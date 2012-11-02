@@ -1,0 +1,600 @@
+﻿namespace Barista.SharePoint.Library
+{
+  using System;
+  using System.Linq;
+  using Jurassic;
+  using Jurassic.Library;
+  using Microsoft.SharePoint;
+  using Microsoft.Office.Server.Utilities;
+  using System.Collections.Generic;
+
+  public class SPListConstructor : ClrFunction
+  {
+    public SPListConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "SPList", new SPListInstance(engine.Object.InstancePrototype))
+    {
+    }
+
+    [JSConstructorFunction]
+    public SPListInstance Construct(string listUrl)
+    {
+      SPList list;
+      if (SPHelper.TryGetSPList(listUrl, out list))
+        return new SPListInstance(this.InstancePrototype, list);
+
+      throw new JavaScriptException(this.Engine, "Error", "A list at the specified url was not found.");
+    }
+
+    public SPListInstance Construct(SPList list)
+    {
+      if (list == null)
+        throw new ArgumentNullException("list");
+
+      return new SPListInstance(this.InstancePrototype, list);
+    }
+  }
+
+  public class SPListInstance : ObjectInstance
+  {
+    private SPList m_list;
+
+    public SPListInstance(ObjectInstance prototype)
+      : base(prototype)
+    {
+      this.PopulateFields();
+      this.PopulateFunctions();
+    }
+
+    public SPListInstance(ObjectInstance prototype, SPList list)
+      : this(prototype)
+    {
+      this.m_list = list;
+    }
+
+    public SPListInstance(ScriptEngine engine, SPList list)
+      : this(engine.Object.InstancePrototype, list)
+    {
+    }
+
+    #region Properties
+
+    [JSProperty(Name = "allowContentTypes")]
+    public bool AllowContentTypes
+    {
+      get { return m_list.AllowContentTypes; }
+    }
+
+    [JSProperty(Name = "baseTemplate")]
+    public int BaseTemplate
+    {
+      get { return (int)m_list.BaseTemplate; }
+    }
+
+    //[JSProperty(Name = "baseType")]
+    //public object BaseType
+    //{
+    //  get { return m_list.BaseType; }
+    //}
+
+    [JSProperty(Name = "contentTypesEnabled")]
+    public bool ContentTypesEnabled
+    {
+      get { return m_list.ContentTypesEnabled; }
+    }
+
+    [JSProperty(Name = "created")]
+    public DateInstance Created
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.Created.ToLocalTime()); }
+    }
+
+    [JSProperty(Name = "defaultDisplayFormUrl")]
+    public string DefaultDisplayFormUrl
+    {
+      get { return m_list.DefaultDisplayFormUrl; }
+      set { m_list.DefaultDisplayFormUrl = value; }
+    }
+
+    [JSProperty(Name = "defaultEditFormUrl")]
+    public string DefaultEditFormUrl 
+    {
+      get { return m_list.DefaultEditFormUrl; }
+      set { m_list.DefaultEditFormUrl = value; }
+    }
+
+    [JSProperty(Name = "defaultNewFormUrl")]
+    public string DefaultNewFormUrl 
+    {
+      get { return m_list.DefaultNewFormUrl; }
+      set { m_list.DefaultNewFormUrl = value; }
+    }
+
+    [JSProperty(Name = "description")]
+    public string Description
+    {
+      get { return m_list.Description; }
+      set { m_list.Description = value; }
+    }
+
+    [JSProperty(Name = "direction")]
+    public string Direction
+    {
+      get { return m_list.Direction; }
+      set { m_list.Direction = value; }
+    }
+
+    [JSProperty(Name = "draftVersionVisibility")]
+    public string DraftVersionVisibility
+    {
+      get { return m_list.DraftVersionVisibility.ToString(); }
+      set { m_list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), value); }
+    }
+
+    [JSProperty(Name = "enableAttachments")]
+    public bool EnableAttachments
+    {
+      get { return m_list.EnableAttachments; }
+      set { m_list.EnableAttachments = value; }
+    }
+
+    [JSProperty(Name = "enableFolderCreation")]
+    public bool EnableFolderCreation
+    {
+      get { return m_list.EnableFolderCreation; }
+      set { m_list.EnableFolderCreation = value; }
+    }
+
+    [JSProperty(Name = "enableMinorVersions")]
+    public bool EnableMinorVersions
+    {
+      get { return m_list.EnableMinorVersions; }
+      set { m_list.EnableMinorVersions = value; }
+    }
+
+    [JSProperty(Name = "enableModeration")]
+    public bool EnableModeration 
+    {
+      get { return m_list.EnableModeration; }
+      set { m_list.EnableModeration = value; }
+    }
+
+    [JSProperty(Name = "enableVersioning")]
+    public bool EnableVersioning
+    {
+      get { return m_list.EnableVersioning; }
+      set { m_list.EnableVersioning = value; }
+    }
+
+    //[JSProperty(Name = "fields")]
+    //public ArrayInstance Fields
+    //{
+    //  get { return m_list.Fields; }
+    //}
+
+    [JSProperty(Name = "forceCheckout")]
+    public bool ForceCheckout
+    {
+      get { return m_list.ForceCheckout; }
+      set { m_list.ForceCheckout = value; }
+    }
+
+    [JSProperty(Name = "hasExternalDataSource")]
+    public bool HasExternalDataSource
+    {
+      get { return m_list.HasExternalDataSource; }
+    }
+
+    [JSProperty(Name = "hidden")]
+    public bool Hidden
+    {
+      get { return m_list.Hidden; }
+      set { m_list.Hidden = value; }
+    }
+
+    [JSProperty(Name = "id")]
+    public string Id
+    {
+      get { return m_list.ID.ToString(); }
+    }
+
+    [JSProperty(Name = "imageUrl")]
+    public string ImageUrl
+    {
+      get { return m_list.ImageUrl; }
+    }
+
+    [JSProperty(Name = "isApplicationList")]
+    public bool IsApplicationList
+    {
+      get { return m_list.IsApplicationList; }
+      set { m_list.IsApplicationList = value; }
+    }
+
+    //[JSProperty(Name = "isCatalog")]
+    //public bool IsCatalog
+    //{
+    //  get { return m_list; }
+    //  set { m_list.IsGallery = value; }
+    //}
+
+    [JSProperty(Name = "isSiteAssetsLibrary")]
+    public bool IsSiteAssetsLibrary
+    {
+      get { return m_list.IsSiteAssetsLibrary; }
+    }
+
+    [JSProperty(Name = "itemCount")]
+    public int ItemCount
+    {
+      get { return m_list.ItemCount; }
+    }
+
+    [JSProperty(Name = "lastItemDeletedDate")]
+    public DateInstance LastItemDeletedDate
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemDeletedDate.ToLocalTime()); }
+    }
+
+    [JSProperty(Name = "lastItemModifiedDate")]
+    public DateInstance LastItemModifiedDate
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemModifiedDate.ToLocalTime()); }
+    }
+
+    [JSProperty(Name = "noCrawl")]
+    public bool NoCrawl
+    {
+      get { return m_list.NoCrawl; }
+      set { m_list.NoCrawl = value; }
+    }
+
+    [JSProperty(Name = "onQuickLaunch")]
+    public bool OnQuickLaunch
+    {
+      get { return m_list.OnQuickLaunch; }
+      set { m_list.OnQuickLaunch = value; }
+    }
+
+    [JSProperty(Name = "parentWebUrl")]
+    public string ParentWebUrl
+    {
+      get { return m_list.ParentWebUrl; }
+    }
+
+    [JSProperty(Name = "rootFolder")]
+    public SPFolderInstance RootFolder
+    {
+      get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_list.RootFolder); }
+    }
+
+    [JSProperty(Name = "serverTemplateCanCreateFolders")]
+    public bool ServerTemplateCanCreateFolders
+    {
+      get { return m_list.ServerTemplateCanCreateFolders; }
+    }
+
+    [JSProperty(Name = "serverTemplateId")]
+    public string ServerTemplateId
+    {
+      get
+      {
+        var serverTemplateId = m_list.RootFolder.Properties["vti_listservertemplate"]; //Gotta love SharePoint!!
+        if (serverTemplateId != null)
+          return serverTemplateId.ToString();
+        else
+          return String.Empty;
+      } 
+    }
+
+    [JSProperty(Name = "templateFeatureId")]
+    public string TemplateFeatureId
+    {
+      get { return m_list.TemplateFeatureId.ToString(); }
+    }
+
+    [JSProperty(Name = "title")]
+    public string Title
+    {
+      get { return m_list.Title; }
+    }
+
+    [JSProperty(Name = "validationFormula")]
+    public string ValidationFormula
+    {
+      get { return m_list.ValidationFormula; }
+      set { m_list.ValidationFormula = value; }
+    }
+
+    [JSProperty(Name = "validationMessage")]
+    public string ValidationMessage
+    {
+      get { return m_list.ValidationMessage; }
+      set { m_list.ValidationMessage = value; }
+    }
+
+    [JSProperty(Name = "url")]
+    public string Url
+    {
+      get { return m_list.ParentWeb.Url + "/" + m_list.RootFolder.Url; }
+    }
+    #endregion
+
+    #region Functions
+    [JSFunction(Name = "addContentType")]
+    public SPContentTypeInstance AddContentType(object contentType)
+    {
+      SPContentTypeId bestMatch = SPContentTypeId.Empty;
+
+      if (contentType is string)
+      {
+        bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch(new SPContentTypeId(contentType as string));
+      }
+      else if (contentType is SPContentTypeIdInstance)
+      {
+        bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
+      }
+      else if (contentType is SPContentTypeInstance)
+      {
+        bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+      }
+
+      if (bestMatch == SPContentTypeId.Empty)
+        return null;
+
+      SPContentType spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
+
+      return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, spContentType);
+    }
+
+    [JSFunction(Name = "delete")]
+    public void Delete()
+    {
+      m_list.Delete();
+    }
+
+    /// <summary>
+    /// Ensures that the specified content type has been defined on the list of content types defined on the list.
+    /// </summary>
+    /// <param name="contentType"></param>
+    /// <returns></returns>
+    [JSFunction(Name = "ensureContentType")]
+    public SPContentTypeInstance EnsureContentType(object contentType)
+    {
+      SPContentTypeId contentTypeIdToFind = SPContentTypeId.Empty;
+
+      if (contentType is string)
+      {
+        contentTypeIdToFind = new SPContentTypeId(contentType as string);
+      }
+      else if (contentType is SPContentTypeIdInstance)
+      {
+        contentTypeIdToFind = (contentType as SPContentTypeIdInstance).ContentTypeId;
+      }
+      else if (contentType is SPContentTypeInstance)
+      {
+        contentTypeIdToFind = (contentType as SPContentTypeInstance).ContentType.Id;
+      }
+
+      if (contentTypeIdToFind == SPContentTypeId.Empty)
+        return null;
+
+      var spContentType = m_list.ContentTypes.OfType<SPContentType>().Where(ct => contentTypeIdToFind.IsParentOf(ct.Id)).FirstOrDefault();
+
+      if (spContentType == null)
+      {
+        var bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch(contentTypeIdToFind);
+
+        if (bestMatch == null)
+          return null;
+
+        spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
+      }
+
+      return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, spContentType);
+    }
+
+    [JSFunction(Name = "getItemById")]
+    public object GetItemById(int id)
+    {
+      var item = m_list.GetItemById(id);
+
+      SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+      return instance;
+    }
+
+    [JSFunction(Name = "getItems")]
+    public ArrayInstance GetItems()
+    {
+      List<SPListItem> items = new List<SPListItem>();
+
+      ContentIterator itemsIterator = new ContentIterator();
+      itemsIterator.ProcessListItems(m_list, false, (item) =>
+        {
+          items.Add(item);
+        },
+        (listItem, ex) =>
+        {
+          return false; //don't rethrow errors.
+        });
+      
+      var result = Engine.Array.Construct();
+      
+      foreach (var item in items.OfType<SPListItem>())
+      {
+        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+        ArrayInstance.Push(result, instance);
+      }
+
+      return result;
+    }
+
+    [JSFunction(Name = "getItemsByQuery")]
+    public ArrayInstance GetItemsByQuery(object query)
+    {
+      SPQuery camlQuery = null;
+
+      if (query is string)
+      {
+        camlQuery = new SPQuery();
+        camlQuery.Query = query as string;
+      }
+      else if (query is SPCamlQueryInstance)
+      {
+        var queryInstance = query as SPCamlQueryInstance;
+        camlQuery = queryInstance.SPQuery;
+      }
+      else if (query is SPCamlQueryBuilderInstance)
+      {
+        camlQuery = new SPQuery();
+        camlQuery.Query = query.ToString();
+      }
+      else
+      {
+        return null;
+      }
+
+      List<SPListItem> items = new List<SPListItem>();
+
+      ContentIterator itemsIterator = new ContentIterator();
+      itemsIterator.ProcessListItems(m_list, camlQuery, false, (item) =>
+      {
+        items.Add(item);
+      },
+        (listItem, ex) =>
+        {
+          return false; //don't rethrow errors.
+        });
+
+      var result = Engine.Array.Construct();
+
+      foreach (var item in items.OfType<SPListItem>())
+      {
+        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+        ArrayInstance.Push(result, instance);
+      }
+
+      return result;
+    }
+
+    [JSFunction(Name = "getItemsByView")]
+    public ArrayInstance GetItemsByView(object view)
+    {
+      SPView selectedView = null;
+
+      if (view is string)
+      {
+        selectedView = m_list.Views[view as string];
+      }
+      else if (view is SPViewInstance)
+      {
+        var viewInstance = view as SPViewInstance;
+        selectedView = m_list.Views[viewInstance.Title];
+      }
+      else
+      {
+        return null;
+      }
+
+      List<SPListItem> items = new List<SPListItem>();
+      SPQuery query = new SPQuery(selectedView);
+
+      ContentIterator itemsIterator = new ContentIterator();
+      itemsIterator.ProcessListItems(m_list, query, false, (item) =>
+        {
+          items.Add(item);
+        },
+        (listItem, ex) =>
+        {
+          return false; //don't rethrow errors.
+        });
+
+      var result = Engine.Array.Construct();
+      foreach (var item in items)
+      {
+        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+        ArrayInstance.Push(result, instance);
+      }
+
+      return result;
+    }
+
+    [JSFunction(Name = "getParentWeb")]
+    public SPWebInstance GetParentWeb()
+    {
+      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_list.ParentWeb);
+    }
+
+    [JSFunction(Name = "getPermissions")]
+    public SPSecurableObjectInstance GetPermissions()
+    {
+      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_list);
+    }
+
+    [JSFunction(Name = "getContentTypes")]
+    public ArrayInstance GetContentTypes()
+    {
+      var result = this.Engine.Array.Construct();
+      foreach (var contentType in m_list.ContentTypes.OfType<SPContentType>())
+      {
+        ArrayInstance.Push(result, new SPContentTypeInstance(this.Engine.Object.InstancePrototype, contentType));
+      }
+      return result;
+    }
+
+    [JSFunction(Name = "getViews")]
+    public ArrayInstance GetViews()
+    {
+      var result = this.Engine.Array.Construct();
+
+      foreach (var view in m_list.Views.OfType<SPView>())
+      {
+        ArrayInstance.Push(result, new SPViewInstance(this.Engine.Object.InstancePrototype, view));
+      }
+
+      return result;
+    }
+
+    [JSFunction(Name = "getSchemaXml")]
+    public string GetSchemaXml()
+    {
+      return m_list.SchemaXml;
+    }
+
+    [JSFunction(Name = "removeContentType")]
+    public void RemoveContentType(object contentType)
+    {
+      SPContentTypeId bestMatch = SPContentTypeId.Empty;
+
+      if (contentType is string)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch(new SPContentTypeId(contentType as string));
+      }
+      else if (contentType is SPContentTypeIdInstance)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
+      }
+      else if (contentType is SPContentTypeInstance)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+      }
+
+      if (bestMatch == SPContentTypeId.Empty)
+        return;
+
+      m_list.ContentTypes.Delete(bestMatch);
+    }
+
+    [JSFunction(Name = "recycle")]
+    public string Recycle()
+    {
+      return m_list.Recycle().ToString();
+    }
+
+    [JSFunction(Name = "update")]
+    public void Update()
+    {
+      m_list.Update();
+    }
+    #endregion
+  }
+}

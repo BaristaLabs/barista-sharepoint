@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:i3="http://schemas.k2.com/core/d1" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:i0="http://schemas.k2.com/process/d1:navigation" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:i1="http://schemas.k2.com/worklist/d1:navigation" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:i2="http://schemas.k2.com/user/d1" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Wcf" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:import namespace="http://schemas.k2.com/process/d1:navigation" location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl0" />
+  <wsdl:import namespace="http://schemas.k2.com/worklist/d1:navigation" location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl1" />
+  <wsdl:import namespace="http://schemas.k2.com/user/d1" location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl2" />
+  <wsdl:import namespace="http://schemas.k2.com/core/d1" location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl3" />
+  <wsdl:types />
+  <wsdl:binding name="BasicHttpBinding_IProcessNavigationService" type="i0:IProcessNavigationService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="StartNewProcessInstance">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProcessInstance">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1/IProcessService/UpdateProcessInstance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenProcessInstance">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1/IProcessService/OpenProcessInstance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="StartNewProcessInstanceScalar">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceScalar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceDataFields">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceDataField">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceXmlFields">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceXmlField">
+      <soap:operation soapAction="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BasicHttpBinding_IWorklistNavigationService" type="i1:IWorklistNavigationService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="OpenWorklist">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklist" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItem">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteActionBySerial">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionBySerial" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteActionByWorklistItem">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionByWorklistItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SearchForWorklistItems">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1/IWorklistService/SearchForWorklistItems" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActions">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemAction">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemAction" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstance">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceDataFields">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceDataField">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceXmlFields">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceXmlField">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestination">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestination" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationDataFields">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationDataField">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationXmlFields">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFields" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationXmlField">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemEventInstance">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemEventInstance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemDestinations">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemDestination">
+      <soap:operation soapAction="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestination" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BasicHttpBinding_IIdentityService" type="i2:IIdentityService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAllUsers">
+      <soap:operation soapAction="http://schemas.k2.com/user/d1/IIdentityService/GetAllUsers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetUser">
+      <soap:operation soapAction="http://schemas.k2.com/user/d1/IIdentityService/GetUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SearchUsers">
+      <soap:operation soapAction="http://schemas.k2.com/user/d1/IIdentityService/SearchUsers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BasicHttpBinding_ICoreService" type="i3:ICoreService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="WhoAmI">
+      <soap:operation soapAction="http://schemas.k2.com/core/d1/ICoreService/WhoAmI" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FailureFault">
+        <soap:fault use="literal" name="FailureFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Wcf">
+    <wsdl:port name="BasicHttpBinding_IProcessNavigationService" binding="tns:BasicHttpBinding_IProcessNavigationService">
+      <soap:address location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc/Process" />
+    </wsdl:port>
+    <wsdl:port name="BasicHttpBinding_IWorklistNavigationService" binding="tns:BasicHttpBinding_IWorklistNavigationService">
+      <soap:address location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc/Worklist" />
+    </wsdl:port>
+    <wsdl:port name="BasicHttpBinding_IIdentityService" binding="tns:BasicHttpBinding_IIdentityService">
+      <soap:address location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc/Identity" />
+    </wsdl:port>
+    <wsdl:port name="BasicHttpBinding_ICoreService" binding="tns:BasicHttpBinding_ICoreService">
+      <soap:address location="http://sp2010dev.treasury.local:81/K2Services/WCF.svc/Core" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

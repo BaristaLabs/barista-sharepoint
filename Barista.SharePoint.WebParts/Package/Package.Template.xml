@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ActivationDependencies>
+    <ActivationDependency SolutionId="63944b60-4455-44a9-b0fa-da5d212b78fb"/>
+  </ActivationDependencies>
+</Solution>

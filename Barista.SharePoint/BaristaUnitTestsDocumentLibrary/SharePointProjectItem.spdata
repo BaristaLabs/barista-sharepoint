@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectItem Type="Microsoft.VisualStudio.SharePoint.ListDefinition" DefaultFile="Elements.xml" SupportedTrustLevels="All" SupportedDeploymentScopes="Web, Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
+  <Files>
+    <ProjectItemFile Source="Elements.xml" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementManifest" />
+    <ProjectItemFile Source="Schema.xml" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementFile" />
+    <ProjectItemFile Source="EditDlg.htm" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementFile" />
+    <ProjectItemFile Source="FileDlg.htm" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementFile" />
+    <ProjectItemFile Source="Repair.aspx" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementFile" />
+    <ProjectItemFile Source="Upload.aspx" Target="BaristaUnitTestsDocumentLibrary\" Type="ElementFile" />
+  </Files>
+</ProjectItem>

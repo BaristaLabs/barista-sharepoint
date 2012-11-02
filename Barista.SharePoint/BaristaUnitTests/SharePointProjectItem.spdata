@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectItem Type="Microsoft.VisualStudio.SharePoint.Module" DefaultFile="Elements.xml" SupportedTrustLevels="All" SupportedDeploymentScopes="Web, Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
+  <Files>
+    <ProjectItemFile Source="Elements.xml" Target="BaristaUnitTests\" Type="ElementManifest" />
+    <ProjectItemFile Source="Content\Barista_Deferred.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_DeleteUpload.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_GetUploads.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_Include.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_ProcessUpload.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_RecursiveWebsRetrieval.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_SimpleExpression.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_SPListItemRetrieval.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_SPListItemRetrievalThroughView.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_SPListTitlesToPDF.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\DemoTemplate.htm" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaDocumentTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaFileUploadTest.html" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaK2Tests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaSharePointTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="index.html" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaActiveDirectoryTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+  </Files>
+</ProjectItem>

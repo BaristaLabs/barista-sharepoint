@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ListInstance Title="Barista Unit Tests" OnQuickLaunch="FALSE" TemplateType="10000" Url="Lists/BaristaUnitTests" Description="Contains Barista Unit Test Files"></ListInstance>
+</Elements>

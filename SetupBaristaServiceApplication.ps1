@@ -1,0 +1,104 @@
+[CmdletBinding(DefaultParameterSetName="FileOrDirectory")]
+param (
+	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
+	[ValidateNotNullOrEmpty()]
+	[string]$ManagedAccount = "TREASURY\SP_WorkerProcess",
+
+	[Parameter(Mandatory=$false, Position=2, ParameterSetName="FileOrDirectory")]
+	[ValidateNotNullOrEmpty()]
+	[string]$SPApplicationPoolName = "Barista Application Pool"
+)
+
+function LoadSharePointPowerShellEnvironment
+{
+	write-host 
+	write-host "Setting up PowerShell environment for SharePoint" -foregroundcolor Yellow
+	write-host 
+	Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
+	write-host "SharePoint PowerShell Snapin loaded." -foregroundcolor Green
+}
+
+write-host 
+LoadSharePointPowerShellEnvironment
+
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Ensure Barista Application Pool has been created.
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+
+write-host 
+write-host "[[STEP]] Ensuring Barista Application Pool Exists." -foregroundcolor Yellow
+write-host 
+
+$appPool = Get-SPServiceApplicationPool | Where {$_.Name -eq $SPApplicationPoolName}
+
+if($appPool -eq $null) {
+	write-host "Creating Barista Application Pool..." -foregroundcolor Gray
+    $appPool = New-SPServiceApplicationPool -Name $SPApplicationPoolName -Account $ManagedAccount
+	if ($appPool -ne $null) {
+	    write-host "Barista Application Pool created.." -foregroundcolor Green
+	}
+}
+
+#
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Provision service app & start service app instance
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+
+write-host 
+write-host "[[STEP]] Creating Barista Service Application." -foregroundcolor Yellow
+write-host 
+
+write-host "Ensure service application not already created..." -foregroundcolor Gray
+$serviceApp = Get-SPServiceApplication | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplication" -and $_.Name -eq "Barista Service Application" }
+if ($serviceApp -eq $null){
+	write-host "Creating service application..." -foregroundcolor Gray
+	$guid = [Guid]::NewGuid()
+	$serviceApp = New-BaristaServiceApplication -Name "Barista Service Application" -ApplicationPool $SPApplicationPoolName
+    if ($serviceApp -ne $null) {
+	    write-host "Barista Service Application created." -foregroundcolor Green
+	}
+}
+
+
+# [[[[[[[[STEP]]]]]]]]
+
+
+write-host 
+write-host "[[STEP]] Configuring permissions on Barista Service Application." -foregroundcolor Yellow
+write-host 
+
+write-host "Configure permissions on the service app..." -foregroundcolor Gray
+$user = $env:userdomain + '\' + $env:username
+
+write-host "  Creating new claim for $user..." -foregroundcolor Gray
+$userClaim = New-SPClaimsPrincipal -Identity $user -IdentityType WindowsSamAccountName
+$security = Get-SPServiceApplicationSecurity $serviceApp
+
+write-host "  Granting $user 'FULL CONTROL' to service application..." -foregroundcolor Gray
+Grant-SPObjectSecurity $security $userClaim -Rights "Full Control"
+Set-SPServiceApplicationSecurity $serviceApp $security
+
+write-host "Barista Service Application permissions set." -foregroundcolor Green
+
+# [[[[[[[[STEP]]]]]]]]
+
+write-host 
+write-host "[[STEP]] Starting Barista Service Application instance on local server." -foregroundcolor Yellow
+write-host 
+
+write-host "Ensure service instance is running on server $env:computername..." -foregroundcolor Gray
+$localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
+if ($localServiceInstance.Status -ne 'Online'){
+	write-host "Starting service instance on server $env:computername..." -foregroundcolor Gray
+	Start-SPServiceInstance $localServiceInstance
+	write-host "Barista Service Application instance started." -foregroundcolor Green
+}
+
+
+
+write-host "[[[[ Barista Service Application provisioned & instance started. ]]]]" -foregroundcolor Green
+
+write-host 

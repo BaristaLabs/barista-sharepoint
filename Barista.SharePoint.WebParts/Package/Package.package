@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="2b699570-1525-46f4-a5b7-92ef9bc0b7a2" solutionId="2b699570-1525-46f4-a5b7-92ef9bc0b7a2" resetWebServer="false" name="Barista.SharePoint.WebParts" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="2c760c72-8e5d-4069-8e41-c1403af404f3" />
+  </features>
+</package>

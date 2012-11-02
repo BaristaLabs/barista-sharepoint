@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint", "Barista.SharePoint\Barista.SharePoint.csproj", "{77BC7214-5D7D-472C-88C5-7D022D93C231}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5A961B80-5532-4AC2-873F-DC1F29BAC26C}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A745E621-0AC3-4826-896F-DD46BEE2CA0B}"
+	ProjectSection(SolutionItems) = preProject
+		SetupBaristaServiceApplication.ps1 = SetupBaristaServiceApplication.ps1
+		SetupBaristaServiceApplicationProxy.ps1 = SetupBaristaServiceApplicationProxy.ps1
+		TestBaristaServiceApplication.ps1 = TestBaristaServiceApplication.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84}"
+	ProjectSection(SolutionItems) = preProject
+		Deployment\Deploy-SPSolutions.ps1 = Deployment\Deploy-SPSolutions.ps1
+		Deployment\README.docx = Deployment\README.docx
+		Deployment\Solutions-Dev.xml = Deployment\Solutions-Dev.xml
+		Deployment\Solutions-DevVM.xml = Deployment\Solutions-DevVM.xml
+		Deployment\Solutions-Prod.xml = Deployment\Solutions-Prod.xml
+		Deployment\Solutions-Stage.xml = Deployment\Solutions-Stage.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D414-49D6-900A-8F7C0912C655}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\EPPlus.dll = Lib\EPPlus.dll
+		Lib\EPPlus.XML = Lib\EPPlus.XML
+		Lib\ICSharpCode.SharpZipLib.dll = Lib\ICSharpCode.SharpZipLib.dll
+		Lib\Interop.ActiveDs.dll = Lib\Interop.ActiveDs.dll
+		Lib\Jurassic.dll = Lib\Jurassic.dll
+		Lib\Jurassic.pdb = Lib\Jurassic.pdb
+		Lib\System.Threading.chm = Lib\System.Threading.chm
+		Lib\System.Threading.dll = Lib\System.Threading.dll
+		Lib\System.Threading.xml = Lib\System.Threading.xml
+		Lib\wnvhtmlconvert.dll = Lib\wnvhtmlconvert.dll
+		Lib\wnvhtmlconvert.xml = Lib\wnvhtmlconvert.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Barista.Core\\Barista.Core.csproj
+		SccProjectName1 = Barista.Core
+		SccLocalPath1 = Barista.Core
+		SccProjectUniqueName2 = Barista.SharePoint.WebParts\\Barista.SharePoint.WebParts.csproj
+		SccProjectName2 = Barista.SharePoint.WebParts
+		SccLocalPath2 = Barista.SharePoint.WebParts
+		SccProjectUniqueName3 = Barista.SharePoint\\Barista.SharePoint.csproj
+		SccProjectName3 = Barista.SharePoint
+		SccLocalPath3 = Barista.SharePoint
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BC7214-5D7D-472C-88C5-7D022D93C231}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
+		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
+	EndGlobalSection
+EndGlobal

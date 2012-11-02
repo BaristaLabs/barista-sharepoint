@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.k2.com/process/d1" elementFormDefault="qualified" targetNamespace="http://schemas.k2.com/process/d1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" namespace="http://schemas.k2.com/worklist/d1" />
+  <xs:element name="StartNewProcessInstance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="processInstance" type="q1:ProcessInstance" />
+        <xs:element minOccurs="1" maxOccurs="1" name="synchronous" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="actDataField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="actXmlField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piDataField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piXmlField" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Description" type="xs:string" />
+  <xs:element name="Metadata" type="xs:string" />
+  <xs:element name="DataField" type="tns:DataField" />
+  <xs:complexType name="DataField">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Name" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:element name="XmlField" type="tns:XmlField" />
+  <xs:complexType name="XmlField">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="Name" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:element name="StartNewProcessInstanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="StartNewProcessInstanceResult" type="q2:ProcessInstance" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateProcessInstance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="processInstance" type="q3:ProcessInstance" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UpdateProcessInstanceResponse">
+    <xs:complexType />
+  </xs:element>
+  <xs:element name="OpenProcessInstance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="processInstanceId" type="xs:string" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piDataField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piXmlField" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenProcessInstanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="OpenProcessInstanceResult" type="q4:ProcessInstance" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="StartNewProcessInstanceScalar">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="fullName" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="folio" type="xs:string" />
+        <xs:element minOccurs="1" maxOccurs="1" name="synchronous" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="StartNewProcessInstanceScalarResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="1" name="StartNewProcessInstanceScalarResult" type="xs:long" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element xmlns:q5="http://schemas.k2.com/worklist/d1" name="ProcessInstance" type="q5:ProcessInstance" />
+  <xs:complexType name="Destination">
+    <xs:attribute name="Name" type="xs:string" />
+  </xs:complexType>
+</xs:schema>

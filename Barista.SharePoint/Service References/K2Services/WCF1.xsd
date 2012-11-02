@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.k2.com/worklist/d1:navigation" elementFormDefault="qualified" targetNamespace="http://schemas.k2.com/worklist/d1:navigation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" namespace="http://schemas.k2.com/worklist/d1" />
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd5" namespace="http://schemas.k2.com/activity/d1" />
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd6" namespace="http://schemas.k2.com/event/d1" />
+  <xs:element name="OpenWorklistItemActions">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActionsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemActionsResult" type="tns:ArrayOfAction" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfAction">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="unbounded" name="Action" nillable="true" type="q1:Action" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OpenWorklistItemAction">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="actionName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemActionResult" type="q2:Action" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piDataField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="piXmlField" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.k2.com/worklist/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemProcessInstanceResult" type="q3:ProcessInstance" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceDataFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceDataFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemProcessInstanceDataFieldsResult" type="tns:ArrayOfDataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfDataField">
+    <xs:sequence>
+      <xs:element xmlns:q4="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" name="DataField" nillable="true" type="q4:DataField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OpenWorklistItemProcessInstanceDataField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="dataFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceDataFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemProcessInstanceDataFieldResult" type="q5:DataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceXmlFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceXmlFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemProcessInstanceXmlFieldsResult" type="tns:ArrayOfXmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfXmlField">
+    <xs:sequence>
+      <xs:element xmlns:q6="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" name="XmlField" nillable="true" type="q6:XmlField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OpenWorklistItemProcessInstanceXmlField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="xmlFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemProcessInstanceXmlFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemProcessInstanceXmlFieldResult" type="q7:XmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestination">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="1" maxOccurs="1" name="actDataField" type="xs:boolean" />
+        <xs:element minOccurs="1" maxOccurs="1" name="actXmlField" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.k2.com/activity/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemActivityInstanceDestinationResult" type="q8:ActivityInstanceDestination" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationDataFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationDataFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemActivityInstanceDestinationDataFieldsResult" type="tns:ArrayOfDataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationDataField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="dataFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationDataFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemActivityInstanceDestinationDataFieldResult" type="q9:DataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationXmlFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationXmlFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemActivityInstanceDestinationXmlFieldsResult" type="tns:ArrayOfXmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationXmlField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="xmlFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemActivityInstanceDestinationXmlFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemActivityInstanceDestinationXmlFieldResult" type="q10:XmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemEventInstance">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemEventInstanceResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.k2.com/event/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemEventInstanceResult" type="q11:EventInstance" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemDestinations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemDestinationsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="OpenWorklistItemDestinationsResult" type="tns:ArrayOfDestination" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfDestination">
+    <xs:sequence>
+      <xs:element xmlns:q12="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" name="Destination" nillable="true" type="q12:Destination" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OpenWorklistItemDestination">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="serialNumber" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="index" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OpenWorklistItemDestinationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="OpenWorklistItemDestinationResult" type="q13:Destination" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
