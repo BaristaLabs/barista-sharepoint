@@ -1,4 +1,4 @@
-﻿namespace OFS.OrcaDB.Core
+﻿namespace Barista.OrcaDB
 {
   using System;
   using System.IO;
@@ -8,7 +8,7 @@
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
   using System.Web;
-  using OFS.OrcaDB.Core.Framework;
+  using Barista.Framework;
 
   /// <summary>
   /// Represents a Service which serves as a REST-based service wrapper around an instance of a Document Store.

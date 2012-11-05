@@ -1,4 +1,4 @@
-﻿namespace OFS.OrcaDB.Core
+﻿namespace Barista.OrcaDB
 {
   using System;
   using System.Configuration;
@@ -6,7 +6,7 @@
   using System.Linq;
   using System.ServiceModel.Web;
   using Newtonsoft.Json;
-  using OFS.OrcaDB.Core.Framework;
+  using Barista.Framework;
 
   /// <summary>
   /// Represents the base class of Document Store Services.

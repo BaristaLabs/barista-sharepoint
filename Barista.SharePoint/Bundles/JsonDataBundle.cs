@@ -16,7 +16,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      engine.Execute(Barista.SharePoint.Properties.Resources.jsonDataHandler);
+      engine.Execute(Barista.Properties.Resources.jsonDataHandler);
       return Null.Value;
     }
   }

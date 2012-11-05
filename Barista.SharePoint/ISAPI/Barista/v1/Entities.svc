@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Debug="true" Language="C#" Service="OFS.OrcaDB.SharePoint.SPDocumentStoreEntitiesService, OFS.OrcaDB.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c" Factory="OFS.OrcaDB.SharePoint.Framework.MultipleHeaderWebServiceHostFactory, OFS.OrcaDB.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c"%>

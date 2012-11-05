@@ -233,7 +233,6 @@
     <Compile Include="Helpers\CommonPropertyUtil.cs" />
     <Compile Include="Helpers\EncryptDecrypt.cs" />
     <Compile Include="Helpers\FarmPropertyBag.cs" />
-    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\SPHelper.cs" />
     <Compile Include="Helpers\UlsHelper.cs" />
     <Compile Include="Services\HtmlConverterService.cs" />
@@ -462,9 +461,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\jsonDataHandler.js" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\linq.js" />
   </ItemGroup>
   <ItemGroup>
@@ -508,8 +504,23 @@
     <Content Include="Features\BaristaUnitTests\BaristaUnitTests.Template.xml">
       <DependentUpon>BaristaUnitTests.feature</DependentUpon>
     </Content>
+    <Content Include="ISAPI\Barista\v1\Attachments.svc">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="ISAPI\Barista\v1\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaTest.svc" />
+    <Content Include="ISAPI\Barista\v1\Cache.svc" />
+    <Content Include="ISAPI\Barista\v1\CacheRest.svc" />
+    <Content Include="ISAPI\Barista\v1\Comments.svc" />
+    <Content Include="ISAPI\Barista\v1\Containers.svc" />
+    <Content Include="ISAPI\Barista\v1\Entities.svc" />
+    <Content Include="ISAPI\Barista\v1\EntityIndex.svc" />
+    <Content Include="ISAPI\Barista\v1\EntityParts.svc" />
+    <Content Include="ISAPI\Barista\v1\Folders.svc" />
+    <Content Include="ISAPI\Barista\v1\Lock.svc" />
+    <Content Include="ISAPI\Barista\v1\Metadata.svc" />
+    <Content Include="ISAPI\Barista\v1\Permissions.svc" />
+    <Content Include="ISAPI\Barista\v1\VersionHistory.svc" />
     <Content Include="Layouts\BaristaFiddle\CheckOutFile.js" />
     <Content Include="Layouts\BaristaFiddle\favicon.ico" />
     <Content Include="Layouts\BaristaFiddle\GetFileInfo.js" />

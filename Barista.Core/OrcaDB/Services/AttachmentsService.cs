@@ -1,4 +1,4 @@
-﻿namespace OFS.OrcaDB.Core
+﻿namespace Barista.OrcaDB
 {
   using System;
   using System.IO;
@@ -6,7 +6,7 @@
   using System.ServiceModel;
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
-  using OFS.OrcaDB.Core.Framework;
+  using Barista.Framework;
 
   /// <summary>
   /// Represents a Service which serves as a REST-based service wrapper around an instance of a Document Store.
@@ -160,7 +160,7 @@
       Stream attachmentStream = documentStore.DownloadAttachment(containerTitle, id, fileName);
 
       WebOperationContext.Current.OutgoingResponse.LastModified = attachment.TimeLastModified;
-      WebOperationContext.Current.OutgoingResponse.ContentType = DocumentStoreHelper.GetMimeTypeFromFileName(attachment.FileName);
+      WebOperationContext.Current.OutgoingResponse.ContentType = StringHelper.GetMimeTypeFromFileName(attachment.FileName);
       WebOperationContext.Current.OutgoingResponse.ContentLength = attachmentStream.Length;
       WebOperationContext.Current.OutgoingResponse.ETag = attachment.ETag;
 

@@ -1,4 +1,4 @@
-﻿namespace OFS.OrcaDB.Core
+﻿namespace Barista.OrcaDB
 {
   using System;
   using System.Collections.Generic;
@@ -10,21 +10,6 @@
 
   public static class DocumentStoreHelper
   {
-    /// <summary>
-    /// Gets the name of the MIME type for the specified file type.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    /// <returns></returns>
-    public static string GetMimeTypeFromFileName(string fileName)
-    {
-      string mime = "application/octetstream";
-      string ext = System.IO.Path.GetExtension(fileName).ToLower();
-      Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
-      if (rk != null && rk.GetValue("Content Type") != null)
-        mime = rk.GetValue("Content Type").ToString();
-      return mime;
-    }
-
     public static JsonSerializerSettings JsonSerializerSettings
     {
       get

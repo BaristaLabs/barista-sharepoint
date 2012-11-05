@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace OFS.OrcaDB.Core
+namespace Barista.OrcaDB
 {
   public class EntityMigrationStrategyCollection : KeyedCollection<string, IEntityMigrationStrategy>
   {

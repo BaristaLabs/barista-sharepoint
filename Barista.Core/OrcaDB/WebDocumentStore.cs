@@ -1,11 +1,11 @@
-﻿namespace OFS.OrcaDB.Core
+﻿namespace Barista.OrcaDB
 {
   using System;
   using System.Collections.Generic;
   using System.IO;
   using System.Text;
   using RestSharp;
-  using OFS.OrcaDB.Core.Framework;
+  using Barista.Framework;
 
   /// <summary>
   /// Represents a REST-Based Document Store service client.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OFS.OrcaDB.Core.Extensions
+namespace Barista.OrcaDB.Extensions
 {
   public static class EnumExtensions
   {

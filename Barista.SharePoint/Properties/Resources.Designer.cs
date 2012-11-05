@@ -61,27 +61,6 @@ namespace Barista.SharePoint.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // Author: Michael Schøler, 2008
-        ///// Dual licensed as MIT and LGPL, use as you like, don&apos;t hold me responsible for success or failure though
-        ///Array.prototype.compareTo = function(compareAry) {
-        ///  if (this.length === compareAry.length) {
-        ///    var i;
-        ///    for (i = 0; i &lt; compareAry.length; i+=1) {
-        ///      if (Object.isArray(this[i]) === true) {
-        ///        if (this[i].compareTo(compareAry[i]) === false) {
-        ///          return false;
-        ///        }
-        ///        continue;
-        ///      }
-        ///      else if (this[i] !== compareAry[i]) {        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string jsonDataHandler {
-            get {
-                return ResourceManager.GetString("jsonDataHandler", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to /*--------------------------------------------------------------------------
         ///* linq.js - LINQ for JavaScript
         ///* ver 2.2.0.2 (Jan. 21th, 2011)

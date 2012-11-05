@@ -1,4 +1,4 @@
-﻿namespace OFS.OrcaDB.Core.Extensions
+﻿namespace Barista.OrcaDB.Extensions
 {
   using System;
   using System.Collections.Generic;

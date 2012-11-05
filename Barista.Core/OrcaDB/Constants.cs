@@ -1,5 +1,5 @@
 ﻿using System;
-namespace OFS.OrcaDB.Core
+namespace Barista.OrcaDB
 {
   internal static class Constants
   {

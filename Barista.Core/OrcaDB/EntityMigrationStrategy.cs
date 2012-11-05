@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-namespace OFS.OrcaDB.Core
+namespace Barista.OrcaDB
 {
   public interface IEntityMigrationStrategy
   {

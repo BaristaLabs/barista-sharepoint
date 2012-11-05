@@ -74,7 +74,12 @@
       <Private>True</Private>
       <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
@@ -115,7 +120,10 @@
     <Compile Include="DirectoryServices\DirectorySource.cs" />
     <Compile Include="DirectoryServices\Helpers.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
+    <Compile Include="Framework\JsonNetDeserializer.cs" />
+    <Compile Include="Framework\MultipartParser.cs" />
     <Compile Include="IBundle.cs" />
+    <Compile Include="Framework\JsonNetSerializer.cs" />
     <Compile Include="Library\DynamicModelInstance.cs" />
     <Compile Include="Extensions\ArgumentHelperExtensions.cs" />
     <Compile Include="Extensions\EventHelperExtensions.cs" />
@@ -180,29 +188,16 @@
     <Compile Include="OrcaDB\EntityPartDefinition.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ValidationAttributeExtensions.cs" />
-    <Compile Include="OrcaDB\Framework\BinaryEndpointBehaviorAttribute.cs" />
-    <Compile Include="OrcaDB\Framework\ConcurrentDictionary.cs" />
-    <Compile Include="OrcaDB\Framework\DynamicFormatter.cs" />
-    <Compile Include="OrcaDB\Framework\DynamicResponseTypeAttribute.cs" />
-    <Compile Include="OrcaDB\Framework\DynamicWebHttpBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\DynamicWebServiceHost.cs" />
-    <Compile Include="OrcaDB\Framework\JsonNetDeserializer.cs" />
-    <Compile Include="OrcaDB\Framework\JsonNetSerializer.cs" />
-    <Compile Include="OrcaDB\Framework\JsonpDataServiceBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\JsonpMessageProperty.cs" />
-    <Compile Include="OrcaDB\Framework\JSONPSupportBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\NewtonsoftJsonBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\NewtonsoftJsonClientFormatter.cs" />
-    <Compile Include="OrcaDB\Framework\NewtonsoftJsonDispatchFormatter.cs" />
-    <Compile Include="OrcaDB\Framework\RawBodyWriter.cs" />
-    <Compile Include="OrcaDB\Framework\RawJsonRequestBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\SilverlightFaultBehavior.cs" />
-    <Compile Include="OrcaDB\Framework\StringStream.cs" />
-    <Compile Include="OrcaDB\Helpers\FileHelper.cs" />
-    <Compile Include="OrcaDB\Helpers\JsonHelper.cs" />
-    <Compile Include="OrcaDB\Helpers\JurassicHelper.cs" />
-    <Compile Include="OrcaDB\Helpers\QueryString.cs" />
-    <Compile Include="OrcaDB\Helpers\StringHelper.cs" />
+    <Compile Include="ConcurrentDictionary.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StringStream.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="Helpers\QueryString.cs" />
     <Compile Include="OrcaDB\IndexDefinition.cs" />
     <Compile Include="OrcaDB\Interfaces\IAsyncExecDocumentStore.cs" />
     <Compile Include="OrcaDB\Interfaces\IAttachmentCapableDocumentStore.cs" />
@@ -231,18 +226,18 @@
     <Compile Include="OrcaDB\Interfaces\ISchemaCapableDocumentStore.cs" />
     <Compile Include="OrcaDB\Interfaces\IVersionHistoryCapableDocumentStore.cs" />
     <Compile Include="OrcaDB\IRepositoryFactory.cs" />
-    <Compile Include="OrcaDB\Lazy.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvColumnAttribute.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvContext.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvFileDescription.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvInputFormatAttribute.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvOutputFormatAttribute.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\CsvStream.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\DataRow.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\DataRowItem.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\Exceptions.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\FieldMapper.cs" />
-    <Compile Include="OrcaDB\Linq\Csv\IDataRow.cs" />
+    <Compile Include="Lazy.cs" />
+    <Compile Include="Linq\Csv\CsvColumnAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvContext.cs" />
+    <Compile Include="Linq\Csv\CsvFileDescription.cs" />
+    <Compile Include="Linq\Csv\CsvInputFormatAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvOutputFormatAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvStream.cs" />
+    <Compile Include="Linq\Csv\DataRow.cs" />
+    <Compile Include="Linq\Csv\DataRowItem.cs" />
+    <Compile Include="Linq\Csv\Exceptions.cs" />
+    <Compile Include="Linq\Csv\FieldMapper.cs" />
+    <Compile Include="Linq\Csv\IDataRow.cs" />
     <Compile Include="OrcaDB\Repository.cs" />
     <Compile Include="OrcaDB\RepositoryConfiguration.cs" />
     <Compile Include="OrcaDB\Services\AttachmentsService.cs" />
@@ -258,10 +253,10 @@
     <Compile Include="OrcaDB\Services\SchemaService.cs" />
     <Compile Include="OrcaDB\Services\ServiceBase.cs" />
     <Compile Include="OrcaDB\Services\VersionHistoryService.cs" />
-    <Compile Include="OrcaDB\ValidationAttributeStore.cs" />
-    <Compile Include="OrcaDB\ValidationContext.cs" />
-    <Compile Include="OrcaDB\ValidationResult.cs" />
-    <Compile Include="OrcaDB\Validator.cs" />
+    <Compile Include="ValidationAttributeStore.cs" />
+    <Compile Include="ValidationContext.cs" />
+    <Compile Include="ValidationResult.cs" />
+    <Compile Include="Validator.cs" />
     <Compile Include="OrcaDB\WebDocumentStore.cs" />
     <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
     <Compile Include="_Constants.cs" />
@@ -273,13 +268,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bundles\" />
-    <Folder Include="OrcaDB\Configuration\" />
-    <Folder Include="OrcaDB\Scripts\" />
+    <Folder Include="OrcaDB\Framework\" />
+    <Folder Include="OrcaDB\Helpers\" />
     <Folder Include="Serialization\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="OrcaDB\Resources\jsonDataHandler.js" />
+    <None Include="Resources\jsonDataHandler.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
