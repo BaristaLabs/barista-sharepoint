@@ -53,6 +53,10 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Camlex.NET, Version=3.2.0.0, Culture=neutral, PublicKeyToken=831792d54d5285b7, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Camlex.NET.dll.3.2.0.0\lib\net20\Camlex.NET.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=3.0.0.2, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\EPPlus.dll</HintPath>
@@ -84,7 +88,7 @@
     </Reference>
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.IdentityModel\3.5.0.0__31bf3856ad364e35\Microsoft.IdentityModel.dll</HintPath>
+      <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -201,6 +205,27 @@
     <Compile Include="Library\SPFarmInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
+    <Compile Include="OrcaDB\Constants.cs" />
+    <Compile Include="OrcaDB\CustomDocumentSetFeatureReceiver.cs" />
+    <Compile Include="OrcaDB\EntityIndexService.cs" />
+    <Compile Include="OrcaDB\HandleEventFiring.cs" />
+    <Compile Include="OrcaDB\PermissionsHelper.cs" />
+    <Compile Include="OrcaDB\SPDocumentStore.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreAttachmentsService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreCommentsService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreContainersService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreEntitiesService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreEntityPartsService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreFoldersService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreHelper.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreLockService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreMetadataService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStorePermissionsService.cs" />
+    <Compile Include="OrcaDB\SPDocumentStoreVersionHistoryService.cs" />
+    <Compile Include="OrcaDB\SPEntity.cs" />
+    <Compile Include="OrcaDB\SPEntityPart.cs" />
+    <Compile Include="OrcaDB\SPMemoryCachedDocumentStore.cs" />
+    <Compile Include="OrcaDB\WebContentTypeAttribute.cs" />
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
@@ -345,7 +370,9 @@
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{cd6a7b8a-2a02-4745-aa7a-989b5a0db704}</SharePointProjectItemId>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Package\Package.package">
       <PackageId>{63944b60-4455-44a9-b0fa-da5d212b78fb}</PackageId>
     </None>
@@ -509,8 +536,6 @@
     </Content>
     <Content Include="ISAPI\Barista\v1\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaTest.svc" />
-    <Content Include="ISAPI\Barista\v1\Cache.svc" />
-    <Content Include="ISAPI\Barista\v1\CacheRest.svc" />
     <Content Include="ISAPI\Barista\v1\Comments.svc" />
     <Content Include="ISAPI\Barista\v1\Containers.svc" />
     <Content Include="ISAPI\Barista\v1\Entities.svc" />
