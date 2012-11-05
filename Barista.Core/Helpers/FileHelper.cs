@@ -52,7 +52,7 @@
         catch (Exception)
         {
           if (numTries > maxTries)
-            return null;
+            break;
 
           // Wait for the lock to be released
           System.Threading.Thread.Sleep(250);

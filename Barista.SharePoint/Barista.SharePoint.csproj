@@ -84,7 +84,7 @@
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.BusinessData.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.BusinessData.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,31 +92,31 @@
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.DocumentManagement.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.DocumentManagement.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.SecureStoreService, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.SecureStoreService\14.0.0.0__71e9bce111e9429c\Microsoft.Office.SecureStoreService.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.SecureStoreService.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Server.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.Server.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Client.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Client.ServerRuntime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.SharePoint.Client.ServerRuntime\14.0.0.0__71e9bce111e9429c\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Powershell, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.SharePoint.PowerShell\14.0.0.0__71e9bce111e9429c\Microsoft.SharePoint.Powershell.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Powershell.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Security, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,7 +124,11 @@
     </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Taxonomy.Intl, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <Private>True</Private>
