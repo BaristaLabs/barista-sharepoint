@@ -135,7 +135,7 @@
         isRaw = webBundle.WebInstance.Response.IsRaw;
       }
 
-      var stringified = JSONObject.Stringify(engine, result);
+      var stringified = JSONObject.Stringify(engine, result, null, null);
       response.SetContentsFromResultObject(engine, result,isRaw);
       return response;
     }

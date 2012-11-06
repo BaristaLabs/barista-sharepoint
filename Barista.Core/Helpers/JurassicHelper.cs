@@ -38,7 +38,7 @@
 
       var objectInstance = instance as ObjectInstance;
       if (objectInstance != null)
-        serializedObject = JSONObject.Stringify(engine, objectInstance);
+        serializedObject = JSONObject.Stringify(engine, objectInstance, null, null);
       else
         serializedObject = JsonConvert.SerializeObject(instance);
 

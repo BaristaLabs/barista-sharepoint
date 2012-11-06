@@ -566,7 +566,7 @@
     {
       var result = m_web.GetSiteData(query.SiteDataQuery);
       var jsonResult = JsonConvert.SerializeObject(result);
-      return JSONObject.Parse(this.Engine, jsonResult);
+      return JSONObject.Parse(this.Engine, jsonResult, null);
     }
 
     [JSFunction(Name = "getSiteGroups")]

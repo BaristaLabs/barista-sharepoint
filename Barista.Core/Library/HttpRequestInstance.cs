@@ -150,7 +150,7 @@
     public object GetBodyObject()
     {
       var stringBody = Encoding.UTF8.GetString(this.Request.Body);
-      return JSONObject.Parse(this.Engine, stringBody);
+      return JSONObject.Parse(this.Engine, stringBody, null);
     }
   }
 }

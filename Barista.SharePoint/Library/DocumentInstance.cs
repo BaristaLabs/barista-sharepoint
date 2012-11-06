@@ -34,7 +34,7 @@
     {
       XDocument doc = XDocument.Parse(xml);
       var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
-      return JSONObject.Parse(this.Engine, jsonDocument);
+      return JSONObject.Parse(this.Engine, jsonDocument, null);
     }
 
     [JSFunction(Name = "json2Xml")]
@@ -42,7 +42,7 @@
     {
       string text;
       if (jsonObject is ObjectInstance)
-        text = JSONObject.Stringify(this.Engine, jsonObject);
+        text = JSONObject.Stringify(this.Engine, jsonObject, null, null);
       else
         text = jsonObject as string;
 

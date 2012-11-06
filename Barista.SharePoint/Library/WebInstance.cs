@@ -223,7 +223,7 @@
             {
               XDocument doc = XDocument.Parse(result);
               var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
-              resultObject = JSONObject.Parse(this.Engine, jsonDocument);
+              resultObject = JSONObject.Parse(this.Engine, jsonDocument, null);
               success = true;
             }
             catch { /* Do Nothing. */ }

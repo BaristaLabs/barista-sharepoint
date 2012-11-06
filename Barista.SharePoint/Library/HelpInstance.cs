@@ -33,7 +33,7 @@
 ""util"": ""Utility namespace. Contains utility, helper, functions."",
 ""sp"": ""SharePoint namespace. Contains functions to interact with SharePoint."",
 ""k2"": ""K2 namespace. Contains functions to interact with K2 services.""
-}");
+}", null);
       }
       else if (obj is string)
       {

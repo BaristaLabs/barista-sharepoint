@@ -39,7 +39,7 @@
       //Attempt to convert the string into a JSON Object.
       try
       {
-        result = JSONObject.Parse(this.Engine, val);
+        result = JSONObject.Parse(this.Engine, val, null);
       }
       catch
       {
@@ -58,7 +58,7 @@
       string stringValue = String.Empty;
       if (value is ObjectInstance)
       {
-        stringValue = JSONObject.Stringify(this.Engine, value);
+        stringValue = JSONObject.Stringify(this.Engine, value, null, null);
       }
       else
       {

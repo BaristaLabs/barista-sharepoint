@@ -36,7 +36,7 @@
             output.AppendLine();
           if (objects[i] is ObjectInstance)
           {
-            output.AppendLine(JSONObject.Stringify(this.Engine, objects[i]));
+            output.AppendLine(JSONObject.Stringify(this.Engine, objects[i], null, null));
           }
           else
           {

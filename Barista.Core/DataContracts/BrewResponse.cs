@@ -221,7 +221,7 @@
       else
       {
         //Obtain the script result and stringify it -- e.g. convert it to a json object.
-        string stringResult = JSONObject.Stringify(engine, result);
+        string stringResult = JSONObject.Stringify(engine, result, null, null);
         if (String.IsNullOrEmpty(stringResult) || (stringResult != null && String.IsNullOrEmpty(stringResult.Trim())))
         {
           byteArray = new byte[0];

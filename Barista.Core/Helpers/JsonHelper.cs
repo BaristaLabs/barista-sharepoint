@@ -39,7 +39,7 @@
       engine.Execute("var a = " + a + ";");
       engine.Execute("var b = " + b + ";");
       var result = engine.Evaluate("jsonDataHandler.diff(a, b);");
-      var stringResult = JSONObject.Stringify(engine, result);
+      var stringResult = JSONObject.Stringify(engine, result, null, null);
 
       object parsedJson = JsonConvert.DeserializeObject(stringResult);
       return JsonConvert.SerializeObject(parsedJson, Formatting.Indented, settings);
@@ -58,7 +58,7 @@
       engine.Execute("var b = " + b + ";");
       engine.Execute("jsonDataHandler.merge(a, b);");
       var result = engine.Evaluate("a;");
-      var stringResult = JSONObject.Stringify(engine, result);
+      var stringResult = JSONObject.Stringify(engine, result, null, null);
 
       object parsedJson = JsonConvert.DeserializeObject(stringResult);
       return JsonConvert.SerializeObject(parsedJson, Formatting.Indented, settings);
