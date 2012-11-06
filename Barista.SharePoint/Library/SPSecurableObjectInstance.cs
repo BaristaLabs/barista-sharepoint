@@ -157,7 +157,7 @@
 
     #region Functions
     [JSFunction(Name = "breakRoleInheritance")]
-    public void BreakRoleInheritance([DefaultParameterValue(true)]bool copyRoleAssignments = true, [DefaultParameterValue(true)]bool clearSubscopes = true)
+    public void BreakRoleInheritance([DefaultParameterValue(true)]bool copyRoleAssignments, [DefaultParameterValue(true)]bool clearSubscopes)
     {
       m_securableObject.BreakRoleInheritance(copyRoleAssignments, clearSubscopes);
     }

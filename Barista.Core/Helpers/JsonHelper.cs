@@ -26,7 +26,7 @@
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static string Diff(string a, string b, JsonSerializerSettings settings = null)
+    public static string Diff(string a, string b, JsonSerializerSettings settings)
     {
       if (a.ToLowerInvariant() == "null" && b.ToLowerInvariant() == "null")
         return "null";
@@ -51,7 +51,7 @@
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static string Merge(string a, string b, JsonSerializerSettings settings = null)
+    public static string Merge(string a, string b, JsonSerializerSettings settings)
     {
       var engine = JsonHelper.Engine;
       engine.Execute("var a = " + a + ";");
@@ -73,7 +73,7 @@
     /// <param name="target"></param>
     /// <param name="settings"></param>
     /// <returns></returns>
-    public static T DiffAndMerge<T>(T original, T source, T target, JsonSerializerSettings settings = null)
+    public static T DiffAndMerge<T>(T original, T source, T target, JsonSerializerSettings settings)
     {
       string originalJson = JsonConvert.SerializeObject(original, settings);
       string sourceJson = JsonConvert.SerializeObject(source, settings);

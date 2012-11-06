@@ -193,7 +193,7 @@
     /// <param name="data"></param>
     /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, string data, bool updateIndex = true)
+    public Entity<T> CreateEntity<T>(string path, string data, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
 
@@ -204,7 +204,7 @@
       var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, data);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id);
+        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
 
       return new Entity<T>(result);
     }
@@ -215,7 +215,7 @@
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(T value, bool updateIndex = true)
+    public Entity<T> CreateEntity<T>(T value, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
 
@@ -226,7 +226,7 @@
       var result = documentStore.CreateEntity<T>(this.Configuration.ContainerTitle, entityDefinition.EntityNamespace, value);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id);
+        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
 
       return result;
     }
@@ -237,7 +237,7 @@
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, T value, bool updateIndex = true)
+    public Entity<T> CreateEntity<T>(string path, T value, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
 
@@ -248,7 +248,7 @@
       var result = documentStore.CreateEntity<T>(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, value);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id);
+        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
 
       return result;
     }
@@ -261,16 +261,16 @@
     /// <param name="sourcePath"></param>
     /// <param name="targetPath"></param>
     /// <returns></returns>
-    public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath, bool updateIndex = true)
+    public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath, bool updateIndex)
     {
       var entity = GetEntity<T>(entityId, sourcePath);
-      var newEntity = CreateEntity<T>(targetPath, entity.Data, updateIndex: false);
+      var newEntity = CreateEntity<T>(targetPath, entity.Data, false);
 
       if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
       {
         foreach(var entityPart in ListEntityParts<T>(entityId))
         {
-          CreateEntityPart<T>(newEntity.Id, entityPart.Name, entityPart.Category, entityPart.Data, updateIndex: false);
+          CreateEntityPart<T>(newEntity.Id, entityPart.Name, entityPart.Category, entityPart.Data, false);
         }
       }
 
@@ -290,7 +290,7 @@
       }
 
       if (updateIndex == true)
-        UpdateEntityIndexes<T>(newEntity.Id);
+        UpdateEntityIndexes<T>(newEntity.Id, null, String.Empty, true);
 
       return GetEntity<T>(newEntity.Id);
     }
@@ -314,8 +314,11 @@
     /// <param name="entityId"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public Entity<T> GetEntity<T>(Guid entityId, string path = "")
+    public Entity<T> GetEntity<T>(Guid entityId, string path)
     {
+      if (path == null)
+        path = String.Empty;
+
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
 
       if (entityDefinition == null)
@@ -345,7 +348,7 @@
     /// <param name="skip"></param>
     /// <param name="top"></param>
     /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string path = "", uint? skip = null, uint? top = null)
+    public IList<Entity<T>> ListEntities<T>(string path, uint? skip, uint? top)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
 
@@ -363,7 +366,7 @@
       });
     }
 
-    internal IList<Entity> ListEntities(EntityDefinition entityDefinition, string path = "", uint? skip = null, uint? top = null)
+    internal IList<Entity> ListEntities(EntityDefinition entityDefinition, string path, uint? skip, uint? top)
     {
       if (entityDefinition == null)
         throw new ArgumentNullException("entityDefinition");
@@ -392,7 +395,7 @@
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <returns></returns>
-    public Entity<TEntity> GetFirstEntity<TEntity>(string path = "")
+    public Entity<TEntity> GetFirstEntity<TEntity>(string path)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -411,7 +414,7 @@
     /// <param name="path"></param>
     /// <param name="createEntity"></param>
     /// <returns></returns>
-    public Entity<TEntity> GetOrCreateEntitySingleton<TEntity>(string path, Func<TEntity> createEntity, bool updateIndex = true)
+    public Entity<TEntity> GetOrCreateEntitySingleton<TEntity>(string path, Func<TEntity> createEntity, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -433,7 +436,7 @@
             result = documentStore.CreateEntity<TEntity>(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, createEntity());
 
             if (result != null && updateIndex)
-              UpdateEntityIndexes<TEntity>(result.Id);
+              UpdateEntityIndexes<TEntity>(result.Id, null, String.Empty, true);
           }
         }
       }
@@ -441,13 +444,13 @@
       return result;
     }
 
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string data, bool updateIndex = true)
+    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string data, bool updateIndex)
     {
       TEntity entity = DocumentStoreHelper.DeserializeObjectFromJson<TEntity>(data);
       return CreateOrUpdateEntitySingleton<TEntity>(path, entity, updateIndex);
     }
 
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, TEntity entity, bool updateIndex = true)
+    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, TEntity entity, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -487,12 +490,12 @@
       }
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(result.Id);
+        UpdateEntityIndexes<TEntity>(result.Id, null, String.Empty, true);
 
       return result;
     }
 
-    public bool UpdateEntity<TEntity>(Entity<TEntity> entity, bool updateIndex = true)
+    public bool UpdateEntity<TEntity>(Entity<TEntity> entity, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -504,7 +507,7 @@
       var result = documentStore.UpdateEntity<TEntity>(this.Configuration.ContainerTitle, entity.Id, entity.Value);
 
       if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entity.Id);
+        UpdateEntityIndexes<TEntity>(entity.Id, null, String.Empty, true);
 
       return result;
     }
@@ -515,14 +518,14 @@
     /// <param name="entityId"></param>
     /// <param name="destinationPath"></param>
     /// <returns></returns>
-    public bool MoveEntity<TEntity>(Guid entityId, string destinationPath, bool updateIndex = true)
+    public bool MoveEntity<TEntity>(Guid entityId, string destinationPath, bool updateIndex)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
       var result = documentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
 
       if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -534,14 +537,14 @@
     /// <param name="entityId"></param>
     /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public bool DeleteEntity<TEntity>(Guid entityId, bool updateIndex = true)
+    public bool DeleteEntity<TEntity>(Guid entityId, bool updateIndex)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
       var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);
 
       if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -554,13 +557,13 @@
     /// <param name="entityId"></param>
     /// <param name="comment"></param>
     /// <returns></returns>
-    public Comment AddEntityComment<TEntity>(Guid entityId, string comment, bool updateIndex = true)
+    public Comment AddEntityComment<TEntity>(Guid entityId, string comment, bool updateIndex)
     {
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
       var result = documentStore.AddEntityComment(this.Configuration.ContainerTitle, entityId, comment);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -611,31 +614,31 @@
     /// <param name="category"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public EntityPart CreateEntityPart<TEntity>(Guid entityId, string partName, string category, string data, bool updateIndex = true)
+    public EntityPart CreateEntityPart<TEntity>(Guid entityId, string partName, string category, string data, bool updateIndex)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var result = documentStore.CreateEntityPart(this.Configuration.ContainerTitle, entityId, partName, category, data);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
 
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string partName, string category, TEntityPart value, bool updateIndex = true)
+    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string partName, string category, TEntityPart value, bool updateIndex)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, partName, category, value);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
 
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string data, bool updateIndex = true)
+    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string data, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -654,7 +657,7 @@
       var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, value);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -667,7 +670,7 @@
     /// <param name="entityId"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex = true)
+    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -684,7 +687,7 @@
       var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, value);
 
       if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -755,7 +758,7 @@
     /// <typeparam name="TEntityPart"></typeparam>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex = true)
+    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -767,10 +770,10 @@
       if (entityPartDefinition == null)
         throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
 
-      var result = UpdateEntityPart<TEntity, TEntityPart>(entityId, entityPartDefinition.EntityPartName, value);
+      var result = UpdateEntityPart<TEntity, TEntityPart>(entityId, entityPartDefinition.EntityPartName, value, true);
 
       if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -782,7 +785,7 @@
     /// <typeparam name="TEntityPart"></typeparam>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, string entityPartName, TEntityPart value, bool updateIndex = false)
+    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, string entityPartName, TEntityPart value, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -793,7 +796,7 @@
       var result = documentStore.UpdateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartName, value);
 
       if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -850,7 +853,7 @@
     /// <typeparam name="TEntityPart"></typeparam>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public bool DeleteEntityPart<TEntity, TEntityPart>(Guid entityId, bool updateIndex = true)
+    public bool DeleteEntityPart<TEntity, TEntityPart>(Guid entityId, bool updateIndex)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -867,7 +870,7 @@
       var result = documentStore.DeleteEntityPart(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName);
 
       if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId);
+        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -943,7 +946,7 @@
     /// <param name="rebuildIndexIfMissing"></param>
     /// <param name="rebuildPath"></param>
     /// <returns></returns>
-    public ICollection<TIndex> GetEntityIndex<TEntity, TIndex>(string indexName = "", bool rebuildIndexIfMissing = true, string rebuildPath = "", bool rebuildIndexIfStale = false, bool reduce = true)
+    public ICollection<TIndex> GetEntityIndex<TEntity, TIndex>(string indexName, bool rebuildIndexIfMissing, string rebuildPath, bool rebuildIndexIfStale, bool reduce)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -1056,7 +1059,7 @@
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="path"></param>
-    public void RebuildEntityIndexes<TEntity>(string path = "")
+    public void RebuildEntityIndexes<TEntity>(string path)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -1066,7 +1069,7 @@
       RebuildEntityIndexes(entityDefinition, path);
     }
 
-    internal void RebuildEntityIndexes(EntityDefinition entityDefinition, string path = "")
+    internal void RebuildEntityIndexes(EntityDefinition entityDefinition, string path)
     {
       var client = Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
       var metadataClient = Configuration.GetDocumentStore<IMetadataCapableDocumentStore>();
@@ -1114,7 +1117,7 @@
               if (indexDefinitionFolder == null)
                 indexDefinitionFolder = folderClient.CreateFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
 
-              dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index());
+              dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index(), true);
 
               indexes.Add(indexDefinition, dsIndex);
             }
@@ -1190,7 +1193,7 @@
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="entity"></param>
-    public void UpdateEntityIndexes<TEntity>(Guid entityId, Entity<TEntity> entity = null, string path = "", bool updateAsync = true)
+    public void UpdateEntityIndexes<TEntity>(Guid entityId, Entity<TEntity> entity, string path, bool updateAsync)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
 
@@ -1248,7 +1251,7 @@
     /// <param name="rebuildIndexIfNotExists"></param>
     /// <param name="persistIndexChanges"></param>
     /// <param name="updateAsync"></param>
-    public void UpdateEntityIndexes(Guid entityId, string entityNamespace, string path = "", bool rebuildIndexIfNotExists = true, bool updateAsync = true)
+    public void UpdateEntityIndexes(Guid entityId, string entityNamespace, string path, bool rebuildIndexIfNotExists, bool updateAsync)
     {
       if (entityId == null || entityId == Guid.Empty || entityId == default(Guid))
         throw new ArgumentNullException("entityId");
@@ -1323,7 +1326,7 @@
           if (indexDefinitionFolder == null)
             indexDefinitionFolder = client.CreateFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
 
-          dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index());
+          dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index(), true);
 
           if (indexes == null)
             indexes = new Dictionary<IndexDefinition, Entity<Index>>();

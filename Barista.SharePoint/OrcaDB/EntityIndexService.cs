@@ -35,7 +35,7 @@
           SPDocumentStore documentStore = new SPDocumentStore(web);
           using(var repository = Repository.GetRepository(factory, documentStore))
           {
-            repository.UpdateEntityIndexes(entityId, entityNamespace, path, rebuildIndexIfNotExists, updateAsync: false);
+            repository.UpdateEntityIndexes(entityId, entityNamespace, path, rebuildIndexIfNotExists, false);
           }
         }
       }

@@ -33,7 +33,7 @@
 
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [DynamicResponseType]
-    public Stream CreateContainer(string containerTitle, string description = "")
+    public Stream CreateContainer(string containerTitle, string description)
     {
       if (String.IsNullOrEmpty(containerTitle))
         throw new ArgumentException("The title value must contain text.", containerTitle);

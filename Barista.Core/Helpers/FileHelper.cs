@@ -35,7 +35,7 @@
     /// Blocks until the file is not locked any more.
     /// </summary>
     /// <param name="fullPath"></param>
-    public static FileStream WaitForFile(string fullPath, int maxTries = 100)
+    public static FileStream WaitForFile(string fullPath, int maxTries)
     {
       int numTries = 0;
       while (true)

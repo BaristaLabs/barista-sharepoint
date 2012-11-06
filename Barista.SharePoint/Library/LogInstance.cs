@@ -15,7 +15,7 @@
     }
 
     [JSFunction(Name = "getLocalLogEntries")]
-    public ArrayInstance GetLocalLogEntries(string guid, [DefaultParameterValue(1)] int daysToLook = 1)
+    public ArrayInstance GetLocalLogEntries(string guid, [DefaultParameterValue(1)] int daysToLook)
     {
       var result = this.Engine.Array.Construct();
       Guid correlationId = new Guid(guid);

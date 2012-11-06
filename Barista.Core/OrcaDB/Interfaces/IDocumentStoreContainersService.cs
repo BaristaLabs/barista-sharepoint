@@ -16,7 +16,7 @@
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "Containers/?title={containerTitle}&description={description}", BodyStyle = WebMessageBodyStyle.Bare, ResponseFormat = WebMessageFormat.Json)]
-    Stream CreateContainer(string containerTitle, string description = "");
+    Stream CreateContainer(string containerTitle, string description);
 
     [OperationContract]
     [WebInvoke(Method = "PUT", UriTemplate = "Containers/", BodyStyle = WebMessageBodyStyle.Bare, ResponseFormat = WebMessageFormat.Json)]

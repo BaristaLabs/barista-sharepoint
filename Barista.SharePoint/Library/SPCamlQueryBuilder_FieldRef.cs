@@ -10,7 +10,7 @@
 
   public class SPCamlQueryBuilder_FieldRef : ObjectInstance
   {
-    public SPCamlQueryBuilder_FieldRef(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, string name, string valueType, bool lookupId = false)
+    public SPCamlQueryBuilder_FieldRef(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, string name, string valueType, bool lookupId)
       : base(prototype)
     {
       this.Builder = builder;

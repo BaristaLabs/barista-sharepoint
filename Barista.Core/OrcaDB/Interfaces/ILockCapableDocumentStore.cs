@@ -6,10 +6,10 @@
   {
     LockStatus GetEntityLockStatus(string containerTitle, string path, Guid entityId);
 
-    void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000);
+    void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs);
 
     void UnlockEntity(string containerTitle, string path, Guid entityId);
 
-    void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000);
+    void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs);
   }
 }

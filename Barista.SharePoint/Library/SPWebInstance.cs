@@ -275,7 +275,7 @@
 
     #region Functions
     [JSFunction(Name = "addFileByUrl")]
-    public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite = true)
+    public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite)
     {
       SPFile result = null;
       if (data is Base64EncodedByteArrayInstance)
@@ -294,7 +294,7 @@
     }
 
     [JSFunction(Name = "activateFeature")]
-    public SPFeatureInstance ActivateFeature(object feature, [DefaultParameterValue(false)] bool force = false)
+    public SPFeatureInstance ActivateFeature(object feature, [DefaultParameterValue(false)] bool force)
     {
       Guid featureId = Guid.Empty;
       if (feature is string)
@@ -372,7 +372,7 @@
     }
 
     [JSFunction(Name = "deactivateFeature")]
-    public void DeactivateFeature(object feature, [DefaultParameterValue(false)] bool force = false)
+    public void DeactivateFeature(object feature, [DefaultParameterValue(false)] bool force)
     {
       Guid featureId = Guid.Empty;
       if (feature is string)

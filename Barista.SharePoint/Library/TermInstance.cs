@@ -128,7 +128,7 @@
     #endregion
 
     [JSFunction(Name = "copy")]
-    public TermInstance Copy([DefaultParameterValue(true)] bool doCopyChildren = true)
+    public TermInstance Copy([DefaultParameterValue(true)] bool doCopyChildren)
     {
       var copiedTerm = m_term.Copy(doCopyChildren);
       return new TermInstance(this.Engine.Object.InstancePrototype, copiedTerm);
@@ -196,7 +196,7 @@
       return m_term.GetDescription();
     }
 
-    public string GetDescription([DefaultParameterValue(1033)] int lcid = 1033)
+    public string GetDescription([DefaultParameterValue(1033)] int lcid)
     {
       return m_term.GetDescription(lcid);
     }
@@ -224,7 +224,7 @@
       return m_term.GetPath();
     }
 
-    public string GetPath([DefaultParameterValue(1033)] int lcid = 1033)
+    public string GetPath([DefaultParameterValue(1033)] int lcid)
     {
       return m_term.GetPath(lcid);
     }
@@ -242,7 +242,7 @@
     }
 
     [JSFunction(Name = "getTerms")]
-    public ArrayInstance GetTerms([DefaultParameterValue(0)] int pagingLimit = 0)
+    public ArrayInstance GetTerms([DefaultParameterValue(0)] int pagingLimit)
     {
       var result = this.Engine.Array.Construct();
       foreach (var term in m_term.GetTerms(pagingLimit))

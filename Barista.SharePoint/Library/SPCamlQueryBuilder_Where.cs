@@ -32,7 +32,7 @@
     [JSFunction(Name = "IntegerField")]
     public SPCamlQueryBuilder_FieldRef IntegerField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Integer");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Integer", false);
     }
 
     /// <summary>
@@ -41,7 +41,7 @@
     [JSFunction(Name = "NumberField")]
     public SPCamlQueryBuilder_FieldRef NumberField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Integer");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Integer", false);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@
     [JSFunction(Name = "CounterField")]
     public SPCamlQueryBuilder_FieldRef CounterField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Counter");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Counter", false);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@
     [JSFunction(Name = "TextField")]
     public SPCamlQueryBuilder_FieldRef TextField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Text");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Text", false);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@
     [JSFunction(Name = "DateField")]
     public SPCamlQueryBuilder_FieldRef DateField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Date");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Date", false);
     }
 
     /// <summary>
@@ -77,7 +77,7 @@
     [JSFunction(Name = "DateTimeField")]
     public SPCamlQueryBuilder_FieldRef DateTimeField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "DateTime");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "DateTime", false);
     }
 
     /// <summary>
@@ -86,7 +86,7 @@
     [JSFunction(Name = "UserField")]
     public SPCamlQueryBuilder_FieldRef UserField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "User");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "User", false);
     }
 
     /// <summary>
@@ -95,7 +95,7 @@
     [JSFunction(Name = "LookupField")]
     public SPCamlQueryBuilder_FieldRef LookupField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Lookup");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Lookup", false);
     }
 
     /// <summary>
@@ -113,7 +113,7 @@
     [JSFunction(Name = "ContentTypeIdField")]
     public SPCamlQueryBuilder_FieldRef ContentTypeIdField(string name)
     {
-      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "ContentTypeId");
+      return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "ContentTypeId", false);
     }
 
     /// <summary>

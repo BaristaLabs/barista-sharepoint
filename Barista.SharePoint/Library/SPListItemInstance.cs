@@ -214,7 +214,7 @@
     }
 
     [JSFunction(Name = "systemUpdate")]
-    public void SystemUpdate([DefaultParameterValue(false)] bool incrementListItemVersion = false)
+    public void SystemUpdate([DefaultParameterValue(false)] bool incrementListItemVersion)
     {
       m_listItem.SystemUpdate(incrementListItemVersion);
     }

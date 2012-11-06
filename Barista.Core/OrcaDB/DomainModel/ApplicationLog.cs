@@ -30,7 +30,7 @@ namespace Barista.OrcaDB
           if (folder == null)
             folder = client.CreateFolder(repository.Configuration.ContainerTitle, path);
 
-          var dsApplicationLogs = repository.ListEntities<ApplicationLog>(folder.FullPath);
+          var dsApplicationLogs = repository.ListEntities<ApplicationLog>(folder.FullPath, null, null);
 
           Entity<ApplicationLog> dsApplicationLog = dsApplicationLogs.FirstOrDefault();
           if (dsApplicationLog == null)

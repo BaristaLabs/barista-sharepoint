@@ -9,9 +9,12 @@
 
   public static class UlsHelper
   {
-    public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook = 1)
+    public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook)
     {
       DirectoryInfo di = new DirectoryInfo(SPUtility.GetGenericSetupPath("LOGS"));
+
+      if (daysToLook < 1)
+        daysToLook = 1;
 
       if (!di.Exists)
         throw new ArgumentException("The system was unable to locate folder '" + di.FullName + "'");

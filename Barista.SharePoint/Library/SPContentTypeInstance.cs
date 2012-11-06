@@ -253,7 +253,7 @@
     }
 
     [JSFunction(Name = "update")]
-    public void Update([DefaultParameterValue(true)] bool updateChildren = true, [DefaultParameterValue(true)] bool throwOnSealedOrReadOnly = true)
+    public void Update([DefaultParameterValue(true)] bool updateChildren, [DefaultParameterValue(true)] bool throwOnSealedOrReadOnly)
     {
       m_contentType.Update(updateChildren, throwOnSealedOrReadOnly);
     }

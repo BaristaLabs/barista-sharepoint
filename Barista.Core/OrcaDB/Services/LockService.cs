@@ -77,7 +77,7 @@
       if (Int32.TryParse(timeoutMs, out timeout))
         documentStore.WaitForEntityLockRelease(containerTitle, path, id, timeout);
       else
-        documentStore.WaitForEntityLockRelease(containerTitle, path, id);
+        documentStore.WaitForEntityLockRelease(containerTitle, path, id, 60000);
     }
   }
 }

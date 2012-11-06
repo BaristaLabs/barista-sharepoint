@@ -3543,7 +3543,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <param name="entityId">The entity id.</param>
-    public virtual void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000)
+    public virtual void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
       bool isLocked = false;
 
@@ -3588,7 +3588,7 @@
           }
           else
           {
-            WaitForEntityLockRelease(containerTitle, path, entityId);
+            WaitForEntityLockRelease(containerTitle, path, entityId, 60000);
             defaultEntityPart.Web.AllowUnsafeUpdates = true;
             try
             {
@@ -3623,7 +3623,7 @@
     /// <param name="path">The path.</param>
     /// <param name="entityId">The entity id.</param>
     /// <param name="timeoutMs">The timeout ms.</param>
-    public void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000)
+    public void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
       LockStatus lockStatus = LockStatus.Locked;
 

@@ -346,7 +346,7 @@
           }
           catch (Exception ex)
           {
-            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.PowerShell, messagePrefix: "Unexpected Error while executing PowerShell Script:");
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.PowerShell, "Unexpected Error while executing PowerShell Script:");
             throw ex;
           }
         }

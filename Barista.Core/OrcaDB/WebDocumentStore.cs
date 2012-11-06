@@ -2025,8 +2025,11 @@
       return Execute<LockStatus>(request);
     }
 
-    public void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000)
+    public void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
+      if (timeoutMs.HasValue == false || timeoutMs < 0)
+        timeoutMs = 60000;
+
       var request = new RestRequest();
       request.Resource = "/v1/Lock.svc/Container({containerTitle})/Entity({guid})/LockEntity({timeoutMs})/{path}";
       request.Method = Method.POST;
@@ -2065,8 +2068,11 @@
       Execute(request);
     }
 
-    public void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs = 60000)
+    public void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
+      if (timeoutMs == null || timeoutMs < 0)
+        timeoutMs = 60000;
+
       var request = new RestRequest();
       request.Resource = "/v1/Lock.svc/Container({containerTitle})/Entity({guid})/WaitForEntityLockRelease({timeoutMs})/{path}";
       request.Method = Method.GET;

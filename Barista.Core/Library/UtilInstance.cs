@@ -31,11 +31,11 @@
 
     [JSFunction(Name = "randomString")]
     public static string RandomString(int size,
-      [DefaultParameterValue(true)] bool allowNumbers = true,
-      [DefaultParameterValue(true)] bool allowUpperCase = true,
-      [DefaultParameterValue(true)] bool allowLowerCase = true,
-      [DefaultParameterValue(true)] bool allowSpecialChars = true,
-      [DefaultParameterValue(true)] bool allowWhitespace = true)
+      [DefaultParameterValue(true)] bool allowNumbers,
+      [DefaultParameterValue(true)] bool allowUpperCase,
+      [DefaultParameterValue(true)] bool allowLowerCase,
+      [DefaultParameterValue(true)] bool allowSpecialChars,
+      [DefaultParameterValue(true)] bool allowWhitespace)
     {
       StringBuilder builder = new StringBuilder();
 

@@ -123,7 +123,7 @@
     #endregion
 
     [JSFunction(Name = "addDocumentSet")]
-    public SPDocumentSetInstance addDocumentSet(string name, object contentType, [DefaultParameterValue(null)] object properties = null, [DefaultParameterValue(true)] bool provisionDefaultContent = true)
+    public SPDocumentSetInstance addDocumentSet(string name, object contentType, [DefaultParameterValue(null)] object properties, [DefaultParameterValue(true)] bool provisionDefaultContent)
     {
       SPContentTypeId contentTypeId = SPContentTypeId.Empty;
 
@@ -150,7 +150,7 @@
     }
 
     [JSFunction(Name = "addFile")]
-    public SPFileInstance AddFile(object file, [DefaultParameterValue(true)] bool overwrite = false)
+    public SPFileInstance AddFile(object file, [DefaultParameterValue(true)] bool overwrite)
     {
       SPFile result = null;
       if (file is Base64EncodedByteArrayInstance)
@@ -171,7 +171,7 @@
     }
 
     [JSFunction(Name = "addFileByUrl")]
-    public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite = true)
+    public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite)
     {
       SPFile result = null;
       if (data is Base64EncodedByteArrayInstance)
@@ -251,7 +251,7 @@
     }
 
     [JSFunction(Name = "getFiles")]
-    public ArrayInstance GetFiles([DefaultParameterValue(false)] bool recursive = false)
+    public ArrayInstance GetFiles([DefaultParameterValue(false)] bool recursive)
     {
       List<SPFile> files = new List<SPFile>();
 

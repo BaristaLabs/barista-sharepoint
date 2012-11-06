@@ -75,7 +75,7 @@
       }
     }
 
-    public void LogException(Exception ex, BaristaDiagnosticCategory category, string messagePrefix = "")
+    public void LogException(Exception ex, BaristaDiagnosticCategory category, string messagePrefix)
     {
       if (messagePrefix == null)
         messagePrefix = String.Empty;
