@@ -216,6 +216,7 @@
     <Compile Include="Library\DocumentInstance.cs" />
     <Compile Include="Library\EntityInstance.cs" />
     <Compile Include="Library\EntityPartInstance.cs" />
+    <Compile Include="Library\EntitySetInstance.cs" />
     <Compile Include="Library\FolderInstance.cs" />
     <Compile Include="Library\HelpInstance.cs" />
     <Compile Include="Library\PermissionsInfoInstance.cs" />

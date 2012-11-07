@@ -27,38 +27,38 @@
     }
 
     [JSProperty(Name = "entityId")]
-    public Guid EntityId
+    public string EntityId
     {
-      get;
-      set;
+      get { return m_entityPart.EntityId.ToString(); }
+      set { m_entityPart.EntityId = new Guid(value); }
     }
 
     [JSProperty(Name = "name")]
     public string Name
     {
-      get;
-      set;
+      get { return m_entityPart.Name; }
+      set { m_entityPart.Name = value; }
     }
 
     [JSProperty(Name = "category")]
     public string Category
     {
-      get;
-      set;
+      get { return m_entityPart.Category; }
+      set { m_entityPart.Category = value; }
     }
 
     [JSProperty(Name = "eTag")]
     public string ETag
     {
-      get;
-      set;
+      get { return m_entityPart.ETag; }
+      set { m_entityPart.ETag = value; }
     }
 
     [JSProperty(Name = "data")]
     public virtual string Data
     {
-      get;
-      set;
+      get { return m_entityPart.Data; }
+      set { m_entityPart.Data = value; }
     }
   }
 }
