@@ -636,26 +636,28 @@ asyncTest("[Your Unit Test Title]", function () {
                     else
                         $("#result").show();
 
-                    $("#ulsLogLoading").show();
-                    var spRequestGuid = jqXHR.getResponseHeader("SPRequestGuid");
-                    var items = spRequestGuid.split(",");
+                    if ($("#bottom-pane").css("height") > 0) {
+                        $("#ulsLogLoading").show();
+                        var spRequestGuid = jqXHR.getResponseHeader("SPRequestGuid");
+                        var items = spRequestGuid.split(",");
 
 
-                    setTimeout(function () {
-                        var logRequest = jQuery.ajax({
-                            type: 'GET',
-                            contentType: "application/json; charset=utf-8",
-                            url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/GetUlsLogEntries.js") + "&cid=" + encodeURIComponent(items[0]),
-                            cache: false,
-                            success: function (data) {
-                                $("#ulsLogLoading").hide();
+                        setTimeout(function () {
+                            var logRequest = jQuery.ajax({
+                                type: 'GET',
+                                contentType: "application/json; charset=utf-8",
+                                url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/GetUlsLogEntries.js") + "&cid=" + encodeURIComponent(items[0]),
+                                cache: false,
+                                success: function (data) {
+                                    $("#ulsLogLoading").hide();
 
-                                ulsData = data;
-                                renderUlsGrid();
-                                $("#ulsGrid").show();
-                            }
-                        });
-                    }, 2400);
+                                    ulsData = data;
+                                    renderUlsGrid();
+                                    $("#ulsGrid").show();
+                                }
+                            });
+                        }, 2400);
+                    }
                 }
             });
         }

@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Debug="true" Language="C#" Service="Barista.SharePoint.OrcaDB.SPDocumentStoreMetadataService, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" Factory="Barista.SharePoint.Framework.MultipleHeaderWebServiceHostFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52"%>

@@ -1,4 +1,4 @@
-﻿namespace Barista.OrcaDB
+﻿namespace Barista.DocumentStore
 {
   using System;
   using System.IO;

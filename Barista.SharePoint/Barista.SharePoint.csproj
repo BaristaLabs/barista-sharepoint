@@ -188,6 +188,7 @@
     <Compile Include="BaristaContext.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
+    <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
@@ -196,6 +197,9 @@
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="Features\BaristaDocumentStore\BaristaDocumentStore.EventReceiver.cs">
+      <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\BaristaServiceInstaller\BaristaServiceInstaller.EventReceiver.cs">
       <DependentUpon>BaristaServiceInstaller.feature</DependentUpon>
     </Compile>
@@ -206,33 +210,44 @@
     <Compile Include="Library\ActiveDirectoryInstance.cs" />
     <Compile Include="Library\ADGroupInstance.cs" />
     <Compile Include="Library\ADUserInstance.cs" />
+    <Compile Include="Library\AttachmentInstance.cs" />
+    <Compile Include="Library\CommentInstance.cs" />
+    <Compile Include="Library\ContainerInstance.cs" />
     <Compile Include="Library\DocumentInstance.cs" />
+    <Compile Include="Library\EntityInstance.cs" />
+    <Compile Include="Library\EntityPartInstance.cs" />
+    <Compile Include="Library\FolderInstance.cs" />
     <Compile Include="Library\HelpInstance.cs" />
+    <Compile Include="Library\PermissionsInfoInstance.cs" />
+    <Compile Include="Library\PrincipalInstance.cs" />
+    <Compile Include="Library\PrincipalRoleInfoInstance.cs" />
+    <Compile Include="Library\RepositoryInstance.cs" />
+    <Compile Include="Library\RoleInstance.cs" />
     <Compile Include="Library\SPExcelPackageInstance.cs" />
     <Compile Include="Library\SPFarmInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
-    <Compile Include="OrcaDB\Constants.cs" />
-    <Compile Include="OrcaDB\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="OrcaDB\EntityIndexService.cs" />
-    <Compile Include="OrcaDB\HandleEventFiring.cs" />
-    <Compile Include="OrcaDB\PermissionsHelper.cs" />
-    <Compile Include="OrcaDB\SPDocumentStore.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreAttachmentsService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreCommentsService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreContainersService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreEntitiesService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreEntityPartsService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreFoldersService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreHelper.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreLockService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreMetadataService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStorePermissionsService.cs" />
-    <Compile Include="OrcaDB\SPDocumentStoreVersionHistoryService.cs" />
-    <Compile Include="OrcaDB\SPEntity.cs" />
-    <Compile Include="OrcaDB\SPEntityPart.cs" />
-    <Compile Include="OrcaDB\SPMemoryCachedDocumentStore.cs" />
-    <Compile Include="OrcaDB\WebContentTypeAttribute.cs" />
+    <Compile Include="DocumentStore\Constants.cs" />
+    <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
+    <Compile Include="DocumentStore\EntityIndexService.cs" />
+    <Compile Include="DocumentStore\HandleEventFiring.cs" />
+    <Compile Include="DocumentStore\PermissionsHelper.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreAttachmentsService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreCommentsService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreContainersService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreEntitiesService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreEntityPartsService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreFoldersService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreLockService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreMetadataService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStorePermissionsService.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreVersionHistoryService.cs" />
+    <Compile Include="DocumentStore\SPEntity.cs" />
+    <Compile Include="DocumentStore\SPEntityPart.cs" />
+    <Compile Include="DocumentStore\SPMemoryCachedDocumentStore.cs" />
+    <Compile Include="DocumentStore\WebContentTypeAttribute.cs" />
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
@@ -348,12 +363,38 @@
     <None Include="BaristaUnitTests\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{05245bd9-0f0f-4a6c-8797-58bba4ee0829}</SharePointProjectItemId>
     </None>
+    <None Include="DocumentStore\DocumentStoreAttachment\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{d33d4891-c132-43dc-86ec-f0258c07b03e}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreContainer\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{076fc9a5-2b8e-453b-a652-fdfb52dc0a65}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreDefaultDocuments\Default.dsep" />
+    <None Include="DocumentStore\DocumentStoreDefaultDocuments\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{fa3532a4-05fd-4cbc-9a5e-5cf75f8ea848}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreEntityPart\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{92036e9e-254e-456b-bd9f-d89e98a866cb}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreEntityWelcomePage\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{09195d8e-88af-4f19-b332-e9862dc50c76}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreEntity\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{712c365b-0325-46bd-88da-b4ca60ed1c63}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\DocumentStoreSiteColumns\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{80a584d0-36de-495c-a64b-ef5ea5af19c5}</SharePointProjectItemId>
+    </None>
     <None Include="Features\BaristaServiceInstaller\BaristaServiceInstaller.feature">
       <FeatureId>{97f9fbf1-67c8-423f-a528-22589d2a3bec}</FeatureId>
     </None>
     <None Include="Features\BaristaUnitTests\BaristaUnitTests.feature">
       <FeatureId>{2bfc89a4-e1dc-4702-aa1c-a39f564e6d45}</FeatureId>
     </None>
+    <None Include="Features\BaristaDocumentStore\BaristaDocumentStore.feature">
+      <FeatureId>{bfe500a5-01af-4f7e-a5e2-38be9a7118ab}</FeatureId>
+    </None>
+    <None Include="ISAPI\BaristaDS\v1\web.config" />
     <None Include="ISAPI\Barista\v1\web.config" />
     <None Include="ISAPI\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0264d2e2-8233-49be-baa7-a35d97e21650}</SharePointProjectItemId>
@@ -532,27 +573,44 @@
     <Content Include="BaristaUnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="BaristaUnitTests\Elements.xml" />
     <Content Include="BaristaUnitTests\index.html" />
+    <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\EditDlg.htm" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\FileDlg.htm" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Repair.aspx" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Upload.aspx" />
+    <Content Include="DocumentStore\DocumentStoreDefaultDocuments\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\DocSetHomePage.aspx" />
+    <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\Sample.txt" />
+    <Content Include="DocumentStore\DocumentStoreEntity\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreSiteColumns\Elements.xml" />
     <Content Include="Features\BaristaServiceInstaller\BaristaServiceInstaller.Template.xml">
       <DependentUpon>BaristaServiceInstaller.feature</DependentUpon>
     </Content>
     <Content Include="Features\BaristaUnitTests\BaristaUnitTests.Template.xml">
       <DependentUpon>BaristaUnitTests.feature</DependentUpon>
     </Content>
-    <Content Include="ISAPI\Barista\v1\Attachments.svc">
+    <Content Include="Features\BaristaDocumentStore\BaristaDocumentStore.Template.xml">
+      <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
+    </Content>
+    <Content Include="ISAPI\BaristaDS\v1\Attachments.svc">
       <SubType>Code</SubType>
     </Content>
     <Content Include="ISAPI\Barista\v1\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaTest.svc" />
-    <Content Include="ISAPI\Barista\v1\Comments.svc" />
-    <Content Include="ISAPI\Barista\v1\Containers.svc" />
-    <Content Include="ISAPI\Barista\v1\Entities.svc" />
-    <Content Include="ISAPI\Barista\v1\EntityIndex.svc" />
-    <Content Include="ISAPI\Barista\v1\EntityParts.svc" />
-    <Content Include="ISAPI\Barista\v1\Folders.svc" />
-    <Content Include="ISAPI\Barista\v1\Lock.svc" />
-    <Content Include="ISAPI\Barista\v1\Metadata.svc" />
-    <Content Include="ISAPI\Barista\v1\Permissions.svc" />
-    <Content Include="ISAPI\Barista\v1\VersionHistory.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Comments.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Containers.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Entities.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\EntityIndex.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\EntityParts.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Folders.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Lock.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Metadata.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\Permissions.svc" />
+    <Content Include="ISAPI\BaristaDS\v1\VersionHistory.svc" />
     <Content Include="Layouts\BaristaFiddle\CheckOutFile.js" />
     <Content Include="Layouts\BaristaFiddle\favicon.ico" />
     <Content Include="Layouts\BaristaFiddle\GetFileInfo.js" />

@@ -1,15 +1,14 @@
-﻿using Jurassic;
-using Jurassic.Library;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-
-namespace Barista.Extensions
+﻿namespace Barista.Extensions
 {
+  using Jurassic;
+  using Jurassic.Library;
+  using System;
+  using System.Collections.Generic;
+  using System.Collections.Specialized;
+  using System.Data;
+  using System.Data.Common;
+  using System.Linq;
+
   public static class ObjectExtensions
   {
     /// <summary>

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace Barista.Extensions
+﻿namespace Barista.Extensions
 {
+  using System;
+  using System.IO;
+
   public static class StreamExtensions
   {
     public static void CopyTo(this Stream input, Stream destination)

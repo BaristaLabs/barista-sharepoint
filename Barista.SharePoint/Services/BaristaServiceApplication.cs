@@ -237,6 +237,7 @@
       common.RegisterBundle(new K2Bundle());
       common.RegisterBundle(new UtilityBundle());
       common.RegisterBundle(new UlsLogBundle());
+      common.RegisterBundle(new DocumentStoreBundle());
 
       //Global Types
 

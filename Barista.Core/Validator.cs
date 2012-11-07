@@ -1,12 +1,11 @@
-﻿namespace Barista.OrcaDB
+﻿namespace Barista.DocumentStore
 {
+  using Barista.Extensions;
   using System;
   using System.Collections.Generic;
   using System.ComponentModel;
   using System.ComponentModel.DataAnnotations;
-  using System.Globalization;
   using System.Linq;
-  using Barista.OrcaDB.Extensions;
 
   public static class Validator
   {

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <!-- Parent ContentType: Document (0x0101) -->
+  <ContentType ID="0x010100c85948cf1fa64eed9d29eaa2a1078fd6"
+               Name="Document Store Entity Part"
+               Group="Document Store Content Types"
+               Description="Represents additional data that is contained within a Document Store Entity."
+               Inherits="TRUE"
+               Version="0">
+    <FieldRefs>
+      <FieldRef ID="{36b8af8b-a773-478c-abf3-038d198e90b2}" Name="Category" DisplayName="Category" ShowInDisplayForm="TRUE" ShowInEditForm="TRUE"/>
+      <FieldRef ID="{cfbc77e4-1fe5-4129-9b97-60021f9dd92f}" Name="Comments" DisplayName="Comments" ShowInNewForm="FALSE" ShowInEditForm="TRUE" />
+      <FieldRef ID="{efab5a5d-493b-480f-867a-2f754a269200}" Name="DocumentEntityGuid" ShowInNewForm="FALSE" ShowInEditForm="FALSE" Required="FALSE"/>
+    </FieldRefs>
+  </ContentType>
+</Elements>

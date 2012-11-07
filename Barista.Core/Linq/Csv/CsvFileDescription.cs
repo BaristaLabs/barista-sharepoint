@@ -1,4 +1,4 @@
-﻿namespace Barista.OrcaDB.Linq.Csv
+﻿namespace Barista.DocumentStore.Linq.Csv
 {
   using System;
   using System.Globalization;

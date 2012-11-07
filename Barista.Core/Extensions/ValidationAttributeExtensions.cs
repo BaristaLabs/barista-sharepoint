@@ -1,10 +1,8 @@
-﻿namespace Barista.OrcaDB.Extensions
+﻿namespace Barista.Extensions
 {
+  using Barista.DocumentStore;
   using System;
-  using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
-  using System.Linq;
-  using System.Text;
 
   public static class ValidationAttributeExtensions
   {

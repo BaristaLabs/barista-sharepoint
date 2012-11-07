@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.OrcaDB.Extensions
+﻿namespace Barista.Extensions
 {
+  using System;
+
   public static class EnumExtensions
   {
     public static bool IsSet<T>(this T value, T flags)
