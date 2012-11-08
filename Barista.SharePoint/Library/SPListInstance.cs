@@ -85,7 +85,7 @@
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.Created.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.Created); }
     }
 
     [JSProperty(Name = "defaultDisplayFormUrl")]
@@ -232,13 +232,13 @@
     [JSProperty(Name = "lastItemDeletedDate")]
     public DateInstance LastItemDeletedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemDeletedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemDeletedDate); }
     }
 
     [JSProperty(Name = "lastItemModifiedDate")]
     public DateInstance LastItemModifiedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemModifiedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemModifiedDate); }
     }
 
     [JSProperty(Name = "noCrawl")]
@@ -320,6 +320,20 @@
     #endregion
 
     #region Functions
+    [JSFunction(Name = "addItem")]
+    public SPListItemInstance AddItem()
+    {
+      var listItem = m_list.Items.Add();
+      return new SPListItemInstance(this.Engine.Object.Prototype, listItem);
+    }
+
+    [JSFunction(Name = "addItemToFolder")]
+    public SPListItemInstance AddItem(string folderUrl)
+    {
+      var listItem = m_list.Items.Add(folderUrl, SPFileSystemObjectType.File);
+      return new SPListItemInstance(this.Engine.Object.Prototype, listItem);
+    }
+
     [JSFunction(Name = "addContentType")]
     public SPContentTypeInstance AddContentType(object contentType)
     {

@@ -82,7 +82,7 @@
         {
           Id = listItemVersion.VersionId,
           CommentText = listItemVersion["Comments"] as string,
-          Created = listItemVersion.Created.ToLocalTime(),
+          Created = listItemVersion.Created,
         };
 
       result.CreatedBy = new User()

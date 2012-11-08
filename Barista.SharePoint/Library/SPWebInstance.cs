@@ -116,7 +116,7 @@
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_web.Created.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_web.Created); }
     }
 
     [JSProperty(Name = "currentUser")]
@@ -166,7 +166,7 @@
     [JSProperty(Name = "lastItemModifiedDate")]
     public DateInstance LastItemModifiedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_web.LastItemModifiedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_web.LastItemModifiedDate); }
     }
 
     //TODO: Navigation
@@ -342,16 +342,31 @@
       //If listTemplate property has a value, create the list instance using the strongly-typed SPListTemplate, optionally using the docTemplate value.
       else if (listCreationInstance != null && listCreationInstance.HasProperty("listTemplate"))
       {
-        var listTemplate = JurassicHelper.Coerce<SPListTemplateInstance>(this.Engine, listCreationInstance.GetPropertyValue("listTemplate"));
+        var listTemplateValue = listCreationInstance.GetPropertyValue("listTemplate");
+        
+        SPListTemplate listTemplate = null;
+        if (listTemplateValue is int)
+        {
+          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().Where(dt => (int)dt.Type == (int)listTemplateValue).FirstOrDefault();
+        }
+        else if (listTemplateValue is string)
+        {
+          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().Where(dt => dt.Type.ToString() == (string)listTemplateValue).FirstOrDefault();
+        }
+        else if (listTemplateValue is ObjectInstance)
+        {
+          listTemplate = JurassicHelper.Coerce<SPListTemplateInstance>(this.Engine, listTemplateValue).ListTemplate;
+        }
+
 
         if (listCreationInstance.HasProperty("docTemplate"))
         {
           var docTemplate = JurassicHelper.Coerce<SPDocTemplateInstance>(this.Engine, listCreationInstance.GetPropertyValue("docTemplate"));
-          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, listTemplate.ListTemplate, docTemplate.DocTemplate);
+          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, docTemplate.DocTemplate.Type.ToString(), quickLaunchOptions);
         }
         else
         {
-          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, listTemplate.ListTemplate);
+          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, String.Empty, quickLaunchOptions);
         }
       }
       //Otherwise attempt to create the list using all properties set on the creation info object.

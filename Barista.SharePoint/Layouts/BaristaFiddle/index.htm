@@ -845,7 +845,8 @@ asyncTest("[Your Unit Test Title]", function () {
         $("#btnUnitTest").click(function () {
             var code = getScriptValue();
             var escaped = code.replace(/\r\n\r\n/g, "\r\n").replace(/\n\n/g, "\n");
-            escaped = code.replace(/\r\n/g, "\\\r\n").replace(/\n/g, "\\\n");
+            escaped = code.replace(/\"/g, "\\\"").replace(/\r\n/g, "\\\r\n").replace(/\n/g, "\\\n");
+
             $("#unitTestCode").text(unitTestTemplate(escaped));
             $("#unitTestDialog").modal("show");
         });

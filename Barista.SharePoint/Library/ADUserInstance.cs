@@ -186,25 +186,25 @@
     [JSProperty(Name="passwordLastSet")]
     public DateInstance PasswordLastSet
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.PasswordLastSet.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.PasswordLastSet); }
     }
 
     [JSProperty(Name="lastLogon")]
     public DateInstance LastLogon
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogon.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogon); }
     }
 
     [JSProperty(Name="lastLogoff")]
     public DateInstance LastLogoff
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogoff.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogoff); }
     }
 
     [JSProperty(Name="badPasswordTime")]
     public DateInstance BadPasswordTime
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.BadPasswordTime.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.BadPasswordTime); }
     }
 
     [JSProperty(Name = "badPasswordCount")]
@@ -216,13 +216,13 @@
     [JSProperty(Name="lastSuccessfulInteractiveLogonTime")]
     public DateInstance LastSuccessfulInteractiveLogonTime
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastSuccessfulInteractiveLogonTime.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastSuccessfulInteractiveLogonTime); }
     }
 
     [JSProperty(Name="lastFailedInteractiveLogonTime")]
     public DateInstance LastFailedInteractiveLogonTime
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastFailedInteractiveLogonTime.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastFailedInteractiveLogonTime); }
     }
 
     [JSProperty(Name="failedInteractiveLogonCount")]

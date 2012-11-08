@@ -118,7 +118,7 @@
           var value = item.GetValue(o, null);
 
           if (value is DateTime)
-            value = JurassicHelper.ToDateInstance(engine, ((DateTime)value).ToLocalTime());
+            value = JurassicHelper.ToDateInstance(engine, (DateTime)value);
 
           result.SetPropertyValue(item.Name, value, false);
         }

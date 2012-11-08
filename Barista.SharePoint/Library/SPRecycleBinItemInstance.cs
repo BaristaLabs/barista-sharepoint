@@ -95,7 +95,7 @@
     [JSProperty(Name = "deletedDate")]
     public DateInstance DeletedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_recycleBinItem.DeletedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_recycleBinItem.DeletedDate); }
     }
 
     [JSDoc("Gets the site-relative url of the list or folder that originally contained the item.")]

@@ -33,7 +33,7 @@
     [JSProperty(Name = "createdDate")]
     public DateInstance CreatedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_term.CreatedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_term.CreatedDate); }
     }
 
     [JSProperty(Name = "customProperties")]
@@ -103,7 +103,7 @@
     [JSProperty(Name = "lastModifiedDate")]
     public DateInstance LastModifiedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_term.LastModifiedDate.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_term.LastModifiedDate); }
     }
 
     [JSProperty(Name = "name")]

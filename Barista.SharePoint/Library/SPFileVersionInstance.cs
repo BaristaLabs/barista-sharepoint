@@ -51,7 +51,7 @@
     [JSProperty(Name = "Created")]
     public DateInstance Created
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_fileVersion.Created.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_fileVersion.Created); }
     }
 
     [JSProperty(Name = "createdBy")]

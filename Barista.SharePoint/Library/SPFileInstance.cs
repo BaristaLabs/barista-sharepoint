@@ -229,7 +229,7 @@
     {
       get
       {
-        return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeCreated.ToLocalTime());
+        return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeCreated);
       }
     }
 
@@ -238,7 +238,7 @@
     {
       get
       {
-        return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeLastModified.ToLocalTime());
+        return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeLastModified);
       }
     }
 

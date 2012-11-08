@@ -254,7 +254,7 @@
               int value;
               if (listItem.TryGetSPFieldValue<int>(field.Id, out value))
               {
-                result.SetPropertyValue(field.Title, value, false);
+                result.SetPropertyValue(field.InternalName, value, false);
                 //ArrayInstance.Push(result, Engine.Array.Construct(field.Title, value));
               }
             }
@@ -264,7 +264,7 @@
               bool value;
               if (listItem.TryGetSPFieldValue<bool>(field.Id, out value))
               {
-                result.SetPropertyValue(field.Title, value, false);
+                result.SetPropertyValue(field.InternalName, value, false);
               }
             }
             break;
@@ -273,7 +273,7 @@
               double value;
               if (listItem.TryGetSPFieldValue<double>(field.Id, out value))
               {
-                result.SetPropertyValue(field.Title, value, false);
+                result.SetPropertyValue(field.InternalName, value, false);
               }
             }
             break;
@@ -282,7 +282,7 @@
               DateTime value;
               if (listItem.TryGetSPFieldValue<DateTime>(field.Id, out value))
               {
-                result.SetPropertyValue(field.Title, JurassicHelper.ToDateInstance(engine, value.ToLocalTime()), false);
+                result.SetPropertyValue(field.InternalName, JurassicHelper.ToDateInstance(engine, new DateTime(value.Ticks, DateTimeKind.Local)), false);
               }
             }
             break;
@@ -293,7 +293,7 @@
               {
                 var fieldUserValue = new SPFieldUserValue(listItem.ParentList.ParentWeb, userToken);
                 var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
-                result.SetPropertyValue(field.Title, userInstance, false);
+                result.SetPropertyValue(field.InternalName, userInstance, false);
               }
             }
             break;
@@ -303,7 +303,9 @@
               if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
               {
                 var stringValue = field.GetFieldValueAsText(value);
-                result.SetPropertyValue(field.Title, stringValue, false);
+
+                if (result.HasProperty(field.InternalName) == false)
+                  result.SetPropertyValue(field.InternalName, stringValue, false);
               }
             }
             break;
@@ -325,7 +327,7 @@
         if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
         {
           var stringValue = field.GetFieldValueAsHtml(value);
-          result.SetPropertyValue(field.Title, stringValue, false);
+          result.SetPropertyValue(field.InternalName, stringValue, false);
         }
       }
 
@@ -344,7 +346,7 @@
         if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
         {
           var stringValue = field.GetFieldValueAsText(value);
-          result.SetPropertyValue(field.Title, stringValue, false);
+          result.SetPropertyValue(field.InternalName, stringValue, false);
         }
       }
 
@@ -363,7 +365,7 @@
         if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
         {
           var stringValue = field.GetFieldValueForEdit(value);
-          result.SetPropertyValue(field.Title, stringValue, false);
+          result.SetPropertyValue(field.InternalName, stringValue, false);
         }
       }
 

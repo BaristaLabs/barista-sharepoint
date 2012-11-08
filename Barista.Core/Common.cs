@@ -32,7 +32,7 @@
       {
         var type = Type.GetType(name, false, true);
         if (type == null)
-          throw new JavaScriptException(engine, "Error", "The specified bundle does not exist.");
+          throw new JavaScriptException(engine, "Error", "The specified bundle does not exist: " + name);
 
         bundle = Activator.CreateInstance(type) as IBundle;
       }

@@ -99,7 +99,7 @@
     [JSProperty(Name = "Timestamp")]
     public DateInstance Timestamp
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_entry.Timestamp.ToLocalTime()); }
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_entry.Timestamp); }
       set { m_entry.Timestamp = DateTime.Parse(value.ToISOString()); }
     }
   }
