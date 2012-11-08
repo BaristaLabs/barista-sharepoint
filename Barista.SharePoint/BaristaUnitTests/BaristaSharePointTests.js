@@ -57,6 +57,26 @@ asyncTest("Create List Title PDF Report.", function () {
     });
 });
 
+asyncTest("Create List Item", function () {
+    expect(5);
+
+    var request = jQuery.ajax(getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent(getContentPath()) + "Barista_SPListItemRetrieval.js");
+
+    request.done(function (data) {
+        ok(data != null && data.length > 0, "A collection of list items was returned.");
+        ok(typeof (data[0].fieldValues["Name"]) === "string", "List item fields can be accesssed via property accessors");
+        ok(data[0].fieldValues["Name"].length > 0, "List item title was set.");
+        ok(typeof (data[0].fieldValues["Created By"]) === "object", "Creator field was set and an object");
+        ok(data[0].fieldValues["Created By"].loginName.length > 0, "Creator has a login name.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
 asyncTest("Enumerate List Items", function () {
     expect(5);
 

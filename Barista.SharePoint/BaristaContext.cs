@@ -9,11 +9,25 @@ namespace Barista.SharePoint
 {
   public sealed class BaristaContext : IDisposable
   {
-    public static BaristaContext s_currentContext = null;
+    private static object s_syncRoot = new object();
+    private static BaristaContext s_currentContext = null;
 
     public static BaristaContext Current
     {
-      get { return s_currentContext; }
+      get
+      {
+        if (s_currentContext == null && SPContext.Current != null)
+        {
+          lock (s_syncRoot)
+          {
+            if (s_currentContext == null && SPContext.Current != null)
+            {
+              s_currentContext = BaristaContext.CreateContextFromSPContext(SPContext.Current);
+            }
+          }
+        }
+        return s_currentContext;
+      }
       internal set { s_currentContext = value; }
     }
 
@@ -54,6 +68,33 @@ namespace Barista.SharePoint
     {
       get;
       internal set;
+    }
+
+    public static BaristaContext CreateContextFromSPContext(SPContext context)
+    {
+      BaristaContext result = new BaristaContext();
+
+      if (context.Site != null)
+        result.Site = new SPSite(context.Site.ID);
+
+      if (context.Web != null)
+        result.Web = result.Site.OpenWeb(context.Web.ID);
+
+      try
+      {
+        if (context.List != null)
+          result.List = result.Web.Lists[context.ListId];
+      }
+      catch (NullReferenceException) { /* Do Nothing */ }
+
+      try
+      {
+        if (context.ListItem != null)
+          result.ListItem = result.List.Items[context.ItemId];
+      }
+      catch (NullReferenceException) { /* Do Nothing */ }
+
+      return result;
     }
 
     public void Dispose()

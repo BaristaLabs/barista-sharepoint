@@ -20,5 +20,6 @@
     <ProjectItemFile Source="BaristaTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
     <ProjectItemFile Source="index.html" Target="BaristaUnitTests\" Type="ElementFile" />
     <ProjectItemFile Source="BaristaActiveDirectoryTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_SPListItemCreation.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>
