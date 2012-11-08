@@ -530,7 +530,7 @@ asyncTest("[Your Unit Test Title]", function () {
             var request = jQuery.ajax({
                 type: 'POST',
                 contentType: "application/x-www-form-jsonencoded",
-                url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval2?c=" + encodeURIComponent("/_layouts/BaristaFiddle/SaveFile.js") + "&f=" + encodeURIComponent(fileUrl),
+                url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/SaveFile.js") + "&f=" + encodeURIComponent(fileUrl),
                 data: JSON.stringify({ contents: code }),
                 success: function (data) {
                     currentDocLibInfo = data.docLibInfo;
@@ -588,7 +588,7 @@ asyncTest("[Your Unit Test Title]", function () {
                 data: JSON.stringify({ code: code }),
                 success: function (data, textStatus, jqXHR) {
                     var contentType = jqXHR.getResponseHeader('Content-Type');
-                    if (contentType.indexOf("text/html") == 0) {
+                    if (contentType != null && contentType.indexOf("text/html") == 0) {
 
                         //var head = $(data).children('head');
                         //var body = $(data).children('body');
@@ -598,7 +598,8 @@ asyncTest("[Your Unit Test Title]", function () {
                         //$("#htmlResult").contents().find('html')[0].replaceChild(body[0], $(this).contents().find('body')[0]);
                     }
                     else {
-                        $("#result").text(JSON.stringify(data, null, 4));
+                        var dataText = JSON.stringify(data, null, 4);
+                        $("#result").text(dataText);
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -617,26 +618,28 @@ asyncTest("[Your Unit Test Title]", function () {
 
                     //If 200 was not returned, display the error.
                     if (typeof (jqXHR) == "undefined" || jqXHR.statusText == "Bad Request" || textStatus == "Bad Request" || jqXHR.status != 200) {
-                        
-                        if (typeof(jqXHR) == "undefined")
+
+                        if (typeof (jqXHR) == "undefined")
                             $("#result").show();
 
                         var contentType = jqXHR.getResponseHeader('Content-Type');
-                        if (contentType.indexOf("text/html") == 0)
+                        if (contentType != null && contentType.indexOf("text/html") == 0)
                             $("#htmlResult").show();
                         else
                             $("#result").show();
-
-                        return;
+                    }
+                    else {
+                        //Show the result.
+                        var contentType = jqXHR.getResponseHeader('Content-Type');
+                        if (contentType != null && contentType.indexOf("text/html") == 0)
+                            $("#htmlResult").show();
+                        else
+                            $("#result").show();
                     }
 
-                    var contentType = jqXHR.getResponseHeader('Content-Type');
-                    if (contentType.indexOf("text/html") == 0)
-                        $("#htmlResult").show();
-                    else
-                        $("#result").show();
-
-                    if ($("#bottom-pane").css("height") > 0) {
+                    //Retrieve the log.
+                    var bottomPaneHeight = $("#bottom-pane").css("height");
+                    if (bottomPaneHeight != "0" && bottomPaneHeight != "0px") {
                         $("#ulsLogLoading").show();
                         var spRequestGuid = jqXHR.getResponseHeader("SPRequestGuid");
                         var items = spRequestGuid.split(",");

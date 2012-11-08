@@ -102,7 +102,7 @@
             $("#s4-searcharea").hide();
 
             var trustedLocationsServiceBaseUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
-            var trustedLocationsServiceBasePostUrl = "/_vti_bin/Barista/v1/Barista.svc/eval2?c=";
+            var trustedLocationsServiceBasePostUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
             trustedLocationsDataSource = new kendo.data.DataSource({
                 transport: {
                     read: {

@@ -1,4 +1,6 @@
 ﻿var sp = require("SharePoint");
+var web = require("Web");
+require("Linq");
 
 var list = new SPList("/Lists/BaristaUnitTests");
 var uploadsFolder = list.rootFolder.ensureSubFolderExists("Uploads");

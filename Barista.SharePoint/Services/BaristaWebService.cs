@@ -1,10 +1,12 @@
 ﻿namespace Barista.SharePoint.Services
 {
+  using Barista.Extensions;
   using Barista.Framework;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Client.Services;
   using Microsoft.SharePoint.Utilities;
+  using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using System;
   using System.IO;
@@ -13,6 +15,7 @@
   using System.ServiceModel;
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
+  using System.Text;
   using System.Web;
 
   [SilverlightFaultBehavior]
@@ -22,6 +25,7 @@
   [ServiceBehavior(IncludeExceptionDetailInFaults = true,
     InstanceContextMode = InstanceContextMode.PerSession,
     ConcurrencyMode = ConcurrencyMode.Multiple)]
+  [RawJsonRequestBehavior]
   public class BaristaWebService
   {
     #region Service Operations
@@ -41,12 +45,11 @@
 
       TakeOrder();
 
-      string code;
-      string xml;
+      var code = Grind();
 
-      PurifyWater(out code, out xml);
+      code = Tamp(code);
 
-      CoffeeAuLait(code, xml);
+      Brew(code);
     }
 
     /// <summary>
@@ -57,26 +60,11 @@
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebInvoke(Method = "POST", UriTemplate = "exec", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
     [DynamicResponseType]
-    public void CoffeeAuLait(string code, string xml)
+    public void CoffeeAuLait(Stream stream)
     {
       TakeOrder();
 
-      Grind(ref code, ref xml);
-
-      code = Tamp(code);
-
-      Brew(code);
-    }
-
-    [OperationContract(Name = "Exec2")]
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", UriTemplate = "exec2?c={code}&x={xml}", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-    [DynamicResponseType]
-    public void CoffeeAuLait2(string code, string xml, Stream stream)
-    {
-      TakeOrder();
-
-      Grind(ref code, ref xml);
+      var code = Grind();
 
       code = Tamp(code);
 
@@ -99,12 +87,11 @@
 
       TakeOrder();
 
-      string code;
-      string xml;
+      var code = Grind();
 
-      PurifyWater(out code, out xml);
+      code = Tamp(code);
 
-      return Latte(code, xml);
+      return Pull(code);
     }
 
     /// <summary>
@@ -116,118 +103,15 @@
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebInvoke(Method = "POST", UriTemplate = "eval", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
     [DynamicResponseType]
-    public Stream Latte(string code, string xml)
+    public Stream Latte(Stream stream)
     {
       TakeOrder();
 
-      Grind(ref code, ref xml);
+      var code = Grind();
 
       code = Tamp(code);
 
       return Pull(code);
-    }
-
-    /// <summary>
-    /// Expresso overload to support having code contained in the body of a http POST.
-    /// </summary>
-    /// <param name="code"></param>
-    /// <returns></returns>
-    [OperationContract(Name = "Eval2")]
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", UriTemplate = "eval2?c={code}&x={xml}", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-    [DynamicResponseType]
-    public Stream Latte2(string code, string xml, Stream stream)
-    {
-      TakeOrder();
-
-      Grind(ref code, ref xml);
-
-      code = Tamp(code);
-
-      return Pull(code);
-    }
-
-    /// <summary>
-    /// Supports multi-part uploads. Does not return a result.
-    /// </summary>
-    /// <param name="scriptUrl"></param>
-    /// <param name="xml"></param>
-    /// <returns></returns>
-    [OperationContract(Name = "ExecUpload")]
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", UriTemplate = "execUpload", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-    [DynamicResponseType(RestOnly = true)]
-    public void IcedCoffee(Stream stream)
-    {
-      if (WebOperationContext.Current == null)
-        throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
-
-      TakeOrder();
-
-      MultipartContentProcessor parser = new MultipartContentProcessor(stream);
-
-      if (parser.IsValid == false)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.UnsupportedMediaType;
-        throw new WebException("The posted file was not recognised.");
-      }
-
-      string code = null;
-      string xml = null;
-
-      Grind(ref code, ref xml);
-
-      code = Tamp(code);
-
-      Brew(code);
-    }
-
-    /// <summary>
-    /// Supports multi-part uploads. Returns a result.
-    /// </summary>
-    /// <param name="scriptUrl"></param>
-    /// <param name="xml"></param>
-    /// <returns></returns>
-    [OperationContract(Name = "EvalUpload")]
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", UriTemplate = "evalUpload", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-    [DynamicResponseType(RestOnly = true)]
-    public Stream Frappuccino(Stream stream)
-    {
-      if (WebOperationContext.Current == null)
-        throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
-
-      TakeOrder();
-
-      MultipartContentProcessor parser = new MultipartContentProcessor(stream);
-
-      if (parser.IsValid == false)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.UnsupportedMediaType;
-        throw new WebException("The posted file was not recognised.");
-      }
-
-      string code = null;
-      string xml = null;
-
-      Grind(ref code, ref xml);
-
-      code = Tamp(code);
-
-      //If a 'redirect' part is contained in the request, redirect to that location, otherwise, return the result.
-      if (String.IsNullOrEmpty(parser.Redirect))
-      {
-        return Pull(code);
-      }
-
-      throw new NotImplementedException();
-
-      //var evalResult = Pull(code);
-      //var stringResult = JSONObject.Stringify(engine, evalResult);
-
-      //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Found;
-      //WebOperationContext.Current.OutgoingResponse.Location = parser.Redirect.Replace("%s", HttpUtility.UrlEncode(stringResult.Replace("\r", "").Replace("\n", "")));
-      //return null;
     }
     #endregion
 
@@ -248,34 +132,20 @@
     }
 
     /// <summary>
-    /// Purifies the water. E.g. For REST Get requests, asserts that the proper query string parameters are present.
+    /// Grinds the beans. E.g. Attempts to retrieve the code value from the request.
     /// </summary>
-    private void PurifyWater(out string code, out string xml)
+    private string Grind()
     {
-      code = String.Empty;
-      xml = String.Empty;
+      string code = null;
 
-      var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+      //If the request has a header named "c" use that first.
+      var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
+      var codeHeaderKey = requestHeaders.AllKeys.Where(k => k.ToLowerInvariant() == "c").FirstOrDefault();
+      if (codeHeaderKey != null)
+        code = requestHeaders[codeHeaderKey];
 
-      var codeKey = requestQueryParameters.AllKeys.Where(k => k.ToLowerInvariant() == "c").FirstOrDefault();
-      if (codeKey != null)
-        code = requestQueryParameters[codeKey];
-
-      var xmlKey = requestQueryParameters.AllKeys.Where(k => k.ToLowerInvariant() == "x").FirstOrDefault();
-      if (xmlKey != null)
-        xml = requestQueryParameters[xmlKey];
-
+      //If the request has a query string parameter named "c" use that.
       if (String.IsNullOrEmpty(code))
-        throw new InvalidOperationException("A query parameter named 'c' must be specified that contains either a literal script declaration or a relative or absolute path to a script file.");
-    }
-    /// <summary>
-    /// Grinds the beans. E.g. Validates the code and xml parameters, if not present, attempts to retrieve them from the query string parameter.
-    /// </summary>
-    /// <param name="code"></param>
-    /// <param name="xml"></param>
-    private void Grind(ref string code, ref string xml)
-    {
-      if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null)
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
@@ -284,18 +154,49 @@
           code = requestQueryParameters[codeKey];
       }
 
-      if (String.IsNullOrEmpty(code))
-        throw new ArgumentNullException("code", "Code must be specified either through the 'c' query string parameter or the 'code' operation parameter that contains either a literal script declaration or a relative or absolute path to a script file.");
-
-
-      if (String.IsNullOrEmpty(xml) && WebOperationContext.Current != null)
+      //If the request contains a form variable named "c" or "code" use that.
+      if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
       {
-        var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-        var xmlKey = requestQueryParameters.AllKeys.Where(k => k.ToLowerInvariant() == "x").FirstOrDefault();
-        if (xmlKey != null)
-          xml = requestQueryParameters[xmlKey];
+        var form = HttpContext.Current.Request.Form;
+        var formKey = form.AllKeys.Where(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code").FirstOrDefault();
+        if (formKey != null)
+          code = form[formKey];
       }
+
+      //Otherwise, use the body of the post as code.
+      if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
+      {
+        var body = HttpContext.Current.Request.InputStream.ToByteArray();
+        var bodyString = Encoding.UTF8.GetString(body);
+
+        //Try using JSON encoding.
+        try
+        {
+          var jsonFormBody = JObject.Parse(bodyString);
+          var codeProperty = jsonFormBody.Properties().Where(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c").FirstOrDefault();
+          if (codeProperty != null)
+            code = codeProperty.Value.ToObject<string>();
+        }
+        catch { /* Do Nothing */ }
+
+        //Try using form encoding
+        if (String.IsNullOrEmpty(code))
+        {
+          try
+          {
+            var form = HttpUtility.ParseQueryString(bodyString);
+            var formKey = form.AllKeys.Where(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code").FirstOrDefault();
+            if (formKey != null)
+              code = form[formKey];
+          }
+          catch { /* Do Nothing */ }
+        }
+      }
+
+      if (String.IsNullOrEmpty(code))
+        throw new ArgumentNullException("code", "Code must be specified either through the 'c' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
+
+      return code;
     }
 
     /// <summary>
@@ -314,7 +215,7 @@
 
           bool isHiveFile;
           String codeFromfile;
-          if (TryGetSPFileAsString(code, out codeFromfile, out isHiveFile))
+          if (SPHelper.TryGetSPFileAsString(code, out codeFromfile, out isHiveFile))
           {
             if (isHiveFile == false)
             {
@@ -331,7 +232,7 @@
       }
 
       //Replace any tokens in the code.
-      code = ReplaceTokens(code);
+      code = SPHelper.ReplaceTokens(code);
 
       return code;
     }
@@ -447,146 +348,6 @@
         if (SPContext.Current.File != null && SPContext.Current.File.UniqueId != Guid.Empty)
           request.ExtendedProperties.Add("SPFileId", SPContext.Current.File.UniqueId.ToString());
       }
-    }
-
-    /// <summary>
-    /// Replaces SharePoint (and custom) tokens in the specified string with their corresponding values.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    public string ReplaceTokens(string text)
-    {
-      if (SPContext.Current == null)
-        return text;
-
-      string result = text;
-      if (SPContext.Current.List != null)
-        result = result.Replace("{ListUrl}", SPContext.Current.Web.Url + "/" + SPContext.Current.List.RootFolder.Url);
-
-      if (SPContext.Current.Web != null)
-      {
-        result = result.Replace("{WebUrl}", SPContext.Current.Web.Url);
-        result = result.Replace("~site", SPContext.Current.Web.ServerRelativeUrl);
-      }
-
-      if (SPContext.Current.Site != null)
-      {
-        result = result.Replace("{SiteUrl}", SPContext.Current.Site.Url);
-        result = result.Replace("~sitecollection", SPContext.Current.Site.ServerRelativeUrl);
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Attemps to create an absolute Uri based on the specified string. If the passed string is relative, uses the current web's uri as the base uri.
-    /// </summary>
-    /// <param name="uriString"></param>
-    /// <param name="uri"></param>
-    /// <returns></returns>
-    public bool TryCreateWebAbsoluteUri(string uriString, out Uri uri)
-    {
-      if (Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute) == false)
-      {
-        uri = null;
-        return false;
-      }
-
-      Uri finalUri;
-      if (Uri.TryCreate(uriString, UriKind.Absolute, out finalUri) == false)
-      {
-        if (Uri.TryCreate(new Uri(SPContext.Current.Web.Url), uriString, out finalUri) == false)
-        {
-          uri = null;
-          return false;
-        }
-      }
-
-      uri = finalUri;
-      return true;
-    }
-
-    /// <summary>
-    /// Attempts to get the contents of the specified file at the specified url. Attempts to be smart about finding the location of the file.
-    /// </summary>
-    /// <param name="fileUrl"></param>
-    /// <param name="fileContents"></param>
-    /// <returns></returns>
-    private bool TryGetSPFileAsString(string fileUrl, out string fileContents, out bool isHiveFile)
-    {
-      isHiveFile = false;
-
-      Uri fileUri;
-      if (TryCreateWebAbsoluteUri(fileUrl, out fileUri) == false)
-      {
-        fileContents = null;
-        return false;
-      }
-
-      try
-      {
-        using (SPSite sourceSite = new SPSite(fileUri.ToString()))
-        {
-          using (SPWeb sourceWeb = sourceSite.OpenWeb())
-          {
-            if (sourceWeb == null)
-              throw new InvalidOperationException("The specified script url is invalid.");
-
-            fileContents = sourceWeb.GetFileAsString(fileUri.ToString());
-            return true;
-          }
-        }
-      }
-      catch { /* Do Nothing... */ }
-
-      //Attempt to get the file relative to the url referrer.
-      if (HttpContext.Current.Request.UrlReferrer != null)
-      {
-        try
-        {
-          string url = SPUtility.ConcatUrls(SPUtility.GetUrlDirectory(HttpContext.Current.Request.UrlReferrer.ToString()), fileUrl);
-
-          using (SPSite sourceSite = new SPSite(url))
-          {
-            using (SPWeb sourceWeb = sourceSite.OpenWeb())
-            {
-              if (sourceWeb == null)
-                throw new InvalidOperationException("The specified script url is invalid.");
-
-              fileContents = sourceWeb.GetFileAsString(url.ToString());
-              return true;
-            }
-          }
-        }
-        catch { /* Do Nothing... */ }
-      }
-
-      //Attempt to get the file relative to the sharepoint hive.
-      try
-      {
-        string hiveFileContents = String.Empty;
-        bool hiveFileResult = false;
-        SPSecurity.RunWithElevatedPrivileges(() =>
-        {
-          string path = HttpContext.Current.Request.MapPath(fileUrl);
-          if (File.Exists(path))
-          {
-            hiveFileContents = File.ReadAllText(path);
-            hiveFileResult = true;
-          }
-        });
-
-        if (hiveFileResult == true)
-        {
-          fileContents = hiveFileContents;
-          isHiveFile = true;
-          return true;
-        }
-      }
-      catch { /* Do Nothing... */ }
-
-      fileContents = null;
-      return false;
     }
     #endregion
   }

@@ -238,6 +238,7 @@
       common.RegisterBundle(new UtilityBundle());
       common.RegisterBundle(new UlsLogBundle());
       common.RegisterBundle(new DocumentStoreBundle());
+      common.RegisterBundle(new SimpleInheritanceBundle());
 
       //Global Types
 

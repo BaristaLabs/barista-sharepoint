@@ -78,6 +78,13 @@
       set;
     }
 
+    [JSProperty(Name = "redirectLocation")]
+    public string Location
+    {
+      get { return Response.RedirectLocation; }
+      set { Response.RedirectLocation = value; }
+    }
+
     [JSProperty(Name = "statusCode")]
     public int StatusCode
     {

@@ -202,7 +202,7 @@ asyncTest("Execute Simple Expression via multi-part post.", function () {
         type: 'POST',
         contentType: "multipart/form-data",
         dataType: "json",
-        url: getDomain() + "/_vti_bin/Barista/v1/Barista.svc/evalUpload?c=42%2B1"
+        url: getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval?c=42%2B1"
     });
 
     request.done(function (data) {

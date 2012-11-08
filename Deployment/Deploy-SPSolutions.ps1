@@ -207,18 +207,18 @@ function global:Deploy-SPSolutions() {
         
         if (!$solution.ContainsWebApplicationResource) {
           Write-Progress -Activity "Deploying solution $name" -Status "Installing $name" -PercentComplete 75
-          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -Confirm:$false
+          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -Confirm:$false -Force:$true
           Block-SPDeployment $solution $true "Installing $name" 85
         } else {
           if ($WebApplication -eq $null -or $WebApplication.Length -eq 0) {
             Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to all Web Applications" -PercentComplete 75
-            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -AllWebApplications -Confirm:$false
+            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -AllWebApplications -Force:$true -Confirm:$false
             Block-SPDeployment $solution $true "Installing $name to all Web Applications" 85
           } else {
             $WebApplication | ForEach-Object {
               $webApp = $_.Read()
               Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to $($webApp.Url)" -PercentComplete 75
-              $solution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$cas -WebApplication $webApp -Confirm:$false
+              $solution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$cas -WebApplication $webApp -Confirm:$false -Force:$true
               Block-SPDeployment $solution $true "Installing $name to $($webApp.Url)" 85
             }
           }

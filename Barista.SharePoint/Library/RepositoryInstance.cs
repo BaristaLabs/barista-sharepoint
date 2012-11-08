@@ -8,6 +8,7 @@
   using Jurassic.Library;
   using System;
   using System.Linq;
+  using Newtonsoft.Json;
 
   public class RepositoryInstance : ObjectInstance
   {
@@ -193,9 +194,40 @@
     }
 
     [JSFunction(Name = "updateEntity")]
-    public bool UpdateEntity(EntityInstance entity, bool updateIndex)
+    public bool UpdateEntity(object entity, bool updateIndex)
     {
-      return m_repository.UpdateEntity(entity.Entity, updateIndex);
+      Entity actualEntity;
+      if (entity is EntityInstance)
+      {
+        actualEntity = (entity as EntityInstance).Entity;
+      }
+      else if (entity is ObjectInstance)
+      {
+        actualEntity = new Entity();
+
+        var e = entity as ObjectInstance;
+        if (e.HasProperty("data"))
+        {
+          var data  =  e.GetPropertyValue("data");
+          if (data is ObjectInstance)
+            actualEntity.Data = JSONObject.Stringify(this.Engine, data, null, null);
+          else if (data is string)
+            actualEntity.Data = data as string;
+
+          e.Delete("data", false);
+        }
+
+        var entityString = JSONObject.Stringify(this.Engine, entity, null, null);
+        JsonConvert.PopulateObject(entityString, actualEntity);
+      }
+      else if (entity is string)
+      {
+        actualEntity = JsonConvert.DeserializeObject<Entity>(entity as string);
+      }
+      else
+        throw new ArgumentOutOfRangeException("entity", "Expected an entity object.");
+
+      return m_repository.UpdateEntity(actualEntity, updateIndex);
     }
     #endregion
 
@@ -285,10 +317,42 @@
     }
 
     [JSFunction(Name = "updateEntityPart")]
-    public bool UpdateEntityPart(string entityId, string partName, EntityPartInstance entityPart, bool updateIndex)
+    public bool UpdateEntityPart(string entityId, string partName, object entityPart, bool updateIndex)
     {
+      EntityPart actualEntityPart;
+      if (entityPart is EntityPartInstance)
+      {
+        actualEntityPart = (entityPart as EntityPartInstance).EntityPart;
+      }
+      else if (entityPart is ObjectInstance)
+      {
+        actualEntityPart = new EntityPart();
+
+        var e = entityPart as ObjectInstance;
+        if (e.HasProperty("data"))
+        {
+          var data = e.GetPropertyValue("data");
+
+          if (data is ObjectInstance)
+            actualEntityPart.Data = JSONObject.Stringify(this.Engine, data, null, null);
+          else if (data is string)
+            actualEntityPart.Data = data as string;
+
+          e.Delete("data", false);
+        }
+
+        var entityString = JSONObject.Stringify(this.Engine, entityPart, null, null);
+        JsonConvert.PopulateObject(entityString, actualEntityPart);
+      }
+      else if (entityPart is string)
+      {
+        actualEntityPart = JsonConvert.DeserializeObject<EntityPart>(entityPart as string);
+      }
+      else
+        throw new ArgumentOutOfRangeException("entityPart", "Expected an entity part object.");
+
       var id = new Guid(entityId);
-      return m_repository.UpdateEntityPart(id, entityPart.EntityPart, updateIndex);
+      return m_repository.UpdateEntityPart(id, actualEntityPart, updateIndex);
     }
     #endregion
 

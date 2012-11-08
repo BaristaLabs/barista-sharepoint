@@ -194,6 +194,7 @@
     <Compile Include="Bundles\LinqBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
+    <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />

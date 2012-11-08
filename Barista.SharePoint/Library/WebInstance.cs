@@ -237,6 +237,10 @@
           }
         }
       }
+      else
+      {
+        resultObject = String.Format("Error attempting to retrieve {3}: {0} {1}", response.StatusCode, response.StatusDescription, response.ResponseUri);
+      }
 
       return resultObject;
     }
