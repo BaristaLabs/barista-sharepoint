@@ -163,26 +163,22 @@
     /// </summary>
     /// <returns></returns>
     [JSFunction(Name = "count")]
-     public int Count([DefaultParameterValue("")]object tableName, [DefaultParameterValue("")]object where)
+     public int Count(object countParams)
     {
-      string stringTableName;
-      string stringWhere;
+      var parameters = new CountParams(this.Engine.Object.InstancePrototype);
+      if (countParams != null && countParams != Null.Value && countParams != Undefined.Value)
+        parameters = JurassicHelper.Coerce<CountParams>(this.Engine, countParams);
 
-      if (tableName == Undefined.Value || tableName == Null.Value || tableName == null)
-        stringTableName = GetFullTableName();
-      else if (tableName is string)
-        stringTableName = (string)tableName;
-      else
-        stringTableName = tableName.ToString();
+      if (String.IsNullOrEmpty(parameters.TableName))
+        parameters.TableName = GetFullTableName();
 
-      if (where == Undefined.Value || where == Null.Value || where == null)
-        stringWhere = "";
-      else if (where is string)
-        stringWhere = (string)where;
+      if (String.IsNullOrEmpty(parameters.TableName))
+        throw new JavaScriptException(this.Engine, "Error", "A table name must be specified either as a parameter or via the tableName property on the DynamicModel instance.");
+
+      if (String.IsNullOrEmpty(parameters.Where))
+        return (int)Scalar(String.Format("SELECT COUNT(*) FROM {0}", parameters.TableName));
       else
-        stringWhere = where.ToString();
-      
-      return (int)Scalar("SELECT COUNT(*) FROM " + stringTableName + " " + stringWhere);
+        return (int)Scalar(String.Format("SELECT COUNT(*) FROM {0} WHERE {1}", parameters.TableName, parameters.Where));
     }
 
     /// <summary>
@@ -379,7 +375,12 @@
       object result = null;
       using (var conn = OpenConnection())
       {
-        result = CreateCommand(sql, conn, args).ExecuteScalar();
+        var command = CreateCommand(sql, conn, args);
+
+        foreach (var param in args)
+          command.AddParam(param);
+
+        result = command.ExecuteScalar();
       }
       return result;
     }
@@ -744,6 +745,34 @@
       [JSProperty(Name = "args")]
       [JsonProperty("args")]
       public Object[] Args
+      {
+        get;
+        set;
+      }
+    }
+
+    public sealed class CountParams : ObjectInstance
+    {
+      public CountParams(ObjectInstance prototype)
+        : base(prototype)
+      {
+        this.TableName = "";
+        this.Where = "";
+
+        this.PopulateFields();
+      }
+
+      [JSProperty(Name = "tableName")]
+      [JsonProperty("tableName")]
+      public string TableName
+      {
+        get;
+        set;
+      }
+
+      [JSProperty(Name = "where")]
+      [JsonProperty("where")]
+      public string Where
       {
         get;
         set;
