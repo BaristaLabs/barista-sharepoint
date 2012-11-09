@@ -90,7 +90,7 @@ namespace Barista.SharePoint
       try
       {
         if (context.ListItem != null)
-          result.ListItem = result.List.Items[context.ItemId];
+          result.ListItem = result.Web.GetListItem(context.ListItem.Url);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
 

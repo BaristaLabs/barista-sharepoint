@@ -162,9 +162,20 @@
           string iFrameId = String.Format("{0}_htmlViewerIFrame", this.ID);
           string code;
           if (String.IsNullOrEmpty(this.ProxyAddress))
-            code = String.Format(@"var response = web.ajax('{0}'); web.response.contentType = ""text/html""; response;", this.TargetUrl.Trim());
+            code = String.Format(@"
+var web = require(""Web"");
+var response = web.ajax('{0}');
+web.response.contentType = ""text/html"";
+response;", 
+          this.TargetUrl.Trim());
+
           else
-            code = String.Format(@"var response = web.ajax('{0}', { useDefaultCredentials: true, address: {1} }", this.TargetUrl.Trim(), this.ProxyAddress.Trim());
+            code = String.Format(@"
+var web = require(""Web"");
+var response = web.ajax('{0}', { useDefaultCredentials: true, proxy: { useDefaultCredentials: true, address: {1} }});
+web.response.contentType = ""text/html"";
+response;",
+          this.TargetUrl.Trim(), this.ProxyAddress.Trim());
 
           string src = SPContext.Current.Web.Url + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + HttpUtility.UrlEncode(code);
 
@@ -188,6 +199,10 @@
 
     private string RetriveResponse(string url, int retries = 3)
     {
+      Uri targetUri;
+      if (SPHelper.TryCreateWebAbsoluteUri(url, out targetUri) == false)
+        throw new InvalidOperationException("Unable to convert target url to absolute uri: " + url);
+
       bool success = false;
       string result = string.Empty;
 
@@ -197,7 +212,7 @@
         {
           HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
-          HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+          HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(targetUri);
           httpWebRequest.UseDefaultCredentials = true;
           httpWebRequest.Credentials = CredentialCache.DefaultNetworkCredentials;
           httpWebRequest.CachePolicy = noCachePolicy;
@@ -259,7 +274,7 @@
       }
 
       if (success == false)
-        result = String.Format("Unable to connect to {0}. Maximum number of retries exceeded ({1})", url, retries);
+        result = String.Format("Unable to connect to {0}. Maximum number of retries exceeded ({1})", targetUri, retries);
 
       //Convert relative urls to absolute:
       if (this.ConvertRelativeUrlsToAbsolute && String.IsNullOrEmpty(result) == false)
@@ -280,7 +295,7 @@
           // Make it absolute if it's relative
           if (!currentUri.IsAbsoluteUri)
           {
-            currentUri = new Uri(new Uri(url, UriKind.Absolute), currentUri);
+            currentUri = new Uri(targetUri, currentUri);
             att.Value = currentUri.ToString();
           }
         }
@@ -297,7 +312,7 @@
           // Make it absolute if it's relative
           if (!currentUri.IsAbsoluteUri)
           {
-            currentUri = new Uri(new Uri(url, UriKind.Absolute), currentUri);
+            currentUri = new Uri(targetUri, currentUri);
             att.Value = currentUri.ToString();
           }
         }

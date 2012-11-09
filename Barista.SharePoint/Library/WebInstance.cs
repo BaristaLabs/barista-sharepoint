@@ -73,7 +73,11 @@
       {
         HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
-        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+        Uri targetUri;
+        if (SPHelper.TryCreateWebAbsoluteUri(url, out targetUri) == false)
+          throw new InvalidOperationException("Unable to convert target url to absolute uri: " + url);
+
+        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(targetUri);
         request.CachePolicy = noCachePolicy; //TODO: Make this configurable.
 
         var farmProxyAddress = Utilities.GetFarmKeyValue(Constants.FarmProxyAddressKey);
@@ -170,9 +174,9 @@
             result = JSONObject.Parse(this.Engine, responseJson, null);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          //TODO: Log this.
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "Error in web.ajax.call");
           throw;
         }
 
