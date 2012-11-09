@@ -220,7 +220,7 @@
       if (columnInstance == null)
         return null;
 
-      object result = null;
+      object result = Null.Value;
 
       string def = columnInstance.GetPropertyValue("COLUMN_DEFAULT") as string;
 
@@ -265,9 +265,10 @@
     {
       ObjectInstance result = this.Engine.Object.Construct();
       var schema = this.Schema;
-      foreach (var column in schema.Properties)
+      foreach (var column in schema.ElementValues.OfType<ObjectInstance>())
       {
-        result.SetPropertyValue(column.Name, GetDefaultValueForColumn(column.Value), false);
+        var name = (string)column.GetPropertyValue("COLUMN_NAME");
+        result.SetPropertyValue(name, GetDefaultValueForColumn(column), false);
       }
 
       return result;
