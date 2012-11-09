@@ -1,4 +1,7 @@
-﻿
+﻿var web = require("Web");
+var sp = require("SharePoint");
+require("Linq");
+
 var newTrustedLocation = web.request.getBodyObject();
 
 //Validation
