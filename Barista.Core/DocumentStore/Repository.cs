@@ -616,7 +616,7 @@
 
       var result = folderCapableDocumentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
 
-      if (result != null && updateIndex)
+      if (result && updateIndex)
         UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
 
       return result;

@@ -544,7 +544,7 @@
 
       foreach (var list in lists)
       {
-        ArrayInstance.Push(instance, new SPListInstance(this.Engine.Object.Prototype, list));
+        ArrayInstance.Push(instance, new SPListInstance(this.Engine.Object.InstancePrototype, list));
       }
 
       return instance;
@@ -567,7 +567,7 @@
     {
       SPList list = m_web.Lists.TryGetList(listTitle);
       
-      return new SPListInstance(this.Engine.Object.Prototype, list);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, list);
     }
 
     [JSFunction(Name = "getPermissions")]

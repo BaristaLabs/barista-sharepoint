@@ -99,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
@@ -154,7 +155,6 @@
     <Compile Include="Library\HttpRequestInstance.cs" />
     <Compile Include="Library\HttpResponseInstance.cs" />
     <Compile Include="Library\JSDocAttribute.cs" />
-    <None Include="Library\MassiveInstance.cs" />
     <Compile Include="Library\ProxySettingsInstance.cs" />
     <Compile Include="Library\UriInstance.cs" />
     <Compile Include="Library\UtilInstance.cs" />
@@ -268,7 +268,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Bundles\" />
     <Folder Include="DocumentStore\Framework\" />
     <Folder Include="DocumentStore\Helpers\" />
     <Folder Include="Serialization\" />

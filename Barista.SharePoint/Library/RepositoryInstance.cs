@@ -392,7 +392,7 @@
       var attachment = m_repository.GetAttachment(id, fileName);
       var streamResult = m_repository.DownloadAttachment(id, fileName);
 
-      var result = new Base64EncodedByteArrayInstance(this.Engine.Object.Prototype, streamResult.ReadToEnd());
+      var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, streamResult.ReadToEnd());
       result.MimeType = attachment.MimeType;
       result.FileName = attachment.FileName;
 

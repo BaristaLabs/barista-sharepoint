@@ -1,5 +1,6 @@
 ﻿namespace Barista.Extensions
 {
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -89,7 +90,31 @@
       ObjectInstance e = engine.Object.Construct();
       for (int i = 0; i < rdr.FieldCount; i++)
       {
-        e.SetPropertyValue(rdr.GetName(i), DBNull.Value.Equals(rdr[i]) ? Null.Value : rdr[i], false);
+        object propertyValue;
+        var value = rdr[i];
+
+        if (DBNull.Value.Equals(value))
+          propertyValue = Null.Value;
+        else if (value is DateTime)
+          propertyValue = JurassicHelper.ToDateInstance(engine, (DateTime)value);
+        else if (value is Byte)
+          propertyValue = Convert.ToInt32((Byte)value);
+        else if (value is Int16)
+          propertyValue = Convert.ToInt32((Int16)value);
+        else if (value is Int64)
+          propertyValue = Convert.ToDouble((Int64)value);
+        else if (value is decimal)
+          propertyValue = Convert.ToDouble((decimal)value);
+        else if (value is Guid)
+          propertyValue = ((Guid)value).ToString();
+        else if (value is Byte[])
+          propertyValue = new Base64EncodedByteArrayInstance(engine.Object.InstancePrototype, (Byte[])value);
+        else if (value.GetType().FullName == "Microsoft.SqlServer.Types.SqlHierarchyId")
+          propertyValue = value.ToString();
+        else
+          propertyValue = value;
+
+        e.SetPropertyValue(rdr.GetName(i), propertyValue, false);
       }
       return e;
     }

@@ -324,14 +324,14 @@
     public SPListItemInstance AddItem()
     {
       var listItem = m_list.Items.Add();
-      return new SPListItemInstance(this.Engine.Object.Prototype, listItem);
+      return new SPListItemInstance(this.Engine.Object.InstancePrototype, listItem);
     }
 
     [JSFunction(Name = "addItemToFolder")]
     public SPListItemInstance AddItem(string folderUrl)
     {
       var listItem = m_list.Items.Add(folderUrl, SPFileSystemObjectType.File);
-      return new SPListItemInstance(this.Engine.Object.Prototype, listItem);
+      return new SPListItemInstance(this.Engine.Object.InstancePrototype, listItem);
     }
 
     [JSFunction(Name = "addContentType")]

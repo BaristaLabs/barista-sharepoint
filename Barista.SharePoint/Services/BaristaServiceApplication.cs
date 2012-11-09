@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Services
 {
+  using Barista.Bundles;
   using Barista.Library;
   using Barista.SharePoint.Bundles;
   using Barista.SharePoint.Library;
@@ -239,6 +240,7 @@
       common.RegisterBundle(new UlsLogBundle());
       common.RegisterBundle(new DocumentStoreBundle());
       common.RegisterBundle(new SimpleInheritanceBundle());
+      common.RegisterBundle(new SqlDataBundle());
 
       //Global Types
 

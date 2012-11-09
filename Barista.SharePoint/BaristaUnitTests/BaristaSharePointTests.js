@@ -64,10 +64,10 @@ asyncTest("Create List Item", function () {
 
     request.done(function (data) {
         ok(data != null && data.length > 0, "A collection of list items was returned.");
-        ok(typeof (data[0].fieldValues["Name"]) === "string", "List item fields can be accesssed via property accessors");
-        ok(data[0].fieldValues["Name"].length > 0, "List item title was set.");
-        ok(typeof (data[0].fieldValues["Created By"]) === "object", "Creator field was set and an object");
-        ok(data[0].fieldValues["Created By"].loginName.length > 0, "Creator has a login name.");
+        ok(typeof (data[0].fieldValues["FileLeafRef"]) === "string", "List item fields can be accesssed via property accessors");
+        ok(data[0].fieldValues["FileLeafRef"].length > 0, "List item title was set.");
+        ok(typeof (data[0].fieldValues["Author"]) === "object", "Creator field was set and an object");
+        ok(data[0].fieldValues["Author"].loginName.length > 0, "Creator has a login name.");
         start();
     });
 
@@ -84,10 +84,10 @@ asyncTest("Enumerate List Items", function () {
 
     request.done(function (data) {
         ok(data != null && data.length > 0, "A collection of list items was returned.");
-        ok(typeof (data[0].fieldValues["Name"]) === "string", "List item fields can be accesssed via property accessors");
-        ok(data[0].fieldValues["Name"].length > 0, "List item title was set.");
-        ok(typeof (data[0].fieldValues["Created By"]) === "object", "Creator field was set and an object");
-        ok(data[0].fieldValues["Created By"].loginName.length > 0, "Creator has a login name.");
+        ok(typeof (data[0].fieldValues["FileLeafRef"]) === "string", "List item fields can be accesssed via property accessors");
+        ok(data[0].fieldValues["FileLeafRef"].length > 0, "List item title was set.");
+        ok(typeof (data[0].fieldValues["Author"]) === "object", "Creator field was set and an object");
+        ok(data[0].fieldValues["Author"].loginName.length > 0, "Creator has a login name.");
         start();
     });
 
@@ -104,10 +104,10 @@ asyncTest("Enumerate List Items Through View", function () {
 
     request.done(function (data) {
         ok(data != null && data.length > 0, "A collection of list items was returned.");
-        ok(typeof (data[0].fieldValues["Approval Status"]) === "string", "List item fields can be accesssed via property accessors");
-        ok(data[0].fieldValues["Approval Status"].length > 0, "List item approval status was set.");
-        ok(typeof (data[0].fieldValues["Modified By"]) === "object", "Modified By field was set and an object");
-        ok(data[0].fieldValues["Modified By"].loginName.length > 0, "Modifier has a login name.");
+        ok(typeof (data[0].fieldValues["_ModerationStatus"]) === "string", "List item fields can be accesssed via property accessors");
+        ok(data[0].fieldValues["_ModerationStatus"].length > 0, "List item approval status was set.");
+        ok(typeof (data[0].fieldValues["Editor"]) === "object", "Modified By field was set and an object");
+        ok(data[0].fieldValues["Editor"].loginName.length > 0, "Modifier has a login name.");
         start();
     });
 
@@ -777,6 +777,43 @@ asyncTest("Test Templates", function () {
         expected = expected.replace(/(\r\n|\n|\r)/gm, "");
         data = data.replace(/(\r\n|\n|\r)/gm, "");
         equal(data, expected, "The correct rendered template was returned.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
+asyncTest("Assert that DateTime values retrieved from list item fields are in the correct time zone.", function () {
+    expect(1);
+
+    var code = "var sp = require(\"SharePoint\");\
+var util = require(\"Utility\");\
+require(\"Linq\");\
+var url = util.randomString(15, false, true, true, false, false);\
+var newList = sp.currentContext.web.createList({\
+    title: 'List For Testing ' + util.randomString(5, false, true, true, false, false),\
+    description: 'This is a test, this is only a test',\
+    url: url,\
+    listTemplate: 100\
+});\
+var item = newList.addItem();\
+item.update();\
+var result = item.fieldValues[\"Modified\"];\
+newList.delete();\
+result;";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval",
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        equal(new Date(data).getHours(), (new Date()).getHours(), "The hour component of the date returned matches the local date.");
         start();
     });
 
