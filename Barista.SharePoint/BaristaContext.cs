@@ -35,11 +35,85 @@ namespace Barista.SharePoint
     {
     }
 
+    public BaristaContext(BrewRequest request, BrewResponse response)
+      : this()
+    {
+      if (request == null)
+        throw new ArgumentNullException("request");
+
+      if (response == null)
+        response = new BrewResponse();
+
+      this.Request = request;
+      this.Response = response;
+
+      if (request.ExtendedProperties != null && request.ExtendedProperties.ContainsKey("SPSiteId"))
+      {
+        Guid siteId = new Guid(request.ExtendedProperties["SPSiteId"]);
+
+        if (siteId != Guid.Empty)
+          this.Site = new SPSite(siteId);
+
+        if (request.ExtendedProperties.ContainsKey("SPWebId"))
+        {
+          Guid webId = new Guid(request.ExtendedProperties["SPWebId"]);
+
+          if (webId != Guid.Empty)
+            this.Web = this.Site.OpenWeb(webId);
+
+          if (request.ExtendedProperties.ContainsKey("SPListId"))
+          {
+            Guid listId = new Guid(request.ExtendedProperties["SPListId"]);
+
+            if (listId != Guid.Empty)
+              this.List = this.Web.Lists[listId];
+
+            if (request.ExtendedProperties.ContainsKey("SPViewId"))
+            {
+              Guid viewId = new Guid(request.ExtendedProperties["SPViewId"]);
+
+              if (viewId != Guid.Empty)
+                this.View = this.List.Views[viewId];
+            }
+          }
+
+          if (request.ExtendedProperties.ContainsKey("SPListItemUrl"))
+          {
+            string url = request.ExtendedProperties["SPListItemUrl"];
+
+            if (String.IsNullOrEmpty(url) == false)
+              this.ListItem = this.Web.GetListItem(url);
+          }
+
+          if (request.ExtendedProperties.ContainsKey("SPFileId"))
+          {
+            Guid fileId = new Guid(request.ExtendedProperties["SPFileId"]);
+
+            if (fileId != Guid.Empty)
+              this.File = this.Web.GetFile(fileId);
+          }
+        }
+      }
+    }
+
+    public BrewRequest Request
+    {
+      get;
+      private set;
+    }
+
+    public BrewResponse Response
+    {
+      get;
+      private set;
+    }
+
     public SPFile File
     {
       get;
       internal set;
     }
+
     public SPSite Site
     {
       get;

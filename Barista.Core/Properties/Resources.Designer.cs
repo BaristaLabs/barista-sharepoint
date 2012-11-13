@@ -73,11 +73,21 @@ namespace Barista.Properties {
         ///        }
         ///        continue;
         ///      }
-        ///      else if (this[i] !== compareAry[i]) {        /// [rest of string was truncated]&quot;;.
+        ///      else if (this[i] !== compareAry[i]) {
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string jsonDataHandler {
             get {
                 return ResourceManager.GetString("jsonDataHandler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (function(b){var a={VERSION:&quot;2.2.0&quot;,Result:{SUCCEEDED:1,NOTRANSITION:2,CANCELLED:3,ASYNC:4},Error:{INVALID_TRANSITION:100,PENDING_TRANSITION:200,INVALID_CALLBACK:300},WILDCARD:&quot;*&quot;,ASYNC:&quot;async&quot;,create:function(g,h){var j=(typeof g.initial==&quot;string&quot;)?{state:g.initial}:g.initial;var f=h||g.target||{};var l=g.events||[];var i=g.callbacks||{};var d={};var k=function(m){var p=(m.from instanceof Array)?m.from:(m.from?[m.from]:[a.WILDCARD]);d[m.name]=d[m.name]||{};for(var o=0;o&lt;p.length;o++){d[m.name][p[o]]=m.to|| [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string stateMachine {
+            get {
+                return ResourceManager.GetString("stateMachine", resourceCulture);
             }
         }
     }

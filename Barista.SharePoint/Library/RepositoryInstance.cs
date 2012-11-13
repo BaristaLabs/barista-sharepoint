@@ -102,7 +102,7 @@
 
     #region Entity
     [JSFunction(Name = "createEntity")]
-    public EntityInstance CreateEntity(object path, object entityNamespace, object data, bool updateIndex)
+    public EntityInstance CreateEntity(object path, object entityNamespace, object data)
     {
       var stringPath = "";
       var stringEntityNamespace = "";
@@ -121,64 +121,60 @@
       else
         stringData = data.ToString();
 
-      var result = m_repository.CreateEntity(stringPath, stringEntityNamespace, stringData, updateIndex);
+      var result = m_repository.CreateEntity(stringPath, stringEntityNamespace, stringData);
       return new EntityInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "cloneEntity")]
-    public EntityInstance CloneEntity(string entityId, string sourcePath, string targetPath, bool updateIndex)
+    public EntityInstance CloneEntity(string entityId, string sourcePath, string targetPath)
     {
       var id = new Guid(entityId);
-      var result = m_repository.CloneEntity(id, sourcePath, targetPath, updateIndex);
+      var result = m_repository.CloneEntity(id, sourcePath, targetPath);
       return new EntityInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "deleteEntity")]
-    public bool DeleteEntity(string entityId, bool updateIndex)
+    public bool DeleteEntity(string entityId)
     {
       var id = new Guid(entityId);
-      return m_repository.DeleteEntity(id, updateIndex);
+      return m_repository.DeleteEntity(id);
     }
 
     [JSFunction(Name = "getEntity")]
-    public EntityInstance GetEntity(string entityId, [DefaultParameterValue("")]string path)
+    public object GetEntity(string entityId, [DefaultParameterValue("")]string path)
     {
       var id = new Guid(entityId);
       var result = m_repository.GetEntity(id, path);
+
+      if (result == null)
+        return Null.Value;
+
       return new EntityInstance(this.Engine, result);
     }
 
-    [JSFunction(Name = "getFirstEntity")]
-    public EntityInstance GetFirstEntity(string path, string entityNamespace)
+    [JSFunction(Name = "single")]
+    public EntityInstance Single(object filterCriteria)
     {
-      var result = m_repository.GetFirstEntity(path, entityNamespace);
+      var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
+
+      if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
+        criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
+
+      var result = m_repository.Single(criteria.EntityFilterCriteria);
       return new EntityInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "listEntities")]
-    public ArrayInstance ListEntities(object path, object entityNamespace, int skip, int top)
+    public ArrayInstance ListEntities(object filterCriteria)
     {
-      string stringPath = string.Empty;
-      string stringNamespace = string.Empty;
+      var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
 
-      if (path is string)
-        stringPath = path as string;
-
-      if (entityNamespace is string)
-        stringNamespace = entityNamespace as string;
-
-      uint? actualSkip = null;
-      if (skip >= 0)
-        actualSkip = (uint)skip;
-
-      uint? actualTop = null;
-      if (top >= 0)
-        actualTop = (uint)top;
-
+      if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
+        criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
 
       var result = this.Engine.Array.Construct();
 
-      foreach(var entity in m_repository.ListEntities(stringPath, stringNamespace, actualSkip, actualTop))
+      foreach(var entity in m_repository.ListEntities(criteria.EntityFilterCriteria))
       {
         ArrayInstance.Push(result, new EntityInstance(this.Engine, entity));
       }
@@ -187,57 +183,41 @@
     }
 
     [JSFunction(Name = "moveEntity")]
-    public bool MoveEntity(string entityId, string destinationPath, bool updateIndex)
+    public bool MoveEntity(string entityId, string destinationPath)
     {
       var id = new Guid(entityId);
-      return m_repository.MoveEntity(id, destinationPath, updateIndex);
+      return m_repository.MoveEntity(id, destinationPath);
     }
 
     [JSFunction(Name = "updateEntity")]
-    public bool UpdateEntity(object entity, bool updateIndex)
+    public EntityInstance UpdateEntity(string entityId, object eTag, object data)
     {
-      Entity actualEntity;
-      if (entity is EntityInstance)
-      {
-        actualEntity = (entity as EntityInstance).Entity;
-      }
-      else if (entity is ObjectInstance)
-      {
-        actualEntity = new Entity();
+      var id = new Guid(entityId);
+      var stringData = "";
+      var stringETag = "";
 
-        var e = entity as ObjectInstance;
-        if (e.HasProperty("data"))
-        {
-          var data  =  e.GetPropertyValue("data");
-          if (data is ObjectInstance)
-            actualEntity.Data = JSONObject.Stringify(this.Engine, data, null, null);
-          else if (data is string)
-            actualEntity.Data = data as string;
+      if (eTag is string)
+        stringETag = (string)eTag;
 
-          e.Delete("data", false);
-        }
-
-        var entityString = JSONObject.Stringify(this.Engine, entity, null, null);
-        JsonConvert.PopulateObject(entityString, actualEntity);
-      }
-      else if (entity is string)
-      {
-        actualEntity = JsonConvert.DeserializeObject<Entity>(entity as string);
-      }
+      if (data is ObjectInstance)
+        stringData = JSONObject.Stringify(this.Engine, data, null, null);
+      else if (data is string)
+        stringData = data as string;
       else
-        throw new ArgumentOutOfRangeException("entity", "Expected an entity object.");
+        stringData = data.ToString();
 
-      return m_repository.UpdateEntity(actualEntity, updateIndex);
+      var result = m_repository.UpdateEntityData(id, stringETag, stringData);
+      return new EntityInstance(this.Engine, result);
     }
     #endregion
 
     #region EntityComments
 
     [JSFunction(Name = "addEntityComment")]
-    public CommentInstance AddEntityComment(string entityId, string comment, bool updateIndex)
+    public CommentInstance AddEntityComment(string entityId, string comment)
     {
       var id = new Guid(entityId);
-      var result = m_repository.AddEntityComment(id, comment, updateIndex);
+      var result = m_repository.AddEntityComment(id, comment);
       return new CommentInstance(this.Engine, result);
     }
 
@@ -258,7 +238,7 @@
 
     #region Entity Parts
     [JSFunction(Name = "createEntityPart")]
-    public EntityPartInstance CreateEntityPart(string entityId, object partName, object category, object data, bool updateIndex)
+    public EntityPartInstance CreateEntityPart(string entityId, object partName, object category, object data)
     {
       var stringPartName = "";
       var stringCategory = "";
@@ -278,21 +258,61 @@
         stringData = data.ToString();
 
       var id = new Guid(entityId);
-      return new EntityPartInstance(this.Engine, m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData, updateIndex));
+      return new EntityPartInstance(this.Engine, m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData));
+    }
+
+    [JSFunction(Name = "createOrUpdateEntityPart")]
+    public EntityPartInstance CreateOrUpdateEntityPart(string entityId, object partName, object category, object data)
+    {
+      var id = new Guid(entityId);
+      var stringPartName = "";
+      var stringCategory = "";
+      var stringData = "";
+
+      if (partName is string)
+        stringPartName = partName as string;
+
+      if (category is string)
+        stringCategory = category as string;
+
+      if (data is ObjectInstance)
+        stringData = JSONObject.Stringify(this.Engine, data, null, null);
+      else if (data is string)
+        stringData = data as string;
+      else
+        stringData = data.ToString();
+
+      var entityPart = m_repository.GetEntityPart(id, stringPartName);
+      if (entityPart == null)
+      {
+        entityPart = m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData);
+      }
+      else
+      {
+        entityPart = m_repository.UpdateEntityPartData(id, stringPartName, stringData);
+      }
+
+      return new EntityPartInstance(this.Engine, entityPart);
     }
 
     [JSFunction(Name = "deleteEntityPart")]
-    public bool DeleteEntityPart(string entityId, string partName, bool updateIndex)
+    public bool DeleteEntityPart(string entityId, string partName)
     {
       var id = new Guid(entityId);
-      return m_repository.DeleteEntityPart(id, partName, updateIndex);
+      return m_repository.DeleteEntityPart(id, partName);
     }
 
     [JSFunction(Name = "getEntityPart")]
-    public EntityPartInstance GetEntityPart(string entityId, string partName)
+    public object GetEntityPart(string entityId, string partName)
     {
       var id = new Guid(entityId);
-      return new EntityPartInstance(this.Engine, m_repository.GetEntityPart(id, partName));
+
+      var result = m_repository.GetEntityPart(id, partName);
+
+      if (result == null)
+        return Null.Value;
+
+      return new EntityPartInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "hasEntityPart")]
@@ -317,42 +337,28 @@
     }
 
     [JSFunction(Name = "updateEntityPart")]
-    public bool UpdateEntityPart(string entityId, string partName, object entityPart, bool updateIndex)
+    public EntityPartInstance UpdateEntityPart(string entityId, object partName, string eTag, object data)
     {
-      EntityPart actualEntityPart;
-      if (entityPart is EntityPartInstance)
-      {
-        actualEntityPart = (entityPart as EntityPartInstance).EntityPart;
-      }
-      else if (entityPart is ObjectInstance)
-      {
-        actualEntityPart = new EntityPart();
-
-        var e = entityPart as ObjectInstance;
-        if (e.HasProperty("data"))
-        {
-          var data = e.GetPropertyValue("data");
-
-          if (data is ObjectInstance)
-            actualEntityPart.Data = JSONObject.Stringify(this.Engine, data, null, null);
-          else if (data is string)
-            actualEntityPart.Data = data as string;
-
-          e.Delete("data", false);
-        }
-
-        var entityString = JSONObject.Stringify(this.Engine, entityPart, null, null);
-        JsonConvert.PopulateObject(entityString, actualEntityPart);
-      }
-      else if (entityPart is string)
-      {
-        actualEntityPart = JsonConvert.DeserializeObject<EntityPart>(entityPart as string);
-      }
-      else
-        throw new ArgumentOutOfRangeException("entityPart", "Expected an entity part object.");
-
       var id = new Guid(entityId);
-      return m_repository.UpdateEntityPart(id, actualEntityPart, updateIndex);
+      var stringPartName = "";
+      var stringData = "";
+      var stringETag = "";
+
+      if (partName is string)
+        stringPartName = (string)partName;
+
+      if (eTag is string)
+        stringETag = (string)eTag;
+
+      if (data is ObjectInstance)
+        stringData = JSONObject.Stringify(this.Engine, data, null, null);
+      else if (data is string)
+        stringData = data as string;
+      else
+        stringData = data.ToString();
+
+      var result = m_repository.UpdateEntityPartData(id, stringPartName, stringETag, stringData);
+      return new EntityPartInstance(this.Engine, result);
     }
     #endregion
 

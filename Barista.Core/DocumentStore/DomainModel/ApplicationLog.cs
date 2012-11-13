@@ -30,12 +30,18 @@ namespace Barista.DocumentStore
           if (folder == null)
             folder = client.CreateFolder(repository.Configuration.ContainerTitle, path);
 
-          var dsApplicationLogs = repository.ListEntities<ApplicationLog>(folder.FullPath, null, null);
+          var dsApplicationLogs = repository.ListEntities(new EntityFilterCriteria()
+          {
+            Path = folder.FullPath,
+            Namespace = Constants.ApplicationLogV1Namespace,
+            NamespaceMatchType = NamespaceMatchType.Equals,
+          });
 
-          Entity<ApplicationLog> dsApplicationLog = dsApplicationLogs.FirstOrDefault();
+          Entity dsApplicationLog = dsApplicationLogs.FirstOrDefault();
           if (dsApplicationLog == null)
           {
-            dsApplicationLog = client.CreateEntity<ApplicationLog>(repository.Configuration.ContainerTitle, folder.FullPath, Constants.ApplicationLogV1Namespace, new ApplicationLog());
+            var data = DocumentStoreHelper.SerializeObjectToJson(new ApplicationLog());
+            dsApplicationLog = client.CreateEntity(repository.Configuration.ContainerTitle, folder.FullPath, Constants.ApplicationLogV1Namespace, data);
           }
 
           var entityPartClient = repository.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
@@ -47,13 +53,15 @@ namespace Barista.DocumentStore
             ApplicationLogPart part = new ApplicationLogPart();
             part.Entries.Add(entry);
 
-            dsCurrentHourApplicationLogPart = entityPartClient.CreateEntityPart<ApplicationLogPart>(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), part);
+            var data = DocumentStoreHelper.SerializeObjectToJson(part);
+            dsCurrentHourApplicationLogPart = entityPartClient.CreateEntityPart(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), "", data);
           }
           else
           {
             ApplicationLogPart part = DocumentStoreHelper.DeserializeObjectFromJson<ApplicationLogPart>(dsCurrentHourApplicationLogPart.Data);
+            var data = DocumentStoreHelper.SerializeObjectToJson(part);
             part.Entries.Add(entry);
-            entityPartClient.UpdateEntityPart<ApplicationLogPart>(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), part);
+            entityPartClient.UpdateEntityPartData(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), null, data);
           }
         }
       }

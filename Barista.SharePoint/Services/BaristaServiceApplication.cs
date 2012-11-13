@@ -12,6 +12,7 @@
   using System;
   using System.Collections.Generic;
   using System.IO;
+  using System.Linq;
   using System.Runtime.InteropServices;
   using System.ServiceModel;
   using System.Web;
@@ -107,9 +108,9 @@
     {
       var response = new BrewResponse();
 
-      SetBaristaContextFromRequest(request);
+      BaristaContext.Current = new BaristaContext(request, response);
 
-      WebBundle webBundle = new WebBundle(request, response);
+      WebBundle webBundle = new WebBundle();
       var engine = GetScriptEngine(webBundle);
 
       object result = null;
@@ -146,9 +147,9 @@
     {
       var response = new BrewResponse();
 
-      SetBaristaContextFromRequest(request);
+      BaristaContext.Current = new BaristaContext(request, response);
 
-      WebBundle webBundle = new WebBundle(request, response);
+      WebBundle webBundle = new WebBundle();
       var engine = GetScriptEngine(webBundle);
 
       try
@@ -160,60 +161,6 @@
         BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An error occured while executing script: ");
         throw;
       }
-    }
-
-    private void SetBaristaContextFromRequest(BrewRequest request)
-    {
-      BaristaContext context = new BaristaContext();
-
-      if (request.ExtendedProperties != null && request.ExtendedProperties.ContainsKey("SPSiteId"))
-      {
-        Guid siteId = new Guid(request.ExtendedProperties["SPSiteId"]);
-
-        if (siteId != Guid.Empty)
-          context.Site = new SPSite(siteId);
-
-        if (request.ExtendedProperties.ContainsKey("SPWebId"))
-        {
-          Guid webId = new Guid(request.ExtendedProperties["SPWebId"]);
-
-          if (webId != Guid.Empty)
-            context.Web = context.Site.OpenWeb(webId);
-
-          if (request.ExtendedProperties.ContainsKey("SPListId"))
-          {
-            Guid listId = new Guid(request.ExtendedProperties["SPListId"]);
-
-            if (listId != Guid.Empty)
-              context.List = context.Web.Lists[listId];
-
-            if (request.ExtendedProperties.ContainsKey("SPViewId"))
-            {
-              Guid viewId = new Guid(request.ExtendedProperties["SPViewId"]);
-
-              if (viewId != Guid.Empty)
-                context.View = context.List.Views[viewId];
-            }
-          }
-
-          if (request.ExtendedProperties.ContainsKey("SPListItemUrl"))
-          {
-            string url = request.ExtendedProperties["SPListItemUrl"];
-
-            if (String.IsNullOrEmpty(url) == false)
-              context.ListItem = context.Web.GetListItem(url);
-          }
-
-          if (request.ExtendedProperties.ContainsKey("SPFileId"))
-          {
-            Guid fileId = new Guid(request.ExtendedProperties["SPFileId"]);
-
-            if (fileId != Guid.Empty)
-              context.File = context.Web.GetFile(fileId);
-          }
-        }
-      }
-      BaristaContext.Current = context;
     }
 
     /// <summary>
@@ -241,11 +188,13 @@
       common.RegisterBundle(new DocumentStoreBundle());
       common.RegisterBundle(new SimpleInheritanceBundle());
       common.RegisterBundle(new SqlDataBundle());
+      common.RegisterBundle(new StateMachineBundle());
 
       //Global Types
 
       //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
+      engine.SetGlobalValue("Guid", new GuidConstructor(engine));
       engine.SetGlobalValue("Uri", new UriConstructor(engine));
       engine.SetGlobalValue("Deferred", new DeferredConstructor(engine));
       engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
@@ -274,19 +223,57 @@
         throw new JavaScriptException(engine, "Error", "Could not locate the specified script file:  " + scriptUrl);
       }));
 
-      engine.SetGlobalFunction("include", new Func<string, object>((scriptUrl) =>
+      engine.SetGlobalFunction("replaceJsonReferences", new Func<object, object>((o) =>
       {
-        bool isHiveFile;
-        string code;
-        if (SPHelper.TryGetSPFileAsString(scriptUrl, out code, out isHiveFile))
-        {
-          code = SPHelper.ReplaceTokens(code);
-          return engine.Evaluate(code);
-        }
-
-        throw new JavaScriptException(engine, "Error", "Could not locate the specified script file:  " + scriptUrl);
+        return ReplaceJsonReferences(o);
       }));
       return engine;
+    }
+
+    private object ReplaceJsonReferences(object o)
+    {
+      var dictionary = new Dictionary<string,ObjectInstance>();
+      return ReplaceJsonReferences(o, dictionary);
+    }
+
+    private object ReplaceJsonReferences(object o, Dictionary<string, ObjectInstance> dictionary)
+    {
+      if (o is ArrayInstance)
+      {
+        var array = o as ArrayInstance;
+        for (int i = 0; i < array.ElementValues.Count(); i++)
+        {
+          
+          array[i] = ReplaceJsonReferences(array[i], dictionary);
+        }
+      }
+      else if (o is ObjectInstance)
+      {
+        var obj = o as ObjectInstance;
+        var properties = obj.Properties.ToList();
+
+        //If there's only one property named "$ref" and it's value is a key that exists in the dictionary, return the value.
+        if (properties.Count == 1 && properties[0].Name == "$ref" && dictionary.ContainsKey((string)properties[0].Value))
+          return dictionary[(string)properties[0].Value];
+
+        var idProperty = properties.Where(p => p.Name == "$id").FirstOrDefault();
+        if (idProperty != null && dictionary.ContainsKey((string)idProperty.Value) == false)
+        {
+          var str = JSONObject.Stringify(obj.Engine, obj, null, null);
+          var clone = JSONObject.Parse(obj.Engine, str, null) as ObjectInstance;
+
+          if (clone.HasProperty("$id"))
+            clone.Delete("$id", false);
+
+          dictionary.Add((string)idProperty.Value, clone);
+        }
+
+        foreach (var property in properties)
+        {
+          obj.SetPropertyValue(property.Name, ReplaceJsonReferences(property.Value, dictionary), false);
+        }
+      }
+      return o;
     }
     #endregion
   }

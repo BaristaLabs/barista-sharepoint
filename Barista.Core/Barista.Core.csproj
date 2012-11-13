@@ -99,7 +99,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
+    <Compile Include="Bundles\StateMachineBundle.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
@@ -151,7 +153,9 @@
     <Compile Include="Library\AjaxSettingsInstance.cs" />
     <Compile Include="Library\Base64EncodedByteArrayInstance.cs" />
     <Compile Include="Library\DeferredInstance.cs" />
+    <Compile Include="Library\EntityFilterCriteriaInstance.cs" />
     <Compile Include="Library\FileSystemInstance.cs" />
+    <Compile Include="Library\GuidInstance.cs" />
     <Compile Include="Library\HttpRequestInstance.cs" />
     <Compile Include="Library\HttpResponseInstance.cs" />
     <Compile Include="Library\JSDocAttribute.cs" />
@@ -204,17 +208,6 @@
     <Compile Include="DocumentStore\Interfaces\IAttachmentCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\ICommentCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IDocumentStore.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreAttachmentsService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreCommentsService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreContainersService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreEntitiesService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreEntityPartsService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreFoldersService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreLockService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreManagedPropertiesService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreMetadataService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStorePermissionsService.cs" />
-    <Compile Include="DocumentStore\Interfaces\IDocumentStoreVersionHistoryService.cs" />
     <Compile Include="DocumentStore\Interfaces\IEntityPartCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IEntityPartFolderCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IEntityPartVersionHistoryCapableDocumentStore.cs" />
@@ -241,24 +234,10 @@
     <Compile Include="Linq\Csv\IDataRow.cs" />
     <Compile Include="DocumentStore\Repository.cs" />
     <Compile Include="DocumentStore\RepositoryConfiguration.cs" />
-    <Compile Include="DocumentStore\Services\AttachmentsService.cs" />
-    <Compile Include="DocumentStore\Services\CommentsService.cs" />
-    <Compile Include="DocumentStore\Services\ContainersService.cs" />
-    <Compile Include="DocumentStore\Services\EntitiesService.cs" />
-    <Compile Include="DocumentStore\Services\EntityPartsService.cs" />
-    <Compile Include="DocumentStore\Services\FoldersService.cs" />
-    <Compile Include="DocumentStore\Services\LockService.cs" />
-    <Compile Include="DocumentStore\Services\ManagedPropertiesService.cs" />
-    <Compile Include="DocumentStore\Services\MetadataService.cs" />
-    <Compile Include="DocumentStore\Services\PermissionsService.cs" />
-    <Compile Include="DocumentStore\Services\SchemaService.cs" />
-    <Compile Include="DocumentStore\Services\ServiceBase.cs" />
-    <Compile Include="DocumentStore\Services\VersionHistoryService.cs" />
     <Compile Include="ValidationAttributeStore.cs" />
     <Compile Include="ValidationContext.cs" />
     <Compile Include="ValidationResult.cs" />
     <Compile Include="Validator.cs" />
-    <Compile Include="DocumentStore\WebDocumentStore.cs" />
     <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
     <Compile Include="_Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -281,6 +260,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\state-machine.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -6,11 +6,6 @@
 
   public class WebBundle : IBundle
   {
-    public WebBundle(BrewRequest request, BrewResponse response)
-    {
-      this.Request = request;
-      this.Response = response;
-    }
 
     public string BundleName
     {
@@ -20,18 +15,6 @@
     public string BundleDescription
     {
       get { return "Web Bundle. Provides a mechanism to make Ajax calls and query the request and manipulate response of the current context."; } 
-    }
-
-    public BrewRequest Request
-    {
-      get;
-      private set;
-    }
-
-    public BrewResponse Response
-    {
-      get;
-      private set;
     }
 
     internal WebInstance WebInstance
@@ -46,7 +29,7 @@
       engine.SetGlobalValue("ProxySettings", new ProxySettingsConstructor(engine));
       
       if (this.WebInstance == null)
-        this.WebInstance = new WebInstance(engine, this.Request, this.Response);
+        this.WebInstance = new WebInstance(engine);
 
       return this.WebInstance;
     }

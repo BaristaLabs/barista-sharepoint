@@ -670,7 +670,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    public virtual bool UpdateEntity(string containerTitle, Entity entity)
+    public virtual Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (SPSite site = new SPSite(this.Web.Site.ID))
@@ -680,47 +680,27 @@
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return false;
+            return null;
 
           SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entity.Id, out defaultEntityPart) == false)
-            return false;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+            return null;
 
           if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
             throw new InvalidOperationException("Insufficent Permissions.");
 
-          if (defaultEntityPart.ETag != entity.ETag)
-          {
-            throw new InvalidOperationException("Could not update the entity, the Entity has been updated by another user.");
-          }
-
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = String.Empty;
-            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
-
-            if (entity.Data != currentData)
-            {
-              if (String.IsNullOrEmpty(entity.Data) == false)
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(entity.Data));
-              }
-              else
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
-              }
-            }
-
             DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
-            if (ds.Item.Title != entity.Title)
-              ds.Item["Title"] = entity.Title;
+            if (ds.Item.Title != title)
+              ds.Item["Title"] = title;
 
-            if ((ds.Item["DocumentSetDescription"] as string) != entity.Description)
-              ds.Item["DocumentSetDescription"] = entity.Description;
+            if ((ds.Item["DocumentSetDescription"] as string) != description)
+              ds.Item["DocumentSetDescription"] = description;
 
-            if ((ds.Item["Namespace"] as string) != entity.Namespace)
-              ds.Item["Namespace"] = entity.Namespace;
+            if ((ds.Item["Namespace"] as string) != @namespace)
+              ds.Item["Namespace"] = @namespace;
 
             ds.Item.SystemUpdate(true);
           }
@@ -729,7 +709,7 @@
             web.AllowUnsafeUpdates = false;
           }
 
-          return true;
+          return SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
         }
       }
     }
@@ -787,6 +767,65 @@
           }
 
           return true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Updates the data of the specified entity.
+    /// </summary>
+    /// <param name="containerTitle"></param>
+    /// <param name="entityId"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public virtual Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
+    {
+      //Get a new web in case we're executing in elevated permissions.
+      using (SPSite site = new SPSite(this.Web.Site.ID))
+      {
+        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        {
+          SPList list;
+          SPFolder folder;
+          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            return null;
+
+          SPFile defaultEntityPart;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+            return null;
+
+          if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+            throw new InvalidOperationException("Insufficent Permissions.");
+
+          if (defaultEntityPart.ETag != eTag)
+          {
+            throw new InvalidOperationException("Could not update the entity, the Entity has been updated by another user.");
+          }
+
+          web.AllowUnsafeUpdates = true;
+          try
+          {
+            string currentData = String.Empty;
+            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
+
+            if (data != currentData)
+            {
+              if (String.IsNullOrEmpty(data) == false)
+              {
+                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(data));
+              }
+              else
+              {
+                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
+              }
+            }
+          }
+          finally
+          {
+            web.AllowUnsafeUpdates = false;
+          }
+
+          return SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
         }
       }
     }
@@ -955,10 +994,41 @@
           if (criteria != null)
           {
             if (String.IsNullOrEmpty(criteria.Namespace) == false)
-              queryString = Camlex.Query()
-                  .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
-                  .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]) == criteria.Namespace)
-                  .ToString();
+            {
+              switch (criteria.NamespaceMatchType)
+              {
+                case NamespaceMatchType.Equals:
+
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]) == criteria.Namespace)
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.StartsWith:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace))
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.EndsWith:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).EndsWith(criteria.Namespace))
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.Contains:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).Contains(criteria.Namespace))
+                      .ToString();
+                  break;
+                default:
+                  throw new ArgumentOutOfRangeException("Unknown or unsupported NamespaceMatchType:" + criteria.NamespaceMatchType);
+              }
+            }
           }
 
           SPQuery query = new SPQuery();
@@ -1501,27 +1571,11 @@
     /// <summary>
     /// Updates the entity part.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName">Name of the part.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public bool UpdateEntityPart<T>(string containerTitle, Guid entityId, string partName, T value)
-    {
-      var entityPart = GetEntityPart<T>(containerTitle, entityId, partName);
-      entityPart.Data = DocumentStoreHelper.SerializeObjectToJson<T>(value);
-      return UpdateEntityPart(containerTitle, entityId, entityPart);
-    }
-
-    /// <summary>
-    /// Updates the entity part.
-    /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <param name="entityPart">The entity part.</param>
     /// <returns></returns>
-    public virtual bool UpdateEntityPart(string containerTitle, Guid entityId, EntityPart entityPart)
+    public virtual EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (SPSite site = new SPSite(this.Web.Site.ID))
@@ -1531,18 +1585,11 @@
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return false;
+            return null;
 
           SPFile entityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, entityPart.Name, out entityPartFile) == false)
-            return false;
-
-          var entityPartContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant())).FirstOrDefault();
-
-          Hashtable properties = new Hashtable();
-          properties.Add("ContentTypeId", entityPartContentType.Id.ToString());
-          properties.Add("Content Type", entityPartContentType.Name);
-          properties.Add("Category", entityPart.Category);
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
+            return null;
 
           web.AllowUnsafeUpdates = true;
           try
@@ -1550,8 +1597,59 @@
             if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
               throw new InvalidOperationException("Insufficent Permissions.");
 
-            entityPartFile = entityPartFile.ParentFolder.Files.Add(entityPartFile.Name, System.Text.UTF8Encoding.Default.GetBytes(entityPart.Data), properties, true);
-            return false;
+            entityPartFile.Item["Category"] = category;
+            entityPartFile.Item.SystemUpdate(true);
+
+            return SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile);
+          }
+          finally
+          {
+            web.AllowUnsafeUpdates = false;
+          }
+        }
+      }
+    }
+
+    public virtual EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
+    {
+      //Get a new web in case we're executing in elevated permissions.
+      using (SPSite site = new SPSite(this.Web.Site.ID))
+      {
+        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        {
+          SPList list;
+          SPFolder folder;
+          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            return null;
+
+          SPFile entityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
+            return null;
+
+          if (entityPartFile.ETag != eTag)
+          {
+            throw new InvalidOperationException("Could not update the entity part, the entity part has been updated by another user.");
+          }
+
+          web.AllowUnsafeUpdates = true;
+          try
+          {
+            string currentData = String.Empty;
+            currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
+
+            if (data != currentData)
+            {
+              if (String.IsNullOrEmpty(data) == false)
+              {
+                entityPartFile.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(data));
+              }
+              else
+              {
+                entityPartFile.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
+              }
+            }
+
+            return SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile);
           }
           finally
           {
@@ -1755,7 +1853,40 @@
 
           var entityVersion = GetEntityVersion(containerTitle, entityId, versionId);
 
-          UpdateEntity(containerTitle, entityVersion.Entity);
+          web.AllowUnsafeUpdates = true;
+          try
+          {
+            string currentData = String.Empty;
+            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
+
+            if (entityVersion.Entity.Data != currentData)
+            {
+              if (String.IsNullOrEmpty(entityVersion.Entity.Data) == false)
+              {
+                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(entityVersion.Entity.Data));
+              }
+              else
+              {
+                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
+              }
+            }
+
+            DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
+            if (ds.Item.Title != entityVersion.Entity.Title)
+              ds.Item["Title"] = entityVersion.Entity.Title;
+
+            if ((ds.Item["DocumentSetDescription"] as string) != entityVersion.Entity.Description)
+              ds.Item["DocumentSetDescription"] = entityVersion.Entity.Description;
+
+            if ((ds.Item["Namespace"] as string) != entityVersion.Entity.Namespace)
+              ds.Item["Namespace"] = entityVersion.Entity.Namespace;
+
+            ds.Item.SystemUpdate(true);
+          }
+          finally
+          {
+            web.AllowUnsafeUpdates = false;
+          }
 
           var versions = ListEntityVersions(containerTitle, entityId);
 

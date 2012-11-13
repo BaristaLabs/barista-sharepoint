@@ -20,24 +20,26 @@ namespace Barista.DocumentStore
       var repository = Repository.GetRepository();
 
       //Double-check locking pattern
-      
-      var applicationConfigurationEntity = repository.GetFirstEntity<ApplicationConfiguration>();
+
+      var applicationConfigurationEntity = repository.Single(new EntityFilterCriteria() { Path = "", Namespace = Constants.ApplicationConfigurationV1Namespace });
       if (applicationConfigurationEntity == null)
       {
         lock (s_syncRoot)
         {
-          applicationConfigurationEntity = repository.GetFirstEntity<ApplicationConfiguration>();
+          applicationConfigurationEntity = repository.Single(new EntityFilterCriteria() { Path = "", Namespace = Constants.ApplicationConfigurationV1Namespace });
           if (applicationConfigurationEntity == null)
           {
-            applicationConfigurationEntity = repository.Configuration.DocumentStore.CreateEntity<ApplicationConfiguration>(repository.Configuration.ContainerTitle, Constants.ApplicationConfigurationV1Namespace, new ApplicationConfiguration()
+            var data = DocumentStoreHelper.SerializeObjectToJson(new ApplicationConfiguration()
             {
               MinimumLogLevel = LogLevel.Error,
             });
+
+            applicationConfigurationEntity = repository.Configuration.DocumentStore.CreateEntity(repository.Configuration.ContainerTitle, Constants.ApplicationConfigurationV1Namespace, data);
           }
         }
       }
 
-      return applicationConfigurationEntity.Value;
+      return DocumentStoreHelper.DeserializeObjectFromJson<ApplicationConfiguration>(applicationConfigurationEntity.Data);
     }
   }
 }

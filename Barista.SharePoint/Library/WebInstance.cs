@@ -24,11 +24,11 @@
     private HttpRequestInstance m_httpRequest;
     private HttpResponseInstance m_httpResponse;
 
-    public WebInstance(ScriptEngine engine, BrewRequest request, BrewResponse response)
+    public WebInstance(ScriptEngine engine)
       : base(engine)
     {
-      m_httpRequest = new HttpRequestInstance(engine, request);
-      m_httpResponse = new HttpResponseInstance(engine, response);
+      m_httpRequest = new HttpRequestInstance(engine, BaristaContext.Current.Request);
+      m_httpResponse = new HttpResponseInstance(engine, BaristaContext.Current.Response);
       
       this.PopulateFields();
       this.PopulateFunctions();

@@ -7,7 +7,27 @@ namespace Barista.DocumentStore
 {
   public sealed class EntityFilterCriteria
   {
+    public EntityFilterCriteria()
+    {
+      this.NamespaceMatchType = DocumentStore.NamespaceMatchType.Equals;
+      this.Path = null;
+      this.Skip = null;
+      this.Top = null;
+    }
+
+    public string Path
+    {
+      get;
+      set;
+    }
+
     public string Namespace
+    {
+      get;
+      set;
+    }
+
+    public NamespaceMatchType NamespaceMatchType
     {
       get;
       set;
@@ -30,5 +50,13 @@ namespace Barista.DocumentStore
       get;
       set;
     }
+  }
+
+  public enum NamespaceMatchType
+  {
+    Equals,
+    StartsWith,
+    EndsWith,
+    Contains,
   }
 }

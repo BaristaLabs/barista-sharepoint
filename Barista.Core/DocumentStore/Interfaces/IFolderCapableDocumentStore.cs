@@ -76,17 +76,6 @@
     Entity CreateEntity(string containerTitle, string path, string @namespace, string data);
 
     /// <summary>
-    /// Creates a new entity in the document store, contained in the specified container in the specified folder and namespace.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="path">The path.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    Entity<T> CreateEntity<T>(string containerTitle, string path, string @namespace, T value);
-
-    /// <summary>
     /// Gets the specified untyped entity in the specified path.
     /// </summary>
     /// <remarks>
@@ -97,18 +86,6 @@
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
     Entity GetEntity(string containerTitle, Guid entityId, string path);
-
-    /// <summary>
-    /// Gets the specified typed entity in the specified path.
-    /// </summary>
-    /// <remarks>
-    /// Restricts entity retrieval to those entities that are in the specified path.
-    /// </remarks>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    Entity<T> GetEntity<T>(string containerTitle, Guid entityId, string path);
 
     /// <summary>
     /// Imports an entity from a previous export.
@@ -129,16 +106,6 @@
     /// <param name="criteria">The criteria.</param>
     /// <returns></returns>
     IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria);
-
-    /// <summary>
-    /// Lists the entities.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="path">The path.</param>
-    /// <param name="criteria">The criteria.</param>
-    /// <returns></returns>
-    IList<Entity<T>> ListEntities<T>(string containerTitle, string path, EntityFilterCriteria criteria);
 
     /// <summary>
     /// Moves the specified entity to the specified destination folder.

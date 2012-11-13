@@ -189,7 +189,6 @@
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
-    <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />
@@ -198,6 +197,7 @@
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
     <Compile Include="Features\BaristaDocumentStore\BaristaDocumentStore.EventReceiver.cs">
       <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
     </Compile>
@@ -231,25 +231,12 @@
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="DocumentStore\EntityIndexService.cs" />
     <Compile Include="DocumentStore\HandleEventFiring.cs" />
     <Compile Include="DocumentStore\PermissionsHelper.cs" />
     <Compile Include="DocumentStore\SPDocumentStore.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreAttachmentsService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreCommentsService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreContainersService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreEntitiesService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreEntityPartsService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreFoldersService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreLockService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreMetadataService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStorePermissionsService.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreVersionHistoryService.cs" />
     <Compile Include="DocumentStore\SPEntity.cs" />
     <Compile Include="DocumentStore\SPEntityPart.cs" />
     <Compile Include="DocumentStore\SPMemoryCachedDocumentStore.cs" />
-    <Compile Include="DocumentStore\WebContentTypeAttribute.cs" />
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
@@ -396,7 +383,6 @@
     <None Include="Features\BaristaDocumentStore\BaristaDocumentStore.feature">
       <FeatureId>{bfe500a5-01af-4f7e-a5e2-38be9a7118ab}</FeatureId>
     </None>
-    <None Include="ISAPI\BaristaDS\v1\web.config" />
     <None Include="ISAPI\Barista\v1\web.config" />
     <None Include="ISAPI\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0264d2e2-8233-49be-baa7-a35d97e21650}</SharePointProjectItemId>
@@ -599,21 +585,8 @@
     <Content Include="Features\BaristaDocumentStore\BaristaDocumentStore.Template.xml">
       <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
     </Content>
-    <Content Include="ISAPI\BaristaDS\v1\Attachments.svc">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="ISAPI\Barista\v1\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaTest.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Comments.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Containers.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Entities.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\EntityIndex.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\EntityParts.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Folders.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Lock.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Metadata.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\Permissions.svc" />
-    <Content Include="ISAPI\BaristaDS\v1\VersionHistory.svc" />
     <Content Include="Layouts\BaristaFiddle\CheckOutFile.js" />
     <Content Include="Layouts\BaristaFiddle\favicon.ico" />
     <Content Include="Layouts\BaristaFiddle\GetFileInfo.js" />

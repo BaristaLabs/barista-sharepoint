@@ -22,8 +22,6 @@
   public class Repository : IDisposable
   {
     #region Fields
-    private const string IndexETagMetadataKey = "__BaristaDSStaleIndexETag";
-
     private readonly RepositoryConfiguration m_configuration;
     private object m_syncRoot = new object();
     #endregion
@@ -56,72 +54,6 @@
     public Repository(IDocumentStore documentStore)
     {
       m_configuration = new RepositoryConfiguration(documentStore);
-    }
-    #endregion
-
-    #region Configuration
-    /// <summary>
-    /// Registers the specified entity type with the Repository, associating it with the specified namespace.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="namespace"></param>
-    public RepositoryConfiguration RegisterEntity<T>(string @namespace)
-    {
-      return this.Configuration.RegisterEntity<T>(@namespace);
-    }
-
-    /// <summary>
-    /// Registers the specified entity type with the Repository, associating it with the specified namespace.
-    /// </summary>
-    /// <param name="namespace"></param>
-    /// <param name="type"></param>
-    public RepositoryConfiguration RegisterEntity(string @namespace, Type type)
-    {
-      return this.Configuration.RegisterEntity(@namespace, type);
-    }
-
-    /// <summary>
-    /// Registers and associates the Entity Part Type with the parent Entity Type, associating the entity part with the specified name.
-    /// </summary>
-    /// <typeparam name="TEntityType"></typeparam>
-    /// <typeparam name="TEntityPartType"></typeparam>
-    /// <param name="entityPartName"></param>
-    public RepositoryConfiguration RegisterEntityPart<TEntityType, TEntityPartType>(string entityPartName)
-    {
-      return this.Configuration.RegisterEntityPart<TEntityType, TEntityPartType>(entityPartName);
-    }
-
-    /// <summary>
-    /// Registers and associates the Entity Part Type with the parent Entity Type, associating the entity part with the specified name.
-    /// </summary>
-    /// <param name="parentEntityType"></param>
-    /// <param name="entityPartName"></param>
-    /// <param name="entityPartType"></param>
-    public RepositoryConfiguration RegisterEntityPart(Type parentEntityType, string entityPartName, Type entityPartType)
-    {
-      return this.Configuration.RegisterEntityPart(parentEntityType, entityPartName, entityPartType);
-    }
-
-    /// <summary>
-    /// Registers an index that is updated when the associated entity is updated, deleted or is invoked manually.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TIndex"></typeparam>
-    /// <param name="indexDefinition"></param>
-    public RepositoryConfiguration RegisterIndex<TEntity, TIndex>(IndexDefinition indexDefinition)
-    {
-      return this.Configuration.RegisterIndex<TEntity, TIndex>(indexDefinition);
-    }
-
-    /// <summary>
-    /// Defines a migration strategy that migrates entities of the 'from' namespace to the 'to' namespace using the defined strategy (func)
-    /// </summary>
-    /// <typeparam name="TDestinationEntityType"></typeparam>
-    /// <param name="entityMigrationDefinition"></param>
-    /// <returns></returns>
-    public RepositoryConfiguration DefineMigrationStrategy<TDestinationEntityType>(EntityMigrationStrategy<TDestinationEntityType> entityMigrationDefinition)
-    {
-      throw new NotImplementedException();
     }
     #endregion
 
@@ -196,95 +128,39 @@
     #endregion
 
     #region Entity
-    public Entity CreateEntity(string path, string entityNamespace, string data, bool updateIndex)
+    /// <summary>
+    /// Creates a new entity in the repository in the specified path with the specified data and returns its value.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="entityNamespace"></param>
+    /// <param name="data"></param>
+    /// <param name="updateIndex"></param>
+    /// <returns></returns>
+    public Entity CreateEntity(string path, string entityNamespace, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityNamespace, data);
 
-      if (result != null && updateIndex)
-        UpdateEntityIndexes(result.Id, entityNamespace, path, true, true);
-
       return result;
     }
 
     /// <summary>
-    /// Creates a new entity in the repository in the specified path with the specified data and returns its value.
+    /// Clones the specified entity located in the source path into the target path.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="path"></param>
-    /// <param name="data"></param>
-    /// <param name="updateIndex"></param>
+    /// <param name="entityId"></param>
+    /// <param name="sourcePath"></param>
+    /// <param name="targetPath"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, string data, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, data);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
-
-      return new Entity<T>(result);
-    }
-
-    /// <summary>
-    /// Creates a new entity in the repository and returns its value.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public Entity<T> CreateEntity<T>(T value, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
-
-      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-      var result = documentStore.CreateEntity<T>(this.Configuration.ContainerTitle, entityDefinition.EntityNamespace, value);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Creates a new entity in the repository and returns its value.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, T value, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var result = documentStore.CreateEntity<T>(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, value);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<T>(result.Id, null, String.Empty, true);
-
-      return result;
-    }
-
-    public Entity CloneEntity(Guid entityId, string sourcePath, string targetPath, bool updateIndex)
+    public Entity CloneEntity(Guid entityId, string sourcePath, string targetPath)
     {
       var entity = GetEntity(entityId, sourcePath);
-      var newEntity = CreateEntity(targetPath, entity.Namespace, false);
+      var newEntity = CreateEntity(targetPath, entity.Namespace, entity.Data);
 
       if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
       {
         foreach (var entityPart in ListEntityParts(entityId))
         {
-          CreateEntityPart(newEntity.Id, entityPart.Name, entityPart.Category, entityPart.Data, false);
+          CreateEntityPart(newEntity.Id, entityPart.Name, entityPart.Category, entityPart.Data);
         }
       }
 
@@ -293,7 +169,7 @@
         foreach (var attachment in ListAttachments(entityId))
         {
           var attachmentStream = DownloadAttachment(entityId, attachment.FileName);
-          var attachmentBytes = ReadFully(attachmentStream, 0);
+          var attachmentBytes = attachmentStream.ReadToEnd();
           UploadAttachment(newEntity.Id, attachment.FileName, attachmentBytes);
         }
       }
@@ -302,55 +178,16 @@
       {
         //Clone Permissions?
       }
-
-      if (newEntity != null && updateIndex)
-        UpdateEntityIndexes(newEntity.Id, newEntity.Namespace, newEntity.Path, true, true);
 
       return newEntity;
     }
 
     /// <summary>
-    /// Creates a copy of the specified entity.
+    /// Gets the specifed entity of the specified type from the underlying repository.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="entityId"></param>
-    /// <param name="sourcePath"></param>
-    /// <param name="targetPath"></param>
+    /// <param name="path"></param>
     /// <returns></returns>
-    public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath, bool updateIndex)
-    {
-      var entity = GetEntity<T>(entityId, sourcePath);
-      var newEntity = CreateEntity<T>(targetPath, entity.Data, false);
-
-      if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
-      {
-        foreach(var entityPart in ListEntityParts<T>(entityId))
-        {
-          CreateEntityPart<T>(newEntity.Id, entityPart.Name, entityPart.Category, entityPart.Data, false);
-        }
-      }
-
-      if (this.Configuration.DocumentStore is IAttachmentCapableDocumentStore)
-      {
-        foreach (var attachment in ListAttachments(entityId))
-        {
-          var attachmentStream = DownloadAttachment(entityId, attachment.FileName);
-          var attachmentBytes = ReadFully(attachmentStream, 0);
-          UploadAttachment(newEntity.Id, attachment.FileName, attachmentBytes);
-        }
-      }
-
-      if (this.Configuration.DocumentStore is IPermissionsCapableDocumentStore)
-      {
-        //Clone Permissions?
-      }
-
-      if (updateIndex == true)
-        UpdateEntityIndexes<T>(newEntity.Id, null, String.Empty, true);
-
-      return GetEntity<T>(newEntity.Id);
-    }
-
     public Entity GetEntity(Guid entityId, string path)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
@@ -359,265 +196,61 @@
     }
 
     /// <summary>
-    /// Gets the specifed entity of the specified type from the underlying repository.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="entityId"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public Entity<T> GetEntity<T>(Guid entityId)
-    {
-      return GetEntity<T>(entityId, String.Empty);
-    }
-
-    /// <summary>
-    /// Gets the specifed entity of the specified type from the underlying repository, optionally restricting to a path.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="entityId"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public Entity<T> GetEntity<T>(Guid entityId, string path)
-    {
-      if (path == null)
-        path = String.Empty;
-
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var entity = documentStore.GetEntity<T>(this.Configuration.ContainerTitle, entityId, path);
-
-      var migrationStrategy = this.Configuration.RegisteredEntityMigrationStrategies.Where( ms => ms.FromNamespace == entity.Namespace ).FirstOrDefault();
-      var typedMigrationStrategy = migrationStrategy as EntityMigrationStrategy<T>;
-      if (typedMigrationStrategy != null)
-      {
-        var migratedValue = typedMigrationStrategy.EntityMigration(Newtonsoft.Json.Linq.JObject.Parse(entity.Data));
-        entity.Namespace = typedMigrationStrategy.ToNamespace;
-        entity.Value = migratedValue;
-        //TODO: What about entity parts?
-      }
-
-      return entity;
-    }
-
-    public IList<Entity> ListEntities(string path, string entityNamespace, uint? skip, uint? top)
-    {
-      //TODO: Utilize the index if one exists. (including populating the index)
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      return documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria()
-      {
-        Namespace = entityNamespace,
-        Skip = skip,
-        Top = top,
-      });
-    }
-
-    /// <summary>
     /// Returns a collection of entities of the specified namespace contained in the specified path.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="path"></param>
-    /// <param name="skip"></param>
-    /// <param name="top"></param>
-    /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string path, uint? skip, uint? top)
+    public IList<Entity> ListEntities(EntityFilterCriteria filterCriteria)
     {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(T)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
-
-      //TODO: Utilize the index if one exists. (including populating the index)
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      return documentStore.ListEntities<T>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria()
+      IList<Entity> result;
+      if (filterCriteria.Path == null)
       {
-        Namespace = entityDefinition.EntityNamespace,
-        Skip = skip,
-        Top = top,
-      });
-    }
-
-    internal IList<Entity> ListEntities(EntityDefinition entityDefinition, string path, uint? skip, uint? top)
-    {
-      if (entityDefinition == null)
-        throw new ArgumentNullException("entityDefinition");
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      return documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria()
-      {
-        Namespace = entityDefinition.EntityNamespace,
-        Skip = skip,
-        Top = top,
-      });
-    }
-
-    public Entity GetFirstEntity(string path, string entityNamespace)
-    {
-      var client = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      return client.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityNamespace, Top = 1 }).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Gets the first entity of the specified type from the repository.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <returns></returns>
-    public Entity<TEntity> GetFirstEntity<TEntity>()
-    {
-      return GetFirstEntity<TEntity>(String.Empty);
-    }
-
-    /// <summary>
-    /// Gets the first entity of the specified type from the this.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <returns></returns>
-    public Entity<TEntity> GetFirstEntity<TEntity>(string path)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var client = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      return client.ListEntities<TEntity>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace, Top = 1 }).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Returns an instance of an entity of the given type in the given path. If no entity exists, one is created. If more than one entity of the given type exists in the given path, an exception is thrown.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="path"></param>
-    /// <param name="createEntity"></param>
-    /// <returns></returns>
-    public Entity<TEntity> GetOrCreateEntitySingleton<TEntity>(string path, Func<TEntity> createEntity, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      //Double-check locking pattern.
-      var result = documentStore.ListEntities<TEntity>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace }).SingleOrDefault();
-      if (result == null)
-      {
-        lock (m_syncRoot)
-        {
-          result = documentStore.ListEntities<TEntity>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace }).SingleOrDefault();
-
-          if (result == null)
-          {
-            result = documentStore.CreateEntity<TEntity>(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, createEntity());
-
-            if (result != null && updateIndex)
-              UpdateEntityIndexes<TEntity>(result.Id, null, String.Empty, true);
-          }
-        }
-      }
-
-      return result;
-    }
-
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string data, bool updateIndex)
-    {
-      TEntity entity = DocumentStoreHelper.DeserializeObjectFromJson<TEntity>(data);
-      return CreateOrUpdateEntitySingleton<TEntity>(path, entity, updateIndex);
-    }
-
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, TEntity entity, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      //Double-check locking pattern.
-      var result = documentStore.ListEntities<TEntity>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace }).SingleOrDefault();
-      if (result == null)
-      {
-        lock (m_syncRoot)
-        {
-          result = documentStore.ListEntities<TEntity>(this.Configuration.ContainerTitle, path, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace }).SingleOrDefault();
-
-          if (result == null)
-          {
-            result = documentStore.CreateEntity<TEntity>(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, entity);
-          }
-          else
-          {
-            var documentStore2 = this.Configuration.GetDocumentStore<IDocumentStore>();
-            documentStore2.UpdateEntity<TEntity>(this.Configuration.ContainerTitle, result.Id, entity);
-            result = GetEntity<TEntity>(result.Id);
-          }
-        }
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
       }
       else
       {
-        var documentStore2 = this.Configuration.GetDocumentStore<IDocumentStore>();
-        lock (m_syncRoot)
-        {
-          documentStore2.UpdateEntity<TEntity>(this.Configuration.ContainerTitle, result.Id, entity);
-          result = GetEntity<TEntity>(result.Id);
-        }
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria);
       }
 
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(result.Id, null, String.Empty, true);
+      return result;
+    }
+
+    /// <summary>
+    /// Gets the first entity with the specified criteria.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="entityNamespace"></param>
+    /// <returns></returns>
+    public Entity Single(EntityFilterCriteria filterCriteria)
+    {
+      return ListEntities(new EntityFilterCriteria() {
+        Path = filterCriteria.Path,
+        Namespace = filterCriteria.Namespace,
+        NamespaceMatchType = filterCriteria.NamespaceMatchType,
+        Top = 1,
+        Skip = filterCriteria.Skip})
+        .FirstOrDefault();
+    }
+
+    public Entity UpdateEntity(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+
+      var result = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entityId, entityTitle, entityDescription, entityNamespace);
 
       return result;
     }
 
-    public bool UpdateEntity(Entity entity, bool updateIndex)
+    public Entity UpdateEntityData(Guid entityId, string data)
     {
-      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var result = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entity);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes(entity.Id, entity.Namespace, entity.Path, true, true);
-
-      return result;
+      return UpdateEntityData(entityId, null, data);
     }
 
-    public bool UpdateEntity<TEntity>(Entity<TEntity> entity, bool updateIndex)
+    public Entity UpdateEntityData(Guid entityId, string eTag, string data)
     {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
-      var result = documentStore.UpdateEntity<TEntity>(this.Configuration.ContainerTitle, entity.Id, entity.Value);
-
-      if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entity.Id, null, String.Empty, true);
-
-      return result;
-    }
-
-    public bool MoveEntity(Guid entityId, string destinationPath, bool updateIndex)
-    {
-      var folderCapableDocumentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
-
-      var result = folderCapableDocumentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
+      Entity result = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entityId, eTag, data);
 
       return result;
     }
@@ -627,29 +260,16 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="destinationPath"></param>
+    /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public bool MoveEntity<TEntity>(Guid entityId, string destinationPath, bool updateIndex)
+    public bool MoveEntity(Guid entityId, string destinationPath)
     {
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      var result = documentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
-    public bool DeleteEntity(Guid entityId, bool updateIndex)
-    {
+      var folderCapableDocumentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
       var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
-      var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
+      var result = folderCapableDocumentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
 
       return result;
     }
@@ -657,25 +277,30 @@
     /// <summary>
     /// Deletes the specified entity from the repository.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     /// <param name="entityId"></param>
     /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public bool DeleteEntity<TEntity>(Guid entityId, bool updateIndex)
+    public bool DeleteEntity(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
-      var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);
+      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
-      if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
+      var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);
 
       return result;
     }
     #endregion
 
     #region Entity Comments
-    public Comment AddEntityComment(Guid entityId, string comment, bool updateIndex)
+    /// <summary>
+    /// Adds the specified string as a comment to the specified entity.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="comment"></param>
+    /// <param name="updateIndex"></param>
+    /// <returns></returns>
+    public Comment AddEntityComment(Guid entityId, string comment)
     {
       var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
@@ -684,26 +309,6 @@
       var entity = entityDocumentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
       var result = documentStore.AddEntityComment(this.Configuration.ContainerTitle, entityId, comment);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Adds the specified string as a comment to the specified entity.
-    /// </summary>
-    /// <param name="entityId"></param>
-    /// <param name="comment"></param>
-    /// <returns></returns>
-    public Comment AddEntityComment<TEntity>(Guid entityId, string comment, bool updateIndex)
-    {
-      var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
-      var result = documentStore.AddEntityComment(this.Configuration.ContainerTitle, entityId, comment);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -722,6 +327,12 @@
 
     #region Entity Parts
 
+    /// <summary>
+    /// Returns a value that indicates if the specified entity contains an entity part of the specified type.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="entityPartName"></param>
+    /// <returns></returns>
     public bool HasEntityPart(Guid entityId, string entityPartName)
     {
       var entityParts = ListEntityParts(entityId);
@@ -729,29 +340,15 @@
     }
 
     /// <summary>
-    /// Returns a value that indicates if the specified entity contains an entity part of the specified type.
+    /// Creates a new entity part with the specified name, category and data that is associated with the specified entity.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityPart"></typeparam>
     /// <param name="entityId"></param>
+    /// <param name="partName"></param>
+    /// <param name="category"></param>
+    /// <param name="data"></param>
+    /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public bool HasEntityPart<TEntity, TEntityPart>(Guid entityId)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var entityParts = ListEntityParts<TEntity>(entityId);
-      return entityParts.Any(ep => ep.Name == entityPartDefinition.EntityPartName);
-    }
-
-    public EntityPart CreateEntityPart(Guid entityId, string partName, string category, string data, bool updateIndex)
+    public EntityPart CreateEntityPart(Guid entityId, string partName, string category, string data)
     {
       var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
@@ -761,99 +358,15 @@
 
       var result = documentStore.CreateEntityPart(this.Configuration.ContainerTitle, entityId, partName, category, data);
 
-      if (result != null && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
-
       return result;
     }
 
     /// <summary>
-    /// Creates a new entity part with the specified name, category and data that is associated with the specified entity.
+    /// Returns the entity part associated with the specified entity.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
-    /// <param name="category"></param>
-    /// <param name="data"></param>
     /// <returns></returns>
-    public EntityPart CreateEntityPart<TEntity>(Guid entityId, string partName, string category, string data, bool updateIndex)
-    {
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      var result = documentStore.CreateEntityPart(this.Configuration.ContainerTitle, entityId, partName, category, data);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string partName, string category, TEntityPart value, bool updateIndex)
-    {
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, partName, category, value);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, string data, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var value = DocumentStoreHelper.DeserializeObjectFromJson<TEntityPart>(data);
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, value);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Creates an entity part of the specified type associated with the entity with the specified id.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityPart"></typeparam>
-    /// <param name="entityId"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public EntityPart<TEntityPart> CreateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-     
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      var result = documentStore.CreateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, value);
-
-      if (result != null && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
     public EntityPart GetEntityPart(Guid entityId, string partName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
@@ -861,130 +374,39 @@
       return documentStore.GetEntityPart(this.Configuration.ContainerTitle, entityId, partName);
     }
 
+
+    public EntityPart UpdateEntityPart(Guid entityId, string partName, string category)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
+
+      return documentStore.UpdateEntityPart(this.Configuration.ContainerTitle, entityId, partName, category);
+    }
+
     /// <summary>
-    /// Returns the entity part associated with the specified entity.
+    /// Updates the entity part associated with the specified entity.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
+    /// <param name="data"></param>
+    /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public EntityPart<TEntityPart> GetEntityPart<TEntity, TEntityPart>(Guid entityId, string partName)
+    public EntityPart UpdateEntityPartData(Guid entityId, string partName, string data)
     {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
+      return UpdateEntityPartData(entityId, partName, null, data);
+    }
 
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
+    public EntityPart UpdateEntityPartData(Guid entityId, string partName, string eTag, string data)
+    {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
-      return documentStore.GetEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, partName);
+      return documentStore.UpdateEntityPartData(this.Configuration.ContainerTitle, entityId, partName, eTag, data);
     }
 
     /// <summary>
-    /// Returns the entity part associated with the specified entity.
+    /// Lists the entity parts associated with the specified entity.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public EntityPart<TEntityPart> GetEntityPart<TEntity, TEntityPart>(Guid entityId)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-     
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      return documentStore.GetEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName);
-    }
-
-    public bool TryGetEntityPart<TEntity, TEntityPart>(Guid entityId, out EntityPart<TEntityPart> entityPart)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      return documentStore.TryGetEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, out entityPart);
-    }
-
-    public bool UpdateEntityPart(Guid entityId, EntityPart entityPart, bool updateIndex)
-    {
-      var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = entityDocumentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-      var result = documentStore.UpdateEntityPart(this.Configuration.ContainerTitle, entityId, entityPart);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Updates the entity part associated with the specified entity.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityPart"></typeparam>
-    /// <param name="entityId"></param>
-    /// <returns></returns>
-    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, TEntityPart value, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified Entity Type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var result = UpdateEntityPart<TEntity, TEntityPart>(entityId, entityPartDefinition.EntityPartName, value, true);
-
-      if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Updates the entity part associated with the specified entity.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityPart"></typeparam>
-    /// <param name="entityId"></param>
-    /// <returns></returns>
-    public bool UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, string entityPartName, TEntityPart value, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified Entity Type has not been registered with the repository. " + typeof(TEntity));
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-      var result = documentStore.UpdateEntityPart<TEntityPart>(this.Configuration.ContainerTitle, entityId, entityPartName, value);
-
-      if (result == true && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
-
-      return result;
-    }
-
     public IList<EntityPart> ListEntityParts(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
@@ -993,51 +415,13 @@
     }
 
     /// <summary>
-    /// Lists the entity parts associated with the specified entity.
+    /// Deletes the specified Entity Part associated with the specified entity.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
     /// <param name="entityId"></param>
+    /// <param name="entityPartName"></param>
+    /// <param name="updateIndex"></param>
     /// <returns></returns>
-    public IList<EntityPart> ListEntityParts<TEntity>(Guid entityId)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      return documentStore.ListEntityParts(this.Configuration.ContainerTitle, entityId);
-    }
-
-    /// <summary>
-    /// Returns the specified entity part associated with the first entity in the repository.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="entityId"></param>
-    /// <returns></returns>
-    public EntityPart<TEntityPart> GetFirstEntityPart<TEntity, TEntityPart>()
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var firstEntity = this.Configuration.DocumentStore.ListEntities<TEntity>(this.Configuration.ContainerTitle, new EntityFilterCriteria() { Namespace = entityDefinition.EntityNamespace, Top = 1 }).FirstOrDefault();
-
-      if (firstEntity == null)
-        return null;
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-      return documentStore.GetEntityPart<TEntityPart>(this.Configuration.ContainerTitle, firstEntity.Id, entityPartDefinition.EntityPartName);
-    }
-
-    public bool DeleteEntityPart(Guid entityId, string entityPartName, bool updateIndex)
+    public bool DeleteEntityPart(Guid entityId, string entityPartName)
     {
       var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
@@ -1046,38 +430,6 @@
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var result = documentStore.DeleteEntityPart(this.Configuration.ContainerTitle, entityId, entityPartName);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes(entityId, entity.Namespace, entity.Path, true, true);
-
-      return result;
-    }
-
-    /// <summary>
-    /// Deletes the specified Entity Part associated with the specified entity.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TEntityPart"></typeparam>
-    /// <param name="entityId"></param>
-    /// <returns></returns>
-    public bool DeleteEntityPart<TEntity, TEntityPart>(Guid entityId, bool updateIndex)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var entityPartDefinition = entityDefinition.EntityPartDefinitions.Where(pd => pd.EntityPartType == typeof(TEntityPart)).FirstOrDefault();
-
-      if (entityPartDefinition == null)
-        throw new InvalidOperationException("The specified Entity Part Type has not been registered with the repository. " + typeof(TEntityPart).ToString());
-
-      var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      var result = documentStore.DeleteEntityPart(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName);
-
-      if (result && updateIndex)
-        UpdateEntityIndexes<TEntity>(entityId, null, String.Empty, true);
 
       return result;
     }
@@ -1156,505 +508,6 @@
     }
     #endregion
 
-    #region Repository Indexes
-
-    /// <summary>
-    /// Get all indexes associated with the specified entity, optionally specifying the index, optionally rebuilding the index, and optionally specifying a index source path.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TIndex"></typeparam>
-    /// <param name="indexName"></param>
-    /// <param name="rebuildIndexIfMissing"></param>
-    /// <param name="rebuildPath"></param>
-    /// <returns></returns>
-    public ICollection<TIndex> GetEntityIndex<TEntity, TIndex>(string indexName, bool rebuildIndexIfMissing, string rebuildPath, bool rebuildIndexIfStale, bool reduce)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      var indexDefinitions = entityDefinition.IndexDefinitions.Where(id => id.IndexType == typeof(TIndex));
-
-      IndexDefinition indexDefinition = null;
-      if (indexDefinitions.Count() == 1 && String.IsNullOrEmpty(indexName))
-        indexDefinition = indexDefinitions.FirstOrDefault();
-      else
-      {
-        if (indexDefinitions.Count() > 1 && String.IsNullOrEmpty(indexName))
-          throw new InvalidOperationException("Multiple indexes exist with the specified types. Please specify an index name.");
-
-        indexDefinition = indexDefinitions.Where(id => id.Name == indexName).FirstOrDefault();
-      }
-
-      if (indexDefinition == null)
-        throw new InvalidOperationException("Unable to locate the index definition for the specified index type: " + typeof(TIndex) + " and/or name: " + indexName);
-
-      var client = Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var indexDefinitionFolder = client.GetFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-      if (indexDefinitionFolder == null)
-      {
-        indexDefinitionFolder = client.CreateFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-        if (rebuildIndexIfMissing == false)
-          return null;
-
-        RebuildEntityIndexes<TEntity>(rebuildPath);
-      }
-
-      var dsIndex = GetFirstEntity<Index>(indexDefinitionFolder.FullPath);
-
-      if (dsIndex == null && rebuildIndexIfMissing)
-      {
-        RebuildEntityIndexes<TEntity>(rebuildPath);
-        dsIndex = GetFirstEntity<Index>(indexDefinitionFolder.FullPath);
-      }
-
-      if (dsIndex == null)
-        return null;
-
-      var epClient = Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-      var items = epClient.ListEntityParts(Configuration.ContainerTitle, dsIndex.Id);
-
-      var result = new List<KeyValuePair<Guid, IndexObject>>();
-      foreach (var item in items)
-      {
-        var indexItem = DocumentStoreHelper.DeserializeObjectFromJson<IndexObject>(item.Data);
-        result.Add(new KeyValuePair<Guid, IndexObject>(new Guid(item.Name), indexItem));
-      }
-
-      //if (dsIndex == null)
-      //  return null;
-      
-      ////If we're in aggressive mode, validate that the index is not stale.
-      //if (indexDefinition.IndexETag != null)
-      //{
-      //  var indexETag = dsIndex.Value.ETag;
-      //  var currentIndexETag = indexDefinition.IndexETag(this);
-
-      //  if (indexETag != currentIndexETag)
-      //  {
-      //    if (HttpContext.Current != null && HttpContext.Current.Response != null)
-      //    {
-      //      HttpContext.Current.Response.AddHeader("BaristaDSIndexIsStale", "true");
-      //    }
-
-      //    if (rebuildIndexIfStale == true)
-      //    {
-      //      if (lockClient.GetEntityLockStatus(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name, dsIndex.Id))
-      //      {
-      //        RebuildEntityIndexes<TEntity>(rebuildPath);
-      //      }
-      //      else
-      //      {
-      //        lockClient.WaitForEntityLockRelease(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name, dsIndex.Id, 5000);
-      //      }
-
-      //      dsIndex = GetFirstEntity<Index>(indexDefinitionFolder.FullPath);
-      //    }
-      //  }
-      //}
-
-      IList<KeyValuePair<Guid, IndexObject>> indexedItems = result;
-
-      if (reduce == true)
-      {
-        indexedItems = indexDefinition.Reduce(result);
-      }
-
-      return indexedItems.Select(i => (TIndex)i.Value.MapResult).ToList();
-    }
-
-    /// <summary>
-    /// Instruct the repository to rebuild the entity indexes.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public void RebuildEntityIndexes<TEntity>()
-    {
-      RebuildEntityIndexes<TEntity>(String.Empty);
-    }
-
-    /// <summary>
-    /// Instruct the repository to rebuild the entity indexes using the specified source path.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="path"></param>
-    public void RebuildEntityIndexes<TEntity>(string path)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      RebuildEntityIndexes(entityDefinition, path);
-    }
-
-    internal void RebuildEntityIndexes(EntityDefinition entityDefinition, string path)
-    {
-      var client = Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-      var metadataClient = Configuration.GetDocumentStore<IMetadataCapableDocumentStore>();
-
-      string isRebuilding = metadataClient.GetContainerMetadata(Configuration.ContainerTitle, "IsIndexRebuilding");
-
-      if (String.IsNullOrEmpty(isRebuilding) == false)
-      {
-        if (DateTime.Parse(isRebuilding).AddMinutes(15) > DateTime.Now)
-          return;
-      }
-
-      lock (m_syncRoot)
-      {
-        metadataClient.SetContainerMetadata(Configuration.ContainerTitle, "IsIndexRebuilding", DateTime.Now.ToString());
-
-        var entities = ListEntities(entityDefinition, path, null, null);
-        var currentEntityIds = entities.Select( e => e.Id);
-
-        ApplicationLog.AddLogEntry(new ApplicationLogEntry()
-        {
-          Level = LogLevel.Information,
-          Logger = "System",
-          Message = String.Format("Rebuilding Index for type {0}. {1} entities found.", entityDefinition.EntityType.ToString(), entities.Count()),
-          TimeStamp = DateTime.Now,
-          Host = Environment.MachineName,
-        });
-
-        try
-        {
-          var folderClient = Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-          IDictionary<IndexDefinition, Entity<Index>> indexes = new ConcurrentDictionary<IndexDefinition, Entity<Index>>();
-
-          //For each index definition, ensure that the index folders and index entities are present.
-          foreach (var indexDefinition in entityDefinition.IndexDefinitions)
-          {
-            Entity<Index> dsIndex = null;
-
-            if (indexes == null || indexes.ContainsKey(indexDefinition) == false)
-            {
-              //Get or create the index entity from the DocumentStore.
-
-              var indexDefinitionFolder = folderClient.GetFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-              if (indexDefinitionFolder == null)
-                indexDefinitionFolder = folderClient.CreateFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-              dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index(), true);
-
-              indexes.Add(indexDefinition, dsIndex);
-            }
-            else
-            {
-              //Retrieve the index entity from the dictionary.
-              dsIndex = indexes[indexDefinition];
-            }
-          }
-
-          if (Configuration.IsDocumentStore<IAsyncExecDocumentStore>())
-          {
-            var asyncClient = Configuration.GetDocumentStore<IAsyncExecDocumentStore>();
-            var tasks = new List<Task>();
-            foreach (var entity in entities)
-            {
-              var currentEntity = entity;
-              Task t = asyncClient.ExecAsync(() =>
-              {
-                using (var repo = Repository.GetRepository(this.Factory, RepositoryConfiguration.InitializeDocumentStoreFromConfiguration()))
-                {
-                  repo.UpdateEntityIndexes(entityDefinition, currentEntity.Id, currentEntity, ref indexes);
-                }
-              });
-              tasks.Add(t);
-            }
-            Task.WaitAll(tasks.ToArray());
-          }
-          else
-          {
-            foreach (var entity in entities)
-            {
-              var currentEntity = entity;
-              UpdateEntityIndexes(entityDefinition, currentEntity.Id, currentEntity, ref indexes);
-            }
-          }
-
-          if (indexes != null)
-          {
-            foreach (var indexDefinition in indexes)
-            {
-              //Remove any missing entities from the index.
-              foreach (var deletedEntity in indexDefinition.Value.Value.Items.Where(io => currentEntityIds.Contains(io.Key) == false).ToList())
-              {
-                client.DeleteEntityPart(Configuration.ContainerTitle, indexDefinition.Value.Id, deletedEntity.Key.ToString());
-              }
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          ApplicationLog.AddException(ex);
-          throw;
-        }
-        finally
-        {
-          metadataClient.SetContainerMetadata(Configuration.ContainerTitle, "IsIndexRebuilding", null);
-        }
-
-        ApplicationLog.AddLogEntry(new ApplicationLogEntry()
-        {
-          Level = LogLevel.Information,
-          Logger = "System",
-          Message = String.Format("Completed rebuilding indexes for {0}.", entityDefinition.EntityType.ToString()),
-          TimeStamp = DateTime.Now,
-          Host = Environment.MachineName,
-        });
-      }
-    }
-
-    /// <summary>
-    /// Updates all indexes associated with the specified entity.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="entity"></param>
-    public void UpdateEntityIndexes<TEntity>(Guid entityId, Entity<TEntity> entity, string path, bool updateAsync)
-    {
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
-
-      //If the entity definition does not have indexes defined, get out of dodge.
-      if (entityDefinition.IndexDefinitions == null || entityDefinition.IndexDefinitions.Count == 0)
-        return;
-
-      if (entity == null)
-      {
-        //Wait a bit to allow for stuff to persist.
-        System.Threading.Thread.Sleep(300);
-        entity = GetEntity<TEntity>(entityId);
-      }
-
-      IDictionary<IndexDefinition, Entity<Index>> indexes = null;
-
-      if (updateAsync && Configuration.IsDocumentStore<IAsyncExecDocumentStore>())
-      {
-        var asyncClient = Configuration.GetDocumentStore<IAsyncExecDocumentStore>();
-
-        IDocumentStore threadLocalDocumentStore = null;
-        if (RepositoryConfiguration.SettingsDefinedInConfiguration)
-        {
-          threadLocalDocumentStore = RepositoryConfiguration.InitializeDocumentStoreFromConfiguration();
-        }
-        else
-        {
-          threadLocalDocumentStore = this.Configuration.DocumentStore;
-        }
-
-        Task t = asyncClient.ExecAsync(() =>
-          {
-            using (var repo = Repository.GetRepository(this.Factory, threadLocalDocumentStore))
-            {
-              repo.UpdateEntityIndexes(entityDefinition, entity.Id, entity, ref indexes);
-            }
-          });
-        t.Wait();
-      }
-      else
-      {
-        UpdateEntityIndexes(entityDefinition, entityId, entity, ref indexes);
-      }
-    }
-
-    /// <summary>
-    /// Updates all indexes associated with the specified entity.
-    /// </summary>
-    /// <param name="entityId"></param>
-    /// <param name="entityNamespace"></param>
-    /// <param name="path"></param>
-    /// <param name="rebuildIndexIfNotExists"></param>
-    /// <param name="persistIndexChanges"></param>
-    /// <param name="updateAsync"></param>
-    public void UpdateEntityIndexes(Guid entityId, string entityNamespace, string path, bool rebuildIndexIfNotExists, bool updateAsync)
-    {
-      if (entityId == null || entityId == Guid.Empty || entityId == default(Guid))
-        throw new ArgumentNullException("entityId");
-
-      if (String.IsNullOrEmpty(entityNamespace))
-        throw new ArgumentNullException("entityNamespace");
-
-      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.Where(ed => ed.EntityNamespace == entityNamespace).FirstOrDefault();
-
-      if (entityDefinition == null)
-        throw new InvalidOperationException("The specified entity namespace has not been registered with the repository. " + entityNamespace);
-
-      //If the entity definition does not have indexes defined, get out of dodge.
-      if (entityDefinition.IndexDefinitions == null || entityDefinition.IndexDefinitions.Count == 0)
-        return;
-
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      //Wait a bit to allow for stuff to persist.
-      System.Threading.Thread.Sleep(200);
-      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId, path);
-
-      IDictionary<IndexDefinition, Entity<Index>> indexes = null;
-      if (updateAsync && Configuration.IsDocumentStore<IAsyncExecDocumentStore>())
-      {
-        var asyncClient = Configuration.GetDocumentStore<IAsyncExecDocumentStore>();
-        Task t = asyncClient.ExecAsync(() =>
-        {
-          IDocumentStore threadLocalDocumentStore = null;
-          if (RepositoryConfiguration.SettingsDefinedInConfiguration)
-          {
-            threadLocalDocumentStore = RepositoryConfiguration.InitializeDocumentStoreFromConfiguration();
-          }
-          else
-          {
-            threadLocalDocumentStore = this.Configuration.DocumentStore;
-          }
-
-          using (var repo = Repository.GetRepository(this.Factory, threadLocalDocumentStore))
-          {
-            repo.UpdateEntityIndexes(entityDefinition, entity.Id, entity, ref indexes);
-          }
-        });
-        t.Wait();
-      }
-      else
-      {
-        UpdateEntityIndexes(entityDefinition, entityId, entity, ref indexes);
-      }
-    }
-
-    internal void UpdateEntityIndexes(EntityDefinition entityDefinition, Guid entityId, Entity entity, ref IDictionary<IndexDefinition, Entity<Index>> indexes)
-    {
-      if (entityDefinition == null)
-        throw new ArgumentNullException("entityDefinition");
-
-      if (entity != null && entity.Id != entityId)
-        throw new InvalidOperationException("The entityId and the id of the entity do not match.");
-
-      var client = Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-
-      //TODO: Make this parallel.
-      foreach (var indexDefinition in entityDefinition.IndexDefinitions)
-      {
-        Entity<Index> dsIndex = null;
-
-        if (indexes == null || indexes.ContainsKey(indexDefinition) == false)
-        {
-          //Get or create the index entity from the DocumentStore.
-
-          var indexDefinitionFolder = client.GetFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-          if (indexDefinitionFolder == null)
-            indexDefinitionFolder = client.CreateFolder(Configuration.ContainerTitle, Constants.IndexFolderName + "/" + indexDefinition.Name);
-
-          dsIndex = GetOrCreateEntitySingleton<Index>(indexDefinitionFolder.FullPath, () => new Index(), true);
-
-          if (indexes == null)
-            indexes = new Dictionary<IndexDefinition, Entity<Index>>();
-
-          indexes.Add(indexDefinition, dsIndex);
-        }
-        else
-        {
-          //Retrieve the index entity from the dictionary.
-          dsIndex = indexes[indexDefinition];
-        }
-
-        try
-        {
-          PerformMap(indexDefinition, entityId, entity, dsIndex);
-        }
-        catch (Exception ex)
-        {
-          ApplicationLog.AddException(ex);
-
-          /* Do Nothing!! Invalid data results in the value not showing up in the index, rather than the full index failing... */
-        }
-      }
-    }
-
-    /// <summary>
-    /// Performs the map operation for the specified index.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="indexDefinition"></param>
-    /// <param name="entityId"></param>
-    /// <param name="entity"></param>
-    /// <param name="dsIndex"></param>
-    /// <returns></returns>
-    private bool PerformMap(IndexDefinition indexDefinition, Guid entityId, Entity entity, Entity<Index> dsIndex)
-    {
-      var client = Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
-
-      if (indexDefinition == null || indexDefinition.Map == null)
-        return false;
-
-      var result = false;
-
-      //If the entity was null, remove the entity from the index.
-      if (entity == null)
-      {
-        try
-        {
-          client.DeleteEntityPart(Configuration.ContainerTitle, dsIndex.Id, entity.Id.ToString());
-        }
-        catch { /* Do Nothing */ }
-      }
-      else
-      {
-        //TODO: Remap only if the ETags don't match.
-
-        object mapResult = indexDefinition.Map(entity);
-
-        if (mapResult.GetType() != indexDefinition.IndexType && mapResult.GetType().IsSubclassOf(indexDefinition.IndexType) == false)
-          throw new InvalidOperationException("The return type of the index map function did not match the specified index type. " + indexDefinition.IndexType);
-
-        if (mapResult != null)
-        {
-          var indexObject = new IndexObject()
-          {
-            Metadata = new Dictionary<string, string>() {
-              { "ETag", entity.ETag }
-            },
-            MapResult = mapResult
-          };
-
-          client.CreateEntityPart<IndexObject>(Configuration.ContainerTitle, dsIndex.Id, entityId.ToString(), indexObject);
-
-          result = true;
-        }
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Perform the reduce operation for a specified index.
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="indexDefinition"></param>
-    /// <param name="entityId"></param>
-    /// <param name="entity"></param>
-    /// <param name="dsIndex"></param>
-    /// <returns></returns>
-    public bool PerformReduce<TEntity>(IndexDefinition indexDefinition, Entity<Index> dsIndex)
-    {
-      if (indexDefinition == null || indexDefinition.Reduce == null)
-        return false;
-
-      var reduction = indexDefinition.Reduce(dsIndex.Value.Items.ToList());
-      dsIndex.Value.Items.Clear();
-      foreach (var kvp in reduction)
-      {
-        if (kvp.Value.MapResult.GetType() != indexDefinition.IndexType && kvp.Value.GetType().IsSubclassOf(indexDefinition.IndexType) == false)
-          throw new InvalidOperationException("The return type of the index reduce function did not match the specified index type. " + indexDefinition.IndexType);
-        dsIndex.Value.Items.Add(kvp);
-      }
-
-      return true;
-    }
-    #endregion Indexes
-
     #region Static Methods
     private static IRepositoryFactory s_repositoryFactory = null;
 
@@ -1729,57 +582,6 @@
       }
 
       return s_repositoryFactory;
-    }
-
-    /// <summary>
-    /// Reads data from a stream until the end is reached. The
-    /// data is returned as a byte array. An IOException is
-    /// thrown if any of the underlying IO calls fail.
-    /// </summary>
-    /// <param name="stream">The stream to read data from</param>
-    /// <param name="initialLength">The initial buffer length</param>
-    public static byte[] ReadFully(Stream stream, int initialLength)
-    {
-      // If we've been passed an unhelpful initial length, just
-      // use 32K.
-      if (initialLength < 1)
-      {
-        initialLength = 32768;
-      }
-
-      byte[] buffer = new byte[initialLength];
-      int read = 0;
-
-      int chunk;
-      while ((chunk = stream.Read(buffer, read, buffer.Length - read)) > 0)
-      {
-        read += chunk;
-
-        // If we've reached the end of our buffer, check to see if there's
-        // any more information
-        if (read == buffer.Length)
-        {
-          int nextByte = stream.ReadByte();
-
-          // End of stream? If so, we're done
-          if (nextByte == -1)
-          {
-            return buffer;
-          }
-
-          // Nope. Resize the buffer, put in the byte we've just
-          // read, and continue
-          byte[] newBuffer = new byte[buffer.Length * 2];
-          Array.Copy(buffer, newBuffer, buffer.Length);
-          newBuffer[read] = (byte)nextByte;
-          buffer = newBuffer;
-          read++;
-        }
-      }
-      // Buffer is now too big. Shrink it.
-      byte[] ret = new byte[read];
-      Array.Copy(buffer, ret, read);
-      return ret;
     }
     #endregion
 

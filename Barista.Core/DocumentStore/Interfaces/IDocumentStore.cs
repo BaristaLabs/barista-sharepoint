@@ -56,16 +56,6 @@
     Entity CreateEntity(string containerTitle, string @namespace, string data);
 
     /// <summary>
-    /// Creates a new entity in the document store, contained in the specified container in the specified namespace.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    Entity<T> CreateEntity<T>(string containerTitle, string @namespace, T value);
-
-    /// <summary>
     /// Deletes the specified entity from the specified container.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
@@ -88,15 +78,6 @@
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
     Entity GetEntity(string containerTitle, Guid entityId);
-
-    /// <summary>
-    /// Gets the specified typed entity.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    Entity<T> GetEntity<T>(string containerTitle, Guid entityId);
 
     /// <summary>
     /// Gets the ETag of the specified Entities' contents.
@@ -125,31 +106,20 @@
     IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria);
 
     /// <summary>
-    /// Lists all entities contained in the container with the specified namespace, converting the data to the specified type.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <returns></returns>
-    IList<Entity<T>> ListEntities<T>(string containerTitle, EntityFilterCriteria criteria);
-
-    /// <summary>
     /// Updates the entity.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    bool UpdateEntity(string containerTitle, Entity entity);
+    Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace);
 
     /// <summary>
-    /// Updates the entity.
+    /// Updates the data contained in the specified entity.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="value">The value.</param>
+    /// <param name="containerTitle"></param>
+    /// <param name="entityId"></param>
     /// <returns></returns>
-    bool UpdateEntity<T>(string containerTitle, Guid entityId, T value);
+    Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data);
     #endregion
   }
 }

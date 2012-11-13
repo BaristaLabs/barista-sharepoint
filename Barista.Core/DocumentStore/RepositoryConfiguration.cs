@@ -13,14 +13,6 @@
 
     public RepositoryConfiguration()
     {
-      this.RegisteredEntityDefinitions = new EntityDefinitionCollection();
-      this.RegisteredEntityMigrationStrategies = new EntityMigrationStrategyCollection();
-
-      //Register Built-In Types
-      RegisterEntity<ApplicationConfiguration>(Constants.ApplicationConfigurationV1Namespace);
-      RegisterEntity<ApplicationLog>(Constants.ApplicationLogV1Namespace);
-      RegisterEntity<Index>(Constants.IndexV1Namespace);
-      RegisterEntity<Script>(Constants.ScriptV1Namespace);
     }
 
     public RepositoryConfiguration(IDocumentStore documentStore) : this()
@@ -68,146 +60,9 @@
       get;
       set;
     }
-
-    /// <summary>
-    /// Gets or sets the internal collection of registered entity definitions.
-    /// </summary>
-    internal EntityDefinitionCollection RegisteredEntityDefinitions
-    {
-      get;
-      set;
-    }
-
-    /// <summary>
-    /// Gets or sets the internal collection of registered entity migration strategies.
-    /// </summary>
-    internal EntityMigrationStrategyCollection RegisteredEntityMigrationStrategies
-    {
-      get;
-      set;
-    }
     #endregion
 
     #region Public Methods
-    /// <summary>
-    /// Registers the specified entity type with the Repository, associating it with the specified namespace.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="namespace"></param>
-    public RepositoryConfiguration RegisterEntity<T>(string @namespace)
-    {
-      RegisterEntity(@namespace, typeof(T));
-      return this;
-    }
-
-    /// <summary>
-    /// Registers the specified entity type with the Repository, associating it with the specified namespace.
-    /// </summary>
-    /// <param name="namespace"></param>
-    /// <param name="type"></param>
-    public RepositoryConfiguration RegisterEntity(string @namespace, Type type)
-    {
-      if (String.IsNullOrEmpty(@namespace))
-        throw new ArgumentNullException("namespace", "A Namespace must be defined when registring an Entity Type.");
-
-      if (type == null)
-        throw new ArgumentNullException("type", "The Entity Type must be defined.");
-
-      lock (m_syncRoot)
-      {
-        if (RegisteredEntityDefinitions.Any(ed => ed.EntityNamespace == @namespace))
-          RegisteredEntityDefinitions.Remove(@namespace);
-
-        RegisteredEntityDefinitions.Add(new EntityDefinition()
-        {
-          EntityNamespace = @namespace,
-          EntityType = type,
-        });
-      }
-      return this;
-    }
-
-    /// <summary>
-    /// Registers and associates the Entity Part Type with the parent Entity Type, associating the entity part with the specified name.
-    /// </summary>
-    /// <typeparam name="TEntityType"></typeparam>
-    /// <typeparam name="TEntityPartType"></typeparam>
-    /// <param name="entityPartName"></param>
-    public RepositoryConfiguration RegisterEntityPart<TEntityType, TEntityPartType>(string entityPartName)
-    {
-      RegisterEntityPart(typeof(TEntityType), entityPartName, typeof(TEntityPartType));
-      return this;
-    }
-
-    /// <summary>
-    /// Registers and associates the Entity Part Type with the parent Entity Type, associating the entity part with the specified name.
-    /// </summary>
-    /// <param name="parentEntityType"></param>
-    /// <param name="entityPartName"></param>
-    /// <param name="entityPartType"></param>
-    public RepositoryConfiguration RegisterEntityPart(Type parentEntityType, string entityPartName, Type entityPartType)
-    {
-      if (parentEntityType == null)
-        throw new ArgumentNullException("When registering an entity part, the parent entity type must be specified.");
-
-      if (String.IsNullOrEmpty(entityPartName))
-        throw new ArgumentNullException("An Entity Part Name must be specified.");
-
-      if (entityPartType == null)
-        throw new ArgumentNullException("When registering an entity part, the entity part type must be specified.");
-
-      var parentEntityDefinition = RegisteredEntityDefinitions.Where(ed => ed.EntityType == parentEntityType).FirstOrDefault();
-
-      if (parentEntityDefinition == null)
-        throw new InvalidOperationException("The Parent Entities' type must first be registered with the Repository prior to being associated with an Entity Part.");
-
-      lock (m_syncRoot)
-      {
-        if (parentEntityDefinition.EntityPartDefinitions.Any(p => p.EntityPartName == entityPartName))
-          parentEntityDefinition.EntityPartDefinitions.Remove(entityPartName);
-
-        //We've run the gauntlet, add the entity part definition.
-        parentEntityDefinition.EntityPartDefinitions.Add(new EntityPartDefinition()
-        {
-          EntityPartName = entityPartName,
-          EntityPartType = entityPartType,
-        });
-      }
-      return this;
-    }
-
-    /// <summary>
-    /// Registers an index that is updated when the specified entity type is updated
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TIndex"></typeparam>
-    /// <param name="indexDefinition"></param>
-    public RepositoryConfiguration RegisterIndex<TEntity, TIndex>(IndexDefinition indexDefinition)
-    {
-      var parentEntityDefinition = RegisteredEntityDefinitions.Where(ed => ed.EntityType == typeof(TEntity)).FirstOrDefault();
-
-      if (parentEntityDefinition == null)
-        throw new InvalidOperationException("The Entity Type type must first be registered with the Repository prior to being associated with an Index.");
-
-      indexDefinition.IndexType = typeof(TIndex);
-
-      lock (m_syncRoot)
-      {
-        //Replace any indexes with the same name.
-        if (parentEntityDefinition.IndexDefinitions.Any(p => p.Name == indexDefinition.Name))
-          parentEntityDefinition.IndexDefinitions.Remove(indexDefinition.Name);
-
-        parentEntityDefinition.IndexDefinitions.Add(indexDefinition);
-      }
-
-      return this;
-    }
-
-    public RepositoryConfiguration RegisterEntityMigration<TDestinationEntityType>(EntityMigrationStrategy<TDestinationEntityType> entityMigrationDefinition)
-    {
-      throw new NotImplementedException();
-    }
-
     /// <summary>
     /// Returns a value that indicates if the document store implements the specified interface.
     /// </summary>
@@ -225,7 +80,7 @@
     /// <returns></returns>
     public T GetDocumentStore<T>()
     {
-      if ((this.DocumentStore is T) == false)
+      if (IsDocumentStore<T>() == false)
       {
         throw new NotImplementedException(String.Format("The current Document Store does not implement the specified operation. ({0})", typeof(T)));
       }
