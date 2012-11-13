@@ -355,6 +355,9 @@
     <None Include="DocumentStore\DocumentStoreAttachment\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{d33d4891-c132-43dc-86ec-f0258c07b03e}</SharePointProjectItemId>
     </None>
+    <None Include="DocumentStore\DocumentStoreContainer\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{9b929ad8-83dd-4c9f-8c80-2a26784d88f7}</SharePointProjectItemId>
+    </None>
     <None Include="DocumentStore\DocumentStoreDefaultDocuments\Default.dsep" />
     <None Include="DocumentStore\DocumentStoreDefaultDocuments\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{fa3532a4-05fd-4cbc-9a5e-5cf75f8ea848}</SharePointProjectItemId>
@@ -560,6 +563,12 @@
     <Content Include="BaristaUnitTests\Elements.xml" />
     <Content Include="BaristaUnitTests\index.html" />
     <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\EditDlg.htm" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\FileDlg.htm" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Repair.aspx" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Upload.aspx" />
     <Content Include="DocumentStore\DocumentStoreDefaultDocuments\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\DocSetHomePage.aspx" />
