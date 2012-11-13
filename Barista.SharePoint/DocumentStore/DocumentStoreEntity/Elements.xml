@@ -1,23 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
   <!-- Parent ContentType: Document Set (0x0120D520) -->
-  <ContentType ID="0x0120D520009156b84f06ea4f2f96e34101e1e1b1a8"
-               Name="Document Store Entity"
-               Group="Document Store Content Types"
-               Description="Represents a document, attachments and associated metadata in a NoSql/Document-oriented database style model."
-               Version="0"
-               ProgId="SharePoint.DocumentSet"
-               PushDownChangedResourceFilesOnly="TRUE">
+  <ContentType ID="0x0120D520009156b84f06ea4f2f96e34101e1e1b1a8" Name="Document Store Entity" Group="Document Store Content Types" Description="Represents a document, attachments and associated metadata in a NoSql/Document-oriented database style model." Version="0" ProgId="SharePoint.DocumentSet" PushDownChangedResourceFilesOnly="TRUE" Inherits="FALSE">
     <Folder TargetName="_cts/Document Store Entity" />
     <FieldRefs>
-
       <!--OOB fields -->
-      <FieldRef ID="{CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E}" Name="DocumentSetDescription" ShowInNewForm="TRUE" ShowInEditForm="TRUE" />
-
       <!-- Custom fields -->
-      <FieldRef ID="{5b8dd38e-b926-41b3-b7f1-896534b9d916}" Name="Namespace" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE"/>
-      <FieldRef ID="{efab5a5d-493b-480f-867a-2f754a269200}" Name="DocumentEntityGuid" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE"/>
-
+      <FieldRef ID="{5b8dd38e-b926-41b3-b7f1-896534b9d916}" Name="Namespace" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE" />
+      <FieldRef ID="{efab5a5d-493b-480f-867a-2f754a269200}" Name="DocumentEntityGuid" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE" />
     </FieldRefs>
     <XmlDocuments>
       <!-- List of all fields [site columns] shared between all content types and the document set. -->
@@ -35,7 +25,7 @@
           <!-- Add content types that will be used in the document set using the syntax below -->
           <!--<AllowedContentType id="00000000-0000-0000-0000-000000000000" />-->
           <!-- Link to a Document -->
-          <AllowedContentType id="0x01010A"/>
+          <AllowedContentType id="0x01010A" />
           <!-- Document Store Entity Part -->
           <AllowedContentType id="0x010100c85948cf1fa64eed9d29eaa2a1078fd6" />
           <!-- Document Store Attachment -->
@@ -60,7 +50,7 @@
         <dd:DefaultDocuments xmlns:dd="http://schemas.microsoft.com/office/documentsets/defaultdocuments" AddSetName="FALSE" LastModified="1/1/2010 08:00:00 AM">
           <!-- Add default documents using the syntax below -->
           <!--<DefaultDocument name="Sample Document.docx" idContentType="0x0101" />-->
-          <DefaultDocument name="default.dsep" idContentType="0x010100c85948cf1fa64eed9d29eaa2a1078fd6"/>
+          <DefaultDocument name="default.dsep" idContentType="0x010100c85948cf1fa64eed9d29eaa2a1078fd6" />
         </dd:DefaultDocuments>
       </XmlDocument>
       <!-- Documents used (OOB) -->
@@ -70,7 +60,7 @@
         </FormUrls>
       </XmlDocument>
       <XmlDocument NamespaceURI="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms">
-        <FormTemplates  xmlns="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms">
+        <FormTemplates xmlns="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms">
           <Display>ListForm</Display>
           <Edit>ListForm</Edit>
           <New>DocSetDisplayForm</New>

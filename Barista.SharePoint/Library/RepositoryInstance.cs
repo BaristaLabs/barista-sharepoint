@@ -49,9 +49,9 @@
     }
 
     [JSFunction(Name = "createContainer")]
-    public ContainerInstance CreateContainer(string containerTitle)
+    public ContainerInstance CreateContainer(string containerTitle, string description)
     {
-      var container = m_repository.CreateContainer(containerTitle);
+      var container = m_repository.CreateContainer(containerTitle, description);
       return new ContainerInstance(this.Engine, container);
     }
 

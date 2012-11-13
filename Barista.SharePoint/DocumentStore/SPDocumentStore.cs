@@ -96,8 +96,8 @@
             Guid listID = web.Lists.Add(containerTitle,                         //List Title
                                         description,                            //List Description
                                         "Lists/" + containerTitle,              //List Url
-                                        "0984cbdd-a989-422e-9fe6-08a980a669a6", //Feature Id of List definition Provisioning Feature – CustomList Feature Id
-                                        10080,                                  //List Template Type
+                                        "1e084611-a8c5-449c-a1f0-841a56ee2712", //Feature Id of List definition Provisioning Feature – CustomList Feature Id
+                                        10001,                                  //List Template Type
                                         "121");                                 //Document Template Type .. 101 is for None
             return SPDocumentStoreHelper.MapContainerFromSPList(web.Lists[listID]);
           }

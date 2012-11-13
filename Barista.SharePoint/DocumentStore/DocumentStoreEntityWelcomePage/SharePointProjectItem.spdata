@@ -2,7 +2,6 @@
 <ProjectItem Type="Microsoft.VisualStudio.SharePoint.Module" DefaultFile="Elements.xml" SupportedTrustLevels="All" SupportedDeploymentScopes="Web, Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
   <Files>
     <ProjectItemFile Source="Elements.xml" Target="DocumentStoreEntityWelcomePage\" Type="ElementManifest" />
-    <ProjectItemFile Source="Sample.txt" Target="DocumentStoreEntityWelcomePage\" Type="ElementFile" />
     <ProjectItemFile Source="DocSetHomePage.aspx" Target="DocumentStoreEntityWelcomePage\" Type="ElementFile" />
   </Files>
 </ProjectItem>

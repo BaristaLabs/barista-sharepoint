@@ -75,10 +75,10 @@
     /// </summary>
     /// <param name="containerTitle"></param>
     /// <returns></returns>
-    public Container CreateContainer(string containerTitle)
+    public Container CreateContainer(string containerTitle, string description)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-      return documentStore.CreateContainer(this.Configuration.ContainerTitle, containerTitle);
+      return documentStore.CreateContainer(containerTitle, description);
     }
 
     /// <summary>

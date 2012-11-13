@@ -355,9 +355,6 @@
     <None Include="DocumentStore\DocumentStoreAttachment\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{d33d4891-c132-43dc-86ec-f0258c07b03e}</SharePointProjectItemId>
     </None>
-    <None Include="DocumentStore\DocumentStoreContainer\SharePointProjectItem.spdata">
-      <SharePointProjectItemId>{076fc9a5-2b8e-453b-a652-fdfb52dc0a65}</SharePointProjectItemId>
-    </None>
     <None Include="DocumentStore\DocumentStoreDefaultDocuments\Default.dsep" />
     <None Include="DocumentStore\DocumentStoreDefaultDocuments\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{fa3532a4-05fd-4cbc-9a5e-5cf75f8ea848}</SharePointProjectItemId>
@@ -369,7 +366,7 @@
       <SharePointProjectItemId>{09195d8e-88af-4f19-b332-e9862dc50c76}</SharePointProjectItemId>
     </None>
     <None Include="DocumentStore\DocumentStoreEntity\SharePointProjectItem.spdata">
-      <SharePointProjectItemId>{712c365b-0325-46bd-88da-b4ca60ed1c63}</SharePointProjectItemId>
+      <SharePointProjectItemId>{8cc2bc20-86f0-477f-87b2-aadba6e015ce}</SharePointProjectItemId>
     </None>
     <None Include="DocumentStore\DocumentStoreSiteColumns\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{80a584d0-36de-495c-a64b-ef5ea5af19c5}</SharePointProjectItemId>
@@ -563,17 +560,10 @@
     <Content Include="BaristaUnitTests\Elements.xml" />
     <Content Include="BaristaUnitTests\index.html" />
     <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml" />
-    <Content Include="DocumentStore\DocumentStoreContainer\EditDlg.htm" />
-    <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
-    <Content Include="DocumentStore\DocumentStoreContainer\FileDlg.htm" />
-    <Content Include="DocumentStore\DocumentStoreContainer\Repair.aspx" />
-    <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
-    <Content Include="DocumentStore\DocumentStoreContainer\Upload.aspx" />
     <Content Include="DocumentStore\DocumentStoreDefaultDocuments\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\DocSetHomePage.aspx" />
     <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\Elements.xml" />
-    <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\Sample.txt" />
     <Content Include="DocumentStore\DocumentStoreEntity\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreSiteColumns\Elements.xml" />
     <Content Include="Features\BaristaServiceInstaller\BaristaServiceInstaller.Template.xml">

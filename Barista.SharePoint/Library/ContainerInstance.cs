@@ -54,11 +54,9 @@
     [JSProperty(Name = "url")]
     public string Url
     {
-      get;
-      set;
+      get { return m_container.Url; }
+      set { m_container.Url = value; }
     }
-
-
     #endregion
   }
 }

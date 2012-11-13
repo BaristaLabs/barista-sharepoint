@@ -376,7 +376,7 @@ namespace Barista.SharePoint
       if (BaristaContext.Current.Request != null && BaristaContext.Current.Request.UrlReferrer != null)
         referrer = BaristaContext.Current.Request.UrlReferrer;
       else if (HttpContext.Current != null && HttpContext.Current.Request != null)
-        referrer = BaristaContext.Current.Request.UrlReferrer;
+        referrer = HttpContext.Current.Request.UrlReferrer;
 
       //Attempt to get the file relative to the url referrer.
       if (referrer != null)
