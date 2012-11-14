@@ -6,7 +6,7 @@ namespace Barista.SharePoint.DocumentStore
     public const string MetadataPrefix = "ods_";
     public const string DocumentSetEntityPartExtension = ".dsep";
 
-    public static Guid DocumentContainerFeatureId = new Guid("0984cbdd-a989-422e-9fe6-08a980a669a6");
+    public static Guid DocumentContainerFeatureId = new Guid("1e084611-a8c5-449c-a1f0-841a56ee2712");
 
     public static Guid NamespaceFieldId = new Guid("5b8dd38e-b926-41b3-b7f1-896534b9d916");
     public static Guid DocumentEntityGuidFieldId = new Guid("efab5a5d-493b-480f-867a-2f754a269200");

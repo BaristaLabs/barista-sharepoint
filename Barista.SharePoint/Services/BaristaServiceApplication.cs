@@ -18,7 +18,7 @@
   using System.Web;
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
-  [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
+  [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
   internal sealed class BaristaServiceApplication : SPIisWebServiceApplication, IBaristaServiceApplication
   {
     [Persisted]
@@ -117,28 +117,39 @@
       try
       {
         result = engine.Evaluate(request.Code);
+
+        var isRaw = false;
+
+        //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
+        if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+        {
+          response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result);
+        }
+
+        if (webBundle.WebInstance != null)
+        {
+          isRaw = webBundle.WebInstance.Response.IsRaw;
+        }
+
+        var stringified = JSONObject.Stringify(engine, result, null, null);
+        response.SetContentsFromResultObject(engine, result, isRaw);
       }
       catch (Exception ex)
       {
         BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An error occured while evaluating script: ");
         throw;
       }
-
-      var isRaw = false;
-
-      //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
-      if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+      finally
       {
-        response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result);
+        //Cleanup
+        engine = null;
+
+        if (BaristaContext.Current != null)
+          BaristaContext.Current.Dispose();
+
+        BaristaContext.Current = null;
       }
 
-      if (webBundle.WebInstance != null)
-      {
-        isRaw = webBundle.WebInstance.Response.IsRaw;
-      }
-
-      var stringified = JSONObject.Stringify(engine, result, null, null);
-      response.SetContentsFromResultObject(engine, result,isRaw);
       return response;
     }
 
@@ -161,6 +172,13 @@
         BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An error occured while executing script: ");
         throw;
       }
+      finally
+      {
+        //Cleanup
+        engine = null;
+        BaristaContext.Current.Dispose();
+        BaristaContext.Current = null;
+      }
     }
 
     /// <summary>
@@ -170,6 +188,7 @@
     private ScriptEngine GetScriptEngine(WebBundle webBundle)
     {
       var engine = new Jurassic.ScriptEngine();
+
       var console = new FirebugConsole(engine);
       console.Output = new BaristaConsoleOutput(engine);
 

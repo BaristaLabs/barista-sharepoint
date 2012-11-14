@@ -64,11 +64,11 @@
 
     #region Folder
     [JSFunction(Name="listFolders")]
-    public ArrayInstance ListFolders([DefaultParameterValue("")]object path)
+    public ArrayInstance ListFolders(object path)
     {
       var stringPath = String.Empty;
-      if (path != Undefined.Value && path != Null.Value && path is string)
-        stringPath = path as string;
+      if (path != Undefined.Value && path != Null.Value)
+        stringPath = path.ToString();
 
       var result = this.Engine.Array.Construct();
 
@@ -108,16 +108,14 @@
       var stringEntityNamespace = "";
       var stringData = "";
 
-      if (path is string)
-        stringPath = path as string;
+      if (path != Null.Value && path != Undefined.Value)
+        stringPath = path.ToString();
 
-      if (entityNamespace is string)
-        stringEntityNamespace = entityNamespace as string;
+      if (entityNamespace != Null.Value && entityNamespace != Undefined.Value)
+        stringEntityNamespace = entityNamespace.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else if (data is string)
-        stringData = data as string;
       else
         stringData = data.ToString();
 
@@ -153,7 +151,7 @@
     }
 
     [JSFunction(Name = "single")]
-    public EntityInstance Single(object filterCriteria)
+    public object Single(object filterCriteria)
     {
       var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
 
@@ -161,6 +159,10 @@
         criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
 
       var result = m_repository.Single(criteria.EntityFilterCriteria);
+
+      if (result == null)
+        return Null.Value;
+
       return new EntityInstance(this.Engine, result);
     }
 
@@ -190,23 +192,41 @@
     }
 
     [JSFunction(Name = "updateEntity")]
-    public EntityInstance UpdateEntity(string entityId, object eTag, object data)
+    public object UpdateEntity(string entityId, object eTag, object data)
     {
       var id = new Guid(entityId);
       var stringData = "";
       var stringETag = "";
 
-      if (eTag is string)
-        stringETag = (string)eTag;
+      if (eTag != Null.Value && eTag != Undefined.Value)
+        stringETag = eTag.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else if (data is string)
-        stringData = data as string;
       else
         stringData = data.ToString();
 
       var result = m_repository.UpdateEntityData(id, stringETag, stringData);
+
+      if (result == null)
+        return Null.Value;
+
+      return new EntityInstance(this.Engine, result);
+    }
+
+    [JSFunction(Name = "updateEntityNamespace")]
+    public object UpdateEntityNamespace(string entityId, object newNamespace)
+    {
+      string stringNewNamespace = null;
+      if (newNamespace != Null.Value && newNamespace != Undefined.Value)
+        stringNewNamespace = newNamespace.ToString();
+
+      var id = new Guid(entityId);
+      var result = m_repository.UpdateEntity(id, null, null, stringNewNamespace);
+
+      if (result == null)
+        return Null.Value;
+
       return new EntityInstance(this.Engine, result);
     }
     #endregion
@@ -244,16 +264,14 @@
       var stringCategory = "";
       var stringData = "";
 
-      if (partName is string)
-        stringPartName = partName as string;
+      if (partName != Null.Value && partName != Undefined.Value)
+        stringPartName = partName.ToString();
 
-      if (category is string)
-        stringCategory = category as string;
+      if (category != Null.Value && category != Undefined.Value)
+        stringCategory = category.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else if (data is string)
-        stringData = data as string;
       else
         stringData = data.ToString();
 
@@ -269,16 +287,14 @@
       var stringCategory = "";
       var stringData = "";
 
-      if (partName is string)
-        stringPartName = partName as string;
+      if (partName != Null.Value && partName != Undefined.Value)
+        stringPartName = partName.ToString();
 
-      if (category is string)
-        stringCategory = category as string;
+      if (category != Null.Value && category != Undefined.Value)
+        stringCategory = category.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else if (data is string)
-        stringData = data as string;
       else
         stringData = data.ToString();
 
@@ -337,23 +353,21 @@
     }
 
     [JSFunction(Name = "updateEntityPart")]
-    public EntityPartInstance UpdateEntityPart(string entityId, object partName, string eTag, object data)
+    public EntityPartInstance UpdateEntityPart(string entityId, object partName, object eTag, object data)
     {
       var id = new Guid(entityId);
       var stringPartName = "";
       var stringData = "";
       var stringETag = "";
 
-      if (partName is string)
-        stringPartName = (string)partName;
+      if (partName != Null.Value && partName != Undefined.Value)
+        stringPartName = partName.ToString();
 
-      if (eTag is string)
-        stringETag = (string)eTag;
+      if (eTag != Null.Value && eTag != Undefined.Value)
+        stringETag = eTag.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else if (data is string)
-        stringData = data as string;
       else
         stringData = data.ToString();
 
@@ -459,8 +473,8 @@
       var stringPath = "";
       var id = new Guid(entityId);
 
-      if (path is string)
-        stringPath = path as string;
+      if (path != Null.Value && path != Undefined.Value)
+        stringPath = path.ToString();
 
       var entity = m_repository.GetEntity(id, stringPath);
       var entityPart = m_repository.ListEntityParts(id);

@@ -198,6 +198,7 @@
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
+    <Compile Include="Extensions\BrewRequestExtensions.cs" />
     <Compile Include="Features\BaristaDocumentStore\BaristaDocumentStore.EventReceiver.cs">
       <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
     </Compile>
@@ -207,6 +208,7 @@
     <Compile Include="Features\BaristaUnitTests\BaristaUnitTests.EventReceiver.cs">
       <DependentUpon>BaristaUnitTests.feature</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BaristaHelper.cs" />
     <Compile Include="Layouts\BaristaJS\linqjs-2.2.0.2\sample\LinqJS.cs" />
     <Compile Include="Library\ActiveDirectoryInstance.cs" />
     <Compile Include="Library\ADGroupInstance.cs" />

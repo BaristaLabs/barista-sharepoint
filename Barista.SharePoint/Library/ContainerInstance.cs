@@ -57,6 +57,44 @@
       get { return m_container.Url; }
       set { m_container.Url = value; }
     }
+
+    [JSProperty(Name = "created")]
+    public DateInstance Created
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_container.Created); }
+      set { m_container.Created = DateTime.Parse(value.ToISOString()); }
+    }
+
+    [JSProperty(Name = "createdBy")]
+    public object CreatedBy
+    {
+      get
+      {
+        if (m_container.CreatedBy == null)
+          return Null.Value;
+
+        return m_container.CreatedBy.LoginName;
+      }
+    }
+
+    [JSProperty(Name = "modified")]
+    public DateInstance Modified
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_container.Modified); }
+      set { m_container.Modified = DateTime.Parse(value.ToISOString()); }
+    }
+
+    [JSProperty(Name = "modifiedBy")]
+    public object ModifiedBy
+    {
+      get
+      {
+        if (m_container.ModifiedBy == null)
+          return Null.Value;
+
+        return m_container.ModifiedBy.LoginName;
+      }
+    }
     #endregion
   }
 }

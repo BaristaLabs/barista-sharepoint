@@ -21,7 +21,7 @@
     {
       var web = BaristaContext.Current.Web;
       var factory = new BaristaRepositoryFactory();
-      var repository = Repository.GetRepository(factory, new SPMemoryCachedDocumentStore(web));
+      var repository = Repository.GetRepository(factory, new SPDocumentStore(web));
       return new RepositoryInstance(engine, repository);
     }
 

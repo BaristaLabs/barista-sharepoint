@@ -46,6 +46,7 @@
       get { return m_httpResponse; }
     }
 
+    #region Ajax
     [JSFunction(Name = "ajax")]
     public object Ajax(string url, object settings)
     {
@@ -247,6 +248,22 @@
       }
 
       return resultObject;
+    }
+    #endregion
+
+    [JSFunction(Name = "parseQueryString")]
+    public object ParseQueryString(object query)
+    {
+      if (query.GetType() != typeof(string))
+        return Null.Value;
+
+      var result = this.Engine.Object.Construct();
+      var dict = HttpUtility.ParseQueryString(query as string);
+      foreach (var key in dict.AllKeys)
+      {
+        result.SetPropertyValue(key, dict[key], false);
+      }
+      return result;
     }
   }
 }

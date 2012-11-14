@@ -693,13 +693,13 @@
           try
           {
             DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
-            if (ds.Item.Title != title)
+            if (String.IsNullOrEmpty(title) == false && ds.Item.Title != title)
               ds.Item["Title"] = title;
 
-            if ((ds.Item["DocumentSetDescription"] as string) != description)
+            if (description != null && (ds.Item["DocumentSetDescription"] as string) != description)
               ds.Item["DocumentSetDescription"] = description;
 
-            if ((ds.Item["Namespace"] as string) != @namespace)
+            if (@namespace != null && (ds.Item["Namespace"] as string) != @namespace)
               ds.Item["Namespace"] = @namespace;
 
             ds.Item.SystemUpdate(true);
@@ -797,7 +797,7 @@
           if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
             throw new InvalidOperationException("Insufficent Permissions.");
 
-          if (defaultEntityPart.ETag != eTag)
+          if (String.IsNullOrEmpty(eTag) == false && defaultEntityPart.ETag != eTag)
           {
             throw new InvalidOperationException("Could not update the entity, the Entity has been updated by another user.");
           }

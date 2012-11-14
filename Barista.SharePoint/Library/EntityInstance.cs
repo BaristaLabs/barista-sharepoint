@@ -88,5 +88,43 @@
       get { return m_entity.Data; }
       set { m_entity.Data = value; }
     }
+
+    [JSProperty(Name = "created")]
+    public DateInstance Created
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Created); }
+      set { m_entity.Created = DateTime.Parse(value.ToISOString()); }
+    }
+
+    [JSProperty(Name = "createdBy")]
+    public object CreatedBy
+    {
+      get
+      {
+        if (m_entity.CreatedBy == null)
+          return Null.Value;
+
+        return m_entity.CreatedBy.LoginName;
+      }
+    }
+
+    [JSProperty(Name = "modified")]
+    public DateInstance Modified
+    {
+      get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Modified); }
+      set { m_entity.Modified = DateTime.Parse(value.ToISOString()); }
+    }
+
+    [JSProperty(Name = "modifiedBy")]
+    public object ModifiedBy
+    {
+      get
+      {
+        if (m_entity.ModifiedBy == null)
+          return Null.Value;
+
+        return m_entity.ModifiedBy.LoginName;
+      }
+    }
   }
 }

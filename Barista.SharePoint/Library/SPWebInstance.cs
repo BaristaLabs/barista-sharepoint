@@ -484,6 +484,7 @@
     public SPFolderInstance GetFolderFromServerRelativeUrl(string serverRelativeUrl)
     {
       var folder = m_web.GetFolder(serverRelativeUrl);
+
       if (folder == null || folder.Exists == false)
         return null;
 
@@ -514,10 +515,7 @@
           serverRelativeUrl = SPUtility.GetFullUrl(BaristaContext.Current.Site, serverRelativeUrl);
         }
 
-        siteRelativeUrl = serverRelativeUrl.Replace(m_web.Url, "");
-        siteRelativeUrl = siteRelativeUrl.Replace(Path.GetFileName(siteRelativeUrl), "");
-
-        list = m_web.GetList(siteRelativeUrl);
+        list = m_web.GetList(serverRelativeUrl);
       }
       catch (FileNotFoundException)
       {

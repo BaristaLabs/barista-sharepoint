@@ -98,9 +98,7 @@
       var result = this.Engine.Object.Construct();
       foreach (var key in this.Response.Headers.Keys)
       {
-        var obj = this.Engine.Evaluate("({ '" + key + "' : '" + this.Response.Headers[key] + "' });");
-        result.DefineProperty(key, new PropertyDescriptor(this.Response.Headers[key], PropertyAttributes.Writable | PropertyAttributes.Enumerable | PropertyAttributes.Configurable), true);
-        result.SetPropertyValue(key, this.Response.Headers[key], true);
+        result.SetPropertyValue(key, this.Response.Headers[key], false);
       }
       return result;
     }

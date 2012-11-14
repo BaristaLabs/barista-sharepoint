@@ -184,6 +184,11 @@ namespace Barista.SharePoint
         this.Site.Dispose();
         this.Site = null;
       }
+
+      this.List = null;
+      this.ListItem = null;
+      this.Request = null;
+      this.Response = null;
     }
   }
 }

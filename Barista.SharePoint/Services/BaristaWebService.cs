@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.Services
 {
+  using Barista.SharePoint.Extensions;
   using Barista.Extensions;
   using Barista.Framework;
+  using Barista.SharePoint.Extensions;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Client.Services;
@@ -128,7 +130,7 @@
       if (SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.Open) == false)
         throw new InvalidOperationException("Cannot execute Barista: Access Denied - The current user does not have access to the current web.");
 
-      EnsureExecutionInTrustedLocation();
+      BaristaHelper.EnsureExecutionInTrustedLocation();
     }
 
     /// <summary>
@@ -249,54 +251,9 @@
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
 
-      SetExtendedPropertiesFromCurrentSPContext(request);
+      request.SetExtendedPropertiesFromCurrentSPContext();
       
       client.Exec(request);
-    }
-
-    /// <summary>
-    /// Checks the current context against the trusted locations.
-    /// </summary>
-    private void EnsureExecutionInTrustedLocation()
-    {
-      var currentUri = new Uri(SPContext.Current.Web.Url);
-
-      //CA is always trusted.
-      if (SPAdministrationWebApplication.Local.AlternateUrls.Any( u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
-        return;
-
-      bool trusted = false;
-      var trustedLocations = Utilities.GetFarmKeyValue("BaristaTrustedLocations");
-
-      if (trustedLocations != null && trustedLocations != string.Empty)
-      {
-        var trustedLocationsCollection = JArray.Parse(trustedLocations);
-        foreach (var trustedLocation in trustedLocationsCollection.OfType<JObject>())
-        {
-          Uri trustedLocationUrl = new Uri(trustedLocation["Url"].ToString(), UriKind.Absolute);
-          bool trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
-
-          if (trustChildren == true)
-          {
-            if (trustedLocationUrl.IsBaseOf(currentUri))
-            {
-              trusted = true;
-              break;
-            }
-          }
-          else
-          {
-            if (trustedLocationUrl == currentUri)
-            {
-              trusted = true;
-              break;
-            }
-          }
-        }
-      }
-
-      if (trusted == false)
-        throw new InvalidOperationException("Cannot execute Barista: Current location is not trusted. Add the current location to the trusted Urls in the management section of the Barista service application.");
     }
 
     /// <summary>
@@ -311,7 +268,7 @@
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
 
-      SetExtendedPropertiesFromCurrentSPContext(request);
+      request.SetExtendedPropertiesFromCurrentSPContext();
 
       var result = client.Eval(request);
 
@@ -324,30 +281,6 @@
 
       var resultStream = new MemoryStream(result.Content);
       return resultStream;
-    }
-
-    public void SetExtendedPropertiesFromCurrentSPContext(BrewRequest request)
-    {
-      if (SPContext.Current != null)
-      {
-        if (SPContext.Current.Site != null)
-          request.ExtendedProperties.Add("SPSiteId", SPContext.Current.Site.ID.ToString());
-
-        if (SPContext.Current.Web != null)
-          request.ExtendedProperties.Add("SPWebId", SPContext.Current.Web.ID.ToString());
-
-        if (SPContext.Current.ListId != null && SPContext.Current.ListId != Guid.Empty)
-          request.ExtendedProperties.Add("SPListId", SPContext.Current.ListId.ToString());
-
-        if (String.IsNullOrEmpty(SPContext.Current.ListItemServerRelativeUrl) == false)
-          request.ExtendedProperties.Add("SPListItemUrl", SPContext.Current.ListItemServerRelativeUrl);
-
-        if (SPContext.Current.ViewContext != null && SPContext.Current.ViewContext.ViewId != Guid.Empty)
-          request.ExtendedProperties.Add("SPViewId", SPContext.Current.ViewContext.ViewId.ToString());
-
-        if (SPContext.Current.File != null && SPContext.Current.File.UniqueId != Guid.Empty)
-          request.ExtendedProperties.Add("SPFileId", SPContext.Current.File.UniqueId.ToString());
-      }
     }
     #endregion
   }
