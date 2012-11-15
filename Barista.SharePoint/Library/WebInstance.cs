@@ -6,8 +6,10 @@
   using Jurassic.Library;
   using Microsoft.IdentityModel.Claims;
   using Microsoft.IdentityModel.WindowsTokenService;
+  using Microsoft.Office.Server.ObjectCache;
   using Newtonsoft.Json;
   using System;
+  using System.Collections;
   using System.IO;
   using System.Linq;
   using System.Net;
@@ -17,6 +19,7 @@
   using System.Threading;
   using System.Threading.Tasks;
   using System.Web;
+  using System.Web.Caching;
   using System.Xml.Linq;
 
   public class WebInstance : ObjectInstance
@@ -262,6 +265,78 @@
       foreach (var key in dict.AllKeys)
       {
         result.SetPropertyValue(key, dict[key], false);
+      }
+      return result;
+    }
+
+    [JSFunction(Name = "getItemFromCache")]
+    public object GetItemFromCache(string cacheKey)
+    {
+      var result = HttpRuntime.Cache.Get(cacheKey) as string;
+      if (result == null)
+        return Null.Value;
+
+      return result;
+    }
+
+    [JSFunction(Name = "addItemToCache")]
+    public void AddItemToCache(string cacheKey, object item, object absoluteExpiration, object slidingExpiration)
+    {
+      string stringItem;
+      DateTime dtExpiration = Cache.NoAbsoluteExpiration;
+      TimeSpan tsExpiration = Cache.NoSlidingExpiration;
+
+      if (item == Null.Value || item == Undefined.Value || item == null)
+        return;
+
+      if (item is ObjectInstance)
+        stringItem = JSONObject.Stringify(this.Engine, item, null, null);
+      else
+        stringItem = item.ToString();
+
+      if (absoluteExpiration != Null.Value && absoluteExpiration != Undefined.Value && absoluteExpiration != null)
+      {
+        if (absoluteExpiration is DateInstance)
+          dtExpiration = DateTime.Parse((absoluteExpiration as DateInstance).ToISOString());
+        else
+          dtExpiration = DateTime.Parse(absoluteExpiration.ToString());
+      }
+
+      if (slidingExpiration != Null.Value && slidingExpiration != Undefined.Value && slidingExpiration != null)
+      {
+        if (slidingExpiration is DateInstance)
+          tsExpiration = TimeSpan.FromMilliseconds((slidingExpiration as DateInstance).ValueInMilliseconds);
+        else
+          tsExpiration = TimeSpan.Parse(slidingExpiration.ToString());
+      }
+
+      HttpRuntime.Cache.Insert(cacheKey, stringItem, null, dtExpiration, tsExpiration);
+    }
+
+    [JSFunction(Name = "removeItemFromCache")]
+    public string RemoveItemFromCache(string cacheKey)
+    {
+      var result = HttpRuntime.Cache.Remove(cacheKey) as string;
+      return result;
+    }
+
+    [JSFunction(Name = "getItemsInCache")]
+    public object GetItemsInCache()
+    {
+      var result = this.Engine.Object.Construct();
+      foreach (var item in HttpRuntime.Cache.OfType<DictionaryEntry>())
+      {
+        var key = item.Key as string;
+        if (key != null)
+        {
+          string value = item.Value as string;
+
+          if (value == null)
+            result.SetPropertyValue(key, Null.Value, false);
+          else
+            result.SetPropertyValue(key, value, false);
+        }
+        
       }
       return result;
     }

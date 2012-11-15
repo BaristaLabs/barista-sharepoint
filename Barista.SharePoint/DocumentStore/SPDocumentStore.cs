@@ -959,7 +959,7 @@
     /// <returns></returns>
     public IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria)
     {
-      return ListEntities(containerTitle, String.Empty, criteria);
+      return ListEntities(containerTitle, criteria.Path, criteria);
     }
 
     /// <summary>

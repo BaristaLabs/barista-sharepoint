@@ -167,7 +167,7 @@
       get { return m_uri.Scheme; }
     }
 
-    [JSProperty(Name = "Segments")]
+    [JSProperty(Name = "segments")]
     public ArrayInstance Segments
     {
       get
