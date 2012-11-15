@@ -3,7 +3,6 @@
   using Barista.SharePoint.Extensions;
   using Barista.Extensions;
   using Barista.Framework;
-  using Barista.SharePoint.Extensions;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Client.Services;

@@ -99,7 +99,7 @@
       string fileContents;
       if (SPHelper.TryGetSPFileAsString(fileUrl, out fileContents, out isHiveFile))
       {
-        return JSONObject.Parse(this.Engine, fileContents);
+        return JSONObject.Parse(this.Engine, fileContents, null);
       }
 
       throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
