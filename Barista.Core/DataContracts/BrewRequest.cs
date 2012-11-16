@@ -7,6 +7,7 @@
   using System.Runtime.Serialization;
   using System.ServiceModel.Web;
   using System.Text;
+  using System.Linq;
   using System.Web;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
@@ -25,6 +26,8 @@
       this.QueryString = new Dictionary<string, string>();
       this.ServerVariables = new Dictionary<string, string>();
       this.ExtendedProperties = new Dictionary<string, string>();
+
+      this.ForceStrict = false;
     }
 
     #region Properties
@@ -121,6 +124,13 @@
 
     [DataMember]
     public IDictionary<string, PostedFile> Files
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public bool ForceStrict
     {
       get;
       set;
@@ -383,6 +393,11 @@
           result.ServerVariables.Add(serverVariableName, request.ServerVariables[serverVariableName]);
       }
 
+      if (request.QueryString.AllKeys.Any( k => k == "Barista_ForceStrict") ||
+          request.Headers.AllKeys.Any( k => k == "Barista_ForceStrict"))
+      {
+        result.ForceStrict = true;
+      }
       return result;
     }
 

@@ -9,29 +9,34 @@
 
   public class HttpRequestInstance : ObjectInstance
   {
-    private BrewRequest Request;
+    private BrewRequest m_request;
     private ObjectInstance m_files = null;
 
     public HttpRequestInstance(ScriptEngine engine, BrewRequest request)
       : base(engine)
     {
-      this.Request = request;
+      this.m_request = request;
       this.PopulateFields();
       this.PopulateFunctions();
     }
 
     #region Properties
 
+    public BrewRequest Request
+    {
+      get { return m_request; }
+    }
+
     [JSProperty(Name = "accept")]
     public ArrayInstance Accept
     {
-      get { return this.Engine.Array.Construct(this.Request.AcceptTypes); }
+      get { return this.Engine.Array.Construct(this.m_request.AcceptTypes); }
     }
 
     [JSProperty(Name="contentType")]
     public string ContentType
     {
-      get { return this.Request.ContentType; }
+      get { return this.m_request.ContentType; }
     }
 
     [JSProperty(Name = "files", IsEnumerable = true)]
@@ -43,7 +48,7 @@
         {
           m_files = this.Engine.Object.Construct();
 
-          foreach (var file in this.Request.Files)
+          foreach (var file in this.m_request.Files)
           {
             var content = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, file.Value.Content);
             content.FileName = file.Value.FileName;
@@ -63,9 +68,9 @@
       get
       {
         var result = this.Engine.Object.Construct();
-        foreach (var key in this.Request.Headers.Keys)
+        foreach (var key in this.m_request.Headers.Keys)
         {
-          result.SetPropertyValue(key, this.Request.Headers[key], true);
+          result.SetPropertyValue(key, this.m_request.Headers[key], true);
         }
         return result;
       }
@@ -74,7 +79,7 @@
     [JSProperty(Name = "location")]
     public string Location
     {
-      get { return this.Request.Url.PathAndQuery; }
+      get { return this.m_request.Url.PathAndQuery; }
     }
 
     [JSProperty(Name = "form")]
@@ -83,9 +88,9 @@
       get
       {
         var result = this.Engine.Object.Construct();
-        foreach (var key in this.Request.Form.Keys)
+        foreach (var key in this.m_request.Form.Keys)
         {
-          result.SetPropertyValue(key, this.Request.Form[key], false);
+          result.SetPropertyValue(key, this.m_request.Form[key], false);
         }
         return result;
       }
@@ -96,7 +101,7 @@
     {
       get
       {
-        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, this.Request.Body);
+        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, this.m_request.Body);
       }
     }
 
@@ -106,9 +111,9 @@
       get
       {
         var result = this.Engine.Object.Construct();
-        foreach (var key in this.Request.QueryString.Keys)
+        foreach (var key in this.m_request.QueryString.Keys)
         {
-          result.SetPropertyValue(key, this.Request.QueryString[key], false);
+          result.SetPropertyValue(key, this.m_request.QueryString[key], false);
         }
         return result;
       }
@@ -117,31 +122,31 @@
     [JSProperty(Name = "referrerLocation")]
     public string ReferrerLocation
     {
-      get { return this.Request.UrlReferrer.PathAndQuery; }
+      get { return this.m_request.UrlReferrer.PathAndQuery; }
     }
 
     [JSProperty(Name = "referrer")]
     public string Referrer
     {
-      get { return this.Request.UrlReferrer.ToString(); }
+      get { return this.m_request.UrlReferrer.ToString(); }
     }
 
     [JSProperty(Name = "method")]
     public string Method
     {
-      get { return this.Request.Method; }
+      get { return this.m_request.Method; }
     }
 
     [JSProperty(Name = "url")]
     public string Url
     {
-      get { return this.Request.Path; }
+      get { return this.m_request.Path; }
     }
 
     [JSProperty(Name = "userAgent")]
     public string UserAgent
     {
-      get { return this.Request.UserAgent; }
+      get { return this.m_request.UserAgent; }
     }
 
     #endregion
@@ -149,7 +154,7 @@
     [JSFunction(Name = "getBodyObject")]
     public object GetBodyObject()
     {
-      var stringBody = Encoding.UTF8.GetString(this.Request.Body);
+      var stringBody = Encoding.UTF8.GetString(this.m_request.Body);
       return JSONObject.Parse(this.Engine, stringBody, null);
     }
   }

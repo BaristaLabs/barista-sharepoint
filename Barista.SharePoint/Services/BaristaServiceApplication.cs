@@ -106,6 +106,9 @@
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public BrewResponse Eval(BrewRequest request)
     {
+      if (request == null)
+        throw new ArgumentNullException("request");
+
       var response = new BrewResponse();
 
       BaristaContext.Current = new BaristaContext(request, response);
@@ -156,6 +159,9 @@
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void Exec(BrewRequest request)
     {
+      if (request == null)
+        throw new ArgumentNullException("request");
+
       var response = new BrewResponse();
 
       BaristaContext.Current = new BaristaContext(request, response);
@@ -188,6 +194,11 @@
     private ScriptEngine GetScriptEngine(WebBundle webBundle)
     {
       var engine = new Jurassic.ScriptEngine();
+
+      if (BaristaContext.Current.Request.ForceStrict)
+      {
+        engine.ForceStrictMode = true;
+      }
 
       var console = new FirebugConsole(engine);
       console.Output = new BaristaConsoleOutput(engine);
