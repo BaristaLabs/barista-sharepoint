@@ -401,17 +401,25 @@
                         <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" + Constants.DocumentStoreDefaultEntityPartFileName + @"</Value></Eq>
                       </And></Where>";
       query.RowLimit = 1;
+      query.QueryThrottleMode = SPQueryThrottleOption.Override;
       query.ViewAttributes = "Scope=\"Recursive\"";
 
-      SPFile dataFile = null;
-      ContentIterator itemsIterator = new ContentIterator();
-      itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
-      {
-        dataFile = spListItem.File;
-        itemsIterator.Cancel = true;
-      }, null);
+      //SPFile dataFile = null;
+      //ContentIterator itemsIterator = new ContentIterator();
+      //itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
+      //{
+      //  dataFile = spListItem.File;
+      //  itemsIterator.Cancel = true;
+      //}, null);
+      //
+      //return dataFile;
 
-      return dataFile;
+      var item = list.GetItems(query).OfType<SPListItem>().FirstOrDefault();
+
+      if (item != null)
+        return item.File;
+
+      return null;
     }
 
     /// <summary>
@@ -475,15 +483,22 @@
       query.RowLimit = 1;
       query.ViewAttributes = "Scope=\"Recursive\"";
 
-      SPFile dataFile = null;
-      ContentIterator itemsIterator = new ContentIterator();
-      itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
-      {
-        dataFile = spListItem.File;
-        itemsIterator.Cancel = true;
-      }, null);
+      //SPFile dataFile = null;
+      //ContentIterator itemsIterator = new ContentIterator();
+      //itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
+      //{
+      //  dataFile = spListItem.File;
+      //  itemsIterator.Cancel = true;
+      //}, null);
 
-      return dataFile;
+      //return dataFile;
+
+      var item = list.GetItems(query).OfType<SPListItem>().FirstOrDefault();
+
+      if (item != null)
+        return item.File;
+
+      return null;
     }
 
     /// <summary>

@@ -201,7 +201,7 @@
     [JSProperty(Name = "rootFolder")]
     public SPFolderInstance RootFolder
     {
-      get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_web.RootFolder); }
+      get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_web.RootFolder); }
     }
 
     [JSProperty(Name = "serverRelativeUrl")]
@@ -383,7 +383,7 @@
       }
       
       var createdList = m_web.Lists[createdListId];
-      return new SPListInstance(this.Engine.Object.InstancePrototype, createdList);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, createdList);
     }
 
     [JSFunction(Name = "deactivateFeature")]
@@ -488,7 +488,7 @@
       if (folder == null || folder.Exists == false)
         return null;
 
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, folder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, folder);
     }
 
     [JSFunction(Name = "getFolders")]
@@ -497,7 +497,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var folder in m_web.Folders.OfType<SPFolder>())
       {
-        ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, folder));
+        ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, folder));
       }
 
       return result;
@@ -525,7 +525,7 @@
       if (list == null)
         return null;
 
-      return new SPListInstance(this.Engine.Object.InstancePrototype, list);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
     }
 
     [JSFunction(Name = "getLists")]
@@ -542,7 +542,7 @@
 
       foreach (var list in lists)
       {
-        ArrayInstance.Push(instance, new SPListInstance(this.Engine.Object.InstancePrototype, list));
+        ArrayInstance.Push(instance, new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list));
       }
 
       return instance;
@@ -565,7 +565,7 @@
     {
       SPList list = m_web.Lists.TryGetList(listTitle);
       
-      return new SPListInstance(this.Engine.Object.InstancePrototype, list);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
     }
 
     [JSFunction(Name = "getPermissions")]
@@ -596,7 +596,7 @@
     [JSFunction(Name = "getSiteUserInfoList")]
     public SPListInstance GetSiteUserInfoList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, m_web.SiteUserInfoList);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_web.SiteUserInfoList);
     }
 
     [JSFunction(Name = "getWebs")]

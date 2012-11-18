@@ -183,28 +183,28 @@ namespace Barista.SharePoint
     /// <param name="folderUrl"></param>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static bool TryGetSPFolder(string folderUrl, out SPFolder folder)
+    public static bool TryGetSPFolder(string folderUrl, out SPSite site, out SPWeb web, out SPFolder folder)
     {
       Uri folderUri;
       if (TryCreateWebAbsoluteUri(folderUrl, out folderUri) == false)
       {
+        site = null;
+        web = null;
         folder = null;
         return false;
       }
 
       try
       {
-        using (SPSite site = new SPSite(folderUri.ToString()))
-        {
-          using (SPWeb web = site.OpenWeb())
-          {
-            folder = web.GetFolder(folderUri.ToString());
-            return true;
-          }
-        }
+        site = new SPSite(folderUri.ToString());
+        web = site.OpenWeb();
+        folder = web.GetFolder(folderUri.ToString());
+        return true;
       }
       catch { /* Do Nothing... */ }
 
+      site = null;
+      web = null;
       folder = null;
       return false;
     }
@@ -216,28 +216,28 @@ namespace Barista.SharePoint
     /// <param name="listUrl"></param>
     /// <param name="list"></param>
     /// <returns></returns>
-    public static bool TryGetSPList(string listUrl, out SPList list)
+    public static bool TryGetSPList(string listUrl, out SPSite site, out SPWeb web, out SPList list)
     {
       Uri listUri;
       if (TryCreateWebAbsoluteUri(listUrl, out listUri) == false)
       {
+        site = null;
+        web = null;
         list = null;
         return false;
       }
 
       try
       {
-        using (SPSite site = new SPSite(listUri.ToString()))
-        {
-          using (SPWeb web = site.OpenWeb())
-          {
-            list = web.GetList(listUri.ToString());
-            return true;
-          }
-        }
+        site = new SPSite(listUri.ToString());
+        web = site.OpenWeb();
+        list = web.GetList(listUri.ToString());
+        return true;
       }
       catch { /* Do Nothing... */ }
 
+      site = null;
+      web = null;
       list = null;
       return false;
     }

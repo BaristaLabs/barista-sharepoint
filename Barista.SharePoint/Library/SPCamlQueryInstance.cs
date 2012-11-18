@@ -106,7 +106,7 @@
         if (m_query.Folder == null)
           return null;
 
-        return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_query.Folder);
+        return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_query.Folder);
       }
       set { m_query.Folder = value.Folder; }
     }

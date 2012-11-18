@@ -388,12 +388,20 @@
 
           var folderContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Folder);
 
-          ContentIterator itemsIterator = new ContentIterator();
-          itemsIterator.ProcessItemsInFolder(list, folder, false, true, false, (spListItem) =>
-          {
-            if (spListItem.ContentTypeId == folderContentTypeId)
-              result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
-          }, null);
+          //ContentIterator itemsIterator = new ContentIterator();
+          //itemsIterator.ProcessItemsInFolder(list, folder, false, true, false, (spListItem) =>
+          //{
+          //  if (spListItem.ContentTypeId == folderContentTypeId)
+          //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
+          //}, null);
+
+          SPQuery query = new SPQuery();
+          query.QueryThrottleMode = SPQueryThrottleOption.Override;
+          query.Folder = folder;
+          result = list.GetItems(query).OfType<SPListItem>()
+                                       .Where(li => li.ContentTypeId == folderContentTypeId)
+                                       .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                                       .ToList();
 
           return result;
         }
@@ -422,13 +430,20 @@
 
           var folderContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Folder);
 
-          ContentIterator itemsIterator = new ContentIterator();
-          itemsIterator.ProcessItemsInFolder(list, folder, true, true, false, (spListItem) =>
-          {
-            if (spListItem.ContentTypeId == folderContentTypeId)
-              result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
-          }, null);
+          //ContentIterator itemsIterator = new ContentIterator();
+          //itemsIterator.ProcessItemsInFolder(list, folder, true, true, false, (spListItem) =>
+          //{
+          //  if (spListItem.ContentTypeId == folderContentTypeId)
+          //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
+          //}, null);
 
+          SPQuery query = new SPQuery();
+          query.QueryThrottleMode = SPQueryThrottleOption.Override;
+          query.Folder = folder;
+          result = list.GetItems(query).OfType<SPListItem>()
+                                       .Where(li => li.ContentTypeId == folderContentTypeId)
+                                       .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                                       .ToList();
           return result;
         }
       }

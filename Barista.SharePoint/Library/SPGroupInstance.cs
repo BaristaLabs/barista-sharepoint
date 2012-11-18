@@ -222,7 +222,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var list in m_group.GetDistributionGroupArchives(null))
       {
-        ArrayInstance.Push(result, new SPListInstance(this.Engine.Object.InstancePrototype, list));
+        ArrayInstance.Push(result, new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list));
       }
       return result;
     }

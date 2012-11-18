@@ -7,6 +7,8 @@
   using Microsoft.SharePoint;
   using Microsoft.Office.Server.Utilities;
   using System.Collections.Generic;
+  using Barista.Library;
+  using System.Text;
 
   public class SPListConstructor : ClrFunction
   {
@@ -18,9 +20,15 @@
     [JSConstructorFunction]
     public SPListInstance Construct(string listUrl)
     {
+      SPSite site;
+      SPWeb web;
       SPList list;
-      if (SPHelper.TryGetSPList(listUrl, out list))
-        return new SPListInstance(this.InstancePrototype, list);
+      if (SPHelper.TryGetSPList(listUrl, out site, out web, out list))
+      {
+        var result = new SPListInstance(this.InstancePrototype, site, web, list);
+
+        return result;
+      }
 
       throw new JavaScriptException(this.Engine, "Error", "A list at the specified url was not found.");
     }
@@ -30,12 +38,15 @@
       if (list == null)
         throw new ArgumentNullException("list");
 
-      return new SPListInstance(this.InstancePrototype, list);
+      return new SPListInstance(this.InstancePrototype, null, null, list);
     }
   }
 
-  public class SPListInstance : ObjectInstance
+  public class SPListInstance : ObjectInstance, IDisposable
   {
+    private SPSite m_site;
+    private SPWeb m_web;
+
     private SPList m_list;
 
     public SPListInstance(ObjectInstance prototype)
@@ -45,14 +56,16 @@
       this.PopulateFunctions();
     }
 
-    public SPListInstance(ObjectInstance prototype, SPList list)
+    public SPListInstance(ObjectInstance prototype, SPSite site, SPWeb web, SPList list)
       : this(prototype)
     {
+      this.m_site = site;
+      this.m_web = web;
       this.m_list = list;
     }
 
     public SPListInstance(ScriptEngine engine, SPList list)
-      : this(engine.Object.InstancePrototype, list)
+      : this(engine.Object.InstancePrototype, null, null, list)
     {
     }
 
@@ -264,7 +277,7 @@
     [JSProperty(Name = "rootFolder")]
     public SPFolderInstance RootFolder
     {
-      get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_list.RootFolder); }
+      get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_list.RootFolder); }
     }
 
     [JSProperty(Name = "serverTemplateCanCreateFolders")]
@@ -325,6 +338,37 @@
     {
       var listItem = m_list.Items.Add();
       return new SPListItemInstance(this.Engine.Object.InstancePrototype, listItem);
+    }
+
+    [JSFunction(Name = "addFile")]
+    public SPFileInstance AddFile(string url, object data, object overwrite)
+    {
+      bool bOverwrite = false;
+      byte[] byteData = null;
+
+      if (String.IsNullOrEmpty(url))
+        throw new JavaScriptException(this.Engine, "Error", "A url of the new file must be specified.");
+
+      if (data == Null.Value || data == Undefined.Value || data == null)
+        throw new JavaScriptException(this.Engine, "Error", "Data must be specified.");
+
+      if (data is Base64EncodedByteArrayInstance)
+        byteData = ((Base64EncodedByteArrayInstance) data).Data;
+      else if (data is ObjectInstance)
+        byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, data, null, null));
+      else
+        byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, data.ToString(), null, null));
+
+      if (overwrite != Null.Value && overwrite != Undefined.Value && overwrite != null)
+      {
+        if (overwrite is Boolean)
+          bOverwrite = (bool)overwrite;
+        else
+          bOverwrite = Boolean.Parse(overwrite.ToString());
+      }
+
+      var file = m_list.RootFolder.Files.Add(url, byteData, bOverwrite);
+      return new SPFileInstance(this.Engine.Object.InstancePrototype, file);
     }
 
     [JSFunction(Name = "addItemToFolder")]
@@ -421,23 +465,22 @@
     {
       List<SPListItem> items = new List<SPListItem>();
 
-      ContentIterator itemsIterator = new ContentIterator();
-      itemsIterator.ProcessListItems(m_list, false, (item) =>
-        {
-          items.Add(item);
-        },
-        (listItem, ex) =>
-        {
-          return false; //don't rethrow errors.
-        });
-      
-      var result = Engine.Array.Construct();
-      
-      foreach (var item in items.OfType<SPListItem>())
-      {
-        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
-        ArrayInstance.Push(result, instance);
-      }
+      //ContentIterator itemsIterator = new ContentIterator();
+      //itemsIterator.ProcessListItems(m_list, false, (item) =>
+      //  {
+      //    items.Add(item);
+      //  },
+      //  (listItem, ex) =>
+      //  {
+      //    return false; //don't rethrow errors.
+      //  });
+
+      SPQuery query = new SPQuery();
+      query.QueryThrottleMode = SPQueryThrottleOption.Override;
+      items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+
+      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var result = Engine.Array.Construct(listItemInstances.ToArray());
 
       return result;
     }
@@ -469,23 +512,21 @@
 
       List<SPListItem> items = new List<SPListItem>();
 
-      ContentIterator itemsIterator = new ContentIterator();
-      itemsIterator.ProcessListItems(m_list, camlQuery, false, (item) =>
-      {
-        items.Add(item);
-      },
-        (listItem, ex) =>
-        {
-          return false; //don't rethrow errors.
-        });
+      //ContentIterator itemsIterator = new ContentIterator();
+      //itemsIterator.ProcessListItems(m_list, camlQuery, false, (item) =>
+      //{
+      //  items.Add(item);
+      //},
+      //  (listItem, ex) =>
+      //  {
+      //    return false; //don't rethrow errors.
+      //  });
+      camlQuery.QueryThrottleMode = SPQueryThrottleOption.Override;
 
-      var result = Engine.Array.Construct();
+      items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
 
-      foreach (var item in items.OfType<SPListItem>())
-      {
-        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
-        ArrayInstance.Push(result, instance);
-      }
+      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var result = Engine.Array.Construct(listItemInstances.ToArray());
 
       return result;
     }
@@ -511,24 +552,29 @@
 
       List<SPListItem> items = new List<SPListItem>();
       SPQuery query = new SPQuery(selectedView);
+      query.QueryThrottleMode = SPQueryThrottleOption.Override;
 
-      ContentIterator itemsIterator = new ContentIterator();
-      itemsIterator.ProcessListItems(m_list, query, false, (item) =>
-        {
-          items.Add(item);
-        },
-        (listItem, ex) =>
-        {
-          return false; //don't rethrow errors.
-        });
+      //ContentIterator itemsIterator = new ContentIterator();
+      //itemsIterator.ProcessListItems(m_list, query, false, (item) =>
+      //  {
+      //    items.Add(item);
+      //  },
+      //  (listItem, ex) =>
+      //  {
+      //    return false; //don't rethrow errors.
+      //  });
 
-      var result = Engine.Array.Construct();
-      foreach (var item in items)
-      {
-        SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
-        ArrayInstance.Push(result, instance);
-      }
+      //var result = Engine.Array.Construct();
+      //foreach (var item in items)
+      //{
+      //  SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+      //  ArrayInstance.Push(result, instance);
+      //}
 
+      items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+
+      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var result = Engine.Array.Construct(listItemInstances.ToArray());
       return result;
     }
 
@@ -610,5 +656,19 @@
       m_list.Update();
     }
     #endregion
+
+    public void Dispose()
+    {
+      if (m_site != null) {
+        m_site.Dispose();
+        m_site = null;
+      }
+
+      if (m_web != null)
+      {
+        m_web.Dispose();
+        m_web = null;
+      }
+    }
   }
 }

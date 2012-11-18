@@ -26,7 +26,7 @@
       try
       {
         if (m_context.List != null)
-          this.List = new SPListInstance(this.Engine.Object.InstancePrototype, m_context.List);
+          this.List = new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_context.List);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
 

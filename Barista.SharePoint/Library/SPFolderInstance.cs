@@ -22,12 +22,14 @@
     [JSConstructorFunction]
     public SPFolderInstance Construct(string folderUrl)
     {
+      SPSite site;
+      SPWeb web;
       SPFolder folder;
 
-      if (SPHelper.TryGetSPFolder(folderUrl, out folder) == false)
+      if (SPHelper.TryGetSPFolder(folderUrl, out site, out web, out folder) == false)
         throw new JavaScriptException(this.Engine, "Error", "No folder is available at the specified url.");
 
-      return new SPFolderInstance(this.InstancePrototype, folder);
+      return new SPFolderInstance(this.InstancePrototype, site, web, folder);
     }
 
     public SPFolderInstance Construct(SPFolder folder)
@@ -35,12 +37,14 @@
       if (folder == null)
         throw new ArgumentNullException("folder");
 
-      return new SPFolderInstance(this.InstancePrototype, folder);
+      return new SPFolderInstance(this.InstancePrototype, null, null, folder);
     }
   }
 
-  public class SPFolderInstance : ObjectInstance
+  public class SPFolderInstance : ObjectInstance, IDisposable
   {
+    private SPSite m_site;
+    private SPWeb m_web;
     private SPFolder m_folder;
 
     public SPFolderInstance(ObjectInstance prototype)
@@ -50,9 +54,11 @@
       this.PopulateFunctions();
     }
 
-    public SPFolderInstance(ObjectInstance prototype, SPFolder folder)
+    public SPFolderInstance(ObjectInstance prototype, SPSite site, SPWeb web, SPFolder folder)
       : this(prototype)
     {
+      this.m_folder = folder;
+      this.m_web = web;
       this.m_folder = folder;
     }
 
@@ -146,7 +152,7 @@
       var htProperties = SPHelper.GetFieldValuesHashtableFromPropertyObject(properties);
 
       DocumentSet docSet = DocumentSet.Create(m_folder, name, contentTypeId, htProperties, provisionDefaultContent);
-      return new SPDocumentSetInstance(this.Engine.Object.InstancePrototype, docSet);
+      return new SPDocumentSetInstance(this.Engine.Object.InstancePrototype, null, null, docSet);
     }
 
     [JSFunction(Name = "addFile")]
@@ -193,7 +199,7 @@
     public SPFolderInstance addSubFolder(string url)
     {
       var subFolder = m_folder.SubFolders.Add(url);
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, subFolder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
     }
 
     [JSFunction(Name = "delete")]
@@ -217,7 +223,7 @@
         m_folder.ParentWeb.AllowUnsafeUpdates = false;
       }
 
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, subFolder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
     }
 
     [JSFunction(Name = "getContentTypeOrder")]
@@ -241,7 +247,7 @@
     [JSFunction(Name = "getParentFolder")]
     public SPFolderInstance GetParentFolder()
     {
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_folder.ParentFolder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_folder.ParentFolder);
     }
 
     [JSFunction(Name = "getPermissions")]
@@ -255,22 +261,26 @@
     {
       List<SPFile> files = new List<SPFile>();
 
-      ContentIterator iterator = new ContentIterator();
-      iterator.ProcessFilesInFolder(m_folder, recursive, (file) =>
-        {
-          files.Add(file);
-        },
-        (file, ex) =>
-        {
-          return false; // do not rethrow errors;
-        });
-      var result = this.Engine.Array.Construct();
+      //ContentIterator iterator = new ContentIterator();
+      //iterator.ProcessFilesInFolder(m_folder, recursive, (file) =>
+      //  {
+      //    files.Add(file);
+      //  },
+      //  (file, ex) =>
+      //  {
+      //    return false; // do not rethrow errors;
+      //  });
 
-      foreach (SPFile file in files)
-      {
-        ArrayInstance.Push(result, new SPFileInstance(this.Engine.Object.InstancePrototype, file));
-      }
-      return result;
+      //var result = this.Engine.Array.Construct();
+
+      //foreach (SPFile file in files)
+      //{
+      //  ArrayInstance.Push(result, new SPFileInstance(this.Engine.Object.InstancePrototype, file));
+      //}
+      //return result;
+
+      var listItemInstances = m_folder.Files.OfType<SPFile>().Select((file) => { return new SPFileInstance(this.Engine.Object.InstancePrototype, file); });
+      return this.Engine.Array.Construct(listItemInstances.ToArray());
     }
 
     [JSFunction(Name = "getSubFolders")]
@@ -279,7 +289,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var folder in m_folder.SubFolders.OfType<SPFolder>())
       {
-        ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, folder));
+        ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, folder));
       }
 
       return result;
@@ -336,6 +346,21 @@
     public void Update()
     {
       m_folder.Update();
+    }
+
+    public void Dispose()
+    {
+      if (m_site != null)
+      {
+        m_site.Dispose();
+        m_site = null;
+      }
+
+      if (m_web != null)
+      {
+        m_web.Dispose();
+        m_web = null;
+      }
     }
   }
 }

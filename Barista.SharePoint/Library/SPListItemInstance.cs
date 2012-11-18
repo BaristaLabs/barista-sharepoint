@@ -164,7 +164,7 @@
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, m_listItem.ParentList);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_listItem.ParentList);
     }
 
     [JSFunction(Name = "getPermissions")]

@@ -237,7 +237,7 @@
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, m_contentType.ParentList);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_contentType.ParentList);
     }
 
     [JSFunction(Name = "getParentWeb")]
@@ -249,7 +249,7 @@
     [JSFunction(Name = "getResourceFolder")]
     public SPFolderInstance ResourceFolder()
     {
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_contentType.ResourceFolder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_contentType.ResourceFolder);
     }
 
     [JSFunction(Name = "update")]

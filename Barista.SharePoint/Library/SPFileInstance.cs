@@ -316,7 +316,7 @@
     {
       if (m_file.InDocumentLibrary == false)
         return null;
-      return new SPListInstance(this.Engine.Object.InstancePrototype, m_file.DocumentLibrary);
+      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_file.DocumentLibrary);
     }
 
     [JSFunction(Name = "getListItemAllFields")]
@@ -328,7 +328,7 @@
     [JSFunction(Name = "getParentFolder")]
     public SPFolderInstance GetParentFolder()
     {
-      return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_file.ParentFolder);
+      return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_file.ParentFolder);
     }
 
     [JSFunction(Name = "getParentWeb")]

@@ -80,7 +80,7 @@
     </Reference>
     <Reference Include="Jurassic, Version=2.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Jurassic.dll</HintPath>
+      <HintPath>..\Lib\Jurassic\Jurassic.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
