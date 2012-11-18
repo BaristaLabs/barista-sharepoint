@@ -20,6 +20,7 @@
     StartGroup = 800,
     EndGroup = 900,
     PowerShell = 1000,
+    JavaScriptException = 1100,
   }
 
   [Guid("B7D45781-D64D-4B23-ABA3-33398DB1249B")]

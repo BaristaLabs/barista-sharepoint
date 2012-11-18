@@ -83,9 +83,10 @@
     [JSFunction(Name = "loadFileAsString")]
     public string LoadFileAsString(string fileUrl)
     {
+      string path;
       bool isHiveFile;
       string fileContents;
-      if (SPHelper.TryGetSPFileAsString(fileUrl, out fileContents, out isHiveFile))
+      if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
         return fileContents;
 
       throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
@@ -95,9 +96,10 @@
     [JSFunction(Name = "loadFileAsJSON")]
     public object LoadFileAsJson(string fileUrl)
     {
+      string path;
       bool isHiveFile;
       string fileContents;
-      if (SPHelper.TryGetSPFileAsString(fileUrl, out fileContents, out isHiveFile))
+      if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
       {
         return JSONObject.Parse(this.Engine, fileContents, null);
       }

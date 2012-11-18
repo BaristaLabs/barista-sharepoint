@@ -186,6 +186,7 @@
       <DependentUpon>Manage.aspx.cs</DependentUpon>
     </Compile>
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
@@ -337,6 +338,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="SPFileScriptSource.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>

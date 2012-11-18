@@ -344,13 +344,14 @@ namespace Barista.SharePoint
     /// <param name="fileUrl"></param>
     /// <param name="fileContents"></param>
     /// <returns></returns>
-    public static bool TryGetSPFileAsString(string fileUrl, out string fileContents, out bool isHiveFile)
+    public static bool TryGetSPFileAsString(string fileUrl, out string filePath, out string fileContents, out bool isHiveFile)
     {
       isHiveFile = false;
 
       Uri fileUri;
       if (TryCreateWebAbsoluteUri(fileUrl, out fileUri) == false)
       {
+        filePath = null;
         fileContents = null;
         return false;
       }
@@ -364,6 +365,7 @@ namespace Barista.SharePoint
             if (sourceWeb == null)
               throw new InvalidOperationException("The specified script url is invalid.");
 
+            filePath = fileUri.ToString();
             fileContents = sourceWeb.GetFileAsString(fileUri.ToString());
             return true;
           }
@@ -392,6 +394,7 @@ namespace Barista.SharePoint
               if (sourceWeb == null)
                 throw new InvalidOperationException("The specified script url is invalid.");
 
+              filePath = url.ToString();
               fileContents = sourceWeb.GetFileAsString(url.ToString());
               return true;
             }
@@ -405,9 +408,10 @@ namespace Barista.SharePoint
       {
         string hiveFileContents = String.Empty;
         bool hiveFileResult = false;
+        string path = String.Empty;
         SPSecurity.RunWithElevatedPrivileges(() =>
         {
-          string path = HttpContext.Current.Request.MapPath(fileUrl);
+          path = HttpContext.Current.Request.MapPath(fileUrl);
           if (File.Exists(path))
           {
             hiveFileContents = File.ReadAllText(path);
@@ -417,6 +421,7 @@ namespace Barista.SharePoint
 
         if (hiveFileResult == true)
         {
+          filePath = path;
           fileContents = hiveFileContents;
           isHiveFile = true;
           return true;
@@ -424,6 +429,7 @@ namespace Barista.SharePoint
       }
       catch { /* Do Nothing... */ }
 
+      filePath = null;
       fileContents = null;
       return false;
     }

@@ -15,6 +15,7 @@
   {
     public BrewRequest()
     {
+      this.CodePath = String.Empty;
       this.Content = new byte[0];
       this.ContentLength = 0;
       this.ContentType = "application/octet-stream";
@@ -68,6 +69,13 @@
 
     [DataMember]
     public string Code
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string CodePath
     {
       get;
       set;

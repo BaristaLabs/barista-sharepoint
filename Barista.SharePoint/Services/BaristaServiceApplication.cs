@@ -15,12 +15,39 @@
   using System.Linq;
   using System.Runtime.InteropServices;
   using System.ServiceModel;
+  using System.ServiceModel.Web;
+  using System.Text;
   using System.Web;
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
   internal sealed class BaristaServiceApplication : SPIisWebServiceApplication, IBaristaServiceApplication
   {
+    #region Constants
+    private const string JavaScriptExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<HTML><HEAD>
+<STYLE type=""text/css"">
+#content{{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}}
+BODY{{MARGIN-TOP: 0px; MARGIN-LEFT: 0px; COLOR: #000000; FONT-FAMILY: Verdana; BACKGROUND-COLOR: white}}
+P{{MARGIN-TOP: 0px; MARGIN-BOTTOM: 12px; COLOR: #000000; FONT-FAMILY: Verdana}}
+PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1px solid; MARGIN-TOP: -5px; PADDING-LEFT: 5px; FONT-SIZE: 1.2em; PADDING-BOTTOM: 5px; BORDER-LEFT: #f0f0e0 1px solid; PADDING-TOP: 5px; BORDER-BOTTOM: #f0f0e0 1px solid; FONT-FAMILY: Courier New; BACKGROUND-COLOR: #e5e5cc}}
+.heading1{{MARGIN-TOP: 0px; PADDING-LEFT: 15px; FONT-WEIGHT: normal; FONT-SIZE: 26px; MARGIN-BOTTOM: 0px; PADDING-BOTTOM: 3px; MARGIN-LEFT: -30px; WIDTH: 100%; COLOR: #ffffff; PADDING-TOP: 10px; FONT-FAMILY: Tahoma; BACKGROUND-COLOR: #492B29}}
+.intro{{MARGIN-LEFT: -15px}}</STYLE>
+<TITLE>JavaScript Error</TITLE></HEAD><BODY>
+<DIV id=""content"">
+<P class=""heading1"">JavaScript Error</P>
+<BR/>
+<P class=""intro"">The JavaScript being executed on the server threw an exception ({0}). The exception message is '{1}'.</P>
+<p class=""intro"">Function Name: <span id=""functionName"">{2}</span><br/>
+Line Number: <span id=""lineNumber"">{3}</span><br/>
+Source Path: <span id=""sourcePath"">{4}</span></p>
+<P class=""intro""/>
+<P class=""intro"">The exception stack trace is:</P>
+<P class=""intro stackTrace"">{5}</P>
+</DIV>
+</BODY></HTML>
+";
+    #endregion
     [Persisted]
     private int m_settings;
     public int Settings
@@ -119,7 +146,8 @@
       object result = null;
       try
       {
-        result = engine.Evaluate(request.Code);
+        var source = new BaristaScriptSource(request.Code, request.CodePath);
+        result = engine.Evaluate(source);
 
         var isRaw = false;
 
@@ -137,9 +165,14 @@
         var stringified = JSONObject.Stringify(engine, result, null, null);
         response.SetContentsFromResultObject(engine, result, isRaw);
       }
+      catch (JavaScriptException ex)
+      {
+        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+        UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+      }
       catch (Exception ex)
       {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An error occured while evaluating script: ");
+        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
         throw;
       }
       finally
@@ -171,18 +204,27 @@
 
       try
       {
-        engine.Execute(request.Code);
+        var source = new BaristaScriptSource(request.Code, request.CodePath);
+        engine.Execute(source);
+      }
+      catch (JavaScriptException ex)
+      {
+        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+        UpdateResponseWithJavaScriptExceptionDetails(ex, response);
       }
       catch (Exception ex)
       {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An error occured while executing script: ");
+        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while executing script: ");
         throw;
       }
       finally
       {
         //Cleanup
         engine = null;
-        BaristaContext.Current.Dispose();
+
+        if (BaristaContext.Current != null)
+          BaristaContext.Current.Dispose();
+
         BaristaContext.Current = null;
       }
     }
@@ -241,16 +283,9 @@
 
       engine.SetGlobalFunction("include", new Action<string>((scriptUrl) =>
       {
-        bool isHiveFile;
-        string code;
-        if (SPHelper.TryGetSPFileAsString(scriptUrl, out code, out isHiveFile))
-        {
-          code = SPHelper.ReplaceTokens(code);
-          engine.Execute(code);
-          return;
-        }
+        var source = new SPFileScriptSource(engine, scriptUrl);
 
-        throw new JavaScriptException(engine, "Error", "Could not locate the specified script file:  " + scriptUrl);
+        engine.Execute(source);
       }));
 
       engine.SetGlobalFunction("replaceJsonReferences", new Func<object, object>((o) =>
@@ -304,6 +339,23 @@
         }
       }
       return o;
+    }
+
+    private void UpdateResponseWithJavaScriptExceptionDetails(JavaScriptException exception, BrewResponse response)
+    {
+      ObjectInstance errorObject = exception.ErrorObject as ObjectInstance;
+
+      response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+
+      response.AutoDetectContentType = false;
+      response.ContentType = "text/html";
+
+      var message = errorObject.GetPropertyValue("message") as string;
+      var stack = errorObject.GetPropertyValue("stack") as string;
+      if (String.IsNullOrEmpty(stack) == false)
+        stack = stack.Replace("at ", "at<br/>");
+      var resultMessage = String.Format(JavaScriptExceptionMessage, exception.Name, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
+      response.Content = Encoding.UTF8.GetBytes(resultMessage);
     }
     #endregion
   }

@@ -46,11 +46,12 @@
 
       TakeOrder();
 
+      string codePath;
       var code = Grind();
 
-      code = Tamp(code);
+      code = Tamp(code, out codePath);
 
-      Brew(code);
+      Brew(code, codePath);
     }
 
     /// <summary>
@@ -65,11 +66,12 @@
     {
       TakeOrder();
 
+      string codePath;
       var code = Grind();
 
-      code = Tamp(code);
+      code = Tamp(code, out codePath);
 
-      Brew(code);
+      Brew(code, codePath);
     }
 
     /// <summary>
@@ -88,11 +90,12 @@
 
       TakeOrder();
 
+      string codePath;
       var code = Grind();
 
-      code = Tamp(code);
+      code = Tamp(code, out codePath);
 
-      return Pull(code);
+      return Pull(code, codePath);
     }
 
     /// <summary>
@@ -108,11 +111,12 @@
     {
       TakeOrder();
 
+      string codePath;
       var code = Grind();
 
-      code = Tamp(code);
+      code = Tamp(code, out codePath);
 
-      return Pull(code);
+      return Pull(code, codePath);
     }
     #endregion
 
@@ -205,18 +209,20 @@
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    private string Tamp(string code)
+    private string Tamp(string code, out string scriptPath)
     {
+      scriptPath = String.Empty;
+
       //If the code looks like a uri, attempt to retrieve a code file and use the contents of that file as the code.
       if (Uri.IsWellFormedUriString(code, UriKind.RelativeOrAbsolute))
       {
         Uri codeUri;
         if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
         {
-
+          string scriptFilePath;
           bool isHiveFile;
           String codeFromfile;
-          if (SPHelper.TryGetSPFileAsString(code, out codeFromfile, out isHiveFile))
+          if (SPHelper.TryGetSPFileAsString(code, out scriptFilePath, out codeFromfile, out isHiveFile))
           {
             if (isHiveFile == false)
             {
@@ -227,6 +233,7 @@
               }
             }
 
+            scriptPath = scriptFilePath;
             code = codeFromfile;
           }
         }
@@ -243,12 +250,13 @@
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="code"></param>
-    private void Brew(string code)
+    private void Brew(string code, string codePath)
     {
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
+      request.CodePath = codePath;
 
       request.SetExtendedPropertiesFromCurrentSPContext();
       
@@ -260,12 +268,13 @@
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    private Stream Pull(string code)
+    private Stream Pull(string code, string codePath)
     {
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
+      request.CodePath = codePath;
 
       request.SetExtendedPropertiesFromCurrentSPContext();
 
