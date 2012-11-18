@@ -267,6 +267,9 @@
       if (partName != Null.Value && partName != Undefined.Value)
         stringPartName = partName.ToString();
 
+      if (String.IsNullOrEmpty(stringPartName))
+        throw new JavaScriptException(this.Engine, "Error", "When creating an entity part, a part name must be specified.");
+
       if (category != Null.Value && category != Undefined.Value)
         stringCategory = category.ToString();
 

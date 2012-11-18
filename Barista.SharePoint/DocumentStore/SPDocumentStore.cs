@@ -1641,7 +1641,7 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
             return null;
 
-          if (entityPartFile.ETag != eTag)
+          if (String.IsNullOrEmpty(eTag) == false && entityPartFile.ETag != eTag)
           {
             throw new InvalidOperationException("Could not update the entity part, the entity part has been updated by another user.");
           }
