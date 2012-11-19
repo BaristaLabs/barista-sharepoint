@@ -318,6 +318,9 @@ asyncTest("[Your Unit Test Title]", function () {
         var currentFileInfo = null;
         var ulsData = {};
         var baristaForceStrict = false;
+        var baristaInstanceMode = null;
+        var baristaInstanceKey = null;
+        var baristaInstanceInitializationCode = null;
 
         var jsLintResultTemplate = kendo.template($("#jsLintResultTemplate").html());
         var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
@@ -585,8 +588,26 @@ asyncTest("[Your Unit Test Title]", function () {
 
             var url = currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval";
 
+            var seperator = "?";
+
             if (baristaForceStrict == true) {
-                url += "?Barista_ForceStrict=1;"
+                url += seperator + "Barista_ForceStrict=1;"
+                seperator = "&";
+            }
+
+            if (baristaInstanceMode != null) {
+                url += seperator + "Barista_InstanceMode=" + encodeURIComponent(baristaInstanceMode);
+                seperator = "&";
+            }
+
+            if (baristaInstanceKey != null) {
+                url += seperator + "Barista_InstanceKey=" + encodeURIComponent(baristaInstanceKey);
+                seperator = "&";
+            }
+
+            if (baristaInstanceInitializationCode != null) {
+                url += seperator + "Barista_InstanceInitializationCode=" + encodeURIComponent(baristaInstanceInitializationCode);
+                seperator = "&";
             }
 
             var request = jQuery.ajax({

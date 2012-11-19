@@ -133,10 +133,13 @@
       set;
     }
 
+    [NonSerialized]
+    private ExtensionDataObject m_extensionData;
+
     public ExtensionDataObject ExtensionData
     {
-      get;
-      set;
+      get { return m_extensionData; }
+      set { m_extensionData = value; }
     }
 
     public void ModifyWebOperationContext(OutgoingWebResponseContext response)

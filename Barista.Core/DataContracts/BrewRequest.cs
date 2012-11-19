@@ -30,6 +30,10 @@
       this.ExtendedProperties = new Dictionary<string, string>();
 
       this.ForceStrict = false;
+      this.InstanceMode = BaristaInstanceMode.PerCall;
+      this.InstanceKey = null;
+      this.InstanceInitializationCode = null;
+      this.InstanceInitializationCodePath = null;
     }
 
     #region Properties
@@ -147,6 +151,34 @@
 
     [DataMember]
     public IDictionary<string, string> Headers
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public BaristaInstanceMode InstanceMode
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string InstanceInitializationCode
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string InstanceInitializationCodePath
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string InstanceKey
     {
       get;
       set;
@@ -306,10 +338,13 @@
       set;
     }
 
+    [NonSerialized]
+    private ExtensionDataObject m_extensionData;
+
     public ExtensionDataObject ExtensionData
     {
-      get;
-      set;
+      get { return m_extensionData; }
+      set { m_extensionData = value; }
     }
     #endregion
 
@@ -407,6 +442,55 @@
       {
         result.ForceStrict = true;
       }
+
+      //InstanceMode
+      string instanceModeKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceMode");
+      string instanceKeyKey;
+      if (instanceModeKey != null)
+      {
+        result.InstanceMode = (BaristaInstanceMode)Enum.Parse(typeof(BaristaInstanceMode), request.Headers["Barista_InstanceMode"]);
+
+        if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
+        {
+          instanceKeyKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceKey");
+          if (instanceKeyKey == null)
+            throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Key must also be specified.");
+
+          result.InstanceKey = request.Headers["Barista_InstanceKey"];
+        }
+      }
+      else
+      {
+        instanceModeKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceMode");
+        if (instanceModeKey != null)
+        {
+          result.InstanceMode = (BaristaInstanceMode)Enum.Parse(typeof(BaristaInstanceMode), request.QueryString["Barista_InstanceMode"]);
+
+          if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
+          {
+            instanceKeyKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceKey");
+            if (instanceKeyKey == null)
+              throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Key must also be specified.");
+
+            result.InstanceKey = request.QueryString["Barista_InstanceKey"];
+          }
+        }
+      }
+
+      string instanceInitializationCodeKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceInitializationCode");
+      if (instanceInitializationCodeKey != null)
+      {
+        result.InstanceInitializationCode = request.Headers["Barista_InstanceInitializationCode"];
+      }
+      else
+      {
+        instanceInitializationCodeKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceInitializationCode");
+        if (instanceInitializationCodeKey != null)
+        {
+          result.InstanceInitializationCode = request.QueryString["Barista_InstanceInitializationCode"];
+        }
+      }
+
       return result;
     }
 

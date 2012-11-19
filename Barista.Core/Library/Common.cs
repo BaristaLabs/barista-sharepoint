@@ -15,6 +15,7 @@
   public class Common : ObjectInstance
   {
     private Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
+    private Dictionary<IBundle, object> m_installedBundles = new Dictionary<IBundle, object>();
 
     public Common(ObjectInstance prototype)
       : base(prototype)
@@ -46,7 +47,17 @@
         bundle = Activator.CreateInstance(type) as IBundle;
       }
 
-      return bundle.InstallBundle(this.Engine);
+      //Insure that bundles are only installed once.
+      if (m_installedBundles.ContainsKey(bundle))
+      {
+        return m_installedBundles[bundle];
+      }
+      else
+      {
+        var result = bundle.InstallBundle(this.Engine);
+        m_installedBundles.Add(bundle, result);
+        return result;
+      }
     }
 
     /// <summary>
@@ -61,6 +72,17 @@
       foreach (var bundleName in m_registeredBundles.Keys.OrderBy(k => k))
       {
         result.SetPropertyValue(bundleName, m_registeredBundles[bundleName].BundleDescription, false);
+      }
+      return result;
+    }
+
+    [JSFunction(Name = "listInstalledBundles")]
+    public ObjectInstance ListInstalledBundles()
+    {
+      var result = this.Engine.Object.Construct();
+      foreach (var bundle in m_installedBundles.Keys.OrderBy(k => k.BundleName))
+      {
+        result.SetPropertyValue(bundle.BundleName, bundle.BundleDescription, false);
       }
       return result;
     }

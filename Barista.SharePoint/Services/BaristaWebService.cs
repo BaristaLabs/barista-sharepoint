@@ -258,6 +258,13 @@
       request.Code = code;
       request.CodePath = codePath;
 
+      if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+      {
+        string instanceInitializationCodePath;
+        request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+        request.InstanceInitializationCodePath = instanceInitializationCodePath;
+      }
+
       request.SetExtendedPropertiesFromCurrentSPContext();
       
       client.Exec(request);
@@ -275,6 +282,13 @@
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
       request.CodePath = codePath;
+
+      if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+      {
+        string instanceInitializationCodePath;
+        request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+        request.InstanceInitializationCodePath = instanceInitializationCodePath;
+      }
 
       request.SetExtendedPropertiesFromCurrentSPContext();
 

@@ -92,6 +92,7 @@
       <HintPath>..\Lib\System.Threading.dll</HintPath>
     </Reference>
     <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Web.dll" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -99,6 +100,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />

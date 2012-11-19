@@ -17,7 +17,9 @@
   using System.ServiceModel;
   using System.ServiceModel.Web;
   using System.Text;
+  using System.Threading;
   using System.Web;
+  using System.Web.Caching;
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -140,13 +142,20 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
       BaristaContext.Current = new BaristaContext(request, response);
 
+      Mutex syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+
       WebBundle webBundle = new WebBundle();
-      var engine = GetScriptEngine(webBundle);
+      bool isNewScriptEngineInstance; 
+      var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
 
       object result = null;
       try
       {
         var source = new BaristaScriptSource(request.Code, request.CodePath);
+
+        if (syncRoot != null)
+          syncRoot.WaitOne();
+
         result = engine.Evaluate(source);
 
         var isRaw = false;
@@ -184,6 +193,9 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
           BaristaContext.Current.Dispose();
 
         BaristaContext.Current = null;
+
+        if (syncRoot != null)
+          syncRoot.ReleaseMutex();
       }
 
       return response;
@@ -200,7 +212,8 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       BaristaContext.Current = new BaristaContext(request, response);
 
       WebBundle webBundle = new WebBundle();
-      var engine = GetScriptEngine(webBundle);
+      bool isNewScriptEngineInstance;
+      var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
 
       try
       {
@@ -233,54 +246,84 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
     /// Returns a new instance of a script engine object with all runtime objects available.
     /// </summary>
     /// <returns></returns>
-    private ScriptEngine GetScriptEngine(WebBundle webBundle)
+    private ScriptEngine GetScriptEngine(WebBundle webBundle, out bool isNewScriptEngineInstance)
     {
-      var engine = new Jurassic.ScriptEngine();
+      isNewScriptEngineInstance = false;
+
+      ScriptEngine engine;
+      switch (BaristaContext.Current.Request.InstanceMode)
+      {
+        case BaristaInstanceMode.PerCall:
+          engine = new ScriptEngine();
+          isNewScriptEngineInstance = true;
+          break;
+        case BaristaInstanceMode.Single:
+          engine = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey) as ScriptEngine;
+          if (engine == null)
+          {
+            engine = new ScriptEngine();
+            isNewScriptEngineInstance = true;
+            HttpRuntime.Cache.Add("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey, engine, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+          }
+          break;
+        default:
+          throw new NotImplementedException("The instance mode of " + BaristaContext.Current.Request.InstanceMode + " is currently not supported.");
+      }
 
       if (BaristaContext.Current.Request.ForceStrict)
       {
         engine.ForceStrictMode = true;
       }
 
-      var console = new FirebugConsole(engine);
-      console.Output = new BaristaConsoleOutput(engine);
+      if (isNewScriptEngineInstance)
+      {
+        var console = new FirebugConsole(engine);
+        console.Output = new BaristaConsoleOutput(engine);
 
-      //Register Bundles.
-      BaristaGlobal instance = new BaristaGlobal(engine.Object.InstancePrototype);
+        //Register Bundles.
+        BaristaGlobal instance = new BaristaGlobal(engine.Object.InstancePrototype);
 
-      instance.Common.RegisterBundle(webBundle);
-      instance.Common.RegisterBundle(new MustacheBundle());
-      instance.Common.RegisterBundle(new LinqBundle());
-      instance.Common.RegisterBundle(new JsonDataBundle());
-      instance.Common.RegisterBundle(new SharePointBundle());
-      instance.Common.RegisterBundle(new ActiveDirectoryBundle());
-      instance.Common.RegisterBundle(new DocumentBundle());
-      instance.Common.RegisterBundle(new K2Bundle());
-      instance.Common.RegisterBundle(new UtilityBundle());
-      instance.Common.RegisterBundle(new UlsLogBundle());
-      instance.Common.RegisterBundle(new DocumentStoreBundle());
-      instance.Common.RegisterBundle(new SimpleInheritanceBundle());
-      instance.Common.RegisterBundle(new SqlDataBundle());
-      instance.Common.RegisterBundle(new StateMachineBundle());
-      instance.Common.RegisterBundle(new DeferredBundle());
+        instance.Common.RegisterBundle(webBundle);
+        instance.Common.RegisterBundle(new MustacheBundle());
+        instance.Common.RegisterBundle(new LinqBundle());
+        instance.Common.RegisterBundle(new JsonDataBundle());
+        instance.Common.RegisterBundle(new SharePointBundle());
+        instance.Common.RegisterBundle(new ActiveDirectoryBundle());
+        instance.Common.RegisterBundle(new DocumentBundle());
+        instance.Common.RegisterBundle(new K2Bundle());
+        instance.Common.RegisterBundle(new UtilityBundle());
+        instance.Common.RegisterBundle(new UlsLogBundle());
+        instance.Common.RegisterBundle(new DocumentStoreBundle());
+        instance.Common.RegisterBundle(new SimpleInheritanceBundle());
+        instance.Common.RegisterBundle(new SqlDataBundle());
+        instance.Common.RegisterBundle(new StateMachineBundle());
+        instance.Common.RegisterBundle(new DeferredBundle());
 
-      //Global Types
-      engine.SetGlobalValue("Barista", instance);
-      instance.SetPropertyValue("SharePoint", new BaristaSharePointGlobal(engine.Object.InstancePrototype), true);
+        //Global Types
+        engine.SetGlobalValue("Barista", instance);
+        instance.SetPropertyValue("SharePoint", new BaristaSharePointGlobal(engine.Object.InstancePrototype), true);
 
-      //engine.SetGlobalValue("file", new FileSystemInstance(engine));
+        //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
-      engine.SetGlobalValue("Guid", new GuidConstructor(engine));
-      engine.SetGlobalValue("Uri", new UriConstructor(engine));
-      engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
+        engine.SetGlobalValue("Guid", new GuidConstructor(engine));
+        engine.SetGlobalValue("Uri", new UriConstructor(engine));
+        engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
 
-      engine.SetGlobalValue("console", console);
+        engine.SetGlobalValue("console", console);
 
-      //Map Barista functions to global functions.
-      engine.Execute(@"var help = function(obj) { return Barista.help(obj); };
+        //Map Barista functions to global functions.
+        engine.Execute(@"var help = function(obj) { return Barista.help(obj); };
 var require = function(name) { return Barista.common.require(name); };
 var listBundles = function() { return Barista.common.listBundles(); };
 var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl); };");
+
+        //Execute any instance initialization code.
+        if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCode) == false)
+        {
+          BaristaScriptSource initializationScriptSource = new BaristaScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
+          engine.Execute(initializationScriptSource);
+        }
+      }
 
       return engine;
     }
