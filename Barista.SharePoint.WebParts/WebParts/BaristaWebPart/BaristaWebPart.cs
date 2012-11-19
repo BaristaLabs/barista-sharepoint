@@ -35,12 +35,14 @@
 
       BaristaHelper.EnsureExecutionInTrustedLocation();
 
-      var codeToExecute = Tamp(this.Code);
+      string codePath;
+      var codeToExecute = Tamp(this.Code, out codePath);
 
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = codeToExecute;
+      request.CodePath = codePath;
 
       request.SetExtendedPropertiesFromCurrentSPContext();
 
@@ -57,18 +59,20 @@
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    private string Tamp(string code)
+    private string Tamp(string code, out string codePath)
     {
+      codePath = String.Empty;
+
       //If the code looks like a uri, attempt to retrieve a code file and use the contents of that file as the code.
       if (Uri.IsWellFormedUriString(code, UriKind.RelativeOrAbsolute))
       {
         Uri codeUri;
         if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
         {
-
+          string filePath;
           bool isHiveFile;
           String codeFromfile;
-          if (SPHelper.TryGetSPFileAsString(code, out codeFromfile, out isHiveFile))
+          if (SPHelper.TryGetSPFileAsString(code, out filePath, out codeFromfile, out isHiveFile))
           {
             if (isHiveFile == false)
             {
@@ -80,6 +84,7 @@
             }
 
             code = codeFromfile;
+            codePath = filePath;
           }
         }
       }
