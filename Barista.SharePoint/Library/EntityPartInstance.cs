@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class EntityPartInstance : ObjectInstance
   {
     EntityPart m_entityPart;

@@ -3,7 +3,9 @@
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
+  using System;
 
+  [Serializable]
   public class AjaxSettingsConstructor : ClrFunction
   {
     public AjaxSettingsConstructor(ScriptEngine engine)
@@ -18,6 +20,7 @@
     }
   }
 
+  [Serializable]
   public class AjaxSettingsInstance : ObjectInstance
   {
     public AjaxSettingsInstance(ObjectInstance prototype)

@@ -18,6 +18,7 @@
   /// <summary>
   /// Represents a SharePoint-backed Document Store.
   /// </summary>
+  [Serializable]
   public class SPDocumentStore :
     IFullyCapableDocumentStore,
     IAsyncExecDocumentStore,

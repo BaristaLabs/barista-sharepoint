@@ -9,6 +9,7 @@
   using Newtonsoft.Json;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPListCreationInformation : ObjectInstance
   {
     public SPListCreationInformation(ObjectInstance prototype)

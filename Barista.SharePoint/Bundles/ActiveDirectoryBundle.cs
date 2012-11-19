@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
   using Barista.SharePoint.Library;
+  using System;
 
+  [Serializable]
   public class ActiveDirectoryBundle : IBundle
   {
     public string BundleName

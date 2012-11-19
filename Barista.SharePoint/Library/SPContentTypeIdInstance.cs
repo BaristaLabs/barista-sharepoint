@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPContentTypeIdConstructor : ClrFunction
   {
     public SPContentTypeIdConstructor(ScriptEngine engine)
@@ -30,6 +31,7 @@
     }
   }
 
+  [Serializable]
   public class SPContentTypeIdInstance : ObjectInstance
   {
     private SPContentTypeId m_contentTypeId;

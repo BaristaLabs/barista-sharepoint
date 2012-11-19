@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_FieldRef : ObjectInstance
   {
     public SPCamlQueryBuilder_FieldRef(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, string name, string valueType, bool lookupId)

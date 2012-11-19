@@ -15,6 +15,7 @@
   /// <summary>
   /// SharePoint namespace. Contains functions to interact with SharePoint.
   /// </summary>
+  [Serializable]
   public class SPInstance : ObjectInstance
   {
     private SPContextInstance m_context;
@@ -30,6 +31,7 @@
       this.PopulateFunctions();
     }
 
+    #region Properties
     [JSDoc("Gets the current context of the request. Equivalent to SPContext.Current in the server object model.")]
     [JSProperty(Name = "currentContext")]
     public SPContextInstance CurrentContext
@@ -43,40 +45,36 @@
     {
       get { return m_farm; }
     }
+    #endregion
 
-    [JSDoc("Writes the specified contents to the file located at the specified url")]
-    [JSFunction(Name = "write")]
-    public SPFileInstance Write(string fileUrl, object contents)
+    #region Functions
+    [JSDoc("Returns a value that indicates if a file exists at the specified url.")]
+    [JSFunction(Name = "exists")]
+    public bool Exists(string fileUrl)
     {
-      byte[] data;
-      if (contents is Base64EncodedByteArrayInstance)
-        data = ((Base64EncodedByteArrayInstance)contents).Data;
-      else if (contents is StringInstance || contents is string)
-        data = Encoding.UTF8.GetBytes((string)contents);
-      else if (contents is ObjectInstance)
-        data = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, contents, null, null));
-      else
-        data = Encoding.UTF8.GetBytes(contents.ToString());
-
-      SPFile result;
-      if (SPHelper.TryGetSPFile(fileUrl, out result))
+      SPFile file;
+      if (SPHelper.TryGetSPFile(fileUrl, out file))
       {
-        SPWeb web;
-        if (SPHelper.TryGetSPWeb(fileUrl, out web))
-        {
-          result = web.Files.Add(fileUrl, data);
-        }
-        else
-        {
-          throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified web:  " + fileUrl);
-        }
+        return true;
       }
       else
       {
-        result.SaveBinary(data);
+        return false;
+      }
+    }
+
+    [JSDoc("Loads the file at the specified url as a byte array.")]
+    [JSFunction(Name = "loadFileAsByteArray")]
+    public Base64EncodedByteArrayInstance LoadFileAsByteArray(string fileUrl)
+    {
+      SPFile file;
+      if (SPHelper.TryGetSPFile(fileUrl, out file))
+      {
+        var data = file.OpenBinary(SPOpenBinaryOptions.None);
+        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, data);
       }
 
-      return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+      throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
     }
 
     [JSDoc("Loads the file at the specified url as a string.")]
@@ -133,6 +131,42 @@
       else
         eventFiring.CustomDisableEventFiring();
     }
+
+    [JSDoc("Writes the specified contents to the file located at the specified url")]
+    [JSFunction(Name = "write")]
+    public SPFileInstance Write(string fileUrl, object contents)
+    {
+      byte[] data;
+      if (contents is Base64EncodedByteArrayInstance)
+        data = ((Base64EncodedByteArrayInstance)contents).Data;
+      else if (contents is StringInstance || contents is string)
+        data = Encoding.UTF8.GetBytes((string)contents);
+      else if (contents is ObjectInstance)
+        data = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, contents, null, null));
+      else
+        data = Encoding.UTF8.GetBytes(contents.ToString());
+
+      SPFile result;
+      if (SPHelper.TryGetSPFile(fileUrl, out result))
+      {
+        SPWeb web;
+        if (SPHelper.TryGetSPWeb(fileUrl, out web))
+        {
+          result = web.Files.Add(fileUrl, data);
+        }
+        else
+        {
+          throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified web:  " + fileUrl);
+        }
+      }
+      else
+      {
+        result.SaveBinary(data);
+      }
+
+      return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+    }
+    #endregion
 
     #region Nested Classes
     private class HandleEventFiring : SPItemEventReceiver

@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class CommentInstance : ObjectInstance
   {
     Comment m_comment;

@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class FolderInstance : ObjectInstance
   {
     Folder m_folder;

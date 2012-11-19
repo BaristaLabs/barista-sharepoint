@@ -8,6 +8,7 @@
   using Jurassic.Library;
   using Newtonsoft.Json;
 
+  [Serializable]
   public class SPWebCreationInformation : ObjectInstance
   {
     public SPWebCreationInformation(ObjectInstance prototype)

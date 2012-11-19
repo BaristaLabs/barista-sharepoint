@@ -6,6 +6,7 @@
   using System;
   using System.Linq;
 
+  [Serializable]
   public class PrincipalRoleInfoInstance : ObjectInstance
   {
     PrincipalInstance m_principalInstance;

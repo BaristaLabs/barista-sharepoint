@@ -3,7 +3,9 @@
   using Barista.Library;
   using Barista.SharePoint.Library;
   using Jurassic;
+  using System;
 
+  [Serializable]
   public class WebBundle : IBundle
   {
 

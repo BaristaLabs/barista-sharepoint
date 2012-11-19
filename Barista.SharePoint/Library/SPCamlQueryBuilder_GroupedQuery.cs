@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_GroupedQuery : ObjectInstance
   {
     public SPCamlQueryBuilder_GroupedQuery(ObjectInstance prototype, SPCamlQueryBuilderInstance builder)

@@ -8,6 +8,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
 
+  [Serializable]
   public class SPContextInstance : ObjectInstance
   {
     private BaristaContext m_context;

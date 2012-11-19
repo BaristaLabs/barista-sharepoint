@@ -10,6 +10,7 @@
   using Barista.Library;
   using System.Text;
 
+  [Serializable]
   public class SPListConstructor : ClrFunction
   {
     public SPListConstructor(ScriptEngine engine)
@@ -42,6 +43,7 @@
     }
   }
 
+  [Serializable]
   public class SPListInstance : ObjectInstance, IDisposable
   {
     private SPSite m_site;

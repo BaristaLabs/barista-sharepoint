@@ -7,6 +7,7 @@
   using Jurassic;
   using Jurassic.Library;
 
+  [Serializable]
   public class Base64EncodedByteArrayConstructor : ClrFunction
   {
     public Base64EncodedByteArrayConstructor(ScriptEngine engine)
@@ -24,6 +25,7 @@
     }
   }
 
+  [Serializable]
   public class Base64EncodedByteArrayInstance : ObjectInstance
   {
     private List<Byte> m_data = new List<byte>();

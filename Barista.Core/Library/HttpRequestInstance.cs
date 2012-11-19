@@ -6,7 +6,9 @@
   using System.Web;
   using System.ServiceModel.Web;
   using System.Text;
+  using System;
 
+  [Serializable]
   public class HttpRequestInstance : ObjectInstance
   {
     private BrewRequest m_request;

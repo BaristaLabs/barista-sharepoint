@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPListTemplateConstructor : ClrFunction
   {
     public SPListTemplateConstructor(ScriptEngine engine)
@@ -35,6 +36,7 @@
     }
   }
 
+  [Serializable]
   public class SPListTemplateInstance : ObjectInstance
   {
     private SPListTemplate m_listTemplate;

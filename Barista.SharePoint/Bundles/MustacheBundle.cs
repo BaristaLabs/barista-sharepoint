@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
   using Jurassic;
+  using System;
 
+  [Serializable]
   public class MustacheBundle : IBundle
   {
     public string BundleName

@@ -7,6 +7,7 @@
   using System.Text;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
+  [Serializable]
   public class PostedFile
   {
     [DataMember]

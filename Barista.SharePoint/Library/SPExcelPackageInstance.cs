@@ -10,6 +10,7 @@
   using Microsoft.SharePoint;
   using Barista.Library;
 
+  [Serializable]
   public class ExcelPackageConstructor : ClrFunction
   {
     public ExcelPackageConstructor(ScriptEngine engine)
@@ -52,6 +53,7 @@
     }
   }
 
+  [Serializable]
   public class ExcelPackageInstance : ObjectInstance, IDisposable
   {
     private SPFile m_sourceFile;

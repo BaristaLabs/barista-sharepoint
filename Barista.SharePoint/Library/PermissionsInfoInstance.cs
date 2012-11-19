@@ -6,6 +6,7 @@
   using System;
   using System.Linq;
 
+  [Serializable]
   public class PermissionsInfoInstance : ObjectInstance
   {
     PermissionsInfo m_permissionsInfo;

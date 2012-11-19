@@ -14,6 +14,7 @@
   using System.IO;
   using Barista.Library;
 
+  [Serializable]
   public class SPWebConstructor : ClrFunction
   {
     public SPWebConstructor(ScriptEngine engine)
@@ -42,6 +43,7 @@
   }
 
   [JSDoc("Represents a SharePoint website.")]
+  [Serializable]
   public class SPWebInstance : ObjectInstance, IDisposable
   {
     private SPWeb m_web;

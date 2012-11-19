@@ -15,6 +15,7 @@
   using Barista.Library;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
+  [Serializable]
   public class BrewResponse : IExtensibleDataObject
   {
     public BrewResponse()

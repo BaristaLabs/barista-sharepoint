@@ -3,7 +3,9 @@
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
+  using System;
 
+  [Serializable]
   public class ProxySettingsConstructor : ClrFunction
   {
     public ProxySettingsConstructor(ScriptEngine engine)
@@ -18,7 +20,7 @@
     }
   }
 
-
+  [Serializable]
   public class ProxySettingsInstance : ObjectInstance
   {
     public ProxySettingsInstance(ObjectInstance prototype)

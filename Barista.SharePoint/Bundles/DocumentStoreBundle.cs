@@ -4,7 +4,9 @@
   using Barista.SharePoint.DocumentStore;
   using Barista.SharePoint.Library;
   using Jurassic;
+  using System;
 
+  [Serializable]
   public class DocumentStoreBundle : IBundle
   {
     public string BundleName
@@ -25,7 +27,8 @@
       return new RepositoryInstance(engine, repository);
     }
 
-    class BaristaRepositoryFactory : IRepositoryFactory
+    [Serializable]
+    private class BaristaRepositoryFactory : IRepositoryFactory
     {
       public Repository CreateRepository()
       {

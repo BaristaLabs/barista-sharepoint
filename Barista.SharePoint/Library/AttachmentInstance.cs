@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class AttachmentInstance : ObjectInstance
   {
     private Attachment m_attachment;

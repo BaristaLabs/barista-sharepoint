@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using System.Collections.Generic;
 
+  [Serializable]
   public class SPFileVersionCollectionConstructor : ClrFunction
   {
     public SPFileVersionCollectionConstructor(ScriptEngine engine)
@@ -23,6 +24,7 @@
     }
   }
 
+  [Serializable]
   public class SPFileVersionCollectionInstance : ObjectInstance
   {
     private SPFileVersionCollection m_fileVersionCollection;

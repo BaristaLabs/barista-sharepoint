@@ -1,79 +1,54 @@
-﻿namespace Barista.SharePoint.Library
+﻿namespace Barista.Library
 {
+  using Jurassic;
+  using Jurassic.Library;
   using System;
   using System.Collections.Generic;
   using System.Linq;
-  using System.Net;
   using System.Reflection;
-  using System.ServiceModel.Web;
-  using System.Web;
-  using Jurassic;
-  using Jurassic.Library;
-  using System.Xml.Linq;
-  using Barista.Extensions;
-  using Newtonsoft.Json;
-  using Barista.SharePoint.Library;
-  using Barista.Library;
+  using System.Text;
 
-  public static class Help
+  [Serializable]
+  public class BaristaGlobal : ObjectInstance
   {
-    public static object GenerateHelpJsonForObject(ScriptEngine engine, object obj)
+    public BaristaGlobal(ObjectInstance prototype)
+      : base(prototype)
+    {
+      this.Common = new Common(prototype);
+
+      this.PopulateFields();
+      this.PopulateFunctions();
+    }
+
+    [JSProperty(Name = "common")]
+    public Common Common
+    {
+      get;
+      set;
+    }
+
+    [JSFunction(Name = "help")]
+    public object Help(object obj)
     {
       object result = "Sorry, Dave. I didn't understand what you wanted.";
 
       if (obj == null || obj == Null.Value || obj == Undefined.Value)
       {
-        result = JSONObject.Parse(engine, 
-@"{
-""console"": ""Console object that allows various logging/trace functions."",
-""ad"": ""Active Directory namespace. Contains functions to interact with AD."",
-""doc"": ""Document namespace. Contains functions to generate/parse documents."",
-""log"": ""Log namespace. Contains fuctions to retrieve information from the ULS log."",
-""web"": ""Web namespace. Contains functions to gather information from the current web context."",
-""util"": ""Utility namespace. Contains utility, helper, functions."",
-""sp"": ""SharePoint namespace. Contains functions to interact with SharePoint."",
-""k2"": ""K2 namespace. Contains functions to interact with K2 services.""
-}", null);
-      }
-      else if (obj is string)
-      {
-        var name = obj as string;
-        switch(name)
+        if (this.Common != null)
         {
-          case "console":
-            result = "See http://getfirebug.com/logging";
-            break;
-          case "ad":
-            result = GetObjectInfo(engine, typeof(ActiveDirectoryInstance));
-            break;
-          case "doc":
-            result = GetObjectInfo(engine, typeof(DocumentInstance));
-            break;
-          case "log":
-            result = GetObjectInfo(engine, typeof(LogInstance));
-            break;
-          case "web":
-            result = GetObjectInfo(engine, typeof(WebInstance));
-            break;
-          case "util":
-            result = GetObjectInfo(engine, typeof(UtilInstance));
-            break;
-          case "sp":
-            result = GetObjectInfo(engine, typeof(SPInstance));
-            break;
-          case "k2":
-            result = GetObjectInfo(engine, typeof(K2Instance));
-            break;
+          return Common.ListBundles();
         }
       }
       else if (obj is ObjectInstance)
       {
         var oi = obj as ObjectInstance;
-        result = GetObjectInfo(engine, oi.GetType());
+        result = GetObjectInfo(this.Engine, oi.GetType());
       }
 
       return result;
     }
+
+    #region Members
 
     private static ObjectInstance GetObjectInfo(ScriptEngine engine, Type type)
     {
@@ -92,7 +67,8 @@
       var resultProperties = engine.Object.Construct();
 
       var properties = type.GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public)
-                           .Select(mi => new {
+                           .Select(mi => new
+                           {
                              MemberInfo = mi,
                              PropertyInfo = mi.GetCustomAttributes(typeof(JSPropertyAttribute), true).OfType<JSPropertyAttribute>().FirstOrDefault()
                            })
@@ -109,7 +85,8 @@
       var resultFunctions = engine.Object.Construct();
 
       var functions = type.GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public)
-                     .Select(mi => new {
+                     .Select(mi => new
+                     {
                        MemberInfo = mi,
                        FunctionInfo = mi.GetCustomAttributes(typeof(JSFunctionAttribute), true).OfType<JSFunctionAttribute>().FirstOrDefault()
                      })
@@ -193,8 +170,9 @@
           result = result.Replace("Barista.Library.", "");
           break;
       }
-      
+
       return result;
     }
+    #endregion
   }
 }

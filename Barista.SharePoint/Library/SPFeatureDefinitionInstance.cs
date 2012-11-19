@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
 
+  [Serializable]
   public class SPFeatureDefinitionConstructor : ClrFunction
   {
     public SPFeatureDefinitionConstructor(ScriptEngine engine)
@@ -35,6 +36,7 @@
     }
   }
 
+  [Serializable]
   public class SPFeatureDefinitionInstance : ObjectInstance
   {
     private SPFeatureDefinition m_featureDefinition;

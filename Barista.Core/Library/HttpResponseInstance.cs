@@ -7,6 +7,7 @@
   using System.Net;
   using System.Web;
 
+  [Serializable]
   public class HttpResponseInstance : ObjectInstance
   {
     private string m_body;

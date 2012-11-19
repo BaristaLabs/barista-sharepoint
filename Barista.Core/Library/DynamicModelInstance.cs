@@ -11,6 +11,7 @@
   using System.Linq;
   using System.Text;
 
+  [Serializable]
   public class DynamicModelConstructor : ClrFunction
   {
     public DynamicModelConstructor(ScriptEngine engine)
@@ -43,6 +44,7 @@
     }
   }
 
+  [Serializable]
   public class DynamicModelInstance : ObjectInstance
   {
     private string m_connectionString;

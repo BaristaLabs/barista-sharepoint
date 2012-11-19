@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPListItemCollectionPositionConstructor : ClrFunction
   {
     public SPListItemCollectionPositionConstructor(ScriptEngine engine)
@@ -30,6 +31,7 @@
     }
   }
 
+  [Serializable]
   public class SPListItemCollectionPositionInstance : ObjectInstance
   {
     private SPListItemCollectionPosition m_position;

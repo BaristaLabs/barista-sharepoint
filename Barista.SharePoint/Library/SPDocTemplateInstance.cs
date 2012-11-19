@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPDocTemplateConstructor : ClrFunction
   {
     public SPDocTemplateConstructor(ScriptEngine engine)
@@ -36,6 +37,7 @@
     }
   }
 
+  [Serializable]
   public class SPDocTemplateInstance : ObjectInstance
   {
     private SPDocTemplate m_docTemplate;

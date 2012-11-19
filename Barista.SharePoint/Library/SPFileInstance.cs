@@ -6,6 +6,7 @@
   using Microsoft.SharePoint;
   using Barista.Library;
 
+  [Serializable]
   public class SPFileConstructor : ClrFunction
   {
     public SPFileConstructor(ScriptEngine engine)
@@ -33,8 +34,10 @@
     }
   }
 
+  [Serializable]
   public class SPFileInstance : ObjectInstance
   {
+    [NonSerialized]
     private SPFile m_file;
 
     public SPFileInstance(ObjectInstance prototype)

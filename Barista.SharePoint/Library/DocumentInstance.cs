@@ -6,10 +6,12 @@
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
+  using System;
   using System.Collections.Generic;
   using System.Xml;
   using System.Xml.Linq;
 
+  [Serializable]
   public class DocumentInstance : ObjectInstance
   {
     public DocumentInstance(ScriptEngine engine)

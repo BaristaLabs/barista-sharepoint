@@ -12,6 +12,7 @@
   using Microsoft.Office.Server.Utilities;
   using Barista.Library;
 
+  [Serializable]
   public class SPFolderConstructor : ClrFunction
   {
     public SPFolderConstructor(ScriptEngine engine)
@@ -41,6 +42,7 @@
     }
   }
 
+  [Serializable]
   public class SPFolderInstance : ObjectInstance, IDisposable
   {
     private SPSite m_site;

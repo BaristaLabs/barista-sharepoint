@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPRecycleBinItemCollectionConstructor : ClrFunction
   {
     public SPRecycleBinItemCollectionConstructor(ScriptEngine engine)
@@ -22,6 +23,7 @@
     }
   }
 
+  [Serializable]
   public class SPRecycleBinItemCollectionInstance : ObjectInstance
   {
     private SPRecycleBinItemCollection m_recycleBinItemCollection;

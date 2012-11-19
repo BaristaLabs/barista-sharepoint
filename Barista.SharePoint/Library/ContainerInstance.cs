@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class ContainerInstance : ObjectInstance
   {
     Container m_container;

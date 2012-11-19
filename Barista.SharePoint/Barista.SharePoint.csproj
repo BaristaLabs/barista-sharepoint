@@ -188,6 +188,7 @@
     <Compile Include="BaristaContext.cs" />
     <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="Library\ADGroupInstance.cs" />
     <Compile Include="Library\ADUserInstance.cs" />
     <Compile Include="Library\AttachmentInstance.cs" />
+    <Compile Include="Library\BaristaSharePointGlobal.cs" />
     <Compile Include="Library\CommentInstance.cs" />
     <Compile Include="Library\ContainerInstance.cs" />
     <Compile Include="Library\DocumentInstance.cs" />
@@ -222,7 +224,6 @@
     <Compile Include="Library\EntityPartInstance.cs" />
     <Compile Include="Library\EntitySetInstance.cs" />
     <Compile Include="Library\FolderInstance.cs" />
-    <Compile Include="Library\HelpInstance.cs" />
     <Compile Include="Library\PermissionsInfoInstance.cs" />
     <Compile Include="Library\PrincipalInstance.cs" />
     <Compile Include="Library\PrincipalRoleInfoInstance.cs" />

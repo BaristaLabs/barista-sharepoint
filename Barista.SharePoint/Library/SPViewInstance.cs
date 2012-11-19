@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPViewConstructor : ClrFunction
   {
     public SPViewConstructor(ScriptEngine engine)
@@ -33,6 +34,7 @@
     }
   }
 
+  [Serializable]
   public class SPViewInstance : ObjectInstance
   {
     private SPView m_view;

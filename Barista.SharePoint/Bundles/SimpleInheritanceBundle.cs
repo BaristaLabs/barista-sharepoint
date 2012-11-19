@@ -6,6 +6,7 @@
   using System.Linq;
   using System.Text;
 
+  [Serializable]
   public class SimpleInheritanceBundle : IBundle
   {
 

@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_Token : ObjectInstance
   {
     public SPCamlQueryBuilder_Token(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, int startIndex)

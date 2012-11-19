@@ -7,6 +7,7 @@
   using Jurassic.Library;
   using Barista.DirectoryServices;
 
+  [Serializable]
   public class ADUserConstructor : ClrFunction
   {
     public ADUserConstructor(ScriptEngine engine)
@@ -31,6 +32,7 @@
     }
   }
 
+  [Serializable]
   public class ADUserInstance : ObjectInstance
   {
     private ADUser m_user;

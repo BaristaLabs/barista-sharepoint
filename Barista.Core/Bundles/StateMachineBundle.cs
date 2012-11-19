@@ -1,7 +1,9 @@
 ﻿namespace Barista.Bundles
 {
   using Jurassic;
+  using System;
 
+  [Serializable]
   public class StateMachineBundle : IBundle
   {
     public string BundleName

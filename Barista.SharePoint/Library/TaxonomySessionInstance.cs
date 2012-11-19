@@ -8,6 +8,7 @@
   using Microsoft.SharePoint.Taxonomy;
   using System.Collections.Generic;
 
+  [Serializable]
   public class TaxonomySessionInstance : ObjectInstance
   {
     private TaxonomySession m_taxonomySession;

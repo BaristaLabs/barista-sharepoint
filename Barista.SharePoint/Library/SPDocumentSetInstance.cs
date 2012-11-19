@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.Office.DocumentManagement.DocumentSets;
 
+  [Serializable]
   public class SPDocumentSetConstructor : ClrFunction
   {
     public SPDocumentSetConstructor(ScriptEngine engine)
@@ -49,6 +50,7 @@
     }
   }
 
+  [Serializable]
   public class SPDocumentSetInstance : ObjectInstance,  IDisposable
   {
     private SPSite m_site;

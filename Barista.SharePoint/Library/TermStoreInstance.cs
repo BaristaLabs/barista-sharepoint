@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Taxonomy;
 
+  [Serializable]
   public class TermStoreInstance : ObjectInstance
   {
     private TermStore m_termStore;

@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class PrincipalInstance : ObjectInstance
   {
     Principal m_principal;

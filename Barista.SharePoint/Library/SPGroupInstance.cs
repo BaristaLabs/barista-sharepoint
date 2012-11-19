@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using System.Collections.Generic;
 
+  [Serializable]
   public class SPGroupConstructor : ClrFunction
   {
     public SPGroupConstructor(ScriptEngine engine)
@@ -35,6 +36,7 @@
     }
   }
 
+  [Serializable]
   public class SPGroupInstance : ObjectInstance
   {
     private SPGroup m_group;

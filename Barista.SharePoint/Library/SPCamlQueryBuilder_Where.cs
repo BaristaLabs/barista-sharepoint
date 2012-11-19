@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_Where : ObjectInstance
   {
     public SPCamlQueryBuilder_Where(ObjectInstance prototype, SPCamlQueryBuilderInstance builder)

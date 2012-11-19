@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_Membership : ObjectInstance
   {
     public SPCamlQueryBuilder_Membership(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, int startIndex)
@@ -54,6 +55,7 @@
     }
   }
 
+  [Serializable]
   public class SPCamlQueryBuilder_SPWeb : ObjectInstance
   {
     public SPCamlQueryBuilder_SPWeb(ObjectInstance prototype, SPCamlQueryBuilderInstance builder, int startIndex)

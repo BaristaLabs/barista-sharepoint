@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPCamlQueryConstructor : ClrFunction
   {
     public SPCamlQueryConstructor(ScriptEngine engine)

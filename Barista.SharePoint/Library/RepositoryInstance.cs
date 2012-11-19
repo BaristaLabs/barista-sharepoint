@@ -10,6 +10,7 @@
   using System.Linq;
   using Newtonsoft.Json;
 
+  [Serializable]
   public class RepositoryInstance : ObjectInstance
   {
     Repository m_repository;

@@ -1,12 +1,9 @@
-﻿using Microsoft.SharePoint;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-
-namespace Barista.SharePoint
+﻿namespace Barista.SharePoint
 {
+  using Microsoft.SharePoint;
+  using System;
+
+  [Serializable]
   public sealed class BaristaContext : IDisposable
   {
     private static object s_syncRoot = new object();

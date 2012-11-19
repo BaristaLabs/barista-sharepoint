@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Taxonomy;
 
+  [Serializable]
   public class TermLabelInstance : ObjectInstance
   {
     private Label m_termLabel;

@@ -9,6 +9,7 @@
   using Barista.SharePoint.Services;
   using Barista.DirectoryServices;
 
+  [Serializable]
   public class ActiveDirectoryInstance : ObjectInstance
   {
     public ActiveDirectoryInstance(ScriptEngine engine)

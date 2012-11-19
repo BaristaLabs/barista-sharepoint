@@ -1,4 +1,4 @@
-﻿namespace Barista
+﻿namespace Barista.Library
 {
   using Jurassic;
   using System;
@@ -11,9 +11,17 @@
   /// <summary>
   /// Provides functionality similar to CommonJS
   /// </summary>
-  public class Common
+  [Serializable]
+  public class Common : ObjectInstance
   {
-    public Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
+    private Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
+
+    public Common(ObjectInstance prototype)
+      : base(prototype)
+    {
+      this.PopulateFields();
+      this.PopulateFunctions();
+    }
 
     /// <summary>
     /// Installs the current bundle within the script engine, optionally returning a result.
@@ -21,7 +29,8 @@
     /// <param name="engine"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public object Require(ScriptEngine engine, string name)
+    [JSFunction(Name = "require")]
+    public object Require(string name)
     {
       IBundle bundle;
       if (m_registeredBundles.ContainsKey(name))
@@ -32,12 +41,12 @@
       {
         var type = Type.GetType(name, false, true);
         if (type == null)
-          throw new JavaScriptException(engine, "Error", "The specified bundle does not exist: " + name);
+          throw new JavaScriptException(this.Engine, "Error", "The specified bundle does not exist: " + name);
 
         bundle = Activator.CreateInstance(type) as IBundle;
       }
 
-      return bundle.InstallBundle(engine);
+      return bundle.InstallBundle(this.Engine);
     }
 
     /// <summary>
@@ -45,9 +54,10 @@
     /// </summary>
     /// <param name="engine"></param>zzz
     /// <returns></returns>
-    public ObjectInstance List(ScriptEngine engine)
+    [JSFunction(Name = "listBundles")]
+    public ObjectInstance ListBundles()
     {
-      var result = engine.Object.Construct();
+      var result = this.Engine.Object.Construct();
       foreach (var bundleName in m_registeredBundles.Keys.OrderBy(k => k))
       {
         result.SetPropertyValue(bundleName, m_registeredBundles[bundleName].BundleDescription, false);
@@ -56,7 +66,7 @@
     }
 
     /// <summary>
-    /// Registeres the specified bundle (used by the bootstrapper)
+    /// Registers the specified bundle (used by the bootstrapper)
     /// </summary>
     /// <param name="bundle"></param>
     public void RegisterBundle(IBundle bundle)

@@ -12,6 +12,7 @@
   using Microsoft.Office.Server.Utilities;
   using Barista.Library;
 
+  [Serializable]
   public class SPSiteDataQueryConstructor : ClrFunction
   {
     public SPSiteDataQueryConstructor(ScriptEngine engine)
@@ -26,6 +27,7 @@
     }
   }
 
+  [Serializable]
   public class SPSiteDataQueryInstance : ObjectInstance
   {
     SPSiteDataQuery m_siteDataQuery;

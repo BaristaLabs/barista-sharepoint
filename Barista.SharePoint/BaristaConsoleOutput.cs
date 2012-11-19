@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
 
+  [Serializable]
   public class BaristaConsoleOutput : IFirebugConsoleOutput
   {
     public BaristaConsoleOutput(ScriptEngine engine)
@@ -16,6 +17,7 @@
 
       this.Engine = engine;
     }
+
     public ScriptEngine Engine
     {
       get;

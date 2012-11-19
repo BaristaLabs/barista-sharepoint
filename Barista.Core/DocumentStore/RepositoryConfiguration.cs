@@ -6,6 +6,7 @@
   using System.Configuration;
   using System.Linq;
 
+  [Serializable]
   public class RepositoryConfiguration
   {
     private static object m_syncRoot = new object();

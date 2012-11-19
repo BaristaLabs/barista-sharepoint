@@ -22,6 +22,7 @@
   using System.Web.Caching;
   using System.Xml.Linq;
 
+  [Serializable]
   public class WebInstance : ObjectInstance
   {
     private HttpRequestInstance m_httpRequest;

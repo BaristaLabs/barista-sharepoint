@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPSecurableObjectInstance : ObjectInstance
   {
     private SPSecurableObject m_securableObject;

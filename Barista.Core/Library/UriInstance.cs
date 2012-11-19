@@ -5,6 +5,7 @@
   using Jurassic;
   using Jurassic.Library;
 
+  [Serializable]
   public class UriConstructor : ClrFunction
   {
     public UriConstructor(ScriptEngine engine)
@@ -41,6 +42,7 @@
     }
   }
 
+  [Serializable]
   public class UriInstance : ObjectInstance
   {
     private Uri m_uri;

@@ -11,6 +11,7 @@
   using Microsoft.SharePoint.Taxonomy;
   using System.Reflection;
 
+  [Serializable]
   public class SPListItemConstructor : ClrFunction
   {
     public SPListItemConstructor(ScriptEngine engine)
@@ -37,6 +38,7 @@
     }
   }
 
+  [Serializable]
   public class SPListItemInstance : ObjectInstance
   {
     private SPListItem m_listItem;

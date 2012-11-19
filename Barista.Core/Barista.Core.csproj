@@ -102,7 +102,7 @@
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
-    <Compile Include="Common.cs" />
+    <Compile Include="Library\Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
     <Compile Include="Csv\CsvWriter.cs" />
@@ -128,6 +128,7 @@
     <Compile Include="Framework\MultipartParser.cs" />
     <Compile Include="IBundle.cs" />
     <Compile Include="Framework\JsonNetSerializer.cs" />
+    <Compile Include="Library\BaristaGlobalInstance.cs" />
     <Compile Include="Library\DynamicModelInstance.cs" />
     <Compile Include="Extensions\ArgumentHelperExtensions.cs" />
     <Compile Include="Extensions\EventHelperExtensions.cs" />

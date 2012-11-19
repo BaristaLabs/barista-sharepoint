@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilderConstructor : ClrFunction
   {
     public SPCamlQueryBuilderConstructor(ScriptEngine engine)
@@ -28,6 +29,7 @@
   /// <remarks>
   /// Converted from the EcmaScript version at camljs.codeplex.com
   /// </remarks>
+  [Serializable]
   public class SPCamlQueryBuilderInstance : ObjectInstance
   {
     public SPCamlQueryBuilderInstance(ObjectInstance prototype)

@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class UsageInfoInstance : ObjectInstance
   {
     private SPSite.UsageInfo m_usageInfo;

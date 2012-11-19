@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Taxonomy;
 
+  [Serializable]
   public class TermGroupInstance : ObjectInstance
   {
     private Group m_termGroup;

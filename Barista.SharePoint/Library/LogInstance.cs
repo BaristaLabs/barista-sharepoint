@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class LogInstance : ObjectInstance
   {
     public LogInstance(ScriptEngine engine)
@@ -28,6 +29,7 @@
     }
   }
 
+  [Serializable]
   public class UlsLogEntry : ObjectInstance
   {
     UlsHelper.UlsLogEntry m_entry;

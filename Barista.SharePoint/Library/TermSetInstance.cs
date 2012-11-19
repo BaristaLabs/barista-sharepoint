@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Taxonomy;
 
+  [Serializable]
   public class TermSetInstance : ObjectInstance
   {
     private TermSet m_termSet;

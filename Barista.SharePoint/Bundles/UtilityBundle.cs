@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
   using Barista.Library;
+  using System;
 
+  [Serializable]
   public class UtilityBundle : IBundle
   {
     public string BundleName

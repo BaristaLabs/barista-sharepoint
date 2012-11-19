@@ -8,6 +8,7 @@
   using System.Collections.Generic;
   using Barista.Library;
 
+  [Serializable]
   public class SPFileVersionConstructor : ClrFunction
   {
     public SPFileVersionConstructor(ScriptEngine engine)
@@ -24,6 +25,7 @@
     }
   }
 
+  [Serializable]
   public class SPFileVersionInstance : ObjectInstance
   {
     private SPFileVersion m_fileVersion;

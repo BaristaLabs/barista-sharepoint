@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPRoleDefinitionConstructor : ClrFunction
   {
     public SPRoleDefinitionConstructor(ScriptEngine engine)
@@ -36,6 +37,7 @@
     }
   }
 
+  [Serializable]
   public class SPRoleDefinitionInstance : ObjectInstance
   {
     private SPRoleDefinition m_roleDefinition;

@@ -246,99 +246,43 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       console.Output = new BaristaConsoleOutput(engine);
 
       //Register Bundles.
-      Common common = new Common();
-      common.RegisterBundle(webBundle);
-      common.RegisterBundle(new MustacheBundle());
-      common.RegisterBundle(new LinqBundle());
-      common.RegisterBundle(new JsonDataBundle());
-      common.RegisterBundle(new SharePointBundle());
-      common.RegisterBundle(new ActiveDirectoryBundle());
-      common.RegisterBundle(new DocumentBundle());
-      common.RegisterBundle(new K2Bundle());
-      common.RegisterBundle(new UtilityBundle());
-      common.RegisterBundle(new UlsLogBundle());
-      common.RegisterBundle(new DocumentStoreBundle());
-      common.RegisterBundle(new SimpleInheritanceBundle());
-      common.RegisterBundle(new SqlDataBundle());
-      common.RegisterBundle(new StateMachineBundle());
+      BaristaGlobal instance = new BaristaGlobal(engine.Object.InstancePrototype);
+
+      instance.Common.RegisterBundle(webBundle);
+      instance.Common.RegisterBundle(new MustacheBundle());
+      instance.Common.RegisterBundle(new LinqBundle());
+      instance.Common.RegisterBundle(new JsonDataBundle());
+      instance.Common.RegisterBundle(new SharePointBundle());
+      instance.Common.RegisterBundle(new ActiveDirectoryBundle());
+      instance.Common.RegisterBundle(new DocumentBundle());
+      instance.Common.RegisterBundle(new K2Bundle());
+      instance.Common.RegisterBundle(new UtilityBundle());
+      instance.Common.RegisterBundle(new UlsLogBundle());
+      instance.Common.RegisterBundle(new DocumentStoreBundle());
+      instance.Common.RegisterBundle(new SimpleInheritanceBundle());
+      instance.Common.RegisterBundle(new SqlDataBundle());
+      instance.Common.RegisterBundle(new StateMachineBundle());
+      instance.Common.RegisterBundle(new DeferredBundle());
 
       //Global Types
+      engine.SetGlobalValue("Barista", instance);
+      instance.SetPropertyValue("SharePoint", new BaristaSharePointGlobal(engine.Object.InstancePrototype), true);
 
       //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
       engine.SetGlobalValue("Guid", new GuidConstructor(engine));
       engine.SetGlobalValue("Uri", new UriConstructor(engine));
-      engine.SetGlobalValue("Deferred", new DeferredConstructor(engine));
       engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
 
       engine.SetGlobalValue("console", console);
 
-      //Functions
-      engine.SetGlobalFunction("help", new Func<object, object>(obj => Help.GenerateHelpJsonForObject(engine, obj)));
-      engine.SetGlobalFunction("require", new Func<string, object>(obj => common.Require(engine, obj)));
-      engine.SetGlobalFunction("listBundles", new Func<object>(() => common.List(engine)));
+      //Map Barista functions to global functions.
+      engine.Execute(@"var help = function(obj) { return Barista.help(obj); };
+var require = function(name) { return Barista.common.require(name); };
+var listBundles = function() { return Barista.common.listBundles(); };
+var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl); };");
 
-      engine.SetGlobalFunction("delay", new Action<int>((millisecondsTimeout) => { System.Threading.Thread.Sleep(millisecondsTimeout); }));
-      engine.SetGlobalFunction("waitAll", new Action<object, object>((deferreds, timeout) => { DeferredInstance.WaitAll(deferreds, timeout); }));
-
-      engine.SetGlobalFunction("include", new Action<string>((scriptUrl) =>
-      {
-        var source = new SPFileScriptSource(engine, scriptUrl);
-
-        engine.Execute(source);
-      }));
-
-      engine.SetGlobalFunction("replaceJsonReferences", new Func<object, object>((o) =>
-      {
-        return ReplaceJsonReferences(o);
-      }));
       return engine;
-    }
-
-    private object ReplaceJsonReferences(object o)
-    {
-      var dictionary = new Dictionary<string,ObjectInstance>();
-      return ReplaceJsonReferences(o, dictionary);
-    }
-
-    private object ReplaceJsonReferences(object o, Dictionary<string, ObjectInstance> dictionary)
-    {
-      if (o is ArrayInstance)
-      {
-        var array = o as ArrayInstance;
-        for (int i = 0; i < array.ElementValues.Count(); i++)
-        {
-          
-          array[i] = ReplaceJsonReferences(array[i], dictionary);
-        }
-      }
-      else if (o is ObjectInstance)
-      {
-        var obj = o as ObjectInstance;
-        var properties = obj.Properties.ToList();
-
-        //If there's only one property named "$ref" and it's value is a key that exists in the dictionary, return the value.
-        if (properties.Count == 1 && properties[0].Name == "$ref" && dictionary.ContainsKey((string)properties[0].Value))
-          return dictionary[(string)properties[0].Value];
-
-        var idProperty = properties.Where(p => p.Name == "$id").FirstOrDefault();
-        if (idProperty != null && dictionary.ContainsKey((string)idProperty.Value) == false)
-        {
-          var str = JSONObject.Stringify(obj.Engine, obj, null, null);
-          var clone = JSONObject.Parse(obj.Engine, str, null) as ObjectInstance;
-
-          if (clone.HasProperty("$id"))
-            clone.Delete("$id", false);
-
-          dictionary.Add((string)idProperty.Value, clone);
-        }
-
-        foreach (var property in properties)
-        {
-          obj.SetPropertyValue(property.Name, ReplaceJsonReferences(property.Value, dictionary), false);
-        }
-      }
-      return o;
     }
 
     private void UpdateResponseWithJavaScriptExceptionDetails(JavaScriptException exception, BrewResponse response)

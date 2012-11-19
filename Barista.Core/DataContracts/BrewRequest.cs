@@ -11,6 +11,7 @@
   using System.Web;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
+  [Serializable]
   public sealed class BrewRequest : IExtensibleDataObject
   {
     public BrewRequest()

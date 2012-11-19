@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPUserConstructor : ClrFunction
   {
     public SPUserConstructor(ScriptEngine engine)
@@ -33,6 +34,7 @@
     }
   }
 
+  [Serializable]
   public class SPUserInstance : ObjectInstance
   {
     private SPUser m_user;

@@ -2,7 +2,9 @@
 {
   using Barista.Library;
   using Barista.SharePoint.Library;
+  using System;
 
+  [Serializable]
   public class DocumentBundle : IBundle
   {
     public string BundleName

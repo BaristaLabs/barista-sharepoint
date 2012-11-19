@@ -8,6 +8,7 @@
   using Barista.DirectoryServices;
   using Barista.SharePoint.Services;
 
+  [Serializable]
   public class ADGroupConstructor : ClrFunction
   {
     public ADGroupConstructor(ScriptEngine engine)
@@ -32,6 +33,7 @@
     }
   }
 
+  [Serializable]
   public class ADGroupInstance : ObjectInstance
   {
     private ADGroup m_group;

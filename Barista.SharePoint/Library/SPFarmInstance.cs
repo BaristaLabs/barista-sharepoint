@@ -9,8 +9,10 @@
   using Microsoft.SharePoint.Administration;
   using Newtonsoft.Json;
 
+  [Serializable]
   public class SPFarmInstance : ObjectInstance
   {
+    [NonSerialized]
     private SPFarm m_farm;
 
     public SPFarmInstance(ObjectInstance prototype)

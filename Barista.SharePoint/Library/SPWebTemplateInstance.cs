@@ -6,6 +6,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  [Serializable]
   public class SPWebTemplateConstructor : ClrFunction
   {
     public SPWebTemplateConstructor(ScriptEngine engine)
@@ -36,6 +37,7 @@
     }
   }
 
+  [Serializable]
   public class SPWebTemplateInstance : ObjectInstance
   {
     private SPWebTemplate m_webTemplate;

@@ -10,6 +10,7 @@
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Taxonomy;
 
+  [Serializable]
   public class SPSiteConstructor : ClrFunction
   {
     public SPSiteConstructor(ScriptEngine engine)
@@ -37,6 +38,7 @@
     }
   }
 
+  [Serializable]
   public class SPSiteInstance : ObjectInstance, IDisposable
   {
     private SPSite m_site;

@@ -10,6 +10,7 @@ namespace Barista.SharePoint.Library
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class RoleInstance : ObjectInstance
   {
     Role m_role;

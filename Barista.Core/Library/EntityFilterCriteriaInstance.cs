@@ -1,11 +1,12 @@
 ﻿namespace Barista.Library
 {
   using Barista.DocumentStore;
-using Jurassic;
-using Jurassic.Library;
-using Newtonsoft.Json;
-using System;
+  using Jurassic;
+  using Jurassic.Library;
+  using Newtonsoft.Json;
+  using System;
 
+  [Serializable]
   public class EntityFilterCriteriaInstance : ObjectInstance
   {
     public EntityFilterCriteriaInstance(ObjectInstance prototype)

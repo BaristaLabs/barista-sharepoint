@@ -19,6 +19,7 @@
   /// 
   /// Follows the Unit-of-work pattern.
   /// </remarks>
+  [Serializable]
   public class Repository : IDisposable
   {
     #region Fields

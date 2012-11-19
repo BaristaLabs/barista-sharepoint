@@ -1,7 +1,9 @@
 ﻿namespace Barista.Bundles
 {
   using Jurassic;
+  using System;
 
+  [Serializable]
   public class JsonDataBundle : IBundle
   {
     public string BundleName

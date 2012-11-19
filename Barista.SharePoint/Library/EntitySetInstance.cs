@@ -7,6 +7,7 @@
   using System.Collections.Generic;
   using System.Linq;
 
+  [Serializable]
   public class EntitySetInstance : ObjectInstance
   {
     Entity m_entity;

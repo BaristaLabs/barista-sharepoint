@@ -8,6 +8,7 @@
   using System.Text;
   using System.Xml;
 
+  [Serializable]
   public class SPCamlQueryBuilder_OrderedQuery : ObjectInstance
   {
     public SPCamlQueryBuilder_OrderedQuery(ObjectInstance prototype, SPCamlQueryBuilderInstance builder)

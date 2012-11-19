@@ -2,8 +2,10 @@
 {
   using Barista.Library;
   using Jurassic;
+  using System;
   using System.Configuration;
 
+  [Serializable]
   public class SqlDataBundle : IBundle
   {
     public string BundleName

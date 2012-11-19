@@ -4,6 +4,7 @@
   using Jurassic.Library;
   using System;
 
+  [Serializable]
   public class GuidConstructor : ClrFunction
   {
     public GuidConstructor(ScriptEngine engine)
@@ -31,7 +32,7 @@
     }
   }
 
-
+  [Serializable]
   public class GuidInstance : ObjectInstance
   {
     Guid m_guid;

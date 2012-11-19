@@ -7,6 +7,7 @@
   using System.Threading;
   using System.Threading.Tasks;
 
+  [Serializable]
   public class DeferredConstructor : ClrFunction
   {
     public DeferredConstructor(ScriptEngine engine)
@@ -42,7 +43,7 @@
     }
   }
 
-
+  [Serializable]
   public class DeferredInstance : ObjectInstance
   {
     private Task<object> m_task;

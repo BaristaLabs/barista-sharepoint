@@ -7,6 +7,7 @@
   using System;
   using System.IO;
 
+  [Serializable]
   public class ZipFileConstructor : ClrFunction
   {
     public ZipFileConstructor(ScriptEngine engine)
@@ -21,6 +22,7 @@
     }
   }
 
+  [Serializable]
   public class ZipFileInstance : ObjectInstance
   {
     private MemoryStream m_memoryStream;
