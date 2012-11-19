@@ -73,12 +73,65 @@ namespace Barista.Properties {
         ///        }
         ///        continue;
         ///      }
-        ///      else if (this[i] !== compareAry[i]) {
-        /// [rest of string was truncated]&quot;;.
+        ///      else if (this[i] !== compareAry[i]) {        /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string jsonDataHandler {
             get {
                 return ResourceManager.GetString("jsonDataHandler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*--------------------------------------------------------------------------
+        ///* linq.js - LINQ for JavaScript
+        ///* ver 2.2.0.2 (Jan. 21th, 2011)
+        ///*
+        ///* created and maintained by neuecc &lt;ils@neue.cc&gt;
+        ///* licensed under Microsoft Public License(Ms-PL)
+        ///* http://neue.cc/
+        ///* http://linqjs.codeplex.com/
+        ///*--------------------------------------------------------------------------*/
+        ///
+        ///Enumerable = (function ()
+        ///{
+        ///    var Enumerable = function (getEnumerator)
+        ///    {
+        ///        this.GetEnumerator = getEnumerator;
+        ///    } [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string linq {
+            get {
+                return ResourceManager.GetString("linq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*!
+        /// * mustache.js - Logic-less {{mustache}} templates with JavaScript
+        /// * http://github.com/janl/mustache.js
+        /// */
+        ///
+        ////*global define: false*/
+        ///
+        ///var Mustache;
+        ///
+        ///(function (exports) {
+        ///  if (typeof module !== &quot;undefined&quot; &amp;&amp; typeof module.exports !== &quot;undefined&quot;) {
+        ///    module.exports = exports; // CommonJS
+        ///  } else if (typeof define === &quot;function&quot;) {
+        ///    define(exports); // AMD
+        ///  } else {
+        ///    Mustache = exports; // &lt;script&gt;
+        ///  }
+        ///}((function () {
+        ///  var exports = {};
+        ///
+        ///  exports.name = &quot;mustache.js&quot;;
+        ///  exports.version = [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string mustache {
+            get {
+                return ResourceManager.GetString("mustache", resourceCulture);
             }
         }
         

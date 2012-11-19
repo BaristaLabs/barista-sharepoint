@@ -100,6 +100,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bundles\JsonDataBundle.cs" />
+    <Compile Include="Bundles\LinqBundle.cs" />
+    <Compile Include="Bundles\MustacheBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
     <Compile Include="Library\Common.cs" />
@@ -264,6 +266,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\state-machine.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\linq.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mustache.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

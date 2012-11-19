@@ -192,8 +192,6 @@
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
-    <Compile Include="Bundles\LinqBundle.cs" />
-    <Compile Include="Bundles\MustacheBundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
     <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\UlsLogBundle.cs" />
@@ -527,12 +525,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\linq.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mustache.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ADMIN\BaristaService\AddOrUpdateTrustedLocation.js" />

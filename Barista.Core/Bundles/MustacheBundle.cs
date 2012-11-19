@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.Bundles
+﻿namespace Barista.Bundles
 {
   using Jurassic;
   using System;
@@ -18,7 +18,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      engine.Execute(Barista.SharePoint.Properties.Resources.mustache);
+      engine.Execute(Barista.Properties.Resources.mustache);
       return Null.Value;
     }
   }
