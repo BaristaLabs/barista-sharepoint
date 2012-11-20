@@ -142,58 +142,69 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
       BaristaContext.Current = new BaristaContext(request, response);
 
-      Mutex syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+      Mutex syncRoot = null;
+
+      if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+      {
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+      }
 
       WebBundle webBundle = new WebBundle();
-      bool isNewScriptEngineInstance; 
-      var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
+      var source = new BaristaScriptSource(request.Code, request.CodePath);
 
-      object result = null;
+      bool isNewScriptEngineInstance;
+
+      if (syncRoot != null)
+        syncRoot.WaitOne();
+
       try
       {
-        var source = new BaristaScriptSource(request.Code, request.CodePath);
+        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
 
-        if (syncRoot != null)
-          syncRoot.WaitOne();
-
-        result = engine.Evaluate(source);
-
-        var isRaw = false;
-
-        //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
-        if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+        object result = null;
+        try
         {
-          response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result);
-        }
+          result = engine.Evaluate(source);
 
-        if (webBundle.WebInstance != null)
+          var isRaw = false;
+
+          //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
+          if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+          {
+            response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result);
+          }
+
+          if (webBundle.WebInstance != null)
+          {
+            isRaw = webBundle.WebInstance.Response.IsRaw;
+          }
+
+          var stringified = JSONObject.Stringify(engine, result, null, null);
+          response.SetContentsFromResultObject(engine, result, isRaw);
+        }
+        catch (JavaScriptException ex)
         {
-          isRaw = webBundle.WebInstance.Response.IsRaw;
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+          UpdateResponseWithJavaScriptExceptionDetails(ex, response);
         }
+        catch (Exception ex)
+        {
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
+          throw;
+        }
+        finally
+        {
+          //Cleanup
+          engine = null;
 
-        var stringified = JSONObject.Stringify(engine, result, null, null);
-        response.SetContentsFromResultObject(engine, result, isRaw);
-      }
-      catch (JavaScriptException ex)
-      {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-        UpdateResponseWithJavaScriptExceptionDetails(ex, response);
-      }
-      catch (Exception ex)
-      {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
-        throw;
+          if (BaristaContext.Current != null)
+            BaristaContext.Current.Dispose();
+
+          BaristaContext.Current = null;
+        }
       }
       finally
       {
-        //Cleanup
-        engine = null;
-
-        if (BaristaContext.Current != null)
-          BaristaContext.Current.Dispose();
-
-        BaristaContext.Current = null;
-
         if (syncRoot != null)
           syncRoot.ReleaseMutex();
       }
@@ -209,36 +220,57 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
       var response = new BrewResponse();
 
+      //Set the current context with information from the current request and response.
       BaristaContext.Current = new BaristaContext(request, response);
 
+      //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
+      Mutex syncRoot = null;
+      if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+      {
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+      }
+
       WebBundle webBundle = new WebBundle();
+      var source = new BaristaScriptSource(request.Code, request.CodePath);
+
       bool isNewScriptEngineInstance;
-      var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
+
+      if (syncRoot != null)
+        syncRoot.WaitOne();
 
       try
       {
-        var source = new BaristaScriptSource(request.Code, request.CodePath);
-        engine.Execute(source);
-      }
-      catch (JavaScriptException ex)
-      {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-        UpdateResponseWithJavaScriptExceptionDetails(ex, response);
-      }
-      catch (Exception ex)
-      {
-        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while executing script: ");
-        throw;
+        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
+
+        try
+        {
+          engine.Execute(source);
+        }
+        catch (JavaScriptException ex)
+        {
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+          UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+        }
+        catch (Exception ex)
+        {
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while executing script: ");
+          throw;
+        }
+        finally
+        {
+          //Cleanup
+          engine = null;
+
+          if (BaristaContext.Current != null)
+            BaristaContext.Current.Dispose();
+
+          BaristaContext.Current = null;
+        }
       }
       finally
       {
-        //Cleanup
-        engine = null;
-
-        if (BaristaContext.Current != null)
-          BaristaContext.Current.Dispose();
-
-        BaristaContext.Current = null;
+        if (syncRoot != null)
+          syncRoot.ReleaseMutex();
       }
     }
 

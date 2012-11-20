@@ -6,7 +6,10 @@
   [Serializable]
   public sealed class BaristaContext : IDisposable
   {
+    [ThreadStatic]
     private static object s_syncRoot = new object();
+
+    [ThreadStatic]
     private static BaristaContext s_currentContext = null;
 
     public static BaristaContext Current
