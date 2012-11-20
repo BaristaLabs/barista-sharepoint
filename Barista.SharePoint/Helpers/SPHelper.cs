@@ -178,6 +178,40 @@ namespace Barista.SharePoint
     }
 
     /// <summary>
+    /// Attemps to retrieve a file at the specified url.
+    /// </summary>
+    /// <param name="fileUrl"></param>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    public static bool TryGetSPFileETag(string fileUrl, out string eTag)
+    {
+      eTag = null;
+
+      Uri fileUri;
+      if (TryCreateWebAbsoluteUri(fileUrl, out fileUri) == false)
+      {
+        return false;
+      }
+
+      try
+      {
+        using (SPSite site = new SPSite(fileUri.ToString()))
+        {
+          using (SPWeb web = site.OpenWeb())
+          {
+            var file = web.GetFile(fileUri.ToString());
+            if (file.Exists)
+              eTag = file.ETag;
+            return file.Exists;
+          }
+        }
+      }
+      catch { /* Do Nothing... */ }
+
+      return false;
+    }
+
+    /// <summary>
     /// Attempts to retrieve a folder at the specified url.
     /// </summary>
     /// <param name="folderUrl"></param>
