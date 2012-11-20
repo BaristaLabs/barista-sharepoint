@@ -42,7 +42,7 @@
       else if (obj is ObjectInstance)
       {
         var oi = obj as ObjectInstance;
-        result = GetObjectInfo(this.Engine, oi.GetType());
+        result = GetObjectInfo(this.Engine, oi);
       }
 
       return result;
@@ -50,9 +50,10 @@
 
     #region Members
 
-    private static ObjectInstance GetObjectInfo(ScriptEngine engine, Type type)
+    private static ObjectInstance GetObjectInfo(ScriptEngine engine, ObjectInstance obj)
     {
       var result = engine.Object.Construct();
+      var type = obj.GetType();
 
       var jsDocAttributes = type.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
       foreach (var attribute in jsDocAttributes)
@@ -82,6 +83,12 @@
         resultProperties.SetPropertyValue(property.PropertyInfo.Name, doc, false);
       }
 
+      foreach (var property in obj.Properties)
+      {
+        if ((property.Value is FunctionInstance) == false && resultProperties.HasProperty(property.Name) == false)
+          resultProperties.SetPropertyValue(property.Name, "", false);
+      }
+
       var resultFunctions = engine.Object.Construct();
 
       var functions = type.GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public)
@@ -97,6 +104,12 @@
         var doc = GetMemberDocumentationObject(engine, function.MemberInfo);
 
         resultFunctions.SetPropertyValue(function.FunctionInfo.Name, doc, false);
+      }
+
+      foreach (var property in obj.Properties)
+      {
+        if (property.Value is FunctionInstance && resultFunctions.HasProperty(property.Name) == false)
+          resultFunctions.SetPropertyValue(property.Name, "", false);
       }
 
       result.SetPropertyValue("properties", resultProperties, false);
