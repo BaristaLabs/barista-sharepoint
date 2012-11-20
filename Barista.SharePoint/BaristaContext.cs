@@ -7,7 +7,7 @@
   public sealed class BaristaContext : IDisposable
   {
     [ThreadStatic]
-    private static object s_syncRoot = new object();
+    private static object s_syncRoot = null;
 
     [ThreadStatic]
     private static BaristaContext s_currentContext = null;
@@ -16,6 +16,9 @@
     {
       get
       {
+        if (s_syncRoot == null)
+          s_syncRoot = new object();
+
         if (s_currentContext == null && SPContext.Current != null)
         {
           lock (s_syncRoot)

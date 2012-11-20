@@ -146,7 +146,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
       if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
       {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
       }
 
       WebBundle webBundle = new WebBundle();
@@ -227,7 +227,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       Mutex syncRoot = null;
       if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
       {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
       }
 
       WebBundle webBundle = new WebBundle();
@@ -290,12 +290,21 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
           isNewScriptEngineInstance = true;
           break;
         case BaristaInstanceMode.Single:
-          engine = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey) as ScriptEngine;
+          engine = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName) as ScriptEngine;
           if (engine == null)
           {
+            var absoluteExpiration = Cache.NoAbsoluteExpiration;
+            var slidingExpiration = Cache.NoSlidingExpiration;
+
+            if (BaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
+              absoluteExpiration = BaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
+
+            if (BaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
+              slidingExpiration = BaristaContext.Current.Request.InstanceSlidingExpiration.Value;
+
             engine = new ScriptEngine();
             isNewScriptEngineInstance = true;
-            HttpRuntime.Cache.Add("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey, engine, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+            HttpRuntime.Cache.Add("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName, engine, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
           }
           break;
         default:

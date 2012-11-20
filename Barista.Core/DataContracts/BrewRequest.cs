@@ -31,7 +31,11 @@
 
       this.ForceStrict = false;
       this.InstanceMode = BaristaInstanceMode.PerCall;
-      this.InstanceKey = null;
+      this.InstanceName = null;
+
+      this.InstanceAbsoluteExpiration = null;
+      this.InstanceSlidingExpiration = null;
+
       this.InstanceInitializationCode = null;
       this.InstanceInitializationCodePath = null;
     }
@@ -178,7 +182,21 @@
     }
 
     [DataMember]
-    public string InstanceKey
+    public DateTime? InstanceAbsoluteExpiration
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public TimeSpan? InstanceSlidingExpiration
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string InstanceName
     {
       get;
       set;
@@ -445,18 +463,33 @@
 
       //InstanceMode
       string instanceModeKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceMode");
-      string instanceKeyKey;
+      string instanceNameKey;
+      string instanceAbsoluteExpirationKey;
+      string instanceSlidingExpirationKey;
       if (instanceModeKey != null)
       {
         result.InstanceMode = (BaristaInstanceMode)Enum.Parse(typeof(BaristaInstanceMode), request.Headers["Barista_InstanceMode"]);
 
         if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
         {
-          instanceKeyKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceKey");
-          if (instanceKeyKey == null)
-            throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Key must also be specified.");
+          instanceNameKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceName");
+          if (instanceNameKey == null)
+            throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
 
-          result.InstanceKey = request.Headers["Barista_InstanceKey"];
+          result.InstanceName = request.Headers["Barista_InstanceName"];
+
+          instanceAbsoluteExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceAbsoluteExpiration");
+          if (instanceAbsoluteExpirationKey != null)
+          {
+            result.InstanceAbsoluteExpiration = DateTime.Parse(request.Headers["Barista_InstanceAbsoluteExpiration"]);
+          }
+
+          instanceSlidingExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceSlidingExpiration");
+          if (instanceSlidingExpirationKey != null)
+          {
+            result.InstanceSlidingExpiration = TimeSpan.Parse(request.Headers["Barista_InstanceSlidingExpiration"]);
+          }
+
         }
       }
       else
@@ -468,15 +501,29 @@
 
           if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
           {
-            instanceKeyKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceKey");
-            if (instanceKeyKey == null)
-              throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Key must also be specified.");
+            instanceNameKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceName");
 
-            result.InstanceKey = request.QueryString["Barista_InstanceKey"];
+            if (instanceNameKey == null)
+              throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
+
+            result.InstanceName = request.QueryString["Barista_InstanceName"];
+
+            instanceAbsoluteExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceAbsoluteExpiration");
+            if (instanceAbsoluteExpirationKey != null)
+            {
+              result.InstanceAbsoluteExpiration = DateTime.Parse(request.QueryString["Barista_InstanceAbsoluteExpiration"]);
+            }
+
+            instanceSlidingExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceSlidingExpiration");
+            if (instanceSlidingExpirationKey != null)
+            {
+              result.InstanceSlidingExpiration = TimeSpan.Parse(request.QueryString["Barista_InstanceSlidingExpiration"]);
+            }
           }
         }
       }
 
+      //Instance Initialization Code
       string instanceInitializationCodeKey = request.Headers.AllKeys.FirstOrDefault(k => k == "Barista_InstanceInitializationCode");
       if (instanceInitializationCodeKey != null)
       {

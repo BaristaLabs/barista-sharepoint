@@ -12,6 +12,76 @@
   [ToolboxItemAttribute(false)]
   public class BaristaWebPart : WebPart
   {
+    public BaristaWebPart()
+    {
+      this.InstanceMode = BaristaInstanceMode.PerCall;
+      this.InstanceName = null;
+      this.InstanceInitializationCode = null;
+      this.InstanceAbsoluteExpiration = null;
+      this.InstanceSlidingExpiration = null;
+    }
+
+    [WebBrowsable(true)]
+    [WebDisplayName("Instance Mode")]
+    [WebDescription("Indicates the instancing mode to use. Currently Allows PerCall and Single")]
+    [Personalizable(PersonalizationScope.Shared)]
+    [Category("Settings")]
+    [DefaultValue(BaristaInstanceMode.PerCall)]
+    public BaristaInstanceMode InstanceMode
+    {
+      get;
+      set;
+    }
+
+    [WebBrowsable(true)]
+    [WebDisplayName("Instance Name")]
+    [WebDescription("When Single instancing is used, indicates the instance name.")]
+    [Personalizable(PersonalizationScope.Shared)]
+    [Category("Settings")]
+    [DefaultValue("")]
+    public string InstanceName
+    {
+      get;
+      set;
+    }
+
+    [WebBrowsable(true)]
+    [WebDisplayName("Instance Absolute Expiration")]
+    [WebDescription("When Single instancing is used, indicates when the instance expires")]
+    [Personalizable(PersonalizationScope.Shared)]
+    [Category("Settings")]
+    [DefaultValue("")]
+    public DateTime? InstanceAbsoluteExpiration
+    {
+      get;
+      set;
+    }
+
+
+    [WebBrowsable(true)]
+    [WebDisplayName("Instance Sliding Expiration")]
+    [WebDescription("When Single instancing is used, indicates when the instance expires")]
+    [Personalizable(PersonalizationScope.Shared)]
+    [Category("Settings")]
+    [DefaultValue("")]
+    public TimeSpan? InstanceSlidingExpiration
+    {
+      get;
+      set;
+    }
+
+    [WebBrowsable(true)]
+    [WebDisplayName("Instance Initialization Code")]
+    [WebDescription("Code to execute to initialize the instance.")]
+    [Personalizable(PersonalizationScope.Shared)]
+    [Category("Settings")]
+    [DefaultValue("")]
+    public string InstanceInitializationCode
+    {
+      get;
+      set;
+    }
+
     [WebBrowsable(true)]
     [WebDisplayName("Code to Execute")]
     [WebDescription("Contains the JavaScript which is evaluated by Barista.")]
@@ -43,6 +113,18 @@
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = codeToExecute;
       request.CodePath = codePath;
+
+      if (String.IsNullOrEmpty(this.InstanceInitializationCode) == false)
+      {
+        string filePath;
+        request.InstanceInitializationCode = Tamp(this.InstanceInitializationCode, out filePath);
+        request.InstanceInitializationCodePath = filePath;
+      }
+
+      request.InstanceMode = this.InstanceMode;
+      request.InstanceName = this.InstanceName;
+      request.InstanceAbsoluteExpiration = this.InstanceAbsoluteExpiration;
+      request.InstanceSlidingExpiration = this.InstanceSlidingExpiration;
 
       request.SetExtendedPropertiesFromCurrentSPContext();
 

@@ -31,7 +31,7 @@
       if (BaristaContext.Current.Request.InstanceMode == BaristaInstanceMode.PerCall)
         return false;
 
-      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey) as ScriptEngine;
+      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName) as ScriptEngine;
       if (cached != null)
         result = true;
 
@@ -45,10 +45,10 @@
         return false;
 
       bool result = false;
-      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey) as ScriptEngine;
+      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName) as ScriptEngine;
       if (cached != null)
       {
-        HttpRuntime.Cache.Remove("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceKey);
+        HttpRuntime.Cache.Remove("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
         result = true;
       }
 

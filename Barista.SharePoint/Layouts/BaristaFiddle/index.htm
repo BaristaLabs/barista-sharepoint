@@ -319,7 +319,9 @@ asyncTest("[Your Unit Test Title]", function () {
         var ulsData = {};
         var baristaForceStrict = false;
         var baristaInstanceMode = null;
-        var baristaInstanceKey = null;
+        var baristaInstanceName = null;
+        var baristaInstanceAbsoluteExpiration = null;
+        var baristaInstanceSlidingExpiration = null;
         var baristaInstanceInitializationCode = null;
 
         var jsLintResultTemplate = kendo.template($("#jsLintResultTemplate").html());
@@ -600,8 +602,18 @@ asyncTest("[Your Unit Test Title]", function () {
                 seperator = "&";
             }
 
-            if (baristaInstanceKey != null) {
-                url += seperator + "Barista_InstanceKey=" + encodeURIComponent(baristaInstanceKey);
+            if (baristaInstanceName != null) {
+                url += seperator + "Barista_InstanceName=" + encodeURIComponent(baristaInstanceName);
+                seperator = "&";
+            }
+
+            if (baristaInstanceAbsoluteExpiration != null) {
+                url += seperator + "Barista_InstanceAbsoluteExpiration=" + encodeURIComponent(baristaInstanceAbsoluteExpiration);
+                seperator = "&";
+            }
+
+            if (baristaInstanceSlidingExpiration != null) {
+                url += seperator + "Barista_InstanceSlidingExpiration=" + encodeURIComponent(baristaInstanceSlidingExpiration);
                 seperator = "&";
             }
 
