@@ -22,7 +22,7 @@
       this.StatusCode = 200;
     }
 
-    internal BrewResponse Response
+    public BrewResponse Response
     {
       get;
       private set;

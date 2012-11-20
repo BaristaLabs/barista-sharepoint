@@ -25,15 +25,12 @@
   [Serializable]
   public class WebInstance : ObjectInstance
   {
-    private HttpRequestInstance m_httpRequest;
-    private HttpResponseInstance m_httpResponse;
+    private HttpRequestInstance m_httpRequest = null;
+    private HttpResponseInstance m_httpResponse = null;
 
     public WebInstance(ScriptEngine engine)
       : base(engine)
     {
-      m_httpRequest = new HttpRequestInstance(engine, BaristaContext.Current.Request);
-      m_httpResponse = new HttpResponseInstance(engine, BaristaContext.Current.Response);
-      
       this.PopulateFields();
       this.PopulateFunctions();
     }
@@ -41,13 +38,31 @@
     [JSProperty(Name = "request")]
     public HttpRequestInstance Request
     {
-      get { return m_httpRequest; }
+      get
+      {
+        if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, BaristaContext.Current.Request) == false))
+        {
+          m_httpRequest = new HttpRequestInstance(this.Engine, BaristaContext.Current.Request);
+        }
+
+        return m_httpRequest;
+      }
+      internal set { m_httpRequest = value; }
     }
 
     [JSProperty(Name = "response")]
     public HttpResponseInstance Response
     {
-      get { return m_httpResponse; }
+      get
+      {
+        if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, BaristaContext.Current.Response) == false))
+        {
+          m_httpResponse = new HttpResponseInstance(this.Engine, BaristaContext.Current.Response);
+        }
+
+        return m_httpResponse;
+      }
+      internal set { m_httpResponse = value; }
     }
 
     #region Ajax

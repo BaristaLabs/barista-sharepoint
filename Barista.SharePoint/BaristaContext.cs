@@ -21,13 +21,7 @@
 
         if (s_currentContext == null && SPContext.Current != null)
         {
-          lock (s_syncRoot)
-          {
-            if (s_currentContext == null && SPContext.Current != null)
-            {
-              s_currentContext = BaristaContext.CreateContextFromSPContext(SPContext.Current);
-            }
-          }
+          s_currentContext = BaristaContext.CreateContextFromSPContext(SPContext.Current);
         }
         return s_currentContext;
       }
