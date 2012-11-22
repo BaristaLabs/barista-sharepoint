@@ -198,7 +198,6 @@
     <Compile Include="DocumentStore\EntityPartDefinition.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ValidationAttributeExtensions.cs" />
-    <Compile Include="ConcurrentDictionary.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

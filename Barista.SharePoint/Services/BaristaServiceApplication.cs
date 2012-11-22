@@ -153,13 +153,17 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       bool isNewScriptEngineInstance;
+      bool errorInInitialization;
 
       if (syncRoot != null)
         syncRoot.WaitOne();
 
       try
       {
-        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
+        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+        if (errorInInitialization)
+          return response;
 
         object result = null;
         try
@@ -234,13 +238,17 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       bool isNewScriptEngineInstance;
+      bool errorInInitialization;
 
       if (syncRoot != null)
         syncRoot.WaitOne();
 
       try
       {
-        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance);
+        var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+        if (errorInInitialization)
+          return;
 
         try
         {
@@ -278,10 +286,10 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
     /// Returns a new instance of a script engine object with all runtime objects available.
     /// </summary>
     /// <returns></returns>
-    private ScriptEngine GetScriptEngine(WebBundle webBundle, out bool isNewScriptEngineInstance)
+    private ScriptEngine GetScriptEngine(WebBundle webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
     {
       isNewScriptEngineInstance = false;
-
+      errorInInitialization = false;
       
 
       //Based on the instancing mode, either retrieve the ScriptEngine from the desired store, or create a new ScriptEngine instance.
@@ -294,10 +302,10 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
           isNewScriptEngineInstance = true;
           break;
         case BaristaInstanceMode.Single:
-          engine = GetOrCreateScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
+          engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
           break;
         case BaristaInstanceMode.PerSession:
-          engine = GetOrCreateScriptEngineInstanceFromSession(BaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
+          engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromSession(BaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
           break;
         default:
           throw new NotImplementedException("The instance mode of " + BaristaContext.Current.Request.InstanceMode + " is currently not supported.");
@@ -354,112 +362,43 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
         if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCode) == false)
         {
           BaristaScriptSource initializationScriptSource = new BaristaScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
-          engine.Execute(initializationScriptSource);
+
+          try
+          {
+            engine.Execute(initializationScriptSource);
+          }
+          catch (JavaScriptException ex)
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+            UpdateResponseWithJavaScriptExceptionDetails(ex, BaristaContext.Current.Response);
+            errorInInitialization = true;
+
+            switch (BaristaContext.Current.Request.InstanceMode)
+            {
+              case BaristaInstanceMode.Single:
+                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+                break;
+              case BaristaInstanceMode.PerSession:
+                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+                break;
+            }
+          }
+          catch (Exception ex)
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
+            errorInInitialization = true;
+            switch (BaristaContext.Current.Request.InstanceMode)
+            {
+              case BaristaInstanceMode.Single:
+                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+                break;
+              case BaristaInstanceMode.PerSession:
+                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+                break;
+            }
+            throw;
+          }
         }
-      }
-
-      return engine;
-    }
-
-    /// <summary>
-    /// Returns the stored instance of the script engine, if it exists, from the runtime cache. If it does not exist, a new instance is created.
-    /// </summary>
-    /// <param name="isNewInstance"></param>
-    /// <returns></returns>
-    private ScriptEngine GetOrCreateScriptEngineInstanceFromRuntimeCache(string instanceName, out bool isNewScriptEngineInstance)
-    {
-      if (String.IsNullOrEmpty(instanceName))
-        throw new InvalidOperationException("When using Single instance mode, an instance name must be specified.");
-
-      ScriptEngine engine = null;
-      string cacheKey = "Barista_ScriptEngineInstance_" + instanceName;
-      string instanceInitializationCodeETag = null;
-      isNewScriptEngineInstance = false;
-
-      //If a instance initialization code path is defined, retrieve the etag.
-      if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCodePath) == false)
-      {
-        SPHelper.TryGetSPFileETag(BaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
-      }
-
-      //If the eTag of the initialization script differs, recreate the instance.
-      var eTagWhenCreated = HttpRuntime.Cache.Get(cacheKey + "_eTag") as string;
-
-      if (String.IsNullOrEmpty(eTagWhenCreated) == false && eTagWhenCreated != instanceInitializationCodeETag)
-      {
-        HttpRuntime.Cache.Remove(cacheKey);
-        HttpRuntime.Cache.Remove(cacheKey + "_eTag");
-      }
-      else
-      {
-        engine = HttpRuntime.Cache.Get(cacheKey) as ScriptEngine;
-      }
-          
-      if (engine == null)
-      {
-        var absoluteExpiration = Cache.NoAbsoluteExpiration;
-        var slidingExpiration = Cache.NoSlidingExpiration;
-
-        if (BaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
-          absoluteExpiration = BaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
-
-        if (BaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
-          slidingExpiration = BaristaContext.Current.Request.InstanceSlidingExpiration.Value;
-
-        engine = new ScriptEngine();
-        isNewScriptEngineInstance = true;
-        HttpRuntime.Cache.Add(cacheKey, engine, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
-        HttpRuntime.Cache.Add(cacheKey + "_eTag", instanceInitializationCodeETag, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
-      }
-
-      return engine;
-    }
-
-    public ScriptEngine GetOrCreateScriptEngineInstanceFromSession(string instanceName, out bool isNewScriptEngineInstance)
-    {
-      if (String.IsNullOrEmpty(instanceName))
-        throw new InvalidOperationException("When using PerSession instance mode, an instance name must be specified.");
-
-      if (HttpContext.Current == null || HttpContext.Current.Session == null)
-        throw new InvalidOperationException("When using PerSession instance mode, a valid Http Context and Session must be available.");
-
-      ScriptEngine engine = null;
-      var cacheKey = "Barista_ScriptEngineInstance_" + instanceName;
-      string instanceInitializationCodeETag = null;
-      isNewScriptEngineInstance = false;
-
-      //If a instance initialization code path is defined, retrieve the etag.
-      if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCodePath) == false)
-      {
-        SPHelper.TryGetSPFileETag(BaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
-      }
-
-      //If the eTag of the initialization script differs, recreate the instance.
-      string eTagWhenCreated = null;
-      if (HttpContext.Current.Session.Keys.OfType<string>().Any( k => k == (cacheKey + "_eTag")))
-      {
-        eTagWhenCreated = HttpContext.Current.Session[cacheKey + "_eTag"] as string;
-      }
-
-      if (String.IsNullOrEmpty(eTagWhenCreated) == false && eTagWhenCreated != instanceInitializationCodeETag)
-      {
-        HttpContext.Current.Session.Remove(cacheKey);
-        HttpContext.Current.Session.Remove(cacheKey + "_eTag");
-      }
-      else
-      {
-        if (HttpContext.Current.Session.Keys.OfType<string>().Any(k => k == cacheKey))
-        {
-          engine = HttpContext.Current.Session[cacheKey] as ScriptEngine;
-        }
-      }
-
-      if (engine == null)
-      {
-        engine = new ScriptEngine();
-        isNewScriptEngineInstance = true;
-        HttpContext.Current.Session.Add(cacheKey, engine);
-        HttpContext.Current.Session.Add(cacheKey + "_eTag", instanceInitializationCodeETag);
       }
 
       return engine;
