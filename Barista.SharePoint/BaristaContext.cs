@@ -7,18 +7,12 @@
   public sealed class BaristaContext : IDisposable
   {
     [ThreadStatic]
-    private static object s_syncRoot = null;
-
-    [ThreadStatic]
     private static BaristaContext s_currentContext = null;
 
     public static BaristaContext Current
     {
       get
       {
-        if (s_syncRoot == null)
-          s_syncRoot = new object();
-
         if (s_currentContext == null && SPContext.Current != null)
         {
           s_currentContext = BaristaContext.CreateContextFromSPContext(SPContext.Current);
@@ -26,6 +20,11 @@
         return s_currentContext;
       }
       internal set { s_currentContext = value; }
+    }
+
+    public static bool HasCurrentContext
+    {
+      get { return s_currentContext != null; }
     }
 
     public BaristaContext()
@@ -172,12 +171,14 @@
     {
       if (this.Web != null)
       {
+        this.Web.Close();
         this.Web.Dispose();
         this.Web = null;
       }
 
       if (this.Site != null)
       {
+        this.Site.Close();
         this.Site.Dispose();
         this.Site = null;
       }

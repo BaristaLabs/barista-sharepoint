@@ -159,5 +159,12 @@
       var stringBody = Encoding.UTF8.GetString(this.Request.Body);
       return JSONObject.Parse(this.Engine, stringBody, null);
     }
+
+    [JSFunction(Name = "getBodyString")]
+    public string GetBodyString()
+    {
+      var stringBody = Encoding.UTF8.GetString(this.Request.Body);
+      return stringBody;
+    }
   }
 }

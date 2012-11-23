@@ -64,24 +64,33 @@ namespace Barista.SharePoint
     /// <returns></returns>
     public static bool TryCreateWebAbsoluteUri(string uriString, out Uri uri)
     {
+      uri = null;
+
       if (Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute) == false)
       {
-        uri = null;
         return false;
       }
 
-      Uri finalUri;
-      if (Uri.TryCreate(uriString, UriKind.Absolute, out finalUri) == false)
+      Uri finalUri = null;
+      if (Uri.TryCreate(uriString, UriKind.Absolute, out finalUri))
       {
-        if (Uri.TryCreate(new Uri(BaristaContext.Current.Web.Url), uriString, out finalUri) == false)
-        {
-          uri = null;
-          return false;
-        }
+        uri = finalUri;
+        return true;
       }
 
-      uri = finalUri;
-      return true;
+      if (BaristaContext.HasCurrentContext && Uri.TryCreate(new Uri(BaristaContext.Current.Web.Url), uriString, out finalUri))
+      {
+        uri = finalUri;
+        return true;
+      }
+
+      if (SPContext.Current != null && Uri.TryCreate(new Uri(SPContext.Current.Web.Url), uriString, out finalUri))
+      {
+        uri = finalUri;
+        return true;
+      }
+
+      return false;
     }
 
     /// <summary>
@@ -409,7 +418,7 @@ namespace Barista.SharePoint
 
       Uri referrer = null;
 
-      if (BaristaContext.Current.Request != null && BaristaContext.Current.Request.UrlReferrer != null)
+      if (BaristaContext.HasCurrentContext && BaristaContext.Current.Request != null && BaristaContext.Current.Request.UrlReferrer != null)
         referrer = BaristaContext.Current.Request.UrlReferrer;
       else if (HttpContext.Current != null && HttpContext.Current.Request != null)
         referrer = HttpContext.Current.Request.UrlReferrer;
@@ -419,7 +428,7 @@ namespace Barista.SharePoint
       {
         try
         {
-          string url = SPUtility.ConcatUrls(SPUtility.GetUrlDirectory(HttpContext.Current.Request.UrlReferrer.ToString()), fileUrl);
+          string url = SPUtility.ConcatUrls(SPUtility.GetUrlDirectory(referrer.ToString()), fileUrl);
 
           using (SPSite sourceSite = new SPSite(url))
           {
@@ -492,6 +501,35 @@ namespace Barista.SharePoint
       {
         result = result.Replace("{SiteUrl}", BaristaContext.Current.Site.Url);
         result = result.Replace("~sitecollection", BaristaContext.Current.Site.ServerRelativeUrl);
+      }
+
+      return result;
+    }
+
+    /// <summary>
+    /// Replaces SharePoint (and custom) tokens in the specified string with their corresponding values.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static string ReplaceTokens(SPContext context, string text)
+    {
+      if (context == null)
+        return text;
+
+      string result = text;
+      if (context.List != null)
+        result = result.Replace("{ListUrl}", context.Web.Url + "/" + context.List.RootFolder.Url);
+
+      if (context.Web != null)
+      {
+        result = result.Replace("{WebUrl}", context.Web.Url);
+        result = result.Replace("~site", context.Web.ServerRelativeUrl);
+      }
+
+      if (context.Site != null)
+      {
+        result = result.Replace("{SiteUrl}", context.Site.Url);
+        result = result.Replace("~sitecollection", context.Site.ServerRelativeUrl);
       }
 
       return result;

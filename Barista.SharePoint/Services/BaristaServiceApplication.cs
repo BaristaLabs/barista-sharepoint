@@ -407,16 +407,17 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
     private void UpdateResponseWithJavaScriptExceptionDetails(JavaScriptException exception, BrewResponse response)
     {
       ObjectInstance errorObject = exception.ErrorObject as ObjectInstance;
-
-      response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-
-      response.AutoDetectContentType = false;
-      response.ContentType = "text/html";
-
       var message = errorObject.GetPropertyValue("message") as string;
       var stack = errorObject.GetPropertyValue("stack") as string;
       if (String.IsNullOrEmpty(stack) == false)
         stack = stack.Replace("at ", "at<br/>");
+
+      response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+      response.StatusDescription = message;
+      response.AutoDetectContentType = false;
+      response.ContentType = "text/html";
+
+      
       var resultMessage = String.Format(JavaScriptExceptionMessage, exception.Name, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
       response.Content = Encoding.UTF8.GetBytes(resultMessage);
     }

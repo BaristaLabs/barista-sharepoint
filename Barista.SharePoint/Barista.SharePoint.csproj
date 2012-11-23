@@ -236,8 +236,6 @@
     <Compile Include="DocumentStore\HandleEventFiring.cs" />
     <Compile Include="DocumentStore\PermissionsHelper.cs" />
     <Compile Include="DocumentStore\SPDocumentStore.cs" />
-    <Compile Include="DocumentStore\SPEntity.cs" />
-    <Compile Include="DocumentStore\SPEntityPart.cs" />
     <Compile Include="DocumentStore\SPMemoryCachedDocumentStore.cs" />
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />

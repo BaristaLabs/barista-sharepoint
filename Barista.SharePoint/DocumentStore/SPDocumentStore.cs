@@ -42,24 +42,6 @@
     /// </summary>
     public SPDocumentStore()
     {
-      if (SPContext.Current == null || SPContext.Current.Web == null)
-        throw new InvalidOperationException("A current SPContext must be available.");
-
-      this.Web = SPContext.Current.Web;
-      m_originalCatchAccessDeniedValue = SPSecurity.CatchAccessDeniedException;
-      SPSecurity.CatchAccessDeniedException = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SPDocumentStore"/> class.
-    /// </summary>
-    /// <param name="web">The web.</param>
-    public SPDocumentStore(SPWeb web)
-    {
-      if (web == null)
-        throw new ArgumentNullException("web");
-
-      this.Web = web;
       m_originalCatchAccessDeniedValue = SPSecurity.CatchAccessDeniedException;
       SPSecurity.CatchAccessDeniedException = false;
     }
@@ -71,8 +53,7 @@
     /// </summary>
     public SPWeb Web
     {
-      get;
-      private set;
+      get { return BaristaContext.Current.Web; }
     }
     #endregion
 
@@ -525,7 +506,7 @@
           properties.Add("DocumentEntityGuid", newGuid.ToString());
           properties.Add("Namespace", @namespace);
 
-          DocumentSet newDocumentSet;
+          SPFolder documentSetFolder;
 
           web.AllowUnsafeUpdates = true;
           try
@@ -536,20 +517,24 @@
 
             if (PermissionsHelper.IsRunningUnderElevatedPrivledges(site.WebApplication.ApplicationPool))
             {
-              newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, this.Web.CurrentUser);
+              var newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, this.Web.CurrentUser);
 
-              newDocumentSet.Folder.Files.Add(newDocumentSet.Folder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
+              documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
+
+              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
 
               //Set the created/updated fields of the new document set to the current user.
               string userLogonName = this.Web.CurrentUser.ID + ";#" + this.Web.CurrentUser.Name;
-              newDocumentSet.Folder.Item[SPBuiltInFieldId.Editor] = userLogonName;
-              newDocumentSet.Folder.Item.UpdateOverwriteVersion();
+              documentSetFolder.Item[SPBuiltInFieldId.Editor] = userLogonName;
+              documentSetFolder.Item.UpdateOverwriteVersion();
             }
             else
             {
-              newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true);
+              var newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true);
 
-              newDocumentSet.Folder.Files.Add(newDocumentSet.Folder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), true);
+              documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
+
+              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), true);
             }
           }
           finally
@@ -557,7 +542,7 @@
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(newDocumentSet.Item);
+          return SPDocumentStoreHelper.MapEntityFromSPListItem(documentSetFolder.Item);
         }
       }
     }

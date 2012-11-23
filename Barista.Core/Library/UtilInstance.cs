@@ -64,6 +64,18 @@ using System.Web;
       return builder.ToString();
     }
 
+    [JSFunction(Name = "getExtensionFromFileName")]
+    public static string GetExtensionFromFileName(string fileName)
+    {
+      return Path.GetExtension(fileName);
+    }
+
+    [JSFunction(Name = "getMimeTypeFromFileName")]
+    public static string GetMimeTypeFromFileName(string fileName)
+    {
+      return StringHelper.GetMimeTypeFromFileName(fileName);
+    }
+
     [JSFunction(Name = "getCurrentCorrelationId")]
     public static string GetCurrentCorrelationId()
     {

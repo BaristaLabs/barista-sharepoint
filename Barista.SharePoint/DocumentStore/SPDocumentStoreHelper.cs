@@ -10,6 +10,8 @@
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Utilities;
   using Barista.DocumentStore;
+  using System.Text;
+  using Microsoft.Office.DocumentManagement.DocumentSets;
 
   /// <summary>
   /// Contains methods that assist with the retrieval of Document Store objects.
@@ -125,9 +127,81 @@
 
     public static Entity MapEntityFromSPListItem(SPListItem listItem)
     {
-      Entity result = new SPEntity(listItem);
+      if (listItem == null)
+        throw new ArgumentNullException("listItem", "When creating an Entity, the SPListItem that represents the entity must not be null.");
 
-      return result;
+      Entity entity = new Entity();
+
+      try
+      {
+        string id = listItem[Constants.DocumentEntityGuidFieldId] as string;
+
+        entity.Id = new Guid(id);
+      }
+      catch
+      {
+        //Do Nothing...
+      }
+
+      entity.Namespace = listItem[Constants.NamespaceFieldId] as string;
+
+      var docSet = DocumentSet.GetDocumentSet(listItem.Folder);
+
+      SPFile dataFile = null;
+
+      try
+      {
+        dataFile = listItem.Web.GetFile(listItem.Folder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName);
+      }
+      catch (Exception) { /* Do Nothing... */ };
+
+      if (dataFile == null) //The default entity part file doesn't exist, get outta dodge (something happened here...)
+        throw new InvalidOperationException("No correpsonding entity file exists on the SP Doc Set that represents the entity.");
+
+
+      entity.ETag = dataFile.ETag;
+      entity.Title = docSet.Item.Title;
+      entity.Description = docSet.Item["DocumentSetDescription"] as string;
+      entity.Created = (DateTime)docSet.Item[SPBuiltInFieldId.Created];
+      entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
+
+      var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
+      var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
+      entity.ContentsETag = StringHelper.CreateMD5Hash(combinedETag);
+      entity.ContentsModified = latestFile.TimeLastModified;
+
+      entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
+      entity.Path = entity.Path.TrimStart('/');
+
+      entity.Data = Encoding.UTF8.GetString(dataFile.OpenBinary());
+
+      var createdByUserValue = listItem[SPBuiltInFieldId.Author] as String;
+      SPFieldUserValue createdByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
+
+      if (createdByUser != null)
+      {
+        entity.CreatedBy = new User()
+        {
+          Email = createdByUser.User.Email,
+          LoginName = createdByUser.User.LoginName,
+          Name = createdByUser.User.Name,
+        };
+      }
+
+      var modifiedByUserValue = listItem[SPBuiltInFieldId.Editor] as String;
+      SPFieldUserValue modifiedByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
+
+      if (modifiedByUser != null)
+      {
+        entity.ModifiedBy = new User()
+        {
+          Email = modifiedByUser.User.Email,
+          LoginName = modifiedByUser.User.LoginName,
+          Name = modifiedByUser.User.Name,
+        };
+      }
+
+      return entity;
     }
 
     public static Entity MapEntityFromSPListItemVersion(SPListItemVersion version)
@@ -203,8 +277,56 @@
 
     public static EntityPart MapEntityPartFromSPFile(SPFile file)
     {
-      EntityPart result = new SPEntityPart(file);
-      return result;
+      if (file == null)
+        throw new ArgumentNullException("file", "When creating an EntityPart, the SPFile that represents the entity part must not be null.");
+
+      EntityPart entityPart = new EntityPart();
+      try
+      {
+        string id = file.Item[Constants.DocumentEntityGuidFieldId] as string;
+
+        entityPart.EntityId = new Guid(id);
+      }
+      catch
+      {
+        //Do Nothing...
+      }
+
+      entityPart.Category = file.Item["Category"] as string;
+      entityPart.ETag = file.ETag;
+      entityPart.Name = file.Name.Substring(0, file.Name.Length - Constants.DocumentSetEntityPartExtension.Length);
+      entityPart.Created = (DateTime)file.Item[SPBuiltInFieldId.Created];
+      entityPart.Modified = (DateTime)file.Item[SPBuiltInFieldId.Modified];
+
+      entityPart.Data = Encoding.UTF8.GetString(file.OpenBinary());
+
+      var createdByUserValue = file.Item[SPBuiltInFieldId.Author] as string;
+      SPFieldUserValue createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
+
+      if (createdByUser != null)
+      {
+        entityPart.CreatedBy = new User()
+        {
+          Email = createdByUser.User.Email,
+          LoginName = createdByUser.User.LoginName,
+          Name = createdByUser.User.Name,
+        };
+      }
+
+      var modifiedByUserValue = file.Item[SPBuiltInFieldId.Editor] as string;
+      SPFieldUserValue modifiedByUser = new SPFieldUserValue(file.Web, createdByUserValue);
+
+      if (modifiedByUser != null)
+      {
+        entityPart.ModifiedBy = new User()
+        {
+          Email = modifiedByUser.User.Email,
+          LoginName = modifiedByUser.User.LoginName,
+          Name = modifiedByUser.User.Name,
+        };
+      }
+
+      return entityPart;
     }
 
     public static Folder MapFolderFromSPFolder(SPFolder folder)

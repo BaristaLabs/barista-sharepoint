@@ -74,8 +74,8 @@
     [JSProperty(Name = "url")]
     public string Url
     {
-      get;
-      set;
+      get { return m_attachment.Url; }
+      set { m_attachment.Url = value; }
     }
 
     [JSProperty(Name = "created")]

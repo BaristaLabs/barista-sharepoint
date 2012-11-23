@@ -21,9 +21,8 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      var web = BaristaContext.Current.Web;
       var factory = new BaristaRepositoryFactory();
-      var repository = Repository.GetRepository(factory, new SPDocumentStore(web));
+      var repository = Repository.GetRepository(factory, new SPDocumentStore());
       return new RepositoryInstance(engine, repository);
     }
 

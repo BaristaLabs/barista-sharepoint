@@ -21,11 +21,6 @@
     {
     }
 
-    public SPMemoryCachedDocumentStore(SPWeb web)
-      : base(web)
-    {
-    }
-
     public override Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       var etag = base.GetEntityContentsETag(containerTitle, entityId);
