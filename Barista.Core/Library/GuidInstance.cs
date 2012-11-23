@@ -58,6 +58,12 @@
     {
     }
 
+    public Guid Value
+    {
+      get { return m_guid; }
+      set { m_guid = value; }
+    }
+
     [JSFunction(Name = "toByteArray")]
     public Base64EncodedByteArrayInstance ToByteArray()
     {

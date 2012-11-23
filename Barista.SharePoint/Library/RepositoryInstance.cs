@@ -68,7 +68,11 @@
     public ArrayInstance ListFolders(object path)
     {
       var stringPath = String.Empty;
-      if (path != Undefined.Value && path != Null.Value)
+      if (path is FolderInstance)
+        stringPath = (path as FolderInstance).FullPath;
+      else if (path == Undefined.Value || path == Null.Value || path == null)
+        stringPath = String.Empty;
+      else
         stringPath = path.ToString();
 
       var result = this.Engine.Array.Construct();
@@ -172,7 +176,11 @@
     {
       var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
 
-      if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
+      if (filterCriteria is FolderInstance)
+        criteria.EntityFilterCriteria.Path = (filterCriteria as FolderInstance).FullPath;
+      else if (filterCriteria is string || filterCriteria is StringInstance || filterCriteria is ConcatenatedString)
+        criteria.EntityFilterCriteria.Path = filterCriteria.ToString();
+      else if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
         criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
 
       var result = this.Engine.Array.Construct();
@@ -259,8 +267,11 @@
 
     #region Entity Parts
     [JSFunction(Name = "createEntityPart")]
-    public EntityPartInstance CreateEntityPart(string entityId, object partName, object category, object data)
+    public EntityPartInstance CreateEntityPart(object entityId, object partName, object category, object data)
     {
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
       var stringPartName = "";
       var stringCategory = "";
       var stringData = "";
@@ -279,14 +290,31 @@
       else
         stringData = data.ToString();
 
-      var id = new Guid(entityId);
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return new EntityPartInstance(this.Engine, m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData));
     }
 
     [JSFunction(Name = "createOrUpdateEntityPart")]
-    public EntityPartInstance CreateOrUpdateEntityPart(string entityId, object partName, object category, object data)
+    public EntityPartInstance CreateOrUpdateEntityPart(object entityId, object partName, object category, object data)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+      
       var stringPartName = "";
       var stringCategory = "";
       var stringData = "";
@@ -343,11 +371,19 @@
     }
 
     [JSFunction(Name = "listEntityParts")]
-    public ArrayInstance ListEntityParts(string entityId)
+    public ArrayInstance ListEntityParts(object entityId)
     {
       var result = this.Engine.Array.Construct();
 
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else
+        id = new Guid(entityId.ToString());
+
       foreach (var entityPart in m_repository.ListEntityParts(id))
       {
         ArrayInstance.Push(result, new EntityPartInstance(this.Engine, entityPart));
@@ -357,9 +393,19 @@
     }
 
     [JSFunction(Name = "updateEntityPart")]
-    public EntityPartInstance UpdateEntityPart(string entityId, object partName, object eTag, object data)
+    public EntityPartInstance UpdateEntityPart(object entityId, object partName, object eTag, object data)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var stringPartName = "";
       var stringData = "";
       var stringETag = "";
