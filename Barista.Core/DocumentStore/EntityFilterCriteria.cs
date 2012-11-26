@@ -10,6 +10,7 @@ namespace Barista.DocumentStore
     public EntityFilterCriteria()
     {
       this.NamespaceMatchType = DocumentStore.NamespaceMatchType.Equals;
+      this.QueryPairs = new Dictionary<string, string>();
       this.Path = null;
       this.Skip = null;
       this.Top = null;
@@ -22,6 +23,12 @@ namespace Barista.DocumentStore
     }
 
     public string Namespace
+    {
+      get;
+      set;
+    }
+
+    public IDictionary<string, string> QueryPairs
     {
       get;
       set;
@@ -58,5 +65,7 @@ namespace Barista.DocumentStore
     StartsWith,
     EndsWith,
     Contains,
+    StartsWithMatchAnyQueryPairs,
+    StartsWithMatchAllQueryPairs,
   }
 }

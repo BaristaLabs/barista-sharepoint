@@ -14,6 +14,7 @@
   using Microsoft.Office.Server.Utilities;
   using Microsoft.SharePoint;
   using Barista.DocumentStore;
+  using System.Linq.Expressions;
 
   /// <summary>
   /// Represents a SharePoint-backed Document Store.
@@ -1025,6 +1026,34 @@
                       .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
                       .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).Contains(criteria.Namespace))
                       .ToString();
+                  break;
+                case NamespaceMatchType.StartsWithMatchAllQueryPairs:
+                  var matchAllExpressions = new List<Expression<Func<SPListItem, bool>>>();
+                  foreach(var queryPair in criteria.QueryPairs)
+                  {
+                    matchAllExpressions.Add(li => ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", queryPair.Key, queryPair.Value)));
+                  }
+                  var matchAll = Camlex.Query()
+                     .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
+                  
+                  if (matchAllExpressions.Count > 0)
+                    matchAll = matchAll.WhereAll(matchAllExpressions);
+                  queryString = matchAll.ToString();
+                  break;
+                case NamespaceMatchType.StartsWithMatchAnyQueryPairs:
+                  var matchAnyExpressions = new List<Expression<Func<SPListItem, bool>>>();
+                  foreach(var queryPair in criteria.QueryPairs)
+                  {
+                    matchAnyExpressions.Add(li => ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", queryPair.Key, queryPair.Value)));
+                  }
+                  var matchAny = Camlex.Query()
+                     .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
+                  
+                  if (matchAnyExpressions.Count > 0)
+                    matchAny = matchAny.WhereAny(matchAnyExpressions);
+                  queryString = matchAny.ToString();
                   break;
                 default:
                   throw new ArgumentOutOfRangeException("Unknown or unsupported NamespaceMatchType:" + criteria.NamespaceMatchType);

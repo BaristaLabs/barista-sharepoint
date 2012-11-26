@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using Newtonsoft.Json;
   using System;
+  using System.Collections.Generic;
 
   [Serializable]
   public class EntityFilterCriteriaInstance : ObjectInstance
@@ -45,6 +46,14 @@
     {
       get { return EntityFilterCriteria.NamespaceMatchType.ToString(); }
       set { EntityFilterCriteria.NamespaceMatchType = (NamespaceMatchType)Enum.Parse(typeof(NamespaceMatchType), value); }
+    }
+
+    [JSProperty(Name = "queryPairs")]
+    [JsonProperty("queryPairs")]
+    public IDictionary<string, string> QueryPairs
+    {
+      get { return EntityFilterCriteria.QueryPairs; }
+      set { EntityFilterCriteria.QueryPairs = value; }
     }
 
     [JSProperty(Name = "skip")]
