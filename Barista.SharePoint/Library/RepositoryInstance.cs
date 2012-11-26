@@ -160,7 +160,11 @@
     {
       var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
 
-      if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
+      if (filterCriteria is FolderInstance)
+        criteria.EntityFilterCriteria.Path = (filterCriteria as FolderInstance).FullPath;
+      else if (filterCriteria is string || filterCriteria is StringInstance || filterCriteria is ConcatenatedString)
+        criteria.EntityFilterCriteria.Path = filterCriteria.ToString();
+      else if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
         criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
 
       var result = m_repository.Single(criteria.EntityFilterCriteria);
@@ -272,22 +276,24 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
+      if (partName == null || partName == Null.Value || partName == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "The name of the desired entity part must be defined as the second parameter.");
+
       var stringPartName = "";
       var stringCategory = "";
       var stringData = "";
 
-      if (partName != Null.Value && partName != Undefined.Value)
-        stringPartName = partName.ToString();
+      stringPartName = partName.ToString();
 
       if (String.IsNullOrEmpty(stringPartName))
         throw new JavaScriptException(this.Engine, "Error", "When creating an entity part, a part name must be specified.");
 
-      if (category != Null.Value && category != Undefined.Value)
+      if (category != Null.Value && category != Undefined.Value || category != null)
         stringCategory = category.ToString();
 
       if (data is ObjectInstance)
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-      else
+      else if (data != null)
         stringData = data.ToString();
 
       Guid id;
@@ -344,16 +350,35 @@
     }
 
     [JSFunction(Name = "deleteEntityPart")]
-    public bool DeleteEntityPart(string entityId, string partName)
+    public bool DeleteEntityPart(object entityId, string partName)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return m_repository.DeleteEntityPart(id, partName);
     }
 
     [JSFunction(Name = "getEntityPart")]
-    public object GetEntityPart(string entityId, string partName)
+    public object GetEntityPart(object entityId, string partName)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
 
       var result = m_repository.GetEntityPart(id, partName);
 
@@ -364,9 +389,19 @@
     }
 
     [JSFunction(Name = "hasEntityPart")]
-    public bool HasEntityPart(string entityId, string partName)
+    public bool HasEntityPart(object entityId, string partName)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return m_repository.HasEntityPart(id, partName);
     }
 
@@ -428,11 +463,21 @@
 
     #region Attachments
     [JSFunction(Name = "listAttachments")]
-    public ArrayInstance ListAttachments(string entityId)
+    public ArrayInstance ListAttachments(object entityId)
     {
       var result = this.Engine.Array.Construct();
 
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       foreach (var attachment in m_repository.ListAttachments(id))
       {
         ArrayInstance.Push(result, new AttachmentInstance(this.Engine, attachment));
@@ -442,23 +487,53 @@
     }
 
     [JSFunction(Name = "getAttachment")]
-    public AttachmentInstance GetAttachment(string entityId, string fileName)
+    public AttachmentInstance GetAttachment(object entityId, string fileName)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return new AttachmentInstance(this.Engine, m_repository.GetAttachment(id, fileName));
     }
 
     [JSFunction(Name = "uploadAttachment")]
-    public AttachmentInstance UploadAttachment(string entityId, string fileName, Base64EncodedByteArrayInstance attachment)
+    public AttachmentInstance UploadAttachment(object entityId, string fileName, Base64EncodedByteArrayInstance attachment)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return new AttachmentInstance(this.Engine, m_repository.UploadAttachment(id, fileName, attachment.Data));
     }
 
     [JSFunction(Name = "downloadAttachment")]
-    public Base64EncodedByteArrayInstance DownloadAttachment(string entityId, string fileName)
+    public Base64EncodedByteArrayInstance DownloadAttachment(object entityId, string fileName)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var attachment = m_repository.GetAttachment(id, fileName);
       var streamResult = m_repository.DownloadAttachment(id, fileName);
 
@@ -470,9 +545,18 @@
     }
 
     [JSFunction(Name = "deleteAttachment")]
-    public bool DeleteAttachment(string entityId, string fileName)
+    public bool DeleteAttachment(object entityId, string fileName)
     {
-      var id = new Guid(entityId);
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
 
       return m_repository.DeleteAttachment(id, fileName);
     }
@@ -518,10 +602,20 @@
 
     #region EntitySet
     [JSFunction(Name = "getEntitySet")]
-    public EntitySetInstance GetEntitySet(string entityId, object path)
+    public EntitySetInstance GetEntitySet(object entityId, object path)
     {
       var stringPath = "";
-      var id = new Guid(entityId);
+
+      if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
 
       if (path != Null.Value && path != Undefined.Value)
         stringPath = path.ToString();
