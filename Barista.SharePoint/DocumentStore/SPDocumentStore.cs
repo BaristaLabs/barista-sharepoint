@@ -1031,7 +1031,9 @@
                   var matchAllExpressions = new List<Expression<Func<SPListItem, bool>>>();
                   foreach(var queryPair in criteria.QueryPairs)
                   {
-                    matchAllExpressions.Add(li => ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", queryPair.Key, queryPair.Value)));
+                    matchAllExpressions.Add(li => (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) &&
+                                  ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))));
                   }
                   var matchAll = Camlex.Query()
                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
@@ -1045,7 +1047,9 @@
                   var matchAnyExpressions = new List<Expression<Func<SPListItem, bool>>>();
                   foreach(var queryPair in criteria.QueryPairs)
                   {
-                    matchAnyExpressions.Add(li => ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", queryPair.Key, queryPair.Value)));
+                    matchAnyExpressions.Add(li => (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) && 
+                                  ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))));
                   }
                   var matchAny = Camlex.Query()
                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
