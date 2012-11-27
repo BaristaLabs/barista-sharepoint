@@ -91,16 +91,38 @@
     }
 
     [JSFunction(Name="createFolder")]
-    public FolderInstance CreateFolder(string path)
+    public FolderInstance CreateFolder(object path)
     {
-      var folder = m_repository.CreateFolder(path);
+      var stringPath = String.Empty;
+      if (path is FolderInstance)
+        stringPath = (path as FolderInstance).FullPath;
+      else if (path == Undefined.Value || path == Null.Value || path == null)
+        stringPath = String.Empty;
+      else
+        stringPath = path.ToString();
+
+      if (String.IsNullOrEmpty(stringPath))
+        throw new JavaScriptException(this.Engine, "Error", "The path to create must be specified.");
+
+      var folder = m_repository.CreateFolder(stringPath);
       return new FolderInstance(this.Engine, folder);
     }
 
     [JSFunction(Name="deleteFolder")]
-    public void DeleteFolder(string path)
+    public void DeleteFolder(object path)
     {
-      m_repository.DeleteFolder(path);
+      var stringPath = String.Empty;
+      if (path is FolderInstance)
+        stringPath = (path as FolderInstance).FullPath;
+      else if (path == Undefined.Value || path == Null.Value || path == null)
+        stringPath = String.Empty;
+      else
+        stringPath = path.ToString();
+
+      if (String.IsNullOrEmpty(stringPath))
+        throw new JavaScriptException(this.Engine, "Error", "The path to delete must be specified.");
+
+      m_repository.DeleteFolder(stringPath);
     }
 
     #endregion
@@ -113,7 +135,11 @@
       var stringEntityNamespace = "";
       var stringData = "";
 
-      if (path != Null.Value && path != Undefined.Value)
+      if (path is FolderInstance)
+        stringPath = (path as FolderInstance).FullPath;
+      else if (path == Undefined.Value || path == Null.Value || path == null)
+        stringPath = String.Empty;
+      else
         stringPath = path.ToString();
 
       if (entityNamespace != Null.Value && entityNamespace != Undefined.Value)
@@ -164,7 +190,7 @@
     }
 
     [JSFunction(Name = "getEntity")]
-    public object GetEntity(object entityId, [DefaultParameterValue("")]string path)
+    public object GetEntity(object entityId, object path)
     {
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
@@ -177,7 +203,15 @@
       else
         id = new Guid(entityId.ToString());
 
-      var result = m_repository.GetEntity(id, path);
+      string stringPath = String.Empty;
+      if (path is FolderInstance)
+        stringPath = (path as FolderInstance).FullPath;
+      else if (path == Undefined.Value || path == Null.Value || path == null)
+        stringPath = String.Empty;
+      else
+        stringPath = path.ToString();
+
+      var result = m_repository.GetEntity(id, stringPath);
 
       if (result == null)
         return Null.Value;
