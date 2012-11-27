@@ -131,6 +131,9 @@
     [JSFunction(Name = "cloneEntity")]
     public EntityInstance CloneEntity(object entityId, string sourcePath, string targetPath)
     {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
       Guid id;
       if (entityId is EntityInstance)
         id = (entityId as EntityInstance).Entity.Id;
@@ -146,6 +149,9 @@
     [JSFunction(Name = "deleteEntity")]
     public bool DeleteEntity(object entityId)
     {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
       Guid id;
       if (entityId is EntityInstance)
         id = (entityId as EntityInstance).Entity.Id;
@@ -160,6 +166,9 @@
     [JSFunction(Name = "getEntity")]
     public object GetEntity(object entityId, [DefaultParameterValue("")]string path)
     {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
       Guid id;
       if (entityId is EntityInstance)
         id = (entityId as EntityInstance).Entity.Id;
@@ -219,16 +228,36 @@
     }
 
     [JSFunction(Name = "moveEntity")]
-    public bool MoveEntity(string entityId, string destinationPath)
+    public bool MoveEntity(object entityId, string destinationPath)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return m_repository.MoveEntity(id, destinationPath);
     }
 
     [JSFunction(Name = "updateEntity")]
-    public object UpdateEntity(string entityId, object eTag, object data)
+    public object UpdateEntity(object entityId, object eTag, object data)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var stringData = "";
       var stringETag = "";
 
@@ -249,13 +278,23 @@
     }
 
     [JSFunction(Name = "updateEntityNamespace")]
-    public object UpdateEntityNamespace(string entityId, object newNamespace)
+    public object UpdateEntityNamespace(object entityId, object newNamespace)
     {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       string stringNewNamespace = null;
       if (newNamespace != Null.Value && newNamespace != Undefined.Value)
         stringNewNamespace = newNamespace.ToString();
 
-      var id = new Guid(entityId);
       var result = m_repository.UpdateEntity(id, null, null, stringNewNamespace);
 
       if (result == null)
@@ -268,19 +307,39 @@
     #region EntityComments
 
     [JSFunction(Name = "addEntityComment")]
-    public CommentInstance AddEntityComment(string entityId, string comment)
+    public CommentInstance AddEntityComment(object entityId, string comment)
     {
-      var id = new Guid(entityId);
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var result = m_repository.AddEntityComment(id, comment);
       return new CommentInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "listEntityComments")]
-    public ArrayInstance ListEntityComments(string entityId)
+    public ArrayInstance ListEntityComments(object entityId)
     {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var result = this.Engine.Array.Construct();
 
-      var id = new Guid(entityId);
       foreach (var comment in m_repository.ListEntityComments(id))
       {
         ArrayInstance.Push(result, new CommentInstance(this.Engine, comment));
