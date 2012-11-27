@@ -129,24 +129,45 @@
     }
 
     [JSFunction(Name = "cloneEntity")]
-    public EntityInstance CloneEntity(string entityId, string sourcePath, string targetPath)
+    public EntityInstance CloneEntity(object entityId, string sourcePath, string targetPath)
     {
-      var id = new Guid(entityId);
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var result = m_repository.CloneEntity(id, sourcePath, targetPath);
       return new EntityInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "deleteEntity")]
-    public bool DeleteEntity(string entityId)
+    public bool DeleteEntity(object entityId)
     {
-      var id = new Guid(entityId);
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       return m_repository.DeleteEntity(id);
     }
 
     [JSFunction(Name = "getEntity")]
-    public object GetEntity(string entityId, [DefaultParameterValue("")]string path)
+    public object GetEntity(object entityId, [DefaultParameterValue("")]string path)
     {
-      var id = new Guid(entityId);
+      Guid id;
+      if (entityId is EntityInstance)
+        id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
+      else
+        id = new Guid(entityId.ToString());
+
       var result = m_repository.GetEntity(id, path);
 
       if (result == null)
