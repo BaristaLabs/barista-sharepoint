@@ -1,14 +1,11 @@
 ﻿namespace Barista.SharePoint.Services
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
-  using System.ServiceModel.Activation;
-  using System.ServiceModel;
   using Microsoft.SharePoint;
+  using System;
+  using System.ServiceModel;
+  using System.ServiceModel.Activation;
 
-  internal sealed class BaristaServiceHostFactory : ServiceHostFactory
+  public sealed class BaristaServiceHostFactory : ServiceHostFactory
   {
     public override ServiceHostBase CreateServiceHost(string constructorString, Uri[] baseAddresses)
     {

@@ -1,16 +1,12 @@
 ﻿namespace Barista.SharePoint
 {
   using Jurassic;
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.IO;
 
   public class BaristaScriptSource : ScriptSource
   {
-    private readonly string m_code = null;
-    private readonly string m_codePath = null;
+    private readonly string m_code;
+    private readonly string m_codePath;
 
     public BaristaScriptSource(string code, string codePath)
     {

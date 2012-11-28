@@ -23,7 +23,7 @@
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
-  internal sealed class BaristaServiceApplication : SPIisWebServiceApplication, IBaristaServiceApplication
+  public sealed class BaristaServiceApplication : SPIisWebServiceApplication, IBaristaServiceApplication
   {
     #region Constants
     private const string JavaScriptExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>

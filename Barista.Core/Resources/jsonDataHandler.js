@@ -73,7 +73,7 @@ var jsonDataHandler = {
         var key, bDiff;
         for (key in j2) if (j2.hasOwnProperty(key)) {
             bDiff = false;
-            if (typeof j1[key] === "undefined" || typeof j1[key] != typeof j2[key]) {
+            if (typeof j1[key] === "undefined" || typeof j1[key] !== typeof j2[key]) {
                 bDiff = true;
             }
             else if (j1[key] !== j2[key]) {

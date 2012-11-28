@@ -62,7 +62,6 @@
     /// <summary>
     /// Returns the stored instance of the script engine, if it exists, from the runtime cache. If it does not exist, a new instance is created.
     /// </summary>
-    /// <param name="isNewInstance"></param>
     /// <returns></returns>
     internal static ScriptEngine GetOrCreateScriptEngineInstanceFromRuntimeCache(string instanceName, out bool isNewScriptEngineInstance)
     {
@@ -107,7 +106,11 @@
         engine = new ScriptEngine();
         isNewScriptEngineInstance = true;
         HttpRuntime.Cache.Add(cacheKey, engine, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
-        HttpRuntime.Cache.Add(cacheKey + "_eTag", instanceInitializationCodeETag, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
+        if (instanceInitializationCodeETag != null)
+        {
+          HttpRuntime.Cache.Add(cacheKey + "_eTag", instanceInitializationCodeETag, null, absoluteExpiration,
+                                slidingExpiration, CacheItemPriority.Normal, null);
+        }
       }
 
       return engine;

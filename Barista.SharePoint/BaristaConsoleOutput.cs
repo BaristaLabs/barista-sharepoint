@@ -1,11 +1,10 @@
 ﻿namespace Barista.SharePoint
 {
-  using System;
-  using System.Text;
   using Jurassic;
   using Jurassic.Library;
-  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
+  using System;
+  using System.Text;
 
   [Serializable]
   public class BaristaConsoleOutput : IFirebugConsoleOutput
@@ -27,45 +26,43 @@
     public void Log(FirebugConsoleMessageStyle style, object[] objects)
     {
       BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
-      if (baristaLogService != null)
+
+      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.Console];
+
+      StringBuilder output = new StringBuilder();
+      for (int i = 0; i < objects.Length; i++)
       {
-        SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.Console];
-
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < objects.Length; i++)
+        if (i > 0)
+          output.AppendLine();
+        if (objects[i] is ObjectInstance)
         {
-          if (i > 0)
-            output.AppendLine();
-          if (objects[i] is ObjectInstance)
-          {
-            output.AppendLine(JSONObject.Stringify(this.Engine, objects[i], null, null));
-          }
-          else
-          {
-            output.AppendLine(TypeConverter.ToString(objects[i]));
-          }
+          output.AppendLine(JSONObject.Stringify(this.Engine, objects[i], null, null));
         }
-
-        var severity = TraceSeverity.None;
-
-        switch (style)
+        else
         {
-          case FirebugConsoleMessageStyle.Error:
-            severity = TraceSeverity.Unexpected;
-            break;
-          case FirebugConsoleMessageStyle.Information:
-            severity = TraceSeverity.Verbose;
-            break;
-          case FirebugConsoleMessageStyle.Regular:
-            severity = TraceSeverity.Medium;
-            break;
-          case FirebugConsoleMessageStyle.Warning:
-            severity = TraceSeverity.Monitorable;
-            break;
+          output.AppendLine(TypeConverter.ToString(objects[i]));
         }
-
-        baristaLogService.WriteTrace(1, cat, severity, output.ToString(), baristaLogService.TypeName);
       }
+
+      var severity = TraceSeverity.None;
+
+      switch (style)
+      {
+        case FirebugConsoleMessageStyle.Error:
+          severity = TraceSeverity.Unexpected;
+          break;
+        case FirebugConsoleMessageStyle.Information:
+          severity = TraceSeverity.Verbose;
+          break;
+        case FirebugConsoleMessageStyle.Regular:
+          severity = TraceSeverity.Medium;
+          break;
+        case FirebugConsoleMessageStyle.Warning:
+          severity = TraceSeverity.Monitorable;
+          break;
+      }
+
+      baristaLogService.WriteTrace(1, cat, severity, output.ToString(), baristaLogService.TypeName);
     }
 
     public void Clear()
@@ -76,21 +73,17 @@
     public void StartGroup(string title, bool initiallyCollapsed)
     {
       BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
-      if (baristaLogService != null)
-      {
-        SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
-        baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----Start Group - " + title, initiallyCollapsed);
-      }
+
+      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
+      baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----Start Group - " + title, initiallyCollapsed);
     }
 
     public void EndGroup()
     {
       BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
-      if (baristaLogService != null)
-      {
-        SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
-        baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----End Group");
-      }
+
+      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
+      baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----End Group");
     }
   }
 }

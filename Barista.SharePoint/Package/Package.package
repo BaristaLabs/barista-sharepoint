@@ -9,9 +9,9 @@
     <customAssembly location="wnvhtmlconvert.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\wnvhtmlconvert.dll" />
     <customAssembly location="itextsharp.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\iTextSharp.5.3.3\lib\itextsharp.dll" />
     <customAssembly location="HtmlAgilityPack.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll" />
-    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.4.5.10\lib\net35\Newtonsoft.Json.dll" />
     <customAssembly location="Camlex.NET.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Camlex.NET.dll.3.2.0.0\lib\net20\Camlex.NET.dll" />
     <customAssembly location="Jurassic.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Jurassic\Jurassic.dll" />
+    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.4.5.11\lib\net35\Newtonsoft.Json.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

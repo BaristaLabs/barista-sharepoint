@@ -5,10 +5,6 @@
 
   public class HandleEventFiring : SPItemEventReceiver
   {
-    public HandleEventFiring()
-    {
-    }
-
     public void CustomDisableEventFiring()
     {
       this.EventFiringEnabled = false;

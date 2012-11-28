@@ -7,7 +7,7 @@
   public sealed class BaristaContext : IDisposable
   {
     [ThreadStatic]
-    private static BaristaContext s_currentContext = null;
+    private static BaristaContext s_currentContext;
 
     public static BaristaContext Current
     {
