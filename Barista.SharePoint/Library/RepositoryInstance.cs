@@ -520,9 +520,9 @@
     }
 
     [JSFunction(Name = "listEntityParts")]
-    public ArrayInstance ListEntityParts(object entityId)
+    public ObjectInstance ListEntityParts(object entityId)
     {
-      var result = this.Engine.Array.Construct();
+      var result = this.Engine.Object.Construct();
 
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
@@ -535,7 +535,7 @@
 
       foreach (var entityPart in m_repository.ListEntityParts(id))
       {
-        ArrayInstance.Push(result, new EntityPartInstance(this.Engine, entityPart));
+        result.SetPropertyValue(entityPart.Name, new EntityPartInstance(this.Engine, entityPart), false);
       }
 
       return result;
