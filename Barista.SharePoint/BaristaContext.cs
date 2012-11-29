@@ -19,7 +19,7 @@
         }
         return s_currentContext;
       }
-      internal set { s_currentContext = value; }
+      set { s_currentContext = value; }
     }
 
     public static bool HasCurrentContext
@@ -29,6 +29,12 @@
 
     public BaristaContext()
     {
+    }
+
+    public BaristaContext(SPSite site, SPWeb web)
+    {
+      this.Site = site;
+      this.Web = web;
     }
 
     public BaristaContext(BrewRequest request, BrewResponse response)
@@ -107,37 +113,37 @@
     public SPFile File
     {
       get;
-      internal set;
+      set;
     }
 
     public SPSite Site
     {
       get;
-      internal set;
+      set;
     }
 
     public SPWeb Web
     {
       get;
-      internal set;
+      set;
     }
 
     public SPList List
     {
       get;
-      internal set;
+      set;
     }
 
     public SPListItem ListItem
     {
       get;
-      internal set;
+      set;
     }
 
     public SPView View
     {
       get;
-      internal set;
+      set;
     }
 
     public static BaristaContext CreateContextFromSPContext(SPContext context)

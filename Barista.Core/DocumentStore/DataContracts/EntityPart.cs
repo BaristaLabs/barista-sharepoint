@@ -51,7 +51,7 @@
     public EntityPart(EntityPart entityPart)
     {
       if (entityPart == null)
-        throw new ArgumentNullException("entityPart");
+        throw new ArgumentNullException("entityPart", @"When a clone of an entity part is created, the entity part must not be null.");
 
       this.Category = entityPart.Category;
       this.Created = entityPart.Created;

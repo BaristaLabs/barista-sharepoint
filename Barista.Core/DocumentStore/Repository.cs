@@ -519,7 +519,7 @@
       if (factory == null)
         factory = GetRepositoryFactoryFromConfiguration();
 
-      Repository repository = documentStore == null ? factory.CreateRepository() : factory.CreateRepository(documentStore);
+      Repository repository = (documentStore == null ? factory.CreateRepository() : factory.CreateRepository(documentStore)) as Repository;
 
       if (repository == null)
         throw new InvalidOperationException("The repository object returned by the factory (" + factory.GetType() + ") was null.");
@@ -551,8 +551,10 @@
             if (documentStoreType != null && documentStoreType.GetInterfaces().Any(i => i == typeof(IRepositoryFactory)) == false)
               throw new InvalidOperationException("The BaristaDS_RepositoryFactory type name was specified within web.config, but it does not implement IRepositoryFactory");
 
-            if (documentStoreType != null)
-              s_repositoryFactory = Activator.CreateInstance(documentStoreType) as IRepositoryFactory;
+            if (documentStoreType == null)
+              throw new InvalidOperationException("The BaristaDS_RepositoryFactory type name was specified within web.config, but was null");
+            
+            s_repositoryFactory = Activator.CreateInstance(documentStoreType) as IRepositoryFactory;
           }
         }
       }

@@ -106,6 +106,8 @@
     <Compile Include="Bundles\MustacheBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
+    <Compile Include="DocumentStore\TypedRepository.cs" />
+    <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
     <Compile Include="Library\Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
@@ -203,6 +205,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Stateless\DynamicTriggerBehaviour.cs" />
+    <Compile Include="Stateless\Enforce.cs" />
+    <Compile Include="Stateless\IgnoredTriggerBehaviour.cs" />
+    <Compile Include="Stateless\ParameterConversion.cs" />
+    <Compile Include="Stateless\StateConfiguration.cs" />
+    <Compile Include="Stateless\StateMachine.cs" />
+    <Compile Include="Stateless\StateReference.cs" />
+    <Compile Include="Stateless\StateRepresentation.cs" />
+    <Compile Include="Stateless\Transition.cs" />
+    <Compile Include="Stateless\TransitioningTriggerBehaviour.cs" />
+    <Compile Include="Stateless\TriggerBehaviour.cs" />
+    <Compile Include="Stateless\TriggerWithParameters.cs" />
     <Compile Include="StringStream.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />

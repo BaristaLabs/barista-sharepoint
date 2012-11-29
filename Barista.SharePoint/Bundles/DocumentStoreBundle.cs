@@ -29,7 +29,7 @@
     [Serializable]
     private class BaristaRepositoryFactory : IRepositoryFactory
     {
-      public Repository CreateRepository()
+      public object CreateRepository()
       {
         Repository repository = new Repository();
 
@@ -38,7 +38,7 @@
         return repository;
       }
 
-      public Repository CreateRepository(IDocumentStore documentStore)
+      public object CreateRepository(IDocumentStore documentStore)
       {
         Repository repository = new Repository(documentStore);
 

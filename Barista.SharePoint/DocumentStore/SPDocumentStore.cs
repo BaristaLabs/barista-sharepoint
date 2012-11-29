@@ -46,7 +46,15 @@ namespace Barista.SharePoint.DocumentStore
     {
       m_originalCatchAccessDeniedValue = SPSecurity.CatchAccessDeniedException;
       SPSecurity.CatchAccessDeniedException = false;
+      this.Web = BaristaContext.Current.Web;
     }
+
+    public SPDocumentStore(SPWeb web)
+      :this()
+    {
+      this.Web = web;
+    }
+
     #endregion
 
     #region Properties
@@ -55,7 +63,8 @@ namespace Barista.SharePoint.DocumentStore
     /// </summary>
     public SPWeb Web
     {
-      get { return BaristaContext.Current.Web; }
+      get;
+      private set;
     }
     #endregion
 
@@ -1343,6 +1352,10 @@ namespace Barista.SharePoint.DocumentStore
     {
       string data = DocumentStoreHelper.SerializeObjectToJson(value);
       var result = CreateEntityPart(containerTitle, entityId, partName, category, data);
+
+      if (result == null)
+        return null;
+
       return new EntityPart<T>(result);
     }
 
@@ -1508,6 +1521,7 @@ namespace Barista.SharePoint.DocumentStore
       try
       {
         EntityPart untypedEntityPart = GetEntityPart(containerTitle, entityId, partName);
+
         if (untypedEntityPart == null)
           return false;
 

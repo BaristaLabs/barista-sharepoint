@@ -7,8 +7,8 @@ namespace Barista.DocumentStore
 {
   public interface IRepositoryFactory
   {
-    Repository CreateRepository();
+    object CreateRepository();
 
-    Repository CreateRepository(IDocumentStore documentStore);
+    object CreateRepository(IDocumentStore documentStore);
   }
 }
