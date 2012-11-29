@@ -8,6 +8,7 @@
       <!-- Custom fields -->
       <FieldRef ID="{5b8dd38e-b926-41b3-b7f1-896534b9d916}" Name="Namespace" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE" />
       <FieldRef ID="{efab5a5d-493b-480f-867a-2f754a269200}" Name="DocumentEntityGuid" ShowInNewForm="TRUE" ShowInEditForm="TRUE" Required="TRUE" />
+      <FieldRef ID="{559f471b-e1bb-49b5-b6a9-5816c63c9cf1}" Name="DocumentEntityIndexedProperty" ShowInNewForm="FALSE" ShowInEditForm="FALSE" Required="FALSE" />
     </FieldRefs>
     <XmlDocuments>
       <!-- List of all fields [site columns] shared between all content types and the document set. -->

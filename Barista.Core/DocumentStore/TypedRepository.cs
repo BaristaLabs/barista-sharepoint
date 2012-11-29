@@ -134,6 +134,17 @@
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.CreateContainer(this.Configuration.ContainerTitle, containerTitle);
     }
+
+    /// <summary>
+    /// Deletes the specified container.
+    /// </summary>
+    /// <param name="containerTitle"></param>
+    /// <returns></returns>
+    public void DeleteContainer(string containerTitle)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+      documentStore.DeleteContainer(containerTitle);
+    }
     #endregion
 
     #region Folders
