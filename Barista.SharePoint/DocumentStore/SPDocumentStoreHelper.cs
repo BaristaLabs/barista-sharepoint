@@ -611,7 +611,7 @@
     /// <summary>
     /// Executes the specified action asynchronously, while preserving both the HttpContext and SPContext
     /// </summary>
-    public static Task ExecuteAsync(HttpContext context, SPWeb webContext, Action action)
+    public static Task ExecuteAsync(Repository repository, HttpContext context, SPWeb webContext, Action action)
     {
       var siteId = webContext.Site.ID;
       var webId = webContext.ID;
@@ -637,7 +637,7 @@
           }
           catch(Exception ex)
           {
-            ApplicationLog.AddException(ex);
+            ApplicationLog.AddException(repository, ex);
 
             /* Do Nothing... */
           }

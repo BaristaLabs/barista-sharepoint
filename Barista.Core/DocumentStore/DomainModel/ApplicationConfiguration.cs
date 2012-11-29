@@ -1,4 +1,6 @@
-﻿namespace Barista.DocumentStore
+﻿using System;
+
+namespace Barista.DocumentStore
 {
   public class ApplicationConfiguration
   {
@@ -10,26 +12,36 @@
       set;
     }
 
-    public static ApplicationConfiguration GetApplicationConfiguration()
+    public static ApplicationConfiguration GetApplicationConfiguration(Repository repository)
     {
-      var repository = Repository.GetRepository();
-
       //Double-check locking pattern
 
-      var applicationConfigurationEntity = repository.Single(new EntityFilterCriteria() { Path = "", Namespace = Constants.ApplicationConfigurationV1Namespace });
+      var applicationConfigurationEntity =
+        repository.Single(new EntityFilterCriteria()
+          {
+            Path = "",
+            Namespace = Constants.ApplicationConfigurationV1Namespace
+          });
       if (applicationConfigurationEntity == null)
       {
         lock (s_syncRoot)
         {
-          applicationConfigurationEntity = repository.Single(new EntityFilterCriteria() { Path = "", Namespace = Constants.ApplicationConfigurationV1Namespace });
+          applicationConfigurationEntity =
+            repository.Single(new EntityFilterCriteria()
+              {
+                Path = "",
+                Namespace = Constants.ApplicationConfigurationV1Namespace
+              });
           if (applicationConfigurationEntity == null)
           {
             var data = DocumentStoreHelper.SerializeObjectToJson(new ApplicationConfiguration()
-            {
-              MinimumLogLevel = LogLevel.Error,
-            });
+              {
+                MinimumLogLevel = LogLevel.Error,
+              });
 
-            applicationConfigurationEntity = repository.Configuration.DocumentStore.CreateEntity(repository.Configuration.ContainerTitle, Constants.ApplicationConfigurationV1Namespace, data);
+            applicationConfigurationEntity =
+              repository.Configuration.DocumentStore.CreateEntity(repository.Configuration.ContainerTitle,
+                                                                  Constants.ApplicationConfigurationV1Namespace, data);
           }
         }
       }

@@ -3825,7 +3825,8 @@ namespace Barista.SharePoint.DocumentStore
 
     public Task ExecAsync(Action action)
     {
-      return SPDocumentStoreHelper.ExecuteAsync(HttpContext.Current, this.Web, action);
+      Repository repository = Repository.GetRepository();
+      return SPDocumentStoreHelper.ExecuteAsync(repository, HttpContext.Current, this.Web, action);
     }
 
     #endregion
