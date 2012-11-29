@@ -1,9 +1,10 @@
-﻿namespace Barista.SharePoint.Helpers
+﻿using System.Globalization;
+
+namespace Barista.SharePoint.Helpers
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
-  using System.Text;
   using System.IO;
   using Microsoft.SharePoint.Utilities;
 
@@ -48,16 +49,22 @@
           {
             while (!reader.EndOfStream)
             {
-              string[] fields = reader.ReadLine().Split(new char[] { '\t' });
-              UlsLogEntry entry = new UlsLogEntry();
-              entry.Process = fields[1].Trim();
-              entry.TID = fields[2].Trim();
-              entry.Area = fields[3].Trim();
-              entry.Category = fields[4].Trim();
-              entry.EventID = fields[5].Trim();
-              entry.Level = fields[6].Trim();
-              entry.Message = fields[7].Trim();
-              entry.CorrelationId = fields[8].Trim();
+              var readLine = reader.ReadLine();
+              if (readLine == null)
+                continue;
+
+              string[] fields = readLine.Split(new[] { '\t' });
+              UlsLogEntry entry = new UlsLogEntry
+                {
+                  Process = fields[1].Trim(),
+                  TID = fields[2].Trim(),
+                  Area = fields[3].Trim(),
+                  Category = fields[4].Trim(),
+                  EventID = fields[5].Trim(),
+                  Level = fields[6].Trim(),
+                  Message = fields[7].Trim(),
+                  CorrelationId = fields[8].Trim()
+                };
 
               DateTime timeStamp;
               if (DateTime.TryParse(fields[0].Trim(), out timeStamp))
@@ -67,7 +74,7 @@
 
               if (fields[0].EndsWith("*"))
               {
-                entries[entries.Count - 2].Message = entries[entries.Count - 2].Message.ToString().TrimEnd('.') + entry.Message.ToString().Substring(3);
+                entries[entries.Count - 2].Message = entries[entries.Count - 2].Message.ToString(CultureInfo.InvariantCulture).TrimEnd('.') + entry.Message.ToString(CultureInfo.InvariantCulture).Substring(3);
                 entries.Remove(entry);
               }
             }

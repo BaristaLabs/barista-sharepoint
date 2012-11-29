@@ -101,7 +101,7 @@
     /// Lists all entities contained in the container with the specified namespace.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
-    /// <param name="namespace">The @namespace.</param>
+    /// <param name="criteria"></param>
     /// <returns></returns>
     IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria);
 
@@ -109,7 +109,10 @@
     /// Updates the entity.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
-    /// <param name="entity">The entity.</param>
+    /// <param name="entityId"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <param name="namespace"></param>
     /// <returns></returns>
     Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace);
 
@@ -118,6 +121,8 @@
     /// </summary>
     /// <param name="containerTitle"></param>
     /// <param name="entityId"></param>
+    /// <param name="eTag"></param>
+    /// <param name="data"></param>
     /// <returns></returns>
     Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data);
     #endregion

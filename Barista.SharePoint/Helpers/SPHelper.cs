@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.SharePoint;
-using System.IO;
-using System.Web;
-using Microsoft.SharePoint.Utilities;
-using System.Collections;
-using Jurassic.Library;
-using Jurassic;
-
-namespace Barista.SharePoint
+﻿namespace Barista.SharePoint
 {
+  using System;
+  using System.Globalization;
+  using Microsoft.SharePoint;
+  using System.IO;
+  using System.Web;
+  using Microsoft.SharePoint.Utilities;
+  using System.Collections;
+  using Jurassic.Library;
+  using Jurassic;
+
   /// <summary>
   /// Contains various helper methods for interacting with SharePoint.
   /// </summary>
@@ -19,25 +17,16 @@ namespace Barista.SharePoint
   {
     public static bool TryGetSPUserFromLoginName(string loginName, out SPUser user)
     {
-      user = null;
       if (String.IsNullOrEmpty(loginName) || loginName == Undefined.Value.ToString())
       {
         user = BaristaContext.Current.Web.CurrentUser;
       }
       else
       {
-        user = BaristaContext.Current.Web.AllUsers[loginName];
-
-        if (user == null)
-        {
-          user = BaristaContext.Current.Web.EnsureUser(loginName);
-        }
+        user = BaristaContext.Current.Web.AllUsers[loginName] ?? BaristaContext.Current.Web.EnsureUser(loginName);
       }
 
-      if (user == null)
-        return false;
-
-      return true;
+      return user != null;
     }
 
     /// <summary>
@@ -71,7 +60,7 @@ namespace Barista.SharePoint
         return false;
       }
 
-      Uri finalUri = null;
+      Uri finalUri;
       if (Uri.TryCreate(uriString, UriKind.Absolute, out finalUri))
       {
         uri = finalUri;
@@ -190,7 +179,7 @@ namespace Barista.SharePoint
     /// Attemps to retrieve a file at the specified url.
     /// </summary>
     /// <param name="fileUrl"></param>
-    /// <param name="file"></param>
+    /// <param name="eTag"></param>
     /// <returns></returns>
     public static bool TryGetSPFileETag(string fileUrl, out string eTag)
     {
@@ -224,7 +213,9 @@ namespace Barista.SharePoint
     /// Attempts to retrieve a folder at the specified url.
     /// </summary>
     /// <param name="folderUrl"></param>
+    /// <param name="web"></param>
     /// <param name="folder"></param>
+    /// <param name="site"></param>
     /// <returns></returns>
     public static bool TryGetSPFolder(string folderUrl, out SPSite site, out SPWeb web, out SPFolder folder)
     {
@@ -257,7 +248,9 @@ namespace Barista.SharePoint
     /// Attempts to retrieve the list at the specified url
     /// </summary>
     /// <param name="listUrl"></param>
+    /// <param name="web"></param>
     /// <param name="list"></param>
+    /// <param name="site"></param>
     /// <returns></returns>
     public static bool TryGetSPList(string listUrl, out SPSite site, out SPWeb web, out SPList list)
     {
@@ -370,10 +363,7 @@ namespace Barista.SharePoint
           value = (T)rawValue;
           return true;
         }
-        else
-        {
-          return false;
-        }
+        return false;
       }
       catch
       {
@@ -385,7 +375,9 @@ namespace Barista.SharePoint
     /// Attempts to get the contents of the specified file at the specified url. Attempts to be smart about finding the location of the file.
     /// </summary>
     /// <param name="fileUrl"></param>
+    /// <param name="filePath"></param>
     /// <param name="fileContents"></param>
+    /// <param name="isHiveFile"></param>
     /// <returns></returns>
     public static bool TryGetSPFileAsString(string fileUrl, out string filePath, out string fileContents, out bool isHiveFile)
     {
@@ -420,7 +412,7 @@ namespace Barista.SharePoint
 
       if (BaristaContext.HasCurrentContext && BaristaContext.Current.Request != null && BaristaContext.Current.Request.UrlReferrer != null)
         referrer = BaristaContext.Current.Request.UrlReferrer;
-      else if (HttpContext.Current != null && HttpContext.Current.Request != null)
+      else if (HttpContext.Current != null)
         referrer = HttpContext.Current.Request.UrlReferrer;
 
       //Attempt to get the file relative to the url referrer.
@@ -437,8 +429,8 @@ namespace Barista.SharePoint
               if (sourceWeb == null)
                 throw new InvalidOperationException("The specified script url is invalid.");
 
-              filePath = url.ToString();
-              fileContents = sourceWeb.GetFileAsString(url.ToString());
+              filePath = url.ToString(CultureInfo.InvariantCulture);
+              fileContents = sourceWeb.GetFileAsString(url.ToString(CultureInfo.InvariantCulture));
               return true;
             }
           }
@@ -462,7 +454,7 @@ namespace Barista.SharePoint
           }
         });
 
-        if (hiveFileResult == true)
+        if (hiveFileResult)
         {
           filePath = path;
           fileContents = hiveFileContents;
@@ -509,6 +501,7 @@ namespace Barista.SharePoint
     /// <summary>
     /// Replaces SharePoint (and custom) tokens in the specified string with their corresponding values.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="text"></param>
     /// <returns></returns>
     public static string ReplaceTokens(SPContext context, string text)
@@ -549,7 +542,7 @@ namespace Barista.SharePoint
         htProperties = new Hashtable();
         foreach (var property in propertiesInstance.Properties)
         {
-          var propertyName = property.Name.ToString();
+          var propertyName = property.Name.ToString(CultureInfo.InvariantCulture);
 
           //TODO: Convert to appropriate FieldValues
           object propertyValue;

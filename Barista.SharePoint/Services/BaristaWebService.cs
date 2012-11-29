@@ -4,15 +4,11 @@
   using Barista.Extensions;
   using Barista.Framework;
   using Microsoft.SharePoint;
-  using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Client.Services;
-  using Microsoft.SharePoint.Utilities;
-  using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using System;
   using System.IO;
   using System.Linq;
-  using System.Net;
   using System.ServiceModel;
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
@@ -34,7 +30,6 @@
     /// <summary>
     /// Executes the specified script and does not return a result.
     /// </summary>
-    /// <param name="code"></param>
     [OperationContract(Name = "ExecRest")]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebGet(UriTemplate = "exec", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
@@ -57,7 +52,6 @@
     /// <summary>
     /// Overload for coffee to allow http POSTS.
     /// </summary>
-    /// <param name="code"></param>
     [OperationContract(Name = "Exec")]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebInvoke(Method = "POST", UriTemplate = "exec", BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -77,7 +71,6 @@
     /// <summary>
     /// Evaluates the specified script.
     /// </summary>
-    /// <param name="code"></param>
     /// <returns></returns>
     [OperationContract(Name = "EvalRest")]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
@@ -101,7 +94,6 @@
     /// <summary>
     /// Expresso overload to support having code contained in the body of a http POST.
     /// </summary>
-    /// <param name="code"></param>
     /// <returns></returns>
     [OperationContract(Name = "Eval")]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
@@ -144,17 +136,20 @@
       string code = null;
 
       //If the request has a header named "c" use that first.
-      var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-      var codeHeaderKey = requestHeaders.AllKeys.Where(k => k.ToLowerInvariant() == "c").FirstOrDefault();
-      if (codeHeaderKey != null)
-        code = requestHeaders[codeHeaderKey];
+      if (WebOperationContext.Current != null)
+      {
+        var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
+        var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c");
+        if (codeHeaderKey != null)
+          code = requestHeaders[codeHeaderKey];
+      }
 
       //If the request has a query string parameter named "c" use that.
-      if (String.IsNullOrEmpty(code))
+      if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null)
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-        var codeKey = requestQueryParameters.AllKeys.Where(k => k.ToLowerInvariant() == "c").FirstOrDefault();
+        var codeKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c");
         if (codeKey != null)
           code = requestQueryParameters[codeKey];
       }
@@ -163,7 +158,7 @@
       if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
       {
         var form = HttpContext.Current.Request.Form;
-        var formKey = form.AllKeys.Where(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code").FirstOrDefault();
+        var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
         if (formKey != null)
           code = form[formKey];
       }
@@ -178,7 +173,7 @@
         try
         {
           var jsonFormBody = JObject.Parse(bodyString);
-          var codeProperty = jsonFormBody.Properties().Where(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c").FirstOrDefault();
+          var codeProperty = jsonFormBody.Properties().FirstOrDefault(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c");
           if (codeProperty != null)
             code = codeProperty.Value.ToObject<string>();
         }
@@ -190,7 +185,7 @@
           try
           {
             var form = HttpUtility.ParseQueryString(bodyString);
-            var formKey = form.AllKeys.Where(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code").FirstOrDefault();
+            var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
             if (formKey != null)
               code = form[formKey];
           }
@@ -208,6 +203,7 @@
     /// Tamps the ground coffee. E.g. Parses the code and makes it ready to be executed (brewed).
     /// </summary>
     /// <param name="code"></param>
+    /// <param name="scriptPath"></param>
     /// <returns></returns>
     private string Tamp(string code, out string scriptPath)
     {
@@ -248,8 +244,8 @@
     /// <summary>
     /// Brews a cup of coffee. E.g. Executes the specified script.
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="code"></param>
+    /// <param name="codePath"></param>
     private void Brew(string code, string codePath)
     {
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
@@ -274,6 +270,7 @@
     /// Pulls a shot of espresso. E.g. Executes the specified script and sets the appropriate values on the response object.
     /// </summary>
     /// <param name="code"></param>
+    /// <param name="codePath"></param>
     /// <returns></returns>
     private Stream Pull(string code, string codePath)
     {

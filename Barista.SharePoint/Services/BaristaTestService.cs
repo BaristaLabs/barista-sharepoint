@@ -1,25 +1,14 @@
 ﻿namespace Barista.SharePoint.Services
 {
+  using Barista.Framework;
+  using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Client.Services;
   using System;
   using System.IO;
-  using System.Linq;
   using System.ServiceModel;
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
-  using System.Text;
   using System.Web;
-  using System.Xml.Linq;
-  using Jurassic;
-  using Jurassic.Library;
-  using Microsoft.SharePoint;
-  using Microsoft.SharePoint.Client.Services;
-  using Newtonsoft.Json;
-  using Barista.Framework;
-  using Barista.Extensions;
-  using Barista.SharePoint.Services;
-  using Barista.SharePoint.Framework;
-  using Barista.SharePoint.Library;
-  using System.Net;
 
   [SilverlightFaultBehavior]
   [BasicHttpBindingServiceMetadataExchangeEndpoint]

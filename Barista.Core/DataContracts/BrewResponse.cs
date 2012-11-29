@@ -1,18 +1,18 @@
-﻿namespace Barista
+﻿using System.Globalization;
+
+namespace Barista
 {
+  using Barista.Library;
+  using Jurassic;
+  using Jurassic.Library;
   using System;
   using System.Collections.Generic;
-  using Barista.Extensions;
-  using System.IO;
   using System.Linq;
   using System.Net;
   using System.Runtime.Serialization;
   using System.ServiceModel.Web;
   using System.Text;
   using System.Web;
-  using Jurassic.Library;
-  using Jurassic;
-  using Barista.Library;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
   [Serializable]
@@ -195,6 +195,7 @@
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="result"></param>
+    /// <param name="isRaw"></param>
     public void SetContentsFromResultObject(ScriptEngine engine, object result, bool isRaw)
     {
       //If IsRaw has been set on the response script object, convert the result value as a byte array, otherwise convert the string as a byte array.
@@ -207,7 +208,9 @@
         }
         else if (result is StringInstance || result is string)
         {
-          byteArray = Encoding.UTF8.GetBytes(result as string);
+          var stringResult = result as string ?? String.Empty;
+
+          byteArray = Encoding.UTF8.GetBytes(stringResult);
         }
         else
         {
@@ -220,19 +223,21 @@
       }
       else if (result is StringInstance || result is string)
       {
-        byteArray = Encoding.UTF8.GetBytes(result as string);
+        var stringResult = result as string ?? String.Empty;
+
+        byteArray = Encoding.UTF8.GetBytes(stringResult);
       }
       else
       {
         //Obtain the script result and stringify it -- e.g. convert it to a json object.
         string stringResult = JSONObject.Stringify(engine, result, null, null);
-        if (String.IsNullOrEmpty(stringResult) || (stringResult != null && String.IsNullOrEmpty(stringResult.Trim())))
+        if (String.IsNullOrEmpty(stringResult) || (String.IsNullOrEmpty(stringResult.Trim())))
         {
           byteArray = new byte[0];
         }
         else
         {
-          byteArray = Encoding.UTF8.GetBytes(stringResult.ToString());
+          byteArray = Encoding.UTF8.GetBytes(stringResult.ToString(CultureInfo.InvariantCulture));
         }
       }
 
@@ -243,7 +248,6 @@
     /// <summary>
     /// Determines the content type from the specified result.
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="result"></param>
     /// <returns></returns>
     public static string AutoDetectContentTypeFromResult(object result)
@@ -258,10 +262,10 @@
       else if (result is StringInstance || result is string)
       {
         var stringResult = result as string;
-        if (stringResult.TrimStart().StartsWith("<html", StringComparison.InvariantCultureIgnoreCase) ||
-            stringResult.TrimStart().StartsWith("<!doctype html>", StringComparison.InvariantCultureIgnoreCase))
+        if (stringResult != null && (stringResult.TrimStart().StartsWith("<html", StringComparison.InvariantCultureIgnoreCase) ||
+                                     stringResult.TrimStart().StartsWith("<!doctype html>", StringComparison.InvariantCultureIgnoreCase)))
           contentType = "text/html";
-        else if (stringResult.TrimStart().StartsWith("<?xml", StringComparison.InvariantCultureIgnoreCase))
+        else if (stringResult != null && stringResult.TrimStart().StartsWith("<?xml", StringComparison.InvariantCultureIgnoreCase))
           contentType = "text/xml";
         else
           contentType = "text/plain";

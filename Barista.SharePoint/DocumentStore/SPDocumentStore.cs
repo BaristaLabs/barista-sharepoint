@@ -1,20 +1,21 @@
-﻿namespace Barista.SharePoint.DocumentStore
+﻿using System.Globalization;
+
+namespace Barista.SharePoint.DocumentStore
 {
+  using Barista.DocumentStore;
+  using CamlexNET;
+  using Microsoft.Office.DocumentManagement.DocumentSets;
+  using Microsoft.SharePoint;
   using System;
   using System.Collections;
   using System.Collections.Generic;
   using System.Diagnostics;
   using System.IO;
   using System.Linq;
+  using System.Linq.Expressions;
   using System.Net;
   using System.Threading.Tasks;
   using System.Web;
-  using CamlexNET;
-  using Microsoft.Office.DocumentManagement.DocumentSets;
-  using Microsoft.Office.Server.Utilities;
-  using Microsoft.SharePoint;
-  using Barista.DocumentStore;
-  using System.Linq.Expressions;
 
   /// <summary>
   /// Represents a SharePoint-backed Document Store.
@@ -187,12 +188,9 @@
       {
         using (SPWeb web = site.OpenWeb(this.Web.ID))
         {
-          List<Container> result = new List<Container>();
-          foreach (var list in SPDocumentStoreHelper.GetContainers(web))
-          {
-            result.Add(SPDocumentStoreHelper.MapContainerFromSPList(list));
-          }
-          return result;
+          return SPDocumentStoreHelper.GetContainers(web)
+                                      .Select(list => SPDocumentStoreHelper.MapContainerFromSPList(list))
+                                      .ToList();
         }
       }
     }
@@ -367,8 +365,6 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             return null;
 
-          List<Folder> result = new List<Folder>();
-
           var folderContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Folder);
 
           //ContentIterator itemsIterator = new ContentIterator();
@@ -378,13 +374,11 @@
           //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
           //}, null);
 
-          SPQuery query = new SPQuery();
-          query.QueryThrottleMode = SPQueryThrottleOption.Override;
-          query.Folder = folder;
-          result = list.GetItems(query).OfType<SPListItem>()
-                                       .Where(li => li.ContentTypeId == folderContentTypeId)
-                                       .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
-                                       .ToList();
+          SPQuery query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
+          List<Folder> result = list.GetItems(query).OfType<SPListItem>()
+                            .Where(li => li.ContentTypeId == folderContentTypeId)
+                            .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                            .ToList();
 
           return result;
         }
@@ -409,8 +403,6 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             return null;
 
-          List<Folder> result = new List<Folder>();
-
           var folderContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Folder);
 
           //ContentIterator itemsIterator = new ContentIterator();
@@ -420,13 +412,11 @@
           //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
           //}, null);
 
-          SPQuery query = new SPQuery();
-          query.QueryThrottleMode = SPQueryThrottleOption.Override;
-          query.Folder = folder;
-          result = list.GetItems(query).OfType<SPListItem>()
-                                       .Where(li => li.ContentTypeId == folderContentTypeId)
-                                       .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
-                                       .ToList();
+          SPQuery query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
+          List<Folder> result = list.GetItems(query).OfType<SPListItem>()
+                            .Where(li => li.ContentTypeId == folderContentTypeId)
+                            .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                            .ToList();
           return result;
         }
       }
@@ -445,7 +435,7 @@
     /// <returns></returns>
     public Entity<T> CreateEntity<T>(string containerTitle, string @namespace, T value)
     {
-      return CreateEntity<T>(containerTitle, String.Empty, @namespace, value);
+      return CreateEntity(containerTitle, String.Empty, @namespace, value);
     }
 
     /// <summary>
@@ -471,7 +461,7 @@
     /// <returns></returns>
     public Entity<T> CreateEntity<T>(string containerTitle, string path, string @namespace, T value)
     {
-      var data = DocumentStoreHelper.SerializeObjectToJson<T>(value);
+      var data = DocumentStoreHelper.SerializeObjectToJson(value);
       var result = CreateEntity(containerTitle, path, @namespace, data);
       return new Entity<T>(result);
     }
@@ -502,10 +492,12 @@
           Guid newGuid = Guid.NewGuid();
           var docEntityContentTypeId = list.ContentTypes.BestMatch(new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId));
 
-          Hashtable properties = new Hashtable();
-          properties.Add("DocumentSetDescription", "Document Store Entity");
-          properties.Add("DocumentEntityGuid", newGuid.ToString());
-          properties.Add("Namespace", @namespace);
+          Hashtable properties = new Hashtable
+            {
+              {"DocumentSetDescription", "Document Store Entity"},
+              {"DocumentEntityGuid", newGuid.ToString()},
+              {"Namespace", @namespace}
+            };
 
           SPFolder documentSetFolder;
 
@@ -518,11 +510,11 @@
 
             if (PermissionsHelper.IsRunningUnderElevatedPrivledges(site.WebApplication.ApplicationPool))
             {
-              var newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, this.Web.CurrentUser);
+              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, this.Web.CurrentUser);
 
               documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
 
-              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
+              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
 
               //Set the created/updated fields of the new document set to the current user.
               string userLogonName = this.Web.CurrentUser.ID + ";#" + this.Web.CurrentUser.Name;
@@ -531,11 +523,11 @@
             }
             else
             {
-              var newDocumentSet = DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true);
+              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true);
 
               documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
 
-              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.UTF8Encoding.Default.GetBytes(data), true);
+              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), true);
             }
           }
           finally
@@ -670,7 +662,10 @@
     /// Updates the entity.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
-    /// <param name="entity">The entity.</param>
+    /// <param name="entityId"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
+    /// <param name="namespace"></param>
     /// <returns></returns>
     public virtual Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
@@ -726,7 +721,7 @@
     /// <returns></returns>
     public virtual bool UpdateEntity<T>(string containerTitle, Guid entityId, T value)
     {
-      string data = DocumentStoreHelper.SerializeObjectToJson<T>(value);
+      string data = DocumentStoreHelper.SerializeObjectToJson(value);
 
       //Get a new web in case we're executing in elevated permissions.
       using (SPSite site = new SPSite(this.Web.Site.ID))
@@ -748,19 +743,13 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = String.Empty;
-            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
+            string currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
 
             if (data != currentData)
             {
-              if (String.IsNullOrEmpty(data) == false)
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(data));
-              }
-              else
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
-              }
+              defaultEntityPart.SaveBinary(String.IsNullOrEmpty(data) == false
+                                             ? System.Text.Encoding.Default.GetBytes(data)
+                                             : System.Text.Encoding.Default.GetBytes(String.Empty));
             }
           }
           finally
@@ -778,6 +767,7 @@
     /// </summary>
     /// <param name="containerTitle"></param>
     /// <param name="entityId"></param>
+    /// <param name="eTag"></param>
     /// <param name="data"></param>
     /// <returns></returns>
     public virtual Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
@@ -807,19 +797,13 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = String.Empty;
-            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
+            string currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
 
             if (data != currentData)
             {
-              if (String.IsNullOrEmpty(data) == false)
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(data));
-              }
-              else
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
-              }
+              defaultEntityPart.SaveBinary(String.IsNullOrEmpty(data) == false
+                                             ? System.Text.Encoding.Default.GetBytes(data)
+                                             : System.Text.Encoding.Default.GetBytes(String.Empty));
             }
           }
           finally
@@ -877,12 +861,9 @@
     /// <returns></returns>
     public IList<Entity<T>> ListEntities<T>(string containerTitle)
     {
-      List<Entity<T>> results = new List<Entity<T>>();
-      foreach (var entity in ListEntities(containerTitle, String.Empty, null))
-      {
-        results.Add(new Entity<T>(entity));
-      }
-      return results;
+      return ListEntities(containerTitle, String.Empty, null)
+        .Select(entity => new Entity<T>(entity))
+        .ToList();
     }
 
     /// <summary>
@@ -915,12 +896,9 @@
     /// <returns></returns>
     public IList<Entity<T>> ListEntities<T>(string containerTitle, string @namespace)
     {
-      List<Entity<T>> results = new List<Entity<T>>();
-      foreach (var entity in ListEntities(containerTitle, String.Empty, null))
-      {
-        results.Add(new Entity<T>(entity));
-      }
-      return results;
+      return ListEntities(containerTitle, String.Empty, null)
+        .Select(entity => new Entity<T>(entity))
+        .ToList();
     }
 
     /// <summary>
@@ -945,12 +923,9 @@
     /// <returns></returns>
     public IList<Entity<T>> ListEntities<T>(string containerTitle, string path, EntityFilterCriteria criteria)
     {
-      List<Entity<T>> results = new List<Entity<T>>();
-      foreach (var entity in ListEntities(containerTitle, path, criteria))
-      {
-        results.Add(new Entity<T>(entity));
-      }
-      return results;
+      return ListEntities(containerTitle, path, criteria)
+        .Select(entity => new Entity<T>(entity))
+        .ToList();
     }
 
     /// <summary>
@@ -1028,13 +1003,11 @@
                       .ToString();
                   break;
                 case NamespaceMatchType.StartsWithMatchAllQueryPairs:
-                  var matchAllExpressions = new List<Expression<Func<SPListItem, bool>>>();
-                  foreach(var queryPair in criteria.QueryPairs)
-                  {
-                    matchAllExpressions.Add(li => (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
-                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) &&
-                                  ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))));
-                  }
+                  var matchAllExpressions = criteria.QueryPairs
+                                                    .Select(queryPair => (Expression<Func<SPListItem, bool>>) (li => (((string) li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                                      ((string) li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) &&
+                                                      ((string) li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value)))))
+                                                    .ToList();
                   var matchAll = Camlex.Query()
                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
                                   ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
@@ -1044,13 +1017,11 @@
                   queryString = matchAll.ToString();
                   break;
                 case NamespaceMatchType.StartsWithMatchAnyQueryPairs:
-                  var matchAnyExpressions = new List<Expression<Func<SPListItem, bool>>>();
-                  foreach(var queryPair in criteria.QueryPairs)
-                  {
-                    matchAnyExpressions.Add(li => (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
-                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) && 
-                                  ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))));
-                  }
+                  var matchAnyExpressions = criteria.QueryPairs
+                                                    .Select(queryPair => (Expression<Func<SPListItem, bool>>) (li => (((string) li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                                      ((string) li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace)) &&
+                                                      ((string) li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value)))))
+                                                    .ToList();
                   var matchAny = Camlex.Query()
                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
                                   ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
@@ -1065,34 +1036,38 @@
             }
           }
 
-          SPQuery query = new SPQuery();
-          query.Query = queryString;
-          query.ViewFields = Camlex.Query().ViewFields(new List<Guid>() { 
-            SPBuiltInFieldId.ID, 
-            SPBuiltInFieldId.Title, 
-            SPBuiltInFieldId.FileRef, 
-            SPBuiltInFieldId.FileDirRef, 
-            SPBuiltInFieldId.FileLeafRef, 
-            SPBuiltInFieldId.FSObjType, 
-            SPBuiltInFieldId.ContentTypeId, 
-            SPBuiltInFieldId.Created,
-            SPBuiltInFieldId.Modified,
-            SPBuiltInFieldId.Author,
-            SPBuiltInFieldId.Editor,
-            Constants.DocumentEntityGuidFieldId,
-            Constants.NamespaceFieldId,
-            new Guid("CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E") // DocumentSetDescription
-          });
-          query.ViewFieldsOnly = true;
-          query.QueryThrottleMode = SPQueryThrottleOption.Override;
-          query.Folder = folder;
-          query.ViewAttributes = "Scope=\"Recursive\"";
+          SPQuery query = new SPQuery
+            {
+              Query = queryString,
+              ViewFields = Camlex.Query().ViewFields(new List<Guid>
+                {
+                  SPBuiltInFieldId.ID,
+                  SPBuiltInFieldId.Title,
+                  SPBuiltInFieldId.FileRef,
+                  SPBuiltInFieldId.FileDirRef,
+                  SPBuiltInFieldId.FileLeafRef,
+                  SPBuiltInFieldId.FSObjType,
+                  SPBuiltInFieldId.ContentTypeId,
+                  SPBuiltInFieldId.Created,
+                  SPBuiltInFieldId.Modified,
+                  SPBuiltInFieldId.Author,
+                  SPBuiltInFieldId.Editor,
+                  Constants.DocumentEntityGuidFieldId,
+                  Constants.NamespaceFieldId,
+                  new Guid("CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E") // DocumentSetDescription
+                }),
+              ViewFieldsOnly = true,
+              QueryThrottleMode = SPQueryThrottleOption.Override,
+              Folder = folder,
+              ViewAttributes = "Scope=\"Recursive\""
+            };
 
           if (criteria != null)
           {
             if (criteria.Skip.HasValue)
             {
               SPListItemCollectionPosition itemPosition = new SPListItemCollectionPosition(String.Format("Paged=TRUE&p_ID={0}", criteria.Skip.Value));
+              query.ListItemCollectionPosition = itemPosition;
             }
 
             if (criteria.Top.HasValue)
@@ -1113,12 +1088,11 @@
           //});
 
           var listItems = list.GetItems(query).OfType<SPListItem>();
-          foreach (var spListItem in listItems)
-          {
-            var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(spListItem);
-            if (entity != null)
-              result.Add(entity);
-          }
+          result.AddRange(
+            listItems
+            .Select(spListItem => SPDocumentStoreHelper.MapEntityFromSPListItem(spListItem))
+            .Where(entity => entity != null)
+            );
 
           ProcessEntityList(containerTitle, path, criteria, folder, result);
           return result;
@@ -1145,10 +1119,8 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             return null;
 
-          List<Entity> result = new List<Entity>();
-
           if (folder.ItemCount == 0)
-            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString());
+            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString(CultureInfo.InvariantCulture));
 
           string queryString = Camlex.Query()
               .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
@@ -1166,37 +1138,34 @@
                   .ToString();
           }
 
-          SPQuery query = new SPQuery();
-          query.Query = queryString;
-          query.ViewFields = Camlex.Query().ViewFields(new List<Guid>() { 
-            SPBuiltInFieldId.ID,
-            SPBuiltInFieldId.Title,
-            SPBuiltInFieldId.FileRef, 
-            SPBuiltInFieldId.FileDirRef, 
-            SPBuiltInFieldId.FileLeafRef, 
-            SPBuiltInFieldId.FSObjType,
-            SPBuiltInFieldId.ContentTypeId, 
-            Constants.DocumentEntityGuidFieldId,
-            Constants.NamespaceFieldId,
-          });
-          query.ViewFieldsOnly = true;
-          query.QueryThrottleMode = SPQueryThrottleOption.Override;
-          query.Folder = folder;
-          query.ViewAttributes = "Scope=\"Recursive\"";
+          SPQuery query = new SPQuery
+            {
+              Query = queryString,
+              ViewFields = Camlex.Query().ViewFields(new List<Guid>
+                {
+                  SPBuiltInFieldId.ID,
+                  SPBuiltInFieldId.Title,
+                  SPBuiltInFieldId.FileRef,
+                  SPBuiltInFieldId.FileDirRef,
+                  SPBuiltInFieldId.FileLeafRef,
+                  SPBuiltInFieldId.FSObjType,
+                  SPBuiltInFieldId.ContentTypeId,
+                  Constants.DocumentEntityGuidFieldId,
+                  Constants.NamespaceFieldId,
+                }),
+              ViewFieldsOnly = true,
+              QueryThrottleMode = SPQueryThrottleOption.Override,
+              Folder = folder,
+              ViewAttributes = "Scope=\"Recursive\""
+            };
 
           var items = list.GetItems(query).OfType<SPListItem>();
 
-          if (items.Any() == false)
-            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString());
+          var spListItems = items as IList<SPListItem> ?? items.ToList();
+          if (spListItems.Any() == false)
+            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString(CultureInfo.InvariantCulture));
 
-          var tags = new List<string>();
-          foreach(var item in items)
-          {
-            Guid id = new Guid(item.Name);
-            tags.Add(GetEntityContentsETag(containerTitle, id));
-          }
-          
-          var combinedETag = String.Join(", ", tags.ToArray());
+          var combinedETag = String.Join(", ", spListItems.Select(item => new Guid(item.Name)).Select(id => GetEntityContentsETag(containerTitle, id)).ToArray());
 
           return StringHelper.CreateMD5Hash(combinedETag);
         }
@@ -1204,12 +1173,13 @@
     }
 
     /// <summary>
-    /// When overridden in a subclass, allows custom processing to occur on the SPListItemCollection/IList<Entity> that is retrieved from SharePoint.
+    /// When overridden in a subclass, allows custom processing to occur on the SPListItemCollection/IList<Entity/> that is retrieved from SharePoint.
     /// </summary>
     /// <param name="containerTitle"></param>
-    /// <param name="entityId"></param>
-    /// <param name="entityFile"></param>
-    /// <param name="entity"></param>
+    /// <param name="path"></param>
+    /// <param name="criteria"></param>
+    /// <param name="folder"></param>
+    /// <param name="entities"></param>
     protected virtual void ProcessEntityList(string containerTitle, string path, EntityFilterCriteria criteria, SPFolder folder, IList<Entity> entities)
     {
       //Does nothing in the base implementation.
@@ -1253,12 +1223,14 @@
 
           var docEntityContentTypeId = list.ContentTypes.BestMatch(new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId));
 
-          Hashtable properties = new Hashtable();
-          properties.Add("DocumentSetDescription", "Document Store Entity");
-          properties.Add("DocumentEntityGuid", entityId.ToString());
-          properties.Add("Namespace", @namespace);
+          Hashtable properties = new Hashtable
+            {
+              {"DocumentSetDescription", "Document Store Entity"},
+              {"DocumentEntityGuid", entityId.ToString()},
+              {"Namespace", @namespace}
+            };
 
-          DocumentSet importedDocSet = null;
+          DocumentSet importedDocSet;
 
           web.AllowUnsafeUpdates = true;
           try
@@ -1364,12 +1336,12 @@
     /// <returns></returns>
     public EntityPart<T> CreateEntityPart<T>(string containerTitle, Guid entityId, string partName, T value)
     {
-      return CreateEntityPart<T>(containerTitle, entityId, partName, String.Empty, value);
+      return CreateEntityPart(containerTitle, entityId, partName, String.Empty, value);
     }
 
     public EntityPart<T> CreateEntityPart<T>(string containerTitle, Guid entityId, string partName, string category, T value)
     {
-      string data = DocumentStoreHelper.SerializeObjectToJson<T>(value);
+      string data = DocumentStoreHelper.SerializeObjectToJson(value);
       var result = CreateEntityPart(containerTitle, entityId, partName, category, data);
       return new EntityPart<T>(result);
     }
@@ -1415,30 +1387,37 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var entityPartContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant())).FirstOrDefault();
+          var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
+            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
-          Hashtable properties = new Hashtable();
-          properties.Add("ContentTypeId", entityPartContentType.Id.ToString());
-          properties.Add("Content Type", entityPartContentType.Name);
-
-          if (String.IsNullOrEmpty(category) == false)
-            properties.Add("Category", category);
-
-          web.AllowUnsafeUpdates = true;
-          try
+          if (entityPartContentType != null)
           {
-            if (defaultEntityPart.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
-              throw new InvalidOperationException("Insufficent Permissions.");
+            Hashtable properties = new Hashtable
+              {
+                {"ContentTypeId", entityPartContentType.Id.ToString()},
+                {"Content Type", entityPartContentType.Name}
+              };
 
-            SPFile partFile = defaultEntityPart.ParentFolder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.UTF8Encoding.Default.GetBytes(data), properties, true);
-            return SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile);
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
+            if (String.IsNullOrEmpty(category) == false)
+              properties.Add("Category", category);
+
+            web.AllowUnsafeUpdates = true;
+            try
+            {
+              if (defaultEntityPart.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
+                throw new InvalidOperationException("Insufficent Permissions.");
+
+              SPFile partFile = defaultEntityPart.ParentFolder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.Encoding.Default.GetBytes(data), properties, true);
+              return SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile);
+            }
+            finally
+            {
+              web.AllowUnsafeUpdates = false;
+            }
           }
         }
       }
+      return null;
     }
 
     /// <summary>
@@ -1506,8 +1485,9 @@
     /// </summary>
     /// <param name="containerTitle"></param>
     /// <param name="entityId"></param>
-    /// <param name="entityFile"></param>
+    /// <param name="entityPartFile"></param>
     /// <param name="entity"></param>
+    /// <param name="partName"></param>
     protected virtual void ProcessEntityPartFile(string containerTitle, Guid entityId, string partName, SPFile entityPartFile, EntityPart entity)
     {
       //Does nothing in the base implementation.
@@ -1607,7 +1587,8 @@
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
-    /// <param name="entityPart">The entity part.</param>
+    /// <param name="partName"></param>
+    /// <param name="category"></param>
     /// <returns></returns>
     public virtual EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
@@ -1668,19 +1649,13 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = String.Empty;
-            currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
+            string currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
 
             if (data != currentData)
             {
-              if (String.IsNullOrEmpty(data) == false)
-              {
-                entityPartFile.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(data));
-              }
-              else
-              {
-                entityPartFile.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
-              }
+              entityPartFile.SaveBinary(String.IsNullOrEmpty(data) == false
+                                          ? System.Text.Encoding.Default.GetBytes(data)
+                                          : System.Text.Encoding.Default.GetBytes(String.Empty));
             }
 
             return SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile);
@@ -1753,15 +1728,10 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var entityPartContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant())).FirstOrDefault();
+          var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
+            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
-          List<EntityPart> result = new List<EntityPart>();
-          foreach (SPFile entityPartFile in defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => f.Item.ContentTypeId == entityPartContentType.Id && f.Name != Constants.DocumentStoreDefaultEntityPartFileName))
-          {
-            result.Add(SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile));
-          }
-
-          return result;
+          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => entityPartContentType != null && (f.Item.ContentTypeId == entityPartContentType.Id && f.Name != Constants.DocumentStoreDefaultEntityPartFileName)).Select(entityPartFile => SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile)).ToList();
         }
       }
     }
@@ -1795,8 +1765,8 @@
 
           foreach (var ver in defaultEntityPart.Item.Versions.OfType<SPListItemVersion>())
           {
-            var entityVersion = new EntityVersion()
-            {
+            var entityVersion = new EntityVersion
+              {
               Comment = ver.ListItem.File.CheckInComment,
               Created = ver.Created,
               CreatedByLoginName = ver.CreatedBy.User.LoginName,
@@ -1839,13 +1809,14 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var ver = defaultEntityPart.Item.Versions.OfType<SPListItemVersion>().Where(v => v.VersionId == versionId).FirstOrDefault();
+          var ver = defaultEntityPart.Item.Versions.OfType<SPListItemVersion>()
+            .FirstOrDefault(v => v.VersionId == versionId);
 
           if (ver == null)
             return null;
 
-          var entityVersion = new EntityVersion()
-          {
+          var entityVersion = new EntityVersion
+            {
             Comment = ver.ListItem.File.CheckInComment,
             Created = ver.Created,
             CreatedByLoginName = ver.CreatedBy.User.LoginName,
@@ -1890,19 +1861,13 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = String.Empty;
-            currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
+            string currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
 
             if (entityVersion.Entity.Data != currentData)
             {
-              if (String.IsNullOrEmpty(entityVersion.Entity.Data) == false)
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(entityVersion.Entity.Data));
-              }
-              else
-              {
-                defaultEntityPart.SaveBinary(System.Text.UTF8Encoding.Default.GetBytes(String.Empty));
-              }
+              defaultEntityPart.SaveBinary(String.IsNullOrEmpty(entityVersion.Entity.Data) == false
+                                             ? System.Text.Encoding.Default.GetBytes(entityVersion.Entity.Data)
+                                             : System.Text.Encoding.Default.GetBytes(String.Empty));
             }
 
             DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
@@ -1924,7 +1889,7 @@
 
           var versions = ListEntityVersions(containerTitle, entityId);
 
-          return versions.Where(v => v.IsCurrentVersion).FirstOrDefault();
+          return versions.FirstOrDefault(v => v.IsCurrentVersion);
         }
       }
     }
@@ -1971,38 +1936,44 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId)).FirstOrDefault();
+          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId));
 
-          Hashtable properties = new Hashtable();
-          properties.Add("ContentTypeId", attachmentContentType.Id.ToString());
-          properties.Add("Content Type", attachmentContentType.Name);
-
-          if (String.IsNullOrEmpty(category) == false)
-            properties.Add("Category", category);
-
-          if (String.IsNullOrEmpty(path) == false)
+          if (attachmentContentType != null)
           {
-            Uri pathUri = null;
-            if (Uri.TryCreate(path, UriKind.Relative, out pathUri) == false)
+            Hashtable properties = new Hashtable
+              {
+                {"ContentTypeId", attachmentContentType.Id.ToString()},
+                {"Content Type", attachmentContentType.Name}
+              };
+
+            if (String.IsNullOrEmpty(category) == false)
+              properties.Add("Category", category);
+
+            if (String.IsNullOrEmpty(path) == false)
             {
-              throw new InvalidOperationException("The optional Path parameter is not in the format of a path.");
+              Uri pathUri;
+              if (Uri.TryCreate(path, UriKind.Relative, out pathUri) == false)
+              {
+                throw new InvalidOperationException("The optional Path parameter is not in the format of a path.");
+              }
+
+              properties.Add("AttachmentPath", path);
             }
 
-            properties.Add("AttachmentPath", path);
-          }
-
-          web.AllowUnsafeUpdates = true;
-          try
-          {
-            SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, attachment, properties, true);
-            return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
+            web.AllowUnsafeUpdates = true;
+            try
+            {
+              SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, attachment, properties, true);
+              return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
+            }
+            finally
+            {
+              web.AllowUnsafeUpdates = false;
+            }
           }
         }
       }
+      return null;
     }
 
     /// <summary>
@@ -2024,17 +1995,16 @@
         {
           Uri sourceUri = new Uri(sourceUrl);
 
-          byte[] fileContents = null;
+          byte[] fileContents;
 
           //Get the content via a httpwebrequest and copy it with the same filename.
-          HttpWebRequest webRequest;
           HttpWebResponse webResponse = null;
 
           try
           {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            webRequest = (HttpWebRequest)WebRequest.Create(sourceUri);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(sourceUri);
             webRequest.Timeout = 10000;
             webRequest.AllowWriteStreamBuffering = false;
             webResponse = (HttpWebResponse)webRequest.GetResponse();
@@ -2045,7 +2015,7 @@
               using (MemoryStream ms = new MemoryStream())
               {
                 int read;
-                while ((read = s.Read(buffer, 0, buffer.Length)) > 0)
+                while (s != null && (read = s.Read(buffer, 0, buffer.Length)) > 0)
                 {
                   ms.Write(buffer, 0, read);
                 }
@@ -2071,30 +2041,37 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId)).FirstOrDefault();
+          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>()
+            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId));
 
-          Hashtable properties = new Hashtable();
-          properties.Add("ContentTypeId", attachmentContentType.Id.ToString());
-          properties.Add("Content Type", attachmentContentType.Name);
-
-          if (String.IsNullOrEmpty(category) == false)
-            properties.Add("Category", category);
-
-          if (String.IsNullOrEmpty(path) == false)
-            properties.Add("Path", path);
-
-          web.AllowUnsafeUpdates = true;
-          try
+          if (attachmentContentType != null)
           {
-            SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, fileContents, properties, true);
-            return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
+            Hashtable properties = new Hashtable
+              {
+                {"ContentTypeId", attachmentContentType.Id.ToString()},
+                {"Content Type", attachmentContentType.Name}
+              };
+
+            if (String.IsNullOrEmpty(category) == false)
+              properties.Add("Category", category);
+
+            if (String.IsNullOrEmpty(path) == false)
+              properties.Add("Path", path);
+
+            web.AllowUnsafeUpdates = true;
+            try
+            {
+              SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, fileContents, properties, true);
+              return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
+            }
+            finally
+            {
+              web.AllowUnsafeUpdates = false;
+            }
           }
         }
       }
+      return null;
     }
 
     /// <summary>
@@ -2237,15 +2214,12 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var attachmentContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant())).FirstOrDefault();
+          var attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant()));
 
-          List<Attachment> result = new List<Attachment>();
-          foreach (SPFile attachmentFile in defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => f.Item.ContentTypeId == attachmentContentType.Id))
-          {
-            result.Add(SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile));
-          }
-
-          return result;
+          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>()
+            .Where(f => attachmentContentType != null && f.Item.ContentTypeId == attachmentContentType.Id)
+            .Select(attachmentFile => SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile))
+            .ToList();
         }
       }
     }
@@ -2367,13 +2341,9 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          Dictionary<string, string> result = new Dictionary<string, string>();
-
-          foreach (string key in list.RootFolder.Properties.Keys.OfType<string>().Where(k => k.StartsWith(Constants.MetadataPrefix)))
-          {
-            result.Add(key.Substring(Constants.MetadataPrefix.Length), list.RootFolder.Properties[key] as string);
-          }
-          return result;
+          return list.RootFolder.Properties.Keys.OfType<string>()
+            .Where(k => k.StartsWith(Constants.MetadataPrefix))
+            .ToDictionary(key => key.Substring(Constants.MetadataPrefix.Length), key => list.RootFolder.Properties[key] as string);
         }
       }
     }
@@ -2470,13 +2440,9 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          Dictionary<string, string> result = new Dictionary<string, string>();
-
-          foreach (string key in defaultEntityPart.Properties.Keys.OfType<string>().Where(k => k.StartsWith(Constants.MetadataPrefix)))
-          {
-            result.Add(key.Substring(Constants.MetadataPrefix.Length), defaultEntityPart.Properties[key] as string);
-          }
-          return result;
+          return defaultEntityPart.Properties.Keys.OfType<string>()
+            .Where(k => k.StartsWith(Constants.MetadataPrefix))
+            .ToDictionary(key => key.Substring(Constants.MetadataPrefix.Length), key => defaultEntityPart.Properties[key] as string);
         }
       }
     }
@@ -2577,13 +2543,9 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
             return null;
 
-          Dictionary<string, string> result = new Dictionary<string, string>();
-
-          foreach (string key in entityPart.Properties.Keys.OfType<string>().Where(k => k.StartsWith(Constants.MetadataPrefix)))
-          {
-            result.Add(key.Substring(Constants.MetadataPrefix.Length), entityPart.Properties[key] as string);
-          }
-          return result;
+          return entityPart.Properties.Keys.OfType<string>()
+            .Where(k => k.StartsWith(Constants.MetadataPrefix))
+            .ToDictionary(key => key.Substring(Constants.MetadataPrefix.Length), key => entityPart.Properties[key] as string);
         }
       }
     }
@@ -2695,13 +2657,9 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
             return null;
 
-          Dictionary<string, string> result = new Dictionary<string, string>();
-
-          foreach (string key in attachment.Properties.Keys.OfType<string>().Where(k => k.StartsWith(Constants.MetadataPrefix)))
-          {
-            result.Add(key.Substring(Constants.MetadataPrefix.Length), attachment.Properties[key] as string);
-          }
-          return result;
+          return attachment.Properties.Keys.OfType<string>()
+            .Where(k => k.StartsWith(Constants.MetadataPrefix))
+            .ToDictionary(key => key.Substring(Constants.MetadataPrefix.Length), key => attachment.Properties[key] as string);
         }
       }
     }
@@ -2770,18 +2728,18 @@
             return null;
 
           List<Comment> result = new List<Comment>();
-          Comment lastComment = new Comment()
-          {
-            CommentText = null
-          };
+          Comment[] lastComment =
+            {new Comment
+              {
+                CommentText = null
+              }};
 
-          foreach (var itemVersion in defaultEntityPart.Item.Versions.OfType<SPListItemVersion>().OrderBy(v => Double.Parse(v.VersionLabel)))
+          foreach (var itemVersion in defaultEntityPart.Item.Versions.OfType<SPListItemVersion>()
+            .OrderBy(v => Double.Parse(v.VersionLabel))
+            .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
           {
-            if (String.Compare(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
-            {
-              lastComment = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
-              result.Add(lastComment);
-            }
+            lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
+            result.Add(lastComment[0]);
           }
           result.Reverse();
           return result;
@@ -2853,14 +2811,14 @@
             return null;
 
           List<Comment> result = new List<Comment>();
-          Comment lastComment = new Comment()
-          {
+          Comment lastComment = new Comment
+            {
             CommentText = null
           };
 
           foreach (var itemVersion in entityPart.Item.Versions.OfType<SPListItemVersion>().OrderBy(v => Double.Parse(v.VersionLabel)))
           {
-            if (String.Compare(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
+            if (String.CompareOrdinal(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
             {
               lastComment = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
               result.Add(lastComment);
@@ -2944,14 +2902,14 @@
             return null;
 
           List<Comment> result = new List<Comment>();
-          Comment lastComment = new Comment()
-          {
+          Comment lastComment = new Comment
+            {
             CommentText = null
           };
 
           foreach (var itemVersion in attachment.Item.Versions.OfType<SPListItemVersion>().OrderBy(v => Double.Parse(v.VersionLabel)))
           {
-            if (String.Compare(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
+            if (String.CompareOrdinal(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
             {
               lastComment = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
               result.Add(lastComment);
@@ -3708,6 +3666,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <param name="entityId">The entity id.</param>
+    /// <param name="timeoutMs"></param>
     public virtual void LockEntity(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
       bool isLocked = false;
@@ -3790,9 +3749,7 @@
     /// <param name="timeoutMs">The timeout ms.</param>
     public void WaitForEntityLockRelease(string containerTitle, string path, Guid entityId, int? timeoutMs)
     {
-      LockStatus lockStatus = LockStatus.Locked;
-
-      lockStatus = GetEntityLockStatus(containerTitle, path, entityId);
+      LockStatus lockStatus = GetEntityLockStatus(containerTitle, path, entityId);
 
       if (timeoutMs != null)
       {

@@ -2,15 +2,11 @@
 {
   using Jurassic;
   using System;
-  using System.IO;
-  using System.Runtime.Serialization.Formatters.Binary;
-  using System.Web;
-  using System.Web.Caching;
 
   [Serializable]
   public class LinqBundle : IBundle
   {
-    private static StringScriptSource s_linqScriptSource = new StringScriptSource(Barista.Properties.Resources.linq);
+    private static readonly StringScriptSource LinqScriptSource = new StringScriptSource(Barista.Properties.Resources.linq);
 
     public string BundleName
     {
@@ -24,7 +20,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      engine.Execute(s_linqScriptSource);
+      engine.Execute(LinqScriptSource);
       return Null.Value;
     }
   }

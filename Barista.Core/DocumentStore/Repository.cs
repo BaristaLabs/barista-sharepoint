@@ -5,7 +5,6 @@
   using System.Configuration;
   using System.IO;
   using System.Linq;
-  using System.Threading.Tasks;
 
   /// <summary>
   /// Represents a class that abstracts retrieval of data from a document store.
@@ -24,7 +23,7 @@
   {
     #region Fields
     private readonly RepositoryConfiguration m_configuration;
-    private object m_syncRoot = new object();
+    private readonly object m_syncRoot = new object();
     #endregion
 
     #region Properties
@@ -75,6 +74,7 @@
     /// Creates a new container with the specified title in the document store.
     /// </summary>
     /// <param name="containerTitle"></param>
+    /// <param name="description"></param>
     /// <returns></returns>
     public Container CreateContainer(string containerTitle, string description)
     {
@@ -129,13 +129,13 @@
     #endregion
 
     #region Entity
+
     /// <summary>
     /// Creates a new entity in the repository in the specified path with the specified data and returns its value.
     /// </summary>
     /// <param name="path"></param>
     /// <param name="entityNamespace"></param>
     /// <param name="data"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public Entity CreateEntity(string path, string entityNamespace, string data)
     {
@@ -219,12 +219,12 @@
     /// <summary>
     /// Gets the first entity with the specified criteria.
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="entityNamespace"></param>
+    /// <param name="filterCriteria"></param>
     /// <returns></returns>
     public Entity Single(EntityFilterCriteria filterCriteria)
     {
-      return ListEntities(new EntityFilterCriteria() {
+      return ListEntities(new EntityFilterCriteria
+        {
         Path = filterCriteria.Path,
         Namespace = filterCriteria.Namespace,
         NamespaceMatchType = filterCriteria.NamespaceMatchType,
@@ -261,14 +261,10 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="destinationPath"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public bool MoveEntity(Guid entityId, string destinationPath)
     {
       var folderCapableDocumentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
       var result = folderCapableDocumentStore.MoveEntity(this.Configuration.ContainerTitle, entityId, destinationPath);
 
@@ -279,13 +275,10 @@
     /// Deletes the specified entity from the repository.
     /// </summary>
     /// <param name="entityId"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public bool DeleteEntity(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
       var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);
 
@@ -299,15 +292,10 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="comment"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public Comment AddEntityComment(Guid entityId, string comment)
     {
-      var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
-      
-      var entity = entityDocumentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
 
       var result = documentStore.AddEntityComment(this.Configuration.ContainerTitle, entityId, comment);
 
@@ -347,14 +335,9 @@
     /// <param name="partName"></param>
     /// <param name="category"></param>
     /// <param name="data"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public EntityPart CreateEntityPart(Guid entityId, string partName, string category, string data)
     {
-      var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = entityDocumentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
-
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var result = documentStore.CreateEntityPart(this.Configuration.ContainerTitle, entityId, partName, category, data);
@@ -389,7 +372,6 @@
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
     /// <param name="data"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public EntityPart UpdateEntityPartData(Guid entityId, string partName, string data)
     {
@@ -420,14 +402,9 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="entityPartName"></param>
-    /// <param name="updateIndex"></param>
     /// <returns></returns>
     public bool DeleteEntityPart(Guid entityId, string entityPartName)
     {
-      var entityDocumentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-
-      var entity = entityDocumentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
-
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var result = documentStore.DeleteEntityPart(this.Configuration.ContainerTitle, entityId, entityPartName);
@@ -510,7 +487,7 @@
     #endregion
 
     #region Static Methods
-    private static IRepositoryFactory s_repositoryFactory = null;
+    private static volatile IRepositoryFactory s_repositoryFactory;
 
     /// <summary>
     /// Using the Repository Factory defined in configuration, returns a repository object.
@@ -535,27 +512,24 @@
     /// Using the specified repository factory, returns a repository object.
     /// </summary>
     /// <param name="factory"></param>
+    /// <param name="documentStore"></param>
     /// <returns></returns>
     public static Repository GetRepository(IRepositoryFactory factory, IDocumentStore documentStore)
     {
       if (factory == null)
         factory = GetRepositoryFactoryFromConfiguration();
 
-      Repository repository = null;
-      if (documentStore == null)
-        repository = factory.CreateRepository();
-      else
-        repository = factory.CreateRepository(documentStore);
+      Repository repository = documentStore == null ? factory.CreateRepository() : factory.CreateRepository(documentStore);
 
       if (repository == null)
-        throw new InvalidOperationException("The repository object returned by the factory (" + factory.GetType().ToString() + ") was null.");
+        throw new InvalidOperationException("The repository object returned by the factory (" + factory.GetType() + ") was null.");
 
       repository.Factory = factory;
 
       return repository;
     }
 
-    private static object s_syncRoot = new object();
+    private static readonly object SyncRoot = new object();
 
     private static IRepositoryFactory GetRepositoryFactoryFromConfiguration()
     {
@@ -565,7 +539,7 @@
       //Double-Check Locking Pattern
       if (s_repositoryFactory == null)
       {
-        lock (s_syncRoot)
+        lock (SyncRoot)
         {
           if (s_repositoryFactory == null)
           {
@@ -574,10 +548,11 @@
               throw new InvalidOperationException("A BaristaDS_RepositoryFactory key was specified within web.config, but it did not contain a value.");
 
             Type documentStoreType = Type.GetType(fullTypeName, true, true);
-            if (documentStoreType.GetInterfaces().Any(i => i == typeof(IRepositoryFactory)) == false)
+            if (documentStoreType != null && documentStoreType.GetInterfaces().Any(i => i == typeof(IRepositoryFactory)) == false)
               throw new InvalidOperationException("The BaristaDS_RepositoryFactory type name was specified within web.config, but it does not implement IRepositoryFactory");
 
-            s_repositoryFactory = Activator.CreateInstance(documentStoreType) as IRepositoryFactory;
+            if (documentStoreType != null)
+              s_repositoryFactory = Activator.CreateInstance(documentStoreType) as IRepositoryFactory;
           }
         }
       }

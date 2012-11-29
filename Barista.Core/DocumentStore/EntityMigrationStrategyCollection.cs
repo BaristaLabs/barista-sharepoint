@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
+  using System.Collections.ObjectModel;
+
   public class EntityMigrationStrategyCollection : KeyedCollection<string, IEntityMigrationStrategy>
   {
     protected override string GetKeyForItem(IEntityMigrationStrategy item)

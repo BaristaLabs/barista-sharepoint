@@ -33,6 +33,9 @@
         }
         catch { }
 
+        if (s == null)
+          return String.Empty;
+
         return s.ToString();
       }
       set { }

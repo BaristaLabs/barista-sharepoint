@@ -3,11 +3,9 @@
   using Barista.Extensions;
   using System;
   using System.Collections.Generic;
-  using System.Net;
-  using System.Runtime.Serialization;
-  using System.ServiceModel.Web;
-  using System.Text;
   using System.Linq;
+  using System.Runtime.Serialization;
+  using System.Text;
   using System.Web;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
@@ -371,46 +369,45 @@
     public static BrewRequest CreateServiceApplicationRequestFromHttpRequest(HttpRequest request)
     {
 
-      var result = new BrewRequest()
-      {
-        AcceptTypes = request.AcceptTypes,
-        AnonymousId = request.AnonymousID,
-        ApplicationPath = request.ApplicationPath,
-        AppRelativeCurrentExecutionFilePath = request.AppRelativeCurrentExecutionFilePath,
-        //Browser?
-        ContentEncoding = request.ContentEncoding,
-        ContentLength = request.TotalBytes,
-        ContentType = request.ContentType,
-        CurrentExecutionFilePath = request.CurrentExecutionFilePath,
-        FilePath = request.FilePath,
-        IsAuthenticated = request.IsAuthenticated,
-        IsLocal = request.IsLocal,
-        IsSecureConnection = request.IsSecureConnection,
-        Method = request.HttpMethod,
-        LogonUserName = request.LogonUserIdentity == null ? String.Empty : request.LogonUserIdentity.Name,
-        Path = request.Path,
-        PathInfo = request.PathInfo,
-        PhysicalApplicationPath = request.PhysicalApplicationPath,
-        PhysicalPath = request.PhysicalPath,
-        RawUrl = request.RawUrl,
-        RequestType = request.RequestType,
-        Url = request.Url,
-        UrlReferrer = request.UrlReferrer,
-        UserAgent = request.UserAgent,
-        UserHostAddress = request.UserHostAddress,
-        UserHostName = request.UserHostName,
-        UserLanguages = request.UserLanguages,
-      };
-
-      result.Body = request.InputStream.ToByteArray();
+      var result = new BrewRequest
+        {
+          AcceptTypes = request.AcceptTypes,
+          AnonymousId = request.AnonymousID,
+          ApplicationPath = request.ApplicationPath,
+          AppRelativeCurrentExecutionFilePath = request.AppRelativeCurrentExecutionFilePath,
+          //Browser?
+          ContentEncoding = request.ContentEncoding,
+          ContentLength = request.TotalBytes,
+          ContentType = request.ContentType,
+          CurrentExecutionFilePath = request.CurrentExecutionFilePath,
+          FilePath = request.FilePath,
+          IsAuthenticated = request.IsAuthenticated,
+          IsLocal = request.IsLocal,
+          IsSecureConnection = request.IsSecureConnection,
+          Method = request.HttpMethod,
+          LogonUserName = request.LogonUserIdentity == null ? String.Empty : request.LogonUserIdentity.Name,
+          Path = request.Path,
+          PathInfo = request.PathInfo,
+          PhysicalApplicationPath = request.PhysicalApplicationPath,
+          PhysicalPath = request.PhysicalPath,
+          RawUrl = request.RawUrl,
+          RequestType = request.RequestType,
+          Url = request.Url,
+          UrlReferrer = request.UrlReferrer,
+          UserAgent = request.UserAgent,
+          UserHostAddress = request.UserHostAddress,
+          UserHostName = request.UserHostName,
+          UserLanguages = request.UserLanguages,
+          Body = request.InputStream.ToByteArray(),
+        };
 
       foreach (var fileName in request.Files.AllKeys)
       {
         var file = request.Files[fileName];
         var content = file.InputStream.ToByteArray();
 
-        result.Files.Add(fileName, new PostedFile()
-        {
+        result.Files.Add(fileName, new PostedFile
+          {
           Content = content,
           ContentLength = file.ContentLength,
           ContentType = file.ContentType,
@@ -422,7 +419,11 @@
       foreach (var cookieName in request.Cookies.AllKeys)
       {
         if (result.Cookies.ContainsKey(cookieName) == false)
-          result.Cookies.Add(cookieName, request.Cookies[cookieName].Value);
+        {
+          var httpCookie = request.Cookies[cookieName];
+          if (httpCookie != null)
+            result.Cookies.Add(cookieName, httpCookie.Value);
+        }
       }
 
       foreach (var headerName in request.Headers.AllKeys)

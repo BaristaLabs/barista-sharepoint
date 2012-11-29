@@ -1,16 +1,14 @@
 ﻿namespace Barista.DocumentStore
 {
   using System;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Configuration;
   using System.Linq;
 
   [Serializable]
   public class RepositoryConfiguration
   {
-    private static object m_syncRoot = new object();
-    private IDocumentStore m_documentStore = null;
+    private static readonly object SyncRoot = new object();
+    private volatile IDocumentStore m_documentStore;
 
     public RepositoryConfiguration()
     {
@@ -35,7 +33,7 @@
         //Double-Check Locking Pattern
         if (m_documentStore == null)
         {
-          lock (m_syncRoot)
+          lock (SyncRoot)
           {
             if (m_documentStore == null)
             {
@@ -108,9 +106,12 @@
         throw new InvalidOperationException("A BaristaDS_DocumentStore key was specified within web.config, but it did not contain a value.");
 
       Type documentStoreType = Type.GetType(fullTypeName, true, true);
-      if (documentStoreType.GetInterfaces().Any(i => i == typeof(IDocumentStore)) == false)
+      if (documentStoreType != null && documentStoreType.GetInterfaces().Any(i => i == typeof(IDocumentStore)) == false)
         throw new InvalidOperationException("The BaristaDS_DocumentStore was specified within web.config, but it does not implement IDocumentStore");
 
+      if (documentStoreType == null)
+        throw new InvalidOperationException("Unable to initialize the BaristaDS_DocumentStore.");
+      
       return Activator.CreateInstance(documentStoreType) as IDocumentStore;
     }
     #endregion

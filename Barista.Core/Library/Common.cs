@@ -4,8 +4,6 @@
   using System;
   using System.Collections.Generic;
   using System.Linq;
-  using System.Text;
-  using System.Reflection;
   using Jurassic.Library;
 
   /// <summary>
@@ -27,7 +25,6 @@
     /// <summary>
     /// Installs the current bundle within the script engine, optionally returning a result.
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="name"></param>
     /// <returns></returns>
     [JSFunction(Name = "require")]
@@ -47,23 +44,24 @@
         bundle = Activator.CreateInstance(type) as IBundle;
       }
 
+      if (bundle == null)
+        throw new JavaScriptException(this.Engine, "Error",
+                                      "A bundle was specified, but the instance of the bundle was null.");
+
       //Insure that bundles are only installed once.
       if (m_installedBundles.ContainsKey(bundle))
       {
         return m_installedBundles[bundle];
       }
-      else
-      {
-        var result = bundle.InstallBundle(this.Engine);
-        m_installedBundles.Add(bundle, result);
-        return result;
-      }
+
+      var result = bundle.InstallBundle(this.Engine);
+      m_installedBundles.Add(bundle, result);
+      return result;
     }
 
     /// <summary>
     /// Lists all Bundles currently registered.
     /// </summary>
-    /// <param name="engine"></param>zzz
     /// <returns></returns>
     [JSFunction(Name = "listBundles")]
     public ObjectInstance ListBundles()

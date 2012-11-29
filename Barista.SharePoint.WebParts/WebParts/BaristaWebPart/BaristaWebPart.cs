@@ -140,6 +140,7 @@
     /// Tamps the ground coffee. E.g. Parses the code and makes it ready to be executed (brewed).
     /// </summary>
     /// <param name="code"></param>
+    /// <param name="codePath"></param>
     /// <returns></returns>
     private string Tamp(string code, out string codePath)
     {

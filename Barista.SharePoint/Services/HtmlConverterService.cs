@@ -26,7 +26,7 @@
     [OperationContract]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebGet(BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-    public Stream ConvertHtmlToPDF(string html, string fileName)
+    public Stream ConvertHtmlToPdf(string html, string fileName)
     {
       if (WebOperationContext.Current == null)
         throw new InvalidOperationException("This operation only supports REST-based requests.");

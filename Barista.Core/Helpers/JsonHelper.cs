@@ -1,9 +1,5 @@
 ﻿namespace Barista.DocumentStore
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
@@ -25,14 +21,15 @@
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
+    /// <param name="settings"></param>
     /// <returns></returns>
     public static string Diff(string a, string b, JsonSerializerSettings settings)
     {
       if (a.ToLowerInvariant() == "null" && b.ToLowerInvariant() == "null")
         return "null";
-      else if (a.ToLowerInvariant() == "null")
+      if (a.ToLowerInvariant() == "null")
         return b;
-      else if (b.ToLowerInvariant() == "null")
+      if (b.ToLowerInvariant() == "null")
         return a;
 
       var engine = JsonHelper.Engine;
@@ -50,6 +47,7 @@
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
+    /// <param name="settings"></param>
     /// <returns></returns>
     public static string Merge(string a, string b, JsonSerializerSettings settings)
     {

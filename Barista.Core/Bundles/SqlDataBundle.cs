@@ -24,8 +24,7 @@
 
       if (ConfigurationManager.ConnectionStrings.Count > 1)
         return new DynamicModelInstance(engine.Object.InstancePrototype, ConfigurationManager.ConnectionStrings[1].Name);
-      else
-        return Null.Value;
+      return Null.Value;
     }
   }
 }

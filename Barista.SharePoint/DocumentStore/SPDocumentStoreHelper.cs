@@ -23,9 +23,9 @@
     public static bool TryGetDocumentStoreAttachment(SPList list, SPFile defaultEntityPart, string attachmentFileName, out SPFile attachment)
     {
       //TODO: Possibly SPQuerify this.
-      var attachmentContentType = list.ContentTypes.OfType<SPContentType>().Where(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant())).FirstOrDefault();
+      var attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant()));
 
-      attachment = defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => f.Name == attachmentFileName && f.Item.ContentTypeId.IsChildOf(attachmentContentType.Id)).FirstOrDefault();
+      attachment = defaultEntityPart.ParentFolder.Files.OfType<SPFile>().FirstOrDefault(f => attachmentContentType != null && (f.Name == attachmentFileName && f.Item.ContentTypeId.IsChildOf(attachmentContentType.Id)));
       if (attachment == null)
         return false;
 
@@ -34,25 +34,24 @@
 
     public static Attachment MapAttachmentFromSPFile(SPFile file)
     {
-      Attachment result = new Attachment()
-      {
-        Category = file.Item["Category"] as string,
-        Path = file.Item["Path"] as string,
-        ETag = file.ETag,
-        FileName = file.Name,
-        MimeType = StringHelper.GetMimeTypeFromFileName(file.Name),
-        Size = file.Length,
-        Url = file.Web.Url + "/" + file.Url
-      };
-
-      result.Created = (DateTime)file.Item[SPBuiltInFieldId.Created];
-      result.Modified = (DateTime)file.Item[SPBuiltInFieldId.Modified];
+      Attachment result = new Attachment
+        {
+          Category = file.Item["Category"] as string,
+          Path = file.Item["Path"] as string,
+          ETag = file.ETag,
+          FileName = file.Name,
+          MimeType = StringHelper.GetMimeTypeFromFileName(file.Name),
+          Size = file.Length,
+          Url = file.Web.Url + "/" + file.Url,
+          Created = (DateTime) file.Item[SPBuiltInFieldId.Created],
+          Modified = (DateTime) file.Item[SPBuiltInFieldId.Modified]
+        };
 
       var createdByUser = file.Item[SPBuiltInFieldId.Created_x0020_By] as SPFieldUserValue;
       if (createdByUser != null)
       {
-        result.CreatedBy = new User()
-        {
+        result.CreatedBy = new User
+          {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
@@ -62,8 +61,8 @@
       var modifiedByUser = file.Item[SPBuiltInFieldId.Modified_x0020_By] as SPFieldUserValue;
       if (modifiedByUser != null)
       {
-        result.ModifiedBy = new User()
-        {
+        result.ModifiedBy = new User
+          {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
@@ -80,20 +79,19 @@
 
     public static Comment MapCommentFromSPListItemVersion(SPListItemVersion listItemVersion)
     {
-      var result = new Comment()
+      var result = new Comment
         {
           Id = listItemVersion.VersionId,
           CommentText = listItemVersion["Comments"] as string,
           Created = listItemVersion.Created,
+          CreatedBy = new User
+            {
+              Email = listItemVersion.CreatedBy.User.Email,
+              LoginName = listItemVersion.CreatedBy.User.LoginName,
+              Name = listItemVersion.CreatedBy.User.Name,
+            },
         };
 
-      result.CreatedBy = new User()
-      {
-        Email = listItemVersion.CreatedBy.User.Email,
-        LoginName = listItemVersion.CreatedBy.User.LoginName,
-        Name = listItemVersion.CreatedBy.User.Name,
-      };
-      
       return result;
     }
 
@@ -102,25 +100,23 @@
       if (list == null)
         throw new ArgumentNullException("list");
 
-      var result = new Container()
-      {
-        Id = list.ID,
-        Title = list.Title,
-        Description = list.Description,
-        EntityCount = list.ItemCount,
-        Url = list.RootFolder.Url.Substring(list.RootFolder.Url.IndexOf('/') + 1),
-        Created = list.Created,
-        CreatedBy = new User()
+      var result = new Container
         {
-          Email = list.Author.Email,
-          LoginName = list.Author.LoginName,
-          Name = list.Author.Name,
-        }
+          Id = list.ID,
+          Title = list.Title,
+          Description = list.Description,
+          EntityCount = list.ItemCount,
+          Url = list.RootFolder.Url.Substring(list.RootFolder.Url.IndexOf('/') + 1),
+          Created = list.Created,
+          CreatedBy = new User
+            {
+              Email = list.Author.Email,
+              LoginName = list.Author.LoginName,
+              Name = list.Author.Name,
+            },
+          Modified = (DateTime) list.RootFolder.Properties["vti_timelastmodified"]
+        };
 
-      };
-
-      result.Modified = (DateTime)list.RootFolder.Properties["vti_timelastmodified"];
-      
       //TODO: ModifiedBy using the last item added to the list.
       return result;
     }
@@ -128,7 +124,7 @@
     public static Entity MapEntityFromSPListItem(SPListItem listItem)
     {
       if (listItem == null)
-        throw new ArgumentNullException("listItem", "When creating an Entity, the SPListItem that represents the entity must not be null.");
+        throw new ArgumentNullException("listItem", @"When creating an Entity, the SPListItem that represents the entity must not be null.");
 
       Entity entity = new Entity();
 
@@ -136,7 +132,8 @@
       {
         string id = listItem[Constants.DocumentEntityGuidFieldId] as string;
 
-        entity.Id = new Guid(id);
+        if (id != null)
+          entity.Id = new Guid(id);
       }
       catch
       {
@@ -168,7 +165,9 @@
       var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
       var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
       entity.ContentsETag = StringHelper.CreateMD5Hash(combinedETag);
-      entity.ContentsModified = latestFile.TimeLastModified;
+
+      if (latestFile != null)
+        entity.ContentsModified = latestFile.TimeLastModified;
 
       entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
@@ -178,28 +177,21 @@
       var createdByUserValue = listItem[SPBuiltInFieldId.Author] as String;
       SPFieldUserValue createdByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
 
-      if (createdByUser != null)
-      {
-        entity.CreatedBy = new User()
+      entity.CreatedBy = new User
         {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
         };
-      }
 
-      var modifiedByUserValue = listItem[SPBuiltInFieldId.Editor] as String;
-      SPFieldUserValue modifiedByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
+      var modifiedByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
 
-      if (modifiedByUser != null)
-      {
-        entity.ModifiedBy = new User()
+      entity.ModifiedBy = new User
         {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
         };
-      }
 
       return entity;
     }
@@ -211,7 +203,8 @@
       {
         string id = version[version.ListItem.Fields[Constants.DocumentEntityGuidFieldId].Title] as string;
 
-        result.Id = new Guid(id);
+        if (id != null)
+          result.Id = new Guid(id);
       }
       catch
       {
@@ -231,28 +224,21 @@
       var createdByUserValue = version[version.ListItem.Fields[SPBuiltInFieldId.Author].Title] as string;
       SPFieldUserValue createdByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
 
-      if (createdByUser != null)
-      {
-        result.CreatedBy = new User()
+      result.CreatedBy = new User
         {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
         };
-      }
 
-      var modifiedByUserValue = version[version.ListItem.Fields[SPBuiltInFieldId.Editor].Title] as string;
-      SPFieldUserValue modifiedByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
+      var modifiedByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
 
-      if (modifiedByUser != null)
-      {
-        result.ModifiedBy = new User()
+      result.ModifiedBy = new User
         {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
         };
-      }
 
       if (version.IsCurrentVersion)
       {
@@ -261,7 +247,7 @@
         using (StreamReader reader = new StreamReader(dataFile.OpenBinaryStream()))
         {
           result.Data = reader.ReadToEnd();
-        };
+        }
       }
       else
       {
@@ -270,7 +256,7 @@
         using (StreamReader reader = new StreamReader(dataFile.OpenBinaryStream()))
         {
           result.Data = reader.ReadToEnd();
-        };
+        }
       }
       return result;
     }
@@ -278,14 +264,15 @@
     public static EntityPart MapEntityPartFromSPFile(SPFile file)
     {
       if (file == null)
-        throw new ArgumentNullException("file", "When creating an EntityPart, the SPFile that represents the entity part must not be null.");
+        throw new ArgumentNullException("file", @"When creating an EntityPart, the SPFile that represents the entity part must not be null.");
 
       EntityPart entityPart = new EntityPart();
       try
       {
         string id = file.Item[Constants.DocumentEntityGuidFieldId] as string;
 
-        entityPart.EntityId = new Guid(id);
+        if (id != null)
+          entityPart.EntityId = new Guid(id);
       }
       catch
       {
@@ -303,28 +290,21 @@
       var createdByUserValue = file.Item[SPBuiltInFieldId.Author] as string;
       SPFieldUserValue createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
 
-      if (createdByUser != null)
-      {
-        entityPart.CreatedBy = new User()
+      entityPart.CreatedBy = new User
         {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
         };
-      }
 
-      var modifiedByUserValue = file.Item[SPBuiltInFieldId.Editor] as string;
-      SPFieldUserValue modifiedByUser = new SPFieldUserValue(file.Web, createdByUserValue);
+      var modifiedByUser = new SPFieldUserValue(file.Web, createdByUserValue);
 
-      if (modifiedByUser != null)
-      {
-        entityPart.ModifiedBy = new User()
+      entityPart.ModifiedBy = new User
         {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
         };
-      }
 
       return entityPart;
     }
@@ -334,41 +314,33 @@
       if (folder == null)
         throw new ArgumentNullException("folder");
 
-      var result = new Folder()
-      {
-        Name = folder.Name,
-        FullPath = folder.Url.Substring(folder.ParentWeb.Lists[folder.ParentListId].RootFolder.Url.Length + 1),
-        EntityCount = folder.ItemCount,
-      };
-
-      result.Created = (DateTime)folder.Item[SPBuiltInFieldId.Created];
-      result.Modified = (DateTime)folder.Item[SPBuiltInFieldId.Modified];
+      var result = new Folder
+        {
+          Name = folder.Name,
+          FullPath = folder.Url.Substring(folder.ParentWeb.Lists[folder.ParentListId].RootFolder.Url.Length + 1),
+          EntityCount = folder.ItemCount,
+          Created = (DateTime) folder.Item[SPBuiltInFieldId.Created],
+          Modified = (DateTime) folder.Item[SPBuiltInFieldId.Modified],
+        };
 
       var createdByUserValue = folder.Item[SPBuiltInFieldId.Author] as String;
       SPFieldUserValue createdByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
 
-      if (createdByUser != null)
-      {
-        result.CreatedBy = new User()
+      result.CreatedBy = new User
         {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
         };
-      }
 
-      var modifiedByUserValue = folder.Item[SPBuiltInFieldId.Editor] as String;
-      SPFieldUserValue modifiedByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
+      var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
 
-      if (modifiedByUser != null)
-      {
-        result.ModifiedBy = new User()
+      result.ModifiedBy = new User
         {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
         };
-      }
 
       return result;
     }
@@ -388,7 +360,7 @@
       List<SPDocumentLibrary> result = new List<SPDocumentLibrary>();
 
       ContentIterator listsIterator = new ContentIterator();
-      listsIterator.ProcessLists(web.Lists, (currentList) =>
+      listsIterator.ProcessLists(web.Lists, currentList =>
       {
         if (currentList is SPDocumentLibrary && currentList.TemplateFeatureId == Constants.DocumentContainerFeatureId)
           result.Add(currentList as SPDocumentLibrary);
@@ -420,7 +392,9 @@
       SPFolder currentFolder = list.RootFolder;
       try
       {
+#pragma warning disable 168
         foreach (string subFolder in DocumentStoreHelper.GetPathSegments(path))
+#pragma warning restore 168
         {
           currentFolder = web.GetFolder(list.RootFolder.Url + "/" + path);
         }
@@ -455,7 +429,7 @@
     public static SPFolder GetFolderFromPath(SPWeb web, string containerTitle, string path, out SPList list)
     {
       SPList localList;
-      SPFolder folder = null;
+      SPFolder folder;
       if (TryGetFolderFromPath(web, containerTitle, out localList, out folder, path) == false)
         throw new InvalidOperationException("The specified folder does not exist.");
 
@@ -514,17 +488,23 @@
       }
 
       //If we weren't able to retrieve the SPFile directly, use a SPQuery to recursively obtain the file (should be more efficient than a recursive function)
-      SPQuery query = new SPQuery();
-      query.Folder = folder;
-      query.Query = @"<Where><And><And>
-                        <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" + Constants.DocumentStoreEntityPartContentTypeId.ToUpperInvariant() + @"</Value></BeginsWith>
-                        <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() + @"</Value></Eq>
+      SPQuery query = new SPQuery
+        {
+          Folder = folder, Query = @"<Where><And><And>
+                        <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" +
+                                   Constants.DocumentStoreEntityPartContentTypeId
+                                            .ToUpperInvariant() + @"</Value></BeginsWith>
+                        <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() +
+                                   @"</Value></Eq>
                       </And>
-                        <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" + Constants.DocumentStoreDefaultEntityPartFileName + @"</Value></Eq>
-                      </And></Where>";
-      query.RowLimit = 1;
-      query.QueryThrottleMode = SPQueryThrottleOption.Override;
-      query.ViewAttributes = "Scope=\"Recursive\"";
+                        <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" +
+                                   Constants.DocumentStoreDefaultEntityPartFileName +
+                                   @"</Value></Eq>
+                      </And></Where>",
+          RowLimit = 1,
+          QueryThrottleMode = SPQueryThrottleOption.Override,
+          ViewAttributes = "Scope=\"Recursive\""
+        };
 
       //SPFile dataFile = null;
       //ContentIterator itemsIterator = new ContentIterator();
@@ -594,16 +574,21 @@
           return childFile;
       }
 
-      SPQuery query = new SPQuery();
-      query.Folder = folder;
-      query.Query = @"<Where><And><And>
-                        <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" + Constants.DocumentStoreEntityPartContentTypeId.ToUpperInvariant() + @"</Value></BeginsWith>
-                        <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() + @"</Value></Eq>
+      SPQuery query = new SPQuery
+        {
+          Folder = folder, Query = @"<Where><And><And>
+                        <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" +
+                                   Constants.DocumentStoreEntityPartContentTypeId
+                                            .ToUpperInvariant() + @"</Value></BeginsWith>
+                        <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() +
+                                   @"</Value></Eq>
                       </And>
-                        <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" + partName + Constants.DocumentSetEntityPartExtension + @"</Value></Eq>
-                      </And></Where>";
-      query.RowLimit = 1;
-      query.ViewAttributes = "Scope=\"Recursive\"";
+                        <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" + partName +
+                                   Constants.DocumentSetEntityPartExtension + @"</Value></Eq>
+                      </And></Where>",
+          RowLimit = 1,
+          ViewAttributes = "Scope=\"Recursive\""
+        };
 
       //SPFile dataFile = null;
       //ContentIterator itemsIterator = new ContentIterator();
@@ -626,37 +611,37 @@
     /// <summary>
     /// Executes the specified action asynchronously, while preserving both the HttpContext and SPContext
     /// </summary>
-    /// <param name="contextAction"></param>
     public static Task ExecuteAsync(HttpContext context, SPWeb webContext, Action action)
     {
       var siteId = webContext.Site.ID;
       var webId = webContext.ID;
-      Task task = new Task(new Action(() =>
-      {
-        SPUtility.ValidateFormDigest();
-        try
+      Task task = new Task(() =>
         {
-
-          if (HttpContext.Current == null || SPContext.Current == null)
+          SPUtility.ValidateFormDigest();
+          try
           {
-            SPSite site = new SPSite(siteId);
-            SPWeb web = site.OpenWeb(webId);
-            HttpContext.Current = new HttpContext(context.Request, context.Response);
-            HttpContext.Current.User = context.User;
-            HttpContext.Current.Items["HttpHandlerSPWeb"] = web;
 
-            //Just bump the current context.
-            var threadLocalContext = SPContext.Current;
+            if (HttpContext.Current == null || SPContext.Current == null)
+            {
+              SPSite site = new SPSite(siteId);
+              SPWeb web = site.OpenWeb(webId);
+              HttpContext.Current = new HttpContext(context.Request, context.Response) {User = context.User};
+              HttpContext.Current.Items["HttpHandlerSPWeb"] = web;
+
+              //Just bump the current context.
+#pragma warning disable 168
+              var threadLocalContext = SPContext.Current;
+#pragma warning restore 168
+            }
+            action();
           }
-          action();
-        }
-        catch(Exception ex)
-        {
-          ApplicationLog.AddException(ex);
+          catch(Exception ex)
+          {
+            ApplicationLog.AddException(ex);
 
-          /* Do Nothing... */
-        }
-      }));
+            /* Do Nothing... */
+          }
+        });
 
       task.Start();
       return task;
