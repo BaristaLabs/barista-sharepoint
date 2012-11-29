@@ -490,6 +490,12 @@
       return result;
     }
 
+    /// <summary>
+    /// Updates both the metadata and the data of the specified entity.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="entity"></param>
+    /// <returns></returns>
     public Entity<TEntity> UpdateEntity<TEntity>(Entity<TEntity> entity)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
@@ -499,8 +505,12 @@
 
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
-      var updatedEntity = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entity.Id, entity.Title,
-                                                     entity.Description, entity.Namespace);
+      documentStore.UpdateEntity(this.Configuration.ContainerTitle, entity.Id, entity.Title,
+                                 entity.Description, entity.Namespace);
+
+      var json = DocumentStoreHelper.SerializeObjectToJson(entity.Value);
+      var updatedEntity = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entity.Id, entity.ETag, json);
+
 
       if (updatedEntity == null)
         return null;

@@ -698,17 +698,28 @@ namespace Barista.SharePoint.DocumentStore
           web.AllowUnsafeUpdates = true;
           try
           {
+            bool needsUpdate = false;
             DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
             if (String.IsNullOrEmpty(title) == false && ds.Item.Title != title)
+            {
               ds.Item["Title"] = title;
+              needsUpdate = true;
+            }
 
             if (description != null && (ds.Item["DocumentSetDescription"] as string) != description)
+            {
               ds.Item["DocumentSetDescription"] = description;
+              needsUpdate = true;
+            }
 
             if (@namespace != null && (ds.Item["Namespace"] as string) != @namespace)
+            {
               ds.Item["Namespace"] = @namespace;
+              needsUpdate = true;
+            }
 
-            ds.Item.SystemUpdate(true);
+            if (needsUpdate)
+              ds.Item.SystemUpdate(true);
           }
           finally
           {
@@ -716,57 +727,6 @@ namespace Barista.SharePoint.DocumentStore
           }
 
           return SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
-        }
-      }
-    }
-
-    /// <summary>
-    /// Updates the entity.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public virtual bool UpdateEntity<T>(string containerTitle, Guid entityId, T value)
-    {
-      string data = DocumentStoreHelper.SerializeObjectToJson(value);
-
-      //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
-      {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
-        {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return false;
-
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return false;
-
-          if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
-            throw new InvalidOperationException("Insufficent Permissions.");
-
-          web.AllowUnsafeUpdates = true;
-          try
-          {
-            string currentData = defaultEntityPart.Web.GetFileAsString(defaultEntityPart.Url);
-
-            if (data != currentData)
-            {
-              defaultEntityPart.SaveBinary(String.IsNullOrEmpty(data) == false
-                                             ? System.Text.Encoding.Default.GetBytes(data)
-                                             : System.Text.Encoding.Default.GetBytes(String.Empty));
-            }
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
-          }
-
-          return true;
         }
       }
     }
