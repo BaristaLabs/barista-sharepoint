@@ -520,7 +520,9 @@
                                  entity.Description, entity.Namespace);
 
       var json = DocumentStoreHelper.SerializeObjectToJson(entity.Value);
-      var updatedEntity = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entity.Id, entity.ETag, json);
+
+      //TODO: Fix ETag
+      var updatedEntity = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entity.Id, String.Empty, json);
 
 
       if (updatedEntity == null)

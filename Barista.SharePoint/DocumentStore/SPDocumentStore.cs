@@ -760,7 +760,7 @@ namespace Barista.SharePoint.DocumentStore
 
           if (String.IsNullOrEmpty(eTag) == false && defaultEntityPart.ETag != eTag)
           {
-            throw new InvalidOperationException("Could not update the entity, the Entity has been updated by another user.");
+            throw new InvalidOperationException(String.Format("Could not update the entity, the Entity has been updated by another user. New: {0} Existing:{1}", eTag, defaultEntityPart.ETag));
           }
 
           web.AllowUnsafeUpdates = true;
@@ -1617,7 +1617,7 @@ namespace Barista.SharePoint.DocumentStore
 
           if (String.IsNullOrEmpty(eTag) == false && entityPartFile.ETag != eTag)
           {
-            throw new InvalidOperationException("Could not update the entity part, the entity part has been updated by another user.");
+            throw new InvalidOperationException(string.Format("Could not update the entity part, the entity part has been updated by another user. New:{0} Existing{1}", eTag, entityPartFile.ETag));
           }
 
           web.AllowUnsafeUpdates = true;
