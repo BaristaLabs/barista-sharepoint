@@ -6,13 +6,27 @@
 
   public static class JsonHelper
   {
+    private static readonly object SyncRoot = new object();
+    private static volatile ScriptEngine s_engine;
+
     private static ScriptEngine Engine
     {
       get
       {
-        ScriptEngine engine = new ScriptEngine();
-        engine.Execute(Properties.Resources.jsonDataHandler);
-        return engine;
+        if (s_engine == null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_engine == null)
+            {
+              var engine = new ScriptEngine();
+              engine.Execute(Properties.Resources.jsonDataHandler);
+              s_engine = engine;
+            }
+          }
+        }
+
+        return s_engine;
       }
     }
 
