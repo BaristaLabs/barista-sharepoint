@@ -86,13 +86,13 @@ namespace Barista.SharePoint.DocumentStore
           web.AllowUnsafeUpdates = true;
           try
           {
-            Guid listID = web.Lists.Add(containerTitle,                         //List Title
+            Guid listId = web.Lists.Add(containerTitle,                         //List Title
                                         description,                            //List Description
                                         "Lists/" + containerTitle,              //List Url
                                         "1e084611-a8c5-449c-a1f0-841a56ee2712", //Feature Id of List definition Provisioning Feature – CustomList Feature Id
                                         10001,                                  //List Template Type
                                         "121");                                 //Document Template Type .. 101 is for None
-            return SPDocumentStoreHelper.MapContainerFromSPList(web.Lists[listID]);
+            return SPDocumentStoreHelper.MapContainerFromSPList(web.Lists[listId]);
           }
           finally
           {
@@ -198,7 +198,7 @@ namespace Barista.SharePoint.DocumentStore
         using (SPWeb web = site.OpenWeb(this.Web.ID))
         {
           return SPDocumentStoreHelper.GetContainers(web)
-                                      .Select(list => SPDocumentStoreHelper.MapContainerFromSPList(list))
+                                      .Select(SPDocumentStoreHelper.MapContainerFromSPList)
                                       .ToList();
         }
       }
@@ -435,19 +435,6 @@ namespace Barista.SharePoint.DocumentStore
     #region Entities
 
     /// <summary>
-    /// Creates strongly typed entity in the specified container with the specified namespace and value.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string containerTitle, string @namespace, T value)
-    {
-      return CreateEntity(containerTitle, String.Empty, @namespace, value);
-    }
-
-    /// <summary>
     /// Creates a new entity in the document store, contained in the specified container in the specified namespace.
     /// </summary>
     /// <param name="containerTitle">The container title. Required.</param>
@@ -457,22 +444,6 @@ namespace Barista.SharePoint.DocumentStore
     public Entity CreateEntity(string containerTitle, string @namespace, string data)
     {
       return CreateEntity(containerTitle, String.Empty, @namespace, data);
-    }
-
-    /// <summary>
-    /// Creates the entity.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="path">The path.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string containerTitle, string path, string @namespace, T value)
-    {
-      var data = DocumentStoreHelper.SerializeObjectToJson(value);
-      var result = CreateEntity(containerTitle, path, @namespace, data);
-      return new Entity<T>(result);
     }
 
     /// <summary>
@@ -550,23 +521,6 @@ namespace Barista.SharePoint.DocumentStore
     }
 
     /// <summary>
-    /// Gets the strongly-typed entity from the specified container with the specified id.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    public Entity<T> GetEntity<T>(string containerTitle, Guid entityId)
-    {
-      var result = GetEntity(containerTitle, entityId);
-
-      if (result == null)
-        return null;
-
-      return new Entity<T>(result);
-    }
-
-    /// <summary>
     /// Gets the specified untyped entity.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
@@ -575,24 +529,6 @@ namespace Barista.SharePoint.DocumentStore
     public Entity GetEntity(string containerTitle, Guid entityId)
     {
       return GetEntity(containerTitle, entityId, String.Empty);
-    }
-
-    /// <summary>
-    /// Gets the specifed strongly-typed entity in the specified path.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="path">The path.</param>
-    /// <returns></returns>
-    public Entity<T> GetEntity<T>(string containerTitle, Guid entityId, string path)
-    {
-      var result = GetEntity(containerTitle, entityId, path);
-
-      if (result == null)
-        return null;
-
-      return new Entity<T>(result);
     }
 
     /// <summary>
@@ -825,19 +761,6 @@ namespace Barista.SharePoint.DocumentStore
     /// <summary>
     /// Lists the entities.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string containerTitle)
-    {
-      return ListEntities(containerTitle, String.Empty, null)
-        .Select(entity => new Entity<T>(entity))
-        .ToList();
-    }
-
-    /// <summary>
-    /// Lists the entities.
-    /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <returns></returns>
     public IList<Entity> ListEntities(string containerTitle)
@@ -854,47 +777,6 @@ namespace Barista.SharePoint.DocumentStore
     public IList<Entity> ListEntities(string containerTitle, string path)
     {
       return ListEntities(containerTitle, path, null);
-    }
-
-    /// <summary>
-    /// Lists the entities.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="namespace">The @namespace.</param>
-    /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string containerTitle, string @namespace)
-    {
-      return ListEntities(containerTitle, String.Empty, null)
-        .Select(entity => new Entity<T>(entity))
-        .ToList();
-    }
-
-    /// <summary>
-    /// Lists the entities.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="criteria">The criteria.</param>
-    /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string containerTitle, EntityFilterCriteria criteria)
-    {
-      return ListEntities<T>(containerTitle, String.Empty, criteria);
-    }
-
-    /// <summary>
-    /// Lists the entities.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="path">The path.</param>
-    /// <param name="criteria">The criteria.</param>
-    /// <returns></returns>
-    public IList<Entity<T>> ListEntities<T>(string containerTitle, string path, EntityFilterCriteria criteria)
-    {
-      return ListEntities(containerTitle, path, criteria)
-        .Select(entity => new Entity<T>(entity))
-        .ToList();
     }
 
     /// <summary>
@@ -1059,7 +941,7 @@ namespace Barista.SharePoint.DocumentStore
           var listItems = list.GetItems(query).OfType<SPListItem>();
           result.AddRange(
             listItems
-            .Select(spListItem => SPDocumentStoreHelper.MapEntityFromSPListItem(spListItem))
+            .Select(SPDocumentStoreHelper.MapEntityFromSPListItem)
             .Where(entity => entity != null)
             );
 
@@ -1297,31 +1179,6 @@ namespace Barista.SharePoint.DocumentStore
     /// <summary>
     /// Creates the entity part.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName">Name of the part.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public EntityPart<T> CreateEntityPart<T>(string containerTitle, Guid entityId, string partName, T value)
-    {
-      return CreateEntityPart(containerTitle, entityId, partName, String.Empty, value);
-    }
-
-    public EntityPart<T> CreateEntityPart<T>(string containerTitle, Guid entityId, string partName, string category, T value)
-    {
-      string data = DocumentStoreHelper.SerializeObjectToJson(value);
-      var result = CreateEntityPart(containerTitle, entityId, partName, category, data);
-
-      if (result == null)
-        return null;
-
-      return new EntityPart<T>(result);
-    }
-
-    /// <summary>
-    /// Creates the entity part.
-    /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <param name="partName">Name of the part.</param>
@@ -1464,53 +1321,6 @@ namespace Barista.SharePoint.DocumentStore
     protected virtual void ProcessEntityPartFile(string containerTitle, Guid entityId, string partName, SPFile entityPartFile, EntityPart entity)
     {
       //Does nothing in the base implementation.
-    }
-
-    /// <summary>
-    /// Tries the get entity part.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName">Name of the part.</param>
-    /// <param name="entityPart">The entity part.</param>
-    /// <returns></returns>
-    public bool TryGetEntityPart<T>(string containerTitle, Guid entityId, string partName, out EntityPart<T> entityPart)
-    {
-      entityPart = null;
-      try
-      {
-        EntityPart untypedEntityPart = GetEntityPart(containerTitle, entityId, partName);
-
-        if (untypedEntityPart == null)
-          return false;
-
-        entityPart = new EntityPart<T>(untypedEntityPart);
-      }
-      catch (Exception)
-      {
-        entityPart = null;
-        return false;
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// Gets the entity part.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName">Name of the part.</param>
-    /// <returns></returns>
-    public EntityPart<T> GetEntityPart<T>(string containerTitle, Guid entityId, string partName)
-    {
-      EntityPart untypedEntityPart = GetEntityPart(containerTitle, entityId, partName);
-
-      if (untypedEntityPart == null)
-        return null;
-
-      return new EntityPart<T>(untypedEntityPart);
     }
 
     /// <summary>
@@ -1705,7 +1515,7 @@ namespace Barista.SharePoint.DocumentStore
           var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
             .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
-          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => entityPartContentType != null && (f.Item.ContentTypeId == entityPartContentType.Id && f.Name != Constants.DocumentStoreDefaultEntityPartFileName)).Select(entityPartFile => SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile)).ToList();
+          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => entityPartContentType != null && (f.Item.ContentTypeId == entityPartContentType.Id && f.Name != Constants.DocumentStoreDefaultEntityPartFileName)).Select(SPDocumentStoreHelper.MapEntityPartFromSPFile).ToList();
         }
       }
     }
@@ -2192,7 +2002,7 @@ namespace Barista.SharePoint.DocumentStore
 
           return defaultEntityPart.ParentFolder.Files.OfType<SPFile>()
             .Where(f => attachmentContentType != null && f.Item.ContentTypeId == attachmentContentType.Id)
-            .Select(attachmentFile => SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile))
+            .Select(SPDocumentStoreHelper.MapAttachmentFromSPFile)
             .ToList();
         }
       }
