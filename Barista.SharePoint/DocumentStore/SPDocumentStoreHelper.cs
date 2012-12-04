@@ -169,7 +169,7 @@
 
       //var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
       //var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
-      //entity.ContentsETag = StringHelper.CreateMD5Hash(combinedETag);
+      entity.ContentsETag = docSet.Item["DocumentEntityContentsHash"] as string;
 
       //if (latestFile != null)
       //  entity.ContentsModified = latestFile.TimeLastModified;
