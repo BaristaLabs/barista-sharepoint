@@ -134,6 +134,22 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net35\Newtonsoft.Json.dll</HintPath>
@@ -194,6 +210,7 @@
     <Compile Include="Bundles\K2Bundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
     <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
+    <Compile Include="Bundles\TfsBundle.cs" />
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
@@ -231,6 +248,7 @@
     <Compile Include="Library\SPExcelPackageInstance.cs" />
     <Compile Include="Library\SPFarmInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
+    <Compile Include="Library\TfsInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
@@ -337,6 +355,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="SPFileScriptSource.cs" />
+    <Compile Include="TfsCredentialsProvider.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>

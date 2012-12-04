@@ -6,20 +6,13 @@
   using Barista.SharePoint.Library;
   using Jurassic;
   using Jurassic.Library;
-  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Utilities;
   using System;
-  using System.Collections.Generic;
-  using System.IO;
-  using System.Linq;
   using System.Runtime.InteropServices;
   using System.ServiceModel;
-  using System.ServiceModel.Web;
   using System.Text;
   using System.Threading;
-  using System.Web;
-  using System.Web.Caching;
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -59,7 +52,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
     }
 
     public BaristaServiceApplication()
-      : base() { }
+    { }
 
     private BaristaServiceApplication(string name, BaristaService service, SPIisWebServiceApplicationPool appPool)
       : base(name, service, appPool) { }
@@ -152,23 +145,21 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       WebBundle webBundle = new WebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
-      bool isNewScriptEngineInstance;
-      bool errorInInitialization;
-
       if (syncRoot != null)
         syncRoot.WaitOne();
 
       try
       {
+        bool isNewScriptEngineInstance;
+        bool errorInInitialization;
         var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
 
         if (errorInInitialization)
           return response;
 
-        object result = null;
         try
         {
-          result = engine.Evaluate(source);
+          object result = engine.Evaluate(source);
 
           var isRaw = false;
 
@@ -183,7 +174,6 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
             isRaw = webBundle.WebInstance.Response.IsRaw;
           }
 
-          var stringified = JSONObject.Stringify(engine, result, null, null);
           response.SetContentsFromResultObject(engine, result, isRaw);
         }
         catch (JavaScriptException ex)
@@ -199,7 +189,9 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         finally
         {
           //Cleanup
+// ReSharper disable RedundantAssignment
           engine = null;
+// ReSharper restore RedundantAssignment
 
           if (BaristaContext.Current != null)
             BaristaContext.Current.Dispose();
@@ -237,14 +229,13 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       WebBundle webBundle = new WebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
-      bool isNewScriptEngineInstance;
-      bool errorInInitialization;
-
       if (syncRoot != null)
         syncRoot.WaitOne();
 
       try
       {
+        bool isNewScriptEngineInstance;
+        bool errorInInitialization;
         var engine = GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
 
         if (errorInInitialization)
@@ -267,7 +258,9 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         finally
         {
           //Cleanup
+// ReSharper disable RedundantAssignment
           engine = null;
+// ReSharper restore RedundantAssignment
 
           if (BaristaContext.Current != null)
             BaristaContext.Current.Dispose();
@@ -293,7 +286,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
       
 
       //Based on the instancing mode, either retrieve the ScriptEngine from the desired store, or create a new ScriptEngine instance.
-      ScriptEngine engine = null;
+      ScriptEngine engine;
       switch (BaristaContext.Current.Request.InstanceMode)
       {
         case BaristaInstanceMode.PerCall:
@@ -318,8 +311,9 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
       if (isNewScriptEngineInstance)
       {
-        var console = new FirebugConsole(engine);
-        console.Output = new BaristaConsoleOutput(engine);
+        var console = new FirebugConsole(engine) {
+          Output = new BaristaConsoleOutput(engine)
+        };
 
         //Register Bundles.
         BaristaGlobal instance = new BaristaGlobal(engine.Object.InstancePrototype);
@@ -339,6 +333,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         instance.Common.RegisterBundle(new SqlDataBundle());
         instance.Common.RegisterBundle(new StateMachineBundle());
         instance.Common.RegisterBundle(new DeferredBundle());
+        instance.Common.RegisterBundle(new TfsBundle());
 
         //Global Types
         engine.SetGlobalValue("Barista", instance);
@@ -407,19 +402,23 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
     private void UpdateResponseWithJavaScriptExceptionDetails(JavaScriptException exception, BrewResponse response)
     {
       ObjectInstance errorObject = exception.ErrorObject as ObjectInstance;
-      var message = errorObject.GetPropertyValue("message") as string;
-      var stack = errorObject.GetPropertyValue("stack") as string;
-      if (String.IsNullOrEmpty(stack) == false)
-        stack = stack.Replace("at ", "at<br/>");
 
-      response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-      response.StatusDescription = message;
-      response.AutoDetectContentType = false;
-      response.ContentType = "text/html";
+      if (errorObject != null)
+      {
+        var message = errorObject.GetPropertyValue("message") as string;
+        var stack = errorObject.GetPropertyValue("stack") as string;
+        if (String.IsNullOrEmpty(stack) == false)
+          stack = stack.Replace("at ", "at<br/>");
+
+        response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+        response.StatusDescription = message;
+        response.AutoDetectContentType = false;
+        response.ContentType = "text/html";
 
       
-      var resultMessage = String.Format(JavaScriptExceptionMessage, exception.Name, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
-      response.Content = Encoding.UTF8.GetBytes(resultMessage);
+        var resultMessage = String.Format(JavaScriptExceptionMessage, exception.Name, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
+        response.Content = Encoding.UTF8.GetBytes(resultMessage);
+      }
     }
     #endregion
   }

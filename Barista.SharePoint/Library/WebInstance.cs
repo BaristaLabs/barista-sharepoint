@@ -78,12 +78,15 @@
       if (Thread.CurrentPrincipal.Identity is ClaimsIdentity)
       {
         IClaimsIdentity identity = (ClaimsIdentity)System.Threading.Thread.CurrentPrincipal.Identity;
-        string upn = identity.Claims.Where(c => c.ClaimType == ClaimTypes.Upn).First().Value;
+        var firstClaim = identity.Claims.FirstOrDefault(c => c.ClaimType == ClaimTypes.Upn);
+
+        if (firstClaim == null)
+          throw new InvalidOperationException("No UPN claim found");
+
+        string upn = firstClaim.Value;
 
         if (String.IsNullOrEmpty(upn))
-        {
-          throw new InvalidOperationException("No UPN claim found");
-        }
+          throw new InvalidOperationException("A UPN claim was found, however, the value was empty.");
 
         var currentIdentity = S4UClient.UpnLogon(upn);
         ctxt = currentIdentity.Impersonate();

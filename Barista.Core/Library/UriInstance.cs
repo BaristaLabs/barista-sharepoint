@@ -45,7 +45,7 @@
   [Serializable]
   public class UriInstance : ObjectInstance
   {
-    private Uri m_uri;
+    private readonly Uri m_uri;
 
     public UriInstance(ObjectInstance prototype)
       : base(prototype)
@@ -58,6 +58,11 @@
       : this(prototype)
     {
       this.m_uri = uri;
+    }
+
+    public Uri Uri
+    {
+      get { return m_uri; }
     }
 
     #region Properties
