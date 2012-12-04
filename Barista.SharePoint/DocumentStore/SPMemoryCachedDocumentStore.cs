@@ -1,12 +1,13 @@
-﻿namespace Barista.SharePoint.DocumentStore
+﻿using System.Collections;
+
+namespace Barista.SharePoint.DocumentStore
 {
   using System;
   using System.Collections.Generic;
-  using System.IO;
   using System.Web;
   using System.Web.Caching;
+  using System.Linq;
   using Microsoft.SharePoint;
-  using Newtonsoft.Json;
   using Barista.DocumentStore;
 
   /// <summary>
@@ -14,126 +15,152 @@
   /// </summary>
   public class SPMemoryCachedDocumentStore : SPDocumentStore
   {
-    private static TimeSpan s_cacheSlidingExpiration = TimeSpan.FromMinutes(15);
-
-    public SPMemoryCachedDocumentStore()
-      : base()
-    {
-    }
+    private static readonly TimeSpan CacheSlidingExpiration = TimeSpan.FromMinutes(15);
+    private const string EntityContentsCachePrefix = "BaristaDS_EntityContents_";
 
     public override Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
-      var etag = base.GetEntityContentsETag(containerTitle, entityId);
-      if (String.IsNullOrEmpty(etag))
-        return null;
-
-      string blobPath = String.Empty;
-      string blobFileName = String.Empty;
-
-      Entity entity = null;
-
-      var cachedValue = HttpRuntime.Cache["ODB_Entity_" + etag];
-      if (cachedValue != null && cachedValue is Entity)
-        entity = cachedValue as Entity;
-
-      if (entity == null)
+      //Get a new web in case we're executing in elevated permissions.
+      using (SPSite site = new SPSite(this.Web.Site.ID))
       {
-        entity = base.GetEntity(containerTitle, entityId, path);
+        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        {
+          var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 
-        if (entity != null)
-        {
-          HttpRuntime.Cache.Add("ODB_Entity_" + etag,
-            entity,
-            null,
-            Cache.NoAbsoluteExpiration,
-            s_cacheSlidingExpiration,
-            CacheItemPriority.Normal,
-            null);
-        }
-        else
-        {
-          HttpRuntime.Cache.Remove("ODB_Entity_" + etag);
+          //If the contents hash is not set, fall back on just retrieving the entity.
+          if (String.IsNullOrEmpty(contentsHash))
+            return base.GetEntity(containerTitle, entityId, path);
+
+          //If we found it in the cache, return the entity value.
+          var cachedValue = HttpRuntime.Cache[EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash];
+          if (cachedValue is EntityContents)
+            return (cachedValue as EntityContents).Entity;
+
+          EntityContents entityContents = GetEntityContents(web, containerTitle, entityId);
+
+          HttpRuntime.Cache.Add(EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash,
+                                entityContents,
+                                null,
+                                Cache.NoAbsoluteExpiration,
+                                CacheSlidingExpiration,
+                                CacheItemPriority.Normal,
+                                null);
+
+          return entityContents.Entity;
         }
       }
+    }
 
-      return entity;
+    public override bool DeleteEntity(string containerTitle, Guid entityId)
+    {
+      foreach (var key in HttpRuntime.Cache
+        .OfType<DictionaryEntry>()
+        .ToList()
+        .Select(cacheItem => cacheItem.Key as string)
+        .Where(key => key != null &&
+          key.StartsWith(EntityContentsCachePrefix + "_" + entityId)))
+      {
+        HttpRuntime.Cache.Remove(key);
+      }
+
+      return base.DeleteEntity(containerTitle, entityId);
     }
 
     public override EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
     {
-      var etag = base.GetEntityPartETag(containerTitle, entityId, partName);
-      if (string.IsNullOrEmpty(etag))
-        return null;
-
-      string blobPath = String.Empty;
-      string blobFileName = String.Empty;
-
-      EntityPart entityPart = null;
-
-      var cachedValue = HttpRuntime.Cache["ODB_EntityPart_" + etag];
-
-      if (cachedValue != null && cachedValue is EntityPart)
-        entityPart = cachedValue as EntityPart;
-
-      if (entityPart == null)
+      //Get a new web in case we're executing in elevated permissions.
+      using (SPSite site = new SPSite(this.Web.Site.ID))
       {
-        entityPart = base.GetEntityPart(containerTitle, entityId, partName);
+        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        {
+          var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 
-        if (entityPart != null)
-        {
-          HttpRuntime.Cache.Add("ODB_EntityPart_" + etag,
-            entityPart,
-            null,
-            Cache.NoAbsoluteExpiration,
-            s_cacheSlidingExpiration,
-            CacheItemPriority.Normal,
-            null);
-        }
-        else
-        {
-          HttpRuntime.Cache.Remove("ODB_EntityPart_" + etag);
+          //If the contents hash is not set, fall back on just retrieving the entity.
+          if (String.IsNullOrEmpty(contentsHash))
+            return base.GetEntityPart(containerTitle, entityId, partName);
+
+          //If we found it in the cache, return the entity value.
+          var cachedValue = HttpRuntime.Cache[EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash];
+          if (cachedValue is EntityContents)
+          {
+            var cachedEntityContents = cachedValue as EntityContents;
+            return cachedEntityContents.EntityParts.ContainsKey(partName)
+                     ? cachedEntityContents.EntityParts[partName]
+                     : null;
+          }
+
+          var entityContents = GetEntityContents(web, containerTitle, entityId);
+
+          HttpRuntime.Cache.Add(EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash,
+                                entityContents,
+                                null,
+                                Cache.NoAbsoluteExpiration,
+                                CacheSlidingExpiration,
+                                CacheItemPriority.Normal,
+                                null);
+
+          return entityContents.EntityParts.ContainsKey(partName)
+                   ? entityContents.EntityParts[partName]
+                   : null;
         }
       }
-
-      return entityPart;
     }
 
-    public override IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria)
+    public override IList<EntityPart> ListEntityParts(string containerTitle, Guid entityId)
     {
-      var etag = base.GetFolderETag(containerTitle, path, criteria);
-      if (String.IsNullOrEmpty(etag))
-        return new List<Entity>();
-
-      string blobPath = String.Empty;
-      string blobFileName = String.Empty;
-
-      IList<Entity> entityList = null;
-
-      var cachedValue = HttpRuntime.Cache["ODB_List_" + etag];
-      if (cachedValue != null && cachedValue is List<Entity>)
-        entityList = cachedValue as List<Entity>;
-
-      if (entityList == null)
+      //Get a new web in case we're executing in elevated permissions.
+      using (SPSite site = new SPSite(this.Web.Site.ID))
       {
-        entityList = base.ListEntities(containerTitle, path, criteria);
+        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        {
+          var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 
-        if (entityList != null && entityList.Count > 0)
-        {
-          HttpRuntime.Cache.Add("ODB_List_" + etag,
-            entityList,
-            null,
-            Cache.NoAbsoluteExpiration,
-            s_cacheSlidingExpiration,
-            CacheItemPriority.Normal,
-            null);
-        }
-        else
-        {
-          HttpRuntime.Cache.Remove("ODB_List_" + etag);
+          //If the contents hash is not set, fall back on just retrieving the entity.
+          if (String.IsNullOrEmpty(contentsHash))
+            return base.ListEntityParts(containerTitle, entityId);
+
+          //If we found it in the cache, return the entity value.
+          var cachedValue = HttpRuntime.Cache[EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash];
+          if (cachedValue is EntityContents)
+          {
+            var cachedEntityContents = cachedValue as EntityContents;
+            return cachedEntityContents.EntityParts.Values.ToList();
+          }
+
+          var entityContents = GetEntityContents(web, containerTitle, entityId);
+
+          HttpRuntime.Cache.Add(EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash,
+                                entityContents,
+                                null,
+                                Cache.NoAbsoluteExpiration,
+                                CacheSlidingExpiration,
+                                CacheItemPriority.Normal,
+                                null);
+
+          return entityContents.EntityParts.Values.ToList();
         }
       }
+    }
 
-      return entityList;
+    private static EntityContents GetEntityContents(SPWeb web, string containerTitle, Guid entityId)
+    {
+      SPList list;
+      SPFolder folder;
+      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+          false)
+        return null;
+
+      SPFile defaultEntityPart;
+      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==
+        false)
+        return null;
+
+      EntityContents entityContents = SPDocumentStoreHelper.GetEntityContentsEntityPart(web, list, defaultEntityPart.ParentFolder);
+
+      if (entityContents == null)
+        throw new NotImplementedException(); // TODO: Build it, update the hash yada yada.
+
+      return entityContents;
     }
   }
 }

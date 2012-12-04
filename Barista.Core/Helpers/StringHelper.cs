@@ -1,10 +1,7 @@
 ﻿namespace Barista
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using System.Text;
-  using System.IO;
   using System.Security.Cryptography;
 
   public static class StringHelper
@@ -14,7 +11,7 @@
     {
       if (input == null || input.Length < length)
         return input;
-      int iNextSpace = input.LastIndexOf(" ", length);
+      int iNextSpace = input.LastIndexOf(" ", length, StringComparison.Ordinal);
       return string.Format("{0}...", input.Substring(0, (iNextSpace > 0) ? iNextSpace : length).Trim());
     }
 
@@ -42,10 +39,14 @@
     /// <returns></returns>
     public static string GetMimeTypeFromFileName(string fileName)
     {
+      if (String.IsNullOrEmpty(fileName))
+        return "";
+
       string mime = "application/octet-stream";
-      if (String.IsNullOrEmpty(fileName) == false)
+      var extension = System.IO.Path.GetExtension(fileName);
+      if (extension != null)
       {
-        string ext = System.IO.Path.GetExtension(fileName).ToLower();
+        string ext = extension.ToLower();
         Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
         if (rk != null && rk.GetValue("Content Type") != null)
           mime = rk.GetValue("Content Type").ToString();

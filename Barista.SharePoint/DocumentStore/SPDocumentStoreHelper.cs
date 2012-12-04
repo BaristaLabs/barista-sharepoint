@@ -12,6 +12,8 @@
   using Barista.DocumentStore;
   using System.Text;
   using Microsoft.Office.DocumentManagement.DocumentSets;
+  using Newtonsoft.Json;
+  using System.Collections;
 
   /// <summary>
   /// Contains methods that assist with the retrieval of Document Store objects.
@@ -121,7 +123,7 @@
       return result;
     }
 
-    public static Entity MapEntityFromSPListItem(SPListItem listItem)
+    public static Entity MapEntityFromSPListItem(SPListItem listItem, string data)
     {
       if (listItem == null)
         throw new ArgumentNullException("listItem", @"When creating an Entity, the SPListItem that represents the entity must not be null.");
@@ -150,7 +152,10 @@
       {
         dataFile = listItem.Web.GetFile(listItem.Folder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName);
       }
-      catch (Exception) { /* Do Nothing... */ };
+      catch (Exception)
+      {
+        /* Do Nothing... */
+      }
 
       if (dataFile == null) //The default entity part file doesn't exist, get outta dodge (something happened here...)
         throw new InvalidOperationException("No correpsonding entity file exists on the SP Doc Set that represents the entity.");
@@ -162,17 +167,17 @@
       entity.Created = (DateTime)docSet.Item[SPBuiltInFieldId.Created];
       entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
 
-      var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
-      var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
-      entity.ContentsETag = StringHelper.CreateMD5Hash(combinedETag);
+      //var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
+      //var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
+      //entity.ContentsETag = StringHelper.CreateMD5Hash(combinedETag);
 
-      if (latestFile != null)
-        entity.ContentsModified = latestFile.TimeLastModified;
+      //if (latestFile != null)
+      //  entity.ContentsModified = latestFile.TimeLastModified;
 
       entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
 
-      entity.Data = Encoding.UTF8.GetString(dataFile.OpenBinary());
+      entity.Data = data ?? Encoding.UTF8.GetString(dataFile.OpenBinary());
 
       var createdByUserValue = listItem[SPBuiltInFieldId.Author] as String;
       SPFieldUserValue createdByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
@@ -261,7 +266,13 @@
       return result;
     }
 
-    public static EntityPart MapEntityPartFromSPFile(SPFile file)
+    /// <summary>
+    /// Maps an SPFile to an Entity Part. If the data parameter is null, the file is opened and the data retrieved.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static EntityPart MapEntityPartFromSPFile(SPFile file, string data)
     {
       if (file == null)
         throw new ArgumentNullException("file", @"When creating an EntityPart, the SPFile that represents the entity part must not be null.");
@@ -285,7 +296,7 @@
       entityPart.Created = (DateTime)file.Item[SPBuiltInFieldId.Created];
       entityPart.Modified = (DateTime)file.Item[SPBuiltInFieldId.Modified];
 
-      entityPart.Data = Encoding.UTF8.GetString(file.OpenBinary());
+      entityPart.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
 
       var createdByUserValue = file.Item[SPBuiltInFieldId.Author] as string;
       SPFieldUserValue createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
@@ -645,6 +656,288 @@
 
       task.Start();
       return task;
+    }
+
+
+    /// <summary>
+    /// Gets the hash of the specified Entities' contents.
+    /// </summary>
+    /// <param name="web"></param>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="entityId">The entity id.</param>
+    /// <returns></returns>
+    public static string GetEntityContentsHash(SPWeb web, string containerTitle, Guid entityId)
+    {
+      SPList list;
+      SPFolder folder;
+      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+        return null;
+
+      SPFile defaultEntityPart;
+      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+        return null;
+
+      return defaultEntityPart.ParentFolder.Item["DocumentEntityContentsHash"] as string;
+    }
+
+    /// <summary>
+    /// Gets the ETag of the specified entity part
+    /// </summary>
+    /// <param name="web"></param>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="entityId">The entity id.</param>
+    /// <param name="partName"></param>
+    /// <returns></returns>
+    public static string GetEntityPartETag(SPWeb web, string containerTitle, Guid entityId, string partName)
+    {
+      SPList list;
+      SPFolder folder;
+      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+        return null;
+
+      SPFile entityPart;
+      if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+        return null;
+
+      var result = entityPart.ETag;
+      return result;
+    }
+
+    /// <summary>
+    /// Removes the specified key from the content entity part for the specified document set folder.
+    /// </summary>
+    /// <param name="web"></param>
+    /// <param name="list"></param>
+    /// <param name="documentSetFolder"></param>
+    /// <param name="key"></param>
+    /// <param name="contentHash"></param>
+    /// <returns></returns>
+    public static string RemoveContentEntityPartKeyValue(SPWeb web, SPList list, SPFolder documentSetFolder, string key, out string contentHash)
+    {
+      if (web == null)
+        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
+
+      if (list == null)
+        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+
+      if (documentSetFolder == null)
+        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+
+      var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
+                                        .FirstOrDefault(
+                                          ct =>
+                                          ct.Id.ToString()
+                                            .ToLowerInvariant()
+                                            .StartsWith(
+                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+
+      if (entityPartContentType == null)
+        throw new InvalidOperationException("Unable to locate the entity part content type");
+
+      var contentFile =
+        documentSetFolder.Files.OfType<SPFile>()
+                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
+
+      if (contentFile == null || contentFile.Exists == false)
+      {
+        contentHash = String.Empty;
+        return String.Empty;
+      }
+
+      var contentData = contentFile.OpenBinary();
+      var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
+      Dictionary<string, EntityPart> contentDictionary = JsonConvert.DeserializeObject<Dictionary<string, EntityPart>>(contentJson);
+
+      if (contentDictionary.ContainsKey(key) == false)
+      {
+        var unmodifiedContent = JsonConvert.SerializeObject(contentDictionary);
+        contentHash = StringHelper.CreateMD5Hash(unmodifiedContent);
+        return unmodifiedContent;
+      }
+
+      contentDictionary.Remove(key);
+
+      var content = JsonConvert.SerializeObject(contentDictionary);
+      contentHash = StringHelper.CreateMD5Hash(content);
+
+      web.AllowUnsafeUpdates = true;
+
+      try
+      {
+        contentFile.SaveBinary(System.Text.Encoding.Default.GetBytes(content));
+      }
+      finally
+      {
+        web.AllowUnsafeUpdates = false;
+      }
+
+      return content;
+    }
+
+    /// <summary>
+    /// Returns a value that indicates if the specified document set folder contains a content entity part.
+    /// </summary>
+    /// <param name="documentSetFolder"></param>
+    /// <returns></returns>
+    public static bool HasContentEntityPart(SPFolder documentSetFolder)
+    {
+      if (documentSetFolder == null)
+        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+
+      var contentFile =
+       documentSetFolder.Files.OfType<SPFile>()
+                        .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
+
+      return (contentFile != null);
+    }
+
+    public static EntityContents GetEntityContentsEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder)
+    {
+      if (web == null)
+        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
+
+      if (list == null)
+        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+
+      if (documentSetFolder == null)
+        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+
+      var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
+                                        .FirstOrDefault(
+                                          ct =>
+                                          ct.Id.ToString()
+                                            .ToLowerInvariant()
+                                            .StartsWith(
+                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+
+      if (entityPartContentType == null)
+        throw new InvalidOperationException("Unable to locate the entity part content type");
+
+      var contentFile =
+        documentSetFolder.Files.OfType<SPFile>()
+                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
+
+      if (contentFile == null)
+        return null;
+
+      var contentData = contentFile.OpenBinary();
+      var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
+      var entityContents = JsonConvert.DeserializeObject<EntityContents>(contentJson);
+
+      return entityContents;
+    }
+
+    /// <summary>
+    /// Creates or updates the content entity part for the specified document set folder, optionally using the entity part to update.
+    /// </summary>
+    /// <param name="web"></param>
+    /// <param name="list"></param>
+    /// <param name="documentSetFolder"></param>
+    /// <param name="updatedEntity"></param>
+    /// <param name="updatedEntityPart"></param>
+    /// <param name="contentHash"></param>
+    /// <returns></returns>
+    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder, Entity updatedEntity, EntityPart updatedEntityPart, out string contentHash)
+    {
+      if (web == null)
+        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
+      
+      if (list == null)
+        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+
+      if (documentSetFolder == null)
+        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+
+      var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
+                                        .FirstOrDefault(
+                                          ct =>
+                                          ct.Id.ToString()
+                                            .ToLowerInvariant()
+                                            .StartsWith(
+                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+
+      if (entityPartContentType == null)
+        throw new InvalidOperationException("Unable to locate the entity part content type");
+
+      EntityContents entityContents;
+
+      var contentFile =
+        documentSetFolder.Files.OfType<SPFile>()
+                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
+
+      //If the content file does not exist, create a new content dictionary object
+      //that contains all the entity parts contained in the document store entity
+      //Except for the content part and, if specified, the updated entity part.
+      //Otherwise, read the content file and update the entity part.
+      if (contentFile == null)
+      {
+
+        var entityParts = documentSetFolder.Files.OfType<SPFile>()
+                                            .Where(f => f.Item.ContentTypeId == entityPartContentType.Id &&
+                                                        f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
+                                                        f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
+                                                        (updatedEntityPart != null && f.Name != updatedEntityPart.Name + Constants.DocumentSetEntityPartExtension))
+                                            .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
+                                            .ToList();
+
+        entityContents = new EntityContents
+          {
+            Entity = SPDocumentStoreHelper.MapEntityFromSPListItem(documentSetFolder.Item, null),
+            EntityParts = entityParts.ToDictionary(entityPart => entityPart.Name)
+          };
+      }
+      else
+      {
+        var contentData = contentFile.OpenBinary();
+        var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
+        entityContents = JsonConvert.DeserializeObject<EntityContents>(contentJson);
+      }
+
+      if (updatedEntity != null)
+        entityContents.Entity = updatedEntity;
+
+      if (updatedEntityPart != null)
+      {
+        if (entityContents.EntityParts.ContainsKey(updatedEntityPart.Name))
+          entityContents.EntityParts[updatedEntityPart.Name] = updatedEntityPart;
+        else
+          entityContents.EntityParts.Add(updatedEntityPart.Name, updatedEntityPart);
+      }
+
+      var content = JsonConvert.SerializeObject(entityContents);
+      contentHash = StringHelper.CreateMD5Hash(content);
+
+      //Perform the update.
+
+      if (documentSetFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+        throw new InvalidOperationException("Insufficent Permissions.");
+
+      var originalAllowUnsafeUpdates = web.AllowUnsafeUpdates;
+
+      web.AllowUnsafeUpdates = true;
+
+      try
+      {
+        if (contentFile == null)
+        {
+          var properties = new Hashtable
+            {
+              {"ContentTypeId", entityPartContentType.Id.ToString()},
+              {"Content Type", entityPartContentType.Name}
+            };
+          documentSetFolder.Files.Add(Constants.DocumentStoreEntityContentsPartFileName, System.Text.Encoding.Default.GetBytes(content), properties, true);
+        }
+        else
+        {
+          contentFile.SaveBinary(System.Text.Encoding.Default.GetBytes(content));
+        }
+      }
+      finally
+      {
+        web.AllowUnsafeUpdates = originalAllowUnsafeUpdates;
+      }
+      
+      return content;
     }
   }
 }

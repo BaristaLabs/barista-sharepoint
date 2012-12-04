@@ -42,14 +42,6 @@
     EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName);
 
     /// <summary>
-    /// Gets the ETag of the specified entity part
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    string GetEntityPartETag(string containerTitle, Guid entityId, string partName);
-
-    /// <summary>
     /// Lists the entity parts associated with the specified entity in the specified container.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>

@@ -80,14 +80,6 @@
     Entity GetEntity(string containerTitle, Guid entityId);
 
     /// <summary>
-    /// Gets the ETag of the specified Entities' contents.
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    string GetEntityContentsETag(string containerTitle, Guid entityId);
-
-    /// <summary>
     /// Imports an entity from a previous export.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>

@@ -30,15 +30,6 @@
     Folder GetFolder(string containerTitle, string path);
 
     /// <summary>
-    /// Gets the ETag for the folder.
-    /// </summary>
-    /// <param name="containerTitle"></param>
-    /// <param name="path"></param>
-    /// <param name="criteria"></param>
-    /// <returns></returns>
-    string GetFolderETag(string containerTitle, string path, EntityFilterCriteria criteria);
-
-    /// <summary>
     /// Lists all folders contained in the specified container.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>

@@ -11,6 +11,7 @@ namespace Barista.SharePoint.DocumentStore
     public static Guid NamespaceFieldId = new Guid("5b8dd38e-b926-41b3-b7f1-896534b9d916");
     public static Guid DocumentEntityGuidFieldId = new Guid("efab5a5d-493b-480f-867a-2f754a269200");
     public static Guid CommentFieldId = new Guid("cfbc77e4-1fe5-4129-9b97-60021f9dd92f");
+    public static Guid DocumentEntityContentsHashId = new Guid("fde9fe27-2621-4441-84dc-02f842aa042e");
 
     public static string AttachmentDocumentContentTypeId = "0x010100d1f6bb0d78094ba3acabd9118f81b0c5";
     public static Guid AttachmentCategoryFieldId = new Guid("36b8af8b-a773-478c-abf3-038d198e90b2");
@@ -20,6 +21,7 @@ namespace Barista.SharePoint.DocumentStore
     public static string DocumentStoreEntityPartContentTypeId = "0x010100c85948cf1fa64eed9d29eaa2a1078fd6";
     
     public static string DocumentStoreDefaultEntityPartFileName = "default.dsep";
+    public static string DocumentStoreEntityContentsPartFileName = "__contents.dsep";
 
     public const string DSServiceV1Namespace = "http://barista/sharepoint/documentstore/v1/";
     public const string ServiceNamespace = "http://barista/sharepoint/documentstore/2012/02/";

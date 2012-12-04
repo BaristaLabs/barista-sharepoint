@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Barista.SharePoint.DocumentStore
+﻿namespace Barista.SharePoint.DocumentStore
 {
   using Barista.DocumentStore;
   using CamlexNET;
@@ -16,6 +14,7 @@ namespace Barista.SharePoint.DocumentStore
   using System.Net;
   using System.Threading.Tasks;
   using System.Web;
+
 
   /// <summary>
   /// Represents a SharePoint-backed Document Store.
@@ -198,7 +197,7 @@ namespace Barista.SharePoint.DocumentStore
         using (SPWeb web = site.OpenWeb(this.Web.ID))
         {
           return SPDocumentStoreHelper.GetContainers(web)
-                                      .Select(SPDocumentStoreHelper.MapContainerFromSPList)
+                                      .Select(w => SPDocumentStoreHelper.MapContainerFromSPList(w))
                                       .ToList();
         }
       }
@@ -496,9 +495,14 @@ namespace Barista.SharePoint.DocumentStore
 
               documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
 
+              //Update the contents entity part and the modified by user stamp.
+              string contentHash;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash);
+
               //Set the created/updated fields of the new document set to the current user.
               string userLogonName = this.Web.CurrentUser.ID + ";#" + this.Web.CurrentUser.Name;
               documentSetFolder.Item[SPBuiltInFieldId.Editor] = userLogonName;
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
               documentSetFolder.Item.UpdateOverwriteVersion();
             }
             else
@@ -508,6 +512,13 @@ namespace Barista.SharePoint.DocumentStore
               documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
 
               documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), true);
+
+              //Update the contents Entity Part.
+              string contentHash;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash);
+
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSetFolder.Item.UpdateOverwriteVersion();
             }
           }
           finally
@@ -515,7 +526,7 @@ namespace Barista.SharePoint.DocumentStore
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(documentSetFolder.Item);
+          return SPDocumentStoreHelper.MapEntityFromSPListItem(documentSetFolder.Item, data);
         }
       }
     }
@@ -554,39 +565,10 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
+          var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item, null);
           ProcessEntityFile(containerTitle, entityId, defaultEntityPart, entity);
 
           return entity;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the ETag of the specified Entities' contents.
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <returns></returns>
-    public virtual string GetEntityContentsETag(string containerTitle, Guid entityId)
-    {
-      //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
-      {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
-        {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return null;
-
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
-          var combinedETag = String.Join(", ", defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
-
-          return StringHelper.CreateMD5Hash(combinedETag);
         }
       }
     }
@@ -604,7 +586,7 @@ namespace Barista.SharePoint.DocumentStore
     }
 
     /// <summary>
-    /// Updates the entity.
+    /// Updates the metadata associated with the entity, and not any data.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId"></param>
@@ -624,45 +606,61 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          SPFile defaultEntityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
             return null;
 
-          if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+          if (defaultEntityPartFile.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
             throw new InvalidOperationException("Insufficent Permissions.");
 
+          Entity entity;
           web.AllowUnsafeUpdates = true;
           try
           {
             bool needsUpdate = false;
-            DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
-            if (String.IsNullOrEmpty(title) == false && ds.Item.Title != title)
+            DocumentSet entityDocumentSet = DocumentSet.GetDocumentSet(defaultEntityPartFile.ParentFolder);
+            if (String.IsNullOrEmpty(title) == false && entityDocumentSet.Item.Title != title)
             {
-              ds.Item["Title"] = title;
+              entityDocumentSet.Item["Title"] = title;
               needsUpdate = true;
             }
 
-            if (description != null && (ds.Item["DocumentSetDescription"] as string) != description)
+            if (description != null && (entityDocumentSet.Item["DocumentSetDescription"] as string) != description)
             {
-              ds.Item["DocumentSetDescription"] = description;
+              entityDocumentSet.Item["DocumentSetDescription"] = description;
               needsUpdate = true;
             }
 
-            if (@namespace != null && (ds.Item["Namespace"] as string) != @namespace)
+            if (@namespace != null && (entityDocumentSet.Item["Namespace"] as string) != @namespace)
             {
-              ds.Item["Namespace"] = @namespace;
+              entityDocumentSet.Item["Namespace"] = @namespace;
               needsUpdate = true;
             }
 
             if (needsUpdate)
-              ds.Item.SystemUpdate(true);
+            {
+              entityDocumentSet.Item.SystemUpdate(true);
+
+              entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPartFile.ParentFolder.Item, null);
+
+              //Update the contents entity part
+              string contentHash;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPartFile.ParentFolder,
+                                                                    entity, null, out contentHash);
+              entityDocumentSet.Item["DocumentEntityContentsHash"] = contentHash;
+              entityDocumentSet.Item.UpdateOverwriteVersion();
+            }
+            else
+            {
+              entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPartFile.ParentFolder.Item, null);
+            }
           }
           finally
           {
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
+          return entity;
         }
       }
     }
@@ -699,6 +697,7 @@ namespace Barista.SharePoint.DocumentStore
             throw new InvalidOperationException(String.Format("Could not update the entity, the Entity has been updated by another user. New: {0} Existing:{1}", eTag, defaultEntityPart.ETag));
           }
 
+          Entity entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item, data);
           web.AllowUnsafeUpdates = true;
           try
           {
@@ -709,6 +708,14 @@ namespace Barista.SharePoint.DocumentStore
               defaultEntityPart.SaveBinary(String.IsNullOrEmpty(data) == false
                                              ? System.Text.Encoding.Default.GetBytes(data)
                                              : System.Text.Encoding.Default.GetBytes(String.Empty));
+
+              //Update the contents Entity Part.
+              string contentHash;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash);
+
+              SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSetFolder.Item.UpdateOverwriteVersion();
             }
           }
           finally
@@ -716,7 +723,7 @@ namespace Barista.SharePoint.DocumentStore
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item);
+          return entity;
         }
       }
     }
@@ -742,11 +749,11 @@ namespace Barista.SharePoint.DocumentStore
           web.AllowUnsafeUpdates = true;
           try
           {
-            SPFile dataFile = SPDocumentStoreHelper.GetDocumentStoreDefaultEntityPartForGuid(list, list.RootFolder, entityId);
-            if (dataFile == null)
+            SPFile entityPartFile = SPDocumentStoreHelper.GetDocumentStoreDefaultEntityPartForGuid(list, list.RootFolder, entityId);
+            if (entityPartFile == null)
               return false;
 
-            dataFile.ParentFolder.Delete();
+            entityPartFile.ParentFolder.Delete();
           }
           finally
           {
@@ -941,84 +948,12 @@ namespace Barista.SharePoint.DocumentStore
           var listItems = list.GetItems(query).OfType<SPListItem>();
           result.AddRange(
             listItems
-            .Select(SPDocumentStoreHelper.MapEntityFromSPListItem)
+            .Select(li => SPDocumentStoreHelper.MapEntityFromSPListItem(li, null))
             .Where(entity => entity != null)
             );
 
           ProcessEntityList(containerTitle, path, criteria, folder, result);
           return result;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the ETag for the folder.
-    /// </summary>
-    /// <param name="containerTitle"></param>
-    /// <param name="path"></param>
-    /// <param name="criteria"></param>
-    /// <returns></returns>
-    public virtual string GetFolderETag(string containerTitle, string path, EntityFilterCriteria criteria)
-    {
-      //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
-      {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
-        {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-            return null;
-
-          if (folder.ItemCount == 0)
-            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString(CultureInfo.InvariantCulture));
-
-          string queryString = Camlex.Query()
-              .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
-              .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()))
-              .OrderBy(li => li[SPBuiltInFieldId.Last_x0020_Modified] as Camlex.Desc)
-              .ToString();
-
-          if (criteria != null)
-          {
-            if (String.IsNullOrEmpty(criteria.Namespace) == false)
-              queryString = Camlex.Query()
-                  .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
-                  .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]) == criteria.Namespace)
-                  .OrderBy(li => li[SPBuiltInFieldId.Last_x0020_Modified] as Camlex.Desc)
-                  .ToString();
-          }
-
-          SPQuery query = new SPQuery
-            {
-              Query = queryString,
-              ViewFields = Camlex.Query().ViewFields(new List<Guid>
-                {
-                  SPBuiltInFieldId.ID,
-                  SPBuiltInFieldId.Title,
-                  SPBuiltInFieldId.FileRef,
-                  SPBuiltInFieldId.FileDirRef,
-                  SPBuiltInFieldId.FileLeafRef,
-                  SPBuiltInFieldId.FSObjType,
-                  SPBuiltInFieldId.ContentTypeId,
-                  Constants.DocumentEntityGuidFieldId,
-                  Constants.NamespaceFieldId,
-                }),
-              ViewFieldsOnly = true,
-              QueryThrottleMode = SPQueryThrottleOption.Override,
-              Folder = folder,
-              ViewAttributes = "Scope=\"Recursive\""
-            };
-
-          var items = list.GetItems(query).OfType<SPListItem>();
-
-          var spListItems = items as IList<SPListItem> ?? items.ToList();
-          if (spListItems.Any() == false)
-            return StringHelper.CreateMD5Hash(folder.UniqueId.ToString() + ((DateTime)folder.Properties["vti_timelastmodified"]).Ticks.ToString(CultureInfo.InvariantCulture));
-
-          var combinedETag = String.Join(", ", spListItems.Select(item => new Guid(item.Name)).Select(id => GetEntityContentsETag(containerTitle, id)).ToArray());
-
-          return StringHelper.CreateMD5Hash(combinedETag);
         }
       }
     }
@@ -1093,7 +1028,7 @@ namespace Barista.SharePoint.DocumentStore
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(importedDocSet.Item);
+          return SPDocumentStoreHelper.MapEntityFromSPListItem(importedDocSet.Item, null);
         }
       }
     }
@@ -1116,11 +1051,11 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          SPFile defaultEntityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
             return null;
 
-          DocumentSet docSet = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
+          DocumentSet docSet = DocumentSet.GetDocumentSet(defaultEntityPartFile.ParentFolder);
 
           MemoryStream ms = new MemoryStream();
           docSet.Export(ms);
@@ -1155,14 +1090,14 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out destinationList, out destinationFolder, destinationPath) == false)
             throw new InvalidOperationException("The destination folder is invalid.");
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          SPFile defaultEntityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
             throw new InvalidOperationException("An entity with the specified id could not be found.");
 
           web.AllowUnsafeUpdates = true;
           try
           {
-            defaultEntityPart.ParentFolder.MoveTo(destinationFolder.Url + "/" + defaultEntityPart.ParentFolder.Name);
+            defaultEntityPartFile.ParentFolder.MoveTo(destinationFolder.Url + "/" + defaultEntityPartFile.ParentFolder.Name);
           }
           finally
           {
@@ -1200,7 +1135,8 @@ namespace Barista.SharePoint.DocumentStore
     /// <returns></returns>
     public virtual EntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string category, string data)
     {
-      if (partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName)
+      if (partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName ||
+          partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreEntityContentsPartFileName)
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
@@ -1220,34 +1156,43 @@ namespace Barista.SharePoint.DocumentStore
           var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
             .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
-          if (entityPartContentType != null)
+          if (entityPartContentType == null)
+            throw new InvalidOperationException("Unable to locate the entity part content type");
+
+          Hashtable properties = new Hashtable
+            {
+              {"ContentTypeId", entityPartContentType.Id.ToString()},
+              {"Content Type", entityPartContentType.Name}
+            };
+
+          if (String.IsNullOrEmpty(category) == false)
+            properties.Add("Category", category);
+
+          web.AllowUnsafeUpdates = true;
+          try
           {
-            Hashtable properties = new Hashtable
-              {
-                {"ContentTypeId", entityPartContentType.Id.ToString()},
-                {"Content Type", entityPartContentType.Name}
-              };
+            if (defaultEntityPart.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
+              throw new InvalidOperationException("Insufficent Permissions.");
 
-            if (String.IsNullOrEmpty(category) == false)
-              properties.Add("Category", category);
+            SPFile partFile = defaultEntityPart.ParentFolder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.Encoding.Default.GetBytes(data), properties, true);
+            var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile, data);
 
-            web.AllowUnsafeUpdates = true;
-            try
-            {
-              if (defaultEntityPart.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
-                throw new InvalidOperationException("Insufficent Permissions.");
+            //Update the content Entity Part
+            string contentHash;
+            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, partFile.ParentFolder, null, entityPart, out contentHash);
 
-              SPFile partFile = defaultEntityPart.ParentFolder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.Encoding.Default.GetBytes(data), properties, true);
-              return SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile);
-            }
-            finally
-            {
-              web.AllowUnsafeUpdates = false;
-            }
+            SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
+            documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+            documentSetFolder.Item.UpdateOverwriteVersion();
+
+            return entityPart;
+          }
+          finally
+          {
+            web.AllowUnsafeUpdates = false;
           }
         }
       }
-      return null;
     }
 
     /// <summary>
@@ -1269,42 +1214,13 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile entityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+          SPFile entityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
             return null;
 
-          var result = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPart);
-          ProcessEntityPartFile(containerTitle, entityId, partName, entityPart, result);
+          var result = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
+          ProcessEntityPartFile(containerTitle, entityId, partName, entityPartFile, result);
 
-          return result;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the ETag of the specified entity part
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName"></param>
-    /// <returns></returns>
-    public virtual string GetEntityPartETag(string containerTitle, Guid entityId, string partName)
-    {
-      //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
-      {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
-        {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return null;
-
-          SPFile entityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
-            return null;
-
-          var result = entityPart.ETag;
           return result;
         }
       }
@@ -1346,15 +1262,15 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile entityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+          SPFile entityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
             return false;
 
           web.AllowUnsafeUpdates = true;
           try
           {
-            entityPart.Item["Name"] = newPartName + Constants.DocumentSetEntityPartExtension;
-            entityPart.Item.UpdateOverwriteVersion();
+            entityPartFile.Item["Name"] = newPartName + Constants.DocumentSetEntityPartExtension;
+            entityPartFile.Item.UpdateOverwriteVersion();
           }
           finally
           {
@@ -1399,7 +1315,18 @@ namespace Barista.SharePoint.DocumentStore
             entityPartFile.Item["Category"] = category;
             entityPartFile.Item.SystemUpdate(true);
 
-            return SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile);
+
+            EntityPart entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
+
+            //Update the content entity part
+            string contentHash;
+            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash);
+
+            SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
+            documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+            documentSetFolder.Item.UpdateOverwriteVersion();
+
+            return entityPart;
           }
           finally
           {
@@ -1435,14 +1362,23 @@ namespace Barista.SharePoint.DocumentStore
           {
             string currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
 
+            EntityPart entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, data);
+
             if (data != currentData)
             {
               entityPartFile.SaveBinary(String.IsNullOrEmpty(data) == false
                                           ? System.Text.Encoding.Default.GetBytes(data)
                                           : System.Text.Encoding.Default.GetBytes(String.Empty));
+
+              string contentHash;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash);
+
+              SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSetFolder.Item.UpdateOverwriteVersion();
             }
 
-            return SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile);
+            return entityPart;
           }
           finally
           {
@@ -1471,14 +1407,20 @@ namespace Barista.SharePoint.DocumentStore
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile entityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+          SPFile entityPartFile;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
             return false;
 
           web.AllowUnsafeUpdates = true;
           try
           {
-            entityPart.Delete();
+            entityPartFile.Delete();
+
+            string contentHash;
+            SPDocumentStoreHelper.RemoveContentEntityPartKeyValue(web, list, entityPartFile.ParentFolder, partName, out contentHash);
+
+            entityPartFile.ParentFolder.Item["DocumentEntityContentsHash"] = contentHash;
+            entityPartFile.ParentFolder.Item.UpdateOverwriteVersion();
           }
           finally
           {
@@ -1515,7 +1457,18 @@ namespace Barista.SharePoint.DocumentStore
           var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
             .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
-          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>().Where(f => entityPartContentType != null && (f.Item.ContentTypeId == entityPartContentType.Id && f.Name != Constants.DocumentStoreDefaultEntityPartFileName)).Select(SPDocumentStoreHelper.MapEntityPartFromSPFile).ToList();
+          if (entityPartContentType == null)
+            throw new InvalidOperationException("Unable to locate the entity part content type");
+
+          return defaultEntityPart.ParentFolder.Files
+            .OfType<SPFile>()
+            .Where(f =>
+              f.Item.ContentTypeId == entityPartContentType.Id &&
+              f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
+              f.Name != Constants.DocumentStoreEntityContentsPartFileName
+              )
+            .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
+            .ToList();
         }
       }
     }
@@ -2002,7 +1955,7 @@ namespace Barista.SharePoint.DocumentStore
 
           return defaultEntityPart.ParentFolder.Files.OfType<SPFile>()
             .Where(f => attachmentContentType != null && f.Item.ContentTypeId == attachmentContentType.Id)
-            .Select(SPDocumentStoreHelper.MapAttachmentFromSPFile)
+            .Select(f => SPDocumentStoreHelper.MapAttachmentFromSPFile(f))
             .ToList();
         }
       }

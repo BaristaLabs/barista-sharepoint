@@ -197,6 +197,7 @@
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
     <Compile Include="Extensions\BrewRequestExtensions.cs" />
     <Compile Include="Features\BaristaDocumentStore\BaristaDocumentStore.EventReceiver.cs">

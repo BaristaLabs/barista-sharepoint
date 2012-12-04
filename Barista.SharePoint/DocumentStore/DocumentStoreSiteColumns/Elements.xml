@@ -41,6 +41,14 @@
      Type="Text">
   </Field>
 
+  <Field ID="{fde9fe27-2621-4441-84dc-02f842aa042e}"
+       Group="Document Store Site Columns"
+       Name="DocumentEntityContentsHash"
+       DisplayName="Document Entity Contents Hash"
+       Type="Text"
+       MaxLength="255">
+  </Field>
+
   <!--Attachment metadata-->
   <Field ID="{bba7d51c-914a-4b45-bc13-daf11c6f7aea}"
        Group="Document Store Site Columns"
