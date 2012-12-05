@@ -296,7 +296,14 @@
       if (eTag != Null.Value && eTag != Undefined.Value)
         stringETag = eTag.ToString();
 
-      if (data is ObjectInstance)
+      if (data == Null.Value || data == Undefined.Value || data == null)
+      {
+        if (entityId is EntityInstance)
+          stringData = (entityId as EntityInstance).Entity.Data;
+        else
+          throw new InvalidOperationException("A data parameter must be specified if the first parameter is not an instance of an Entity object.");
+      }
+      else if (data is ObjectInstance)
 // ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
 // ReSharper restore RedundantArgumentDefaultValue

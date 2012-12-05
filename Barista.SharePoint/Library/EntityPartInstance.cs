@@ -8,7 +8,7 @@
   [Serializable]
   public class EntityPartInstance : ObjectInstance
   {
-    EntityPart m_entityPart;
+    readonly EntityPart m_entityPart;
 
     public EntityPartInstance(ScriptEngine engine, EntityPart entityPart)
       : base(engine)
@@ -56,10 +56,37 @@
     }
 
     [JSProperty(Name = "data")]
-    public virtual string Data
+    public object Data
     {
-      get { return m_entityPart.Data; }
-      set { m_entityPart.Data = value; }
+      get
+      {
+        try
+        {
+          // ReSharper disable RedundantArgumentDefaultValue
+          var result = JSONObject.Parse(this.Engine, m_entityPart.Data, null);
+          // ReSharper restore RedundantArgumentDefaultValue
+          return result;
+        }
+        catch (Exception)
+        {
+          //If there was an issue converting to a JSON object, just return the string value.
+          return m_entityPart.Data;
+        }
+      }
+      set
+      {
+
+        if (value == Null.Value || value == Undefined.Value || value == null)
+          m_entityPart.Data = String.Empty;
+        else if (value is string || value is StringInstance || value is ConcatenatedString)
+          m_entityPart.Data = value.ToString();
+        else if (value is ObjectInstance)
+          // ReSharper disable RedundantArgumentDefaultValue
+          m_entityPart.Data = JSONObject.Stringify(this.Engine, value, null, null);
+        // ReSharper restore RedundantArgumentDefaultValue
+        else
+          m_entityPart.Data = value.ToString();
+      }
     }
 
     [JSProperty(Name = "created")]

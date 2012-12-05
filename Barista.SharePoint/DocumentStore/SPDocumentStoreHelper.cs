@@ -168,7 +168,11 @@
       entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
 
       entity.ContentsETag = docSet.Item["DocumentEntityContentsHash"] as string;
-      entity.ContentsModified = (DateTime)docSet.Item["DocumentEntityContentsLastModified"];
+
+      if (docSet.Item["DocumentEntityContentsLastModified"] != null)
+      {
+        entity.ContentsModified = (DateTime) docSet.Item["DocumentEntityContentsLastModified"];
+      }
 
       entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
