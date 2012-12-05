@@ -1,10 +1,7 @@
 ﻿namespace Barista.SharePoint.Services
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using System.Runtime.InteropServices;
-  using System.Text;
   using Microsoft.SharePoint.Administration;
 
   [Guid("929093C2-7BBF-41DE-8FAB-C4B2A161924D")]
@@ -30,9 +27,8 @@
         throw new ArgumentNullException("provisioningContext");
 
       // if the service doesn't already exist, create it
-      BaristaServiceApplication serviceApp = this.Farm.GetObject(name, this.Id, serviceApplicationType) as BaristaServiceApplication;
-      if (serviceApp == null)
-        serviceApp = BaristaServiceApplication.Create(name, this, provisioningContext.IisWebServiceApplicationPool);
+      BaristaServiceApplication serviceApp = this.Farm.GetObject(name, this.Id, serviceApplicationType) as BaristaServiceApplication ??
+                                             BaristaServiceApplication.Create(name, this, provisioningContext.IisWebServiceApplicationPool);
 
       return serviceApp;
     }
@@ -71,7 +67,7 @@
 
     public Type[] GetApplicationTypes()
     {
-      return new Type[] { typeof(BaristaServiceApplication) };
+      return new[] { typeof(BaristaServiceApplication) };
     }
 
     public override SPAdministrationLink GetCreateApplicationLink(Type serviceApplicationType)

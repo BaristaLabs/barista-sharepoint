@@ -1,9 +1,6 @@
 ﻿namespace Barista.SharePoint.Services
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using Microsoft.SharePoint.Administration;
   using System.Runtime.InteropServices;
 
@@ -14,7 +11,6 @@
   public class BaristaServiceProxy : SPIisWebServiceProxy, IServiceProxyAdministration
   {
     public BaristaServiceProxy()
-      : base()
     {
     }
 
@@ -38,7 +34,7 @@
 
     public Type[] GetProxyTypes()
     {
-      return new Type[]
+      return new[]
       {
         typeof(BaristaServiceApplicationProxy)
       };

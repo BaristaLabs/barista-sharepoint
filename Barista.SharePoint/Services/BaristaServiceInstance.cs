@@ -1,9 +1,5 @@
 ﻿namespace Barista.SharePoint.Services
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using Microsoft.SharePoint.Administration;
 
   public class BaristaServiceInstance : SPIisWebServiceInstance

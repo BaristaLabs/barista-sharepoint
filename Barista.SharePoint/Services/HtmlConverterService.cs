@@ -1,4 +1,6 @@
-﻿namespace Barista.SharePoint.Services
+﻿using System.Globalization;
+
+namespace Barista.SharePoint.Services
 {
   using iTextSharp.text;
   using iTextSharp.text.html.simpleparser;
@@ -31,12 +33,12 @@
       if (WebOperationContext.Current == null)
         throw new InvalidOperationException("This operation only supports REST-based requests.");
 
-      byte[] pdfBuffer = ConvertHtmlToPDFInternal(new List<string>() { html }, null);
+      byte[] pdfBuffer = ConvertHtmlToPDFInternal(new List<string> { html }, null);
 
       var response = WebOperationContext.Current.OutgoingResponse;
       response.ContentType = "application/pdf";
       response.Headers.Add("Content-Disposition", String.Format("filename=\"{0}\"", fileName + ".pdf"));
-      response.Headers.Add("Content-Length", pdfBuffer.LongLength.ToString());
+      response.Headers.Add("Content-Length", pdfBuffer.LongLength.ToString(CultureInfo.InvariantCulture));
       return new MemoryStream(pdfBuffer);
     }
 
@@ -47,8 +49,10 @@
     /// <returns></returns>
     public byte[] ConvertHtmlToPDFInternal(IEnumerable<string> htmlDocuments, IEnumerable<InfoPathAttachment> pdfAttachments)
     {
-      Winnovative.WnvHtmlConvert.PdfConverter pdfConverter = new Winnovative.WnvHtmlConvert.PdfConverter();
-      pdfConverter.PdfStandardSubset = Winnovative.WnvHtmlConvert.PdfStandardSubset.Pdf_A_1b;
+      Winnovative.WnvHtmlConvert.PdfConverter pdfConverter = new Winnovative.WnvHtmlConvert.PdfConverter
+        {
+          PdfStandardSubset = Winnovative.WnvHtmlConvert.PdfStandardSubset.Pdf_A_1b
+        };
 
       string pdfConverterLicenseKey = Barista.SharePoint.Utilities.GetFarmKeyValue("Winnovative_HtmlToPdfConverter");
       if (string.IsNullOrEmpty(pdfConverterLicenseKey) == false)
@@ -69,14 +73,15 @@
           throw new InvalidOperationException("No PDF Document Object was created.");
 
         //Use iTextSharp to add all attachments
-        if (pdfAttachments != null && pdfAttachments.Count() > 0)
+        var infoPathAttachments = pdfAttachments as InfoPathAttachment[] ?? pdfAttachments.ToArray();
+        if (pdfAttachments != null && infoPathAttachments.Any())
         {
           PdfReader reader = new PdfReader(doc.Save());
 
           using (MemoryStream outputPdfStream = new MemoryStream())
           {
             var stamper = new PdfStamper(reader, outputPdfStream);
-            foreach (var pdfAttachment in pdfAttachments)
+            foreach (var pdfAttachment in infoPathAttachments)
             {
               stamper.AddFileAttachment(pdfAttachment.Description, pdfAttachment.Data, pdfAttachment.FileName, pdfAttachment.FileDisplayName);
             }
@@ -137,7 +142,10 @@
     public System.Drawing.Image ConvertHtmlToImageInternal(IEnumerable<string> htmlDocuments)
     {
       Winnovative.WnvHtmlConvert.ImgConverter imgConverter = new Winnovative.WnvHtmlConvert.ImgConverter();
-      imgConverter.LicenseKey = "Q2hzY3Jjc2N3bXNjcHJtcnFtenp6eg==";
+
+      string pdfConverterLicenseKey = Barista.SharePoint.Utilities.GetFarmKeyValue("Winnovative_HtmlToPdfConverter");
+      if (string.IsNullOrEmpty(pdfConverterLicenseKey) == false)
+        imgConverter.LicenseKey = pdfConverterLicenseKey;
 
       System.Drawing.Image img = null;
       foreach (var htmlDocument in htmlDocuments)
@@ -165,8 +173,8 @@
 
       if (img != null)
         return img;
-      else
-        throw new InvalidOperationException("No image object was created.");
+
+      throw new InvalidOperationException("No image object was created.");
     }
   }
 }

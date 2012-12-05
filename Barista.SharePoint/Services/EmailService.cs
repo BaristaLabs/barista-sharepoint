@@ -27,45 +27,50 @@
       if (BaristaContext.Current == null)
         throw new InvalidOperationException("No SharePoint Context.");
 
-      StringDictionary headers = new StringDictionary();
-
-      headers.Add("to", to);
-      headers.Add("cc", cc);
-      headers.Add("bcc", bcc);
-      headers.Add("from", from);
-      headers.Add("subject", subject);
-      headers.Add("content-type", "text/html");
+      //Todo: Replace tokens in message body with the specified text.
+      StringDictionary headers = new StringDictionary
+        {
+          {"to", to},
+          {"cc", cc},
+          {"bcc", bcc},
+          {"from", @from},
+          {"subject", subject},
+          {"content-type", "text/html"}
+        };
 
       messageBody = "<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html\"></HEAD><BODY>" + messageBody + "</BODY></HTML>";
 
       return EmailService.SendMailInternal(BaristaContext.Current.Site, subject, messageBody, true, from, to, cc, bcc);
     }
 
-    private static bool SendMailInternal(SPSite site, string Subject, string Body, bool IsBodyHtml, string From, string To, string Cc, string Bcc)
+    private static bool SendMailInternal(SPSite site, string subject, string body, bool isBodyHtml, string @from, string to, string cc, string bcc)
     {
-      bool mailSent = false;
       try
       {
-        SmtpClient smtpClient = new SmtpClient();
-        smtpClient.Host = site.WebApplication.OutboundMailServiceInstance.Server.Address;
+        SmtpClient smtpClient = new SmtpClient {
+          Host = site.WebApplication.OutboundMailServiceInstance.Server.Address
+        };
 
-        MailMessage mailMessage = new MailMessage(From, To, Subject, Body);
-        if (!String.IsNullOrEmpty(Cc))
+        MailMessage mailMessage = new MailMessage(@from, to, subject, body);
+        if (!String.IsNullOrEmpty(cc))
         {
-          MailAddress CCAddress = new MailAddress(Cc);
-          mailMessage.CC.Add(CCAddress);
+          MailAddress ccAddress = new MailAddress(cc);
+          mailMessage.CC.Add(ccAddress);
         }
-        if (!String.IsNullOrEmpty(Bcc))
+        if (!String.IsNullOrEmpty(bcc))
         {
-          MailAddress BCCAddress = new MailAddress(Bcc);
-          mailMessage.Bcc.Add(BCCAddress);
+          MailAddress bccAddress = new MailAddress(bcc);
+          mailMessage.Bcc.Add(bccAddress);
         }
-        mailMessage.IsBodyHtml = IsBodyHtml;
+        mailMessage.IsBodyHtml = isBodyHtml;
         smtpClient.Send(mailMessage);
-        mailSent = true;
       }
-      catch (Exception) { return mailSent; }
-      return mailSent;
+      catch (Exception)
+      {
+        return false;
+      }
+
+      return true;
     }
   }
 }

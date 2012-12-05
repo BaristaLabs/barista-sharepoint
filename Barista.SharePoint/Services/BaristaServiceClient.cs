@@ -2,14 +2,10 @@
 {
   using Microsoft.SharePoint;
   using System;
-  using System.Collections.Generic;
-  using System.IO;
-  using System.Linq;
-  using System.Text;
 
   public sealed class BaristaServiceClient
   {
-    private SPServiceContext m_serviceContext;
+    private readonly SPServiceContext m_serviceContext;
 
     public BaristaServiceClient(SPServiceContext serviceContext)
     {

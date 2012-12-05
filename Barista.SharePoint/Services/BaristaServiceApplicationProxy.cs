@@ -4,23 +4,17 @@
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Utilities;
   using System;
-  using System.Collections.Generic;
   using System.Configuration;
-  using System.IO;
-  using System.Linq;
-  using System.Net;
   using System.Runtime.InteropServices;
-  using System.Security.Principal;
   using System.ServiceModel;
   using System.ServiceModel.Channels;
   using System.ServiceModel.Configuration;
-  using System.Text;
 
   [Guid("45ABD9F3-051B-48B6-958D-E5505848FABC")]
   public class BaristaServiceApplicationProxy : SPIisWebServiceApplicationProxy
   {
     private ChannelFactory<IBaristaServiceApplication> m_channelFactory;
-    private object m_channelFactoryLock = new object();
+    private readonly object m_channelFactoryLock = new object();
     private string m_endpointConfigName;
 
     [Persisted]
@@ -102,10 +96,8 @@
         }
       }
 
-      IBaristaServiceApplication channel;
-
       // create a channel that acts as the logged on user when authenticating with the service
-      channel = m_channelFactory.CreateChannelActingAsLoggedOnUser<IBaristaServiceApplication>(new EndpointAddress(address));
+      IBaristaServiceApplication channel = m_channelFactory.CreateChannelActingAsLoggedOnUser(new EndpointAddress(address));
       return channel;
     }
 

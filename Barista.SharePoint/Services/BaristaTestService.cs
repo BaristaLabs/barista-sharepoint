@@ -18,10 +18,10 @@
   public class BaristaTestService
   {
     #region Service Operations
+
     /// <summary>
     /// Executes the specified script and does not return a result.
     /// </summary>
-    /// <param name="code"></param>
     [OperationContract(Name = "ExecRest")]
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     [WebGet(UriTemplate = "testme", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]

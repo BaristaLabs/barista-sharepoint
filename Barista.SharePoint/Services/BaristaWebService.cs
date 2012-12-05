@@ -194,7 +194,7 @@
       }
 
       if (String.IsNullOrEmpty(code))
-        throw new ArgumentNullException("code", "Code must be specified either through the 'c' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
+        throw new InvalidOperationException("Code must be specified either through the 'c' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
 
       return code;
     }

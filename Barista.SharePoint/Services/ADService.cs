@@ -2,8 +2,6 @@
 {
   using Barista.Framework;
   using Barista.DirectoryServices;
-  using Barista.SharePoint.Framework;
-
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Client.Services;
 
@@ -14,7 +12,6 @@
   using System.ServiceModel;
   using System.ServiceModel.Activation;
   using System.ServiceModel.Web;
-  using System.Web;
 
   /// <summary>
   /// Represents a service to retrieve people in the system.
@@ -45,12 +42,12 @@
         using (ADContext ctx = new ADContext(ldapRoot))
         {
           string domainName = ldapRoot.Path.Replace("LDAP://", "");
-          string preWin2kLoginName = loginName.Replace(domainName + "\\", "");
+          string preWin2KLoginName = loginName.Replace(domainName + "\\", "");
 
           ctx.Users.Searcher.SizeLimit = 1;
 
           result = (from usr in ctx.Users
-                    where usr.PreWin2kLogonName == preWin2kLoginName
+                    where usr.PreWin2kLogonName == preWin2KLoginName
                     select usr).ToList().FirstOrDefault();
         }
       });
@@ -94,7 +91,6 @@
     public IEnumerable<DirectoryEntity> SearchAllDirectoryEntities(string searchText, int maxResults, PrincipalType principalType)
     {
       List<DirectoryEntity> result = new List<DirectoryEntity>();
-      string domain = Utilities.GetFarmKeyValue("WindowsDomainShortName");
 
       searchText = searchText.Trim();
 
@@ -116,8 +112,7 @@
                               usr.PreWin2kLogonName == "*" + searchText + "*"
                         select usr;
 
-            foreach (var user in users)
-              result.Add(user);
+            result.AddRange(Enumerable.Cast<DirectoryEntity>(users));
           }
           else if ((principalType & PrincipalType.SecurityGroup) == PrincipalType.SecurityGroup)
           {
@@ -125,8 +120,7 @@
                          where grp.Name == "*" + searchText + "*"
                          select grp;
 
-            foreach (var group in groups)
-              result.Add(group);
+            result.AddRange(Enumerable.Cast<DirectoryEntity>(groups));
           }
           else
           {
