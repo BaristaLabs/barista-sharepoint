@@ -222,7 +222,6 @@
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\QueryString.cs" />
     <Compile Include="DocumentStore\IndexDefinition.cs" />
-    <Compile Include="DocumentStore\Interfaces\IAsyncExecDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IAttachmentCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\ICommentCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IDocumentStore.cs" />

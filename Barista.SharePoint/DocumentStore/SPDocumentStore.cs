@@ -12,9 +12,6 @@
   using System.Linq;
   using System.Linq.Expressions;
   using System.Net;
-  using System.Threading.Tasks;
-  using System.Web;
-
 
   /// <summary>
   /// Represents a SharePoint-backed Document Store.
@@ -22,7 +19,6 @@
   [Serializable]
   public class SPDocumentStore :
     IFullyCapableDocumentStore,
-    IAsyncExecDocumentStore,
     IDisposable
   {
     #region Fields
@@ -3557,16 +3553,6 @@
           defaultEntityPart.Web.AllowUnsafeUpdates = false;
         }
       }
-    }
-
-    #endregion
-
-    #region ExecAsync
-
-    public Task ExecAsync(Action action)
-    {
-      Repository repository = Repository.GetRepository();
-      return SPDocumentStoreHelper.ExecuteAsync(repository, HttpContext.Current, this.Web, action);
     }
 
     #endregion
