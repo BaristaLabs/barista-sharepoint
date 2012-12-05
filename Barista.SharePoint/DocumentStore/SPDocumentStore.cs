@@ -649,9 +649,14 @@
               string contentHash;
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPartFile.ParentFolder,
                                                                     entity, null, out contentHash);
+
+              var contentsLastModified = DateTime.Now;
               entityDocumentSet.Item["DocumentEntityContentsHash"] = contentHash;
-              entityDocumentSet.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+              entityDocumentSet.Item["DocumentEntityContentsLastModified"] = contentsLastModified;
               entityDocumentSet.Item.UpdateOverwriteVersion();
+
+              entity.ContentsETag = contentHash;
+              entity.ContentsModified = contentsLastModified;
             }
             else
             {
@@ -716,10 +721,14 @@
               string contentHash;
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash);
 
+              var contentsLastModified = DateTime.Now;
               SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentsLastModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
+
+              entity.ContentsETag = contentHash;
+              entity.ContentsModified = contentsLastModified;
             }
           }
           finally
@@ -1331,7 +1340,7 @@
             documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
             documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
             documentSetFolder.Item.UpdateOverwriteVersion();
-
+            
             return entityPart;
           }
           finally
