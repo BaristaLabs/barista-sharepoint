@@ -49,6 +49,14 @@
        MaxLength="255">
   </Field>
 
+  <Field ID="{db7f92c5-50ff-4e28-a0b7-0cc43da4270f}"
+       Group="Document Store Site Columns"
+       Name="DocumentEntityContentsLastModified"
+       DisplayName="Document Entity Contents Last Modified"
+       Type="DateTime"
+       Format="DateTime">
+  </Field>
+
   <!--Attachment metadata-->
   <Field ID="{bba7d51c-914a-4b45-bc13-daf11c6f7aea}"
        Group="Document Store Site Columns"

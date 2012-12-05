@@ -1,19 +1,15 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using Barista.Extensions;
   using Barista.DocumentStore;
   using Barista.Library;
-  using Barista.SharePoint.Helpers;
   using Jurassic;
   using Jurassic.Library;
   using System;
-  using System.Linq;
-  using Newtonsoft.Json;
 
   [Serializable]
   public class RepositoryInstance : ObjectInstance
   {
-    Repository m_repository;
+    readonly Repository m_repository;
 
     public RepositoryInstance(ScriptEngine engine, Repository repository)
       : base(engine)
@@ -67,7 +63,7 @@
     [JSFunction(Name="listFolders")]
     public ArrayInstance ListFolders(object path)
     {
-      var stringPath = String.Empty;
+      string stringPath;
       if (path is FolderInstance)
         stringPath = (path as FolderInstance).FullPath;
       else if (path == Undefined.Value || path == Null.Value || path == null)
@@ -93,7 +89,7 @@
     [JSFunction(Name="createFolder")]
     public FolderInstance CreateFolder(object path)
     {
-      var stringPath = String.Empty;
+      string stringPath;
       if (path is FolderInstance)
         stringPath = (path as FolderInstance).FullPath;
       else if (path == Undefined.Value || path == Null.Value || path == null)
@@ -111,7 +107,7 @@
     [JSFunction(Name="deleteFolder")]
     public void DeleteFolder(object path)
     {
-      var stringPath = String.Empty;
+      string stringPath;
       if (path is FolderInstance)
         stringPath = (path as FolderInstance).FullPath;
       else if (path == Undefined.Value || path == Null.Value || path == null)
@@ -131,9 +127,9 @@
     [JSFunction(Name = "createEntity")]
     public EntityInstance CreateEntity(object path, object entityNamespace, object data)
     {
-      var stringPath = "";
+      string stringPath;
       var stringEntityNamespace = "";
-      var stringData = "";
+      string stringData;
 
       if (path is FolderInstance)
         stringPath = (path as FolderInstance).FullPath;
@@ -146,7 +142,9 @@
         stringEntityNamespace = entityNamespace.ToString();
 
       if (data is ObjectInstance)
+// ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
+// ReSharper restore RedundantArgumentDefaultValue
       else
         stringData = data.ToString();
 
@@ -203,7 +201,7 @@
       else
         id = new Guid(entityId.ToString());
 
-      string stringPath = String.Empty;
+      string stringPath;
       if (path is FolderInstance)
         stringPath = (path as FolderInstance).FullPath;
       else if (path == Undefined.Value || path == Null.Value || path == null)
@@ -292,14 +290,16 @@
       else
         id = new Guid(entityId.ToString());
 
-      var stringData = "";
+      string stringData;
       var stringETag = "";
 
       if (eTag != Null.Value && eTag != Undefined.Value)
         stringETag = eTag.ToString();
 
       if (data is ObjectInstance)
+// ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
+// ReSharper restore RedundantArgumentDefaultValue
       else
         stringData = data.ToString();
 
@@ -393,11 +393,10 @@
       if (partName == null || partName == Null.Value || partName == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "The name of the desired entity part must be defined as the second parameter.");
 
-      var stringPartName = "";
       var stringCategory = "";
       var stringData = "";
 
-      stringPartName = partName.ToString();
+      string stringPartName = partName.ToString();
 
       if (String.IsNullOrEmpty(stringPartName))
         throw new JavaScriptException(this.Engine, "Error", "When creating an entity part, a part name must be specified.");
@@ -406,7 +405,9 @@
         stringCategory = category.ToString();
 
       if (data is ObjectInstance)
+// ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
+// ReSharper restore RedundantArgumentDefaultValue
       else if (data != null)
         stringData = data.ToString();
 
@@ -437,7 +438,7 @@
       
       var stringPartName = "";
       var stringCategory = "";
-      var stringData = "";
+      string stringData;
 
       if (partName != Null.Value && partName != Undefined.Value)
         stringPartName = partName.ToString();
@@ -446,19 +447,16 @@
         stringCategory = category.ToString();
 
       if (data is ObjectInstance)
+// ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
+// ReSharper restore RedundantArgumentDefaultValue
       else
         stringData = data.ToString();
 
       var entityPart = m_repository.GetEntityPart(id, stringPartName);
-      if (entityPart == null)
-      {
-        entityPart = m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData);
-      }
-      else
-      {
-        entityPart = m_repository.UpdateEntityPartData(id, stringPartName, stringData);
-      }
+      entityPart = entityPart == null 
+        ? m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData)
+        : m_repository.UpdateEntityPartData(id, stringPartName, stringData);
 
       return new EntityPartInstance(this.Engine, entityPart);
     }
@@ -556,7 +554,7 @@
         id = new Guid(entityId.ToString());
 
       var stringPartName = "";
-      var stringData = "";
+      string stringData;
       var stringETag = "";
 
       if (partName != Null.Value && partName != Undefined.Value)
@@ -566,7 +564,9 @@
         stringETag = eTag.ToString();
 
       if (data is ObjectInstance)
+// ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
+// ReSharper restore RedundantArgumentDefaultValue
       else
         stringData = data.ToString();
 
@@ -651,9 +651,11 @@
       var attachment = m_repository.GetAttachment(id, fileName);
       var streamResult = m_repository.DownloadAttachment(id, fileName);
 
-      var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, streamResult.ReadToEnd());
-      result.MimeType = attachment.MimeType;
-      result.FileName = attachment.FileName;
+      var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, streamResult.ReadToEnd())
+        {
+          MimeType = attachment.MimeType,
+          FileName = attachment.FileName
+        };
 
       return result;
     }

@@ -167,12 +167,8 @@
       entity.Created = (DateTime)docSet.Item[SPBuiltInFieldId.Created];
       entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
 
-      //var latestFile = listItem.Folder.Files.OfType<SPFile>().OrderByDescending(f => f.TimeLastModified).FirstOrDefault();
-      //var combinedETag = String.Join(", ", listItem.Folder.Files.OfType<SPFile>().Select(f => f.ETag).ToArray());
       entity.ContentsETag = docSet.Item["DocumentEntityContentsHash"] as string;
-
-      //if (latestFile != null)
-      //  entity.ContentsModified = latestFile.TimeLastModified;
+      entity.ContentsModified = (DateTime)docSet.Item["DocumentEntityContentsLastModified"];
 
       entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
