@@ -487,7 +487,78 @@
     #endregion
 
     #region Static Methods
+
+    private static readonly object SyncRoot = new object();
+
     private static volatile IRepositoryFactory s_repositoryFactory;
+
+    private static volatile IDocumentStore s_documentStore;
+
+    public static IRepositoryFactory RepositoryFactory
+    {
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("value");
+
+        //Double-Check Locking Pattern
+        if (s_repositoryFactory != null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_repositoryFactory != null)
+            {
+              throw new InvalidOperationException(
+                "The Repository has already been initialized. Please attempt to set the repository factory before the repository has been used.");
+            }
+          }
+        }
+
+        if (s_repositoryFactory == null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_repositoryFactory == null)
+            {
+              s_repositoryFactory = value;
+            }
+          }
+        }
+      }
+    }
+
+    public static IDocumentStore DocumentStore
+    {
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("value");
+
+        //Double-Check Locking Pattern
+        if (s_documentStore != null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_documentStore != null)
+            {
+              throw new InvalidOperationException(
+                "The Document STore has already been initialized. Please attempt to set the document store before the repository has been used.");
+            }
+          }
+        }
+
+        if (s_documentStore == null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_documentStore == null)
+            {
+              s_documentStore = value;
+            }
+          }
+        }
+      }
+    }
 
     /// <summary>
     /// Using the Repository Factory defined in configuration, returns a repository object.
@@ -495,7 +566,7 @@
     /// <returns></returns>
     public static Repository GetRepository()
     {
-      return GetRepository(null, null);
+      return GetRepository(s_repositoryFactory, s_documentStore);
     }
 
     /// <summary>
@@ -505,7 +576,7 @@
     /// <returns></returns>
     public static Repository GetRepository(IRepositoryFactory factory)
     {
-      return GetRepository(factory, null);
+      return GetRepository(factory, s_documentStore);
     }
 
     /// <summary>
@@ -528,8 +599,6 @@
 
       return repository;
     }
-
-    private static readonly object SyncRoot = new object();
 
     private static IRepositoryFactory GetRepositoryFactoryFromConfiguration()
     {

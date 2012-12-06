@@ -12,8 +12,8 @@
   [Serializable]
   public class Common : ObjectInstance
   {
-    private Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
-    private Dictionary<IBundle, object> m_installedBundles = new Dictionary<IBundle, object>();
+    private readonly Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
+    private readonly Dictionary<IBundle, object> m_installedBundles = new Dictionary<IBundle, object>();
 
     public Common(ObjectInstance prototype)
       : base(prototype)
@@ -42,6 +42,7 @@
           throw new JavaScriptException(this.Engine, "Error", "The specified bundle does not exist: " + name);
 
         bundle = Activator.CreateInstance(type) as IBundle;
+        RegisterBundle(bundle);
       }
 
       if (bundle == null)

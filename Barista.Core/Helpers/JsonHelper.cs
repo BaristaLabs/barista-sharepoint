@@ -57,6 +57,27 @@
     }
 
     /// <summary>
+    /// Given two objects, perform a diff on the objects and return the result as a new object that contains the differences.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public static T Diff<T>(T a, T b, JsonSerializerSettings settings)
+    {
+      var jsonA = JsonConvert.SerializeObject(a, settings);
+      var jsonB = JsonConvert.SerializeObject(b, settings);
+
+      var engine = JsonHelper.Engine;
+      engine.Execute("var a = " + jsonA + ";");
+      engine.Execute("var b = " + jsonB + ";");
+      var result = engine.Evaluate("jsonDataHandler.diff(a, b);");
+      var stringResult = JSONObject.Stringify(engine, result, null, null);
+
+      return JsonConvert.DeserializeObject<T>(stringResult, settings);
+    }
+
+    /// <summary>
     /// Given two json strings, merge a with b and return the result as a formatted json string.
     /// </summary>
     /// <param name="a"></param>

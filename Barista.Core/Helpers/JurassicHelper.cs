@@ -1,24 +1,21 @@
 ﻿namespace Barista
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using System.Text;
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
-  using System.Collections;
 
   public static class JurassicHelper
   {
-    public static double ToJSDate(DateTime dateTime)
+    public static double ToJsDate(DateTime dateTime)
     {
       return dateTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
     }
 
     public static DateInstance ToDateInstance(ScriptEngine engine, DateTime dateTime)
     {
-      var dateNumeric = ToJSDate(dateTime);
+      var dateNumeric = ToJsDate(dateTime);
       return engine.Date.Construct(dateNumeric);
     }
 
@@ -34,13 +31,12 @@
       if (instance is T)
         return instance as T;
 
-      string serializedObject = String.Empty;
+      string serializedObject;
 
       var objectInstance = instance as ObjectInstance;
-      if (objectInstance != null)
-        serializedObject = JSONObject.Stringify(engine, objectInstance, null, null);
-      else
-        serializedObject = JsonConvert.SerializeObject(instance);
+      serializedObject = objectInstance != null
+        ? JSONObject.Stringify(engine, objectInstance, null, null)
+        : JsonConvert.SerializeObject(instance);
 
       T result = (T)Activator.CreateInstance(typeof(T), engine.Object.InstancePrototype);
       JsonConvert.PopulateObject(serializedObject, result);

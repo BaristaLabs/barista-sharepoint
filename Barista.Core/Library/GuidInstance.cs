@@ -87,5 +87,16 @@
     {
       return m_guid.ToString();
     }
+
+    public static Guid ConvertFromJsObjectToGuid(object guid)
+    {
+      Guid id;
+      if (guid is GuidInstance)
+        id = (guid as GuidInstance).Value;
+      else
+        id = new Guid(guid.ToString());
+
+      return id;
+    }
   }
 }

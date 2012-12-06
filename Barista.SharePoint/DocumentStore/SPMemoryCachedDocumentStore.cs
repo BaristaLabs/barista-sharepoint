@@ -18,6 +18,15 @@ namespace Barista.SharePoint.DocumentStore
     private static readonly TimeSpan CacheSlidingExpiration = TimeSpan.FromMinutes(15);
     private const string EntityContentsCachePrefix = "BaristaDS_EntityContents_";
 
+    public SPMemoryCachedDocumentStore()
+    {
+    }
+
+    public SPMemoryCachedDocumentStore(SPWeb web)
+      :base(web)
+    {
+    }
+
     public override Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.

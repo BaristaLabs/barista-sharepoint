@@ -158,13 +158,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var result = m_repository.CloneEntity(id, sourcePath, targetPath);
       return new EntityInstance(this.Engine, result);
@@ -176,13 +170,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.DeleteEntity(id);
     }
@@ -193,13 +181,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       string stringPath;
       if (path is FolderInstance)
@@ -265,13 +247,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.MoveEntity(id, destinationPath);
     }
@@ -282,13 +258,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       string stringData;
       var stringETag = "";
@@ -324,13 +294,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       string stringNewNamespace = null;
       if (newNamespace != Null.Value && newNamespace != Undefined.Value)
@@ -353,13 +317,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var result = m_repository.AddEntityComment(id, comment);
       return new CommentInstance(this.Engine, result);
@@ -371,13 +329,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var result = this.Engine.Array.Construct();
 
@@ -418,13 +370,7 @@
       else if (data != null)
         stringData = data.ToString();
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return new EntityPartInstance(this.Engine, m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData));
     }
@@ -435,13 +381,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
       
       var stringPartName = "";
       var stringCategory = "";
@@ -474,13 +414,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.DeleteEntityPart(id, partName);
     }
@@ -491,13 +425,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var result = m_repository.GetEntityPart(id, partName);
 
@@ -513,13 +441,7 @@
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.HasEntityPart(id, partName);
     }
@@ -552,13 +474,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var stringPartName = "";
       string stringData;
@@ -591,13 +507,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       foreach (var attachment in m_repository.ListAttachments(id))
       {
@@ -613,13 +523,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return new AttachmentInstance(this.Engine, m_repository.GetAttachment(id, fileName));
     }
@@ -630,13 +534,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return new AttachmentInstance(this.Engine, m_repository.UploadAttachment(id, fileName, attachment.Data));
     }
@@ -647,13 +545,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       var attachment = m_repository.GetAttachment(id, fileName);
       var streamResult = m_repository.DownloadAttachment(id, fileName);
@@ -673,13 +565,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.DeleteAttachment(id, fileName);
     }
@@ -732,13 +618,7 @@
       if (entityId == null || entityId == Null.Value || entityId == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "An entity id or an entity must be defined as the first parameter.");
 
-      Guid id;
-      if (entityId is EntityInstance)
-        id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
-      else
-        id = new Guid(entityId.ToString());
+      var id = ConvertFromJsObjectToGuid(entityId);
 
       if (path != Null.Value && path != Undefined.Value)
         stringPath = path.ToString();
@@ -746,6 +626,21 @@
       var entity = m_repository.GetEntity(id, stringPath);
       var entityPart = m_repository.ListEntityParts(id);
       return new EntitySetInstance(this.Engine, entity, entityPart);
+    }
+    #endregion
+
+    #region Helpers
+    public static Guid ConvertFromJsObjectToGuid(object guid)
+    {
+      Guid id;
+      if (guid is EntityInstance)
+        id = (guid as EntityInstance).Entity.Id;
+      else if (guid is GuidInstance)
+        id = (guid as GuidInstance).Value;
+      else
+        id = new Guid(guid.ToString());
+
+      return id;
     }
     #endregion
   }
