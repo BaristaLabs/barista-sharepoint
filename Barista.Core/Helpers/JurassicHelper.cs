@@ -31,12 +31,10 @@
       if (instance is T)
         return instance as T;
 
-      string serializedObject;
-
       var objectInstance = instance as ObjectInstance;
-      serializedObject = objectInstance != null
-        ? JSONObject.Stringify(engine, objectInstance, null, null)
-        : JsonConvert.SerializeObject(instance);
+      string serializedObject = objectInstance != null
+                                  ? JSONObject.Stringify(engine, objectInstance, null, null)
+                                  : JsonConvert.SerializeObject(instance);
 
       T result = (T)Activator.CreateInstance(typeof(T), engine.Object.InstancePrototype);
       JsonConvert.PopulateObject(serializedObject, result);
