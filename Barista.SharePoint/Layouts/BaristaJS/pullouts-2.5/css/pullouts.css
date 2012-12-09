@@ -1,0 +1,269 @@
+/*
+Comment out the body rule
+if this plugin is causing a horizontal scroll bar
+at the bottom of your browser
+*/
+body {
+    overflow-x: hidden;
+    position: relative;
+}
+
+.pullouts{
+    position: fixed;    
+    clear: both;    
+    background-color: #eee;    
+}
+
+.pullouts .widget {
+    margin: 0!important;
+    padding: 0!important;
+    height: auto!important;
+}
+
+.pullouts .widgettitle, .pullouts .widget-title {
+    margin-top: 0!important;
+    padding-top: 0!important;
+}
+
+.pullout-closed {
+    position: fixed;
+}
+
+.pullout-opened {
+    z-index: 100010;
+}
+
+.reset-position {
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;    
+    height: auto;
+}
+
+.pullouts.pullout-closed {
+    -webkit-box-shadow: none!important;
+    box-shadow: none!important;
+}
+
+.pullouts.side_left {
+    -webkit-box-shadow: 1px 1px 3px #999;
+    box-shadow: 1px 1px 3px #999;
+}
+.pullouts.side_right {
+    -webkit-box-shadow: -1px 1px 3px #999;
+    box-shadow: -1px 1px 3px #999;
+}
+.pullouts.side_top {
+    -webkit-box-shadow: 1px 1px 3px #999;
+    box-shadow: 1px 1px 3px #999;
+}
+.pullouts.side_bottom {
+    -webkit-box-shadow: 1px -1px 3px #999;
+    box-shadow: 1px -1px 3px #999;
+}
+
+.pullout-content {        
+    display: block;
+    padding: 10px 20px;
+    clear: both;
+}
+
+.pullout-button {
+    position: absolute;    
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+    cursor: pointer;
+    text-align: center;
+    line-height: 17px;
+}
+
+.pullout-button span, .pullout-button .icon {
+    display: inline-block;
+    margin: 10px;
+    padding: 0px;
+    vertical-align: top;
+    *display: inline;
+    zoom: 1;
+}
+
+.side_left .pullout-button {
+    position: absolute;
+    top: 0;
+    -webkit-box-shadow: 3px 1px 3px #999;
+    box-shadow: 3px 1px 3px #999;
+}
+
+.side_right .pullout-button {
+    position: absolute;
+    top: 0;
+    -webkit-box-shadow: -3px 1px 3px #999;
+    box-shadow: -3px 1px 3px #999;
+}
+
+.side_top .pullout-button {    
+    -webkit-box-shadow: 1px 3px 3px #999;
+    box-shadow: 1px 3px 3px #999;
+}
+
+.side_bottom .pullout-button {    
+    -webkit-box-shadow: 1px -3px 3px #999;
+    box-shadow: 1px -3px 3px #999;
+}
+
+.side_left .pullout-button.rotate {
+    transform: rotate(270deg);
+    transform-origin: bottom right;
+    -o-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);    
+    -ms-transform: rotate(270deg);
+    -o-transform-origin: bottom right;
+    -moz-transform-origin: bottom right;
+    -webkit-transform-origin: bottom right;
+    -ms-transform-origin: bottom right;
+    -webkit-box-shadow: -1px 3px 3px #999;
+    box-shadow: -1px 3px 3px #999;
+}
+
+
+.pullout-button .icon {    
+    background: url(../images/icons.png) no-repeat;
+    width: 17px;
+    height: 17px;
+    margin-right: 0;
+}
+
+.side_left .pullout-button.rotate .icon {
+    transform: rotate(90deg);
+    transform-origin: none;
+    -o-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -o-transform-origin: none;
+    -moz-transform-origin: none;
+    -webkit-transform-origin: none;
+    -ms-transform-origin: none;
+}
+
+.side_right .pullout-button.rotate {    
+    transform: rotate(90deg);
+    transform-origin: bottom left;
+    -o-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform-origin: bottom left;
+    -moz-transform-origin: bottom left;
+    -webkit-transform-origin: bottom left;
+    -ms-transform-origin: bottom left;
+    -webkit-box-shadow: 1px 3px 3px #999;
+    box-shadow: 1px 3px 3px #999;
+}
+
+.side_right .pullout-button.rotate .icon {    
+    transform: rotate(270deg);
+    transform-origin: none;
+    -o-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);    
+    -o-transform-origin: none;
+    -moz-transform-origin: none;
+    -webkit-transform-origin: none;
+    -ms-transform-origin: none;    
+}
+
+/**** Borders ****/
+/*Left Side*/
+.borders.pullouts.side_left {    
+    border: 3px solid #fff;
+    border-left: none;    
+}
+.borders.side_left .pullout-button {
+    border: 3px solid #fff;
+    border-left: none;    
+}
+.borders.side_left .pullout-button.rotate {
+    border: 3px solid #fff;
+    border-top: none;
+}
+/*Right Side*/
+.borders.pullouts.side_right {    
+    border: 3px solid #fff;     
+    border-right: none;
+}
+.borders.side_right .pullout-button {
+    border: 3px solid #fff;
+    border-right: none; 
+}
+.borders.side_right .pullout-button.rotate {
+    border: 3px solid #fff;
+    border-top: none;    
+}
+/*Top Side*/
+.borders.pullouts.side_top {    
+    border: 3px solid #fff;    
+    border-top: none;
+}
+.borders.side_top .pullout-button {
+    border: 3px solid #fff;
+    border-top: none;    
+}
+/*Bottom Side*/
+.borders.pullouts.side_bottom {    
+    border: 3px solid #fff;    
+    border-bottom: none;
+}
+.borders.side_bottom .pullout-button {
+    border: 3px solid #fff;
+    border-bottom: none;    
+}
+
+
+
+/**** Rounded Corners ****/
+/*Left Side*/
+.rounded.side_left{
+    border-bottom-right-radius: 10px;
+}
+.rounded.side_left .pullout-button{    
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+.rounded.side_left .pullout-button.rotate {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 0px;
+}
+/*Right Side*/
+.rounded.side_right{
+    border-bottom-left-radius: 10px;
+}
+.rounded.side_right .pullout-button{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.rounded.side_right .pullout-button.rotate {
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 0px;
+}
+/*Top Side*/
+.rounded.side_top{
+    border-bottom-right-radius: 10px;
+}
+.rounded.side_top .pullout-button{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+/*Bottom Side*/
+.rounded.side_bottom{
+    border-top-right-radius: 10px;
+}
+.rounded.side_bottom .pullout-button{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}

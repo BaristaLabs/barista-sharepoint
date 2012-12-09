@@ -297,7 +297,7 @@
     <None Include="Resources\linq.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\mustache.js" />
+    <Content Include="Resources\mustache.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
