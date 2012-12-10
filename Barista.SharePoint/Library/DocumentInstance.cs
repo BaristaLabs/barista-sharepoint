@@ -25,9 +25,11 @@
     public Base64EncodedByteArrayInstance Html2Pdf(string html)
     {
       HtmlConverterService service = new HtmlConverterService();
-      var result = service.ConvertHtmlToPDFInternal(new List<string>() { html }, null);
-      var byteResult =  new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result);
-      byteResult.MimeType = "application/pdf";
+      var result = service.ConvertHtmlToPdfInternal(new List<string> { html }, null);
+      var byteResult =  new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result)
+        {
+          MimeType = "application/pdf"
+        };
       return byteResult;
     }
 

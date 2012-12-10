@@ -33,7 +33,7 @@ namespace Barista.SharePoint.Services
       if (WebOperationContext.Current == null)
         throw new InvalidOperationException("This operation only supports REST-based requests.");
 
-      byte[] pdfBuffer = ConvertHtmlToPDFInternal(new List<string> { html }, null);
+      byte[] pdfBuffer = ConvertHtmlToPdfInternal(new List<string> { html }, null);
 
       var response = WebOperationContext.Current.OutgoingResponse;
       response.ContentType = "application/pdf";
@@ -46,8 +46,9 @@ namespace Barista.SharePoint.Services
     /// Converts the specified html documents to a single pdf file.
     /// </summary>
     /// <param name="htmlDocuments"></param>
+    /// <param name="pdfAttachments"></param>
     /// <returns></returns>
-    public byte[] ConvertHtmlToPDFInternal(IEnumerable<string> htmlDocuments, IEnumerable<InfoPathAttachment> pdfAttachments)
+    public byte[] ConvertHtmlToPdfInternal(IEnumerable<string> htmlDocuments, ICollection<InfoPathAttachment> pdfAttachments)
     {
       Winnovative.WnvHtmlConvert.PdfConverter pdfConverter = new Winnovative.WnvHtmlConvert.PdfConverter
         {
@@ -73,15 +74,14 @@ namespace Barista.SharePoint.Services
           throw new InvalidOperationException("No PDF Document Object was created.");
 
         //Use iTextSharp to add all attachments
-        var infoPathAttachments = pdfAttachments as InfoPathAttachment[] ?? pdfAttachments.ToArray();
-        if (pdfAttachments != null && infoPathAttachments.Any())
+        if (pdfAttachments != null && pdfAttachments.Any())
         {
           PdfReader reader = new PdfReader(doc.Save());
 
           using (MemoryStream outputPdfStream = new MemoryStream())
           {
             var stamper = new PdfStamper(reader, outputPdfStream);
-            foreach (var pdfAttachment in infoPathAttachments)
+            foreach (var pdfAttachment in pdfAttachments)
             {
               stamper.AddFileAttachment(pdfAttachment.Description, pdfAttachment.Data, pdfAttachment.FileName, pdfAttachment.FileDisplayName);
             }
