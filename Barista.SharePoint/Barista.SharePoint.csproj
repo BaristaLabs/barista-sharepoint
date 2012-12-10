@@ -1065,11 +1065,13 @@
     <Content Include="Layouts\BaristaJS\foobar-2.1\jquery.foobar.2.1.css" />
     <Content Include="Layouts\BaristaJS\foobar-2.1\jquery.foobar.2.1.js" />
     <Content Include="Layouts\BaristaJS\foobar-2.1\jquery.foobar.2.1.min.js" />
+    <Content Include="Layouts\BaristaJS\handlebars-1.0.rc.1.js" />
     <Content Include="Layouts\BaristaJS\html5.js" />
     <Content Include="Layouts\BaristaJS\jquery-1.8.2.min.js" />
     <Content Include="Layouts\BaristaJS\jquery.ba-resize.min.js" />
     <Content Include="Layouts\BaristaJS\jquery.hotkeys.js" />
     <Content Include="Layouts\BaristaJS\jquery.isotope.min.js" />
+    <Content Include="Layouts\BaristaJS\jquery.preloadify.min.js" />
     <Content Include="Layouts\BaristaJS\jquery.validate.additional-methods-1.10.0.min.js" />
     <Content Include="Layouts\BaristaJS\jquery.validate-1.10.0.min.js" />
     <Content Include="Layouts\BaristaJS\jslint.js" />
@@ -1244,6 +1246,8 @@
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\test\testrunner.min.htm" />
     <Content Include="Layouts\BaristaJS\load-image.min.js" />
     <Content Include="Layouts\BaristaJS\modernizr-2.6.2.js" />
+    <Content Include="Layouts\BaristaJS\moment.js" />
+    <Content Include="Layouts\BaristaJS\moment.min.js" />
     <Content Include="Layouts\BaristaJS\mustache.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-6.9.1\cors\postmessage.html" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-6.9.1\cors\result.html" />
@@ -1342,6 +1346,8 @@
     <Content Include="Layouts\BaristaJS\rx\rx.time.js" />
     <Content Include="Layouts\BaristaJS\rx\rx.time.min.js" />
     <Content Include="Layouts\BaristaJS\store.js" />
+    <Content Include="Layouts\BaristaJS\string.js" />
+    <Content Include="Layouts\BaristaJS\string.min.js" />
     <Content Include="Layouts\BaristaJS\tmpl.min.js" />
     <Content Include="PowerShell Registration\BaristaServiceApplication.xml" />
     <Content Include="WebServices\Barista\Barista.svc" />

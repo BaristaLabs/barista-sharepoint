@@ -319,6 +319,8 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         BaristaGlobal instance = new BaristaGlobal(engine.Object.InstancePrototype);
 
         instance.Common.RegisterBundle(webBundle);
+        instance.Common.RegisterBundle(new StringBundle());
+        instance.Common.RegisterBundle(new MomentBundle());
         instance.Common.RegisterBundle(new MustacheBundle());
         instance.Common.RegisterBundle(new LinqBundle());
         instance.Common.RegisterBundle(new JsonDataBundle());

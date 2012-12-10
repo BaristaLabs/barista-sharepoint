@@ -63,17 +63,14 @@ namespace Barista.Properties {
         /// <summary>
         ///   Looks up a localized string similar to // Author: Michael Schøler, 2008
         ///// Dual licensed as MIT and LGPL, use as you like, don&apos;t hold me responsible for success or failure though
-        ///Array.prototype.compareTo = function(compareAry) {
-        ///  if (this.length === compareAry.length) {
-        ///    var i;
-        ///    for (i = 0; i &lt; compareAry.length; i+=1) {
-        ///      if (Object.isArray(this[i]) === true) {
-        ///        if (this[i].compareTo(compareAry[i]) === false) {
-        ///          return false;
-        ///        }
-        ///        continue;
-        ///      }
-        ///      else if (this[i] !== compareAry[i]) {        /// [rest of string was truncated]&quot;;.
+        ///Array.prototype.compareTo = function (compareAry) {
+        ///    if (this.length === compareAry.length) {
+        ///        var i;
+        ///        for (i = 0; i &lt; compareAry.length; i += 1) {
+        ///            if (Object.prototype.toString.call(this[i]) === &apos;[object Array]&apos;) {
+        ///                if (this[i].compareTo(compareAry[i]) === false) {
+        ///                    return false;
+        ///                }        /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string jsonDataHandler {
             get {
@@ -106,32 +103,16 @@ namespace Barista.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*!
-        /// * mustache.js - Logic-less {{mustache}} templates with JavaScript
-        /// * http://github.com/janl/mustache.js
-        /// */
-        ///
-        ////*global define: false*/
-        ///
-        ///var Mustache;
-        ///
-        ///(function (exports) {
-        ///  if (typeof module !== &quot;undefined&quot; &amp;&amp; typeof module.exports !== &quot;undefined&quot;) {
-        ///    module.exports = exports; // CommonJS
-        ///  } else if (typeof define === &quot;function&quot;) {
-        ///    define(exports); // AMD
-        ///  } else {
-        ///    Mustache = exports; // &lt;script&gt;
-        ///  }
-        ///}((function () {
-        ///  var exports = {};
-        ///
-        ///  exports.name = &quot;mustache.js&quot;;
-        ///  exports.version = [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to // moment.js
+        ///// version : 1.7.2
+        ///// author : Tim Wood
+        ///// license : MIT
+        ///// momentjs.com
+        ///(function(a){function E(a,b,c,d){var e=c.lang();return e[a].call?e[a](c,d):e[a][b]}function F(a,b){return function(c){return K(a.call(this,c),b)}}function G(a){return function(b){var c=a.call(this,b);return c+this.lang().ordinal(c)}}function H(a,b,c){this._d=a,this._isUTC=!!b,this._a=a._a||null,this._lang=c||!1}function I(a){var b=this._data={},c=a.years||a.y||0,d=a.months||a.M||0,e=a.weeks||a.w||0,f=a.days||a.d||0,g=a.hou [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string mustache {
+        public static string moment_min {
             get {
-                return ResourceManager.GetString("mustache", resourceCulture);
+                return ResourceManager.GetString("moment_min", resourceCulture);
             }
         }
         
@@ -141,6 +122,24 @@ namespace Barista.Properties {
         public static string stateMachine {
             get {
                 return ResourceManager.GetString("stateMachine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///string.js - Copyright (C) 2012, JP Richardson &lt;jprichardson@gmail.com&gt;
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
+        ///associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including 
+        ///without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+        ///sell copies of the Software, and to permit persons to whom the Software is furnished to 
+        ///do so, subject to the following conditions:
+        ///
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string string_min {
+            get {
+                return ResourceManager.GetString("string_min", resourceCulture);
             }
         }
     }

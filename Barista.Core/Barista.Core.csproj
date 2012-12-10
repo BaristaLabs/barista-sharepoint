@@ -103,11 +103,29 @@
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
+    <Compile Include="Bundles\MomentBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
+    <Compile Include="Bundles\StringBundle.cs" />
     <Compile Include="DocumentStore\TypedRepository.cs" />
     <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
+    <Compile Include="Justache\Block.cs" />
+    <Compile Include="Justache\Encoders.cs" />
+    <Compile Include="Justache\EndSection.cs" />
+    <Compile Include="Justache\FileSystemTemplateLocator.cs" />
+    <Compile Include="Justache\InvertedBlock.cs" />
+    <Compile Include="Justache\LiteralText.cs" />
+    <Compile Include="Justache\JustacheException.cs" />
+    <Compile Include="Justache\Parser.cs" />
+    <Compile Include="Justache\Part.cs" />
+    <Compile Include="Justache\RenderContext.cs" />
+    <Compile Include="Justache\Scanner.cs" />
+    <Compile Include="Justache\Section.cs" />
+    <Compile Include="Justache\Template.cs" />
+    <Compile Include="Justache\TemplateDefinition.cs" />
+    <Compile Include="Justache\TemplateInclude.cs" />
+    <Compile Include="Justache\VariableReference.cs" />
     <Compile Include="Library\Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
@@ -166,6 +184,7 @@
     <Compile Include="Library\HttpRequestInstance.cs" />
     <Compile Include="Library\HttpResponseInstance.cs" />
     <Compile Include="Library\JSDocAttribute.cs" />
+    <Compile Include="Library\MustacheInstance.cs" />
     <Compile Include="Library\ProxySettingsInstance.cs" />
     <Compile Include="Library\UriInstance.cs" />
     <Compile Include="Library\UtilInstance.cs" />
@@ -297,7 +316,8 @@
     <None Include="Resources\linq.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\mustache.js" />
+    <Content Include="Resources\moment.min.js" />
+    <Content Include="Resources\string.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

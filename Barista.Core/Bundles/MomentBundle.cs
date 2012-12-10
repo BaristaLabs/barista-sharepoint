@@ -1,25 +1,25 @@
 ﻿namespace Barista.Bundles
 {
-  using Barista.Library;
   using Jurassic;
   using System;
 
   [Serializable]
-  public class MustacheBundle : IBundle
+  public class MomentBundle : IBundle
   {
     public string BundleName
     {
-      get { return "Mustache"; }
+      get { return "Moment"; }
     }
 
     public string BundleDescription
     {
-      get { return "Mustache Bundle. Includes the Mustache templating engine."; } 
+      get { return "Moment Bundle. Includes a library that provides extra date/time methods."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      return new MustacheInstance(engine.Object.InstancePrototype);
+      engine.Execute(Barista.Properties.Resources.moment_min);
+      return Null.Value;
     }
   }
 }
