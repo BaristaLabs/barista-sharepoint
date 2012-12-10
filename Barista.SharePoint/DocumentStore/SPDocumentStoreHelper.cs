@@ -837,7 +837,7 @@
     /// <param name="updatedEntityPart"></param>
     /// <param name="contentHash"></param>
     /// <returns></returns>
-    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder, Entity updatedEntity, EntityPart updatedEntityPart, out string contentHash)
+    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder, Entity updatedEntity, EntityPart updatedEntityPart, out string contentHash, out DateTime contentModified)
     {
       if (web == null)
         throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
@@ -906,6 +906,12 @@
 
       var content = JsonConvert.SerializeObject(entityContents);
       contentHash = StringHelper.CreateMD5Hash(content);
+      contentModified = DateTime.Now;
+
+      //Update the hash on the entity to match what 'will' be the current.
+      entityContents.Entity.ContentsETag = contentHash;
+      entityContents.Entity.ContentsModified = contentModified;
+      content = JsonConvert.SerializeObject(entityContents);
 
       //Perform the update.
 

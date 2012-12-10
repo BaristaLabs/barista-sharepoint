@@ -493,13 +493,14 @@
 
               //Update the contents entity part and the modified by user stamp.
               string contentHash;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash);
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash, out contentModified);
 
               //Set the created/updated fields of the new document set to the current user.
               string userLogonName = this.Web.CurrentUser.ID + ";#" + this.Web.CurrentUser.Name;
               documentSetFolder.Item[SPBuiltInFieldId.Editor] = userLogonName;
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
             }
             else
@@ -512,10 +513,11 @@
 
               //Update the contents Entity Part.
               string contentHash;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash);
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash, out contentModified);
 
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
             }
           }
@@ -643,16 +645,16 @@
 
               //Update the contents entity part
               string contentHash;
+              DateTime contentModified;
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPartFile.ParentFolder,
-                                                                    entity, null, out contentHash);
+                                                                    entity, null, out contentHash, out contentModified);
 
-              var contentsLastModified = DateTime.Now;
               entityDocumentSet.Item["DocumentEntityContentsHash"] = contentHash;
-              entityDocumentSet.Item["DocumentEntityContentsLastModified"] = contentsLastModified;
+              entityDocumentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
               entityDocumentSet.Item.UpdateOverwriteVersion();
 
               entity.ContentsETag = contentHash;
-              entity.ContentsModified = contentsLastModified;
+              entity.ContentsModified = contentModified;
             }
             else
             {
@@ -715,16 +717,16 @@
 
               //Update the contents Entity Part.
               string contentHash;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash);
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash, out contentModified);
 
-              var contentsLastModified = DateTime.Now;
               SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentsLastModified;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
 
               entity.ContentsETag = contentHash;
-              entity.ContentsModified = contentsLastModified;
+              entity.ContentsModified = contentModified;
             }
           }
           finally
@@ -1188,11 +1190,12 @@
 
             //Update the content Entity Part
             string contentHash;
-            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, partFile.ParentFolder, null, entityPart, out contentHash);
+            DateTime contentModified;
+            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, partFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
             SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
             documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-            documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+            documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
             documentSetFolder.Item.UpdateOverwriteVersion();
 
             return entityPart;
@@ -1330,11 +1333,12 @@
 
             //Update the content entity part
             string contentHash;
-            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash);
+            DateTime contentModified;
+            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
             SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
             documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-            documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+            documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
             documentSetFolder.Item.UpdateOverwriteVersion();
             
             return entityPart;
@@ -1381,12 +1385,14 @@
                                           ? System.Text.Encoding.Default.GetBytes(data)
                                           : System.Text.Encoding.Default.GetBytes(String.Empty));
 
+              //Update the content entity part
               string contentHash;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash);
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
               SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
             }
 

@@ -43,7 +43,13 @@ namespace Barista.SharePoint.DocumentStore
           //If we found it in the cache, return the entity value.
           var cachedValue = HttpRuntime.Cache[EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash];
           if (cachedValue is EntityContents)
-            return (cachedValue as EntityContents).Entity;
+          {
+            var cachedEntityContents = cachedValue as EntityContents;
+            
+            //If it hasn't changed, return the entity.
+            if (cachedEntityContents.Entity.ContentsETag == contentsHash)
+              return cachedEntityContents.Entity;
+          }
 
           EntityContents entityContents = GetEntityContents(web, containerTitle, entityId);
 
@@ -93,9 +99,14 @@ namespace Barista.SharePoint.DocumentStore
           if (cachedValue is EntityContents)
           {
             var cachedEntityContents = cachedValue as EntityContents;
-            return cachedEntityContents.EntityParts.ContainsKey(partName)
-                     ? cachedEntityContents.EntityParts[partName]
-                     : null;
+
+            //If it hasn't changed, return the entity part.
+            if (cachedEntityContents.Entity.ContentsETag == contentsHash)
+            {
+              return cachedEntityContents.EntityParts.ContainsKey(partName)
+                       ? cachedEntityContents.EntityParts[partName]
+                       : null;
+            }
           }
 
           var entityContents = GetEntityContents(web, containerTitle, entityId);
@@ -133,7 +144,9 @@ namespace Barista.SharePoint.DocumentStore
           if (cachedValue is EntityContents)
           {
             var cachedEntityContents = cachedValue as EntityContents;
-            return cachedEntityContents.EntityParts.Values.ToList();
+
+            if (cachedEntityContents.Entity.ContentsETag == contentsHash)
+              return cachedEntityContents.EntityParts.Values.ToList();
           }
 
           var entityContents = GetEntityContents(web, containerTitle, entityId);
