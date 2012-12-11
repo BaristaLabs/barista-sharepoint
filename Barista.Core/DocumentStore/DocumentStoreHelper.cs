@@ -14,8 +14,8 @@
     {
       get
       {
-        return new JsonSerializerSettings()
-        {
+        return new JsonSerializerSettings
+          {
           PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.All,
           TypeNameHandling = TypeNameHandling.Auto,
           NullValueHandling = NullValueHandling.Ignore,
@@ -31,6 +31,18 @@
     public static string SerializeObjectToJson<T>(T value)
     {
       return JsonConvert.SerializeObject(value, Formatting.Indented, JsonSerializerSettings);
+    }
+
+    /// <summary>
+    /// Using Json.Net, makes a clone of the object.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public static T CloneObject<T>(T entity)
+    {
+      var data = JsonConvert.SerializeObject(entity);
+      return JsonConvert.DeserializeObject<T>(data);
     }
 
     /// <summary>
@@ -60,11 +72,11 @@
       }
     }
 
-    private static Regex s_PathRegex = new Regex("^((?<Segment>[^/]+)/?)+$", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+    private static readonly Regex PathRegex = new Regex("^((?<Segment>[^/]+)/?)+$", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
     public static bool IsValidPath(string path)
     {
-      return s_PathRegex.IsMatch(path);
+      return PathRegex.IsMatch(path);
     }
 
     /// <summary>
@@ -77,11 +89,11 @@
       if (string.IsNullOrEmpty(path))
         yield break;
 
-      Match m = s_PathRegex.Match(path);
+      Match m = PathRegex.Match(path);
       if (m.Success == false)
         throw new InvalidOperationException("Specified path is not a valid path.");
 
-      var paths = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+      var paths = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
       foreach (var segment in paths)
         yield return segment;
     }

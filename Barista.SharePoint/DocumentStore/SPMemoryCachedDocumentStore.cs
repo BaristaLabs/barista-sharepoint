@@ -9,6 +9,7 @@ namespace Barista.SharePoint.DocumentStore
   using System.Linq;
   using Microsoft.SharePoint;
   using Barista.DocumentStore;
+  using Newtonsoft.Json;
 
   /// <summary>
   /// Represents a SPDocumentStore that uses Asp.Net based caching to speed data access.
@@ -46,9 +47,9 @@ namespace Barista.SharePoint.DocumentStore
           {
             var cachedEntityContents = cachedValue as EntityContents;
             
-            //If it hasn't changed, return the entity.
+            //If it hasn't changed, return a clone of the entity.
             if (cachedEntityContents.Entity.ContentsETag == contentsHash)
-              return cachedEntityContents.Entity;
+              return DocumentStoreHelper.CloneObject(cachedEntityContents.Entity);
           }
 
           EntityContents entityContents = GetEntityContents(web, containerTitle, entityId);
@@ -61,7 +62,7 @@ namespace Barista.SharePoint.DocumentStore
                                 CacheItemPriority.Normal,
                                 null);
 
-          return entityContents.Entity;
+          return DocumentStoreHelper.CloneObject(entityContents.Entity);
         }
       }
     }
@@ -100,12 +101,13 @@ namespace Barista.SharePoint.DocumentStore
           {
             var cachedEntityContents = cachedValue as EntityContents;
 
-            //If it hasn't changed, return the entity part.
+            //If it hasn't changed, return a clone of the entity part.
             if (cachedEntityContents.Entity.ContentsETag == contentsHash)
             {
-              return cachedEntityContents.EntityParts.ContainsKey(partName)
-                       ? cachedEntityContents.EntityParts[partName]
-                       : null;
+              if (cachedEntityContents.EntityParts.ContainsKey(partName) == false)
+                return null;
+
+              return DocumentStoreHelper.CloneObject(cachedEntityContents.EntityParts[partName]);
             }
           }
 
@@ -119,9 +121,10 @@ namespace Barista.SharePoint.DocumentStore
                                 CacheItemPriority.Normal,
                                 null);
 
-          return entityContents.EntityParts.ContainsKey(partName)
-                   ? entityContents.EntityParts[partName]
-                   : null;
+          if (entityContents.EntityParts.ContainsKey(partName) == false)
+            return null;
+
+          return DocumentStoreHelper.CloneObject(entityContents.EntityParts[partName]);
         }
       }
     }
@@ -146,7 +149,7 @@ namespace Barista.SharePoint.DocumentStore
             var cachedEntityContents = cachedValue as EntityContents;
 
             if (cachedEntityContents.Entity.ContentsETag == contentsHash)
-              return cachedEntityContents.EntityParts.Values.ToList();
+              return DocumentStoreHelper.CloneObject(cachedEntityContents.EntityParts.Values.ToList());
           }
 
           var entityContents = GetEntityContents(web, containerTitle, entityId);
@@ -159,7 +162,7 @@ namespace Barista.SharePoint.DocumentStore
                                 CacheItemPriority.Normal,
                                 null);
 
-          return entityContents.EntityParts.Values.ToList();
+          return DocumentStoreHelper.CloneObject(entityContents.EntityParts.Values.ToList());
         }
       }
     }
@@ -168,13 +171,11 @@ namespace Barista.SharePoint.DocumentStore
     {
       SPList list;
       SPFolder folder;
-      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
-          false)
+      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==false)
         return null;
 
       SPFile defaultEntityPart;
-      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==
-        false)
+      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==false)
         return null;
 
       EntityContents entityContents = SPDocumentStoreHelper.GetEntityContentsEntityPart(web, list, defaultEntityPart.ParentFolder);
