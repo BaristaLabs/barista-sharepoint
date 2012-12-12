@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace Barista.SharePoint.DocumentStore
+﻿namespace Barista.SharePoint.DocumentStore
 {
   using System;
   using System.Collections.Generic;
@@ -9,7 +7,7 @@ namespace Barista.SharePoint.DocumentStore
   using System.Linq;
   using Microsoft.SharePoint;
   using Barista.DocumentStore;
-  using Newtonsoft.Json;
+  using System.Collections;
 
   /// <summary>
   /// Represents a SPDocumentStore that uses Asp.Net based caching to speed data access.

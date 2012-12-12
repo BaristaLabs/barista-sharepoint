@@ -16,6 +16,7 @@
     <customAssembly location="Microsoft.TeamFoundation.WorkItemTracking.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll" />
     <customAssembly location="Microsoft.TeamFoundation.VersionControl.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll" />
     <customAssembly location="Microsoft.TeamFoundation.Common.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.Common.dll" />
+    <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene.Net.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

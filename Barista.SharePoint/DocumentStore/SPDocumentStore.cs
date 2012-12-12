@@ -14,7 +14,7 @@
   using System.Net;
 
   /// <summary>
-  /// Represents a SharePoint-backed Document Store.
+  /// Represents a SharePoint-backed Document Store that uses document sets as containers to hold entities.
   /// </summary>
   [Serializable]
   public class SPDocumentStore :

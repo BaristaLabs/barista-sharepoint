@@ -82,6 +82,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Jurassic\Jurassic.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.BusinessData.dll</HintPath>
@@ -215,7 +219,10 @@
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
+    <Compile Include="DocumentStore\SPDirectory.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
+    <Compile Include="DocumentStore\SPSearchableDocumentStore.cs" />
+    <Compile Include="DocumentStore\SPSimpleDocumentStore.cs" />
     <Compile Include="Extensions\BrewRequestExtensions.cs" />
     <Compile Include="Features\BaristaDocumentStore\BaristaDocumentStore.EventReceiver.cs">
       <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
