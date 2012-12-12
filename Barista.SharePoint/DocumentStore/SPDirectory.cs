@@ -145,6 +145,7 @@ namespace Barista.SharePoint.DocumentStore
       {
         using (var web = site.OpenWeb(m_webId))
         {
+          //TODO: Change this to a ContentIterator
           var folder = web.GetFolder(m_folderId);
           return folder.Files
             .OfType<SPFile>()

@@ -22,18 +22,11 @@
   {
     #region Mapping
 
-    public static bool TryGetDocumentStoreAttachment(SPList list, SPFile defaultEntityPart, string attachmentFileName, out SPFile attachment)
-    {
-      //TODO: Possibly SPQuerify this.
-      var attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant()));
-
-      attachment = defaultEntityPart.ParentFolder.Files.OfType<SPFile>().FirstOrDefault(f => attachmentContentType != null && (f.Name == attachmentFileName && f.Item.ContentTypeId.IsChildOf(attachmentContentType.Id)));
-      if (attachment == null)
-        return false;
-
-      return true;
-    }
-
+    /// <summary>
+    /// Returns an Attachment which represents the specified SPFile.
+    /// </summary>
+    /// <param name="file">The file to map from.</param>
+    /// <returns>Attachment.</returns>
     public static Attachment MapAttachmentFromSPFile(SPFile file)
     {
       Attachment result = new Attachment
@@ -54,10 +47,10 @@
       {
         result.CreatedBy = new User
           {
-          Email = createdByUser.User.Email,
-          LoginName = createdByUser.User.LoginName,
-          Name = createdByUser.User.Name,
-        };
+            Email = createdByUser.User.Email,
+            LoginName = createdByUser.User.LoginName,
+            Name = createdByUser.User.Name,
+          };
       }
 
       var modifiedByUser = file.Item[SPBuiltInFieldId.Modified_x0020_By] as SPFieldUserValue;
@@ -65,18 +58,25 @@
       {
         result.ModifiedBy = new User
           {
-          Email = modifiedByUser.User.Email,
-          LoginName = modifiedByUser.User.LoginName,
-          Name = modifiedByUser.User.Name,
-        };
+            Email = modifiedByUser.User.Email,
+            LoginName = modifiedByUser.User.LoginName,
+            Name = modifiedByUser.User.Name,
+          };
       }
 
       return result;
     }
 
+    /// <summary>
+    /// Returns a comment which represents the first comment defined on the specified list item.
+    /// </summary>
+    /// <param name="listItem">The list item.</param>
+    /// <returns>Comment.</returns>
     public static Comment MapCommentFromSPListItem(SPListItem listItem)
     {
-      return MapCommentFromSPListItemVersion(listItem.Versions.OfType<SPListItemVersion>().OrderByDescending(v => v.Created).First());
+      return
+        MapCommentFromSPListItemVersion(
+          listItem.Versions.OfType<SPListItemVersion>().OrderByDescending(v => v.Created).First());
     }
 
     public static Comment MapCommentFromSPListItemVersion(SPListItemVersion listItemVersion)
@@ -97,6 +97,11 @@
       return result;
     }
 
+    /// <summary>
+    /// Returns a container which represents the SPList.
+    /// </summary>
+    /// <param name="list"></param>
+    /// <returns></returns>
     public static Container MapContainerFromSPList(SPList list)
     {
       if (list == null)
@@ -123,10 +128,17 @@
       return result;
     }
 
+    /// <summary>
+    /// Returns an entity that represents the specified list item.
+    /// </summary>
+    /// <param name="listItem"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public static Entity MapEntityFromSPListItem(SPListItem listItem, string data)
     {
       if (listItem == null)
-        throw new ArgumentNullException("listItem", @"When creating an Entity, the SPListItem that represents the entity must not be null.");
+        throw new ArgumentNullException("listItem",
+                                        @"When creating an Entity, the SPListItem that represents the entity must not be null.");
 
       Entity entity = new Entity();
 
@@ -158,14 +170,15 @@
       }
 
       if (dataFile == null) //The default entity part file doesn't exist, get outta dodge (something happened here...)
-        throw new InvalidOperationException("No correpsonding entity file exists on the SP Doc Set that represents the entity.");
+        throw new InvalidOperationException(
+          "No corresponding entity file exists on the document set that represents the entity.");
 
 
       entity.ETag = dataFile.ETag;
       entity.Title = docSet.Item.Title;
       entity.Description = docSet.Item["DocumentSetDescription"] as string;
-      entity.Created = (DateTime)docSet.Item[SPBuiltInFieldId.Created];
-      entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
+      entity.Created = (DateTime) docSet.Item[SPBuiltInFieldId.Created];
+      entity.Modified = (DateTime) docSet.Item[SPBuiltInFieldId.Modified];
 
       entity.ContentsETag = docSet.Item["DocumentEntityContentsHash"] as string;
 
@@ -201,6 +214,11 @@
       return entity;
     }
 
+    /// <summary>
+    /// Maps the entity from SP list item version.
+    /// </summary>
+    /// <param name="version">The version.</param>
+    /// <returns>Entity.</returns>
     public static Entity MapEntityFromSPListItemVersion(SPListItemVersion version)
     {
       Entity result = new Entity();
@@ -220,8 +238,8 @@
 
       result.Title = version[version.ListItem.Fields[SPBuiltInFieldId.Title].Title] as string;
       result.Description = version["DocumentSetDescription"] as string;
-      result.Created = (DateTime)version[version.ListItem.Fields[SPBuiltInFieldId.Created].Title];
-      result.Modified = (DateTime)version[version.ListItem.Fields[SPBuiltInFieldId.Modified].Title];
+      result.Created = (DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Created].Title];
+      result.Modified = (DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Modified].Title];
 
       result.Path = version.ListItem.File.ParentFolder.Url.Substring(version.ListItem.ParentList.RootFolder.Url.Length);
       result.Path = result.Path.TrimStart('/');
@@ -275,7 +293,8 @@
     public static EntityPart MapEntityPartFromSPFile(SPFile file, string data)
     {
       if (file == null)
-        throw new ArgumentNullException("file", @"When creating an EntityPart, the SPFile that represents the entity part must not be null.");
+        throw new ArgumentNullException("file",
+                                        @"When creating an EntityPart, the SPFile that represents the entity part must not be null.");
 
       EntityPart entityPart = new EntityPart();
       try
@@ -293,8 +312,8 @@
       entityPart.Category = file.Item["Category"] as string;
       entityPart.ETag = file.ETag;
       entityPart.Name = file.Name.Substring(0, file.Name.Length - Constants.DocumentSetEntityPartExtension.Length);
-      entityPart.Created = (DateTime)file.Item[SPBuiltInFieldId.Created];
-      entityPart.Modified = (DateTime)file.Item[SPBuiltInFieldId.Modified];
+      entityPart.Created = (DateTime) file.Item[SPBuiltInFieldId.Created];
+      entityPart.Modified = (DateTime) file.Item[SPBuiltInFieldId.Modified];
 
       entityPart.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
 
@@ -320,6 +339,11 @@
       return entityPart;
     }
 
+    /// <summary>
+    /// Returns a folder which represents the specified SPFolder.
+    /// </summary>
+    /// <param name="folder"></param>
+    /// <returns></returns>
     public static Folder MapFolderFromSPFolder(SPFolder folder)
     {
       if (folder == null)
@@ -368,17 +392,20 @@
       if (web == null)
         throw new ArgumentNullException("web");
 
-      List<SPDocumentLibrary> result = new List<SPDocumentLibrary>();
+      var result = new List<SPDocumentLibrary>();
 
-      ContentIterator listsIterator = new ContentIterator();
+      var listsIterator = new ContentIterator();
       listsIterator.ProcessLists(web.Lists, currentList =>
-      {
-        if (currentList is SPDocumentLibrary && currentList.TemplateFeatureId == Constants.DocumentContainerFeatureId)
-          result.Add(currentList as SPDocumentLibrary);
-      }, null);
+        {
+          if (currentList is SPDocumentLibrary && currentList.TemplateFeatureId == Constants.DocumentContainerFeatureId)
+            result.Add(currentList as SPDocumentLibrary);
+        }, null);
 
       return result;
     }
+
+    private static readonly object SyncFolderDictionary = new object();
+    private static readonly Dictionary<WebContainerPathTuple, ListFolderTuple> FolderDictionary = new Dictionary<WebContainerPathTuple, ListFolderTuple>();
 
     /// <summary>
     /// Returns a value that indicates of a SPFolder that corresponds to the specified path is able to be retrieved.
@@ -389,8 +416,31 @@
     /// <param name="folder">The folder.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public static bool TryGetFolderFromPath(SPWeb web, string containerTitle, out SPList list, out SPFolder folder, string path)
+    public static bool TryGetFolderFromPath(SPWeb web, string containerTitle, out SPList list, out SPFolder folder,
+                                            string path)
     {
+      if (web == null)
+        throw new ArgumentNullException("web");
+
+      if (containerTitle == null)
+        throw new ArgumentNullException("containerTitle");
+
+      var currentFolderTuple = new WebContainerPathTuple
+        {
+          WebId = web.ID,
+          ContainerTitle = containerTitle,
+          Path = path
+        };
+
+      if (FolderDictionary.ContainsKey(currentFolderTuple))
+      {
+        var listFolder = FolderDictionary[currentFolderTuple];
+
+        list = web.Lists[listFolder.ListId];
+        folder = web.GetFolder(listFolder.FolderId);
+        return true;
+      }
+
       list = web.Lists.TryGetList(containerTitle);
 
       if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
@@ -404,10 +454,10 @@
       try
       {
 #pragma warning disable 168
-        foreach (string subFolder in DocumentStoreHelper.GetPathSegments(path))
+        foreach (var subFolder in DocumentStoreHelper.GetPathSegments(path))
 #pragma warning restore 168
         {
-          currentFolder = web.GetFolder(list.RootFolder.Url + "/" + path);
+          currentFolder = web.GetFolder(SPUtility.ConcatUrls(list.RootFolder.Url, path));
         }
       }
       catch (Exception)
@@ -425,8 +475,19 @@
       }
 
       folder = currentFolder;
-      return true;
 
+      if (FolderDictionary.ContainsKey(currentFolderTuple) == false)
+      {
+        lock (SyncFolderDictionary)
+        {
+          if (FolderDictionary.ContainsKey(currentFolderTuple) == false)
+          {
+            FolderDictionary.Add(currentFolderTuple, new ListFolderTuple { ListId = list.ID, FolderId = folder.UniqueId });
+          }
+        }
+      }
+
+      return true;
     }
 
     /// <summary>
@@ -456,14 +517,11 @@
     /// <param name="id"></param>
     /// <param name="defaultEntityPart"></param>
     /// <returns></returns>
-    public static bool TryGetDocumentStoreDefaultEntityPart(SPList list, SPFolder folder, Guid id, out SPFile defaultEntityPart)
+    public static bool TryGetDocumentStoreDefaultEntityPart(SPList list, SPFolder folder, Guid id,
+                                                            out SPFile defaultEntityPart)
     {
       defaultEntityPart = SPDocumentStoreHelper.GetDocumentStoreDefaultEntityPartForGuid(list, folder, id);
-      if (defaultEntityPart == null)
-      {
-        return false;
-      }
-      return true;
+      return defaultEntityPart != null;
     }
 
     /// <summary>
@@ -475,7 +533,7 @@
     /// <returns></returns>
     public static SPFile GetDocumentStoreDefaultEntityPartForGuid(SPList list, SPFolder folder, Guid id)
     {
-      //Attempt to prevent having to do a full SPQuery by attempting to retrieve the file from the subfolder. (Performance)
+      //Attempt to prevent having to do a full SPQuery by attempting to retrieve the file from the sub folder. (Performance)
       var documentStoreEntityContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId);
       var documentStoreEntityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
       SPFolder childFolder = null;
@@ -483,34 +541,45 @@
       {
         childFolder = list.ParentWeb.GetFolder(folder.Url + "/" + id.ToString());
       }
-      catch (ArgumentException) { /* Do Nothing */ }
+      catch (ArgumentException)
+      {
+        /* Do Nothing */
+      }
 
-      if (childFolder != null && childFolder.Exists && childFolder.Item.ContentTypeId.IsChildOf(documentStoreEntityContentTypeId))
+      if (childFolder != null && childFolder.Exists &&
+          childFolder.Item.ContentTypeId.IsChildOf(documentStoreEntityContentTypeId))
       {
         SPFile childFile = null;
         try
         {
-          childFile = list.ParentWeb.GetFile(folder.Url + "/" + id.ToString() + "/" + Constants.DocumentStoreDefaultEntityPartFileName);
+          childFile =
+            list.ParentWeb.GetFile(folder.Url + "/" + id.ToString() + "/" +
+                                   Constants.DocumentStoreDefaultEntityPartFileName);
         }
-        catch (ArgumentException) { /* Do Nothing */ }
+        catch (ArgumentException)
+        {
+          /* Do Nothing */
+        }
 
-        if (childFile != null && childFile.Exists && childFile.Item.ContentTypeId.IsChildOf(documentStoreEntityPartContentTypeId))
+        if (childFile != null && childFile.Exists &&
+            childFile.Item.ContentTypeId.IsChildOf(documentStoreEntityPartContentTypeId))
           return childFile;
       }
 
       //If we weren't able to retrieve the SPFile directly, use a SPQuery to recursively obtain the file (should be more efficient than a recursive function)
       SPQuery query = new SPQuery
         {
-          Folder = folder, Query = @"<Where><And><And>
+          Folder = folder,
+          Query = @"<Where><And><And>
                         <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" +
-                                   Constants.DocumentStoreEntityPartContentTypeId
-                                            .ToUpperInvariant() + @"</Value></BeginsWith>
+                  Constants.DocumentStoreEntityPartContentTypeId
+                           .ToUpperInvariant() + @"</Value></BeginsWith>
                         <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() +
-                                   @"</Value></Eq>
+                  @"</Value></Eq>
                       </And>
                         <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" +
-                                   Constants.DocumentStoreDefaultEntityPartFileName +
-                                   @"</Value></Eq>
+                  Constants.DocumentStoreDefaultEntityPartFileName +
+                  @"</Value></Eq>
                       </And></Where>",
           RowLimit = 1,
           QueryThrottleMode = SPQueryThrottleOption.Override,
@@ -544,12 +613,11 @@
     /// <param name="partName"></param>
     /// <param name="entityPart"></param>
     /// <returns></returns>
-    public static bool TryGetDocumentStoreEntityPart(SPList list, SPFolder folder, Guid id, string partName, out SPFile entityPart)
+    public static bool TryGetDocumentStoreEntityPart(SPList list, SPFolder folder, Guid id, string partName,
+                                                     out SPFile entityPart)
     {
       entityPart = SPDocumentStoreHelper.GetDocumentStoreEntityPart(list, folder, id, partName);
-      if (entityPart == null)
-        return false;
-      return true;
+      return entityPart != null;
     }
 
     /// <summary>
@@ -562,7 +630,7 @@
     /// <returns></returns>
     public static SPFile GetDocumentStoreEntityPart(SPList list, SPFolder folder, Guid id, string partName)
     {
-      //Attempt to prevent having to do a full SPQuery by attempting to retrieve the file from the subfolder. (Performance)
+      //Attempt to prevent having to do a full SPQuery by attempting to retrieve the file from the sub folder. (Performance)
       var documentStoreEntityContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId);
       var documentStoreEntityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
       SPFolder childFolder = null;
@@ -570,32 +638,43 @@
       {
         childFolder = list.ParentWeb.GetFolder(folder.Url + "/" + id.ToString());
       }
-      catch (ArgumentException) { /* Do Nothing */ }
+      catch (ArgumentException)
+      {
+        /* Do Nothing */
+      }
 
-      if (childFolder != null && childFolder.Exists && childFolder.Item.ContentTypeId.IsChildOf(documentStoreEntityContentTypeId))
+      if (childFolder != null && childFolder.Exists &&
+          childFolder.Item.ContentTypeId.IsChildOf(documentStoreEntityContentTypeId))
       {
         SPFile childFile = null;
         try
         {
-          childFile = list.ParentWeb.GetFile(folder.Url + "/" + id.ToString() + "/" + partName + Constants.DocumentSetEntityPartExtension);
+          childFile =
+            list.ParentWeb.GetFile(folder.Url + "/" + id.ToString() + "/" + partName +
+                                   Constants.DocumentSetEntityPartExtension);
         }
-        catch (ArgumentException) { /* Do Nothing */ }
+        catch (ArgumentException)
+        {
+          /* Do Nothing */
+        }
 
-        if (childFile != null && childFile.Exists && childFile.Item.ContentTypeId.IsChildOf(documentStoreEntityPartContentTypeId))
+        if (childFile != null && childFile.Exists &&
+            childFile.Item.ContentTypeId.IsChildOf(documentStoreEntityPartContentTypeId))
           return childFile;
       }
 
       SPQuery query = new SPQuery
         {
-          Folder = folder, Query = @"<Where><And><And>
+          Folder = folder,
+          Query = @"<Where><And><And>
                         <BeginsWith><FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" +
-                                   Constants.DocumentStoreEntityPartContentTypeId
-                                            .ToUpperInvariant() + @"</Value></BeginsWith>
+                  Constants.DocumentStoreEntityPartContentTypeId
+                           .ToUpperInvariant() + @"</Value></BeginsWith>
                         <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id.ToString() +
-                                   @"</Value></Eq>
+                  @"</Value></Eq>
                       </And>
                         <Eq><FieldRef Name=""FileLeafRef""/><Value Type=""Text"">" + partName +
-                                   Constants.DocumentSetEntityPartExtension + @"</Value></Eq>
+                  Constants.DocumentSetEntityPartExtension + @"</Value></Eq>
                       </And></Where>",
           RowLimit = 1,
           ViewAttributes = "Scope=\"Recursive\""
@@ -620,6 +699,38 @@
     }
 
     /// <summary>
+    /// Tries to the get document store attachment.
+    /// </summary>
+    /// <param name="list">The list.</param>
+    /// <param name="defaultEntityPart">The default entity part.</param>
+    /// <param name="attachmentFileName">Name of the attachment file.</param>
+    /// <param name="attachment">The attachment.</param>
+    /// <returns><c>true</c> if XXXX, <c>false</c> otherwise</returns>
+    public static bool TryGetDocumentStoreAttachment(SPList list, SPFile defaultEntityPart, string attachmentFileName,
+                                                     out SPFile attachment)
+    {
+      //TODO: Possibly SPQuerify this.
+      var attachmentContentType =
+        list.ContentTypes.OfType<SPContentType>()
+            .FirstOrDefault(
+              ct =>
+              ct.Id.ToString()
+                .ToLowerInvariant()
+                .StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant()));
+
+      attachment =
+        defaultEntityPart.ParentFolder.Files.OfType<SPFile>()
+                         .FirstOrDefault(
+                           f =>
+                           attachmentContentType != null &&
+                           (f.Name == attachmentFileName && f.Item.ContentTypeId.IsChildOf(attachmentContentType.Id)));
+      if (attachment == null)
+        return false;
+
+      return true;
+    }
+
+    /// <summary>
     /// Executes the specified action asynchronously, while preserving both the HttpContext and SPContext
     /// </summary>
     public static Task ExecuteAsync(Repository repository, HttpContext context, SPWeb webContext, Action action)
@@ -631,7 +742,6 @@
           SPUtility.ValidateFormDigest();
           try
           {
-
             if (HttpContext.Current == null || SPContext.Current == null)
             {
               SPSite site = new SPSite(siteId);
@@ -646,7 +756,7 @@
             }
             action();
           }
-          catch(Exception ex)
+          catch (Exception ex)
           {
             ApplicationLog.AddException(repository, ex);
 
@@ -674,7 +784,8 @@
         return null;
 
       SPFile defaultEntityPart;
-      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+      if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==
+          false)
         return null;
 
       return defaultEntityPart.ParentFolder.Item["DocumentEntityContentsHash"] as string;
@@ -712,24 +823,28 @@
     /// <param name="key"></param>
     /// <param name="contentHash"></param>
     /// <returns></returns>
-    public static string RemoveContentEntityPartKeyValue(SPWeb web, SPList list, SPFolder documentSetFolder, string key, out string contentHash)
+    public static string RemoveContentEntityPartKeyValue(SPWeb web, SPList list, SPFolder documentSetFolder, string key,
+                                                         out string contentHash)
     {
       if (web == null)
-        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
+        throw new ArgumentNullException("web",
+                                        @"The web argument must be specified and contain the web that contains the document set folder.");
 
       if (list == null)
-        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+        throw new ArgumentNullException("list",
+                                        @"The list argument must be specified and contain the list that contains the document set folder.");
 
       if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+        throw new ArgumentNullException("documentSetFolder",
+                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
 
       var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-                                        .FirstOrDefault(
-                                          ct =>
-                                          ct.Id.ToString()
-                                            .ToLowerInvariant()
-                                            .StartsWith(
-                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+                                      .FirstOrDefault(
+                                        ct =>
+                                        ct.Id.ToString()
+                                          .ToLowerInvariant()
+                                          .StartsWith(
+                                            Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
       if (entityPartContentType == null)
         throw new InvalidOperationException("Unable to locate the entity part content type");
@@ -746,7 +861,8 @@
 
       var contentData = contentFile.OpenBinary();
       var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
-      Dictionary<string, EntityPart> contentDictionary = JsonConvert.DeserializeObject<Dictionary<string, EntityPart>>(contentJson);
+      Dictionary<string, EntityPart> contentDictionary =
+        JsonConvert.DeserializeObject<Dictionary<string, EntityPart>>(contentJson);
 
       if (contentDictionary.ContainsKey(key) == false)
       {
@@ -782,11 +898,12 @@
     public static bool HasContentEntityPart(SPFolder documentSetFolder)
     {
       if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+        throw new ArgumentNullException("documentSetFolder",
+                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
 
       var contentFile =
-       documentSetFolder.Files.OfType<SPFile>()
-                        .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
+        documentSetFolder.Files.OfType<SPFile>()
+                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
 
       return (contentFile != null);
     }
@@ -794,21 +911,24 @@
     public static EntityContents GetEntityContentsEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder)
     {
       if (web == null)
-        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
+        throw new ArgumentNullException("web",
+                                        @"The web argument must be specified and contain the web that contains the document set folder.");
 
       if (list == null)
-        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+        throw new ArgumentNullException("list",
+                                        @"The list argument must be specified and contain the list that contains the document set folder.");
 
       if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+        throw new ArgumentNullException("documentSetFolder",
+                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
 
       var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-                                        .FirstOrDefault(
-                                          ct =>
-                                          ct.Id.ToString()
-                                            .ToLowerInvariant()
-                                            .StartsWith(
-                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+                                      .FirstOrDefault(
+                                        ct =>
+                                        ct.Id.ToString()
+                                          .ToLowerInvariant()
+                                          .StartsWith(
+                                            Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
       if (entityPartContentType == null)
         throw new InvalidOperationException("Unable to locate the entity part content type");
@@ -836,25 +956,31 @@
     /// <param name="updatedEntity"></param>
     /// <param name="updatedEntityPart"></param>
     /// <param name="contentHash"></param>
+    /// <param name="contentModified"></param>
     /// <returns></returns>
-    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder, Entity updatedEntity, EntityPart updatedEntityPart, out string contentHash, out DateTime contentModified)
+    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder,
+                                                         Entity updatedEntity, EntityPart updatedEntityPart,
+                                                         out string contentHash, out DateTime contentModified)
     {
       if (web == null)
-        throw new ArgumentNullException("web", @"The web argument must be specified and contain the web that contains the document set folder.");
-      
+        throw new ArgumentNullException("web",
+                                        @"The web argument must be specified and contain the web that contains the document set folder.");
+
       if (list == null)
-        throw new ArgumentNullException("list", @"The list argument must be specified and contain the list that contains the document set folder.");
+        throw new ArgumentNullException("list",
+                                        @"The list argument must be specified and contain the list that contains the document set folder.");
 
       if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder", @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
+        throw new ArgumentNullException("documentSetFolder",
+                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
 
       var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-                                        .FirstOrDefault(
-                                          ct =>
-                                          ct.Id.ToString()
-                                            .ToLowerInvariant()
-                                            .StartsWith(
-                                              Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+                                      .FirstOrDefault(
+                                        ct =>
+                                        ct.Id.ToString()
+                                          .ToLowerInvariant()
+                                          .StartsWith(
+                                            Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
 
       if (entityPartContentType == null)
         throw new InvalidOperationException("Unable to locate the entity part content type");
@@ -871,14 +997,16 @@
       //Otherwise, read the content file and update the entity part.
       if (contentFile == null)
       {
-
         var entityParts = documentSetFolder.Files.OfType<SPFile>()
-                                            .Where(f => f.Item.ContentTypeId == entityPartContentType.Id &&
-                                                        f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
-                                                        f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
-                                                        (updatedEntityPart != null && f.Name != updatedEntityPart.Name + Constants.DocumentSetEntityPartExtension))
-                                            .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
-                                            .ToList();
+                                           .Where(f => f.Item.ContentTypeId == entityPartContentType.Id &&
+                                                       f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
+                                                       f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
+                                                       (updatedEntityPart != null &&
+                                                        f.Name !=
+                                                        updatedEntityPart.Name +
+                                                        Constants.DocumentSetEntityPartExtension))
+                                           .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
+                                           .ToList();
 
         entityContents = new EntityContents
           {
@@ -916,7 +1044,7 @@
       //Perform the update.
 
       if (documentSetFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
-        throw new InvalidOperationException("Insufficent Permissions.");
+        throw new InvalidOperationException("Insufficient Permissions.");
 
       var originalAllowUnsafeUpdates = web.AllowUnsafeUpdates;
 
@@ -931,7 +1059,8 @@
               {"ContentTypeId", entityPartContentType.Id.ToString()},
               {"Content Type", entityPartContentType.Name}
             };
-          documentSetFolder.Files.Add(Constants.DocumentStoreEntityContentsPartFileName, System.Text.Encoding.Default.GetBytes(content), properties, true);
+          documentSetFolder.Files.Add(Constants.DocumentStoreEntityContentsPartFileName,
+                                      System.Text.Encoding.Default.GetBytes(content), properties, true);
         }
         else
         {
@@ -942,8 +1071,87 @@
       {
         web.AllowUnsafeUpdates = originalAllowUnsafeUpdates;
       }
-      
+
       return content;
+    }
+
+    private sealed class ListFolderTuple : IEquatable<ListFolderTuple>
+    {
+      public Guid ListId
+      {
+        get;
+        set;
+      }
+
+      public Guid FolderId
+      {
+        get;
+        set;
+      }
+
+      public bool Equals(ListFolderTuple other)
+      {
+        if (other == null)
+          return false;
+
+        return ListId == other.ListId &&
+               FolderId == other.FolderId;
+      }
+
+      public override bool Equals(object obj)
+      {
+        if (obj is ListFolderTuple)
+          return Equals(obj as ListFolderTuple);
+        return false;
+      }
+
+      public override int GetHashCode()
+      {
+        return String.Format("{0} {1}", ListId, FolderId).GetHashCode();
+      }
+    }
+
+    private sealed class WebContainerPathTuple : IEquatable<WebContainerPathTuple>
+    {
+      public Guid WebId
+      {
+        get;
+        set;
+      }
+
+      public string ContainerTitle
+      {
+        get;
+        set;
+      }
+
+      public string Path
+      {
+        get;
+        set;
+      }
+
+      public bool Equals(WebContainerPathTuple other)
+      {
+        if (other == null)
+          return false;
+
+        return this.WebId == other.WebId &&
+               this.ContainerTitle.Equals(other.ContainerTitle, StringComparison.InvariantCultureIgnoreCase) &&
+               ((this.Path == null && other.Path == null) || (this.Path != null && this.Path.Equals(other.ContainerTitle, StringComparison.InvariantCultureIgnoreCase)));
+      }
+
+      public override bool Equals(object obj)
+      {
+        if (obj is WebContainerPathTuple)
+          return Equals(obj as WebContainerPathTuple);
+        return false;
+      }
+
+      public override int GetHashCode()
+      {
+        return String.Format("{0} {1} {2}", WebId, ContainerTitle, Path).GetHashCode();
+      }
     }
   }
 }

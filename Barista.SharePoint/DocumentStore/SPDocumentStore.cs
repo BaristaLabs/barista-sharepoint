@@ -41,22 +41,61 @@
     {
       m_originalCatchAccessDeniedValue = SPSecurity.CatchAccessDeniedException;
       SPSecurity.CatchAccessDeniedException = false;
-      this.Web = BaristaContext.Current.Web;
+
+      if (BaristaContext.HasCurrentContext)
+      {
+        this.SiteId = BaristaContext.Current.Site.ID;
+        this.WebId = BaristaContext.Current.Web.ID;
+        this.CurrentUserLoginName = BaristaContext.Current.Web.CurrentUser.LoginName;
+      }
+      else if (SPContext.Current != null)
+      {
+        this.SiteId = SPContext.Current.Site.ID;
+        this.WebId = SPContext.Current.Web.ID;
+        this.CurrentUserLoginName = SPContext.Current.Web.CurrentUser.LoginName;
+      }
+      else
+      {
+        throw new InvalidOperationException(
+          "Could not determine the current context - either a Barista Context or SPContext must be present.");
+      }
     }
 
     public SPDocumentStore(SPWeb web)
       :this()
     {
-      this.Web = web;
+      if (web == null)
+        throw new ArgumentNullException("web");
+
+      this.SiteId = web.Site.ID;
+      this.WebId = web.ID;
     }
 
     #endregion
 
     #region Properties
     /// <summary>
-    /// Gets the SPWeb that is associated with the document store. Always use this value instead of SPContext.Current.Web.
+    /// Gets the unique id of the SPSite that is associated with the document store.
     /// </summary>
-    public SPWeb Web
+    public Guid SiteId
+    {
+      get;
+      private set;
+    }
+
+    /// <summary>
+    /// Gets the unique id of the SPWeb that is associated with the document store.
+    /// </summary>
+    public Guid WebId
+    {
+      get;
+      private set;
+    }
+
+    /// <summary>
+    /// Gets the login name of the user who instantiated the document store.
+    /// </summary>
+    public string CurrentUserLoginName
     {
       get;
       private set;
@@ -74,9 +113,9 @@
     public virtual Container CreateContainer(string containerTitle, string description)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           web.AllowUnsafeUpdates = true;
           try
@@ -105,9 +144,9 @@
     public virtual Container GetContainer(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -127,9 +166,9 @@
     public virtual bool UpdateContainer(Container container)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -159,9 +198,9 @@
     public virtual void DeleteContainer(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -188,9 +227,9 @@
     public virtual IList<Container> ListContainers()
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           return SPDocumentStoreHelper.GetContainers(web)
                                       .Select(w => SPDocumentStoreHelper.MapContainerFromSPList(w))
@@ -211,9 +250,9 @@
     public virtual Folder CreateFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           var currentFolder = CreateFolderInternal(web, containerTitle, path);
 
@@ -269,9 +308,9 @@
     public virtual Folder GetFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -293,9 +332,9 @@
     public virtual Folder RenameFolder(string containerTitle, string path, string newFolderName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -328,9 +367,9 @@
     public virtual void DeleteFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -359,9 +398,9 @@
     public virtual IList<Folder> ListFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
 
           SPList list;
@@ -398,9 +437,9 @@
     public virtual IList<Folder> ListAllFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -455,9 +494,9 @@
         data = String.Empty;
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -481,15 +520,16 @@
           {
             if ((folder.Item == null && list.RootFolder == folder && list.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false) ||
                 (folder.Item != null && (folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)))
-              throw new InvalidOperationException("Insufficent Permissions.");
+              throw new InvalidOperationException("Insufficient Permissions.");
 
             if (PermissionsHelper.IsRunningUnderElevatedPrivledges(site.WebApplication.ApplicationPool))
             {
-              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, this.Web.CurrentUser);
+              var currentUser = web.AllUsers[CurrentUserLoginName];
+              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, currentUser);
 
               documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
 
-              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), null, this.Web.CurrentUser, this.Web.CurrentUser, DateTime.UtcNow, DateTime.UtcNow, true);
+              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), null, currentUser, currentUser, DateTime.UtcNow, DateTime.UtcNow, true);
 
               //Update the contents entity part and the modified by user stamp.
               string contentHash;
@@ -497,7 +537,7 @@
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash, out contentModified);
 
               //Set the created/updated fields of the new document set to the current user.
-              string userLogonName = this.Web.CurrentUser.ID + ";#" + this.Web.CurrentUser.Name;
+              string userLogonName = currentUser.ID + ";#" + currentUser.Name;
               documentSetFolder.Item[SPBuiltInFieldId.Editor] = userLogonName;
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
               documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
@@ -552,9 +592,9 @@
     public virtual Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -597,9 +637,9 @@
     public virtual Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -682,9 +722,9 @@
     public virtual Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -748,9 +788,9 @@
     public virtual bool DeleteEntity(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -818,9 +858,9 @@
     public virtual IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1007,9 +1047,9 @@
     public virtual Entity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, byte[] archiveData)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1032,7 +1072,8 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            importedDocSet = DocumentSet.Import(archiveData, entityId.ToString(), folder, docEntityContentTypeId, properties, this.Web.CurrentUser);
+            var currentUser = web.AllUsers[CurrentUserLoginName];
+            importedDocSet = DocumentSet.Import(archiveData, entityId.ToString(), folder, docEntityContentTypeId, properties, currentUser);
           }
           finally
           {
@@ -1053,9 +1094,9 @@
     public virtual Stream ExportEntity(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1087,9 +1128,9 @@
     public virtual bool MoveEntity(string containerTitle, Guid entityId, string destinationPath)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1151,9 +1192,9 @@
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1218,9 +1259,9 @@
     public virtual EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1266,9 +1307,9 @@
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1306,9 +1347,9 @@
     public virtual EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1354,9 +1395,9 @@
     public virtual EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1416,9 +1457,9 @@
     public virtual bool DeleteEntityPart(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1460,9 +1501,9 @@
     public virtual IList<EntityPart> ListEntityParts(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1506,9 +1547,9 @@
       List<EntityVersion> result = new List<EntityVersion>();
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1552,9 +1593,9 @@
     public EntityVersion GetEntityVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1599,9 +1640,9 @@
     public EntityVersion RevertEntityToVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1679,9 +1720,9 @@
     public virtual Attachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1745,9 +1786,9 @@
     public virtual Attachment UploadAttachmentFromSourceUrl(string containerTitle, Guid entityId, string fileName, string sourceUrl, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           Uri sourceUri = new Uri(sourceUrl);
 
@@ -1840,9 +1881,9 @@
     public virtual Attachment GetAttachment(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1873,9 +1914,9 @@
     public virtual bool RenameAttachment(string containerTitle, Guid entityId, string fileName, string newFileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1916,9 +1957,9 @@
     public virtual bool DeleteAttachment(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1957,9 +1998,9 @@
     public virtual IList<Attachment> ListAttachments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -1992,9 +2033,9 @@
       MemoryStream result = new MemoryStream();
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2029,9 +2070,9 @@
     public virtual string GetContainerMetadata(string containerTitle, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2055,9 +2096,9 @@
     public virtual bool SetContainerMetadata(string containerTitle, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2088,9 +2129,9 @@
     public virtual IDictionary<string, string> ListContainerMetadata(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2114,9 +2155,9 @@
     public virtual string GetEntityMetadata(string containerTitle, Guid entityId, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2145,9 +2186,9 @@
     public virtual bool SetEntityMetadata(string containerTitle, Guid entityId, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2183,9 +2224,9 @@
     public virtual IDictionary<string, string> ListEntityMetadata(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2214,9 +2255,9 @@
     public virtual string GetEntityPartMetadata(string containerTitle, Guid entityId, string partName, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2246,9 +2287,9 @@
     public virtual bool SetEntityPartMetadata(string containerTitle, Guid entityId, string partName, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2286,9 +2327,9 @@
     public virtual IDictionary<string, string> ListEntityPartMetadata(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2317,9 +2358,9 @@
     public virtual string GetAttachmentMetadata(string containerTitle, Guid entityId, string fileName, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2353,9 +2394,9 @@
     public virtual bool SetAttachmentMetadata(string containerTitle, Guid entityId, string fileName, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2396,9 +2437,9 @@
     public virtual IDictionary<string, string> ListAttachmentMetadata(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2432,9 +2473,9 @@
     public virtual Comment AddEntityComment(string containerTitle, Guid entityId, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2470,9 +2511,9 @@
     public virtual IList<Comment> ListEntityComments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2514,9 +2555,9 @@
     public virtual Comment AddEntityPartComment(string containerTitle, Guid entityId, string partName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2553,9 +2594,9 @@
     public virtual IList<Comment> ListEntityPartComments(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2597,9 +2638,9 @@
     public virtual Comment AddAttachmentComment(string containerTitle, Guid entityId, string fileName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2640,9 +2681,9 @@
     public virtual IList<Comment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2690,9 +2731,9 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToContainer(string containerTitle, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
 
           SPList list = web.Lists.TryGetList(containerTitle);
@@ -2724,9 +2765,9 @@
     public virtual bool RemovePrincipalRoleFromContainer(string containerTitle, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list = web.Lists.TryGetList(containerTitle);
           if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
@@ -2753,9 +2794,9 @@
     public virtual PermissionsInfo GetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
 
           SPList list = web.Lists.TryGetList(containerTitle);
@@ -2777,9 +2818,9 @@
     public virtual PrincipalRoleInfo GetContainerPermissionsForPrincipal(string containerTitle, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
 
           SPList list = web.Lists.TryGetList(containerTitle);
@@ -2804,9 +2845,9 @@
     public virtual PermissionsInfo ResetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
 
           SPList list = web.Lists.TryGetList(containerTitle);
@@ -2844,9 +2885,9 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2883,9 +2924,9 @@
     public virtual bool RemovePrincipalRoleFromEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2917,9 +2958,9 @@
     public virtual PermissionsInfo GetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2946,9 +2987,9 @@
     public virtual PrincipalRoleInfo GetEntityPermissionsForPrincipal(string containerTitle, Guid guid, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -2978,9 +3019,9 @@
     public virtual PermissionsInfo ResetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3025,9 +3066,9 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3065,9 +3106,9 @@
     public virtual bool RemovePrincipalRoleFromEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3100,9 +3141,9 @@
     public virtual PermissionsInfo GetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3130,9 +3171,9 @@
     public virtual PrincipalRoleInfo GetEntityPartPermissionsForPrincipal(string containerTitle, Guid guid, string partName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3163,9 +3204,9 @@
     public virtual PermissionsInfo ResetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3208,9 +3249,9 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3252,9 +3293,9 @@
     public virtual bool RemovePrincipalRoleFromAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3291,9 +3332,9 @@
     public virtual PermissionsInfo GetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3325,9 +3366,9 @@
     public virtual PrincipalRoleInfo GetAttachmentPermissionsForPrincipal(string containerTitle, Guid guid, string fileName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3362,9 +3403,9 @@
     public virtual PermissionsInfo ResetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
@@ -3453,7 +3494,7 @@
         {
           //If the entity is locked by the current user, refresh the lock. Otherwise, wait until the lock is released.
           if (defaultEntityPart.LockedByUser != null &&
-              defaultEntityPart.LockedByUser.LoginName == this.Web.CurrentUser.LoginName)
+              defaultEntityPart.LockedByUser.LoginName == CurrentUserLoginName)
           {
             defaultEntityPart.Web.AllowUnsafeUpdates = true;
             try
@@ -3487,7 +3528,7 @@
         if (defaultEntityPart.LockType == SPFile.SPLockType.Exclusive &&
             defaultEntityPart.LockId == BaristaDSEntityLockId &&
             defaultEntityPart.LockedByUser != null &&
-            defaultEntityPart.LockedByUser.LoginName == this.Web.CurrentUser.LoginName)
+            defaultEntityPart.LockedByUser.LoginName == CurrentUserLoginName)
         {
           //We're good, we can continue.
           isLocked = true;
@@ -3546,7 +3587,7 @@
       if (defaultEntityPart.LockType == SPFile.SPLockType.Exclusive &&
               defaultEntityPart.LockId == BaristaDSEntityLockId &&
               defaultEntityPart.LockedByUser != null &&
-              defaultEntityPart.LockedByUser.LoginName == this.Web.CurrentUser.LoginName)
+              defaultEntityPart.LockedByUser.LoginName == CurrentUserLoginName)
       {
         defaultEntityPart.Web.AllowUnsafeUpdates = true;
 
@@ -3565,7 +3606,7 @@
 
     #region Private Methods
     /// <summary>
-    /// Gets the default entity part SPFile contianed in the specified container title and path with the specified Id.
+    /// Gets the default entity part SPFile contained in the specified container title and path with the specified Id.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
@@ -3574,9 +3615,9 @@
     private SPFile GetDefaultEntityPart(string containerTitle, string path, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.Web.Site.ID))
+      using (SPSite site = new SPSite(SiteId))
       {
-        using (SPWeb web = site.OpenWeb(this.Web.ID))
+        using (SPWeb web = site.OpenWeb(WebId))
         {
           SPList list;
           SPFolder folder;
