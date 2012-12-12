@@ -404,9 +404,6 @@
       return result;
     }
 
-    private static readonly object SyncFolderDictionary = new object();
-    private static readonly Dictionary<WebContainerPathTuple, ListFolderTuple> FolderDictionary = new Dictionary<WebContainerPathTuple, ListFolderTuple>();
-
     /// <summary>
     /// Returns a value that indicates of a SPFolder that corresponds to the specified path is able to be retrieved.
     /// </summary>
@@ -425,21 +422,8 @@
       if (containerTitle == null)
         throw new ArgumentNullException("containerTitle");
 
-      var currentFolderTuple = new WebContainerPathTuple
-        {
-          WebId = web.ID,
-          ContainerTitle = containerTitle,
-          Path = path
-        };
-
-      if (FolderDictionary.ContainsKey(currentFolderTuple))
-      {
-        var listFolder = FolderDictionary[currentFolderTuple];
-
-        list = web.Lists[listFolder.ListId];
-        folder = web.GetFolder(listFolder.FolderId);
-        return true;
-      }
+      if (path == null)
+        path = String.Empty;
 
       list = web.Lists.TryGetList(containerTitle);
 
@@ -450,15 +434,10 @@
         return false;
       }
 
-      SPFolder currentFolder = list.RootFolder;
+      SPFolder currentFolder;
       try
       {
-#pragma warning disable 168
-        foreach (var subFolder in DocumentStoreHelper.GetPathSegments(path))
-#pragma warning restore 168
-        {
-          currentFolder = web.GetFolder(SPUtility.ConcatUrls(list.RootFolder.Url, path));
-        }
+        currentFolder = web.GetFolder(SPUtility.ConcatUrls(list.RootFolder.Url, path));
       }
       catch (Exception)
       {
@@ -475,18 +454,6 @@
       }
 
       folder = currentFolder;
-
-      if (FolderDictionary.ContainsKey(currentFolderTuple) == false)
-      {
-        lock (SyncFolderDictionary)
-        {
-          if (FolderDictionary.ContainsKey(currentFolderTuple) == false)
-          {
-            FolderDictionary.Add(currentFolderTuple, new ListFolderTuple { ListId = list.ID, FolderId = folder.UniqueId });
-          }
-        }
-      }
-
       return true;
     }
 
@@ -893,8 +860,9 @@
     /// <summary>
     /// Returns a value that indicates if the specified document set folder contains a content entity part.
     /// </summary>
-    /// <param name="documentSetFolder"></param>
-    /// <returns></returns>
+    /// <param name="documentSetFolder">The document set folder.</param>
+    /// <returns><c>true</c> if [has content entity part] [the specified document set folder]; otherwise, <c>false</c>.</returns>
+    /// <exception cref="System.ArgumentNullException">documentSetFolder;@The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.</exception>
     public static bool HasContentEntityPart(SPFolder documentSetFolder)
     {
       if (documentSetFolder == null)
@@ -908,6 +876,15 @@
       return (contentFile != null);
     }
 
+    /// <summary>
+    /// Gets the entity contents entity part.
+    /// </summary>
+    /// <param name="web">The web.</param>
+    /// <param name="list">The list.</param>
+    /// <param name="documentSetFolder">The document set folder.</param>
+    /// <returns>EntityContents.</returns>
+    /// <exception cref="System.ArgumentNullException">web;@The web argument must be specified and contain the web that contains the document set folder.</exception>
+    /// <exception cref="System.InvalidOperationException">Unable to locate the entity part content type</exception>
     public static EntityContents GetEntityContentsEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder)
     {
       if (web == null)
@@ -1073,85 +1050,6 @@
       }
 
       return content;
-    }
-
-    private sealed class ListFolderTuple : IEquatable<ListFolderTuple>
-    {
-      public Guid ListId
-      {
-        get;
-        set;
-      }
-
-      public Guid FolderId
-      {
-        get;
-        set;
-      }
-
-      public bool Equals(ListFolderTuple other)
-      {
-        if (other == null)
-          return false;
-
-        return ListId == other.ListId &&
-               FolderId == other.FolderId;
-      }
-
-      public override bool Equals(object obj)
-      {
-        if (obj is ListFolderTuple)
-          return Equals(obj as ListFolderTuple);
-        return false;
-      }
-
-      public override int GetHashCode()
-      {
-        return String.Format("{0} {1}", ListId, FolderId).GetHashCode();
-      }
-    }
-
-    private sealed class WebContainerPathTuple : IEquatable<WebContainerPathTuple>
-    {
-      public Guid WebId
-      {
-        get;
-        set;
-      }
-
-      public string ContainerTitle
-      {
-        get;
-        set;
-      }
-
-      public string Path
-      {
-        get;
-        set;
-      }
-
-      public bool Equals(WebContainerPathTuple other)
-      {
-        if (other == null)
-          return false;
-
-        return this.WebId == other.WebId &&
-               this.ContainerTitle.Equals(other.ContainerTitle, StringComparison.InvariantCultureIgnoreCase) &&
-               ((this.Path == null && other.Path == null) || (this.Path != null && this.Path.Equals(other.ContainerTitle, StringComparison.InvariantCultureIgnoreCase)));
-      }
-
-      public override bool Equals(object obj)
-      {
-        if (obj is WebContainerPathTuple)
-          return Equals(obj as WebContainerPathTuple);
-        return false;
-      }
-
-      public override int GetHashCode()
-      {
-        return String.Format("{0} {1} {2}", WebId, ContainerTitle, Path).GetHashCode();
-      }
     }
   }
 }
