@@ -91,13 +91,34 @@ write-host
 
 write-host "Ensure service instance is running on server $env:computername..." -foregroundcolor Gray
 $localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
-if ($localServiceInstance.Status -ne 'Online'){
-	write-host "Starting service instance on server $env:computername..." -foregroundcolor Gray
-	Start-SPServiceInstance $localServiceInstance
-	write-host "Barista Service Application instance started." -foregroundcolor Green
+
+if ($localServiceInstance -eq $null) {
+	throw "An instance of the Barista Service could not be located. Please redeploy the Barista Solution."
 }
 
+if ($localServiceInstance.Status -eq 'Provisioning') {
+	$tj = Get-SPTimerJob | where { $_.Title -like "Provisioning Barista Service*" }
+	if ($tj -ne $null) {
+		$tj.Delete()
+	}
 
+	$localServiceInstance.Unprovision()
+}
+
+if ($localServiceInstance.Status -eq 'Unprovisioning') {
+	$tj = Get-SPTimerJob | where { $_.Title -like "Disabling Barista Service*" }
+	if ($tj -ne $null) {
+		$tj.Delete()
+	}
+	$localServiceInstance.Unprovision()
+}
+
+if ($localServiceInstance.Status -ne 'Started'){
+	write-host "Starting service instance on server $env:computername..." -foregroundcolor Gray
+	#Start-SPServiceInstance $localServiceInstance
+	$localServiceInstance.Provision()
+	write-host "Barista Service Application instance started." -foregroundcolor Green
+}
 
 write-host "[[[[ Barista Service Application provisioned & instance started. ]]]]" -foregroundcolor Green
 

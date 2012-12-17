@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SetupBaristaServiceApplication.ps1 = SetupBaristaServiceApplication.ps1
 		SetupBaristaServiceApplicationProxy.ps1 = SetupBaristaServiceApplicationProxy.ps1
 		TestBaristaServiceApplication.ps1 = TestBaristaServiceApplication.ps1
+		UninstallBaristaServiceApplication.ps1 = UninstallBaristaServiceApplication.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84}"

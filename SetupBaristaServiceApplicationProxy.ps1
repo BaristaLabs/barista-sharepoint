@@ -29,7 +29,7 @@ write-host "[[STEP]] Creating Barista Service Application proxy." -foregroundcol
 write-host 
 
 write-host "Ensure service application proxy not already created..." -foregroundcolor Gray
-$serviceAppProxy = Get-SPServiceApplicationProxy | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplication" -and $_.Name -eq "Barista Service Application Proxy" }
+$serviceAppProxy = Get-SPServiceApplicationProxy | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplicationProxy" -and $_.Name -eq "Barista Service Application Proxy" }
 if ($serviceAppProxy -eq $null)
 {
 	write-host "Creating service application proxy..." -foregroundcolor Gray

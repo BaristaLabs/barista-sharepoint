@@ -33,4 +33,10 @@ write-host "Testing the service application..." -foregroundcolor Yellow
 write-host "Evaling 6*7..." -foregroundcolor Gray
 $result = Invoke-BaristaService -ServiceContext $Uri -Eval "6*7"
 write-host "Result of 6*7 = $result" -foregroundcolor Gray
-write-host "Barista Service Application working." -foregroundcolor Green
+
+if ($result -eq "42") {
+	write-host "Barista Service Application working." -foregroundcolor Green
+}
+else {
+	write-host "An error occurred while executing the Barista Service." -foregroundcolor Yellow
+}
