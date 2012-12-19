@@ -213,6 +213,7 @@
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
+    <Compile Include="Bundles\SPSearchBundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
     <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\TfsBundle.cs" />
@@ -220,7 +221,10 @@
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
-    <Compile Include="DocumentStore\SPDirectory.cs" />
+    <Compile Include="Library\SearchDocumentInstance.cs" />
+    <Compile Include="Library\SearchField.cs" />
+    <Compile Include="Search\LuceneHelper.cs" />
+    <Compile Include="Search\SPDirectory.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
     <Compile Include="DocumentStore\SPSearchableDocumentStore.cs" />
     <Compile Include="DocumentStore\SPSimpleDocumentStore.cs" />
@@ -255,6 +259,7 @@
     <Compile Include="Library\RoleInstance.cs" />
     <Compile Include="Library\SPExcelPackageInstance.cs" />
     <Compile Include="Library\SPFarmInstance.cs" />
+    <Compile Include="Library\SPLuceneInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\TfsInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
@@ -267,6 +272,10 @@
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
+    <Compile Include="Search\SPFileInputStream.cs" />
+    <Compile Include="Search\SPFileOutputStream.cs" />
+    <Compile Include="Search\SPLock.cs" />
+    <Compile Include="Search\SPLockFactory.cs" />
     <Compile Include="Services\ADService.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaDiagnosticService.cs" />

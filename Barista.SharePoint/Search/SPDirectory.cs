@@ -1,12 +1,11 @@
-﻿using System.Linq;
-
-namespace Barista.SharePoint.DocumentStore
+﻿namespace Barista.SharePoint.Search
 {
   using Lucene.Net.Store;
   using Microsoft.SharePoint;
-  using System.IO;
-  using System;
   using Microsoft.SharePoint.Utilities;
+  using System;
+  using System.IO;
+  using System.Linq;
 
   /// <summary>
   /// Class SPDirectory
@@ -20,11 +19,54 @@ namespace Barista.SharePoint.DocumentStore
     /// <summary>
     /// Initializes a new instance of the <see cref="SPDirectory" /> class.
     /// </summary>
+    /// <param name="folder">The folder.</param>
+    public SPDirectory(SPFolder folder)
+      : this(folder, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SPDirectory" /> class.
+    /// </summary>
+    /// <param name="folder">The folder.</param>
+    /// <param name="lockFactory">The lock factory.</param>
+    /// <exception cref="System.ArgumentNullException">folder</exception>
+    public SPDirectory(SPFolder folder, LockFactory lockFactory)
+    {
+      if (folder == null)
+        throw new ArgumentNullException("folder");
+
+      m_siteId = folder.ParentWeb.Site.ID;
+      m_webId = folder.ParentWeb.ID;
+      m_folderId = folder.UniqueId;
+
+      //TODO: Change this to use a custom SPLockFactory instance.
+      if (lockFactory == null)
+        lockFactory = new SPLockFactory(m_siteId, m_webId, m_folderId);
+
+      SetLockFactory(lockFactory);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SPDirectory" /> class.
+    /// </summary>
     /// <param name="siteId">The site id.</param>
     /// <param name="webId">The web id.</param>
     /// <param name="folderId">The folder id.</param>
-    /// <exception cref="System.ArgumentNullException">siteId</exception>
     public SPDirectory(Guid siteId, Guid webId, Guid folderId)
+      : this(siteId, webId, folderId, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SPDirectory" /> class.
+    /// </summary>
+    /// <param name="siteId">The site id.</param>
+    /// <param name="webId">The web id.</param>
+    /// <param name="folderId">The folder id.</param>
+    /// <param name="lockFactory"></param>
+    /// <exception cref="System.ArgumentNullException">siteId</exception>
+    public SPDirectory(Guid siteId, Guid webId, Guid folderId, LockFactory lockFactory)
     {
       if (siteId == Guid.Empty || siteId == default(Guid))
         throw new ArgumentNullException("siteId");
@@ -38,6 +80,12 @@ namespace Barista.SharePoint.DocumentStore
       m_siteId = siteId;
       m_webId = webId;
       m_folderId = folderId;
+
+      //TODO: Change this to use a custom SPLockFactory instance.
+      if (lockFactory == null)
+        lockFactory = new SPLockFactory(m_siteId, m_webId, m_folderId);
+
+      SetLockFactory(lockFactory);
     }
 
     /// <summary>
@@ -57,8 +105,9 @@ namespace Barista.SharePoint.DocumentStore
           web.AllowUnsafeUpdates = true;
           try
           {
-            var file = folder.Files.Add(name, new byte[0]);
-            return new SPIndexOutput(m_siteId, m_webId, file.UniqueId);
+            var file = folder.Files.Add(name, new byte[0], true);
+
+            return new SPFileOutputStream(m_siteId, m_webId, file.UniqueId);
           }
           finally
           {
@@ -68,6 +117,10 @@ namespace Barista.SharePoint.DocumentStore
       }
     }
 
+    /// <summary>
+    /// Removes an existing file in the directory.
+    /// </summary>
+    /// <param name="name">The name.</param>
     public override void DeleteFile(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -89,6 +142,11 @@ namespace Barista.SharePoint.DocumentStore
       }
     }
 
+    /// <summary>
+    /// Returns true if a file with the given name exists.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns><c>true</c> if the file exists, <c>false</c> otherwise</returns>
     public override bool FileExists(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -102,6 +160,12 @@ namespace Barista.SharePoint.DocumentStore
       }
     }
 
+    /// <summary>
+    /// Returns the length of a file in the directory.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>System.Int64.</returns>
+    /// <exception cref="System.InvalidOperationException"></exception>
     public override long FileLength(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -112,13 +176,20 @@ namespace Barista.SharePoint.DocumentStore
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)
-            throw new InvalidOperationException(String.Format("The specified file does not exist:{0} {1}", file.Url, name));
+            throw new FileNotFoundException(String.Format("The specified file does not exist:{0} {1}", file.Url,
+                                                              name));
 
           return file.Length;
         }
       }
     }
 
+    /// <summary>
+    /// Returns the time the named file was last modified.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>System.Int64.</returns>
+    /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override long FileModified(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -129,7 +200,8 @@ namespace Barista.SharePoint.DocumentStore
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)
-            throw new InvalidOperationException(String.Format("The specified file does not exist:{0} {1}", file.Url, name));
+            throw new FileNotFoundException(String.Format("The specified file does not exist:{0} {1}", file.Url,
+                                                              name));
 
           var lastWriteTime = file.TimeLastModified;
           var universalTime = lastWriteTime.ToUniversalTime();
@@ -139,6 +211,10 @@ namespace Barista.SharePoint.DocumentStore
       }
     }
 
+    /// <summary>
+    /// Returns an array of strings, one for each file in the directory.
+    /// </summary>
+    /// <returns>System.String[][].</returns>
     public override string[] ListAll()
     {
       using (var site = new SPSite(m_siteId))
@@ -148,13 +224,19 @@ namespace Barista.SharePoint.DocumentStore
           //TODO: Change this to a ContentIterator
           var folder = web.GetFolder(m_folderId);
           return folder.Files
-            .OfType<SPFile>()
-            .Select(f => f.Name)
-            .ToArray();
+                       .OfType<SPFile>()
+                       .Select(f => f.Name)
+                       .ToArray();
         }
       }
     }
 
+    /// <summary>
+    /// Returns a stream reading an existing file.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>IndexInput.</returns>
+    /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override IndexInput OpenInput(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -163,13 +245,21 @@ namespace Barista.SharePoint.DocumentStore
         {
           var folder = web.GetFolder(m_folderId);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
+
           if (file.Exists == false)
-            throw new InvalidOperationException(String.Format("The specified file does not exist:{0} {1}", file.Url, name));
-          return new SPIndexInput(m_siteId, m_webId, file.UniqueId);
+            throw new FileNotFoundException(String.Format("The specified file does not exist:{0} {1}", file.Url,
+                                                              name));
+
+          return new SPFileInputStream(m_siteId, m_webId, file.UniqueId);
         }
       }
     }
 
+    /// <summary>
+    /// Set the modified time of an existing file to now.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override void TouchFile(string name)
     {
       using (var site = new SPSite(m_siteId))
@@ -178,8 +268,10 @@ namespace Barista.SharePoint.DocumentStore
         {
           var folder = web.GetFolder(m_folderId);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
+
           if (file.Exists == false)
-            throw new InvalidOperationException(String.Format("The specified file does not exist:{0} {1}", file.Url, name));
+            throw new FileNotFoundException(String.Format("The specified file does not exist:{0} {1}", file.Url,
+                                                              name));
           web.AllowUnsafeUpdates = true;
           try
           {
@@ -198,135 +290,5 @@ namespace Barista.SharePoint.DocumentStore
       //Surprisingly, nothing to dispose.
       //But... maybe it'll be more performant to just keep an instance of a SPWeb and dispose it here...
     }
-
-    #region Nested Classes
-
-    private class SPIndexInput : BufferedIndexInput
-    {
-      private readonly Guid m_siteId;
-      private readonly Guid m_webId;
-      private readonly Guid m_fileId;
-
-      public SPIndexInput(Guid siteId, Guid webId, Guid fileId)
-      {
-        if (siteId == Guid.Empty || siteId == default(Guid))
-          throw new ArgumentNullException("siteId");
-
-        if (webId == Guid.Empty || webId == default(Guid))
-          throw new ArgumentNullException("webId");
-
-        if (fileId == Guid.Empty || fileId == default(Guid))
-          throw new ArgumentNullException("fileId");
-
-        m_siteId = siteId;
-        m_webId = webId;
-        m_fileId = fileId;
-      }
-
-      public override void ReadInternal(byte[] b, int offset, int length)
-      {
-        using (var site = new SPSite(m_siteId))
-        {
-          using (var web = site.OpenWeb(m_webId))
-          {
-            var file = web.GetFile(m_fileId);
-            using (var s = file.OpenBinaryStream())
-            {
-              var reader = new BinaryReader(s);
-              reader.Read(b, offset, length);
-            }
-          }
-        }
-      }
-
-      public override long Length()
-      {
-        using (var site = new SPSite(m_siteId))
-        {
-          using (var web = site.OpenWeb(m_webId))
-          {
-            var file = web.GetFile(m_fileId);
-            return file.Length;
-          }
-        }
-      }
-
-      public override void SeekInternal(long pos)
-      {
-        //Do Nothing.
-      }
-
-      protected override void Dispose(bool disposing)
-      {
-        //Surprisingly, nothing to dispose.
-      }
-    }
-
-    private class SPIndexOutput : BufferedIndexOutput
-    {
-      private readonly Guid m_siteId;
-      private readonly Guid m_webId;
-      private readonly Guid m_fileId;
-
-      public SPIndexOutput(Guid siteId, Guid webId, Guid fileId)
-      {
-        if (siteId == Guid.Empty || siteId == default(Guid))
-          throw new ArgumentNullException("siteId");
-
-        if (webId == Guid.Empty || webId == default(Guid))
-          throw new ArgumentNullException("webId");
-
-        if (fileId == Guid.Empty || fileId == default(Guid))
-          throw new ArgumentNullException("fileId");
-
-        m_siteId = siteId;
-        m_webId = webId;
-        m_fileId = fileId;
-      }
-
-      /// <summary>
-      /// The number of bytes in the file.
-      /// </summary>
-      /// <value>The length.</value>
-      public override long Length
-      {
-        get
-        {
-          using (var site = new SPSite(m_siteId))
-          {
-            using (var web = site.OpenWeb(m_webId))
-            {
-              var file = web.GetFile(m_fileId);
-              return file.Length;
-            }
-          }
-        }
-      }
-
-      /// <summary>
-      /// Expert: implements buffer write.  Writes bytes at the current position in
-      /// the output.
-      /// </summary>
-      /// <param name="b">the bytes to write</param>
-      /// <param name="offset">the offset in the byte array</param>
-      /// <param name="len">the number of bytes to write</param>
-      public override void FlushBuffer(byte[] b, int offset, int len)
-      {
-        using (var site = new SPSite(m_siteId))
-        {
-          using (var web = site.OpenWeb(m_webId))
-          {
-            var file = web.GetFile(m_fileId);
-            using (var s = file.OpenBinaryStream())
-            {
-              var writer = new BinaryWriter(s);
-              writer.Write(b, offset, len);
-            }
-          }
-        }
-      }
-    }
-
-    #endregion
   }
 }

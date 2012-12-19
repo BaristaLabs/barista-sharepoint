@@ -183,7 +183,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         }
         catch (Exception ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occurred while evaluating script: ");
           throw;
         }
         finally
@@ -336,6 +336,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         instance.Common.RegisterBundle(new StateMachineBundle());
         instance.Common.RegisterBundle(new DeferredBundle());
         instance.Common.RegisterBundle(new TfsBundle());
+        instance.Common.RegisterBundle(new SPSearchBundle());
 
         //Global Types
         engine.SetGlobalValue("Barista", instance);
