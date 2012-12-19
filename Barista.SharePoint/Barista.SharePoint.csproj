@@ -223,6 +223,8 @@
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="Library\SearchDocumentInstance.cs" />
     <Compile Include="Library\SearchField.cs" />
+    <Compile Include="Library\SearchHitInstance.cs" />
+    <Compile Include="Search\Hit.cs" />
     <Compile Include="Search\LuceneHelper.cs" />
     <Compile Include="Search\SPDirectory.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />

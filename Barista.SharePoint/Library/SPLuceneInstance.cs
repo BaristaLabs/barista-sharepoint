@@ -40,11 +40,11 @@
 
       var searchResults = LuceneHelper.Search(targetFolder, query);
 
-      var documentInstances = searchResults
-        .Select(r => new SearchDocumentInstance(this.Engine.Object.InstancePrototype, r))
+      var hitInstances = searchResults
+        .Select(hit => new SearchHitInstance(this.Engine.Object.InstancePrototype, hit))
         .ToArray();
 
-      return this.Engine.Array.Construct(documentInstances);
+      return this.Engine.Array.Construct(hitInstances);
     }
 
     private SPFolder GetFolderFromObject(object folder)

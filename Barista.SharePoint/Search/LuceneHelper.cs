@@ -64,7 +64,7 @@
     /// <param name="targetFolder">The target folder.</param>
     /// <param name="query">The query.</param>
     /// <returns>IList{Document}.</returns>
-    public static IList<Document> Search(SPFolder targetFolder, string query)
+    public static IList<Hit> Search(SPFolder targetFolder, string query)
     {
       var directory = new SPDirectory(targetFolder);
 
@@ -79,7 +79,11 @@
         //iterate over the results.
         return hits.ScoreDocs.AsQueryable()
                    .OrderByDescending(hit => hit.Score)
-                   .Select(hit => searcher.Doc(hit.Doc))
+                   .Select(hit => new Hit
+                     {
+                       Score = hit.Score,
+                       Document = searcher.Doc(hit.Doc)
+                     })
                    .ToList();
       }
     }
