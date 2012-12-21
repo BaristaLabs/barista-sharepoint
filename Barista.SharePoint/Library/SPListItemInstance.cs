@@ -10,6 +10,7 @@
   using System.Collections;
   using Microsoft.SharePoint.Taxonomy;
   using System.Reflection;
+  using Barista.SharePoint.Taxonomy.Library;
 
   [Serializable]
   public class SPListItemConstructor : ClrFunction

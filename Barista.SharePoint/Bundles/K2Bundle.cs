@@ -1,6 +1,6 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
-  using Barista.SharePoint.Library;
+  using Barista.SharePoint.K2.Library;
   using System;
 
   [Serializable]

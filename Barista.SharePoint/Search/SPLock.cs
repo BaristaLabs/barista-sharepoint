@@ -10,26 +10,16 @@
   /// </summary>
   public sealed class SPLock : Lock
   {
-    private readonly Guid m_siteId;
-    private readonly Guid m_webId;
-    private readonly Guid m_folderId;
+    private readonly string m_folderUrl;
 
     private readonly string m_lockName;
 
-    internal SPLock(Guid siteId, Guid webId, Guid folderId, string lockName)
+    internal SPLock(string folderUrl, string lockName)
     {
-      if (siteId == Guid.Empty || siteId == default(Guid))
-        throw new ArgumentNullException("siteId");
+      if (String.IsNullOrEmpty(folderUrl))
+        throw new ArgumentNullException("folderUrl");
 
-      if (webId == Guid.Empty || webId == default(Guid))
-        throw new ArgumentNullException("webId");
-
-      if (folderId == Guid.Empty || folderId == default(Guid))
-        throw new ArgumentNullException("folderId");
-
-      m_siteId = siteId;
-      m_webId = webId;
-      m_folderId = folderId;
+      m_folderUrl = folderUrl;
 
       if (String.IsNullOrEmpty(lockName))
         throw new ArgumentNullException("lockName", @"To initialize the lock, a lock name must be specified.");
@@ -44,11 +34,11 @@
     /// <returns>true if exclusive access is obtained</returns>
     public override bool Obtain()
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
 
           if (folder.Exists == false)
             return false;
@@ -79,11 +69,11 @@
     /// <exception cref="System.NotImplementedException"></exception>
     public override void Release()
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
 
           if (folder.Exists == false)
             return;
@@ -113,11 +103,11 @@
     /// <returns><c>true</c> if this instance is locked; otherwise, <c>false</c>.</returns>
     public override bool IsLocked()
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
 
           if (folder.Exists == false)
             return false;

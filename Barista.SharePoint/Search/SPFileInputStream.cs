@@ -10,27 +10,17 @@
   /// </summary>
   public sealed class SPFileInputStream : IndexInput
   {
-    private readonly Guid m_siteId;
-    private readonly Guid m_webId;
-    private readonly Guid m_fileId;
+    private readonly string m_fileUrl;
 
     private MemoryStream m_data;
     private string m_eTag;
 
-    public SPFileInputStream(Guid siteId, Guid webId, Guid fileId)
+    public SPFileInputStream(string fileUrl)
     {
-      if (siteId == Guid.Empty || siteId == default(Guid))
-        throw new ArgumentNullException("siteId");
+      if (String.IsNullOrEmpty(fileUrl))
+        throw new ArgumentNullException("fileUrl");
 
-      if (webId == Guid.Empty || webId == default(Guid))
-        throw new ArgumentNullException("webId");
-
-      if (fileId == Guid.Empty || fileId == default(Guid))
-        throw new ArgumentNullException("fileId");
-
-      m_siteId = siteId;
-      m_webId = webId;
-      m_fileId = fileId;
+      m_fileUrl = fileUrl;
 
       RefreshData();
     }
@@ -111,11 +101,11 @@
     /// <exception cref="System.IO.FileNotFoundException">Unable to open SharePoint File: File does not exist.</exception>
     private void RefreshData()
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_fileUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var file = web.GetFile(m_fileId);
+          var file = web.GetFile(m_fileUrl);
 
           if (file.Exists == false)
             throw new FileNotFoundException("Unable to open SharePoint File: File does not exist.");

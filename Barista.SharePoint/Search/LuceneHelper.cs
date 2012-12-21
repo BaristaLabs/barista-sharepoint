@@ -22,6 +22,10 @@
     /// <summary>
     /// Adds the index of the object to the index that is contained in the specified folder
     /// </summary>
+    /// <remarks>
+    /// This method should only be used as a helper method to add a single document as it is not performant
+    /// to create an instance of an IndexWriter per document.
+    /// </remarks>
     /// <param name="targetFolder">The target folder.</param>
     /// <param name="create"></param>
     /// <param name="obj">The obj.</param>
@@ -42,7 +46,12 @@
     /// <summary>
     /// Adds the index of the object to the index that is contained in the specified folder
     /// </summary>
+    /// <remarks>
+    /// This method should only be used as a helper method to add a single document as it is not performant
+    /// to create an instance of an IndexWriter per document.
+    /// </remarks>
     /// <param name="targetFolder">The target folder.</param>
+    /// <param name="create"></param>
     /// <param name="jObj">The obj.</param>
     public static void AddObjectToIndex(SPFolder targetFolder, bool create, JObject jObj)
     {
@@ -61,6 +70,10 @@
     /// <summary>
     /// Searches the specified target folder.
     /// </summary>
+    /// <remarks>
+    /// This method should only be used as a helper method to perform a single search as it creates a new
+    /// IndexSearcher per search.
+    /// </remarks>
     /// <param name="targetFolder">The target folder.</param>
     /// <param name="query">The query.</param>
     /// <returns>IList{Document}.</returns>
@@ -129,7 +142,7 @@
       var doc = new Document();
 
       var jObj = JObject.FromObject(obj);
-      var tokenDictionary = new Dictionary<string, Field>();
+      var tokenDictionary = new Dictionary<string, AbstractField>();
       TokenizeObject(jObj, "", ref tokenDictionary);
 
       //Add the full json doc as a "contents" field.
@@ -155,7 +168,7 @@
     {
       var doc = new Document();
 
-      var tokenDictionary = new Dictionary<string, Field>();
+      var tokenDictionary = new Dictionary<string, AbstractField>();
       TokenizeObject(jObj, "", ref tokenDictionary);
 
       //Add the full json doc as a "contents" field.
@@ -178,17 +191,38 @@
     /// <param name="obj"></param>
     /// <param name="prefix"></param>
     /// <param name="dictionary"></param>
-    private static void TokenizeObject(JObject obj, string prefix, ref Dictionary<string, Field> dictionary)
+    private static void TokenizeObject(JObject obj, string prefix, ref Dictionary<string, AbstractField> dictionary)
     {
       if (obj == null)
         return;
 
-      //TODO: Add attribute-based conventions that allow the parameters to be customized.
+      //TODO: Add property-based ("$propertyName") conventions that allow the parameters to be customized.
       foreach (var property in obj.Properties().Where(p => p.Value != null))
       {
         var fieldName = String.IsNullOrEmpty(prefix) ? property.Name : prefix + "." + property.Name;
         switch (property.Value.Type)
         {
+          case JTokenType.Date:
+            var dateString = DateTools.DateToString((DateTime) property.Value, DateTools.Resolution.MILLISECOND);
+            var dateField = new Field(fieldName, dateString, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES);
+
+            dictionary.Add(fieldName, dateField);
+            break;
+          case JTokenType.TimeSpan:
+            var timeSpanField = new NumericField(fieldName, Field.Store.YES, true);
+            timeSpanField.SetLongValue(((TimeSpan)property.Value).Ticks);
+            dictionary.Add(fieldName, timeSpanField);
+            break;
+          case JTokenType.Integer:
+            var intField = new NumericField(fieldName, Field.Store.YES, true);
+            intField.SetIntValue((int)property.Value);
+            dictionary.Add(fieldName, intField);
+            break;
+          case JTokenType.Float:
+            var floatField = new NumericField(fieldName, Field.Store.YES, true);
+            floatField.SetFloatValue((float)property.Value);
+            dictionary.Add(fieldName, floatField);
+            break;
           case JTokenType.Object:
             TokenizeObject(property.Value as JObject, fieldName, ref dictionary);
             break;

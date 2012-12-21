@@ -12,9 +12,7 @@
   /// </summary>
   public sealed class SPDirectory : Lucene.Net.Store.Directory
   {
-    private readonly Guid m_siteId;
-    private readonly Guid m_webId;
-    private readonly Guid m_folderId;
+    private readonly string m_folderUrl;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SPDirectory" /> class.
@@ -36,13 +34,11 @@
       if (folder == null)
         throw new ArgumentNullException("folder");
 
-      m_siteId = folder.ParentWeb.Site.ID;
-      m_webId = folder.ParentWeb.ID;
-      m_folderId = folder.UniqueId;
+      m_folderUrl = SPUtility.ConcatUrls(folder.ParentWeb.Url, folder.ServerRelativeUrl);
 
       //TODO: Change this to use a custom SPLockFactory instance.
       if (lockFactory == null)
-        lockFactory = new SPLockFactory(m_siteId, m_webId, m_folderId);
+        lockFactory = new SPLockFactory(m_folderUrl);
 
       SetLockFactory(lockFactory);
     }
@@ -50,40 +46,28 @@
     /// <summary>
     /// Initializes a new instance of the <see cref="SPDirectory" /> class.
     /// </summary>
-    /// <param name="siteId">The site id.</param>
-    /// <param name="webId">The web id.</param>
-    /// <param name="folderId">The folder id.</param>
-    public SPDirectory(Guid siteId, Guid webId, Guid folderId)
-      : this(siteId, webId, folderId, null)
+    /// <param name="folderUrl">The folder URL.</param>
+    public SPDirectory(string folderUrl)
+      : this(folderUrl, null)
     {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SPDirectory" /> class.
     /// </summary>
-    /// <param name="siteId">The site id.</param>
-    /// <param name="webId">The web id.</param>
-    /// <param name="folderId">The folder id.</param>
+    /// <param name="folderUrl"></param>
     /// <param name="lockFactory"></param>
     /// <exception cref="System.ArgumentNullException">siteId</exception>
-    public SPDirectory(Guid siteId, Guid webId, Guid folderId, LockFactory lockFactory)
+    public SPDirectory(string folderUrl, LockFactory lockFactory)
     {
-      if (siteId == Guid.Empty || siteId == default(Guid))
-        throw new ArgumentNullException("siteId");
+      if (String.IsNullOrEmpty(folderUrl))
+        throw new ArgumentNullException("folderUrl");
 
-      if (webId == Guid.Empty || webId == default(Guid))
-        throw new ArgumentNullException("webId");
-
-      if (folderId == Guid.Empty || folderId == default(Guid))
-        throw new ArgumentNullException("folderId");
-
-      m_siteId = siteId;
-      m_webId = webId;
-      m_folderId = folderId;
+      m_folderUrl = folderUrl;
 
       //TODO: Change this to use a custom SPLockFactory instance.
       if (lockFactory == null)
-        lockFactory = new SPLockFactory(m_siteId, m_webId, m_folderId);
+        lockFactory = new SPLockFactory(m_folderUrl);
 
       SetLockFactory(lockFactory);
     }
@@ -97,17 +81,17 @@
     /// <exception cref="System.NotImplementedException"></exception>
     public override IndexOutput CreateOutput(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           web.AllowUnsafeUpdates = true;
           try
           {
             var file = folder.Files.Add(name, new byte[0], true);
 
-            return new SPFileOutputStream(m_siteId, m_webId, file.UniqueId);
+            return new SPFileOutputStream(SPUtility.ConcatUrls(file.Web.Url, file.ServerRelativeUrl));
           }
           finally
           {
@@ -123,11 +107,11 @@
     /// <param name="name">The name.</param>
     public override void DeleteFile(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
           web.AllowUnsafeUpdates = true;
           try
@@ -149,11 +133,11 @@
     /// <returns><c>true</c> if the file exists, <c>false</c> otherwise</returns>
     public override bool FileExists(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
           return file.Exists;
         }
@@ -168,11 +152,11 @@
     /// <exception cref="System.InvalidOperationException"></exception>
     public override long FileLength(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)
@@ -192,11 +176,11 @@
     /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override long FileModified(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)
@@ -217,12 +201,12 @@
     /// <returns>System.String[][].</returns>
     public override string[] ListAll()
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
           //TODO: Change this to a ContentIterator
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           return folder.Files
                        .OfType<SPFile>()
                        .Select(f => f.Name)
@@ -239,18 +223,18 @@
     /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override IndexInput OpenInput(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)
             throw new FileNotFoundException(String.Format("The specified file does not exist:{0} {1}", file.Url,
                                                               name));
 
-          return new SPFileInputStream(m_siteId, m_webId, file.UniqueId);
+          return new SPFileInputStream(SPUtility.ConcatUrls(file.Web.Url, file.ServerRelativeUrl));
         }
       }
     }
@@ -262,11 +246,11 @@
     /// <exception cref="System.IO.FileNotFoundException"></exception>
     public override void TouchFile(string name)
     {
-      using (var site = new SPSite(m_siteId))
+      using (var site = new SPSite(m_folderUrl))
       {
-        using (var web = site.OpenWeb(m_webId))
+        using (var web = site.OpenWeb())
         {
-          var folder = web.GetFolder(m_folderId);
+          var folder = web.GetFolder(m_folderUrl);
           var file = web.GetFile(SPUtility.ConcatUrls(folder.ServerRelativeUrl, name));
 
           if (file.Exists == false)

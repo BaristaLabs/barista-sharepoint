@@ -1,9 +1,8 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
+  using Barista.SharePoint.DocumentStore.Library;
   using Barista.DocumentStore;
   using Barista.SharePoint.DocumentStore;
-  using Barista.SharePoint.Library;
-  using Jurassic;
   using System;
 
   [Serializable]

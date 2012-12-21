@@ -1,14 +1,17 @@
-﻿namespace Barista.SharePoint.Library
+﻿using System.Globalization;
+
+namespace Barista.SharePoint.Library
 {
-  using System;
-  using System.Linq;
+  using Barista.SharePoint.Taxonomy.Library;
   using Jurassic;
   using Jurassic.Library;
-  using Microsoft.SharePoint;
   using Microsoft.Office.Server.Utilities;
-  using System.Collections.Generic;
+  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Taxonomy;
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
 
   [Serializable]
   public class SPSiteConstructor : ClrFunction
@@ -21,7 +24,7 @@
     [JSConstructorFunction]
     public SPSiteInstance Construct(string siteUrl)
     {
-      SPSite site = null;
+      SPSite site;
 
       if (SPHelper.TryGetSPSite(siteUrl, out site) == false)
         throw new JavaScriptException(this.Engine, "Error", "A site is not available at the specified url.");
@@ -41,7 +44,7 @@
   [Serializable]
   public class SPSiteInstance : ObjectInstance, IDisposable
   {
-    private SPSite m_site;
+    private readonly SPSite m_site;
 
     public SPSiteInstance(ObjectInstance prototype)
       : base(prototype)
@@ -89,7 +92,7 @@
       get
       {
         var result = this.Engine.Array.Construct();
-        foreach (var feature in m_site.Features.OfType<SPFeature>())
+        foreach (var feature in m_site.Features)
         {
           ArrayInstance.Push(result, new SPFeatureInstance(this.Engine.Object.InstancePrototype, feature));
         }
@@ -106,7 +109,7 @@
     [JSProperty(Name = "maxItemsPerThrottledOperation")]
     public string MaxItemsPerThrottledOperation
     {
-      get { return m_site.WebApplication.MaxItemsPerThrottledOperation.ToString(); }
+      get { return m_site.WebApplication.MaxItemsPerThrottledOperation.ToString(CultureInfo.InvariantCulture); }
     }
 
     [JSProperty(Name = "rootWeb")]
@@ -149,7 +152,7 @@
     [JSFunction(Name = "createWeb")]
     public SPWebInstance CreateWeb(object webCreationInfo)
     {
-      SPWeb createdWeb = null;
+      SPWeb createdWeb;
 
       if (webCreationInfo is string)
         createdWeb = m_site.AllWebs.Add(webCreationInfo as string);
@@ -183,14 +186,8 @@
       List<SPWeb> webs = new List<SPWeb>();
 
       ContentIterator ci = new ContentIterator();
-      ci.ProcessSite(m_site, true, (web) =>
-        {
-          webs.Add(web);
-        },
-        (web, ex) =>
-        {
-          return false; // don't rethrow errors.
-        });
+      ci.ProcessSite(m_site, true, webs.Add,
+        (web, ex) => false);
       
       var result = this.Engine.Array.Construct();
       foreach (var web in webs)
@@ -239,9 +236,11 @@
     public ArrayInstance GetWebTemplates(object language)
     {
       uint lcid = (uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
-      
+
+// ReSharper disable PossibleInvalidCastException
       if (language is int)
         lcid = (uint)language;
+// ReSharper restore PossibleInvalidCastException
 
       var result = this.Engine.Array.Construct();
       var webTemplates = m_site.GetWebTemplates(lcid).OfType<SPWebTemplate>();
@@ -267,9 +266,9 @@
     [JSFunction(Name = "openWebById")]
     public SPWebInstance OpenWebById(string id)
     {
-      Guid webID = new Guid(id);
+      Guid webId = new Guid(id);
 
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.OpenWeb(webID));
+      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.OpenWeb(webId));
     }
 
     [JSFunction(Name = "dispose")]

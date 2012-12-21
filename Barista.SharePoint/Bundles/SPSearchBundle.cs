@@ -1,6 +1,6 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
-  using Barista.SharePoint.Library;
+  using Barista.SharePoint.Search.Library;
   using System;
 
   [Serializable]
