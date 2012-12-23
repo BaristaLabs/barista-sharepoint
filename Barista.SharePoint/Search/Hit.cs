@@ -10,6 +10,12 @@
       set;
     }
 
+    public int DocumentId
+    {
+      get;
+      set;
+    }
+
     public Document Document
     {
       get;

@@ -6,7 +6,9 @@
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
+  using Lucene.Net.Store;
   using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Utilities;
   using Newtonsoft.Json;
   using Newtonsoft.Json.Linq;
   using System;
@@ -19,117 +21,143 @@
   /// </summary>
   public static class LuceneHelper
   {
-    /// <summary>
-    /// Adds the index of the object to the index that is contained in the specified folder
-    /// </summary>
-    /// <remarks>
-    /// This method should only be used as a helper method to add a single document as it is not performant
-    /// to create an instance of an IndexWriter per document.
-    /// </remarks>
-    /// <param name="targetFolder">The target folder.</param>
-    /// <param name="create"></param>
-    /// <param name="obj">The obj.</param>
-    public static void AddObjectToIndex(SPFolder targetFolder, bool create, object obj)
+    //TODO: This will fail in a scenario where the Barista Serivce Application is installed on multiple servers in the farm.
+    //The first IndexWriter obtained will lock and block the second index writer.
+    //this should be switched on over to a mechanism that ensures a farm-wide singleton.
+    public static readonly Dictionary<string, IndexWriter> IndexWriters = new Dictionary<string, IndexWriter>();
+
+    public static IndexWriter GetIndexWriterSingleton(SPFolder targetFolder, bool createIndex)
     {
+      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
+      if (IndexWriters.ContainsKey(fullFolderUrl))
+      {
+        lock (IndexWriters)
+        {
+          if (IndexWriters.ContainsKey(fullFolderUrl))
+          {
+            return IndexWriters[fullFolderUrl];
+          }
+        }
+      }
+
       var directory = new SPDirectory(targetFolder);
 
+      //Block until a Lock is no longer present on the target folder.
+      var spLock = directory.MakeLock(directory.GetLockId());
+      spLock.Obtain(Lock.LOCK_OBTAIN_WAIT_FOREVER);
+      spLock.Release();
+
+      var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
+      var writer = new IndexWriter(directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED);
+
+      if (IndexWriters.ContainsKey(fullFolderUrl) == false)
+      {
+        lock (IndexWriters)
+        {
+          if (IndexWriters.ContainsKey(fullFolderUrl) == false)
+          {
+            IndexWriters.Add(fullFolderUrl, writer);
+          }
+        }
+      }
+
+      return IndexWriters[fullFolderUrl];
+    }
+
+    /// <summary>
+    /// Utility method to get the most-relevant index searcher. If a index writer singleton exists for the target folder, uses that instance, otherwise returns a new index searcher. 
+    /// </summary>
+    /// <param name="targetFolder">The target folder.</param>
+    /// <returns>IndexSearcher.</returns>
+    public static IndexSearcher GetIndexSearcher(SPFolder targetFolder)
+    {
+      IndexSearcher searcher;
+      if (HasIndexWriterSingleton(targetFolder))
+      {
+        var indexWriter = GetIndexWriterSingleton(targetFolder, false);
+        var reader = indexWriter.GetReader();
+        searcher = new IndexSearcher(reader);
+      }
+      else
+      {
+        var directory = new SPDirectory(targetFolder);
+        searcher = new IndexSearcher(directory);
+      }
+
+      return searcher;
+    }
+
+    /// <summary>
+    /// Returns a value that indicates if a index writer singleton has been created for the target folder.
+    /// </summary>
+    /// <param name="targetFolder"></param>
+    /// <returns></returns>
+    public static bool HasIndexWriterSingleton(SPFolder targetFolder)
+    {
+      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
+      return IndexWriters.ContainsKey(fullFolderUrl);
+    }
+
+    /// <summary>
+    /// Utility method to add the the object to the index using the specified index writer.
+    /// </summary>
+    /// <param name="indexWriter"></param>
+    /// <param name="obj">The obj.</param>
+    public static void AddObjectToIndex(IndexWriter indexWriter, object obj)
+    {
       var doc = ConvertObjectToDocument(obj);
 
-      var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-
-      using (var writer = new IndexWriter(directory, analyzer, create, IndexWriter.MaxFieldLength.UNLIMITED))
-      {
-        writer.AddDocument(doc);
-      }
+      indexWriter.AddDocument(doc);
     }
 
     /// <summary>
-    /// Adds the index of the object to the index that is contained in the specified folder
+    /// Utility method to add the JObject to the index using the specified index writer.
     /// </summary>
-    /// <remarks>
-    /// This method should only be used as a helper method to add a single document as it is not performant
-    /// to create an instance of an IndexWriter per document.
-    /// </remarks>
-    /// <param name="targetFolder">The target folder.</param>
-    /// <param name="create"></param>
+    /// <param name="indexWriter"></param>
     /// <param name="jObj">The obj.</param>
-    public static void AddObjectToIndex(SPFolder targetFolder, bool create, JObject jObj)
+    public static void AddObjectToIndex(IndexWriter indexWriter, JObject jObj)
     {
-      var directory = new SPDirectory(targetFolder);
-
       var doc = ConvertObjectToDocument(jObj);
 
-      var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-
-      using (var writer = new IndexWriter(directory, analyzer, create, IndexWriter.MaxFieldLength.UNLIMITED))
-      {
-        writer.AddDocument(doc);
-      }
+      indexWriter.AddDocument(doc);
     }
 
     /// <summary>
-    /// Searches the specified target folder.
+    /// Utility method to add the list item to the index using the specified index writer.
     /// </summary>
-    /// <remarks>
-    /// This method should only be used as a helper method to perform a single search as it creates a new
-    /// IndexSearcher per search.
-    /// </remarks>
-    /// <param name="targetFolder">The target folder.</param>
-    /// <param name="query">The query.</param>
-    /// <returns>IList{Document}.</returns>
-    public static IList<Hit> Search(SPFolder targetFolder, string query)
+    /// <param name="indexWriter">The index writer.</param>
+    /// <param name="listItem">The list item.</param>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public static void AddListItemToIndex(IndexWriter indexWriter, SPListItem listItem)
     {
-      var directory = new SPDirectory(targetFolder);
+      var doc = ConvertListItemToDocument(listItem);
 
-      //create an index searcher that will perform the search
-      using (var searcher = new IndexSearcher(directory))
-      {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
-        var lQuery = parser.Parse(query);
-
-        var hits = searcher.Search(lQuery, 100);
-
-        //iterate over the results.
-        return hits.ScoreDocs.AsQueryable()
-                   .OrderByDescending(hit => hit.Score)
-                   .Select(hit => new Hit
-                     {
-                       Score = hit.Score,
-                       Document = searcher.Doc(hit.Doc)
-                     })
-                   .ToList();
-      }
+      indexWriter.AddDocument(doc);
     }
 
     /// <summary>
-    /// Searches the specified target folder.
+    /// Closes the index writer singleton.
     /// </summary>
     /// <param name="targetFolder">The target folder.</param>
-    /// <param name="searchTerms">The search terms.</param>
-    /// <returns>IList{Document}.</returns>
-    public static IList<Document> Search(SPFolder targetFolder, IDictionary<string, string> searchTerms)
+    public static void CloseIndexWriterSingleton(SPFolder targetFolder)
     {
-      var directory = new SPDirectory(targetFolder);
+      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
 
-      //create an index searcher that will perform the search
-      using (var searcher = new IndexSearcher(directory))
+      IndexWriter indexWriter = null;
+      if (IndexWriters.ContainsKey(fullFolderUrl))
       {
-        //build a query object
-        var termQueries = searchTerms
-          .Select(kvp => new TermQuery(new Term(kvp.Key, kvp.Value)))
-          .ToList();
-
-        //TODO: Use more than the first search Term
-
-        //execute the query
-        var hits = searcher.Search(termQueries.First(), 100);
-
-        //iterate over the results.
-        return hits.ScoreDocs.AsQueryable()
-                   .OrderByDescending(hit => hit.Score)
-                   .Select(hit => searcher.Doc(hit.Doc))
-                   .ToList();
+        lock (IndexWriters)
+        {
+          if (IndexWriters.ContainsKey(fullFolderUrl))
+          {
+            indexWriter = IndexWriters[fullFolderUrl];
+            IndexWriters.Remove(fullFolderUrl);
+          }
+        }
       }
+
+      if (indexWriter != null)
+        indexWriter.Dispose();
     }
 
     /// <summary>
@@ -183,6 +211,100 @@
       }
 
       return doc;
+    }
+
+    /// <summary>
+    /// Converts the list item to document.
+    /// </summary>
+    /// <param name="listItem">The list item.</param>
+    /// <returns>Document.</returns>
+    public static Document ConvertListItemToDocument(SPListItem listItem)
+    {
+      var tokenDictionary = new Dictionary<string, AbstractField>();
+
+      foreach (var field in listItem.Fields.OfType<SPField>().Where(f => f.Hidden == false))
+      {
+        switch (field.Type)
+        {
+          case SPFieldType.DateTime:
+             var dateString = DateTools.DateToString((DateTime) listItem[field.Id], DateTools.Resolution.MILLISECOND);
+            var dateField = new Field(field.Title, dateString, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES);
+
+            tokenDictionary.Add(field.Title, dateField);
+            break;
+          case SPFieldType.Integer:
+            var intField = new NumericField(field.Title, Field.Store.YES, true);
+            intField.SetIntValue((int)listItem[field.Id]);
+            tokenDictionary.Add(field.Title, intField);
+            break;
+          case SPFieldType.Number:
+            var numberField = new NumericField(field.Title, Field.Store.YES, true);
+            numberField.SetFloatValue(Convert.ToSingle(listItem[field.Id]));
+            tokenDictionary.Add(field.Title, numberField);
+            break;
+          default:
+            var textValue = field.GetFieldValueAsText(listItem[field.Id]);
+            var stringField = new Field(field.Title, textValue, Field.Store.YES, Field.Index.ANALYZED,
+                                    Field.TermVector.YES);
+            tokenDictionary.Add(field.Title, stringField);
+            break;
+        }
+      }
+
+      var doc = new Document();
+
+      //Add individual fields.
+      foreach (var kvp in tokenDictionary)
+      {
+        doc.Add(kvp.Value);
+      }
+
+      return doc;
+    }
+
+    /// <summary>
+    /// Utility method to search the specified target folder via a query parser.
+    /// </summary>
+    /// <param name="targetFolder">The target folder.</param>
+    /// <param name="query">The query.</param>
+    /// <param name="n"></param>
+    /// <returns>IList{Document}.</returns>
+    public static IList<Hit> Search(SPFolder targetFolder, string query, int n)
+    {
+      var searcher = GetIndexSearcher(targetFolder);
+      try
+      {
+        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
+        var lQuery = parser.Parse(query);
+
+        var hits = searcher.Search(lQuery, n);
+
+        //iterate over the results.
+        return hits.ScoreDocs.AsQueryable()
+                   .OrderByDescending(hit => hit.Score)
+                   .Select(hit => new Hit
+                   {
+                     Score = hit.Score,
+                     DocumentId = hit.Doc,
+                     Document = searcher.Doc(hit.Doc)
+                   })
+                   .ToList();
+      }
+      finally
+      {
+        searcher.Dispose();
+      }
+    }
+
+    /// <summary>
+    /// Utility method to remove all documents from the index using the specified writer.
+    /// </summary>
+    /// <param name="writer"></param>
+    public static void RemoveAllDocumentsFromIndex(IndexWriter writer)
+    {
+      Query query = new MatchAllDocsQuery();
+
+      writer.DeleteDocuments(query);
     }
 
     /// <summary>

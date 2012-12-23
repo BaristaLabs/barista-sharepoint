@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿
 
 namespace Barista.SharePoint.Search.Library
 {
   using Jurassic;
   using Jurassic.Library;
+  using Lucene.Net.Analysis;
+  using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
   using System;
+  using System.Linq;
+  using Version = Lucene.Net.Util.Version;
 
   [Serializable]
   public class IndexSearcherConstructor : ClrFunction
@@ -51,9 +52,74 @@ namespace Barista.SharePoint.Search.Library
       get { return m_indexSearcher; }
     }
 
-    public void Search()
+    [JSFunction(Name = "explain")]
+    public ExplanationInstance Explain(object searchQuery, object hit)
     {
-      throw new NotImplementedException();
+      if (searchQuery == null || searchQuery == Null.Value || searchQuery == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A search query must be specified as the first parameter.");
+
+      if (hit == null || hit == Null.Value || hit == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A search result or document id must be specified as the second parameter.");
+
+      Query query;
+      if (searchQuery is TermQueryInstance)
+      {
+        query = (searchQuery as TermQueryInstance).TermQuery;
+      }
+      else
+      {
+        throw new JavaScriptException(this.Engine, "Error", "Cannot determine query.");
+      }
+
+      Explanation explanation;
+      if (hit is SearchHitInstance)
+      {
+        var searchHit = (hit as SearchHitInstance).Hit;
+        explanation = m_indexSearcher.Explain(query, searchHit.DocumentId);
+      }
+      else
+      {
+        explanation = m_indexSearcher.Explain(query, Convert.ToInt32(hit));
+      }
+
+      return new ExplanationInstance(this.Engine.Object.InstancePrototype, explanation);
+    }
+
+    [JSFunction(Name = "search")]
+    public ArrayInstance Search(object searchQuery, object n)
+    {
+      if (searchQuery == null || searchQuery == Null.Value || searchQuery == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A search query must be specified as the first parameter.");
+
+      var intN = 100;
+      if (n != null && n != Null.Value && n != Undefined.Value && n is int)
+        intN = (int) n;
+
+      Query query;
+      if (searchQuery is TermQueryInstance)
+      {
+        query = (searchQuery as TermQueryInstance).TermQuery;
+      }
+      else
+      {
+        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
+        query = parser.Parse(searchQuery.ToString());
+      }
+
+      var hitInstances = m_indexSearcher.Search(query, intN).ScoreDocs
+                                        .AsQueryable()
+                                        .OrderByDescending(hit => hit.Score)
+                                        .Select(hit =>
+                                            new SearchHitInstance(this.Engine.Object.InstancePrototype, new Hit
+                                              {
+                                                Score = hit.Score,
+                                                DocumentId = hit.Doc,
+                                                Document = m_indexSearcher.Doc(hit.Doc)
+                                              })
+                                          )
+                                        .ToArray();
+
+      return this.Engine.Array.Construct(hitInstances);
     }
   }
 }

@@ -1,30 +1,19 @@
-﻿using Barista.SharePoint.Library;
-using Lucene.Net.Analysis;
-using Microsoft.SharePoint.Utilities;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Search;
 
 namespace Barista.SharePoint.Search.Library
 {
+  using Barista.SharePoint.Library;
   using Barista.SharePoint.Search;
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Analysis.Standard;
-  using Lucene.Net.Index;
-  using Lucene.Net.QueryParsers;
-  using Lucene.Net.Search;
   using Microsoft.SharePoint;
-  using Newtonsoft.Json.Linq;
   using System;
-  using System.Collections.Generic;
   using System.Linq;
 
   [Serializable]
   public class SPLuceneInstance : ObjectInstance
   {
-    //TODO: This will fail in a scenario where the Barista Serivce Application is installed on multiple servers in the farm.
-    //The first IndexWriter obtained will lock and block the second index writer.
-    //this should be switched on over to a mechanism that ensures a farm-wide singleton.
-    public static readonly Dictionary<string, IndexWriter> IndexWriters = new Dictionary<string, IndexWriter>();
-
     public SPLuceneInstance(ObjectInstance prototype)
       : base(prototype)
     {
@@ -37,8 +26,17 @@ namespace Barista.SharePoint.Search.Library
     {
       var targetFolder = GetFolderFromObject(folder);
 
-      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
-      return IndexWriters.ContainsKey(fullFolderUrl);
+      return LuceneHelper.HasIndexWriterSingleton(targetFolder);
+    }
+
+    [JSFunction(Name = "getIndexSearcher")]
+    public IndexSearcherInstance GetIndexSearcher(object folder, object createIndex)
+    {
+      var targetFolder = GetFolderFromObject(folder);
+
+      var indexSearcher = LuceneHelper.GetIndexSearcher(targetFolder);
+
+      return new IndexSearcherInstance(this.Engine.Object.InstancePrototype, indexSearcher);
     }
 
     [JSFunction(Name = "getIndexWriter")]
@@ -46,156 +44,43 @@ namespace Barista.SharePoint.Search.Library
     {
       var targetFolder = GetFolderFromObject(folder);
 
-      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
-      if (IndexWriters.ContainsKey(fullFolderUrl))
-      {
-        lock (IndexWriters)
-        {
-          if (IndexWriters.ContainsKey(fullFolderUrl))
-          {
-            return new IndexWriterInstance(this.Engine.Object.InstancePrototype, IndexWriters[fullFolderUrl]);
-          }
-        }
-      }
-
       var bCreateIndex = false;
       if (createIndex != null && createIndex != Null.Value && createIndex != Undefined.Value && createIndex is Boolean)
         bCreateIndex = (bool)createIndex;
 
-      SPDirectory directory = new SPDirectory(targetFolder);
-      var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-      IndexWriter writer = new IndexWriter(directory, analyzer, bCreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
-
-      if (IndexWriters.ContainsKey(fullFolderUrl) == false)
-      {
-        lock (IndexWriters)
-        {
-          if (IndexWriters.ContainsKey(fullFolderUrl) == false)
-          {
-            IndexWriters.Add(fullFolderUrl, writer);
-          }
-        }
-      }
-
-      return new IndexWriterInstance(this.Engine.Object.InstancePrototype, IndexWriters[fullFolderUrl]);
+      var indexWriter = LuceneHelper.GetIndexWriterSingleton(targetFolder, bCreateIndex);
+      return new IndexWriterInstance(this.Engine.Object.InstancePrototype, indexWriter, targetFolder);
     }
 
-    [JSFunction(Name = "addObjectToIndex")]
-    public void AddObjectToIndex(object folder, object obj, object createIndex)
+    [JSFunction(Name = "createTermQuery")]
+    public TermQueryInstance CreateTermQuery(string fieldName, string text)
     {
-      var indexWriter = GetIndexWriter(folder, createIndex);
-
-      var objString = JSONObject.Stringify(this.Engine, obj, null, null);
-      var objectToAdd = JObject.Parse(objString);
-
-      var doc = LuceneHelper.ConvertObjectToDocument(objectToAdd);
-
-      try
-      {
-        indexWriter.IndexWriter.AddDocument(doc);
-      }
-      catch (OutOfMemoryException)
-      {
-        CloseIndexWriter(folder);
-      }
-    }
-
-    [JSFunction(Name = "removeFromIndex")]
-    public void RemoveFromIndex(object folder, object query)
-    {
-      if (query == Null.Value || query == Undefined.Value || query == null)
-        throw new JavaScriptException(this.Engine, "Error", "A query parameter must be specified to indicate the documents to remove from the index. Use '*' to specify all documents.");
-
-      Query lQuery;
-
-      var queryString = query.ToString();
-      if (queryString == "*")
-        lQuery = new MatchAllDocsQuery();
-      else
-      {
-        var parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "contents", new SimpleAnalyzer());
-        lQuery = parser.Parse(query.ToString());
-      }
-      
-      var indexWriter = GetIndexWriter(folder, false);
-
-      try
-      {
-        indexWriter.IndexWriter.DeleteDocuments(lQuery);
-      }
-      catch (OutOfMemoryException)
-      {
-        CloseIndexWriter(folder);
-      }
+      return new TermQueryInstance(this.Engine.Object.InstancePrototype, new TermQuery(new Term(fieldName, text)));
     }
 
     [JSFunction(Name = "closeIndexWriter")]
     public void CloseIndexWriter(object folder)
     {
       var targetFolder = GetFolderFromObject(folder);
-      var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
 
-      IndexWriter indexWriter = null;
-      if (IndexWriters.ContainsKey(fullFolderUrl))
-      {
-        lock (IndexWriters)
-        {
-          if (IndexWriters.ContainsKey(fullFolderUrl))
-          {
-            indexWriter = IndexWriters[fullFolderUrl];
-            IndexWriters.Remove(fullFolderUrl);
-          }
-        }
-      }
-
-      if (indexWriter != null)
-        indexWriter.Dispose();
+      LuceneHelper.CloseIndexWriterSingleton(targetFolder);
     }
 
     [JSFunction(Name = "search")]
-    public ArrayInstance Search(object folder, string query)
+    public ArrayInstance Search(object folder, string query, object n)
     {
-      IndexSearcher searcher;
-      if (HasIndexWriter(folder))
-      {
-        var indexWriter = GetIndexWriter(folder, false);
-        var reader = indexWriter.IndexWriter.GetReader();
-        searcher = new IndexSearcher(reader);
-      }
-      else
-      {
-        var targetFolder = GetFolderFromObject(folder);
-        var directory = new SPDirectory(targetFolder);
-        searcher = new IndexSearcher(directory);
-      }
 
-      try
-      {
-        var parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "contents", new SimpleAnalyzer());
-        var lQuery = parser.Parse(query);
+      var targetFolder = GetFolderFromObject(folder);
 
-        var hits = searcher.Search(lQuery, 100);
+      var intN = 100;
+      if (n != null && n != Null.Value && n != Undefined.Value && n is int)
+        intN = (int) n;
 
-        //iterate over the results.
-        var searchResults = hits.ScoreDocs.AsQueryable()
-                                 .OrderByDescending(hit => hit.Score)
-                                 .Select(hit => new Hit
-                                 {
-                                   Score = hit.Score,
-                                   Document = searcher.Doc(hit.Doc)
-                                 })
-                                 .ToList();
+      var hitInstances = LuceneHelper.Search(targetFolder, query, intN)
+                                     .Select(hit => new SearchHitInstance(this.Engine.Object.InstancePrototype, hit))
+                                     .ToArray();
 
-        var hitInstances = searchResults
-        .Select(hit => new SearchHitInstance(this.Engine.Object.InstancePrototype, hit))
-        .ToArray();
-
-        return this.Engine.Array.Construct(hitInstances);
-      }
-      finally
-      {
-        searcher.Dispose();
-      }
+      return this.Engine.Array.Construct(hitInstances);
     }
 
     private SPFolder GetFolderFromObject(object folder)

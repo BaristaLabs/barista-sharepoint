@@ -195,6 +195,18 @@
       }
     }
 
+    public override string GetLockId()
+    {
+      using (var site = new SPSite(m_folderUrl))
+      {
+        using (var web = site.OpenWeb())
+        {
+          var folder = web.GetFolder(m_folderUrl);
+          return "SPDirectoryLock_" + folder.UniqueId;
+        }
+      }
+    }
+
     /// <summary>
     /// Returns an array of strings, one for each file in the directory.
     /// </summary>
