@@ -1,15 +1,14 @@
-﻿using Lucene.Net.Analysis;
-using Lucene.Net.QueryParsers;
-using Lucene.Net.Search;
-using Microsoft.SharePoint;
-using Newtonsoft.Json.Linq;
-
-namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.SharePoint.Search.Library
 {
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Lucene.Net.Index;
+  using Lucene.Net.Search;
+  using Microsoft.SharePoint;
+  using Newtonsoft.Json.Linq;
   using System;
+  using System.Reflection;
 
   [Serializable]
   public class IndexWriterConstructor : ClrFunction
@@ -85,13 +84,18 @@ namespace Barista.SharePoint.Search.Library
       Query lQuery;
 
       var queryString = query.ToString();
+      var queryType = query.GetType();
+
       if (queryString == "*")
         lQuery = new MatchAllDocsQuery();
-      else
+      else if (queryType.IsSubclassOfRawGeneric(typeof(QueryInstance<>)))
       {
-        var parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "contents", new SimpleAnalyzer());
-        lQuery = parser.Parse(query.ToString());
+        var queryProperty = queryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+        lQuery = queryProperty.GetValue(query, null) as Query;
       }
+      else
+        throw new JavaScriptException(this.Engine, "Error", "The query parameter was not a query.");
+
 
       try
       {

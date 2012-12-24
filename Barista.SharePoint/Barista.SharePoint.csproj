@@ -87,6 +87,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Lucene.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net.Contrib.Analyzers">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Core">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Highlighter">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Queries">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Regex">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.SpellChecker">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.BusinessData.dll</HintPath>
@@ -225,16 +249,19 @@
     <Compile Include="Search\Library\BooleanQueryInstance.cs" />
     <Compile Include="Search\Library\ExplanationInstance.cs" />
     <Compile Include="Search\Library\FuzzyQueryInstance.cs" />
+    <Compile Include="Search\Library\HitsPerFacetInstance.cs" />
     <Compile Include="Search\Library\IndexSearcherInstance.cs" />
     <Compile Include="Search\Library\IndexWriterInstance.cs" />
     <Compile Include="Search\Library\NumericRangeQueryInstance.cs" />
     <Compile Include="Search\Library\PhraseQueryInstance.cs" />
     <Compile Include="Search\Library\PrefixQueryInstance.cs" />
     <Compile Include="Search\Library\QueryInstance.cs" />
+    <Compile Include="Search\Library\RegexQueryInstance.cs" />
     <Compile Include="Search\Library\SearchDocumentInstance.cs" />
     <Compile Include="Search\Library\SearchField.cs" />
     <Compile Include="Search\Library\SearchHitInstance.cs" />
     <Compile Include="Search\Hit.cs" />
+    <Compile Include="Search\Library\SimpleFacetedSearchInstance.cs" />
     <Compile Include="Search\Library\TermQueryInstance.cs" />
     <Compile Include="Search\Library\TermRangeQueryInstance.cs" />
     <Compile Include="Search\Library\WildcardQueryInstance.cs" />

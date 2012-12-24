@@ -57,6 +57,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lucene Contrib", "Lucene Contrib", "{81791AE6-02EB-46E1-A8DF-D197A2500D07}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Core.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Core.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.pdb
+		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll
+		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 4
@@ -101,5 +129,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
+		{81791AE6-02EB-46E1-A8DF-D197A2500D07} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
 	EndGlobalSection
 EndGlobal

@@ -17,6 +17,10 @@
     <customAssembly location="Microsoft.TeamFoundation.VersionControl.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll" />
     <customAssembly location="Microsoft.TeamFoundation.Common.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.Common.dll" />
     <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene.Net.dll" />
+    <customAssembly location="Lucene.Net.Contrib.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll" />
+    <customAssembly location="Lucene.Net.Contrib.Highlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll" />
+    <customAssembly location="Lucene.Net.Contrib.Regex.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll" />
+    <customAssembly location="Lucene.Net.Contrib.SimpleFacetedSearch.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

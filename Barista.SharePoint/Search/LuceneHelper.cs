@@ -88,6 +88,31 @@
     }
 
     /// <summary>
+    /// Utility method to get the most-relevant simple faceted search.
+    /// </summary>
+    /// <param name="targetFolder"></param>
+    /// <param name="groupByFields"></param>
+    /// <returns></returns>
+    public static SimpleFacetedSearch GetSimpleFacetedSearch(SPFolder targetFolder, params string[] groupByFields)
+    {
+      SimpleFacetedSearch facetedSearch;
+      if (HasIndexWriterSingleton(targetFolder))
+      {
+        var indexWriter = GetIndexWriterSingleton(targetFolder, false);
+        var reader = indexWriter.GetReader();
+        facetedSearch = new SimpleFacetedSearch(reader, groupByFields);
+      }
+      else
+      {
+        var directory = new SPDirectory(targetFolder);
+        var reader = IndexReader.Open(directory, true);
+        facetedSearch = new SimpleFacetedSearch(reader, groupByFields);
+      }
+
+      return facetedSearch;
+    }
+
+    /// <summary>
     /// Returns a value that indicates if a index writer singleton has been created for the target folder.
     /// </summary>
     /// <param name="targetFolder"></param>

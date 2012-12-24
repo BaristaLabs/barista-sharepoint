@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.SharePoint.Search.Library
 {
+  using System.Collections.Generic;
   using Barista.SharePoint.Library;
   using Barista.SharePoint.Search;
+  using Contrib.Regex;
   using Jurassic;
   using Jurassic.Library;
   using Lucene.Net.Analysis;
@@ -34,7 +34,7 @@ namespace Barista.SharePoint.Search.Library
     }
 
     [JSFunction(Name = "getIndexSearcher")]
-    public IndexSearcherInstance GetIndexSearcher(object folder, object createIndex)
+    public IndexSearcherInstance GetIndexSearcher(object folder)
     {
       var targetFolder = GetFolderFromObject(folder);
 
@@ -54,6 +54,27 @@ namespace Barista.SharePoint.Search.Library
 
       var indexWriter = LuceneHelper.GetIndexWriterSingleton(targetFolder, bCreateIndex);
       return new IndexWriterInstance(this.Engine.Object.InstancePrototype, indexWriter, targetFolder);
+    }
+
+    [JSFunction(Name = "getSimpleFacetedSearch")]
+    public SimpleFacetedSearchInstance GetSimpleFacetedSearch(object folder, object groupByFields)
+    {
+      if (groupByFields == null || groupByFields == Null.Value || groupByFields == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "Must specify the field(s) to group by as the second parameter.");
+
+      var groupByFieldsList = new List<string>();
+      if (groupByFields is ArrayInstance)
+      {
+        groupByFieldsList.AddRange((groupByFields as ArrayInstance).ElementValues.OfType<string>());
+      }
+      else
+      {
+        groupByFieldsList.Add(groupByFields.ToString());
+      }
+
+      var targetFolder = GetFolderFromObject(folder);
+      var simpleFacetedSearch = LuceneHelper.GetSimpleFacetedSearch(targetFolder, groupByFieldsList.ToArray());
+      return new SimpleFacetedSearchInstance(this.Engine.Object.InstancePrototype, simpleFacetedSearch);
     }
 
     #region Query Creation
@@ -151,6 +172,20 @@ namespace Barista.SharePoint.Search.Library
 
       var parser = new MultiFieldQueryParser(Version.LUCENE_30, fieldNames.ElementValues.OfType<string>().ToArray(), new SimpleAnalyzer());
       var query = parser.Parse(text);
+      return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
+    }
+
+    [JSFunction(Name = "createRegexQuery")]
+    public RegexQueryInstance CreateRegexQuery(string fieldName, string text)
+    {
+      var query = new RegexQuery(new Term(fieldName, text));
+      return new RegexQueryInstance(this.Engine.Object.InstancePrototype, query);
+    }
+
+    [JSFunction(Name = "createMatchAllDocsQuery")]
+    public GenericQueryInstance CreateMatchAllDocsQuery()
+    {
+      var query = new MatchAllDocsQuery();
       return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
     }
     #endregion
