@@ -7,6 +7,7 @@
   using Jurassic;
   using Jurassic.Library;
   using Lucene.Net.Analysis;
+  using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
@@ -159,7 +160,7 @@
     [JSFunction(Name = "createQuery")]
     public GenericQueryInstance CreateQuery(string fieldName, string text)
     {
-      var parser = new QueryParser(Version.LUCENE_30, fieldName, new SimpleAnalyzer());
+      var parser = new QueryParser(Version.LUCENE_30, fieldName, new StandardAnalyzer(Version.LUCENE_30));
       var query = parser.Parse(text);
       return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
     }
@@ -170,7 +171,7 @@
       if (fieldNames == null)
         throw new JavaScriptException(this.Engine, "Error", "The first parameter must be an array of field names.");
 
-      var parser = new MultiFieldQueryParser(Version.LUCENE_30, fieldNames.ElementValues.OfType<string>().ToArray(), new SimpleAnalyzer());
+      var parser = new MultiFieldQueryParser(Version.LUCENE_30, fieldNames.ElementValues.OfType<string>().ToArray(), new StandardAnalyzer(Version.LUCENE_30));
       var query = parser.Parse(text);
       return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
     }

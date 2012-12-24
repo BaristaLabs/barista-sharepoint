@@ -1,11 +1,11 @@
 ﻿namespace Barista.SharePoint.Search
 {
-  using Lucene.Net.Analysis;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Documents;
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
+  using Lucene.Net.Search.Vectorhighlight;
   using Lucene.Net.Store;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Utilities;
@@ -85,6 +85,17 @@
       }
 
       return searcher;
+    }
+
+    /// <summary>
+    /// Utility method to get a default FastVectorHighlighter.
+    /// </summary>
+    /// <returns></returns>
+    public static FastVectorHighlighter GetFastVectorHighlighter()
+    {
+      FragListBuilder fragListBuilder = new SimpleFragListBuilder();
+      FragmentsBuilder fragmentBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
+      return new FastVectorHighlighter(true, true, fragListBuilder, fragmentBuilder);
     }
 
     /// <summary>
@@ -226,7 +237,7 @@
 
       //Add the full json doc as a "contents" field.
       var contentsTxt = jObj.ToString();
-      var contentsField = new Field("contents", contentsTxt, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+      var contentsField = new Field("_contents", contentsTxt, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
       doc.Add(contentsField);
 
       //Add individual fields.
@@ -270,7 +281,7 @@
           default:
             var textValue = field.GetFieldValueAsText(listItem[field.Id]);
             var stringField = new Field(field.Title, textValue, Field.Store.YES, Field.Index.ANALYZED,
-                                    Field.TermVector.YES);
+                                    Field.TermVector.WITH_POSITIONS_OFFSETS);
             tokenDictionary.Add(field.Title, stringField);
             break;
         }
@@ -299,7 +310,7 @@
       var searcher = GetIndexSearcher(targetFolder);
       try
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
+        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
         var lQuery = parser.Parse(query);
 
         var hits = searcher.Search(lQuery, n);
@@ -377,7 +388,7 @@
             if (String.IsNullOrEmpty(property.Value.ToString()) == false)
             {
               var stringField = new Field(fieldName, property.Value.ToString(), Field.Store.YES, Field.Index.ANALYZED,
-                                    Field.TermVector.YES);
+                                    Field.TermVector.WITH_POSITIONS_OFFSETS);
               dictionary.Add(fieldName, stringField);
             }
             break;

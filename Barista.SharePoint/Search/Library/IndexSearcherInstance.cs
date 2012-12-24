@@ -3,9 +3,10 @@
   using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Analysis;
+  using Lucene.Net.Analysis.Standard;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
+  using Lucene.Net.Search.Vectorhighlight;
   using System;
   using System.Linq;
   using System.Reflection;
@@ -50,6 +51,44 @@
     public IndexSearcher IndexSearcher
     {
       get { return m_indexSearcher; }
+    }
+
+    [JSFunction(Name = "highlight")]
+    public string Highlight(object searchQuery, object hit, string fieldName)
+    {
+      if (searchQuery == null || searchQuery == Null.Value || searchQuery == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A search query must be specified as the first parameter.");
+
+      if (hit == null || hit == Null.Value || hit == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A search result or document id must be specified as the second parameter.");
+
+      var searchQueryType = searchQuery.GetType();
+
+      Query query;
+      if (searchQueryType.IsSubclassOfRawGeneric(typeof(QueryInstance<>)))
+      {
+        var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+        query = queryProperty.GetValue(searchQuery, null) as Query;
+      }
+      else
+        throw new JavaScriptException(this.Engine, "Error", "The first parameter must be a query object.");
+
+      var highlighter = LuceneHelper.GetFastVectorHighlighter();
+      FieldQuery fieldQuery = highlighter.GetFieldQuery(query);
+      string highlightedResult;
+      if (hit is SearchHitInstance)
+      {
+        var searchHit = (hit as SearchHitInstance).Hit;
+        highlightedResult = highlighter.GetBestFragment(fieldQuery, m_indexSearcher.IndexReader, searchHit.DocumentId,
+                                                        fieldName, 100);
+      }
+      else
+      {
+        highlightedResult = highlighter.GetBestFragment(fieldQuery, m_indexSearcher.IndexReader, Convert.ToInt32(hit),
+                                                        fieldName, 100);
+      }
+
+      return highlightedResult;
     }
 
     [JSFunction(Name = "explain")]
@@ -106,7 +145,7 @@
       }
       else
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
+        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
         query = parser.Parse(searchQuery.ToString());
       }
 

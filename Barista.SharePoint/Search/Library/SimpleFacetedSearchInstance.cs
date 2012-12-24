@@ -5,6 +5,7 @@
   using Jurassic;
   using Jurassic.Library;
   using Lucene.Net.Analysis;
+  using Lucene.Net.Analysis.Standard;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
   using System;
@@ -72,7 +73,7 @@
       }
       else
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
+        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
         query = parser.Parse(searchQuery.ToString());
       }
 
