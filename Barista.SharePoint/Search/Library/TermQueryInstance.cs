@@ -21,7 +21,7 @@
   }
 
   [Serializable]
-  public class TermQueryInstance : ObjectInstance
+  public class TermQueryInstance : QueryInstance<TermQuery>
   {
     private readonly TermQuery m_termQuery;
 
@@ -41,7 +41,7 @@
       m_termQuery = termQuery;
     }
 
-    public TermQuery TermQuery
+    public override TermQuery Query
     {
       get { return m_termQuery; }
     }

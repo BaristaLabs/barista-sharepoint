@@ -1,7 +1,6 @@
-﻿
-
-namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.SharePoint.Search.Library
 {
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Lucene.Net.Analysis;
@@ -9,6 +8,7 @@ namespace Barista.SharePoint.Search.Library
   using Lucene.Net.Search;
   using System;
   using System.Linq;
+  using System.Reflection;
   using Version = Lucene.Net.Util.Version;
 
   [Serializable]
@@ -61,15 +61,16 @@ namespace Barista.SharePoint.Search.Library
       if (hit == null || hit == Null.Value || hit == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "A search result or document id must be specified as the second parameter.");
 
+      var searchQueryType = searchQuery.GetType();
+
       Query query;
-      if (searchQuery is TermQueryInstance)
+      if (searchQueryType.IsSubclassOfRawGeneric(typeof(QueryInstance<>)))
       {
-        query = (searchQuery as TermQueryInstance).TermQuery;
+        var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+        query = queryProperty.GetValue(searchQuery, null) as Query;
       }
       else
-      {
-        throw new JavaScriptException(this.Engine, "Error", "Cannot determine query.");
-      }
+        throw new JavaScriptException(this.Engine, "Error", "The first parameter must be a query object.");
 
       Explanation explanation;
       if (hit is SearchHitInstance)
@@ -95,10 +96,13 @@ namespace Barista.SharePoint.Search.Library
       if (n != null && n != Null.Value && n != Undefined.Value && n is int)
         intN = (int) n;
 
+      var searchQueryType = searchQuery.GetType();
+
       Query query;
-      if (searchQuery is TermQueryInstance)
+      if (searchQueryType.IsSubclassOfRawGeneric(typeof(QueryInstance<>)))
       {
-        query = (searchQuery as TermQueryInstance).TermQuery;
+        var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+        query = queryProperty.GetValue(searchQuery, null) as Query;
       }
       else
       {

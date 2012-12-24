@@ -114,6 +114,7 @@
     <Compile Include="Bundles\StringBundle.cs" />
     <Compile Include="DocumentStore\TypedRepository.cs" />
     <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Justache\Block.cs" />
     <Compile Include="Justache\Encoders.cs" />
     <Compile Include="Justache\EndSection.cs" />

@@ -42,7 +42,7 @@
       m_explanation = explination;
     }
 
-    public Explanation Explination
+    public Explanation Explanation
     {
       get { return m_explanation; }
     }

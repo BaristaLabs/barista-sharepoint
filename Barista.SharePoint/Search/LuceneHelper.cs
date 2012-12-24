@@ -42,8 +42,8 @@
 
       var directory = new SPDirectory(targetFolder);
 
-      //Block until a Lock is no longer present on the target folder.
-      var spLock = directory.MakeLock(directory.GetLockId());
+      //Block until a write lock is no longer present on the target folder.
+      var spLock = directory.MakeLock(directory.GetLockId() + "-write");
       spLock.Obtain(Lock.LOCK_OBTAIN_WAIT_FOREVER);
       spLock.Release();
 
