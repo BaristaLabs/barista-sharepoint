@@ -169,7 +169,7 @@
         /* Do Nothing... */
       }
 
-      if (dataFile == null) //The default entity part file doesn't exist, get outta dodge (something happened here...)
+      if (dataFile == null || dataFile.Exists == false) //The default entity part file doesn't exist, get outta dodge (something happened here...)
         throw new InvalidOperationException(
           "No corresponding entity file exists on the document set that represents the entity.");
 

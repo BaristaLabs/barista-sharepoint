@@ -31,8 +31,6 @@
           <AllowedContentType id="0x0101" />
           <!-- Link to a Document -->
           <AllowedContentType id="0x01010A" />
-          <!-- Folder -->
-          <AllowedContentType id="0x0120" />
           <!-- Document Store Entity Part -->
           <AllowedContentType id="0x010100c85948cf1fa64eed9d29eaa2a1078fd6" />
           <!-- Document Store Attachment -->
