@@ -9,6 +9,7 @@
       <ContentTypeRef ID="0x0120D520009156b84f06ea4f2f96e34101e1e1b1a8">
         <Folder TargetName="Forms/Document Store Entity" />
       </ContentTypeRef>
+      <ContentTypeRef ID="0x0101" />
       <ContentTypeRef ID="0x0120" />
     </ContentTypes>
     <Fields>

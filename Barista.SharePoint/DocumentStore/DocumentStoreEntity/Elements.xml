@@ -27,8 +27,12 @@
         <act:AllowedContentTypes xmlns:act="http://schemas.microsoft.com/office/documentsets/allowedcontenttypes" LastModified="1/1/2010 08:00:00 AM">
           <!-- Add content types that will be used in the document set using the syntax below -->
           <!--<AllowedContentType id="00000000-0000-0000-0000-000000000000" />-->
+          <!-- Document -->
+          <AllowedContentType id="0x0101" />
           <!-- Link to a Document -->
           <AllowedContentType id="0x01010A" />
+          <!-- Folder -->
+          <AllowedContentType id="0x0120" />
           <!-- Document Store Entity Part -->
           <AllowedContentType id="0x010100c85948cf1fa64eed9d29eaa2a1078fd6" />
           <!-- Document Store Attachment -->
