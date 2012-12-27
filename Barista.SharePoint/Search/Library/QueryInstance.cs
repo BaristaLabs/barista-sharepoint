@@ -17,6 +17,18 @@
     {
       get;
     }
+
+    [JSFunction(Name = "ToString")]
+    public string ToStringJS()
+    {
+      return this.ToString();
+    }
+
+    [JSFunction(Name = "toString")]
+    public override string ToString()
+    {
+      return this.Query.ToString();
+    }
   }
 
   [Serializable]

@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Search.Library
 {
+  using System.Collections.Generic;
   using System.Linq;
   using Barista.Extensions;
   using Jurassic;
@@ -59,33 +60,45 @@
       if (searchQuery == null || searchQuery == Null.Value || searchQuery == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "A search query must be specified as the first parameter.");
 
-      var intN = 100;
+      SearchArguments searchArguments = new SearchArguments();
+
       if (n != null && n != Null.Value && n != Undefined.Value && n is int)
-        intN = (int) n;
+        searchArguments.Take = (int) n;
 
       var searchQueryType = searchQuery.GetType();
 
-      Query query;
       if (searchQueryType.IsSubclassOfRawGeneric(typeof (QueryInstance<>)))
       {
         var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-        query = queryProperty.GetValue(searchQuery, null) as Query;
+        searchArguments.Query = queryProperty.GetValue(searchQuery, null) as Query;
       }
-      else
+      else if (searchQuery is string || searchQuery is StringInstance || searchQuery is ConcatenatedString)
       {
         var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
-        query = parser.Parse(searchQuery.ToString());
+        searchArguments.Query = parser.Parse(searchQuery.ToString());
       }
+      else if (searchQuery is SearchArgumentsInstance)
+      {
+        var searchArgumentsInstance = searchQuery as SearchArgumentsInstance;
+        searchArguments = SearchArguments.GetSearchArgumentsFromSearchArgumentsInstance(searchArgumentsInstance);
+      }
+      else if (searchQuery is ObjectInstance)
+      {
+        var searchArgumentsDuck = JurassicHelper.Coerce<SearchArgumentsInstance>(this.Engine, searchQuery);
+        searchArguments = SearchArguments.GetSearchArgumentsFromSearchArgumentsInstance(searchArgumentsDuck);
+      }
+      else
+        throw new JavaScriptException(this.Engine, "Error", "Could not determine query from arguments. The query argument must either be a query instance, a string, a search arguments instance or an object that can be converted to a search arguments instance.");
 
-      var hitInstances = m_simpleFacetedSearch.Search(query, intN).HitsPerFacet
-                                       .AsQueryable()
-                                       .OrderByDescending(hit => hit.HitCount)
-                                       .Select(hit =>
-                                           new HitsPerFacetInstance(this.Engine.Object.InstancePrototype, hit)
-                                         )
-                                       .ToArray();
 
-      return this.Engine.Array.Construct(hitInstances);
+      var hitsPerFacetInstances = m_simpleFacetedSearch.Search(searchArguments.Query, searchArguments.Take).HitsPerFacet
+                                .AsQueryable()
+                                .OrderByDescending(hit => hit.HitCount)
+                                .Select(hit =>
+                                        new HitsPerFacetInstance(this.Engine.Object.InstancePrototype, hit)
+                                  );
+
+      return this.Engine.Array.Construct(hitsPerFacetInstances.ToArray());
     }
   }
 }

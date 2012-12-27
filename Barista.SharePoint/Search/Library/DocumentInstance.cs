@@ -7,33 +7,33 @@
   using System.Linq;
 
   [Serializable]
-  public class SearchDocumentConstructor : ClrFunction
+  public class DocumentConstructor : ClrFunction
   {
-    public SearchDocumentConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "SearchDocument", new SearchDocumentInstance(engine.Object.InstancePrototype))
+    public DocumentConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "Document", new DocumentInstance(engine.Object.InstancePrototype))
     {
     }
 
     [JSConstructorFunction]
-    public SearchDocumentInstance Construct()
+    public DocumentInstance Construct()
     {
-      return new SearchDocumentInstance(this.InstancePrototype);
+      return new DocumentInstance(this.InstancePrototype);
     }
   }
 
   [Serializable]
-  public class SearchDocumentInstance : ObjectInstance
+  public class DocumentInstance : ObjectInstance
   {
     private readonly Document m_document;
 
-    public SearchDocumentInstance(ObjectInstance prototype)
+    public DocumentInstance(ObjectInstance prototype)
       : base(prototype)
     {
       this.PopulateFields();
       this.PopulateFunctions();
     }
 
-    public SearchDocumentInstance(ObjectInstance prototype, Document document)
+    public DocumentInstance(ObjectInstance prototype, Document document)
       : this(prototype)
     {
       if (document == null)

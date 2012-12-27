@@ -64,7 +64,7 @@
       get
       {
         var docs =
-          m_hitsPerFacet.Documents.Select(d => new SearchDocumentInstance(this.Engine.Object.InstancePrototype, d));
+          m_hitsPerFacet.Documents.Select(d => new DocumentInstance(this.Engine.Object.InstancePrototype, d));
         return this.Engine.Array.Construct(docs.ToArray());
       }
     }
