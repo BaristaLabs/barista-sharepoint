@@ -237,7 +237,7 @@
 
       //Add the full json doc as a "contents" field.
       var contentsTxt = jObj.ToString();
-      var contentsField = new Field("_contents", contentsTxt, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+      var contentsField = new Field("_contents", contentsTxt, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
       doc.Add(contentsField);
 
       //Add individual fields.
@@ -362,7 +362,7 @@
         {
           case JTokenType.Date:
             var dateString = DateTools.DateToString((DateTime) property.Value, DateTools.Resolution.MILLISECOND);
-            var dateField = new Field(fieldName, dateString, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES);
+            var dateField = new Field(fieldName, dateString, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
 
             dictionary.Add(fieldName, dateField);
             break;
@@ -380,6 +380,11 @@
             var floatField = new NumericField(fieldName, Field.Store.YES, true);
             floatField.SetFloatValue((float)property.Value);
             dictionary.Add(fieldName, floatField);
+            break;
+          case JTokenType.Guid:
+            var guidField = new Field(fieldName, property.Value.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED,
+                                    Field.TermVector.NO);
+              dictionary.Add(fieldName, guidField);
             break;
           case JTokenType.Object:
             TokenizeObject(property.Value as JObject, fieldName, ref dictionary);
