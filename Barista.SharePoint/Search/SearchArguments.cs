@@ -64,7 +64,7 @@
       }
       else
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
+        var parser = new QueryParser(Version.LUCENE_30, "_contents", new StandardAnalyzer(Version.LUCENE_30));
         result.Query = parser.Parse(instance.Query.ToString());
       }
       
@@ -79,7 +79,7 @@
       }
       else
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
+        var parser = new QueryParser(Version.LUCENE_30, "_contents", new StandardAnalyzer(Version.LUCENE_30));
         var query = parser.Parse(instance.Query.ToString());
         result.Filter = new QueryWrapperFilter(query);
       }

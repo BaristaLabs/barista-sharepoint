@@ -209,9 +209,9 @@
       var tokenDictionary = new Dictionary<string, AbstractField>();
       TokenizeObject(jObj, "", ref tokenDictionary);
 
-      //Add the full json doc as a "contents" field.
+      //Add the full json doc as a "_contents" field.
       var contentsTxt = JsonConvert.SerializeObject(obj);
-      var contentsField = new Field("contents", contentsTxt, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+      var contentsField = new Field("_contents", contentsTxt, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
       doc.Add(contentsField);
 
       //Add individual fields.
@@ -310,7 +310,7 @@
       var searcher = GetIndexSearcher(targetFolder);
       try
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
+        var parser = new QueryParser(Version.LUCENE_30, "_contents", new StandardAnalyzer(Version.LUCENE_30));
         var lQuery = parser.Parse(query);
 
         var hits = searcher.Search(lQuery, n);

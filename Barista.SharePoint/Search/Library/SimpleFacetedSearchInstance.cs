@@ -74,7 +74,7 @@
       }
       else if (searchQuery is string || searchQuery is StringInstance || searchQuery is ConcatenatedString)
       {
-        var parser = new QueryParser(Version.LUCENE_30, "contents", new StandardAnalyzer(Version.LUCENE_30));
+        var parser = new QueryParser(Version.LUCENE_30, "_contents", new StandardAnalyzer(Version.LUCENE_30));
         searchArguments.Query = parser.Parse(searchQuery.ToString());
       }
       else if (searchQuery is SearchArgumentsInstance)
