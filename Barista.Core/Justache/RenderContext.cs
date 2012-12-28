@@ -79,47 +79,41 @@ namespace Barista.Justache
           yield return value;
         }
       }
-      else
+      else if (value is string)
       {
         var s = value as string;
-        if (s != null)
+        if (!string.IsNullOrEmpty(s))
         {
-          if (!string.IsNullOrEmpty(s))
-          {
-            yield return value;
-          }
+          yield return value;
         }
-        else
+      }
+      else if (value is IDictionary)
+      {
+        var dictionary = value as IDictionary;
+        if (dictionary.Count > 0)
         {
-          if (value is IDictionary)
-          {
-            var dictionary = value as IDictionary;
-            if (dictionary.Count > 0)
-            {
-              yield return value;
-            }
-          }
-          if (value is ArrayInstance)
-          {
-            var arrayInstance = value as ArrayInstance;
-            foreach (var item in arrayInstance.ElementValues)
-            {
-              yield return item;
-            }
-          }
-          else if (value is IEnumerable)
-          {
-            var items = value as IEnumerable;
-            foreach (var item in items)
-            {
-              yield return item;
-            }
-          }
-          else
-          {
-            yield return value;
-          }
+          yield return value;
         }
+      }
+      else if (value is ArrayInstance)
+      {
+        var arrayInstance = value as ArrayInstance;
+        foreach (var item in arrayInstance.ElementValues)
+        {
+          yield return item;
+        }
+      }
+      else if (value is IEnumerable)
+      {
+        var items = value as IEnumerable;
+        foreach (var item in items)
+        {
+          yield return item;
+        }
+      }
+      else
+      {
+        yield return value;
       }
     }
 

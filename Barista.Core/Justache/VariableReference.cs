@@ -1,13 +1,17 @@
 namespace Barista.Justache
 {
+  using Jurassic.Library;
   using System;
+  using System.Reflection;
   using System.Text.RegularExpressions;
 
   public class VariableReference : Part
   {
     private static readonly Regex NotEscapedRegex = new Regex(@"^\{\s*(.+?)\s*\}$");
+    private static readonly Regex FormattingRegex = new Regex(@"^(.+?):\((?<Format>.*)\)$");
     private readonly string m_path;
     private readonly bool m_escaped;
+    private readonly string m_formatString;
 
     public VariableReference(string path)
     {
@@ -25,6 +29,13 @@ namespace Barista.Justache
       {
         m_path = match.Groups[1].Value;
       }
+
+      if (FormattingRegex.IsMatch(path))
+      {
+        match = FormattingRegex.Match(path);
+        m_formatString = match.Groups["Format"].Value;
+        m_path = match.Groups[1].Value;
+      }
     }
 
     public string Path { get { return m_path; } }
@@ -35,6 +46,24 @@ namespace Barista.Justache
 
       if (value != null)
       {
+        if (value is DateInstance)
+        {
+          var dt = value as DateInstance;
+          value = DateTime.Parse(dt.ToISOString());
+        }
+
+        if (String.IsNullOrEmpty(m_formatString) == false)
+        {
+          var toStringMethod = value.GetType()
+               .GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance, null, new[] {typeof (string)},
+                          null);
+
+          if (toStringMethod != null)
+          {
+            value = toStringMethod.Invoke(value, new object[] {m_formatString});
+          }
+        }
+
         context.Write(m_escaped
             ? Encoders.HtmlEncode(value.ToString())
             : value.ToString());
