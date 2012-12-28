@@ -91,29 +91,33 @@ namespace Barista.Justache
         }
         else
         {
-          var dictionary = value as IDictionary;
-          if (dictionary != null) // Dictionaries also implement IEnumerable
-            // so this has to be checked before it.
+          if (value is IDictionary)
           {
+            var dictionary = value as IDictionary;
             if (dictionary.Count > 0)
             {
               yield return value;
             }
           }
-          else
+          if (value is ArrayInstance)
+          {
+            var arrayInstance = value as ArrayInstance;
+            foreach (var item in arrayInstance.ElementValues)
+            {
+              yield return item;
+            }
+          }
+          else if (value is IEnumerable)
           {
             var items = value as IEnumerable;
-            if (items != null)
+            foreach (var item in items)
             {
-              foreach (var item in items)
-              {
-                yield return item;
-              }
+              yield return item;
             }
-            else if (value != null)
-            {
-              yield return value;
-            }
+          }
+          else
+          {
+            yield return value;
           }
         }
       }
