@@ -1,4 +1,5 @@
-﻿var web = require("Web");
+﻿require("Deferred");
+var web = require("Web");
 var sp = require("SharePoint");
 
 var result = new Array();

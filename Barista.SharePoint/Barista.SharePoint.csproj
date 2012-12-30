@@ -232,6 +232,7 @@
       <DependentUpon>Manage.aspx.cs</DependentUpon>
     </Compile>
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaItemEventProperties.cs" />
     <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
@@ -246,6 +247,8 @@
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
+    <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
+    <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
     <Compile Include="Search\Hit.cs" />
     <Compile Include="Search\Library\BooleanQueryInstance.cs" />
     <Compile Include="Search\Library\ExplanationInstance.cs" />
@@ -311,6 +314,7 @@
     <Compile Include="Library\SPFarmInstance.cs" />
     <Compile Include="Search\Library\SPLuceneInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
+    <Compile Include="Library\SPEventReceiverDefinitionInstance.cs" />
     <Compile Include="TeamFoundationServer\Libraries\TfsInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
@@ -431,13 +435,16 @@
       <SharePointProjectItemId>{9a196b90-3a4a-49ac-b3b5-eff220cb60ef}</SharePointProjectItemId>
     </None>
     <None Include="app.config" />
-    <None Include="BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\SharePointProjectItem.spdata">
+    <None Include="EventReceivers\BaristaItemEventReceiver\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{0b4817fb-dfd3-401f-b84c-b925b2eb1f3e}</SharePointProjectItemId>
+    </None>
+    <None Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{149204ef-d399-4b57-91e9-4ac849a10841}</SharePointProjectItemId>
     </None>
-    <None Include="BaristaUnitTestsDocumentLibrary\SharePointProjectItem.spdata">
+    <None Include="UnitTests\BaristaUnitTestsDocumentLibrary\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{80e42e94-336c-47e1-966a-76f331d3a49e}</SharePointProjectItemId>
     </None>
-    <None Include="BaristaUnitTests\SharePointProjectItem.spdata">
+    <None Include="UnitTests\BaristaUnitTests\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{05245bd9-0f0f-4a6c-8797-58bba4ee0829}</SharePointProjectItemId>
     </None>
     <None Include="DocumentStore\DocumentStoreAttachment\SharePointProjectItem.spdata">
@@ -470,6 +477,9 @@
     </None>
     <None Include="Features\BaristaDocumentStore\BaristaDocumentStore.feature">
       <FeatureId>{bfe500a5-01af-4f7e-a5e2-38be9a7118ab}</FeatureId>
+    </None>
+    <None Include="Features\Barista\Barista.feature">
+      <FeatureId>{e8b284ff-c3f9-49f3-99ec-f1bcafe12495}</FeatureId>
     </None>
     <None Include="ISAPI\Barista\v1\web.config" />
     <None Include="ISAPI\SharePointProjectItem.spdata">
@@ -601,7 +611,9 @@
       <SharePointProjectItemId>{0319abfb-7418-4653-96ae-f0df6ea3ddf1}</SharePointProjectItemId>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Client\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
@@ -641,33 +653,33 @@
     <Content Include="ADMIN\BaristaService\Create.aspx" />
     <Content Include="ADMIN\BaristaService\GetTrustedLocations.js" />
     <Content Include="ADMIN\BaristaService\Manage.aspx" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\Elements.xml" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\EditDlg.htm" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\Elements.xml" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\FileDlg.htm" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\Repair.aspx" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\Schema.xml" />
-    <Content Include="BaristaUnitTestsDocumentLibrary\Upload.aspx" />
-    <Content Include="BaristaUnitTests\BaristaDocumentTests.js" />
-    <Content Include="BaristaUnitTests\BaristaFileUploadTest.html" />
-    <Content Include="BaristaUnitTests\BaristaK2Tests.js" />
-    <Content Include="BaristaUnitTests\BaristaSharePointTests.js" />
-    <Content Include="BaristaUnitTests\BaristaTests.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_Deferred.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_DeleteUpload.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_GetUploads.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_Include.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_ProcessUpload.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_RecursiveWebsRetrieval.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_SimpleExpression.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_SPListItemRetrieval.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_SPListItemRetrievalThroughView.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_SPListTitlesToPDF.js" />
-    <Content Include="BaristaUnitTests\Content\Barista_SPListItemCreation.js" />
-    <Content Include="BaristaUnitTests\Content\DemoTemplate.htm" />
-    <Content Include="BaristaUnitTests\BaristaActiveDirectoryTests.js" />
-    <Content Include="BaristaUnitTests\Elements.xml" />
-    <Content Include="BaristaUnitTests\index.html" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\Elements.xml" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\EditDlg.htm" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Elements.xml" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\FileDlg.htm" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Repair.aspx" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Schema.xml" />
+    <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Upload.aspx" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaDocumentTests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaFileUploadTest.html" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaK2Tests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaSharePointTests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaTests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_Deferred.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_DeleteUpload.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_GetUploads.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_Include.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_ProcessUpload.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_RecursiveWebsRetrieval.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SimpleExpression.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemRetrieval.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemRetrievalThroughView.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListTitlesToPDF.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemCreation.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\DemoTemplate.htm" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaActiveDirectoryTests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Elements.xml" />
+    <Content Include="UnitTests\BaristaUnitTests\index.html" />
     <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\EditDlg.htm" />
     <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
@@ -689,6 +701,9 @@
     </Content>
     <Content Include="Features\BaristaDocumentStore\BaristaDocumentStore.Template.xml">
       <DependentUpon>BaristaDocumentStore.feature</DependentUpon>
+    </Content>
+    <Content Include="Features\Barista\Barista.Template.xml">
+      <DependentUpon>Barista.feature</DependentUpon>
     </Content>
     <Content Include="ISAPI\Barista\v1\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaTest.svc" />

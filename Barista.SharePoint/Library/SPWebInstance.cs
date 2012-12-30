@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Linq;
   using System.Text;
   using Jurassic;
@@ -46,7 +47,7 @@
   [Serializable]
   public class SPWebInstance : ObjectInstance, IDisposable
   {
-    private SPWeb m_web;
+    private readonly SPWeb m_web;
 
     public SPWebInstance(ObjectInstance prototype)
       : base(prototype)
@@ -162,7 +163,7 @@
     [JSProperty(Name = "language")]
     public string Language
     {
-      get { return m_web.Language.ToString(); }
+      get { return m_web.Language.ToString(CultureInfo.InvariantCulture); }
     }
 
     [JSProperty(Name = "lastItemModifiedDate")]
@@ -279,7 +280,7 @@
     [JSFunction(Name = "addFileByUrl")]
     public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite)
     {
-      SPFile result = null;
+      SPFile result;
       if (data is Base64EncodedByteArrayInstance)
       {
         var byteArrayInstance = data as Base64EncodedByteArrayInstance;
@@ -322,7 +323,7 @@
     [JSFunction(Name = "createList")]
     public SPListInstance CreateList(object listCreationInfo)
     {
-      Guid createdListId = Guid.Empty;
+      Guid createdListId;
 
       var listCreationInstance = listCreationInfo as ObjectInstance;
       var creationInfo = JurassicHelper.Coerce<SPListCreationInformation>(this.Engine, listCreationInfo);
@@ -332,6 +333,9 @@
       if (listCreationInstance != null && listCreationInstance.HasProperty("dataSourceProperties"))
       {
         var dataSourceInstance = listCreationInstance.GetPropertyValue("dataSourceProperties") as ObjectInstance;
+
+        if (dataSourceInstance == null)
+          return null;
 
         var dataSource = new SPListDataSource();
         foreach(var property in dataSourceInstance.Properties)
@@ -349,15 +353,20 @@
         SPListTemplate listTemplate = null;
         if (listTemplateValue is int)
         {
-          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().Where(dt => (int)dt.Type == (int)listTemplateValue).FirstOrDefault();
+          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().FirstOrDefault(dt => (int)dt.Type == (int)listTemplateValue);
         }
-        else if (listTemplateValue is string)
+        else
         {
-          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().Where(dt => dt.Type.ToString() == (string)listTemplateValue).FirstOrDefault();
-        }
-        else if (listTemplateValue is ObjectInstance)
-        {
-          listTemplate = JurassicHelper.Coerce<SPListTemplateInstance>(this.Engine, listTemplateValue).ListTemplate;
+          var s = listTemplateValue as string;
+
+          if (s != null)
+          {
+            listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().FirstOrDefault(dt => dt.Type.ToString() == s);
+          }
+          else if (listTemplateValue is ObjectInstance)
+          {
+            listTemplate = JurassicHelper.Coerce<SPListTemplateInstance>(this.Engine, listTemplateValue).ListTemplate;
+          }
         }
 
 
@@ -511,7 +520,6 @@
       SPList list = null;
       try
       {
-        string siteRelativeUrl = String.Empty;
         if (string.IsNullOrEmpty(serverRelativeUrl) || SPUrlUtility.IsUrlRelative(serverRelativeUrl))
         {
           serverRelativeUrl = SPUtility.GetFullUrl(BaristaContext.Current.Site, serverRelativeUrl);
@@ -537,10 +545,7 @@
       var instance = this.Engine.Array.Construct();
 
       ContentIterator listsIterator = new ContentIterator();
-      listsIterator.ProcessLists(m_web.Lists, (currentList) =>
-      {
-        lists.Add(currentList);
-      }, null);
+      listsIterator.ProcessLists(m_web.Lists, lists.Add, null);
 
       foreach (var list in lists)
       {
@@ -618,8 +623,8 @@
     {
       if (String.IsNullOrEmpty(iconSize))
         return SPUtility.MapToIcon(m_web, fileName, progId);
-      else
-        return SPUtility.MapToIcon(m_web, fileName, progId, (IconSize)Enum.Parse(typeof(IconSize), iconSize));
+
+      return SPUtility.MapToIcon(m_web, fileName, progId, (IconSize)Enum.Parse(typeof(IconSize), iconSize));
     }
 
     [JSFunction(Name = "update")]

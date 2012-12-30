@@ -1,4 +1,5 @@
-﻿var combined = new Array();
+﻿require("Deferred");
+var combined = new Array();
 var calls = new Array();
 
 for (var i = 0; i < 10; i++) {

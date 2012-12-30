@@ -53,6 +53,7 @@ asyncTest("Test Including a file", function () {
 asyncTest("Test Writing to Console", function () {
     expect(2);
     var code = "\
+    require(\"Deferred\");\
     var log = require(\"Unified Logging Service\");\
     console.error('A catastrophic error has occurred.');\
     delay(2000);\
@@ -197,7 +198,7 @@ asyncTest("Execute Simple Expression within script file", function () {
 
 asyncTest("Execute Simple Expression via multi-part post.", function () {
     expect(1);
-    
+
     var request = jQuery.ajax({
         type: 'POST',
         contentType: "multipart/form-data",
@@ -259,8 +260,7 @@ asyncTest("Make Ajax call using proxy settings", function () {
 
     request.done(function (data) {
         ok(data != null, "A response was returned from twitter.");
-        if (typeof (data) !== 'undefined' && data != null)
-        {
+        if (typeof (data) !== 'undefined' && data != null) {
             ok(typeof (data.feed) !== 'undefined', "A feed object was returned from twitter.");
             ok(data.feed["entry"].length > 0, "The feed element contained multiple entries.");
         }
@@ -298,6 +298,7 @@ asyncTest("Make async ajax call.", function () {
     expect(4);
 
     var code = "\
+	require(\"Deferred\");\
     var web = require(\"Web\");\
     var calls = new Array();\
     var result = { users: [] };\

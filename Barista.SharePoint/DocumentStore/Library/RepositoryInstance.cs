@@ -457,6 +457,8 @@
       Guid id;
       if (entityId is EntityInstance)
         id = (entityId as EntityInstance).Entity.Id;
+      else if (entityId is GuidInstance)
+        id = (entityId as GuidInstance).Value;
       else
         id = new Guid(entityId.ToString());
 

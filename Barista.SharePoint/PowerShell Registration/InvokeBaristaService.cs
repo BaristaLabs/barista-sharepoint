@@ -1,9 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.Management.Automation;
   using Microsoft.SharePoint.PowerShell;
   using Microsoft.SharePoint;
@@ -13,8 +10,8 @@
   public class InvokeBaristaService : SPCmdlet
   {
     private string m_code;
-    private bool m_isEval = false;
-    private bool m_isExec = false;
+    private bool m_isEval;
+    private bool m_isExec;
 
     [Parameter(Mandatory = true, ValueFromPipeline = true)]
     public SPServiceContextPipeBind ServiceContext;
@@ -53,7 +50,7 @@
       SPServiceContext serviceContext = ServiceContext.Read();
       if (serviceContext == null)
       {
-        WriteError(new InvalidOperationException("Invalid service context."), ErrorCategory.ResourceExists, serviceContext);
+        WriteError(new InvalidOperationException("Invalid service context."), ErrorCategory.ResourceExists, null);
         return;
       }
 
@@ -71,15 +68,13 @@
 
       BaristaServiceClient client = new BaristaServiceClient(serviceContext);
 
-      var request = new BrewRequest() {
+      var request = new BrewRequest {
         Code = m_code,
       };
 
-      BrewResponse response = null;
-
       if (m_isEval)
       {
-        response = client.Eval(request);
+        BrewResponse response = client.Eval(request);
 
         if (response.ContentType.StartsWith("application/json", StringComparison.InvariantCultureIgnoreCase) ||
             response.ContentType.StartsWith("application/xml", StringComparison.InvariantCultureIgnoreCase) ||

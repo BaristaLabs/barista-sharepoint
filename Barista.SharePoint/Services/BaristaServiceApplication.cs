@@ -3,6 +3,7 @@
   using Barista.Bundles;
   using Barista.Library;
   using Barista.SharePoint.Bundles;
+  using Barista.SharePoint.EventReceivers.BaristaItemEventReceiver;
   using Barista.SharePoint.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -13,6 +14,7 @@
   using System.ServiceModel;
   using System.Text;
   using System.Threading;
+  using Newtonsoft.Json;
 
   [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -349,6 +351,21 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
         engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
 
         engine.SetGlobalValue("console", console);
+
+        //If we came from the Barista event receiver, set the appropriate context.
+        if (
+          BaristaContext.Current.Request != null &&
+          BaristaContext.Current.Request.ExtendedProperties != null &&
+          BaristaContext.Current.Request.ExtendedProperties.ContainsKey(
+            BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey))
+        {
+          var properties =
+            BaristaContext.Current.Request.ExtendedProperties[
+              BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey];
+
+          var itemEventProperties = JsonConvert.DeserializeObject<BaristaItemEventProperties>(properties);
+          engine.SetGlobalValue("CurrentItemEventProperties", new BaristaItemEventPropertiesInstance(engine.Object.InstancePrototype, itemEventProperties));
+        }
 
         //Map Barista functions to global functions.
         engine.Execute(@"var help = function(obj) { return Barista.help(obj); };

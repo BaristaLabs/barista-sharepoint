@@ -1,17 +1,14 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
-  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
 
   [Serializable]
   public class SPContextInstance : ObjectInstance
   {
-    private BaristaContext m_context;
+    private readonly BaristaContext m_context;
 
     public SPContextInstance(ScriptEngine engine, BaristaContext context)
       : base(engine)
@@ -35,6 +32,13 @@
       {
         if (m_context.ListItem != null)
           this.ListItem = new SPListItemInstance(this.Engine.Object.InstancePrototype, m_context.ListItem);
+      }
+      catch (NullReferenceException) { /* Do Nothing */ }
+
+      try
+      {
+        if (m_context.View != null)
+          this.View = new SPViewInstance(this.Engine.Object.InstancePrototype, m_context.View);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
 

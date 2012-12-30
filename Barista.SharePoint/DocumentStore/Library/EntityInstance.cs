@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.DocumentStore.Library
 {
   using Barista.DocumentStore;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -28,10 +29,14 @@
     }
 
     [JSProperty(Name = "id")]
-    public string Id
+    public GuidInstance Id
     {
-      get { return m_entity.Id.ToString(); }
-      set { m_entity.Id = new Guid(value); }
+      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_entity.Id); }
+      set
+      {
+        if (value != null)
+          m_entity.Id = value.Value;
+      }
     }
 
     [JSProperty(Name = "title")]

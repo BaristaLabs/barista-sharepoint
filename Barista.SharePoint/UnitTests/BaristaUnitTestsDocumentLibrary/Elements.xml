@@ -9,7 +9,7 @@
         SecurityBits="11"
         Sequence="110"
         DisplayName="Barista Unit Tests"
-        Description="My List Definition"
+        Description="Contains Unit Test Files"
         Image="/_layouts/images/itdl.png"
         DocumentTemplate="121"/>
 </Elements>

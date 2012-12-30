@@ -744,7 +744,7 @@ asyncTest("Test Templates", function () {
     var code = "\
     var sp = require(\"SharePoint\");\
     var util = require(\"Utility\");\
-    require(\"Mustache\");\
+    var Mustache = require(\"Mustache\");\
     require(\"Linq\");\
     var template = sp.loadFileAsString('/Lists/BaristaUnitTests/Content/DemoTemplate.htm');\
     var json = {\

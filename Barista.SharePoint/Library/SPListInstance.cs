@@ -5,10 +5,10 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using Microsoft.Office.Server.Utilities;
   using System.Collections.Generic;
   using Barista.Library;
   using System.Text;
+  using Barista.SharePoint.EventReceivers.BaristaItemEventReceiver;
 
   [Serializable]
   public class SPListConstructor : ClrFunction
@@ -49,7 +49,7 @@
     private SPSite m_site;
     private SPWeb m_web;
 
-    private SPList m_list;
+    private readonly SPList m_list;
 
     public SPListInstance(ObjectInstance prototype)
       : base(prototype)
@@ -294,10 +294,9 @@
       get
       {
         var serverTemplateId = m_list.RootFolder.Properties["vti_listservertemplate"]; //Gotta love SharePoint!!
-        if (serverTemplateId != null)
-          return serverTemplateId.ToString();
-        else
-          return String.Empty;
+        return serverTemplateId != null
+          ? serverTemplateId.ToString()
+          : String.Empty;
       } 
     }
 
@@ -316,14 +315,34 @@
     [JSProperty(Name = "validationFormula")]
     public string ValidationFormula
     {
-      get { return m_list.ValidationFormula; }
+      get
+      {
+        try
+        {
+          return m_list.ValidationFormula;
+        }
+        catch (SPException)
+        {
+          return String.Empty;
+        }
+      }
       set { m_list.ValidationFormula = value; }
     }
 
     [JSProperty(Name = "validationMessage")]
     public string ValidationMessage
     {
-      get { return m_list.ValidationMessage; }
+      get
+      {
+        try
+        {
+          return m_list.ValidationMessage;
+        }
+        catch (SPException)
+        {
+          return String.Empty;
+        }
+      }
       set { m_list.ValidationMessage = value; }
     }
 
@@ -335,6 +354,24 @@
     #endregion
 
     #region Functions
+
+    [JSFunction(Name = "addEventReceiver")]
+    public void AddEventReceiver(string eventReceiverType, string assembly, string className)
+    {
+      var receiverType = (SPEventReceiverType) Enum.Parse(typeof (SPEventReceiverType), eventReceiverType);
+
+      m_list.EventReceivers.Add(receiverType, assembly, className);
+    }
+
+    [JSFunction(Name = "addBaristaEventReceiver")]
+    public void AddBaristaEventReceiver(string eventReceiverType)
+    {
+      var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
+
+      var baristaItemEventReceiverType = typeof (BaristaItemEventReceiver);
+      m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.Name);
+    }
+
     [JSFunction(Name = "addItem")]
     public SPListItemInstance AddItem()
     {
@@ -346,7 +383,7 @@
     public SPFileInstance AddFile(string url, object data, object overwrite)
     {
       bool bOverwrite = false;
-      byte[] byteData = null;
+      byte[] byteData;
 
       if (String.IsNullOrEmpty(url))
         throw new JavaScriptException(this.Engine, "Error", "A url of the new file must be specified.");
@@ -354,8 +391,10 @@
       if (data == Null.Value || data == Undefined.Value || data == null)
         throw new JavaScriptException(this.Engine, "Error", "Data must be specified.");
 
-      if (data is Base64EncodedByteArrayInstance)
-        byteData = ((Base64EncodedByteArrayInstance) data).Data;
+      var instance = data as Base64EncodedByteArrayInstance;
+
+      if (instance != null)
+        byteData = instance.Data;
       else if (data is ObjectInstance)
         byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, data, null, null));
       else
@@ -438,14 +477,11 @@
       if (contentTypeIdToFind == SPContentTypeId.Empty)
         return null;
 
-      var spContentType = m_list.ContentTypes.OfType<SPContentType>().Where(ct => contentTypeIdToFind.IsParentOf(ct.Id)).FirstOrDefault();
+      var spContentType = m_list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => contentTypeIdToFind.IsParentOf(ct.Id));
 
       if (spContentType == null)
       {
         var bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch(contentTypeIdToFind);
-
-        if (bestMatch == null)
-          return null;
 
         spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
       }
@@ -465,8 +501,6 @@
     [JSFunction(Name = "getItems")]
     public ArrayInstance GetItems()
     {
-      List<SPListItem> items = new List<SPListItem>();
-
       //ContentIterator itemsIterator = new ContentIterator();
       //itemsIterator.ProcessListItems(m_list, false, (item) =>
       //  {
@@ -477,12 +511,17 @@
       //    return false; //don't rethrow errors.
       //  });
 
-      SPQuery query = new SPQuery();
-      query.QueryThrottleMode = SPQueryThrottleOption.Override;
-      items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+      SPQuery query = new SPQuery {
+        QueryThrottleMode = SPQueryThrottleOption.Override
+      };
 
-      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+
+      var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+
+// ReSharper disable CoVariantArrayConversion
       var result = Engine.Array.Construct(listItemInstances.ToArray());
+// ReSharper restore CoVariantArrayConversion
 
       return result;
     }
@@ -490,12 +529,13 @@
     [JSFunction(Name = "getItemsByQuery")]
     public ArrayInstance GetItemsByQuery(object query)
     {
-      SPQuery camlQuery = null;
+      SPQuery camlQuery;
 
       if (query is string)
       {
-        camlQuery = new SPQuery();
-        camlQuery.Query = query as string;
+        camlQuery = new SPQuery {
+          Query = query as string
+        };
       }
       else if (query is SPCamlQueryInstance)
       {
@@ -504,15 +544,14 @@
       }
       else if (query is SPCamlQueryBuilderInstance)
       {
-        camlQuery = new SPQuery();
-        camlQuery.Query = query.ToString();
+        camlQuery = new SPQuery {
+          Query = query.ToString()
+        };
       }
       else
       {
         return null;
       }
-
-      List<SPListItem> items = new List<SPListItem>();
 
       //ContentIterator itemsIterator = new ContentIterator();
       //itemsIterator.ProcessListItems(m_list, camlQuery, false, (item) =>
@@ -525,10 +564,13 @@
       //  });
       camlQuery.QueryThrottleMode = SPQueryThrottleOption.Override;
 
-      items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
+      List<SPListItem> items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
 
-      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+
+// ReSharper disable CoVariantArrayConversion
       var result = Engine.Array.Construct(listItemInstances.ToArray());
+// ReSharper restore CoVariantArrayConversion
 
       return result;
     }
@@ -536,7 +578,7 @@
     [JSFunction(Name = "getItemsByView")]
     public ArrayInstance GetItemsByView(object view)
     {
-      SPView selectedView = null;
+      SPView selectedView;
 
       if (view is string)
       {
@@ -552,9 +594,9 @@
         return null;
       }
 
-      List<SPListItem> items = new List<SPListItem>();
-      SPQuery query = new SPQuery(selectedView);
-      query.QueryThrottleMode = SPQueryThrottleOption.Override;
+      SPQuery query = new SPQuery(selectedView) {
+        QueryThrottleMode = SPQueryThrottleOption.Override
+      };
 
       //ContentIterator itemsIterator = new ContentIterator();
       //itemsIterator.ProcessListItems(m_list, query, false, (item) =>
@@ -573,10 +615,14 @@
       //  ArrayInstance.Push(result, instance);
       //}
 
-      items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+      var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
 
-      var listItemInstances = items.Select((item) => { return new SPListItemInstance(this.Engine, item); });
+      var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+
+// ReSharper disable CoVariantArrayConversion
       var result = Engine.Array.Construct(listItemInstances.ToArray());
+// ReSharper restore CoVariantArrayConversion
+
       return result;
     }
 
@@ -599,6 +645,17 @@
       foreach (var contentType in m_list.ContentTypes.OfType<SPContentType>())
       {
         ArrayInstance.Push(result, new SPContentTypeInstance(this.Engine.Object.InstancePrototype, contentType));
+      }
+      return result;
+    }
+
+     [JSFunction(Name = "getEventReceiverDefinitions")]
+    public ArrayInstance GetEventReceiverDefinitions()
+    {
+      var result = this.Engine.Array.Construct();
+      foreach (var eventReceiverDefinition in m_list.EventReceivers.OfType<SPEventReceiverDefinition>())
+      {
+        ArrayInstance.Push(result, new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, eventReceiverDefinition));
       }
       return result;
     }
