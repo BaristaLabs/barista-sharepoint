@@ -30,10 +30,10 @@
     {
       string template = reader.ReadToEnd();
 
-      var scanner = new Scanner();
+      var scanner = new TemplateParser();
       var parser = new Parser();
 
-      parser.Parse(this, scanner.Scan(template));
+      parser.Parse(this, scanner.Parse(template));
     }
 
     /// <summary>

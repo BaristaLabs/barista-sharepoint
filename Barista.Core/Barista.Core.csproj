@@ -125,7 +125,7 @@
     <Compile Include="Justache\Parser.cs" />
     <Compile Include="Justache\Part.cs" />
     <Compile Include="Justache\RenderContext.cs" />
-    <Compile Include="Justache\Scanner.cs" />
+    <Compile Include="Justache\TemplateParser.cs" />
     <Compile Include="Justache\Section.cs" />
     <Compile Include="Justache\Template.cs" />
     <Compile Include="Justache\TemplateDefinition.cs" />

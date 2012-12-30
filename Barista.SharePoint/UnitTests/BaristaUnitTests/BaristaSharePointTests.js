@@ -756,7 +756,7 @@ asyncTest("Test Templates", function () {
   ],\
   \"empty\": false\
 };\
-    var html = Mustache.to_html(template, json);\
+    var html = Mustache.render(template, json);\
     html;\
     ";
 

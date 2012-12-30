@@ -2,15 +2,12 @@ namespace Barista.Justache
 {
   using Jurassic;
   using Jurassic.Library;
-  using System;
   using System.Collections;
   using System.Collections.Generic;
   using System.IO;
   using System.Linq;
 
   public delegate Template TemplateLocator(string name);
-
-  public delegate Object Lambda(string text);
 
   public class RenderContext
   {

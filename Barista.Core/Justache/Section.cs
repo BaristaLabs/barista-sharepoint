@@ -2,8 +2,12 @@ namespace Barista.Justache
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Text;
 
+  /// <summary>
+  /// Represents a section in a Mustache template.
+  /// </summary>
   public class Section : Part
   {
     private readonly string m_name;
@@ -21,12 +25,26 @@ namespace Barista.Justache
       m_name = name;
     }
 
+    /// <summary>
+    /// Gets the name of the section
+    /// </summary>
+    /// <value>The name of the section</value>
     public string Name
     {
       get { return m_name; }
     }
 
-    public IEnumerable<Part> Parts { get { return m_parts; } }
+    /// <summary>
+    /// Gets the list of parts that are contained in the section.
+    /// </summary>
+    /// <value>The parts.</value>
+    public IList<Part> Parts
+    {
+      get
+      {
+        return m_parts;
+      }
+    }
 
     public void Load(IEnumerable<Part> parts)
     {
@@ -69,13 +87,15 @@ namespace Barista.Justache
     protected string InnerSource()
     {
       var sb = new StringBuilder();
-      foreach (var part in Parts)
-      {
-        if (!(part is EndSection))
-        {
-          sb.Append(part.Source());
-        }
-      }
+
+      Parts.Where(part => 
+                  (part is EndSection) == false
+                 )
+           .ToList()
+           .ForEach(part =>
+                    sb.Append(part.Source())
+                   );
+
       return sb.ToString();
     }
 
