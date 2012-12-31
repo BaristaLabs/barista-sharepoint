@@ -3,9 +3,7 @@
   using Jurassic;
   using Jurassic.Library;
   using System;
-  using System.IO;
   using System.Net;
-  using System.Web;
 
   [Serializable]
   public class HttpResponseInstance : ObjectInstance

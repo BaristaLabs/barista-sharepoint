@@ -6,11 +6,9 @@
   using Jurassic.Library;
   using Microsoft.IdentityModel.Claims;
   using Microsoft.IdentityModel.WindowsTokenService;
-  using Microsoft.Office.Server.ObjectCache;
   using Newtonsoft.Json;
   using System;
   using System.Collections;
-  using System.IO;
   using System.Linq;
   using System.Net;
   using System.Net.Cache;
@@ -25,8 +23,8 @@
   [Serializable]
   public class WebInstance : ObjectInstance
   {
-    private HttpRequestInstance m_httpRequest = null;
-    private HttpResponseInstance m_httpResponse = null;
+    private HttpRequestInstance m_httpRequest;
+    private HttpResponseInstance m_httpResponse;
 
     public WebInstance(ScriptEngine engine)
       : base(engine)
@@ -83,7 +81,7 @@
         if (firstClaim == null)
           throw new InvalidOperationException("No UPN claim found");
 
-        string upn = firstClaim.Value;
+        var upn = firstClaim.Value;
 
         if (String.IsNullOrEmpty(upn))
           throw new InvalidOperationException("A UPN claim was found, however, the value was empty.");
@@ -94,29 +92,27 @@
 
       try
       {
-        HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+        var noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
         Uri targetUri;
         if (SPHelper.TryCreateWebAbsoluteUri(url, out targetUri) == false)
           throw new InvalidOperationException("Unable to convert target url to absolute uri: " + url);
 
-        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(targetUri);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(targetUri);
         request.CachePolicy = noCachePolicy; //TODO: Make this configurable.
 
+        //Get the proxy address from the farm property bag setting and use it as the default proxy object.
         var farmProxyAddress = Utilities.GetFarmKeyValue(Constants.FarmProxyAddressKey);
-        if (String.IsNullOrEmpty(farmProxyAddress) == false)
-        {
-          request.Proxy = new WebProxy(farmProxyAddress, true, null, CredentialCache.DefaultNetworkCredentials);
-        }
-        else
-        {
-          request.Proxy = WebRequest.GetSystemWebProxy();
-        }
+
+        request.Proxy = String.IsNullOrEmpty(farmProxyAddress) == false
+          ? new WebProxy(farmProxyAddress, true, null, CredentialCache.DefaultNetworkCredentials)
+          : WebRequest.GetSystemWebProxy();
 
         if (request.Proxy != null)
         {
           request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
         }
+
 
         if (ajaxSettings != null)
         {
@@ -180,7 +176,7 @@
           return new DeferredInstance(this.Engine.Object.InstancePrototype, tcs.Task);
         }
 
-        object result = null;
+        object result;
         try
         {
 
@@ -190,11 +186,10 @@
         catch (WebException e)
         {
           //The request failed -- usually a 400
-          using (WebResponse response = e.Response)
+          using (var response = e.Response)
           {
-            HttpWebResponse httpResponse = (HttpWebResponse)response;
-            var responseJson = JsonConvert.SerializeObject(httpResponse);
-            result = JSONObject.Parse(this.Engine, responseJson, null);
+            var httpResponse = (HttpWebResponse)response;
+            result = new HttpWebResponseInstance(this.Engine.Object.InstancePrototype, httpResponse);
           }
         }
         catch (Exception ex)
@@ -260,13 +255,12 @@
           {
             //If we couldn't convert as json or xml, use it as a byte array.
             resultObject = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, resultData);
-            success = true;
           }
         }
       }
       else
       {
-        resultObject = String.Format("Error attempting to retrieve {3}: {0} {1}", response.StatusCode, response.StatusDescription, response.ResponseUri);
+        resultObject = String.Format("Error attempting to retrieve {2}: {0} {1}", response.StatusCode, response.StatusDescription, response.ResponseUri);
       }
 
       return resultObject;
@@ -276,7 +270,7 @@
     [JSFunction(Name = "parseQueryString")]
     public object ParseQueryString(object query)
     {
-      if (query.GetType() != typeof(string))
+      if ((query is string) == false)
         return Null.Value;
 
       var result = this.Engine.Object.Construct();

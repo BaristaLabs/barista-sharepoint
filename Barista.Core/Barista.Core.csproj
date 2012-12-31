@@ -158,6 +158,7 @@
     <Compile Include="IBundle.cs" />
     <Compile Include="Framework\JsonNetSerializer.cs" />
     <Compile Include="Library\BaristaGlobalInstance.cs" />
+    <Compile Include="Library\CookieInstance.cs" />
     <Compile Include="Library\DynamicModelInstance.cs" />
     <Compile Include="Extensions\ArgumentHelperExtensions.cs" />
     <Compile Include="Extensions\EventHelperExtensions.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Library\GuidInstance.cs" />
     <Compile Include="Library\HttpRequestInstance.cs" />
     <Compile Include="Library\HttpResponseInstance.cs" />
+    <Compile Include="Library\HttpWebResponseInstance.cs" />
     <Compile Include="Library\JSDocAttribute.cs" />
     <Compile Include="Library\MustacheInstance.cs" />
     <Compile Include="Library\ProxySettingsInstance.cs" />

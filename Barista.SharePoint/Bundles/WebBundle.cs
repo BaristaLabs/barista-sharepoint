@@ -29,11 +29,9 @@
     {
       engine.SetGlobalValue("AjaxSettings", new AjaxSettingsConstructor(engine));
       engine.SetGlobalValue("ProxySettings", new ProxySettingsConstructor(engine));
-      
-      if (this.WebInstance == null)
-        this.WebInstance = new WebInstance(engine);
+      engine.SetGlobalValue("Cookie", new CookieConstructor(engine));
 
-      return this.WebInstance;
+      return this.WebInstance ?? (this.WebInstance = new WebInstance(engine));
     }
   }
 }

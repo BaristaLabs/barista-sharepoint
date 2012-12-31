@@ -253,7 +253,7 @@ asyncTest("Make Ajax call using no settings", function () {
 });
 
 asyncTest("Make Ajax call using proxy settings", function () {
-    expect(3);
+    expect(4);
 
     var code = "var web = require(\"Web\"); web.ajax(\"http://search.twitter.com/search.atom?q=gaga&count=5\", " + JSON.stringify({ useDefaultCredentials: true, proxy: getProxy() }) + ")";
     var request = jQuery.ajax(getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent(code));
