@@ -203,6 +203,13 @@
       set { m_eventReceiverDefinition.Synchronization = (SPEventReceiverSynchronization)Enum.Parse(typeof(SPEventReceiverSynchronization), value); }
     }
 
+    [JSProperty(Name = "type")]
+    public string Type
+    {
+      get { return m_eventReceiverDefinition.Type.ToString(); }
+      set { m_eventReceiverDefinition.Type = (SPEventReceiverType) Enum.Parse(typeof (SPEventReceiverType), value); }
+    }
+
     [JSProperty(Name = "webId")]
     public GuidInstance WebId
     {

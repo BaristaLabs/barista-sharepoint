@@ -38,7 +38,7 @@
   public class SPFileInstance : ObjectInstance
   {
     [NonSerialized]
-    private SPFile m_file;
+    private readonly SPFile m_file;
 
     public SPFileInstance(ObjectInstance prototype)
       : base(prototype)
@@ -363,7 +363,7 @@
     [JSFunction(Name = "openBinary")]
     public Base64EncodedByteArrayInstance OpenBinary(string openOptions)
     {
-      Base64EncodedByteArrayInstance result = null;
+      Base64EncodedByteArrayInstance result;
 
       if (String.IsNullOrEmpty(openOptions) || openOptions == Undefined.Value.ToString())
       {

@@ -369,7 +369,7 @@
       var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
 
       var baristaItemEventReceiverType = typeof (BaristaItemEventReceiver);
-      m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.Name);
+      m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.FullName);
     }
 
     [JSFunction(Name = "addItem")]
@@ -649,8 +649,8 @@
       return result;
     }
 
-     [JSFunction(Name = "getEventReceiverDefinitions")]
-    public ArrayInstance GetEventReceiverDefinitions()
+    [JSFunction(Name = "getEventReceivers")]
+    public ArrayInstance GetEventReceivers()
     {
       var result = this.Engine.Array.Construct();
       foreach (var eventReceiverDefinition in m_list.EventReceivers.OfType<SPEventReceiverDefinition>())

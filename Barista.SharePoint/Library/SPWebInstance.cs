@@ -104,10 +104,15 @@
 
         foreach (var key in m_web.AllProperties.Keys)
         {
-          var serializedKey = JsonConvert.SerializeObject(key);
+          string serializedKey;
+          if (key is string)
+            serializedKey = key as string;
+          else
+            serializedKey = JsonConvert.SerializeObject(key);
+
           var serializedValue = JsonConvert.SerializeObject(m_web.AllProperties[key]);
 
-          result.SetPropertyValue(serializedKey, serializedValue, false);
+          result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
         }
 
         return result;

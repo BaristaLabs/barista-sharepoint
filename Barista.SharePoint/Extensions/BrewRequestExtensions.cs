@@ -33,7 +33,7 @@
         request.ExtendedProperties.Add("SPFileId", SPContext.Current.File.UniqueId.ToString());
     }
 
-    public static void SetExtendedPropertiesFromSPItemEventProperties(this BrewRequest request, SPItemEventProperties properties)
+    public static void SetExtendedPropertiesFromSPItemEventProperties(this BrewRequest request, SPWeb web, SPList list, SPListItem item, SPItemEventProperties properties)
     {
       if (request == null)
         return;
@@ -43,6 +43,18 @@
 
       var baristaProperties = BaristaItemEventProperties.CreateItemEventProperties(properties);
       var value = JsonConvert.SerializeObject(baristaProperties);
+
+      if (properties.SiteId != default(Guid))
+        request.ExtendedProperties.Add("SPSiteId", properties.SiteId.ToString());
+
+      if (web != null)
+        request.ExtendedProperties.Add("SPWebId", web.ID.ToString());
+
+      if (list != null)
+        request.ExtendedProperties.Add("SPListId", list.ID.ToString());
+
+      if (item != null)
+        request.ExtendedProperties.Add("SPListItemUrl", item.Url);
 
       request.ExtendedProperties.Add("SPItemEventProperties", value);
     }

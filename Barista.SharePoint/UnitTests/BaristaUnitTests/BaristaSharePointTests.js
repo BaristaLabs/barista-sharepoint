@@ -822,3 +822,22 @@ result;";
         start();
     });
 });
+
+asyncTest("Assert that a Barista Event Receiver is able to be set on a list, and that the script is executed.", function () {
+    expect(2);
+
+    var request = jQuery.ajax({
+        url: getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent(getContentPath()) + "Barista_SPListEventReceiver.js"
+    });
+
+    request.done(function (data) {
+        ok(data["afterProperties"] !== "undefined", "Expression was run and a result returned.");
+        ok(data["afterProperties"]["Event Receiver Executed"] === "true", "Event Receiver Fired");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});

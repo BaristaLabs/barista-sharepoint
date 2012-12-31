@@ -676,6 +676,7 @@
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemRetrievalThroughView.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListTitlesToPDF.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemCreation.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListEventReceiver.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\Elements.xml" />

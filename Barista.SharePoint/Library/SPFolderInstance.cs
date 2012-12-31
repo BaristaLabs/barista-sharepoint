@@ -6,11 +6,10 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
   using Microsoft.Office.DocumentManagement.DocumentSets;
-  using System.Collections;
   using System.Text;
   using System.Collections.Generic;
-  using Microsoft.Office.Server.Utilities;
   using Barista.Library;
+  using Newtonsoft.Json;
 
   [Serializable]
   public class SPFolderConstructor : ClrFunction
@@ -47,7 +46,7 @@
   {
     private SPSite m_site;
     private SPWeb m_web;
-    private SPFolder m_folder;
+    private readonly SPFolder m_folder;
 
     public SPFolderInstance(ObjectInstance prototype)
       : base(prototype)
@@ -60,6 +59,7 @@
       : this(prototype)
     {
       this.m_folder = folder;
+      this.m_site = site;
       this.m_web = web;
       this.m_folder = folder;
     }
@@ -86,6 +86,30 @@
       get
       {
         return m_folder.Name;
+      }
+    }
+
+    [JSProperty(Name = "allProperties")]
+    public ObjectInstance AllProperties
+    {
+      get
+      {
+        var result = this.Engine.Object.Construct();
+
+        foreach (var key in m_folder.Properties.Keys)
+        {
+          string serializedKey;
+          if (key is string)
+            serializedKey = key as string;
+          else
+            serializedKey = JsonConvert.SerializeObject(key);
+            
+          var serializedValue = JsonConvert.SerializeObject(m_folder.Properties[key]);
+
+          result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+        }
+       
+        return result;
       }
     }
 
@@ -131,7 +155,7 @@
     #endregion
 
     [JSFunction(Name = "addDocumentSet")]
-    public SPDocumentSetInstance addDocumentSet(string name, object contentType, [DefaultParameterValue(null)] object properties, [DefaultParameterValue(true)] bool provisionDefaultContent)
+    public SPDocumentSetInstance AddDocumentSet(string name, object contentType, [DefaultParameterValue(null)] object properties, [DefaultParameterValue(true)] bool provisionDefaultContent)
     {
       SPContentTypeId contentTypeId = SPContentTypeId.Empty;
 
@@ -160,7 +184,7 @@
     [JSFunction(Name = "addFile")]
     public SPFileInstance AddFile(object file, [DefaultParameterValue(true)] bool overwrite)
     {
-      SPFile result = null;
+      SPFile result;
       if (file is Base64EncodedByteArrayInstance)
       {
         var byteArray = file as Base64EncodedByteArrayInstance;
@@ -181,7 +205,7 @@
     [JSFunction(Name = "addFileByUrl")]
     public SPFileInstance AddFile(string url, object data, [DefaultParameterValue(true)] bool overwrite)
     {
-      SPFile result = null;
+      SPFile result;
       if (data is Base64EncodedByteArrayInstance)
       {
         var byteArrayInstance = data as Base64EncodedByteArrayInstance;
@@ -198,7 +222,7 @@
     }
 
     [JSFunction(Name = "addSubFolder")]
-    public SPFolderInstance addSubFolder(string url)
+    public SPFolderInstance AddSubFolder(string url)
     {
       var subFolder = m_folder.SubFolders.Add(url);
       return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
@@ -213,9 +237,10 @@
     [JSFunction(Name = "ensureSubFolderExists")]
     public SPFolderInstance EnsureFolderExists(string folderName)
     {
-      var subFolder = m_folder.SubFolders.OfType<SPFolder>()
-                                         .Where(f => f.Name == folderName)
-                                         .FirstOrDefault();
+      var subFolder = m_folder.SubFolders
+                              .OfType<SPFolder>()
+                              .FirstOrDefault(f => f.Name == folderName);
+
       if (subFolder == null)
       {
         m_folder.ParentWeb.AllowUnsafeUpdates = true;
@@ -258,11 +283,15 @@
       return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_folder.Item);
     }
 
+    [JSFunction(Name = "getPropertyBagValue")]
+    public string GetPropertyBagValue(string value)
+    {
+      return m_folder.GetProperty(value) as string;
+    }
+
     [JSFunction(Name = "getFiles")]
     public ArrayInstance GetFiles([DefaultParameterValue(false)] bool recursive)
     {
-      List<SPFile> files = new List<SPFile>();
-
       //ContentIterator iterator = new ContentIterator();
       //iterator.ProcessFilesInFolder(m_folder, recursive, (file) =>
       //  {
@@ -281,8 +310,13 @@
       //}
       //return result;
 
-      var listItemInstances = m_folder.Files.OfType<SPFile>().Select((file) => { return new SPFileInstance(this.Engine.Object.InstancePrototype, file); });
+      var listItemInstances = m_folder.Files
+                                      .OfType<SPFile>()
+                                      .Select(file => new SPFileInstance(this.Engine.Object.InstancePrototype, file));
+
+// ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(listItemInstances.ToArray());
+// ReSharper restore CoVariantArrayConversion
     }
 
     [JSFunction(Name = "getSubFolders")]
@@ -313,6 +347,12 @@
       }
 
       return result;
+    }
+
+    [JSFunction(Name = "setPropertyBagValue")]
+    public void SetPropertyBagValue(string key, string value)
+    {
+      m_folder.SetProperty(key, value);
     }
 
     [JSFunction(Name = "setUniqueContentTypeOrder")]

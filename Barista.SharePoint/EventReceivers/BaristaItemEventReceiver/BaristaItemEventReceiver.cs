@@ -194,12 +194,23 @@
     /// <param name="properties">The properties.</param>
     private static void ExecuteBaristaScript(SPItemEventProperties properties)
     {
-      var list = properties.List;
-      if (list == null)
-        return;
+      BrewRequest request;
+      using (var web = properties.OpenWeb())
+      {
+        var list = web.Lists[properties.ListId];
+        var item = list.GetItemById(properties.ListItemId);
 
-      if (list.RootFolder.Properties.ContainsKey(BaristaItemEventReceiverCodePropertyBagKey) == false || (list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey] is string) == false)
-        return;
+        if (list.RootFolder.Properties.ContainsKey(BaristaItemEventReceiverCodePropertyBagKey) == false ||
+            (list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey] is string) == false)
+          return;
+
+        request = new BrewRequest
+          {
+            Code = (string) list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey],
+          };
+
+        request.SetExtendedPropertiesFromSPItemEventProperties(web, list, item, properties);
+      }
 
       var serviceContext = SPServiceContext.Current ??
                            SPServiceContext.GetContext(SPServiceApplicationProxyGroup.Default,
@@ -207,16 +218,7 @@
 
       var client = new BaristaServiceClient(serviceContext);
 
-      var request = new BrewRequest
-      {
-        Code = (string)list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey],
-      };
-      
-      request.SetExtendedPropertiesFromCurrentSPContext();
-      request.SetExtendedPropertiesFromSPItemEventProperties(properties);
-
       client.Exec(request);
-
       //TODO: Allow for Syncronous events that expect to return an object with which to update the properties object with.
     }
   }
