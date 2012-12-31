@@ -22,7 +22,7 @@
   }
 
   [Serializable]
-  public class HttpWebResponseInstance : ObjectInstance
+  public class HttpWebResponseInstance : ObjectInstance, IDisposable
   {
     private readonly HttpWebResponse m_httpWebResponse;
 
@@ -140,15 +140,21 @@
     }
 
     [JSProperty(Name = "statusCode")]
-    public string StatusCode
+    public int StatusCode
     {
-      get { return m_httpWebResponse.StatusCode.ToString(); }
+      get { return (int)m_httpWebResponse.StatusCode; }
     }
 
     [JSProperty(Name = "statusDescription")]
     public string StatusDescription
     {
       get { return m_httpWebResponse.StatusDescription; }
+    }
+
+    public void Dispose()
+    {
+      if (m_httpWebResponse != null)
+        ((IDisposable)m_httpWebResponse).Dispose();
     }
   }
 }
