@@ -29,11 +29,6 @@ try {
         beforeProperties: newList.rootFolder.allProperties
     };
 
-    newList.addBaristaEventReceiver("ItemAdded");
-    newList.update();
-
-    result.afterEventReceivers = newList.getEventReceivers();
-
     //Set the list property bag setting to the code thing.
     var code = "var sp = require(\"SharePoint\");\
         var list = new SPList(\"" + url + "\");\
@@ -42,8 +37,10 @@ try {
 		list.rootFolder.update();\
 	";
 
-    newList.rootFolder.setPropertyBagValue("BaristaItemEventReceiver_Code", code);
-    newList.rootFolder.update();
+    newList.addBaristaEventReceiver("ItemAdded", code);
+    newList.update();
+
+    result.afterEventReceivers = newList.getEventReceivers();
 
     //Add a new item to the list.
     var item = newList.addFile("Testing.json", "Test12345");

@@ -364,12 +364,18 @@
     }
 
     [JSFunction(Name = "addBaristaEventReceiver")]
-    public void AddBaristaEventReceiver(string eventReceiverType)
+    public void AddBaristaEventReceiver(string eventReceiverType, object code)
     {
       var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
 
       var baristaItemEventReceiverType = typeof (BaristaItemEventReceiver);
       m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.FullName);
+
+      if (code != null && code != Null.Value && code != Undefined.Value)
+      {
+        m_list.RootFolder.AddProperty(BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey, code.ToString());
+        m_list.RootFolder.Update();
+      }
     }
 
     [JSFunction(Name = "addItem")]

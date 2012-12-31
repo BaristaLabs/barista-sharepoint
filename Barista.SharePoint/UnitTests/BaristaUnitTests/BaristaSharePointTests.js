@@ -831,7 +831,7 @@ asyncTest("Assert that a Barista Event Receiver is able to be set on a list, and
     });
 
     request.done(function (data) {
-        ok(data["afterProperties"] !== "undefined", "Expression was run and a result returned.");
+        ok(typeof data["afterProperties"] !== "undefined", "Expression was run and a result returned.");
         ok(data["afterProperties"]["Event Receiver Executed"] === "true", "Event Receiver Fired");
         start();
     });

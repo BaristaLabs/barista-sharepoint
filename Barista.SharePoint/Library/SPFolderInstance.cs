@@ -384,6 +384,12 @@
       return m_folder.Recycle().ToString();
     }
 
+    [JSFunction(Name = "deletePropertyBagValue")]
+    public void DeletePropertyBagValue(string key)
+    {
+      m_folder.DeleteProperty(key);
+    }
+
     [JSFunction(Name = "update")]
     public void Update()
     {
