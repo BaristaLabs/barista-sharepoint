@@ -1,11 +1,8 @@
 namespace Barista.SharePoint.Features.BaristaDocumentStore
 {
-  using System;
-  using System.Collections.Generic;
   using System.Linq;
   using System.Runtime.InteropServices;
   using Microsoft.SharePoint;
-  using Microsoft.SharePoint.WebPartPages;
   using Barista.SharePoint.DocumentStore;
 
   /// <summary>
