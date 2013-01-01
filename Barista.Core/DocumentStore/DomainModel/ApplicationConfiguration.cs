@@ -27,7 +27,7 @@
           });
       if (applicationConfigurationEntity == null)
       {
-        lock (SyncRoot)
+        lock (s_syncRoot)
         {
           applicationConfigurationEntity =
             repository.Single(new EntityFilterCriteria

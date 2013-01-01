@@ -1080,7 +1080,7 @@
             if (s_documentStore != null)
             {
               throw new InvalidOperationException(
-                "The Document STore has already been initialized. Please attempt to set the document store before the repository has been used.");
+                "The Document Store has already been initialized. Please attempt to set the document store before the repository has been used.");
             }
           }
         }

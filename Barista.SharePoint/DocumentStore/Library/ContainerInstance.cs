@@ -39,15 +39,15 @@
     [JSProperty(Name = "description")]
     public string Description
     {
-      get;
-      set;
+      get { return m_container.Description; }
+      set { m_container.Description = value; }
     }
 
     [JSProperty(Name = "entityCount")]
     public int EntityCount
     {
-      get;
-      set;
+      get { return m_container.EntityCount; }
+      set { m_container.EntityCount = value; }
     }
 
     [JSProperty(Name = "title")]
