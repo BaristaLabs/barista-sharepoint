@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
+  using System;
+  using System.Globalization;
+  using System.Linq;
+
   public class ApplicationLog
   {
-    private static object s_syncRoot = new object();
+    private static readonly object SyncRoot = new object();
 
     public static void AddLogEntry(Repository repository, ApplicationLogEntry entry)
     {
@@ -17,18 +16,16 @@ namespace Barista.DocumentStore
       if (configuration.MinimumLogLevel > entry.Level)
         return;
 
-      lock (s_syncRoot)
+      lock (SyncRoot)
       {
         string path = String.Format("{0}/{1}/{2}/{3}", Constants.ApplicationLogFolderName, date.Year, date.Month, date.Day);
         var client = repository.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
-        Folder folder = client.GetFolder(repository.Configuration.ContainerTitle, path);
+        var folder = client.GetFolder(repository.Configuration.ContainerTitle, path) ??
+                     client.CreateFolder(repository.Configuration.ContainerTitle, path);
 
-        if (folder == null)
-          folder = client.CreateFolder(repository.Configuration.ContainerTitle, path);
-
-        var dsApplicationLogs = repository.ListEntities(new EntityFilterCriteria()
-        {
+        var dsApplicationLogs = repository.ListEntities(new EntityFilterCriteria
+          {
           Path = folder.FullPath,
           Namespace = Constants.ApplicationLogV1Namespace,
           NamespaceMatchType = NamespaceMatchType.Equals,
@@ -44,29 +41,34 @@ namespace Barista.DocumentStore
         var entityPartClient = repository.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
         var dsApplicationLogParts = entityPartClient.ListEntityParts(repository.Configuration.ContainerTitle, dsApplicationLog.Id);
 
-        var dsCurrentHourApplicationLogPart = dsApplicationLogParts.Where(alp => alp.Name == date.Hour.ToString()).FirstOrDefault();
+        var dsCurrentHourApplicationLogPart = dsApplicationLogParts.FirstOrDefault(alp => alp.Name == date.Hour.ToString(CultureInfo.InvariantCulture));
         if (dsCurrentHourApplicationLogPart == null)
         {
-          ApplicationLogPart part = new ApplicationLogPart();
+          var part = new ApplicationLogPart();
           part.Entries.Add(entry);
 
           var data = DocumentStoreHelper.SerializeObjectToJson(part);
-          dsCurrentHourApplicationLogPart = entityPartClient.CreateEntityPart(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), "", data);
+          entityPartClient.CreateEntityPart(repository.Configuration.ContainerTitle,
+                                            dsApplicationLog.Id,
+                                            date.Hour.ToString(
+                                              CultureInfo.InvariantCulture), "", data);
         }
         else
         {
-          ApplicationLogPart part = DocumentStoreHelper.DeserializeObjectFromJson<ApplicationLogPart>(dsCurrentHourApplicationLogPart.Data);
+          var part =
+            DocumentStoreHelper.DeserializeObjectFromJson<ApplicationLogPart>(dsCurrentHourApplicationLogPart.Data);
           var data = DocumentStoreHelper.SerializeObjectToJson(part);
           part.Entries.Add(entry);
-          entityPartClient.UpdateEntityPartData(repository.Configuration.ContainerTitle, dsApplicationLog.Id, date.Hour.ToString(), null, data);
+          entityPartClient.UpdateEntityPartData(repository.Configuration.ContainerTitle, dsApplicationLog.Id,
+                                                date.Hour.ToString(CultureInfo.InvariantCulture), null, data);
         }
       }
     }
 
     public static void AddException(Repository repository, Exception ex)
     {
-      ApplicationLogEntry entry = new ApplicationLogEntry()
-      {
+      var entry = new ApplicationLogEntry
+        {
         Exception = ex.ToString(),
         Level = LogLevel.Fatal,
         Logger = "Exception",

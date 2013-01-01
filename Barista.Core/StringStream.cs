@@ -1,6 +1,5 @@
 ﻿namespace Barista.DocumentStore.Framework
 {
-  using System;
   using System.IO;
   using System.Text;
 

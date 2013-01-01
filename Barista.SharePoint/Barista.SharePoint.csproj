@@ -364,10 +364,10 @@
     <Compile Include="Services\HtmlConverterService.cs" />
     <Compile Include="InfopathAttachment.cs" />
     <Compile Include="Caml\Library\CamlHump.cs" />
-    <Compile Include="K2\K2EventInstanceInstance.cs" />
+    <Compile Include="K2\EventInstanceInstance.cs" />
     <Compile Include="K2\K2Instance.cs" />
-    <Compile Include="K2\K2ProcessInstanceInstance.cs" />
-    <Compile Include="K2\K2WorklistItemInstance.cs" />
+    <Compile Include="K2\ProcessInstanceInstance.cs" />
+    <Compile Include="K2\WorklistItemInstance.cs" />
     <Compile Include="Library\LogInstance.cs" />
     <Compile Include="Caml\Library\SPCamlQueryBuilderInstance.cs" />
     <Compile Include="Caml\Library\SPCamlQueryBuilder_FieldRef.cs" />
