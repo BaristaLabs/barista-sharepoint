@@ -356,26 +356,51 @@
     #region Functions
 
     [JSFunction(Name = "addEventReceiver")]
-    public void AddEventReceiver(string eventReceiverType, string assembly, string className)
+    public SPEventReceiverDefinitionInstance AddEventReceiver(string eventReceiverType, string assembly, string className, object code)
     {
       var receiverType = (SPEventReceiverType) Enum.Parse(typeof (SPEventReceiverType), eventReceiverType);
 
+      var eventReceiversBefore = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
+
       m_list.EventReceivers.Add(receiverType, assembly, className);
-    }
 
-    [JSFunction(Name = "addBaristaEventReceiver")]
-    public void AddBaristaEventReceiver(string eventReceiverType, object code)
-    {
-      var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
-
-      var baristaItemEventReceiverType = typeof (BaristaItemEventReceiver);
-      m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.FullName);
+      var eventReceiversAfter = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
 
       if (code != null && code != Null.Value && code != Undefined.Value)
       {
         m_list.RootFolder.AddProperty(BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey, code.ToString());
         m_list.RootFolder.Update();
       }
+
+      var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
+      return result != null
+        ? new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result)
+        : null;
+    }
+
+    [JSFunction(Name = "addBaristaEventReceiver")]
+    public SPEventReceiverDefinitionInstance AddBaristaEventReceiver(string eventReceiverType, object code)
+    {
+      var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
+
+      var baristaItemEventReceiverType = typeof (BaristaItemEventReceiver);
+
+      var eventReceiversBefore = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
+
+      m_list.EventReceivers.Add(receiverType, baristaItemEventReceiverType.Assembly.FullName, baristaItemEventReceiverType.FullName);
+
+      var eventReceiversAfter = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
+
+      if (code != null && code != Null.Value && code != Undefined.Value)
+      {
+        m_list.RootFolder.AddProperty(BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey, code.ToString());
+        m_list.RootFolder.Update();
+      }
+
+      var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
+      return result != null
+        ? new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result)
+        : null;
     }
 
     [JSFunction(Name = "addItem")]

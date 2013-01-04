@@ -140,23 +140,7 @@
         throw new ArgumentNullException("listItem",
                                         @"When creating an Entity, the SPListItem that represents the entity must not be null.");
 
-      Entity entity = new Entity();
-
-      try
-      {
-        string id = listItem[Constants.DocumentEntityGuidFieldId] as string;
-
-        if (id != null)
-          entity.Id = new Guid(id);
-      }
-      catch
-      {
-        //Do Nothing...
-      }
-
-      entity.Namespace = listItem[Constants.NamespaceFieldId] as string;
-
-      var docSet = DocumentSet.GetDocumentSet(listItem.Folder);
+      //FIXME: Hmmm.. why did we go through the work of re-retrieving the file again instead of using the property???
 
       SPFile dataFile = null;
 
@@ -173,43 +157,78 @@
         throw new InvalidOperationException(
           "No corresponding entity file exists on the document set that represents the entity.");
 
+      return MapEntityFromSPListItem(listItem, dataFile, data);
+    }
 
-      entity.ETag = dataFile.ETag;
+    /// <summary>
+    /// Returns an entity that represents the specified list item.
+    /// </summary>
+    /// <param name="listItem"></param>
+    /// <param name="file"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static Entity MapEntityFromSPListItem(SPListItem listItem, SPFile file, string data)
+    {
+      if (listItem == null)
+        throw new ArgumentNullException("listItem");
+
+      if (file == null)
+        throw new ArgumentNullException("file");
+
+      var entity = new Entity();
+
+      try
+      {
+        var id = listItem[Constants.DocumentEntityGuidFieldId] as string;
+
+        if (id != null)
+          entity.Id = new Guid(id);
+      }
+      catch
+      {
+        //Do Nothing...
+      }
+
+      entity.Namespace = listItem[Constants.NamespaceFieldId] as string;
+
+      var docSet = DocumentSet.GetDocumentSet(file.ParentFolder);
+
+      entity.ETag = file.ETag;
       entity.Title = docSet.Item.Title;
       entity.Description = docSet.Item["DocumentSetDescription"] as string;
-      entity.Created = (DateTime) docSet.Item[SPBuiltInFieldId.Created];
-      entity.Modified = (DateTime) docSet.Item[SPBuiltInFieldId.Modified];
+      entity.Created = (DateTime)docSet.Item[SPBuiltInFieldId.Created];
+      entity.Modified = (DateTime)docSet.Item[SPBuiltInFieldId.Modified];
 
       entity.ContentsETag = docSet.Item["DocumentEntityContentsHash"] as string;
 
       if (docSet.Item["DocumentEntityContentsLastModified"] != null)
       {
-        entity.ContentsModified = (DateTime) docSet.Item["DocumentEntityContentsLastModified"];
+        entity.ContentsModified = (DateTime)docSet.Item["DocumentEntityContentsLastModified"];
       }
 
       entity.Path = docSet.ParentFolder.Url.Substring(listItem.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
 
-      entity.Data = data ?? Encoding.UTF8.GetString(dataFile.OpenBinary());
+      entity.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
 
       var createdByUserValue = listItem[SPBuiltInFieldId.Author] as String;
-      SPFieldUserValue createdByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
+      var createdByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
 
       entity.CreatedBy = new User
-        {
-          Email = createdByUser.User.Email,
-          LoginName = createdByUser.User.LoginName,
-          Name = createdByUser.User.Name,
-        };
+      {
+        Email = createdByUser.User.Email,
+        LoginName = createdByUser.User.LoginName,
+        Name = createdByUser.User.Name,
+      };
 
       var modifiedByUser = new SPFieldUserValue(listItem.Web, createdByUserValue);
 
       entity.ModifiedBy = new User
-        {
-          Email = modifiedByUser.User.Email,
-          LoginName = modifiedByUser.User.LoginName,
-          Name = modifiedByUser.User.Name,
-        };
+      {
+        Email = modifiedByUser.User.Email,
+        LoginName = modifiedByUser.User.LoginName,
+        Name = modifiedByUser.User.Name,
+      };
 
       return entity;
     }

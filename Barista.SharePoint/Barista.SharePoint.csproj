@@ -246,7 +246,9 @@
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="DocumentStore\DocumentStoreContainerEventReceiver\DocumentStoreContainerEventReceiver.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
+    <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
     <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
     <Compile Include="Search\Hit.cs" />
@@ -435,6 +437,12 @@
       <SharePointProjectItemId>{9a196b90-3a4a-49ac-b3b5-eff220cb60ef}</SharePointProjectItemId>
     </None>
     <None Include="app.config" />
+    <None Include="DocumentStore\DocumentStoreContainerEventReceiver\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{5f6db410-823e-4502-9b8c-ee0b557b158c}</SharePointProjectItemId>
+    </None>
+    <None Include="DocumentStore\SPDocumentStoreEventReceiver\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{da96c1da-b8fc-45f6-b66d-02c5a719bf3a}</SharePointProjectItemId>
+    </None>
     <None Include="EventReceivers\BaristaItemEventReceiver\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0b4817fb-dfd3-401f-b84c-b925b2eb1f3e}</SharePointProjectItemId>
     </None>
@@ -653,6 +661,9 @@
     <Content Include="ADMIN\BaristaService\Create.aspx" />
     <Content Include="ADMIN\BaristaService\GetTrustedLocations.js" />
     <Content Include="ADMIN\BaristaService\Manage.aspx" />
+    <Content Include="DocumentStore\DocumentStoreContainerEventReceiver\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
+    <Content Include="DocumentStore\SPDocumentStoreEventReceiver\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\EditDlg.htm" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Elements.xml" />
@@ -677,6 +688,7 @@
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListTitlesToPDF.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListItemCreation.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SPListEventReceiver.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_DSEventReceiverExample.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\Elements.xml" />
@@ -686,7 +698,6 @@
     <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\FileDlg.htm" />
     <Content Include="DocumentStore\DocumentStoreContainer\Repair.aspx" />
-    <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\Upload.aspx" />
     <Content Include="DocumentStore\DocumentStoreDefaultDocuments\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml" />

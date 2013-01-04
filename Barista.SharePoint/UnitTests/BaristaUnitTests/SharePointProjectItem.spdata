@@ -22,5 +22,6 @@
     <ProjectItemFile Source="BaristaActiveDirectoryTests.js" Target="BaristaUnitTests\" Type="ElementFile" />
     <ProjectItemFile Source="Content\Barista_SPListItemCreation.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
     <ProjectItemFile Source="Content\Barista_SPListEventReceiver.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_DSEventReceiverExample.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
   </Files>
 </ProjectItem>

@@ -11,6 +11,13 @@
       </ContentTypeRef>
       <ContentTypeRef ID="0x0101" />
       <ContentTypeRef ID="0x0120" />
+      <ContentTypeRef ID="0x01010A" />
+      <ContentTypeRef ID="0x010100c85948cf1fa64eed9d29eaa2a1078fd6">
+        <Folder TargetName="Forms/Document Store Entity Part"/>
+      </ContentTypeRef>
+      <ContentTypeRef ID="0x010100d1f6bb0d78094ba3acabd9118f81b0c5">
+        <Folder TargetName="Forms/Document Store Attachment"/>
+      </ContentTypeRef>
     </ContentTypes>
     <Fields>
       <Field ID="{fa564e0f-0c70-4ab9-b863-0177e6ddd247}" Type="Text" Name="Title" ShowInNewForm="FALSE" ShowInFileDlg="FALSE" DisplayName="$Resources:core,Title;" Sealed="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title"></Field>
