@@ -13,22 +13,30 @@
     public Base64EncodedByteArrayConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "Base64EncodedByteArray", new Base64EncodedByteArrayInstance(engine.Object.InstancePrototype))
     {
+      PopulateFunctions();
     }
 
     [JSConstructorFunction]
     public Base64EncodedByteArrayInstance Construct(string base64EncodedData)
     {
-      if (String.IsNullOrEmpty(base64EncodedData))
-        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null);
-      else
-        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
+      return String.IsNullOrEmpty(base64EncodedData)
+        ? new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null)
+        : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
+    }
+
+    [JSFunction(Name = "CreateFromString")]
+    public Base64EncodedByteArrayInstance CreateFromString(string data)
+    {
+      return String.IsNullOrEmpty(data)
+        ? new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null)
+        : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(data));
     }
   }
 
   [Serializable]
   public class Base64EncodedByteArrayInstance : ObjectInstance
   {
-    private List<Byte> m_data = new List<byte>();
+    private readonly List<Byte> m_data = new List<byte>();
 
     public Base64EncodedByteArrayInstance(ObjectInstance prototype)
       : base(prototype)
@@ -79,7 +87,7 @@
     [JSFunction(Name = "getByteAt")]
     public string GetByteAt(int index)
     {
-      return StringHelper.ByteArrayToString(new Byte[] { m_data[index] });
+      return StringHelper.ByteArrayToString(new[] { m_data[index] });
     }
 
     [JSFunction(Name = "setByteAt")]

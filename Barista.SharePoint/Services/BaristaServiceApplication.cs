@@ -348,7 +348,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 
         engine.SetGlobalValue("Guid", new GuidConstructor(engine));
         engine.SetGlobalValue("Uri", new UriConstructor(engine));
-        engine.SetGlobalValue("Base64EncodedByteArrayInstance", new Base64EncodedByteArrayConstructor(engine));
+        engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
 
         engine.SetGlobalValue("console", console);
 

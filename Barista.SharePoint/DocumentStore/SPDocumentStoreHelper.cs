@@ -1,19 +1,19 @@
 ﻿namespace Barista.SharePoint.DocumentStore
 {
-  using System;
-  using System.Collections.Generic;
-  using System.IO;
-  using System.Linq;
-  using System.Threading.Tasks;
-  using System.Web;
+  using Barista.DocumentStore;
+  using Microsoft.Office.DocumentManagement.DocumentSets;
   using Microsoft.Office.Server.Utilities;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Utilities;
-  using Barista.DocumentStore;
-  using System.Text;
-  using Microsoft.Office.DocumentManagement.DocumentSets;
   using Newtonsoft.Json;
+  using System;
   using System.Collections;
+  using System.Collections.Generic;
+  using System.IO;
+  using System.Linq;
+  using System.Text;
+  using System.Threading.Tasks;
+  using System.Web;
 
   /// <summary>
   /// Contains methods that assist with the retrieval of Document Store objects.
@@ -29,7 +29,7 @@
     /// <returns>Attachment.</returns>
     public static Attachment MapAttachmentFromSPFile(SPFile file)
     {
-      Attachment result = new Attachment
+      var result = new Attachment
         {
           Category = file.Item["Category"] as string,
           Path = file.Item["Path"] as string,
@@ -240,7 +240,7 @@
     /// <returns>Entity.</returns>
     public static Entity MapEntityFromSPListItemVersion(SPListItemVersion version)
     {
-      Entity result = new Entity();
+      var result = new Entity();
       try
       {
         string id = version[version.ListItem.Fields[Constants.DocumentEntityGuidFieldId].Title] as string;
@@ -264,7 +264,7 @@
       result.Path = result.Path.TrimStart('/');
 
       var createdByUserValue = version[version.ListItem.Fields[SPBuiltInFieldId.Author].Title] as string;
-      SPFieldUserValue createdByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
+      var createdByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
 
       result.CreatedBy = new User
         {
@@ -286,7 +286,7 @@
       {
         var dataFile = version.ListItem.File;
         result.ETag = dataFile.ETag;
-        using (StreamReader reader = new StreamReader(dataFile.OpenBinaryStream()))
+        using (var reader = new StreamReader(dataFile.OpenBinaryStream()))
         {
           result.Data = reader.ReadToEnd();
         }
@@ -295,7 +295,7 @@
       {
         var dataFile = version.ListItem.File.Versions.GetVersionFromID(version.VersionId);
         //result.ETag = dataFile.Properties["ETag"];
-        using (StreamReader reader = new StreamReader(dataFile.OpenBinaryStream()))
+        using (var reader = new StreamReader(dataFile.OpenBinaryStream()))
         {
           result.Data = reader.ReadToEnd();
         }
@@ -315,7 +315,7 @@
         throw new ArgumentNullException("file",
                                         @"When creating an EntityPart, the SPFile that represents the entity part must not be null.");
 
-      EntityPart entityPart = new EntityPart();
+      var entityPart = new EntityPart();
       try
       {
         string id = file.Item[Constants.DocumentEntityGuidFieldId] as string;
@@ -337,7 +337,7 @@
       entityPart.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
 
       var createdByUserValue = file.Item[SPBuiltInFieldId.Author] as string;
-      SPFieldUserValue createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
+      var createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
 
       entityPart.CreatedBy = new User
         {
@@ -368,33 +368,71 @@
       if (folder == null)
         throw new ArgumentNullException("folder");
 
+      var rootFolderUrl = folder.ParentWeb.Lists[folder.ParentListId].RootFolder.Url;
+      var folderListItem = folder.Item ?? folder.ParentWeb.GetFolder(folder.Url).Item;
+
       var result = new Folder
         {
           Name = folder.Name,
-          FullPath = folder.Url.Substring(folder.ParentWeb.Lists[folder.ParentListId].RootFolder.Url.Length + 1),
           EntityCount = folder.ItemCount,
-          Created = (DateTime) folder.Item[SPBuiltInFieldId.Created],
-          Modified = (DateTime) folder.Item[SPBuiltInFieldId.Modified],
         };
 
-      var createdByUserValue = folder.Item[SPBuiltInFieldId.Author] as String;
-      SPFieldUserValue createdByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
+      if (folder.Url == rootFolderUrl)
+      {
+        var list = folder.ParentWeb.Lists[folder.ParentListId];
+        result.FullPath = "";
+        result.Created = list.Created;
+        result.Modified = list.LastItemModifiedDate;
 
-      result.CreatedBy = new User
+        var createdByUser = list.Author;
+
+        result.CreatedBy = new User
+        {
+          Email = createdByUser.Email,
+          LoginName = createdByUser.LoginName,
+          Name = createdByUser.Name,
+        };
+
+        var modifiedByUserValue = list.RootFolder.Properties["vti_modifiedby"] as string;
+
+        if (String.Compare(modifiedByUserValue, "SHAREPOINT\\system", StringComparison.InvariantCultureIgnoreCase) != 0)
+        {
+          var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, modifiedByUserValue);
+
+          result.ModifiedBy = new User
+            {
+              Email = modifiedByUser.User.Email,
+              LoginName = modifiedByUser.User.LoginName,
+              Name = modifiedByUser.User.Name,
+            };
+        }
+      }
+      else
+      {
+        result.FullPath = folder.Url.Substring(rootFolderUrl.Length + 1);
+        result.Created = (DateTime) folderListItem[SPBuiltInFieldId.Created];
+        result.Modified = (DateTime) folderListItem[SPBuiltInFieldId.Modified];
+
+        var createdByUserValue = folderListItem[SPBuiltInFieldId.Author] as String;
+        var createdByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
+
+        result.CreatedBy = new User
         {
           Email = createdByUser.User.Email,
           LoginName = createdByUser.User.LoginName,
           Name = createdByUser.User.Name,
         };
 
-      var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
+        var modifiedByUserValue = folderListItem[SPBuiltInFieldId.Editor] as String;
+        var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, modifiedByUserValue);
 
-      result.ModifiedBy = new User
+        result.ModifiedBy = new User
         {
           Email = modifiedByUser.User.Email,
           LoginName = modifiedByUser.User.LoginName,
           Name = modifiedByUser.User.Name,
         };
+      }
 
       return result;
     }
@@ -525,7 +563,7 @@
       SPFolder childFolder = null;
       try
       {
-        childFolder = list.ParentWeb.GetFolder(folder.Url + "/" + id.ToString());
+        childFolder = list.ParentWeb.GetFolder(folder.Url + "/" + id);
       }
       catch (ArgumentException)
       {
@@ -539,7 +577,7 @@
         try
         {
           childFile =
-            list.ParentWeb.GetFile(folder.Url + "/" + id.ToString() + "/" +
+            list.ParentWeb.GetFile(folder.Url + "/" + id + "/" +
                                    Constants.DocumentStoreDefaultEntityPartFileName);
         }
         catch (ArgumentException)
@@ -584,10 +622,9 @@
 
       var item = list.GetItems(query).OfType<SPListItem>().FirstOrDefault();
 
-      if (item != null)
-        return item.File;
-
-      return null;
+      return item != null
+        ? item.File
+        : null;
     }
 
     /// <summary>
@@ -678,10 +715,9 @@
 
       var item = list.GetItems(query).OfType<SPListItem>().FirstOrDefault();
 
-      if (item != null)
-        return item.File;
-
-      return null;
+      return item != null
+        ? item.File
+        : null;
     }
 
     /// <summary>
@@ -723,7 +759,7 @@
     {
       var siteId = webContext.Site.ID;
       var webId = webContext.ID;
-      Task task = new Task(() =>
+      var task = new Task(() =>
         {
           SPUtility.ValidateFormDigest();
           try
