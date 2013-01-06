@@ -126,6 +126,10 @@
       ProcessEvent(properties);
     }
 
+    /// <summary>
+    /// Processes events.
+    /// </summary>
+    /// <param name="properties"></param>
     protected virtual void ProcessEvent(SPItemEventProperties properties)
     {
       //TODO: Should there be folder events too? What happens to the files in a folder when a folder is deleted?
@@ -231,26 +235,50 @@
 
     #region Virtual Methods
 
+    /// <summary>
+    /// Occurs when an entity is created.
+    /// </summary>
+    /// <param name="entity"></param>
     protected virtual void EntityAdded(Entity entity)
     {
     }
 
+    /// <summary>
+    /// Occurs when an entity part is added to an entity.
+    /// </summary>
+    /// <param name="entityPart"></param>
     protected virtual void EntityPartAdded(EntityPart entityPart)
     {
     }
 
+    /// <summary>
+    /// Occurs when an attachment is added to an entity.
+    /// </summary>
+    /// <param name="attachment"></param>
     protected virtual void AttachmentAdded(Attachment attachment)
     {
     }
 
+    /// <summary>
+    /// Occurs when an entity is updated.
+    /// </summary>
+    /// <param name="entity"></param>
     protected virtual void EntityUpdated(Entity entity)
     {
     }
 
+    /// <summary>
+    /// Occurs when an entity part is updated.
+    /// </summary>
+    /// <param name="entityPart"></param>
     protected virtual void EntityPartUpdated(EntityPart entityPart)
     {
     }
 
+    /// <summary>
+    /// Occurs when an attachment is updated.
+    /// </summary>
+    /// <param name="attachment"></param>
     protected virtual void AttachmentUpdated(Attachment attachment)
     {
     }
@@ -263,14 +291,30 @@
     {
     }
 
+    /// <summary>
+    /// Occurs when an entity part is deleted from an entity.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="partName"></param>
     protected virtual void EntityPartDeleted(Guid entityId, string partName)
     {
     }
 
+    /// <summary>
+    /// Occurs when an attachment is deleted from an entity.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="fileName"></param>
     protected virtual void AttachmentDeleted(Guid entityId, string fileName)
     {
     }
 
+    /// <summary>
+    /// Occurs when an entity is moved to a different folder.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="oldFolder"></param>
+    /// <param name="newFolder"></param>
     protected virtual void EntityMoved(Entity entity, Folder oldFolder, Folder newFolder)
     {
     }
