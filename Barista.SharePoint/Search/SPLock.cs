@@ -14,7 +14,7 @@
 
     private readonly string m_lockName;
 
-    internal SPLock(string folderUrl, string lockName)
+    public SPLock(string folderUrl, string lockName)
     {
       if (String.IsNullOrEmpty(folderUrl))
         throw new ArgumentNullException("folderUrl");
