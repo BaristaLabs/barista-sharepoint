@@ -50,8 +50,15 @@
         try
         {
           var entityId = new Guid(guidString);
-          EntityDeleted(entityId);
-          return;
+          using (var site = properties.OpenSite())
+          {
+            using (var web = properties.OpenWeb())
+            {
+              var context = new BaristaContext(site, web);
+              EntityDeleted(context, entityId);
+              return;
+            }
+          }
         }
         catch (Exception) { /* Do Nothing */ }
       }
@@ -73,9 +80,17 @@
 
         try
         {
-         var entityId = new Guid(guidString);
-          EntityPartDeleted(entityId, partName);
-          return;
+          var entityId = new Guid(guidString);
+
+          using (var site = properties.OpenSite())
+          {
+            using (var web = properties.OpenWeb())
+            {
+              var context = new BaristaContext(site, web);
+              EntityPartDeleted(context, entityId, partName);
+              return;
+            }
+          }
         }
         catch (Exception) { /* Do Nothing */ }
       }
@@ -88,8 +103,16 @@
       try
       {
         var entityId = new Guid(guidString);
-        EntityDeleted(entityId);
-        return;
+
+        using (var site = properties.OpenSite())
+        {
+          using (var web = properties.OpenWeb())
+          {
+            var context = new BaristaContext(site, web);
+            EntityDeleted(context, entityId);
+            return;
+          }
+        }
       }
       catch (Exception) { /* Do Nothing */ }
 
@@ -108,8 +131,17 @@
       try
       {
         var attachmentEntityId = new Guid(guidString);
-        AttachmentDeleted(attachmentEntityId, fileName);
-        return;
+        using (var site = properties.OpenSite())
+        {
+          using (var web = properties.OpenWeb())
+          {
+            var context = new BaristaContext(site, web);
+            AttachmentDeleted(context, attachmentEntityId, fileName);
+// ReSharper disable RedundantJumpStatement
+            return;
+// ReSharper restore RedundantJumpStatement
+          }
+        }
       }
       catch (Exception) { /* Do Nothing */ }
 
@@ -146,20 +178,22 @@
           case SPEventReceiverType.ItemFileMoved:
             {
               var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, null);
-              Folder oldFolder;
-              Folder newFolder;
 
-              using (var web = properties.OpenWeb())
+              using (var site = properties.OpenSite())
               {
-                var before = web.GetFolder(properties.BeforeUrl);
-                var after = web.GetFolder(properties.AfterUrl);
-                oldFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(before.ParentFolder);
-                newFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(after.ParentFolder);
+                using (var web = properties.OpenWeb())
+                {
+                  var before = web.GetFolder(properties.BeforeUrl);
+                  var after = web.GetFolder(properties.AfterUrl);
+                  var oldFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(before.ParentFolder);
+                  var newFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(after.ParentFolder);
+                  var context = new BaristaContext(site, web);
+                  EntityMoved(context, entity, oldFolder, newFolder);
+                }
+                
               }
-
-              EntityMoved(entity, oldFolder, newFolder);
               break;
-            }
+          }
         }
       }
       else if (properties.ListItem.ContentTypeId.IsChildOf(documentStoreEntityPartContentTypeId))
@@ -174,14 +208,28 @@
               {
                 var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, properties.ListItem.File,
                                                                            null);
-                EntityAdded(entity);
+                using (var site = properties.OpenSite())
+                {
+                  using (var web = properties.OpenWeb())
+                  {
+                    var context = new BaristaContext(site, web);
+                    EntityAdded(context, entity);
+                  }
+                }
               }
               break;
             case SPEventReceiverType.ItemUpdated:
               {
                 var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, properties.ListItem.File,
                                                                            null);
-                EntityUpdated(entity);
+                using (var site = properties.OpenSite())
+                {
+                  using (var web = properties.OpenWeb())
+                  {
+                    var context = new BaristaContext(site, web);
+                    EntityUpdated(context, entity);
+                  }
+                }
               }
               break;
           }
@@ -193,10 +241,24 @@
           switch (properties.EventType)
           {
             case SPEventReceiverType.ItemAdded:
-              EntityPartAdded(entityPart);
+              using (var site = properties.OpenSite())
+              {
+                using (var web = properties.OpenWeb())
+                {
+                  var context = new BaristaContext(site, web);
+                  EntityPartAdded(context, entityPart);
+                }
+              }
               break;
             case SPEventReceiverType.ItemUpdated:
-              EntityPartUpdated(entityPart);
+              using (var site = properties.OpenSite())
+              {
+                using (var web = properties.OpenWeb())
+                {
+                  var context = new BaristaContext(site, web);
+                  EntityPartUpdated(context, entityPart);
+                }
+              }
               break;
           }
         }
@@ -208,10 +270,24 @@
         switch (properties.EventType)
         {
           case SPEventReceiverType.ItemAdded:
-            AttachmentAdded(attachment);
+            using (var site = properties.OpenSite())
+            {
+              using (var web = properties.OpenWeb())
+              {
+                var context = new BaristaContext(site, web);
+                AttachmentAdded(context, attachment);
+              }
+            }
             break;
           case SPEventReceiverType.ItemUpdated:
-            AttachmentUpdated(attachment);
+            using (var site = properties.OpenSite())
+            {
+              using (var web = properties.OpenWeb())
+              {
+                var context = new BaristaContext(site, web);
+                AttachmentUpdated(context, attachment);
+              }
+            }
             break;
         }
       }
@@ -225,7 +301,14 @@
         switch (properties.EventType)
         {
           case SPEventReceiverType.ItemAdded:
-            EntityAdded(entity);
+            using (var site = properties.OpenSite())
+            {
+              using (var web = properties.OpenWeb())
+              {
+                var context = new BaristaContext(site, web);
+                EntityAdded(context, entity);
+              }
+            }
             break;
         }
       }
@@ -238,84 +321,94 @@
     /// <summary>
     /// Occurs when an entity is created.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entity"></param>
-    protected virtual void EntityAdded(Entity entity)
+    protected virtual void EntityAdded(BaristaContext context, Entity entity)
     {
     }
 
     /// <summary>
     /// Occurs when an entity part is added to an entity.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entityPart"></param>
-    protected virtual void EntityPartAdded(EntityPart entityPart)
+    protected virtual void EntityPartAdded(BaristaContext context, EntityPart entityPart)
     {
     }
 
     /// <summary>
     /// Occurs when an attachment is added to an entity.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="attachment"></param>
-    protected virtual void AttachmentAdded(Attachment attachment)
+    protected virtual void AttachmentAdded(BaristaContext context, Attachment attachment)
     {
     }
 
     /// <summary>
     /// Occurs when an entity is updated.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entity"></param>
-    protected virtual void EntityUpdated(Entity entity)
+    protected virtual void EntityUpdated(BaristaContext context, Entity entity)
     {
     }
 
     /// <summary>
     /// Occurs when an entity part is updated.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entityPart"></param>
-    protected virtual void EntityPartUpdated(EntityPart entityPart)
+    protected virtual void EntityPartUpdated(BaristaContext context, EntityPart entityPart)
     {
     }
 
     /// <summary>
     /// Occurs when an attachment is updated.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="attachment"></param>
-    protected virtual void AttachmentUpdated(Attachment attachment)
+    protected virtual void AttachmentUpdated(BaristaContext context, Attachment attachment)
     {
     }
 
     /// <summary>
     /// Occurs when an entity is deleted from a SPDocumentStore.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entityId"></param>
-    protected virtual void EntityDeleted(Guid entityId)
+    protected virtual void EntityDeleted(BaristaContext context, Guid entityId)
     {
     }
 
     /// <summary>
     /// Occurs when an entity part is deleted from an entity.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
-    protected virtual void EntityPartDeleted(Guid entityId, string partName)
+    protected virtual void EntityPartDeleted(BaristaContext context, Guid entityId, string partName)
     {
     }
 
     /// <summary>
     /// Occurs when an attachment is deleted from an entity.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entityId"></param>
     /// <param name="fileName"></param>
-    protected virtual void AttachmentDeleted(Guid entityId, string fileName)
+    protected virtual void AttachmentDeleted(BaristaContext context, Guid entityId, string fileName)
     {
     }
 
     /// <summary>
     /// Occurs when an entity is moved to a different folder.
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="entity"></param>
     /// <param name="oldFolder"></param>
     /// <param name="newFolder"></param>
-    protected virtual void EntityMoved(Entity entity, Folder oldFolder, Folder newFolder)
+    protected virtual void EntityMoved(BaristaContext context, Entity entity, Folder oldFolder, Folder newFolder)
     {
     }
 
