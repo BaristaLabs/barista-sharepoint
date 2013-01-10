@@ -53,6 +53,9 @@
     /// <returns></returns>
     public static T DeserializeObjectFromJson<T>(string data)
     {
+      if (data == null || String.IsNullOrEmpty(data.Trim()))
+        return default(T);
+
       return JsonConvert.DeserializeObject<T>(data, JsonSerializerSettings);
     }
 

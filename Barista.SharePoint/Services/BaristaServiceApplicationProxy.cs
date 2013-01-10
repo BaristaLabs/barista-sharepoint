@@ -18,7 +18,9 @@
     private string m_endpointConfigName;
 
     [Persisted]
+// ReSharper disable FieldCanBeMadeReadOnly.Local
     private SPServiceLoadBalancer m_loadBalancer;
+// ReSharper restore FieldCanBeMadeReadOnly.Local
 
     public BaristaServiceApplicationProxy()
     {
@@ -45,15 +47,13 @@
       return factory;
     }
 
-    internal delegate void CodeToRunOnApplicationProxy(BaristaServiceApplicationProxy appProxy);
-
-    internal static void Invoke(SPServiceContext serviceContext, CodeToRunOnApplicationProxy codeBlock)
+    internal static void Invoke(SPServiceContext serviceContext, Action<BaristaServiceApplicationProxy> codeBlock)
     {
       if (serviceContext == null)
         throw new ArgumentNullException("serviceContext");
 
       // get service app proxy from the context
-      BaristaServiceApplicationProxy proxy = (BaristaServiceApplicationProxy)serviceContext.GetDefaultProxy(typeof(BaristaServiceApplicationProxy));
+      var proxy = (BaristaServiceApplicationProxy)serviceContext.GetDefaultProxy(typeof(BaristaServiceApplicationProxy));
       if (proxy == null)
         throw new InvalidOperationException("Unable to obtain object reference to Barista service proxy.");
 
@@ -64,7 +64,7 @@
       }
     }
 
-    private string GetEndpointConfigName(Uri address)
+    private static string GetEndpointConfigName(Uri address)
     {
       string configName;
 
@@ -81,7 +81,7 @@
 
     private IBaristaServiceApplication GetChannel(Uri address)
     {
-      string endpointConfig = GetEndpointConfigName(address);
+      var endpointConfig = GetEndpointConfigName(address);
 
       // if there's a cached channel, use that
       if ((m_channelFactory == null) || (endpointConfig != m_endpointConfigName))
@@ -97,23 +97,28 @@
       }
 
       // create a channel that acts as the logged on user when authenticating with the service
-      IBaristaServiceApplication channel = m_channelFactory.CreateChannelActingAsLoggedOnUser(new EndpointAddress(address));
+      var channel = m_channelFactory.CreateChannelActingAsLoggedOnUser(new EndpointAddress(address));
       return channel;
     }
 
-    private delegate void CodeToRunOnChannel(IBaristaServiceApplication contract);
-    private void ExecuteOnChannel(string operationName, CodeToRunOnChannel codeBlock)
+    private void ExecuteOnChannel(Action<IBaristaServiceApplication> codeBlock)
     {
       SPServiceLoadBalancerContext loadBalancerContext = m_loadBalancer.BeginOperation();
 
       try
       {
         // get a channel to the service app endpoint
-        IChannel channel = (IChannel)GetChannel(loadBalancerContext.EndpointAddress);
+
+// ReSharper disable SuspiciousTypeConversion.Global
+        var channel = (IChannel)GetChannel(loadBalancerContext.EndpointAddress);
+// ReSharper restore SuspiciousTypeConversion.Global
+
         try
         {
           // execute the code block
+// ReSharper disable SuspiciousTypeConversion.Global
           codeBlock((IBaristaServiceApplication)channel);
+// ReSharper restore SuspiciousTypeConversion.Global
           channel.Close();
         }
         catch (TimeoutException)
@@ -167,22 +172,14 @@
       BrewResponse result = null;
 
       // execute the call against the service app
-      ExecuteOnChannel("Eval",
-          delegate(IBaristaServiceApplication channel)
-          {
-            result = channel.Eval(request);
-          });
+      ExecuteOnChannel(channel => result = channel.Eval(request));
 
       return result;
     }
     public void Exec(BrewRequest request)
     {
       // execute the call against the service app
-      ExecuteOnChannel("Exec",
-          delegate(IBaristaServiceApplication channel)
-          {
-            channel.Exec(request);
-          });
+      ExecuteOnChannel(channel => channel.Exec(request));
     }
     #endregion
   }
