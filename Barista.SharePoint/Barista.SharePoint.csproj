@@ -317,6 +317,7 @@
     <Compile Include="Search\Library\SPLuceneInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\SPEventReceiverDefinitionInstance.cs" />
+    <Compile Include="SPScriptEngineFactory.cs" />
     <Compile Include="TeamFoundationServer\Libraries\TfsInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />

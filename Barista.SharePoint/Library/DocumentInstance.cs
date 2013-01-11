@@ -34,9 +34,18 @@
     }
 
     [JSFunction(Name = "xml2Json")]
-    public object Xml2Json(string xml)
+    public object Xml2Json(object xml)
     {
-      XDocument doc = XDocument.Parse(xml);
+      if (xml == null || xml == Null.Value || xml == Undefined.Value)
+        return null;
+
+      string xmlString;
+      if (xml is Base64EncodedByteArrayInstance)
+        xmlString = (xml as Base64EncodedByteArrayInstance).ToUtf8String();
+      else
+        xmlString = xml.ToString();
+
+      var doc = XDocument.Parse(xmlString);
       var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
       return JSONObject.Parse(this.Engine, jsonDocument, null);
     }
@@ -50,7 +59,7 @@
       else
         text = jsonObject as string;
 
-      XmlDocument document = JsonConvert.DeserializeXmlNode(text);
+      var document = JsonConvert.DeserializeXmlNode(text);
       return document.OuterXml;
     }
   }

@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Search
 {
+  using Barista.Framework;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Documents;
   using Lucene.Net.Index;
@@ -24,44 +25,25 @@
     //TODO: This will fail in a scenario where the Barista Serivce Application is installed on multiple servers in the farm.
     //The first IndexWriter obtained will lock and block the second index writer.
     //this should be switched on over to a mechanism that ensures a farm-wide singleton.
-    public static readonly Dictionary<string, IndexWriter> IndexWriters = new Dictionary<string, IndexWriter>();
+    public static readonly ConcurrentDictionary<string, IndexWriter> IndexWriters = new ConcurrentDictionary<string, IndexWriter>();
 
     public static IndexWriter GetIndexWriterSingleton(SPFolder targetFolder, bool createIndex)
     {
       var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
-      if (IndexWriters.ContainsKey(fullFolderUrl))
-      {
-        lock (IndexWriters)
+
+      return IndexWriters.GetOrAdd(fullFolderUrl, url =>
         {
-          if (IndexWriters.ContainsKey(fullFolderUrl))
-          {
-            return IndexWriters[fullFolderUrl];
-          }
-        }
-      }
+          var directory = new SPDirectory(targetFolder);
 
-      var directory = new SPDirectory(targetFolder);
+          //Block until a write lock is no longer present on the target folder.
+          var spLock = directory.MakeLock(directory.GetLockId() + "-write");
+          spLock.Obtain(Lock.LOCK_OBTAIN_WAIT_FOREVER);
+          spLock.Release();
 
-      //Block until a write lock is no longer present on the target folder.
-      var spLock = directory.MakeLock(directory.GetLockId() + "-write");
-      spLock.Obtain(Lock.LOCK_OBTAIN_WAIT_FOREVER);
-      spLock.Release();
-
-      var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-      var writer = new IndexWriter(directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED);
-
-      if (IndexWriters.ContainsKey(fullFolderUrl) == false)
-      {
-        lock (IndexWriters)
-        {
-          if (IndexWriters.ContainsKey(fullFolderUrl) == false)
-          {
-            IndexWriters.Add(fullFolderUrl, writer);
-          }
-        }
-      }
-
-      return IndexWriters[fullFolderUrl];
+          var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
+          var writer = new IndexWriter(directory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED);
+          return writer;
+        });
     }
 
     /// <summary>
@@ -179,21 +161,12 @@
     {
       var fullFolderUrl = SPUtility.ConcatUrls(targetFolder.ParentWeb.Url, targetFolder.ServerRelativeUrl);
 
-      IndexWriter indexWriter = null;
-      if (IndexWriters.ContainsKey(fullFolderUrl))
+      IndexWriter indexWriter;
+      if (IndexWriters.TryRemove(fullFolderUrl, out indexWriter))
       {
-        lock (IndexWriters)
-        {
-          if (IndexWriters.ContainsKey(fullFolderUrl))
-          {
-            indexWriter = IndexWriters[fullFolderUrl];
-            IndexWriters.Remove(fullFolderUrl);
-          }
-        }
+        if (indexWriter != null)
+          indexWriter.Dispose();
       }
-
-      if (indexWriter != null)
-        indexWriter.Dispose();
     }
 
     /// <summary>

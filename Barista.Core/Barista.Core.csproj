@@ -131,6 +131,7 @@
     <Compile Include="Justache\TemplateDefinition.cs" />
     <Compile Include="Justache\TemplateInclude.cs" />
     <Compile Include="Justache\VariableReference.cs" />
+    <Compile Include="Library\AjaxDataType.cs" />
     <Compile Include="Library\Common.cs" />
     <Compile Include="Csv\CsvParser.cs" />
     <Compile Include="Csv\CsvReader.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="Library\ProxySettingsInstance.cs" />
     <Compile Include="Library\UriInstance.cs" />
     <Compile Include="Library\UtilInstance.cs" />
+    <Compile Include="Library\WebInstanceBase.cs" />
     <Compile Include="Library\ZipFileInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\DataContracts\Attachment.cs" />

@@ -4,7 +4,6 @@
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Utilities;
   using System;
-  using System.Configuration;
   using System.Runtime.InteropServices;
   using System.ServiceModel;
   using System.ServiceModel.Channels;
@@ -37,13 +36,13 @@
     private ChannelFactory<T> CreateChannelFactory<T>(string endpointConfigName)
     {
       // open the client.config
-      string clientConfigPath = SPUtility.GetGenericSetupPath(@"WebClients\Barista");
-      Configuration clientConfig = OpenClientConfiguration(clientConfigPath);
-      ConfigurationChannelFactory<T> factory = new ConfigurationChannelFactory<T>(endpointConfigName, clientConfig, null);
-
+      var clientConfigPath = SPUtility.GetGenericSetupPath(@"WebClients\Barista");
+      var clientConfig = OpenClientConfiguration(clientConfigPath);
+      var factory = new ConfigurationChannelFactory<T>(endpointConfigName, clientConfig, null);
+      
       // configure the channel factory
       factory.ConfigureCredentials(SPServiceAuthenticationMode.Claims);
-
+      
       return factory;
     }
 
@@ -54,6 +53,7 @@
 
       // get service app proxy from the context
       var proxy = (BaristaServiceApplicationProxy)serviceContext.GetDefaultProxy(typeof(BaristaServiceApplicationProxy));
+      
       if (proxy == null)
         throw new InvalidOperationException("Unable to obtain object reference to Barista service proxy.");
 
@@ -90,7 +90,7 @@
         {
           // create a channel factory using the endpoint name
           m_channelFactory = CreateChannelFactory<IBaristaServiceApplication>(endpointConfig);
-
+          
           // cache the created channel
           m_endpointConfigName = endpointConfig;
         }
@@ -103,12 +103,12 @@
 
     private void ExecuteOnChannel(Action<IBaristaServiceApplication> codeBlock)
     {
-      SPServiceLoadBalancerContext loadBalancerContext = m_loadBalancer.BeginOperation();
-
+      var loadBalancerContext = m_loadBalancer.BeginOperation();
+      
       try
       {
         // get a channel to the service app endpoint
-
+        
 // ReSharper disable SuspiciousTypeConversion.Global
         var channel = (IChannel)GetChannel(loadBalancerContext.EndpointAddress);
 // ReSharper restore SuspiciousTypeConversion.Global
@@ -166,7 +166,7 @@
       this.Update();
     }
 
-    #region service application methods
+    #region Service Application Methods
     public BrewResponse Eval(BrewRequest request)
     {
       BrewResponse result = null;
@@ -176,10 +176,17 @@
 
       return result;
     }
+
     public void Exec(BrewRequest request)
     {
       // execute the call against the service app
       ExecuteOnChannel(channel => channel.Exec(request));
+    }
+
+    public void AddObjectToIndex(string indexUrl, bool createIndex, string json)
+    {
+      // execute the call against the service app
+      ExecuteOnChannel(channel => channel.AddObjectToIndex(indexUrl, createIndex, json));
     }
     #endregion
   }

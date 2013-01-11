@@ -23,7 +23,10 @@
 
     public delegate void RunAsDelegate();
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Local
     private const int LOGON32_LOGON_INTERACTIVE = 2;
+
     private const int LOGON32_LOGON_BATCH = 4;
 
     private const int LOGON32_LOGON_SERVICE = 5;
@@ -38,6 +41,7 @@
       SecurityImpersonation = 2,
       SecurityDelegation = 3
     }
+// ReSharper restore UnusedMember.Local
 
     [DllImport("advapi32.dll", SetLastError = true)]
     private static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, out IntPtr phToken);
@@ -47,7 +51,7 @@
     private static extern long RevertToSelf();
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
     private static extern long CloseHandle(IntPtr handle);
-
+// ReSharper restore InconsistentNaming
     private WindowsImpersonationContext m_impersonationContext;
 
     #region Properties
@@ -80,9 +84,11 @@
     /// <summary>
     /// Do not allow a new instance of the ImpersonationHelper class without SSS information.
     /// </summary>
+// ReSharper disable UnusedMember.Local
     private ImpersonationHelper()
     {
     }
+// ReSharper restore UnusedMember.Local
 
     /// <summary>
     /// Initializes a new instance of the ImpersonationHelper class.
@@ -170,14 +176,15 @@
 
     public static void InvokeAsUser(string providerTypeName, string applicationId, Delegate methodToCall)
     {
-      InvokeAsUser(providerTypeName, applicationId, methodToCall, null);
+      InvokeAsUser(providerTypeName, applicationId, methodToCall, new object[] {});
     }
 
+// ReSharper disable MethodOverloadWithOptionalParameter
     public static object InvokeAsUser(string providerTypeName, string applicationId, Delegate methodToCall, params object[] parameters)
     {
-      object result = null;
+      object result;
 
-      using (ImpersonationHelper impersonationContext = new ImpersonationHelper(providerTypeName, applicationId))
+      using (var impersonationContext = new ImpersonationHelper(providerTypeName, applicationId))
       {
         impersonationContext.ImpersonateUser();
         result = methodToCall.DynamicInvoke(parameters);
@@ -185,6 +192,7 @@
 
       return result;
     }
+// ReSharper restore MethodOverloadWithOptionalParameter
 
     private sealed class UserCredentials
     {
@@ -192,9 +200,12 @@
       public SecureString Password { get; set; }
     }
 
-    private ISecureStoreProvider GetSecureStoreProvider(string providerTypeName)
+    private static ISecureStoreProvider GetSecureStoreProvider(string providerTypeName)
     {
-      Type providerType = Type.GetType(providerTypeName);
+      var providerType = Type.GetType(providerTypeName);
+
+      if (providerType == null)
+        return null;
 
       return Activator.CreateInstance(providerType)
           as ISecureStoreProvider;
@@ -223,8 +234,6 @@
             case SecureStoreCredentialType.WindowsPassword:
               creds.Password = credential.Credential.Copy();
               break;
-            default:
-              break;
           }
         }
 
@@ -240,7 +249,7 @@
     /// <returns></returns>
     private static string GetString(SecureString secureString)
     {
-      string str = null;
+      string str;
       IntPtr pStr = IntPtr.Zero;
       try
       {
@@ -272,7 +281,7 @@
 
     #region IDisposable Implementaton
 
-    private bool _disposed;
+    private bool m_disposed;
     ~ImpersonationHelper()
     {
       Dispose(false);
@@ -295,7 +304,7 @@
     /// <remarks>This method calls Undo if impersonation is still being performed. This method calls the common language runtime version of the Dispose method.</remarks>
     protected void Dispose(bool disposing)
     {
-      if (!_disposed)
+      if (!m_disposed)
       {
         if (disposing)
         {
@@ -307,7 +316,7 @@
         }
         m_impersonationContext = null;
       }
-      _disposed = true;
+      m_disposed = true;
     }
 
     #endregion
@@ -319,7 +328,8 @@
     /// </summary>
     /// <param name="providerTypeName"></param>
     /// <param name="applicationId"></param>
-    /// <param name="userCredentials"></param>
+    /// <param name="userName"></param>
+    /// <param name="password"></param>
     public static void WriteCredentialsToSecureStore(string providerTypeName, string applicationId, string userName, string password)
     {
       SPServiceContext context = SPServiceContext.GetContext(SPServiceApplicationProxyGroup.Default, SPSiteSubscriptionIdentifier.Default);
@@ -378,9 +388,10 @@
     /// <param name="methodToRunAs"></param>
     public static void RunAs(string providerTypeName, string applicationId, RunAsDelegate methodToRunAs)
     {
-      RunAs(providerTypeName, applicationId, methodToRunAs, null);
+      RunAs(providerTypeName, applicationId, methodToRunAs, new object[] {});
     }
 
+// ReSharper disable MethodOverloadWithOptionalParameter
     /// <summary>
     /// Executes the specified method with the specified parameters and returns the result using the specified SharePoint 2010 Secure Store Provider Type Name and SharePoint 2010 Secure Store Application Id.
     /// </summary>
@@ -391,7 +402,7 @@
     /// <returns></returns>
     public static object RunAs(string providerTypeName, string applicationId, RunAsDelegate methodToRunAs, params object[] parameters)
     {
-      object result = null;
+      object result;
 
       using (ImpersonationHelper impersonationContext = new ImpersonationHelper(providerTypeName, applicationId))
       {
@@ -408,6 +419,7 @@
 
       return result;
     }
+// ReSharper restore MethodOverloadWithOptionalParameter
 
     /// <summary>
     /// Executes the specified method under the specified credentials.
@@ -441,11 +453,11 @@
     /// Executes the specified method under the specified credentials.
     /// </summary>
     /// <param name="methodToRunAs"></param>
-    /// <param name="username"></param>
+    /// <param name="userName"></param>
     /// <param name="password"></param>
+    /// <param name="domain"></param>
     public static void RunAs(RunAsDelegate methodToRunAs, string userName, string password, string domain)
     {
-      WindowsIdentity tempWindowsIdentity = null;
       IntPtr token = IntPtr.Zero;
       IntPtr hTokenDuplicate = IntPtr.Zero;
 
@@ -463,17 +475,12 @@
           {
             if (DuplicateToken(token, SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, ref hTokenDuplicate) != 0)
             {
-              tempWindowsIdentity = new WindowsIdentity(hTokenDuplicate);
+              WindowsIdentity tempWindowsIdentity = new WindowsIdentity(hTokenDuplicate);
               using (WindowsImpersonationContext impersonationContext = tempWindowsIdentity.Impersonate())
               {
-
-                if ((impersonationContext == null))
-                  throw new ImpersonationException(userName);
-
                 methodToRunAs();
                 impersonationContext.Undo();
               }
-
             }
             else
             {

@@ -87,5 +87,13 @@
       get;
       set;
     }
+
+    [JSProperty(Name = "dataType")]
+    [JsonProperty("dataType")]
+    public string DataType
+    {
+      get;
+      set;
+    }
   }
 }

@@ -33,5 +33,17 @@
         proxy => proxy.Exec(request)
       );
     }
+
+    public void AddObjectToIndex(string indexUrl, bool createIndex, string json)
+    {
+      //TODO: Change this (And add a seperate static method on the proxy
+      //That obtains the corresponding proxy to the BaristaServiceApplication.IndexServerAffinityKey
+      //defined in the folder property bag.
+      //Not necessary now, as there is only one app server....
+      BaristaServiceApplicationProxy.Invoke(
+        m_serviceContext,
+        proxy => proxy.AddObjectToIndex(indexUrl, createIndex, json)
+      );
+    }
   }
 }

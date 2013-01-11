@@ -98,6 +98,24 @@
       m_data[index] = byteData[0];
     }
 
+    [JSFunction(Name = "toAsciiString")]
+    public string ToAsciiString()
+    {
+      return Encoding.ASCII.GetString(m_data.ToArray());
+    }
+
+    [JSFunction(Name = "toUtf8String")]
+    public string ToUtf8String()
+    {
+      return Encoding.UTF8.GetString(m_data.ToArray());
+    }
+
+    [JSFunction(Name = "toUnicodeString")]
+    public string ToUnicodeString()
+    {
+      return Encoding.Unicode.GetString(m_data.ToArray());
+    }
+
     [JSFunction(Name = "toBase64String")]
     public string ToBase64String()
     {
