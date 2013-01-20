@@ -104,8 +104,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(TargetDir)SPBaristaHostService.exe" "$(SolutionDir)Barista.SharePoint\ISAPI\BaristaHostService\" /y
-XCOPY "$(TargetDir)SPBaristaHostService.exe.config" "$(SolutionDir)Barista.SharePoint\ISAPI\BaristaHostService\" /y</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(TargetDir)SPBaristaHostService.exe" "$(SolutionDir)Barista.SharePoint\ISAPI\BaristaHostService\" /y /r /c
+XCOPY "$(TargetDir)SPBaristaHostService.exe.config" "$(SolutionDir)Barista.SharePoint\ISAPI\BaristaHostService\" /y /r /c</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
