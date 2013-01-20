@@ -1,9 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using Microsoft.SharePoint.PowerShell;
   using System.Management.Automation;
   using Microsoft.SharePoint.Administration;
@@ -31,31 +28,34 @@
     {
       #region validation stuff
       // ensure can hit farm
-      SPFarm farm = SPFarm.Local;
+      var farm = SPFarm.Local;
       if (farm == null)
       {
         ThrowTerminatingError(new InvalidOperationException("SharePoint farm not found."), ErrorCategory.ResourceUnavailable, this);
         SkipProcessCurrentRecord();
+        return;
       }
 
       // ensure can hit local server
-      SPServer server = SPServer.Local;
+      var server = SPServer.Local;
       if (server == null)
       {
         ThrowTerminatingError(new InvalidOperationException("SharePoint local server not found."), ErrorCategory.ResourceUnavailable, this);
         SkipProcessCurrentRecord();
+        return;
       }
 
       // ensure can hit service application
-      BaristaService service = farm.Services.GetValue<BaristaService>();
+      var service = farm.Services.GetValue<BaristaService>();
       if (service == null)
       {
         ThrowTerminatingError(new InvalidOperationException("Barista Service not found (likely not installed)."), ErrorCategory.ResourceUnavailable, this);
         SkipProcessCurrentRecord();
+        return;
       }
 
       // ensure can hit app pool
-      SPIisWebServiceApplicationPool appPool = this.ApplicationPool.Read();
+      var appPool = this.ApplicationPool.Read();
       if (appPool == null)
       {
         ThrowTerminatingError(new InvalidOperationException("Application pool not found."), ErrorCategory.ResourceUnavailable, this);
@@ -64,7 +64,7 @@
       #endregion
 
       // verify a service app doesn't already exist
-      BaristaServiceApplication existingServiceApp = service.Applications.GetValue<BaristaServiceApplication>();
+      var existingServiceApp = service.Applications.GetValue<BaristaServiceApplication>();
       if (existingServiceApp != null)
       {
         WriteError(new InvalidOperationException("Barista Service Application already exists."),
@@ -74,19 +74,19 @@
       }
 
       // create & provision the service app
-      if (ShouldProcess(this.Name))
-      {
-        BaristaServiceApplication serviceApp = BaristaServiceApplication.Create(
-            this.Name,
-            service,
-            appPool);
+      if (!ShouldProcess(this.Name))
+        return;
 
-        // provision the service app
-        serviceApp.Provision();
+      var serviceApp = BaristaServiceApplication.Create(
+        this.Name,
+        service,
+        appPool);
 
-        // pass service app back to the PowerShell
-        WriteObject(serviceApp);
-      }
+      // provision the service app
+      serviceApp.Provision();
+
+      // pass service app back to the PowerShell
+      WriteObject(serviceApp);
     }
   }
 }

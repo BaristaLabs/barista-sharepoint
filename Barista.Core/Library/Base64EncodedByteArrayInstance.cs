@@ -119,7 +119,7 @@
     [JSFunction(Name = "toBase64String")]
     public string ToBase64String()
     {
-      return this.ToString();
+      return Convert.ToBase64String(m_data.ToArray());
     }
 
     [JSFunction(Name = "toString")]

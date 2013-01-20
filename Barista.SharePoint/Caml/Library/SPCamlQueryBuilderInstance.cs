@@ -1,9 +1,12 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using System;
-  using System.Collections.Generic;
+  using System.Linq;
+  using Barista.Linq2Rest;
   using Jurassic;
   using Jurassic.Library;
+  using Microsoft.SharePoint;
+  using System;
+  using System.Collections.Generic;
   using System.Text;
   using System.Xml;
 
@@ -13,12 +16,75 @@
     public SPCamlQueryBuilderConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "SPCamlQueryBuilder", new SPCamlQueryBuilderInstance(engine.Object.InstancePrototype))
     {
+      this.PopulateFunctions();
     }
 
     [JSConstructorFunction]
     public SPCamlQueryBuilderInstance Construct(object objectInstance)
     {
       return new SPCamlQueryBuilderInstance(this.Engine.Object.InstancePrototype);
+    }
+
+    [JSFunction(Name="createCamlQueryFromODataQueryString")]
+    public string CreateCamlQueryFromODataQueryString(SPListInstance list, object includeQueryTag)
+    {
+      var bIncludeQueryTag = true;
+      if (includeQueryTag != null && includeQueryTag != Undefined.Value && includeQueryTag != Null.Value &&
+          includeQueryTag is bool)
+        bIncludeQueryTag = (bool) includeQueryTag;
+
+      var queryParameters = BaristaContext.Current.Request.QueryString;
+      return CreateCamlQueryFromOData(list.List, queryParameters, bIncludeQueryTag);
+    }
+
+    [JSFunction(Name = "createCamlQueryFromOData")]
+    public string CreateCamlQueryFromOData(SPListInstance list, ObjectInstance oData, object includeQueryTag)
+    {
+      var bIncludeQueryTag = true;
+      if (includeQueryTag != null && includeQueryTag != Undefined.Value && includeQueryTag != Null.Value &&
+          includeQueryTag is bool)
+        bIncludeQueryTag = (bool)includeQueryTag;
+
+      var queryParameters = oData.Properties
+        .ToDictionary(property => property.Name, property => oData.GetPropertyValue(property.Name).ToString());
+
+      return CreateCamlQueryFromOData(list.List, queryParameters, bIncludeQueryTag);
+    }
+
+    private static string CreateCamlQueryFromOData(SPList list, IDictionary<string, string> queryParameters, bool includeQueryTag)
+    {
+      //TODO Make this return a CamlQueryInstance instead.
+      
+      string orderByField = null;
+      if (queryParameters.ContainsKey(StringConstants.OrderByParameter))
+        orderByField = queryParameters[StringConstants.OrderByParameter];
+
+      string selects = null;
+      if (queryParameters.ContainsKey(StringConstants.SelectParameter))
+        selects = queryParameters[StringConstants.SelectParameter];
+
+      string filter = null;
+      if (queryParameters.ContainsKey(StringConstants.FilterParameter))
+        filter = queryParameters[StringConstants.FilterParameter];
+
+      string skip = null;
+      if (queryParameters.ContainsKey(StringConstants.SkipParameter))
+        skip = queryParameters[StringConstants.SkipParameter];
+
+      string top = null;
+      if (queryParameters.ContainsKey(StringConstants.TopParameter))
+        top = queryParameters[StringConstants.TopParameter];
+
+      var parser = new Barista.Linq2Rest.Parser.ParameterParser<SPListItem>();
+      var filterExpression = parser.FilterExpressionFactory.Create<SPListItem>(filter);
+      var sortDescriptions = parser.SortExpressionFactory.Create<SPListItem>(orderByField);
+
+      //TODO: Sort Descriptions.
+      var result = CamlexNET.Camlex.Query()
+        .Where(filterExpression)
+        .ToString(includeQueryTag);
+
+      return result;
     }
   }
 

@@ -15,9 +15,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A745E621-0AC3-4826-896F-DD46BEE2CA0B}"
 	ProjectSection(SolutionItems) = preProject
 		Performance1.psess = Performance1.psess
+		SetupBaristaHostService.ps1 = SetupBaristaHostService.ps1
 		SetupBaristaServiceApplication.ps1 = SetupBaristaServiceApplication.ps1
 		SetupBaristaServiceApplicationProxy.ps1 = SetupBaristaServiceApplicationProxy.ps1
 		TestBaristaServiceApplication.ps1 = TestBaristaServiceApplication.ps1
+		UninstallBaristaHostService.ps1 = UninstallBaristaHostService.ps1
 		UninstallBaristaServiceApplication.ps1 = UninstallBaristaServiceApplication.ps1
 	EndProjectSection
 EndProject
@@ -85,9 +87,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lucene Contrib", "Lucene Co
 		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.HostService", "Barista.SharePoint.HostService\Barista.SharePoint.HostService.csproj", "{0ECD7803-8177-407B-9F47-7E08D1030105}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -100,6 +104,9 @@ Global
 		SccProjectUniqueName3 = Barista.SharePoint\\Barista.SharePoint.csproj
 		SccProjectName3 = Barista.SharePoint
 		SccLocalPath3 = Barista.SharePoint
+		SccProjectUniqueName4 = Barista.SharePoint.HostService\\Barista.SharePoint.HostService.csproj
+		SccProjectName4 = Barista.SharePoint.HostService
+		SccLocalPath4 = Barista.SharePoint.HostService
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +129,10 @@ Global
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0ECD7803-8177-407B-9F47-7E08D1030105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ECD7803-8177-407B-9F47-7E08D1030105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

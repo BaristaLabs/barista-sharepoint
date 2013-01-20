@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Globalization;
   using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
@@ -47,9 +48,9 @@
   [Serializable]
   public class DynamicModelInstance : ObjectInstance
   {
-    private string m_connectionString;
-    private string m_providerName;
-    private DbProviderFactory m_factory;
+    private readonly string m_connectionString;
+    private readonly string m_providerName;
+    private readonly DbProviderFactory m_factory;
 
     private ArrayInstance m_schema;
     private string m_databaseName;
@@ -91,13 +92,8 @@
     public string DatabaseName
     {
       get
-      {
-        if (m_databaseName == null)
-        {
-          m_databaseName = (string)Scalar("SELECT DB_NAME() AS DataBaseName");
-        }
-
-        return m_databaseName;
+      { 
+        return m_databaseName ?? (m_databaseName = (string) Scalar("SELECT DB_NAME() AS DataBaseName"));
       }
       set
       {
@@ -110,14 +106,12 @@
     {
       get
       {
-        if (m_schema == null)
-        {
-          if (String.IsNullOrEmpty(this.TableSchema))
-            m_schema = Query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @0", TableName);
-          else
-            m_schema = Query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @0 AND TABLE_NAME = @1", TableSchema, TableName);
-        }
-        return m_schema;
+        return m_schema ?? (m_schema = String.IsNullOrEmpty(this.TableSchema)
+                                         ? Query("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @0",
+                                                 TableName)
+                                         : Query(
+                                           "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @0 AND TABLE_NAME = @1",
+                                           TableSchema, TableName));
       }
     }
 
@@ -179,8 +173,8 @@
 
       if (String.IsNullOrEmpty(parameters.Where))
         return (int)Scalar(String.Format("SELECT COUNT(*) FROM {0}", parameters.TableName));
-      else
-        return (int)Scalar(String.Format("SELECT COUNT(*) FROM {0} WHERE {1}", parameters.TableName, parameters.Where));
+      
+      return (int)Scalar(String.Format("SELECT COUNT(*) FROM {0} WHERE {1}", parameters.TableName, parameters.Where));
     }
 
     /// <summary>
@@ -189,14 +183,12 @@
     [JSFunction(Name = "delete")]
     public int Delete(object deleteParams)
     {
-      var parameters = new DeleteParams(this.Engine.Object.InstancePrototype);
       if (deleteParams == null || deleteParams == Null.Value || deleteParams == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error", "Must specify an object with where or key");
-      else
-        parameters = JurassicHelper.Coerce<DeleteParams>(this.Engine, deleteParams);
+      
+      var parameters = JurassicHelper.Coerce<DeleteParams>(this.Engine, deleteParams);
 
-      var result = 0;
-      result = Execute(CreateDeleteCommand(parameters));
+      int result = Execute(CreateDeleteCommand(parameters));
       return result;
     }
 
@@ -222,7 +214,7 @@
       if (columnInstance == null)
         return null;
 
-      object result = Null.Value;
+      object result;
 
       string def = columnInstance.GetPropertyValue("COLUMN_DEFAULT") as string;
 
@@ -279,11 +271,9 @@
     [JSFunction(Name = "getFullTableName")]
     public string GetFullTableName()
     {
-      var result = "";
-      if (String.IsNullOrEmpty(this.TableSchema))
-        result = String.Format("[{0}].[{1}]", this.DatabaseName, this.TableName);
-      else
-        result = String.Format("[{0}].[{1}].[{2}]", this.DatabaseName, this.TableSchema, this.TableName);
+      string result = String.IsNullOrEmpty(this.TableSchema)
+                        ? String.Format("[{0}].[{1}]", this.DatabaseName, this.TableName)
+                        : String.Format("[{0}].[{1}].[{2}]", this.DatabaseName, this.TableSchema, this.TableName);
 
       return result;
     }
@@ -375,7 +365,7 @@
     [JSFunction(Name = "scalar")]
     public object Scalar(string sql, params object[] args)
     {
-      object result = null;
+      object result;
       using (var conn = OpenConnection())
       {
         var command = CreateCommand(sql, conn, args);
@@ -430,19 +420,12 @@
     /// </summary>
     public virtual List<DbCommand> BuildCommands(params object[] things)
     {
-      var commands = new List<DbCommand>();
-      foreach (var item in things)
-      {
-        if (HasPrimaryKey(item))
-        {
-          commands.Add(CreateUpdateCommand(item, GetPrimaryKeyValue(item)));
-        }
-        else
-        {
-          commands.Add(CreateInsertCommand(item));
-        }
-      }
-      return commands;
+      return things.Select(item => 
+        HasPrimaryKey(item)
+          ? CreateUpdateCommand(item, GetPrimaryKeyValue(item))
+          : CreateInsertCommand(item)
+        )
+        .ToList();
     }
 
     private ObjectInstance BuildPagedResult(PagedParams parameters)
@@ -473,12 +456,11 @@
 
       var result = this.Engine.Object.Construct();
 
-      var countSQL = "";
-      if (!string.IsNullOrEmpty(parameters.Sql))
-        countSQL = string.Format("SELECT COUNT({0}) FROM ({1}) AS PagedTable", parameters.PrimaryKeyField, parameters.Sql);
-      else
-        countSQL = string.Format("SELECT COUNT({0}) FROM {1}", parameters.PrimaryKeyField, GetFullTableName());
-
+      string countSql = string.IsNullOrEmpty(parameters.Sql)
+                          ? string.Format("SELECT COUNT({0}) FROM {1}", parameters.PrimaryKeyField, GetFullTableName())
+                          : string.Format("SELECT COUNT({0}) FROM ({1}) AS PagedTable", parameters.PrimaryKeyField,
+                                          parameters.Sql);
+        
       if (!string.IsNullOrEmpty(parameters.Where))
       {
         if (!parameters.Where.Trim().StartsWith("where", StringComparison.CurrentCultureIgnoreCase))
@@ -487,17 +469,19 @@
         }
       }
 
-      var query = "";
-      if (!string.IsNullOrEmpty(parameters.Sql))
-        query = string.Format("SELECT {0} FROM (SELECT ROW_NUMBER() OVER (ORDER BY {2}) AS Row, {0} FROM ({3}) AS PagedTable {4}) AS Paged ", parameters.Columns, parameters.PageSize, parameters.OrderBy, parameters.Sql, parameters.Where);
-      else
-        query = string.Format("SELECT {0} FROM (SELECT ROW_NUMBER() OVER (ORDER BY {2}) AS Row, {0} FROM {3} {4}) AS Paged ", parameters.Columns, parameters.PageSize, parameters.OrderBy, GetFullTableName(), parameters.Where);
-
+      var query = string.IsNullOrEmpty(parameters.Sql)
+                    ? string.Format(
+                      "SELECT {0} FROM (SELECT ROW_NUMBER() OVER (ORDER BY {1}) AS Row, {0} FROM {2} {3}) AS Paged ",
+                      parameters.Columns, parameters.OrderBy, GetFullTableName(), parameters.Where)
+                    : string.Format(
+                      "SELECT {0} FROM (SELECT ROW_NUMBER() OVER (ORDER BY {1}) AS Row, {0} FROM ({2}) AS PagedTable {3}) AS Paged ",
+                      parameters.Columns, parameters.OrderBy, parameters.Sql, parameters.Where);
+        
       var pageStart = (parameters.CurrentPage - 1) * parameters.PageSize;
       query += string.Format(" WHERE Row > {0} AND Row <={1}", pageStart, (pageStart + parameters.PageSize));
-      countSQL += parameters.Where;
+      countSql += parameters.Where;
 
-      var totalRecords = (int)Scalar(countSQL, parameters.Args);
+      var totalRecords = (int)Scalar(countSql, parameters.Args);
       var totalPages = totalRecords / parameters.PageSize;
       if (totalRecords % parameters.PageSize > 0)
         totalPages += 1;
@@ -514,6 +498,10 @@
     private DbCommand CreateCommand(string sql, DbConnection conn, params object[] args)
     {
       var result = m_factory.CreateCommand();
+
+      if (result == null)
+        throw new InvalidOperationException("DbCommand returned by DbProviderFactory was null.");
+
       result.Connection = conn;
       result.CommandText = sql;
       if (args.Length > 0)
@@ -526,22 +514,20 @@
       var objectInstance = o as ObjectInstance;
 
       if (objectInstance == null)
-        throw new ArgumentOutOfRangeException("Expected ObjectInstance.");
+        throw new ArgumentOutOfRangeException("o", @"Expected ObjectInstance.");
 
-      DbCommand result = null;
-      
       var sbKeys = new StringBuilder();
       var sbVals = new StringBuilder();
-      var stub = "INSERT INTO {0} ({1}) \r\n VALUES ({2})";
+      const string stub = "INSERT INTO {0} ({1}) \r\n VALUES ({2})";
 
-      result = CreateCommand(stub, null);
+      DbCommand result = CreateCommand(stub, null);
 
       int counter = 0;
 
       foreach (var item in objectInstance.Properties)
       {
         sbKeys.AppendFormat("{0},", item.Name);
-        sbVals.AppendFormat("@{0},", counter.ToString());
+        sbVals.AppendFormat("@{0},", counter.ToString(CultureInfo.InvariantCulture));
 
         if (item.Value == Null.Value || item.Value == Undefined.Value)
           result.AddParam(DBNull.Value);
@@ -575,11 +561,11 @@
       var objectInstance = o as ObjectInstance;
 
       if (objectInstance == null)
-        throw new ArgumentOutOfRangeException("Expected ObjectInstance.");
+        throw new ArgumentOutOfRangeException("o", @"Expected ObjectInstance.");
 
       var sbKeys = new StringBuilder();
-      var stub = "UPDATE {0} SET {1} WHERE {2} = @{3}";
-      var args = new List<object>();
+      const string stub = "UPDATE {0} SET {1} WHERE {2} = @{3}";
+
       var result = CreateCommand(stub, null);
       int counter = 0;
 
@@ -597,7 +583,7 @@
           else
             result.AddParam(val);
 
-          sbKeys.AppendFormat("{0} = @{1}, \r\n", item.Name, counter.ToString());
+          sbKeys.AppendFormat("{0} = @{1}, \r\n", item.Name, counter.ToString(CultureInfo.InvariantCulture));
           counter++;
         }
       }
@@ -639,7 +625,7 @@
 
     private int Execute(DbCommand command)
     {
-      return Execute(new DbCommand[] { command });
+      return Execute(new[] { command });
     }
 
     /// <summary>
@@ -670,6 +656,10 @@
     private DbConnection OpenConnection()
     {
       var result = m_factory.CreateConnection();
+
+      if (result == null)
+        throw new InvalidOperationException("The DbConnection returned by the DbProvider factory was null.");
+
       result.ConnectionString = ConnectionString;
       result.Open();
       return result;

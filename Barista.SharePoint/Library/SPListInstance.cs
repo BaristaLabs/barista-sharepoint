@@ -71,7 +71,12 @@
     {
     }
 
-    #region Properties
+    public SPList List
+    {
+      get { return m_list; }
+    }
+
+  #region Properties
 
     [JSProperty(Name = "allowContentTypes")]
     public bool AllowContentTypes

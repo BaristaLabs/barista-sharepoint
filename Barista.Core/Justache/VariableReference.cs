@@ -49,6 +49,10 @@ namespace Barista.Justache
         if (value is DateInstance)
         {
           var dt = value as DateInstance;
+
+          if (dt.ToString() == "Invalid Date")
+            return;
+
           value = DateTime.Parse(dt.ToISOString());
         }
 
