@@ -10,5 +10,11 @@ namespace Barista.SharePoint.HostService
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class Document
   {
+    [DataMember]
+    public ICollection<Field> Fields
+    {
+      get;
+      set;
+    }
   }
 }

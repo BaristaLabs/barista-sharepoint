@@ -37,7 +37,7 @@
       this.PopulateFields();
       this.PopulateFunctions();
     }
-
+    
     public IndexWriterInstance(ObjectInstance prototype, IndexWriter indexWriter, SPFolder targetFolder)
       : this(prototype)
     {

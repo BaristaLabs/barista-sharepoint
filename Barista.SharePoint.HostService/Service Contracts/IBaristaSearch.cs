@@ -1,26 +1,28 @@
 ﻿namespace Barista.SharePoint.HostService
 {
+  using System.Collections.Generic;
   using System.ServiceModel;
+  using Barista.SharePoint.Search;
 
   [ServiceContract(Namespace = Barista.Constants.ServiceNamespace)]
   public interface IBaristaSearch
   {
     [OperationContract]
-    void SetupIndex(SearchIndexOptions options);
+    void DeleteAll(IndexDefinition definition);
 
     [OperationContract]
-    void RemoveIndex(string indexId);
+    void Commit(IndexDefinition definition);
 
     [OperationContract]
-    void AddDocumentToIndex(string indexId, Document document);
+    void AddDocumentToIndex(IndexDefinition definition, Document document);
 
     [OperationContract]
-    void UpdateDocumentInIndex(string indexId, Document document);
+    void UpdateDocumentInIndex(IndexDefinition definition, Term term, Document document);
 
     [OperationContract]
-    void RemoveDocumentFromIndex(string indexId, string key, string value);
+    void DeleteDocuments(IndexDefinition definition, Term term);
 
     [OperationContract]
-    void SearchIndex(string indexUrl, string query);
+    IList<Hit> Search(IndexDefinition definition, string defaultField, string query, int maxResults);
   }
 }

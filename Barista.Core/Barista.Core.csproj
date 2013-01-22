@@ -177,7 +177,6 @@
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Framework\BinaryEndpointBehaviorAttribute.cs" />
-    <Compile Include="Framework\ConcurrentDictionary.cs" />
     <Compile Include="Framework\DynamicFormatter.cs" />
     <Compile Include="Framework\DynamicResponseTypeAttribute.cs" />
     <Compile Include="Framework\DynamicWebHttpBehavior.cs" />

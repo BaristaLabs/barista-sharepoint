@@ -3,24 +3,23 @@
   using System.Runtime.Serialization;
 
   [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
-  public class SearchIndexOptions
+  public class Term
   {
-    public string IndexId
+    public string FieldName
     {
       get;
       set;
     }
 
-    //public IndexType Type
-    //{
-    //  get;
-    //  set;
-    //}
-
-    public string IndexUrl
+    public string Value
     {
       get;
       set;
+    }
+
+    public Lucene.Net.Index.Term GetLuceneTerm()
+    {
+      return new Lucene.Net.Index.Term(this.FieldName, this.Value);
     }
   }
 }

@@ -1033,10 +1033,7 @@
                                            .Where(f => f.Item.ContentTypeId == entityPartContentType.Id &&
                                                        f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
                                                        f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
-                                                       (updatedEntityPart != null &&
-                                                        f.Name !=
-                                                        updatedEntityPart.Name +
-                                                        Constants.DocumentSetEntityPartExtension))
+                                                       (updatedEntityPart == null || f.Name != updatedEntityPart.Name + Constants.DocumentSetEntityPartExtension))
                                            .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
                                            .ToList();
 
