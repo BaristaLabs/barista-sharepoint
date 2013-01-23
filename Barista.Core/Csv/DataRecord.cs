@@ -20,12 +20,12 @@
   [Serializable]
   public sealed class DataRecord : RecordBase
   {
-    private static readonly ExceptionHelper _exceptionHelper = new ExceptionHelper(typeof(DataRecord));
+    private static readonly ExceptionHelper ExceptionHelper = new ExceptionHelper(typeof(DataRecord));
 
     /// <summary>
     /// See <see cref="HeaderRecord"/>.
     /// </summary>
-    private HeaderRecord _headerRecord;
+    private readonly HeaderRecord m_headerRecord;
 
     /// <summary>
     /// Gets the header record for this CSV record, or <see langword="null"/> if no header record applies.
@@ -38,7 +38,7 @@
     {
       get
       {
-        return _headerRecord;
+        return m_headerRecord;
       }
     }
 
@@ -53,8 +53,8 @@
     {
       get
       {
-        _exceptionHelper.ResolveAndThrowIf(_headerRecord == null, "no-header-record");
-        return Values[_headerRecord[column]];
+        ExceptionHelper.ResolveAndThrowIf(m_headerRecord == null, "no-header-record");
+        return Values[m_headerRecord[column]];
       }
     }
 
@@ -91,7 +91,7 @@
     /// </param>
     public DataRecord(HeaderRecord headerRecord)
     {
-      _headerRecord = headerRecord;
+      m_headerRecord = headerRecord;
     }
 
     /// <summary>
@@ -124,7 +124,7 @@
     public DataRecord(HeaderRecord headerRecord, IEnumerable<string> values, bool readOnly)
       : base(values, readOnly)
     {
-      _headerRecord = headerRecord;
+      m_headerRecord = headerRecord;
     }
 
     /// <summary>
@@ -139,8 +139,8 @@
     public string GetValueOrNull(string column)
     {
       column.AssertNotNull("column");
-      _exceptionHelper.ResolveAndThrowIf(_headerRecord == null, "no-header-record");
-      return GetValueOrNull(_headerRecord.IndexOf(column));
+      ExceptionHelper.ResolveAndThrowIf(m_headerRecord == null, "no-header-record");
+      return GetValueOrNull(m_headerRecord.IndexOf(column));
     }
 
     /// <summary>
@@ -175,18 +175,13 @@
         return false;
       }
 
-      if ((_headerRecord == null) && (record._headerRecord == null))
+      if ((m_headerRecord == null) && (record.m_headerRecord == null))
       {
         //both have no header and equal values, therefore they are equal
         return true;
       }
-      else if (((_headerRecord != null) && (record._headerRecord != null)) && (_headerRecord.Equals(record._headerRecord)))
-      {
-        //both have equal headers and equal values, therefore they are equal
-        return true;
-      }
 
-      return false;
+      return ((m_headerRecord != null) && (record.m_headerRecord != null)) && (m_headerRecord.Equals(record.m_headerRecord));
     }
 
     /// <summary>
@@ -199,9 +194,9 @@
     {
       var retVal = base.GetHashCode();
 
-      if (_headerRecord != null)
+      if (m_headerRecord != null)
       {
-        retVal = (int)Math.Pow(retVal, _headerRecord.GetHashCode());
+        retVal = (int)Math.Pow(retVal, m_headerRecord.GetHashCode());
       }
 
       return retVal;

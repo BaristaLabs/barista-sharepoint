@@ -114,74 +114,74 @@
   /// </example>
   public class CsvWriter : IDisposable
   {
-    private static readonly ExceptionHelper _exceptionHelper = new ExceptionHelper(typeof(CsvWriter));
+    private static readonly ExceptionHelper ExceptionHelper = new ExceptionHelper(typeof(CsvWriter));
 
-    private static readonly Encoding defaultEncoding = Encoding.Default;
+    private static readonly Encoding DefaultEncoding = Encoding.Default;
 
     /// <summary>
     /// The <see cref="TextWriter"/> used to output CSV data.
     /// </summary>
-    private TextWriter _writer;
+    private readonly TextWriter m_writer;
 
     /// <summary>
     /// Set to <see langword="true"/> when this <c>CsvWriter</c> is disposed.
     /// </summary>
-    private bool _disposed;
+    private bool m_disposed;
 
     /// <summary>
     /// See <see cref="HeaderRecord"/>.
     /// </summary>
-    private HeaderRecord _headerRecord;
+    private HeaderRecord m_headerRecord;
 
     /// <summary>
     /// See <see cref="AlwaysDelimit"/>.
     /// </summary>
-    private bool _alwaysDelimit;
+    private bool m_alwaysDelimit;
 
     /// <summary>
     /// The buffer of characters containing the current value.
     /// </summary>
-    private char[] _valueBuffer;
+    private char[] m_valueBuffer;
 
     /// <summary>
-    /// The last valid index into <see cref="_valueBuffer"/>.
+    /// The last valid index into <see cref="m_valueBuffer"/>.
     /// </summary>
-    private int _valueBufferEndIndex;
+    private int m_valueBufferEndIndex;
 
     /// <summary>
     /// See <see cref="ValueSeparator"/>.
     /// </summary>
-    private char _valueSeparator;
+    private char m_valueSeparator;
 
     /// <summary>
     /// See <see cref="ValueDelimiter"/>.
     /// </summary>
-    private char _valueDelimiter;
+    private char m_valueDelimiter;
 
     /// <summary>
     /// See <see cref="RecordNumber"/>.
     /// </summary>
-    private long _recordNumber;
+    private long m_recordNumber;
 
     /// <summary>
     /// Set to <see langword="true"/> once the first record is written.
     /// </summary>
-    private bool _passedFirstRecord;
+    private bool m_passedFirstRecord;
 
     /// <summary>
     /// The space character.
     /// </summary>
-    private const char SPACE = ' ';
+    private const char Space = ' ';
 
     /// <summary>
     /// The carriage return character. Escape code is <c>\r</c>.
     /// </summary>
-    private const char CR = (char)0x0d;
+    private const char Cr = (char)0x0d;
 
     /// <summary>
     /// The line-feed character. Escape code is <c>\n</c>.
     /// </summary>
-    private const char LF = (char)0x0a;
+    private const char Lf = (char)0x0a;
 
     /// <summary>
     /// Gets the encoding of the underlying writer for this <c>CsvWriter</c>.
@@ -191,7 +191,7 @@
       get
       {
         EnsureNotDisposed();
-        return _writer.Encoding;
+        return m_writer.Encoding;
       }
     }
 
@@ -207,12 +207,12 @@
       get
       {
         EnsureNotDisposed();
-        return _alwaysDelimit;
+        return m_alwaysDelimit;
       }
       set
       {
         EnsureNotDisposed();
-        _alwaysDelimit = value;
+        m_alwaysDelimit = value;
       }
     }
 
@@ -228,15 +228,15 @@
       get
       {
         EnsureNotDisposed();
-        return _valueSeparator;
+        return m_valueSeparator;
       }
       set
       {
         EnsureNotDisposed();
-        _exceptionHelper.ResolveAndThrowIf(value == _valueDelimiter, "value-separator-same-as-value-delimiter");
-        _exceptionHelper.ResolveAndThrowIf(value == SPACE, "value-separator-or-value-delimiter-space");
+        ExceptionHelper.ResolveAndThrowIf(value == m_valueDelimiter, "value-separator-same-as-value-delimiter");
+        ExceptionHelper.ResolveAndThrowIf(value == Space, "value-separator-or-value-delimiter-space");
 
-        _valueSeparator = value;
+        m_valueSeparator = value;
       }
     }
 
@@ -258,15 +258,15 @@
       get
       {
         EnsureNotDisposed();
-        return _valueDelimiter;
+        return m_valueDelimiter;
       }
       set
       {
         EnsureNotDisposed();
-        _exceptionHelper.ResolveAndThrowIf(value == _valueSeparator, "value-separator-same-as-value-delimiter");
-        _exceptionHelper.ResolveAndThrowIf(value == SPACE, "value-separator-or-value-delimiter-space");
+        ExceptionHelper.ResolveAndThrowIf(value == m_valueSeparator, "value-separator-same-as-value-delimiter");
+        ExceptionHelper.ResolveAndThrowIf(value == Space, "value-separator-or-value-delimiter-space");
 
-        _valueDelimiter = value;
+        m_valueDelimiter = value;
       }
     }
 
@@ -282,12 +282,12 @@
       get
       {
         EnsureNotDisposed();
-        return _writer.NewLine;
+        return m_writer.NewLine;
       }
       set
       {
         EnsureNotDisposed();
-        _writer.NewLine = value;
+        m_writer.NewLine = value;
       }
     }
 
@@ -307,7 +307,7 @@
       get
       {
         EnsureNotDisposed();
-        return _headerRecord;
+        return m_headerRecord;
       }
     }
 
@@ -324,7 +324,7 @@
       get
       {
         EnsureNotDisposed();
-        return _recordNumber;
+        return m_recordNumber;
       }
     }
 
@@ -338,7 +338,7 @@
     /// The stream to which CSV data will be written.
     /// </param>
     public CsvWriter(Stream stream)
-      : this(stream, defaultEncoding)
+      : this(stream, DefaultEncoding)
     {
     }
 
@@ -369,7 +369,7 @@
     /// The full path to the file to which CSV data will be written.
     /// </param>
     public CsvWriter(string path)
-      : this(path, false, defaultEncoding)
+      : this(path, false, DefaultEncoding)
     {
     }
 
@@ -403,7 +403,7 @@
     /// If <c>true</c>, data will be appended to the specified file.
     /// </param>
     public CsvWriter(string path, bool append)
-      : this(path, append, defaultEncoding)
+      : this(path, append, DefaultEncoding)
     {
     }
 
@@ -437,10 +437,10 @@
     {
       writer.AssertNotNull("writer");
 
-      _writer = writer;
-      _valueSeparator = CsvParser.DefaultValueSeparator;
-      _valueDelimiter = CsvParser.DefaultValueDelimiter;
-      _valueBuffer = new char[128];
+      m_writer = writer;
+      m_valueSeparator = CsvParser.DefaultValueSeparator;
+      m_valueDelimiter = CsvParser.DefaultValueDelimiter;
+      m_valueBuffer = new char[128];
     }
 
     /// <summary>
@@ -472,12 +472,12 @@
     /// </remarks>
     public void Close()
     {
-      if (_writer != null)
+      if (m_writer != null)
       {
-        _writer.Close();
+        m_writer.Close();
       }
 
-      _disposed = true;
+      m_disposed = true;
     }
 
     /// <summary>
@@ -489,7 +489,7 @@
     public void Flush()
     {
       EnsureNotDisposed();
-      _writer.Flush();
+      m_writer.Flush();
     }
 
     /// <summary>
@@ -505,7 +505,7 @@
     public void WriteHeaderRecord(HeaderRecord headerRecord)
     {
       headerRecord.AssertNotNull("headerRecord");
-      _exceptionHelper.ResolveAndThrowIf(_passedFirstRecord, "WriteHeaderRecord.passed-first-record");
+      ExceptionHelper.ResolveAndThrowIf(m_passedFirstRecord, "WriteHeaderRecord.passed-first-record");
       WriteHeaderRecord(headerRecord.Values);
     }
 
@@ -572,9 +572,10 @@
     /// </param>
     public void WriteHeaderRecord(IFormatProvider provider, IEnumerable<object> headerRecord)
     {
-      headerRecord.AssertNotNull("dataRecord");
+      var headerRecords = headerRecord as IList<object> ?? headerRecord.ToList();
+      headerRecords.AssertNotNull("dataRecord");
 
-      var dataRecordAsStrings = headerRecord.Select(x => ConvertItemToString(provider, x));
+      var dataRecordAsStrings = headerRecords.Select(x => ConvertItemToString(provider, x));
       WriteHeaderRecord(dataRecordAsStrings);
     }
 
@@ -606,10 +607,11 @@
     public void WriteHeaderRecord(IEnumerable<string> headerRecord)
     {
       EnsureNotDisposed();
-      headerRecord.AssertNotNull("headerRecord");
-      _exceptionHelper.ResolveAndThrowIf(_passedFirstRecord, "WriteHeaderRecord.passed-first-record");
-      _headerRecord = new HeaderRecord(headerRecord, true);
-      WriteRecord(headerRecord, false);
+      var headerRecords = headerRecord as IList<string> ?? headerRecord.ToList();
+      headerRecords.AssertNotNull("headerRecord");
+      ExceptionHelper.ResolveAndThrowIf(m_passedFirstRecord, "WriteHeaderRecord.passed-first-record");
+      m_headerRecord = new HeaderRecord(headerRecords, true);
+      WriteRecord(headerRecords, false);
     }
 
     /// <summary>
@@ -691,9 +693,10 @@
     /// </param>
     public void WriteDataRecord(IFormatProvider provider, IEnumerable<object> dataRecord)
     {
-      dataRecord.AssertNotNull("dataRecord");
+      var dataRecords = dataRecord as IList<object> ?? dataRecord.ToList();
+      dataRecords.AssertNotNull("dataRecord");
 
-      var dataRecordAsStrings = dataRecord.Select(x => ConvertItemToString(provider, x));
+      var dataRecordAsStrings = dataRecords.Select(x => ConvertItemToString(provider, x));
       WriteDataRecord(dataRecordAsStrings);
     }
 
@@ -725,9 +728,10 @@
     public void WriteDataRecord(IEnumerable<string> dataRecord)
     {
       EnsureNotDisposed();
-      dataRecord.AssertNotNull("dataRecord");
+      var dataRecords = dataRecord as IList<string> ?? dataRecord.ToList();
+      dataRecords.AssertNotNull("dataRecord");
 
-      WriteRecord(dataRecord, true);
+      WriteRecord(dataRecords, true);
     }
 
     /// <summary>
@@ -860,7 +864,7 @@
 
       foreach (DataRow row in table.Rows)
       {
-        DataRecord dataRecord = new DataRecord(_headerRecord);
+        DataRecord dataRecord = new DataRecord(m_headerRecord);
 
         foreach (object item in row.ItemArray)
         {
@@ -944,7 +948,7 @@
     {
       EnsureNotDisposed();
       dataSet.AssertNotNull("dataSet");
-      _exceptionHelper.ResolveAndThrowIf(dataSet.Tables.Count == 0, "WriteAll.dataSet-no-table");
+      ExceptionHelper.ResolveAndThrowIf(dataSet.Tables.Count == 0, "WriteAll.dataSet-no-table");
 
       WriteAll(provider, dataSet.Tables[0], writeHeaderRecord);
     }
@@ -969,7 +973,7 @@
       {
         if (!firstValue)
         {
-          _writer.Write(_valueSeparator);
+          m_writer.Write(m_valueSeparator);
         }
         else
         {
@@ -980,12 +984,12 @@
       }
 
       //uses the underlying TextWriter.NewLine property
-      _writer.WriteLine();
-      _passedFirstRecord = true;
+      m_writer.WriteLine();
+      m_passedFirstRecord = true;
 
       if (incrementRecordNumber)
       {
-        ++_recordNumber;
+        ++m_recordNumber;
       }
     }
 
@@ -1000,32 +1004,30 @@
     /// </param>
     private void WriteValue(string val)
     {
-      _valueBufferEndIndex = 0;
-      bool delimit = _alwaysDelimit;
+      m_valueBufferEndIndex = 0;
+      bool delimit = m_alwaysDelimit;
 
       if (!string.IsNullOrEmpty(val))
       {
         //delimit to preserve white-space at the beginning or end of the value
-        if ((val[0] == SPACE) || (val[val.Length - 1] == SPACE))
+        if ((val[0] == Space) || (val[val.Length - 1] == Space))
         {
           delimit = true;
         }
 
-        for (int i = 0; i < val.Length; ++i)
+        foreach (char c in val)
         {
-          char c = val[i];
-
-          if ((c == _valueSeparator) || (c == CR) || (c == LF))
+          if ((c == m_valueSeparator) || (c == Cr) || (c == Lf))
           {
             //all these characters require the value to be delimited
             AppendToValue(c);
             delimit = true;
           }
-          else if (c == _valueDelimiter)
+          else if (c == m_valueDelimiter)
           {
             //escape the delimiter by writing it twice
-            AppendToValue(_valueDelimiter);
-            AppendToValue(_valueDelimiter);
+            AppendToValue(m_valueDelimiter);
+            AppendToValue(m_valueDelimiter);
             delimit = true;
           }
           else
@@ -1037,18 +1039,18 @@
 
       if (delimit)
       {
-        _writer.Write(_valueDelimiter);
+        m_writer.Write(m_valueDelimiter);
       }
 
       //write the value
-      _writer.Write(_valueBuffer, 0, _valueBufferEndIndex);
+      m_writer.Write(m_valueBuffer, 0, m_valueBufferEndIndex);
 
       if (delimit)
       {
-        _writer.Write(_valueDelimiter);
+        m_writer.Write(m_valueDelimiter);
       }
 
-      _valueBufferEndIndex = 0;
+      m_valueBufferEndIndex = 0;
     }
 
     /// <summary>
@@ -1060,7 +1062,7 @@
     private void AppendToValue(char c)
     {
       EnsureValueBufferCapacity(1);
-      _valueBuffer[_valueBufferEndIndex++] = c;
+      m_valueBuffer[m_valueBufferEndIndex++] = c;
     }
 
     /// <summary>
@@ -1068,17 +1070,17 @@
     /// </summary>
     private void EnsureValueBufferCapacity(int count)
     {
-      if ((_valueBufferEndIndex + count) > _valueBuffer.Length)
+      if ((m_valueBufferEndIndex + count) > m_valueBuffer.Length)
       {
-        char[] newBuffer = new char[Math.Max(_valueBuffer.Length * 2, (count >> 1) << 2)];
+        char[] newBuffer = new char[Math.Max(m_valueBuffer.Length * 2, (count >> 1) << 2)];
 
         //profiling revealed a loop to be faster than Array.Copy, despite Array.Copy having an internal implementation
-        for (int i = 0; i < _valueBufferEndIndex; ++i)
+        for (int i = 0; i < m_valueBufferEndIndex; ++i)
         {
-          newBuffer[i] = _valueBuffer[i];
+          newBuffer[i] = m_valueBuffer[i];
         }
 
-        _valueBuffer = newBuffer;
+        m_valueBuffer = newBuffer;
       }
     }
 
@@ -1087,7 +1089,7 @@
     /// </summary>
     private void EnsureNotDisposed()
     {
-      _exceptionHelper.ResolveAndThrowIf(_disposed, "disposed");
+      ExceptionHelper.ResolveAndThrowIf(m_disposed, "disposed");
     }
 
     /// <summary>

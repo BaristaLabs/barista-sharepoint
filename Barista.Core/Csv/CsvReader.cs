@@ -231,29 +231,29 @@
   /// </example>
   public class CsvReader : IDisposable
   {
-    private static readonly ExceptionHelper _exceptionHelper = new ExceptionHelper(typeof(CsvReader));
+    private static readonly ExceptionHelper ExceptionHelper = new ExceptionHelper(typeof(CsvReader));
 
-    private static readonly Encoding defaultEncoding = Encoding.Default;
+    private static readonly Encoding DefaultEncoding = Encoding.Default;
 
     /// <summary>
     /// The instance of <see cref="CsvParser"/> being used to parse the CSV data.
     /// </summary>
-    private readonly CsvParser _parser;
+    private readonly CsvParser m_parser;
 
     /// <summary>
     /// See <see cref="HeaderRecord"/>.
     /// </summary>
-    private HeaderRecord _headerRecord;
+    private HeaderRecord m_headerRecord;
 
     /// <summary>
     /// See <see cref="RecordNumber"/>.
     /// </summary>
-    private long _recordNumber;
+    private long m_recordNumber;
 
     /// <summary>
     /// Set to <see langword="true"/> when this object is disposed.
     /// </summary>
-    private bool _disposed;
+    private bool m_disposed;
 
     /// <summary>
     /// The default table name used during a <see cref="Fill"/> operation.
@@ -268,12 +268,12 @@
       get
       {
         EnsureNotDisposed();
-        return _parser.PreserveLeadingWhiteSpace;
+        return m_parser.PreserveLeadingWhiteSpace;
       }
       set
       {
         EnsureNotDisposed();
-        _parser.PreserveLeadingWhiteSpace = value;
+        m_parser.PreserveLeadingWhiteSpace = value;
       }
     }
 
@@ -285,12 +285,12 @@
       get
       {
         EnsureNotDisposed();
-        return _parser.PreserveTrailingWhiteSpace;
+        return m_parser.PreserveTrailingWhiteSpace;
       }
       set
       {
         EnsureNotDisposed();
-        _parser.PreserveTrailingWhiteSpace = value;
+        m_parser.PreserveTrailingWhiteSpace = value;
       }
     }
 
@@ -306,12 +306,12 @@
       get
       {
         EnsureNotDisposed();
-        return _parser.ValueSeparator;
+        return m_parser.ValueSeparator;
       }
       set
       {
         EnsureNotDisposed();
-        _parser.ValueSeparator = value;
+        m_parser.ValueSeparator = value;
       }
     }
 
@@ -333,12 +333,12 @@
       get
       {
         EnsureNotDisposed();
-        return _parser.ValueDelimiter;
+        return m_parser.ValueDelimiter;
       }
       set
       {
         EnsureNotDisposed();
-        _parser.ValueDelimiter = value;
+        m_parser.ValueDelimiter = value;
       }
     }
 
@@ -357,17 +357,17 @@
       get
       {
         EnsureNotDisposed();
-        return _headerRecord;
+        return m_headerRecord;
       }
       set
       {
         EnsureNotDisposed();
         value.AssertNotNull("value");
-        _exceptionHelper.ResolveAndThrowIf(_headerRecord != null, "HeaderRecord.set.header-record-already-set");
-        _exceptionHelper.ResolveAndThrowIf(_parser.PassedFirstRecord, "HeaderRecord.set.first-record-already-read");
+        ExceptionHelper.ResolveAndThrowIf(m_headerRecord != null, "HeaderRecord.set.header-record-already-set");
+        ExceptionHelper.ResolveAndThrowIf(m_parser.PassedFirstRecord, "HeaderRecord.set.first-record-already-read");
 
-        _parser.PassedFirstRecord = true;
-        _headerRecord = value;
+        m_parser.PassedFirstRecord = true;
+        m_headerRecord = value;
       }
     }
 
@@ -384,7 +384,7 @@
       get
       {
         EnsureNotDisposed();
-        return _recordNumber;
+        return m_recordNumber;
       }
     }
 
@@ -400,7 +400,7 @@
       get
       {
         EnsureNotDisposed();
-        return _parser.HasMoreRecords;
+        return m_parser.HasMoreRecords;
       }
     }
 
@@ -416,7 +416,7 @@
       get
       {
         EnsureNotDisposed();
-        DataRecord record = null;
+        DataRecord record;
 
         while ((record = ReadDataRecord()) != null)
         {
@@ -437,7 +437,7 @@
       get
       {
         EnsureNotDisposed();
-        string[] record = null;
+        string[] record;
 
         while ((record = ReadDataRecordAsStrings()) != null)
         {
@@ -472,7 +472,7 @@
     /// The stream to read CSV data from.
     /// </param>
     public CsvReader(Stream stream)
-      : this(stream, defaultEncoding)
+      : this(stream, DefaultEncoding)
     {
     }
 
@@ -497,7 +497,7 @@
     /// The full path to the file containing CSV data.
     /// </param>
     public CsvReader(string path)
-      : this(path, defaultEncoding)
+      : this(path, DefaultEncoding)
     {
     }
 
@@ -523,7 +523,7 @@
     /// </param>
     public CsvReader(TextReader reader)
     {
-      _parser = new CsvParser(reader);
+      m_parser = new CsvParser(reader);
     }
 
     /// <summary>
@@ -555,12 +555,12 @@
     /// </remarks>
     public void Close()
     {
-      if (_parser != null)
+      if (m_parser != null)
       {
-        _parser.Close();
+        m_parser.Close();
       }
 
-      _disposed = true;
+      m_disposed = true;
     }
 
     /// <summary>
@@ -591,14 +591,14 @@
     /// </returns>
     public HeaderRecord ReadHeaderRecord()
     {
-      _exceptionHelper.ResolveAndThrowIf(_parser.PassedFirstRecord, "HeaderRecord.set.first-record-already-read");
+      ExceptionHelper.ResolveAndThrowIf(m_parser.PassedFirstRecord, "HeaderRecord.set.first-record-already-read");
 
-      HeaderRecord headerRecord = HeaderRecord.FromParser(_parser);
+      HeaderRecord headerRecord = HeaderRecord.FromParser(m_parser);
 
       if (headerRecord != null)
       {
         //reset this flag since the first record read was simply the header
-        _parser.PassedFirstRecord = false;
+        m_parser.PassedFirstRecord = false;
         HeaderRecord = headerRecord;
       }
 
@@ -619,11 +619,11 @@
     {
       EnsureNotDisposed();
 
-      DataRecord retVal = DataRecord.FromParser(_headerRecord, _parser);
+      DataRecord retVal = DataRecord.FromParser(m_headerRecord, m_parser);
 
       if (retVal != null)
       {
-        ++_recordNumber;
+        ++m_recordNumber;
       }
 
       return retVal;
@@ -643,11 +643,11 @@
     {
       EnsureNotDisposed();
 
-      string[] retVal = _parser.ParseRecord();
+      string[] retVal = m_parser.ParseRecord();
 
       if (retVal != null)
       {
-        ++_recordNumber;
+        ++m_recordNumber;
       }
 
       return retVal;
@@ -668,9 +668,9 @@
     {
       EnsureNotDisposed();
       List<DataRecord> retVal = new List<DataRecord>();
-      DataRecord record = null;
+      DataRecord record;
 
-      while ((record = DataRecord.FromParser(_headerRecord, _parser)) != null)
+      while ((record = DataRecord.FromParser(m_headerRecord, m_parser)) != null)
       {
         retVal.Add(record);
       }
@@ -695,18 +695,18 @@
     public ICollection<DataRecord> ReadDataRecords(int maximumRecords)
     {
       EnsureNotDisposed();
-      _exceptionHelper.ResolveAndThrowIf(maximumRecords < 0, "ReadDataRecords.maximumRecords-less-than-zero");
+      ExceptionHelper.ResolveAndThrowIf(maximumRecords < 0, "ReadDataRecords.maximumRecords-less-than-zero");
 
       List<DataRecord> retVal = new List<DataRecord>();
       int numRead = 0;
 
       while (numRead < maximumRecords)
       {
-        DataRecord record = DataRecord.FromParser(_headerRecord, _parser);
+        DataRecord record = DataRecord.FromParser(m_headerRecord, m_parser);
 
         if (record != null)
         {
-          ++_recordNumber;
+          ++m_recordNumber;
         }
         else
         {
@@ -735,9 +735,9 @@
     {
       EnsureNotDisposed();
       List<string[]> retVal = new List<string[]>();
-      string[] record = null;
+      string[] record;
 
-      while ((record = _parser.ParseRecord()) != null)
+      while ((record = m_parser.ParseRecord()) != null)
       {
         retVal.Add(record);
       }
@@ -762,18 +762,18 @@
     public ICollection<string[]> ReadDataRecordsAsStrings(int maximumRecords)
     {
       EnsureNotDisposed();
-      _exceptionHelper.ResolveAndThrowIf(maximumRecords < 0, "ReadDataRecords.maximumRecords-less-than-zero");
+      ExceptionHelper.ResolveAndThrowIf(maximumRecords < 0, "ReadDataRecords.maximumRecords-less-than-zero");
 
       List<string[]> retVal = new List<string[]>();
       int numRead = 0;
 
       while (numRead < maximumRecords)
       {
-        string[] record = _parser.ParseRecord();
+        string[] record = m_parser.ParseRecord();
 
         if (record != null)
         {
-          ++_recordNumber;
+          ++m_recordNumber;
         }
         else
         {
@@ -801,15 +801,12 @@
     {
       EnsureNotDisposed();
 
-      if (_parser.SkipRecord())
+      if (m_parser.SkipRecord())
       {
-        ++_recordNumber;
+        ++m_recordNumber;
         return true;
       }
-      else
-      {
-        return false;
-      }
+      return false;
     }
 
     /// <summary>
@@ -825,19 +822,16 @@
     {
       EnsureNotDisposed();
 
-      if (_parser.SkipRecord())
+      if (m_parser.SkipRecord())
       {
         if (incrementRecordNumber)
         {
-          ++_recordNumber;
+          ++m_recordNumber;
         }
 
         return true;
       }
-      else
-      {
-        return false;
-      }
+      return false;
     }
 
     /// <summary>
@@ -852,15 +846,15 @@
     public int SkipRecords(int number)
     {
       EnsureNotDisposed();
-      _exceptionHelper.ResolveAndThrowIf(number < 0, "SkipRecords.number-less-than-zero");
+      ExceptionHelper.ResolveAndThrowIf(number < 0, "SkipRecords.number-less-than-zero");
 
       int retVal = 0;
 
       while (retVal < number)
       {
-        if (_parser.SkipRecord())
+        if (m_parser.SkipRecord())
         {
-          ++_recordNumber;
+          ++m_recordNumber;
           ++retVal;
         }
         else
@@ -887,17 +881,17 @@
     public int SkipRecords(int number, bool incrementRecordNumber)
     {
       EnsureNotDisposed();
-      _exceptionHelper.ResolveAndThrowIf(number < 0, "SkipRecords.number-less-than-zero");
+      ExceptionHelper.ResolveAndThrowIf(number < 0, "SkipRecords.number-less-than-zero");
 
       int retVal = 0;
 
       while (retVal < number)
       {
-        if (_parser.SkipRecord())
+        if (m_parser.SkipRecord())
         {
           if (incrementRecordNumber)
           {
-            ++_recordNumber;
+            ++m_recordNumber;
           }
 
           ++retVal;
@@ -1022,15 +1016,18 @@
       EnsureNotDisposed();
       dataSet.AssertNotNull("dataSet");
       tableName.AssertNotNull("tableName");
-      _exceptionHelper.ResolveAndThrowIf(useMaximum && (maximumRecords < 0), "Fill.maximumRecords-less-than-zero", "maximumRecords");
-      _exceptionHelper.ResolveAndThrowIf(_headerRecord == null, "Fill.no-header-record-set");
+      ExceptionHelper.ResolveAndThrowIf(useMaximum && (maximumRecords < 0), "Fill.maximumRecords-less-than-zero", "maximumRecords");
+      ExceptionHelper.ResolveAndThrowIf(m_headerRecord == null, "Fill.no-header-record-set");
 
       DataTable table = dataSet.Tables.Add(tableName);
 
       //set up the table columns based on the header record
-      foreach (string column in _headerRecord.Values)
+      if (m_headerRecord != null)
       {
-        table.Columns.Add(column);
+        foreach (string column in m_headerRecord.Values)
+        {
+          table.Columns.Add(column);
+        }
       }
 
       int num = 0;
@@ -1041,11 +1038,14 @@
 
         if (record != null)
         {
-          _exceptionHelper.ResolveAndThrowIf(record.Length > _headerRecord.Values.Count, "Fill.too-many-columns-in-record", record.Length, _headerRecord.Values.Count);
+          if (m_headerRecord != null)
+            ExceptionHelper.ResolveAndThrowIf(m_headerRecord != null && record.Length > m_headerRecord.Values.Count, "Fill.too-many-columns-in-record", record.Length, m_headerRecord.Values.Count);
 
           string[] recordAsStrings = new string[record.Length];
           record.CopyTo(recordAsStrings, 0);
+// ReSharper disable CoVariantArrayConversion
           table.Rows.Add(recordAsStrings);
+// ReSharper restore CoVariantArrayConversion
           ++num;
         }
         else
@@ -1062,7 +1062,7 @@
     /// </summary>
     private void EnsureNotDisposed()
     {
-      _exceptionHelper.ResolveAndThrowIf(_disposed, "disposed");
+      ExceptionHelper.ResolveAndThrowIf(m_disposed, "disposed");
     }
   }
 }

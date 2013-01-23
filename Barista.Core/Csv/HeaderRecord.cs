@@ -17,7 +17,7 @@
     /// <summary>
     /// Maps column names to indexes.
     /// </summary>
-    private readonly IDictionary<string, int> _columnToIndexMap;
+    private readonly IDictionary<string, int> m_columnToIndexMap;
 
     /// <summary>
     /// Gets the index of the specified column in this header record.
@@ -30,12 +30,12 @@
     {
       get
       {
-        if (!_columnToIndexMap.ContainsKey(column))
+        if (!m_columnToIndexMap.ContainsKey(column))
         {
           throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "No column named '{0}' exists in this header record.", column));
         }
 
-        return _columnToIndexMap[column];
+        return m_columnToIndexMap[column];
       }
     }
 
@@ -91,19 +91,19 @@
     public HeaderRecord(IEnumerable<string> columns, bool readOnly)
       : base(columns, readOnly)
     {
-      _columnToIndexMap = new Dictionary<string, int>();
+      m_columnToIndexMap = new Dictionary<string, int>();
 
       //populate the dictionary with column name -> index mappings
       for (int i = 0; i < Values.Count; ++i)
       {
         string columnName = Values[i];
 
-        if (_columnToIndexMap.ContainsKey(columnName))
+        if (m_columnToIndexMap.ContainsKey(columnName))
         {
           throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "A column named '{0}' appears more than once in the header record.", columnName));
         }
 
-        _columnToIndexMap[columnName] = i;
+        m_columnToIndexMap[columnName] = i;
       }
     }
 
@@ -119,9 +119,9 @@
     public int IndexOf(string column)
     {
       column.AssertNotNull("column");
-      int index = int.MinValue;
+      int index;
 
-      if (!_columnToIndexMap.TryGetValue(column, out index))
+      if (!m_columnToIndexMap.TryGetValue(column, out index))
       {
         return -1;
       }

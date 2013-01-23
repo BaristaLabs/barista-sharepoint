@@ -19,7 +19,7 @@
     /// <summary>
     /// See <see cref="Values"/>.
     /// </summary>
-    private IList<string> _values;
+    private readonly IList<string> m_values;
 
     /// <summary>
     /// The character used to separator values in the <see cref="ToString"/> implementation
@@ -33,11 +33,11 @@
     {
       get
       {
-        return _values[index];
+        return m_values[index];
       }
       set
       {
-        _values[index] = value;
+        m_values[index] = value;
       }
     }
 
@@ -48,7 +48,7 @@
     {
       get
       {
-        return _values;
+        return m_values;
       }
     }
 
@@ -57,7 +57,7 @@
     /// </summary>
     protected RecordBase()
     {
-      _values = new List<string>();
+      m_values = new List<string>();
     }
 
     /// <summary>
@@ -82,14 +82,15 @@
     /// </param>
     protected RecordBase(IEnumerable<string> values, bool readOnly)
     {
-      values.AssertNotNull("values");
+      var valuesList = values as IList<string> ?? values.ToList();
+      valuesList.AssertNotNull("values");
 
-      _values = new List<string>(values);
+      m_values = new List<string>(valuesList);
 
       if (readOnly)
       {
         //just use the wrapper readonly collection
-        _values = new ReadOnlyCollection<string>(_values);
+        m_values = new ReadOnlyCollection<string>(m_values);
       }
     }
 
@@ -104,7 +105,7 @@
     /// </returns>
     public string GetValueOrNull(int index)
     {
-      return _values.ElementAtOrDefault(index);
+      return m_values.ElementAtOrDefault(index);
     }
 
     /// <summary>
@@ -134,20 +135,12 @@
         return false;
       }
 
-      if (_values.Count != record._values.Count)
+      if (m_values.Count != record.m_values.Count)
       {
         return false;
       }
 
-      for (var i = 0; i < _values.Count; ++i)
-      {
-        if (_values[i] != record._values[i])
-        {
-          return false;
-        }
-      }
-
-      return true;
+      return !m_values.Where((t, i) => t != record.m_values[i]).Any();
     }
 
     /// <summary>
@@ -158,14 +151,7 @@
     /// </returns>
     public override int GetHashCode()
     {
-      var retVal = 17;
-
-      for (var i = 0; i < _values.Count; ++i)
-      {
-        retVal += _values[i].GetHashCode();
-      }
-
-      return retVal;
+      return 17 + m_values.Sum(t => t.GetHashCode());
     }
 
     /// <summary>
@@ -182,7 +168,7 @@
     {
       var retVal = new StringBuilder();
 
-      foreach (var val in _values)
+      foreach (var val in m_values)
       {
         retVal.Append(val).Append(ValueSeparator);
       }

@@ -13,122 +13,122 @@
   /// </remarks>
   internal sealed class CsvParser : IDisposable
   {
-    private static readonly ExceptionHelper _exceptionHelper = new ExceptionHelper(typeof(CsvParser));
+    private static readonly ExceptionHelper ExceptionHelper = new ExceptionHelper(typeof(CsvParser));
 
     /// <summary>
     /// The source of the CSV data.
     /// </summary>
-    private readonly TextReader _reader;
+    private readonly TextReader m_reader;
 
     /// <summary>
     /// See <see cref="PreserveLeadingWhiteSpace"/>.
     /// </summary>
-    private bool _preserveLeadingWhiteSpace;
+    private bool m_preserveLeadingWhiteSpace;
 
     /// <summary>
     /// See <see cref="PreserveTrailingWhiteSpace"/>.
     /// </summary>
-    private bool _preserveTrailingWhiteSpace;
+    private bool m_preserveTrailingWhiteSpace;
 
     /// <summary>
     /// See <see cref="ValueSeparator"/>.
     /// </summary>
-    private char _valueSeparator;
+    private char m_valueSeparator;
 
     /// <summary>
     /// See <see cref="ValueDelimiter"/>.
     /// </summary>
-    private char _valueDelimiter;
+    private char m_valueDelimiter;
 
     /// <summary>
     /// Buffers CSV data.
     /// </summary>
-    private readonly char[] _buffer;
+    private readonly char[] m_buffer;
 
     /// <summary>
-    /// The current index into <see cref="_buffer"/>.
+    /// The current index into <see cref="m_buffer"/>.
     /// </summary>
-    private int _bufferIndex;
+    private int m_bufferIndex;
 
     /// <summary>
-    /// The last valid index into <see cref="_buffer"/>.
+    /// The last valid index into <see cref="m_buffer"/>.
     /// </summary>
-    private int _bufferEndIndex;
+    private int m_bufferEndIndex;
 
     /// <summary>
     /// The list of values currently parsed by the parser.
     /// </summary>
-    private string[] _valueList;
+    private string[] m_valueList;
 
     /// <summary>
-    /// The last valid index into <see cref="_valueList"/>.
+    /// The last valid index into <see cref="m_valueList"/>.
     /// </summary>
-    public int _valuesListEndIndex;
+    public int ValuesListEndIndex;
 
     /// <summary>
     /// The buffer of characters containing the current value.
     /// </summary>
-    private char[] _valueBuffer;
+    private char[] m_valueBuffer;
 
     /// <summary>
-    /// The last valid index into <see cref="_valueBuffer"/>.
+    /// The last valid index into <see cref="m_valueBuffer"/>.
     /// </summary>
-    private int _valueBufferEndIndex;
+    private int m_valueBufferEndIndex;
 
     /// <summary>
-    /// An index into <see cref="_valueBuffer"/> indicating the first character that might be removed if it is leading white-space.
+    /// An index into <see cref="m_valueBuffer"/> indicating the first character that might be removed if it is leading white-space.
     /// </summary>
-    private int _valueBufferFirstEligibleLeadingWhiteSpace;
+    private int m_valueBufferFirstEligibleLeadingWhiteSpace;
 
     /// <summary>
-    /// An index into <see cref="_valueBuffer"/> indicating the first character that might be removed if it is trailing white-space.
+    /// An index into <see cref="m_valueBuffer"/> indicating the first character that might be removed if it is trailing white-space.
     /// </summary>
-    private int _valueBufferFirstEligibleTrailingWhiteSpace;
+    private int m_valueBufferFirstEligibleTrailingWhiteSpace;
 
     /// <summary>
     /// <see langword="true"/> if the current value is delimited and the parser is in the delimited area.
     /// </summary>
-    private bool _inDelimitedArea;
+    private bool m_inDelimitedArea;
 
     /// <summary>
     /// The starting index of the current value part.
     /// </summary>
-    private int _valuePartStartIndex;
+    private int m_valuePartStartIndex;
 
     /// <summary>
     /// Set to <see langword="true"/> once the first record is passed (or the <see cref="CsvReader"/> decides that the first record has been passed.
     /// </summary>
-    private bool _passedFirstRecord;
+    private bool m_passedFirstRecord;
 
     /// <summary>
     /// Used to quickly recognise whether a character is potentially special or not.
     /// </summary>
-    private int _specialCharacterMask;
+    private int m_specialCharacterMask;
 
     /// <summary>
     /// The space character.
     /// </summary>
-    private const char SPACE = ' ';
+    private const char Space = ' ';
 
     /// <summary>
     /// The tab character.
     /// </summary>
-    private const char TAB = '\t';
+    private const char Tab = '\t';
 
     /// <summary>
     /// The carriage return character. Escape code is <c>\r</c>.
     /// </summary>
-    private const char CR = (char)0x0d;
+    private const char Cr = (char)0x0d;
 
     /// <summary>
     /// The line-feed character. Escape code is <c>\n</c>.
     /// </summary>
-    private const char LF = (char)0x0a;
+    private const char Lf = (char)0x0a;
 
     /// <summary>
     /// One char less than the size of the internal buffer. The extra char is used to support a faster peek operation.
     /// </summary>
-    private const int BUFFER_SIZE = 2047;
+    private const int BufferSize = 2047;
 
     /// <summary>
     /// The default value separator.
@@ -147,11 +147,11 @@
     {
       get
       {
-        return _preserveLeadingWhiteSpace;
+        return m_preserveLeadingWhiteSpace;
       }
       set
       {
-        _preserveLeadingWhiteSpace = value;
+        m_preserveLeadingWhiteSpace = value;
       }
     }
 
@@ -162,11 +162,11 @@
     {
       get
       {
-        return _preserveTrailingWhiteSpace;
+        return m_preserveTrailingWhiteSpace;
       }
       set
       {
-        _preserveTrailingWhiteSpace = value;
+        m_preserveTrailingWhiteSpace = value;
       }
     }
 
@@ -177,14 +177,14 @@
     {
       get
       {
-        return _valueSeparator;
+        return m_valueSeparator;
       }
       set
       {
-        _exceptionHelper.ResolveAndThrowIf(value == _valueDelimiter, "value-separator-same-as-value-delimiter");
-        _exceptionHelper.ResolveAndThrowIf(value == SPACE, "value-separator-or-value-delimiter-space");
+        ExceptionHelper.ResolveAndThrowIf(value == m_valueDelimiter, "value-separator-same-as-value-delimiter");
+        ExceptionHelper.ResolveAndThrowIf(value == Space, "value-separator-or-value-delimiter-space");
 
-        _valueSeparator = value;
+        m_valueSeparator = value;
         UpdateSpecialCharacterMask();
       }
     }
@@ -196,14 +196,14 @@
     {
       get
       {
-        return _valueDelimiter;
+        return m_valueDelimiter;
       }
       set
       {
-        _exceptionHelper.ResolveAndThrowIf(value == _valueSeparator, "value-separator-same-as-value-delimiter");
-        _exceptionHelper.ResolveAndThrowIf(value == SPACE, "value-separator-or-value-delimiter-space");
+        ExceptionHelper.ResolveAndThrowIf(value == m_valueSeparator, "value-separator-same-as-value-delimiter");
+        ExceptionHelper.ResolveAndThrowIf(value == Space, "value-separator-or-value-delimiter-space");
 
-        _valueDelimiter = value;
+        m_valueDelimiter = value;
         UpdateSpecialCharacterMask();
       }
     }
@@ -215,16 +215,14 @@
     {
       get
       {
-        if (_bufferIndex < _bufferEndIndex)
+        if (m_bufferIndex < m_bufferEndIndex)
         {
           //the buffer isn't empty so there must be more records
           return true;
         }
-        else
-        {
-          //the buffer is empty so peek into the reader to see whether there is more data
-          return (_reader.Peek() != -1);
-        }
+
+        //the buffer is empty so peek into the reader to see whether there is more data
+        return (m_reader.Peek() != -1);
       }
     }
 
@@ -235,11 +233,11 @@
     {
       get
       {
-        return _passedFirstRecord;
+        return m_passedFirstRecord;
       }
       set
       {
-        _passedFirstRecord = value;
+        m_passedFirstRecord = value;
       }
     }
 
@@ -253,15 +251,15 @@
     {
       reader.AssertNotNull("reader");
 
-      _reader = reader;
+      m_reader = reader;
       //the extra char is used to facilitate a faster peek operation
-      _buffer = new char[BUFFER_SIZE + 1];
-      _valueList = new string[16];
-      _valueBuffer = new char[128];
-      _valuePartStartIndex = -1;
+      m_buffer = new char[BufferSize + 1];
+      m_valueList = new string[16];
+      m_valueBuffer = new char[128];
+      m_valuePartStartIndex = -1;
       //set defaults
-      _valueSeparator = DefaultValueSeparator;
-      _valueDelimiter = DefaultValueDelimiter;
+      m_valueSeparator = DefaultValueSeparator;
+      m_valueDelimiter = DefaultValueDelimiter;
       //get the default special character mask
       UpdateSpecialCharacterMask();
     }
@@ -278,40 +276,40 @@
       {
         //taking a local copy allows optimisations that otherwise could not be performed because the CLR knows that no other thread
         //can touch our local reference
-        char[] buffer = _buffer;
+        char[] buffer = m_buffer;
 
         while (true)
         {
-          if (_bufferIndex != _bufferEndIndex)
+          if (m_bufferIndex != m_bufferEndIndex)
           {
-            char c = buffer[_bufferIndex++];
+            char c = buffer[m_bufferIndex++];
 
-            if ((c & _specialCharacterMask) == c)
+            if ((c & m_specialCharacterMask) == c)
             {
-              if (!_inDelimitedArea)
+              if (!m_inDelimitedArea)
               {
-                if (c == _valueDelimiter)
+                if (c == m_valueDelimiter)
                 {
                   //found a delimiter so enter delimited area and set the start index for the value
-                  _inDelimitedArea = true;
+                  m_inDelimitedArea = true;
                 }
-                else if (c == CR)
+                else if (c == Cr)
                 {
-                  if (buffer[_bufferIndex] == LF)
+                  if (buffer[m_bufferIndex] == Lf)
                   {
                     SwallowChar();
                   }
 
                   return true;
                 }
-                else if (c == LF)
+                else if (c == Lf)
                 {
                   return true;
                 }
               }
-              else if (c == _valueDelimiter)
+              else if (c == m_valueDelimiter)
               {
-                if (buffer[_bufferIndex] == _valueDelimiter)
+                if (buffer[m_bufferIndex] == m_valueDelimiter)
                 {
                   // delimiter is escaped, so swallow the escape char
                   SwallowChar();
@@ -319,7 +317,7 @@
                 else
                 {
                   //delimiter isn't escaped so we are no longer in a delimited area
-                  _inDelimitedArea = false;
+                  m_inDelimitedArea = false;
                 }
               }
             }
@@ -331,11 +329,9 @@
           }
         }
       }
-      else
-      {
-        //no more records - can't skip
-        return false;
-      }
+
+      //no more records - can't skip
+      return false;
     }
 
     /// <summary>
@@ -346,77 +342,77 @@
     /// </returns>
     public string[] ParseRecord()
     {
-      _valuesListEndIndex = 0;
+      ValuesListEndIndex = 0;
       char c = char.MinValue;
       //taking a local copy allows optimisations that otherwise could not be performed because the CLR knows that no other thread
       //can touch our local reference
-      char[] buffer = _buffer;
+      char[] buffer = m_buffer;
 
       while (true)
       {
-        if (_bufferIndex != _bufferEndIndex)
+        if (m_bufferIndex != m_bufferEndIndex)
         {
-          if (_valuePartStartIndex == -1)
+          if (m_valuePartStartIndex == -1)
           {
-            _valuePartStartIndex = _bufferIndex;
+            m_valuePartStartIndex = m_bufferIndex;
           }
 
-          c = buffer[_bufferIndex++];
+          c = buffer[m_bufferIndex++];
 
-          if ((c & _specialCharacterMask) == c)
+          if ((c & m_specialCharacterMask) == c)
           {
-            if (!_inDelimitedArea)
+            if (!m_inDelimitedArea)
             {
-              if (c == _valueDelimiter)
+              if (c == m_valueDelimiter)
               {
                 //found a delimiter so enter delimited area and set the start index for the value
-                _inDelimitedArea = true;
+                m_inDelimitedArea = true;
                 CloseValuePartExcludeCurrent();
-                _valuePartStartIndex = _bufferIndex;
+                m_valuePartStartIndex = m_bufferIndex;
 
                 //we have to make sure that delimited text isn't stripped if it is white-space
-                if (_valueBufferFirstEligibleLeadingWhiteSpace == 0)
+                if (m_valueBufferFirstEligibleLeadingWhiteSpace == 0)
                 {
-                  _valueBufferFirstEligibleLeadingWhiteSpace = _valueBufferEndIndex;
+                  m_valueBufferFirstEligibleLeadingWhiteSpace = m_valueBufferEndIndex;
                 }
               }
-              else if (c == _valueSeparator)
+              else if (c == m_valueSeparator)
               {
                 CloseValue(false);
               }
-              else if (c == CR)
+              else if (c == Cr)
               {
                 CloseValue(false);
 
-                if (buffer[_bufferIndex] == LF)
+                if (buffer[m_bufferIndex] == Lf)
                 {
                   SwallowChar();
                 }
 
                 break;
               }
-              else if (c == LF)
+              else if (c == Lf)
               {
                 CloseValue(false);
                 break;
               }
             }
-            else if (c == _valueDelimiter)
+            else if (c == m_valueDelimiter)
             {
-              if (buffer[_bufferIndex] == _valueDelimiter)
+              if (buffer[m_bufferIndex] == m_valueDelimiter)
               {
                 CloseValuePart();
                 SwallowChar();
-                _valuePartStartIndex = _bufferIndex;
+                m_valuePartStartIndex = m_bufferIndex;
               }
               else
               {
                 //delimiter isn't escaped so we are no longer in a delimited area
-                _inDelimitedArea = false;
+                m_inDelimitedArea = false;
                 CloseValuePartExcludeCurrent();
-                _valuePartStartIndex = _bufferIndex;
+                m_valuePartStartIndex = m_bufferIndex;
                 //we have to make sure that delimited text isn't stripped if it is white-space
-                _valueBufferFirstEligibleTrailingWhiteSpace = _valueBufferEndIndex;
+                m_valueBufferFirstEligibleTrailingWhiteSpace = m_valueBufferEndIndex;
               }
             }
           }
@@ -424,7 +420,7 @@
         else if (!FillBuffer())
         {
           //special case: if the last character was a separator we need to add a blank value. eg. CSV "Value," will result in "Value", ""
-          if (c == _valueSeparator)
+          if (c == m_valueSeparator)
           {
             AddValue(string.Empty);
           }
@@ -443,8 +439,8 @@
     /// </summary>
     private void CloseValuePart()
     {
-      AppendToValue(_valuePartStartIndex, _bufferIndex);
-      _valuePartStartIndex = -1;
+      AppendToValue(m_valuePartStartIndex, m_bufferIndex);
+      m_valuePartStartIndex = -1;
     }
 
     /// <summary>
@@ -452,30 +448,30 @@
     /// </summary>
     private void CloseValuePartExcludeCurrent()
     {
-      AppendToValue(_valuePartStartIndex, _bufferIndex - 1);
+      AppendToValue(m_valuePartStartIndex, m_bufferIndex - 1);
     }
 
     /// <summary>
     /// Closes the current value by adding it to the list of values in the current record. Assumes that there is actually a value to add, either in <c>_value</c> or in
-    /// <see cref="_buffer"/> starting at <see cref="_valuePartStartIndex"/> and ending at <see cref="_bufferIndex"/>.
+    /// <see cref="m_buffer"/> starting at <see cref="m_valuePartStartIndex"/> and ending at <see cref="m_bufferIndex"/>.
     /// </summary>
     /// <param name="includeCurrentChar">
     /// If <see langword="true"/>, the current character is included in the value. Otherwise, it is excluded.
     /// </param>
     private void CloseValue(bool includeCurrentChar)
     {
-      int endIndex = _bufferIndex;
+      int endIndex = m_bufferIndex;
 
-      if ((!includeCurrentChar) && (endIndex > _valuePartStartIndex))
+      if ((!includeCurrentChar) && (endIndex > m_valuePartStartIndex))
       {
         endIndex -= 1;
       }
 
-      Debug.Assert(_valuePartStartIndex >= 0, "_valuePartStartIndex must be > 0");
-      Debug.Assert(_valuePartStartIndex <= _bufferIndex, "_valuePartStartIndex must be less than or equal to _bufferIndex (" + _valuePartStartIndex + " > " + _bufferIndex + ")");
-      Debug.Assert(_valuePartStartIndex <= endIndex, "_valuePartStartIndex must be less than or equal to endIndex (" + _valuePartStartIndex + " > " + endIndex + ")");
+      Debug.Assert(m_valuePartStartIndex >= 0, "_valuePartStartIndex must be > 0");
+      Debug.Assert(m_valuePartStartIndex <= m_bufferIndex, "_valuePartStartIndex must be less than or equal to _bufferIndex (" + m_valuePartStartIndex + " > " + m_bufferIndex + ")");
+      Debug.Assert(m_valuePartStartIndex <= endIndex, "_valuePartStartIndex must be less than or equal to endIndex (" + m_valuePartStartIndex + " > " + endIndex + ")");
 
-      if (_valueBufferEndIndex == 0)
+      if (m_valueBufferEndIndex == 0)
       {
         if (endIndex == 0)
         {
@@ -484,12 +480,12 @@
         else
         {
           //the value did not require the use of the ValueBuilder
-          int startIndex = _valuePartStartIndex;
+          int startIndex = m_valuePartStartIndex;
           //taking a local copy allows optimisations that otherwise could not be performed because the CLR knows that no other thread
           //can touch our local reference
-          char[] buffer = _buffer;
+          char[] buffer = m_buffer;
 
-          if (!_preserveLeadingWhiteSpace)
+          if (!m_preserveLeadingWhiteSpace)
           {
             //strip all leading white-space
             while ((startIndex < endIndex) && (IsWhiteSpace(buffer[startIndex])))
@@ -498,7 +494,7 @@
             }
           }
 
-          if (!_preserveTrailingWhiteSpace)
+          if (!m_preserveTrailingWhiteSpace)
           {
             //strip all trailing white-space
             while ((endIndex > startIndex) && (IsWhiteSpace(buffer[endIndex - 1])))
@@ -513,23 +509,23 @@
       else
       {
         //we needed the ValueBuilder to compose the value
-        AppendToValue(_valuePartStartIndex, endIndex);
+        AppendToValue(m_valuePartStartIndex, endIndex);
 
-        if (!_preserveLeadingWhiteSpace || !_preserveTrailingWhiteSpace)
+        if (!m_preserveLeadingWhiteSpace || !m_preserveTrailingWhiteSpace)
         {
           //strip all white-space prior to _valueBufferFirstEligibleLeadingWhiteSpace and after _valueBufferFirstEligibleTrailingWhiteSpace
-          AddValue(GetValue(_valueBufferFirstEligibleLeadingWhiteSpace, _valueBufferFirstEligibleTrailingWhiteSpace));
+          AddValue(GetValue(m_valueBufferFirstEligibleLeadingWhiteSpace, m_valueBufferFirstEligibleTrailingWhiteSpace));
         }
         else
         {
           AddValue(GetValue());
         }
 
-        _valueBufferEndIndex = 0;
-        _valueBufferFirstEligibleLeadingWhiteSpace = 0;
+        m_valueBufferEndIndex = 0;
+        m_valueBufferFirstEligibleLeadingWhiteSpace = 0;
       }
 
-      _valuePartStartIndex = -1;
+      m_valuePartStartIndex = -1;
     }
 
     /// <summary>
@@ -543,7 +539,7 @@
     /// </returns>
     internal static bool IsWhiteSpace(char c)
     {
-      return ((c == SPACE) || (c == TAB));
+      return ((c == Space) || (c == Tab));
     }
 
     /// <summary>
@@ -554,15 +550,15 @@
     /// </returns>
     private bool FillBuffer()
     {
-      Debug.Assert(_bufferIndex == _bufferEndIndex);
+      Debug.Assert(m_bufferIndex == m_bufferEndIndex);
 
       //may need to close a value or value part depending on the state of the stream
-      if (_valuePartStartIndex != -1)
+      if (m_valuePartStartIndex != -1)
       {
-        if (_reader.Peek() != -1)
+        if (m_reader.Peek() != -1)
         {
           CloseValuePart();
-          _valuePartStartIndex = 0;
+          m_valuePartStartIndex = 0;
         }
         else
         {
@@ -570,12 +566,12 @@
         }
       }
 
-      _bufferEndIndex = _reader.Read(_buffer, 0, BUFFER_SIZE);
+      m_bufferEndIndex = m_reader.Read(m_buffer, 0, BufferSize);
       //this is possible because the buffer is one char bigger than BUFFER_SIZE. This fact is used to implement a faster peek operation
-      _buffer[_bufferEndIndex] = (char)_reader.Peek();
-      _bufferIndex = 0;
-      _passedFirstRecord = true;
-      return (_bufferEndIndex > 0);
+      m_buffer[m_bufferEndIndex] = (char)m_reader.Peek();
+      m_bufferIndex = 0;
+      m_passedFirstRecord = true;
+      return (m_bufferEndIndex > 0);
     }
 
     /// <summary>
@@ -587,13 +583,13 @@
     /// </returns>
     private bool FillBufferIgnoreValues()
     {
-      Debug.Assert(_bufferIndex == _bufferEndIndex);
-      _bufferEndIndex = _reader.Read(_buffer, 0, BUFFER_SIZE);
+      Debug.Assert(m_bufferIndex == m_bufferEndIndex);
+      m_bufferEndIndex = m_reader.Read(m_buffer, 0, BufferSize);
       //this is possible because the buffer is one char bigger than BUFFER_SIZE. This fact is used to implement a faster peek operation
-      _buffer[_bufferEndIndex] = (char)_reader.Peek();
-      _bufferIndex = 0;
-      _passedFirstRecord = true;
-      return (_bufferEndIndex > 0);
+      m_buffer[m_bufferEndIndex] = (char)m_reader.Peek();
+      m_bufferIndex = 0;
+      m_passedFirstRecord = true;
+      return (m_bufferEndIndex > 0);
     }
 
 
@@ -602,12 +598,12 @@
     /// </summary>
     private void SwallowChar()
     {
-      if (_bufferIndex < BUFFER_SIZE)
+      if (m_bufferIndex < BufferSize)
       {
         //in this case there are still unread chars in the buffer so just skip one
-        ++_bufferIndex;
+        ++m_bufferIndex;
       }
-      else if (_bufferIndex < _bufferEndIndex)
+      else if (m_bufferIndex < m_bufferEndIndex)
       {
         //in this case we are pointing to the second-to-last char in the buffer, so we need to refill the buffer since the last char is a peeked char
         FillBuffer();
@@ -616,7 +612,7 @@
       {
         //in this case we are pointing to the last char in the buffer, which is a peeked char. therefore, we need to refill and skip past that char
         FillBuffer();
-        ++_bufferIndex;
+        ++m_bufferIndex;
       }
     }
 
@@ -633,9 +629,9 @@
     /// </summary>
     public void Close()
     {
-      if (_reader != null)
+      if (m_reader != null)
       {
-        _reader.Close();
+        m_reader.Close();
       }
     }
 
@@ -648,32 +644,30 @@
     private void AddValue(string val)
     {
       EnsureValueListCapacity();
-      _valueList[_valuesListEndIndex++] = val;
+      m_valueList[ValuesListEndIndex++] = val;
     }
 
     /// <summary>
-    /// Gets an array of values that have been added to <see cref="_valueList"/>.
+    /// Gets an array of values that have been added to <see cref="m_valueList"/>.
     /// </summary>
     /// <returns>
     /// An array of type <c>string</c> containing all the values in the value list, or <see langword="null"/> if there are no values in the list.
     /// </returns>
     private string[] GetValues()
     {
-      if (_valuesListEndIndex > 0)
+      if (ValuesListEndIndex > 0)
       {
-        string[] retVal = new string[_valuesListEndIndex];
+        string[] retVal = new string[ValuesListEndIndex];
 
-        for (int i = 0; i < _valuesListEndIndex; ++i)
+        for (int i = 0; i < ValuesListEndIndex; ++i)
         {
-          retVal[i] = _valueList[i];
+          retVal[i] = m_valueList[i];
         }
 
         return retVal;
       }
-      else
-      {
-        return null;
-      }
+
+      return null;
     }
 
     /// <summary>
@@ -681,21 +675,21 @@
     /// </summary>
     private void EnsureValueListCapacity()
     {
-      if (_valuesListEndIndex == _valueList.Length)
+      if (ValuesListEndIndex == m_valueList.Length)
       {
-        string[] newBuffer = new string[_valueList.Length * 2];
+        string[] newBuffer = new string[m_valueList.Length * 2];
 
-        for (int i = 0; i < _valuesListEndIndex; ++i)
+        for (int i = 0; i < ValuesListEndIndex; ++i)
         {
-          newBuffer[i] = _valueList[i];
+          newBuffer[i] = m_valueList[i];
         }
 
-        _valueList = newBuffer;
+        m_valueList = newBuffer;
       }
     }
 
     /// <summary>
-    /// Appends the specified characters from <see cref="_buffer"/> onto the end of the current value.
+    /// Appends the specified characters from <see cref="m_buffer"/> onto the end of the current value.
     /// </summary>
     /// <param name="startIndex">
     /// The index at which to begin copying.
@@ -706,14 +700,14 @@
     private void AppendToValue(int startIndex, int endIndex)
     {
       EnsureValueBufferCapacity(endIndex - startIndex);
-      char[] valueBuffer = _valueBuffer;
-      char[] buffer = _buffer;
+      char[] valueBuffer = m_valueBuffer;
+      char[] buffer = m_buffer;
 
       //profiling revealed a loop to be faster than Array.Copy
       //in addition, profiling revealed that taking a local copy of the _buffer reference impedes performance here
       for (int i = startIndex; i < endIndex; ++i)
       {
-        valueBuffer[_valueBufferEndIndex++] = buffer[i];
+        valueBuffer[m_valueBufferEndIndex++] = buffer[i];
       }
     }
 
@@ -723,7 +717,7 @@
     /// <returns></returns>
     private string GetValue()
     {
-      return new string(_valueBuffer, 0, _valueBufferEndIndex);
+      return new string(m_valueBuffer, 0, m_valueBufferEndIndex);
     }
 
     /// <summary>
@@ -741,25 +735,25 @@
     private string GetValue(int valueBufferFirstEligibleLeadingWhiteSpace, int valueBufferFirstEligibleTrailingWhiteSpace)
     {
       int startIndex = 0;
-      int endIndex = _valueBufferEndIndex - 1;
+      int endIndex = m_valueBufferEndIndex - 1;
 
-      if (!_preserveLeadingWhiteSpace)
+      if (!m_preserveLeadingWhiteSpace)
       {
-        while ((startIndex < valueBufferFirstEligibleLeadingWhiteSpace) && (IsWhiteSpace(_valueBuffer[startIndex])))
+        while ((startIndex < valueBufferFirstEligibleLeadingWhiteSpace) && (IsWhiteSpace(m_valueBuffer[startIndex])))
         {
           ++startIndex;
         }
       }
 
-      if (!_preserveTrailingWhiteSpace)
+      if (!m_preserveTrailingWhiteSpace)
       {
-        while ((endIndex >= valueBufferFirstEligibleTrailingWhiteSpace) && (IsWhiteSpace(_valueBuffer[endIndex])))
+        while ((endIndex >= valueBufferFirstEligibleTrailingWhiteSpace) && (IsWhiteSpace(m_valueBuffer[endIndex])))
         {
           --endIndex;
         }
       }
 
-      return new string(_valueBuffer, startIndex, endIndex - startIndex + 1);
+      return new string(m_valueBuffer, startIndex, endIndex - startIndex + 1);
     }
 
     /// <summary>
@@ -767,17 +761,17 @@
     /// </summary>
     private void EnsureValueBufferCapacity(int count)
     {
-      if ((_valueBufferEndIndex + count) > _valueBuffer.Length)
+      if ((m_valueBufferEndIndex + count) > m_valueBuffer.Length)
       {
-        char[] newBuffer = new char[Math.Max(_valueBuffer.Length * 2, (count >> 1) << 2)];
+        char[] newBuffer = new char[Math.Max(m_valueBuffer.Length * 2, (count >> 1) << 2)];
 
         //profiling revealed a loop to be faster than Array.Copy, despite Array.Copy having an internal implementation
-        for (int i = 0; i < _valueBufferEndIndex; ++i)
+        for (int i = 0; i < m_valueBufferEndIndex; ++i)
         {
-          newBuffer[i] = _valueBuffer[i];
+          newBuffer[i] = m_valueBuffer[i];
         }
 
-        _valueBuffer = newBuffer;
+        m_valueBuffer = newBuffer;
       }
     }
 
@@ -786,7 +780,7 @@
     /// </summary>
     private void UpdateSpecialCharacterMask()
     {
-      _specialCharacterMask = _valueSeparator | _valueDelimiter | CR | LF;
+      m_specialCharacterMask = m_valueSeparator | m_valueDelimiter | Cr | Lf;
     }
   }
 }

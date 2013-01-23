@@ -1,5 +1,8 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using System.IO;
+  using System.Linq;
+  using Barista.Csv;
   using Barista.Extensions;
   using Barista.Library;
   using Barista.SharePoint.Services;
@@ -8,8 +11,8 @@
   using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
-  using System.Xml;
   using System.Xml.Linq;
+  using System.Text;
 
   [Serializable]
   public class DocumentInstance : ObjectInstance
@@ -31,6 +34,132 @@
           MimeType = "application/pdf"
         };
       return byteResult;
+    }
+
+    [JSFunction(Name = "csv2Json")]
+    public object Csv2Json(object csv, object csvOptions)
+    {
+      if (csv == null || csv == Null.Value || csv == Undefined.Value)
+        return null;
+
+      string csvString;
+      if (csv is Base64EncodedByteArrayInstance)
+        csvString = (csv as Base64EncodedByteArrayInstance).ToUtf8String();
+      else
+        csvString = csv.ToString();
+      
+      var options = new CsvOptions(this.Engine.Object.InstancePrototype);
+
+      if (csvOptions != null && csvOptions != Undefined.Value && csvOptions != Null.Value)
+        options = JurassicHelper.Coerce<CsvOptions>(this.Engine, csvOptions);
+
+      using (var csvReader = CsvReader.FromCsvString(csvString))
+      {
+        csvReader.PreserveLeadingWhiteSpace = options.PreserveLeadingWhiteSpace;
+        csvReader.PreserveTrailingWhiteSpace = options.PreserveTrailingWhiteSpace;
+        csvReader.ValueDelimiter = options.ValueDelimiter[0];
+        csvReader.ValueSeparator = options.ValueSeparator[0];
+
+        HeaderRecord headerRecord = null;
+        if (options.HasHeader)
+          headerRecord = csvReader.ReadHeaderRecord();
+
+        var result = new List<ObjectInstance>();
+        DataRecord currentRecord;
+        while ((currentRecord = csvReader.ReadDataRecord()) != null)
+        {
+          ObjectInstance currentObject;
+          if (headerRecord == null)
+          {
+// ReSharper disable CoVariantArrayConversion
+            currentObject = this.Engine.Array.Construct(currentRecord.Values.ToArray());
+// ReSharper restore CoVariantArrayConversion
+          }
+          else
+          {
+            currentObject = this.Engine.Object.Construct();
+            foreach (var key in headerRecord.Values)
+            {
+              currentObject.SetPropertyValue(key, currentRecord[key], false);
+            }
+          }
+          result.Add(currentObject);
+        }
+
+// ReSharper disable CoVariantArrayConversion
+        return this.Engine.Array.Construct(result.ToArray());
+// ReSharper restore CoVariantArrayConversion
+      }
+    }
+
+    [JSFunction(Name = "json2Csv")]
+    public object Json2Csv(object array, object csvOptions)
+    {
+      if (array == null || array == Null.Value || array == Undefined.Value || (array is ArrayInstance) == false || (array as ArrayInstance).Length == 0)
+        return Null.Value;
+
+      var options = new CsvOptions(this.Engine.Object.InstancePrototype);
+
+      if (csvOptions != null && csvOptions != Undefined.Value && csvOptions != Null.Value)
+        options = JurassicHelper.Coerce<CsvOptions>(this.Engine, csvOptions);
+
+      var jsonArray = array as ArrayInstance;
+
+      HeaderRecord headerRecord = null;
+      if (options.HasHeader)
+      {
+        var firstRecord = jsonArray[0] as ObjectInstance;
+        if (firstRecord == null)
+          return Null.Value;
+
+        var keys = firstRecord.Properties
+          .Select(property => property.Name)
+          .ToList();
+
+        headerRecord = new HeaderRecord(keys);
+      }
+
+      using (var ms = new MemoryStream())
+      {
+        using (var csvWriter = new CsvWriter(ms))
+        {
+          csvWriter.ValueDelimiter = options.ValueDelimiter[0];
+          csvWriter.ValueSeparator = options.ValueSeparator[0];
+          
+          if (headerRecord != null)
+            csvWriter.WriteHeaderRecord(headerRecord);
+
+          foreach (var value in jsonArray.ElementValues.OfType<ObjectInstance>())
+          {
+            var currentRecord = new DataRecord(headerRecord);
+            if (headerRecord == null)
+            {
+              foreach (var property in value.Properties)
+              {
+                var propertyValue = String.Empty;
+                if (property.Value != null)
+                  propertyValue = property.Value.ToString();
+                currentRecord.Values.Add(propertyValue);
+              }
+            }
+            else
+            {
+              foreach (var key in headerRecord.Values)
+              {
+                var propertyValue = String.Empty;
+                if (value.HasProperty(key) && value[key] != null)
+                  propertyValue = value[key].ToString();
+                currentRecord.Values.Add(propertyValue);
+              }
+            }
+
+            csvWriter.WriteDataRecord(currentRecord);
+          }
+          csvWriter.Flush();
+          ms.Seek(0, SeekOrigin.Begin);
+          return Encoding.UTF8.GetString(ms.ToArray());
+        }
+      }
     }
 
     [JSFunction(Name = "xml2Json")]
