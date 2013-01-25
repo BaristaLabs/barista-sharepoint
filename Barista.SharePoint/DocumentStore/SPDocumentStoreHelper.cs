@@ -368,7 +368,7 @@
       if (folder == null)
         throw new ArgumentNullException("folder");
 
-      var rootFolderUrl = folder.ParentWeb.Lists[folder.ParentListId].RootFolder.Url;
+      var rootFolderUrl = folder.DocumentLibrary.RootFolder.Url;
       var folderListItem = folder.Item ?? folder.ParentWeb.GetFolder(folder.Url).Item;
 
       var result = new Folder
@@ -379,7 +379,7 @@
 
       if (folder.Url == rootFolderUrl)
       {
-        var list = folder.ParentWeb.Lists[folder.ParentListId];
+        var list = folder.DocumentLibrary;
         result.FullPath = "";
         result.Created = list.Created;
         result.Modified = list.LastItemModifiedDate;

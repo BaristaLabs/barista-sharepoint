@@ -7,17 +7,19 @@
   using Barista.DocumentStore;
   using Microsoft.SharePoint.Administration;
   using System.Security.Principal;
+  using Microsoft.SharePoint.Utilities;
 
   public static class PermissionsHelper
   {
     public static PermissionsInfo MapPermissionsFromSPSecurableObject(SPSecurableObject securableObject)
     {
-      var result = new PermissionsInfo();
+      var result = new PermissionsInfo
+        {
+          HasUniqueRoleAssignments = securableObject.HasUniqueRoleAssignments,
+          Principals = new List<PrincipalRoleInfo>()
+        };
 
-      result.HasUniqueRoleAssignments = securableObject.HasUniqueRoleAssignments;
 
-
-      result.Principals = new List<PrincipalRoleInfo>();
       foreach (var roleAssignment in securableObject.RoleAssignments.OfType<SPRoleAssignment>())
       {
         result.Principals.Add(MapPrincipalRoleInfoFromSPRoleAssignment(roleAssignment));
@@ -52,18 +54,18 @@
       if (roleAssignment.Member is SPUser)
       {
         var spUser = roleAssignment.Member as SPUser;
-        result.Principal = new User()
-        {
-          Email = spUser.Email,
-          LoginName = spUser.LoginName,
-          Name = spUser.Name,
-        };
+        result.Principal = new User
+          {
+            Email = spUser.Email,
+            LoginName = spUser.LoginName,
+            Name = spUser.Name,
+          };
       }
       else if (roleAssignment.Member is SPGroup)
       {
         var spGroup = roleAssignment.Member as SPGroup;
-        result.Principal = new Group()
-        {
+        result.Principal = new Group
+          {
           LoginName = spGroup.LoginName,
           Name = spGroup.Name,
           DistributionGroupEmail = spGroup.DistributionGroupEmail,
@@ -77,15 +79,15 @@
       result.Roles = new List<Role>();
       foreach (var role in roleAssignment.RoleDefinitionBindings.OfType<SPRoleDefinition>())
       {
-        var r = new Role()
-        {
+        var r = new Role
+          {
           Name = role.Name,
           Order = role.Order,
           Description = role.Description,
         };
 
         string permissionsString = Enum.Format(typeof(SPBasePermissions), role.BasePermissions, "F");
-        r.BasePermissions = permissionsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        r.BasePermissions = permissionsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
         result.Roles.Add(r);
       }
@@ -97,31 +99,46 @@
     {
       if (principalType.ToLowerInvariant() == "user")
       {
-        SPUser user = web.AllUsers.OfType<SPUser>().Where(u => u.LoginName == principalName).FirstOrDefault();
+        SPUser user = null;
+        try
+        {
+          user = web.AllUsers[principalName];
+        }
+        catch (Exception)
+        {
+          /* Do Nothing */
+        }
+
         if (user == null)
         {
           try
           {
+            //this is a quicker way to lookup if a UPN exists rather than attempting to execute EnsureUser which tends to be SLOOOOWWW.
+            bool reachMaxCount;
+            var principals = SPUtility.SearchWindowsPrincipals(web.Site.WebApplication, principalName, SPPrincipalType.User, 1,
+                                              out reachMaxCount);
+            if (principals == null || principals.Count == 0)
+              return null;
+
             user = web.EnsureUser(principalName);
           }
           catch
           {
             //Do Nothing...
           }
+
           if (user == null)
             return null;
         }
         return user;
       }
-      else
+
+      var group = web.Groups[principalName];
+      if (group == null)
       {
-        SPGroup group = web.Groups[principalName];
-        if (group == null)
-        {
-          throw new InvalidOperationException("The specified group could not be found.");
-        }
-        return group;
+        throw new InvalidOperationException("The specified group could not be found.");
       }
+      return group;
     }
 
     public static SPRoleType GetRoleType(SPWeb web, string roleName)
@@ -132,11 +149,10 @@
     /// <summary>
     /// Adds the specified user to the specified role for the specified list. Breaks Role Inheritance on the List Item if it hasn't already been broken.
     /// </summary>
+    /// <param name="sourceWeb"></param>
     /// <param name="list"></param>
-    /// <param name="currentPrincipal"></param>
-    /// <param name="roleName"></param>
-    /// <param name="doSystemUpdate"></param>
-    /// <param name="eventFiringEnabled"></param>
+    /// <param name="principal"></param>
+    /// <param name="roleTypeValue"></param>
     public static void AddListPermissionsForPrincipal(SPWeb sourceWeb, SPList list, SPPrincipal principal, SPRoleType roleTypeValue)
     {
       if (principal == null)
@@ -208,11 +224,11 @@
     /// <summary>
     /// Adds the specified user to the specified role for the specified list item. Breaks Role Inheritance on the List Item if it hasn't already been broken.
     /// </summary>
-    /// <param name="sourceSite"></param>
     /// <param name="sourceWeb"></param>
     /// <param name="listItem"></param>
     /// <param name="principal"></param>
     /// <param name="roleTypeValue"></param>
+    /// <param name="doSystemUpdate"></param>
     public static void AddListItemPermissionsForPrincipal(SPWeb sourceWeb, SPListItem listItem, SPPrincipal principal, SPRoleType roleTypeValue, bool doSystemUpdate)
     {
       if (principal == null)
@@ -251,10 +267,11 @@
     /// <summary>
     /// Removes the specified user from the specified list item. Breaks Role Inheritance on the List Item if it hasn't already been broken.
     /// </summary>
-    /// <param name="sourceSite"></param>
     /// <param name="sourceWeb"></param>
     /// <param name="listItem"></param>
     /// <param name="principal"></param>
+    /// <param name="roleTypeValue"></param>
+    /// <param name="doSystemUpdate"></param>
     public static bool RemoveListItemPermissionsForPrincipal(SPWeb sourceWeb, SPListItem listItem, SPPrincipal principal, SPRoleType roleTypeValue, bool doSystemUpdate)
     {
       if (principal == null)
@@ -338,7 +355,8 @@
 
     public static bool IsRunningUnderElevatedPrivledges(SPApplicationPool applicationPool)
     {
-      return WindowsIdentity.GetCurrent().User == applicationPool.ManagedAccount.Sid;
+      var windowsIdentity = WindowsIdentity.GetCurrent();
+      return windowsIdentity != null && windowsIdentity.User == applicationPool.ManagedAccount.Sid;
     }
   }
 }

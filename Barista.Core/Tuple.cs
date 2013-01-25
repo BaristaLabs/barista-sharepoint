@@ -5,7 +5,7 @@
   using System.Diagnostics;
   using System.Globalization;
 
-  static class Tuple
+  public static class Tuple
   {
     public static Tuple<T1, T2> Create<T1, T2>(T1 item1, T2 item2)
     {
@@ -14,7 +14,7 @@
   }
 
   [DebuggerDisplay("Item1={Item1};Item2={Item2}")]
-  class Tuple<T1, T2> : IFormattable
+  public class Tuple<T1, T2> : IFormattable
   {
     public T1 Item1 { get; private set; }
     public T2 Item2 { get; private set; }
@@ -43,8 +43,7 @@
       var other = obj as Tuple<T1, T2>;
       if (object.ReferenceEquals(other, null))
         return false;
-      else
-        return Item1Comparer.Equals(Item1, other.Item1) && Item2Comparer.Equals(Item2, other.Item2);
+      return Item1Comparer.Equals(Item1, other.Item1) && Item2Comparer.Equals(Item2, other.Item2);
     }
     #endregion
 
