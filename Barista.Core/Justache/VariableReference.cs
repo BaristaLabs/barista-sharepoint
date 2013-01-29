@@ -7,8 +7,7 @@ namespace Barista.Justache
 
   public class VariableReference : Part
   {
-    private static readonly Regex NotEscapedRegex = new Regex(@"^(?<LCB>{)?((?<NotEscaped>&)\s*?)?(?<Path>.+?)(?<TCB>})?$", RegexOptions.Compiled);
-    private static readonly Regex FormattingRegex = new Regex(@"^(?<LCB>{)?((?<NotEscaped>&)\s*?)?(?<Path>.+?):\((?<Format>.*)\)(?<TCB>})?$", RegexOptions.Compiled);
+    private static readonly Regex FormattingRegex = new Regex(@"^(?<LCB>{)?((?<NotEscaped>&)\s*?)?(?<Path>.+?)(?<HasFormatting>:\((?<Format>.*)\))?(?<TCB>})?$", RegexOptions.Compiled);
     private readonly string m_path;
     private readonly bool m_escaped = true;
     private readonly string m_formatString;
@@ -23,19 +22,7 @@ namespace Barista.Justache
       m_path = path;
 
       if (!FormattingRegex.IsMatch(path))
-      {
-        if (!NotEscapedRegex.IsMatch(path))
-          return;
-
-        var notEscapedMatch = NotEscapedRegex.Match(path);
-        if (notEscapedMatch.Groups["NotEscaped"].Success)
-          m_escaped = false;
-        else if (notEscapedMatch.Groups["LCB"].Success && notEscapedMatch.Groups["TCB"].Success)
-          m_escaped = false;
-        
-        m_path = notEscapedMatch.Groups["Path"].Value;
         return;
-      }
 
       var match = FormattingRegex.Match(path);
       if (match.Groups["NotEscaped"].Success)
@@ -43,7 +30,9 @@ namespace Barista.Justache
       else if (match.Groups["LCB"].Success && match.Groups["TCB"].Success)
         m_escaped = false;
 
-      m_formatString = match.Groups["Format"].Value;
+      if (match.Groups["HasFormatting"].Success)
+        m_formatString = match.Groups["Format"].Value;
+
       m_path = match.Groups["Path"].Value;
     }
 

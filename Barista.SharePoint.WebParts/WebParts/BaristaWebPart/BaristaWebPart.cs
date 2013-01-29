@@ -132,7 +132,7 @@
       var resultText = System.Text.Encoding.UTF8.GetString(result.Content);
 
       //TODO: Based on the content type of the result, emit the contents differently.
-      LiteralControl cntrl = new LiteralControl(resultText);
+      var cntrl = new LiteralControl(resultText);
       Controls.Add(cntrl);
     }
 
