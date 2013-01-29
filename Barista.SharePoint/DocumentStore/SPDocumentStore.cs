@@ -199,7 +199,7 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            list.Delete();
+            list.Recycle();
           }
           finally
           {
@@ -368,7 +368,7 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            folder.Delete();
+            folder.Recycle();
           }
           finally
           {
@@ -793,7 +793,7 @@
             if (entityPartFile == null)
               return false;
 
-            entityPartFile.ParentFolder.Delete();
+            entityPartFile.ParentFolder.Recycle();
           }
           finally
           {
@@ -1462,7 +1462,7 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            entityPartFile.Delete();
+            entityPartFile.Recycle();
 
             string contentHash;
             SPDocumentStoreHelper.RemoveContentEntityPartKeyValue(web, list, entityPartFile.ParentFolder, partName, out contentHash);
@@ -1966,7 +1966,7 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            attachment.Delete();
+            attachment.Recycle();
           }
           finally
           {
