@@ -35,7 +35,7 @@
         if (dsApplicationLog == null)
         {
           var data = DocumentStoreHelper.SerializeObjectToJson(new ApplicationLog());
-          dsApplicationLog = client.CreateEntity(repository.Configuration.ContainerTitle, folder.FullPath, Constants.ApplicationLogV1Namespace, data);
+          dsApplicationLog = client.CreateEntity(repository.Configuration.ContainerTitle, folder.FullPath, null, Constants.ApplicationLogV1Namespace, data);
         }
 
         var entityPartClient = repository.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();

@@ -182,14 +182,16 @@
     #endregion
 
     #region Entity
+
     /// <summary>
     /// Creates a new entity in the repository in the specified path with the specified data and returns its value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <param name="title"></param>
     /// <param name="path"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, string data)
+    public Entity<T> CreateEntity<T>(string title, string path, string data)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(T));
 
@@ -197,7 +199,7 @@
         throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
 
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, data);
+      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityDefinition.EntityNamespace, data);
 
       if (result == null)
         return null;
@@ -209,9 +211,10 @@
     /// Creates a new entity in the repository and returns its value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <param name="title"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(T value)
+    public Entity<T> CreateEntity<T>(string title, T value)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(T));
 
@@ -221,7 +224,7 @@
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
       var json = DocumentStoreHelper.SerializeObjectToJson(value);
-      var entity = documentStore.CreateEntity(this.Configuration.ContainerTitle, entityDefinition.EntityNamespace, json);
+      var entity = documentStore.CreateEntity(this.Configuration.ContainerTitle, title, entityDefinition.EntityNamespace, json);
 
       if (entity == null)
         return null;
@@ -234,9 +237,10 @@
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="path"></param>
+    /// <param name="title"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, T value)
+    public Entity<T> CreateEntity<T>(string path, string title, T value)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(T));
 
@@ -246,7 +250,7 @@
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
       var json = DocumentStoreHelper.SerializeObjectToJson(value);
-      var entity = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, json);
+      var entity = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityDefinition.EntityNamespace, json);
 
       if (entity == null)
         return null;
@@ -261,11 +265,12 @@
     /// <param name="entityId"></param>
     /// <param name="sourcePath"></param>
     /// <param name="targetPath"></param>
+    /// <param name="newTitle"></param>
     /// <returns></returns>
-    public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath)
+    public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath, string newTitle)
     {
       var entity = GetEntity<T>(entityId, sourcePath);
-      var newEntity = CreateEntity<T>(targetPath, entity.Data);
+      var newEntity = CreateEntity<T>(targetPath, newTitle, entity.Data);
 
       if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
       {
@@ -332,9 +337,10 @@
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="path"></param>
+    /// <param name="title"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public Entity<TEntity> GetOrCreateEntitySingleton<TEntity>(string path, TEntity defaultValue)
+    public Entity<TEntity> GetOrCreateEntitySingleton<TEntity>(string path, string title, TEntity defaultValue)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
 
@@ -354,7 +360,7 @@
           if (result == null)
           {
             var json = DocumentStoreHelper.SerializeObjectToJson(defaultValue);
-            result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, json);
+            result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityDefinition.EntityNamespace, json);
           }
         }
       }
@@ -365,13 +371,13 @@
       return new Entity<TEntity>(result);
     }
 
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string data)
+    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string title, string data)
     {
       TEntity entity = DocumentStoreHelper.DeserializeObjectFromJson<TEntity>(data);
-      return CreateOrUpdateEntitySingleton(path, entity);
+      return CreateOrUpdateEntitySingleton(path, title, entity);
     }
 
-    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, TEntity entity)
+    public Entity<TEntity> CreateOrUpdateEntitySingleton<TEntity>(string path, string title, TEntity entity)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
 
@@ -391,7 +397,7 @@
           if (result == null)
           {
             var json = DocumentStoreHelper.SerializeObjectToJson(entity);
-            result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityDefinition.EntityNamespace, json);
+            result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityDefinition.EntityNamespace, json);
           }
           else
           {

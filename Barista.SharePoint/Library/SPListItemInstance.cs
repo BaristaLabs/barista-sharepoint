@@ -5,12 +5,10 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System.Xml.Linq;
-  using System.Data;
   using System.Collections;
   using Microsoft.SharePoint.Taxonomy;
-  using System.Reflection;
   using Barista.SharePoint.Taxonomy.Library;
+  using System.Text;
 
   [Serializable]
   public class SPListItemConstructor : ClrFunction
@@ -42,7 +40,7 @@
   [Serializable]
   public class SPListItemInstance : ObjectInstance
   {
-    private SPListItem m_listItem;
+    private readonly SPListItem m_listItem;
 
     public SPListItemInstance(ObjectInstance prototype)
       : base(prototype)
@@ -164,6 +162,16 @@
       return new SPFileInstance(this.Engine.Object.InstancePrototype, m_listItem.File);
     }
 
+    [JSFunction(Name = "getFileContentsAsJson")]
+    public object GetFileContentsAsJson()
+    {
+      if (m_listItem.File == null)
+        return null;
+
+      var fileContents = m_listItem.File.OpenBinary(SPOpenBinaryOptions.None);
+      return JSONObject.Parse(this.Engine, Encoding.UTF8.GetString(fileContents), null);
+    }
+
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
@@ -185,7 +193,7 @@
     }
 
     [JSFunction(Name = "setFieldValues")]
-    public void setFieldValues(object fieldValues)
+    public void SetFieldValues(object fieldValues)
     {
       Hashtable ht = SPHelper.GetFieldValuesHashtableFromPropertyObject(fieldValues);
       foreach (var key in ht.Keys)
@@ -204,7 +212,7 @@
       TaxonomyField taxonomyField = m_listItem.Fields[fieldName] as TaxonomyField;
       if (taxonomyField != null)
       {
-        var term = fieldValue as TermInstance;
+        var term = fieldValue;
         taxonomyField.SetFieldValue(m_listItem, term.Term);
       }
     }
@@ -255,7 +263,7 @@
           case SPFieldType.Integer:
             {
               int value;
-              if (listItem.TryGetSPFieldValue<int>(field.Id, out value))
+              if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 result.SetPropertyValue(field.InternalName, value, false);
                 //ArrayInstance.Push(result, Engine.Array.Construct(field.Title, value));
@@ -265,7 +273,7 @@
           case SPFieldType.Boolean:
             {
               bool value;
-              if (listItem.TryGetSPFieldValue<bool>(field.Id, out value))
+              if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 result.SetPropertyValue(field.InternalName, value, false);
               }
@@ -274,7 +282,7 @@
           case SPFieldType.Number:
             {
               double value;
-              if (listItem.TryGetSPFieldValue<double>(field.Id, out value))
+              if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 result.SetPropertyValue(field.InternalName, value, false);
               }
@@ -283,7 +291,7 @@
           case SPFieldType.DateTime:
             {
               DateTime value;
-              if (listItem.TryGetSPFieldValue<DateTime>(field.Id, out value))
+              if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 result.SetPropertyValue(field.InternalName, JurassicHelper.ToDateInstance(engine, new DateTime(value.Ticks, DateTimeKind.Local)), false);
               }
@@ -292,7 +300,7 @@
           case SPFieldType.User:
             {
               string userToken;
-              if (listItem.TryGetSPFieldValue<string>(field.Id, out userToken))
+              if (listItem.TryGetSPFieldValue(field.Id, out userToken))
               {
                 var fieldUserValue = new SPFieldUserValue(listItem.ParentList.ParentWeb, userToken);
                 var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
@@ -303,7 +311,7 @@
           default:
             {
               object value;
-              if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
+              if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 var stringValue = field.GetFieldValueAsText(value);
 
@@ -327,7 +335,7 @@
       foreach (var field in fields.OfType<SPField>())
       {
         object value;
-        if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
+        if (listItem.TryGetSPFieldValue(field.Id, out value))
         {
           var stringValue = field.GetFieldValueAsHtml(value);
           result.SetPropertyValue(field.InternalName, stringValue, false);
@@ -346,7 +354,7 @@
       foreach (var field in fields.OfType<SPField>())
       {
         object value;
-        if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
+        if (listItem.TryGetSPFieldValue(field.Id, out value))
         {
           var stringValue = field.GetFieldValueAsText(value);
           result.SetPropertyValue(field.InternalName, stringValue, false);
@@ -365,7 +373,7 @@
       foreach (var field in fields.OfType<SPField>())
       {
         object value;
-        if (listItem.TryGetSPFieldValue<object>(field.Id, out value))
+        if (listItem.TryGetSPFieldValue(field.Id, out value))
         {
           var stringValue = field.GetFieldValueForEdit(value);
           result.SetPropertyValue(field.InternalName, stringValue, false);

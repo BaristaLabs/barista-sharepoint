@@ -228,15 +228,14 @@
     /// <param name="listItem"></param>
     /// <param name="principal"></param>
     /// <param name="roleTypeValue"></param>
-    /// <param name="doSystemUpdate"></param>
-    public static void AddListItemPermissionsForPrincipal(SPWeb sourceWeb, SPListItem listItem, SPPrincipal principal, SPRoleType roleTypeValue, bool doSystemUpdate)
+    public static void AddListItemPermissionsForPrincipal(SPWeb sourceWeb, SPListItem listItem, SPPrincipal principal, SPRoleType roleTypeValue)
     {
       if (principal == null)
         throw new ArgumentNullException("principal");
 
-      SPRoleAssignment roleAssignment = new SPRoleAssignment(principal);
+      var roleAssignment = new SPRoleAssignment(principal);
 
-      SPRoleDefinition roleDefinition = sourceWeb.RoleDefinitions.GetByType(roleTypeValue);
+      var roleDefinition = sourceWeb.RoleDefinitions.GetByType(roleTypeValue);
       roleAssignment.RoleDefinitionBindings.Add(roleDefinition);
 
       sourceWeb.AllowUnsafeUpdates = true;
@@ -249,14 +248,14 @@
         sourceWeb.AllowUnsafeUpdates = true;
 
         listItem.RoleAssignments.Add(roleAssignment);
+        
+        //if (doSystemUpdate)
+        //  listItem.SystemUpdate();
+        //else
+        //  listItem.Update();
 
-        if (doSystemUpdate)
-          listItem.SystemUpdate();
-        else
-          listItem.Update();
-
-        if (listItem.File != null)
-          listItem.File.Update();
+        //if (listItem.File != null)
+        //  listItem.File.Update();
       }
       finally
       {

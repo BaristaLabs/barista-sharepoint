@@ -46,14 +46,16 @@
     #endregion
 
     #region Entities
+
     /// <summary>
     /// Creates a new entity in the document store, contained in the specified container in the specified namespace.
     /// </summary>
     /// <param name="containerTitle">The container title. Required.</param>
+    /// <param name="title">The title of the entity. Optiona.</param>
     /// <param name="namespace">The namespace of the entity. Optional.</param>
     /// <param name="data">The data to store with the entity. Optional.</param>
     /// <returns></returns>
-    Entity CreateEntity(string containerTitle, string @namespace, string data);
+    Entity CreateEntity(string containerTitle, string title, string @namespace, string data);
 
     /// <summary>
     /// Deletes the specified entity from the specified container.

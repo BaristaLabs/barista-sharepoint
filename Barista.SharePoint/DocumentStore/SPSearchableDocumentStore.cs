@@ -11,7 +11,7 @@ namespace Barista.SharePoint.DocumentStore
   /// </summary>
   public class SPSearchableDocumentStore : SPMemoryCachedDocumentStore
   {
-    public override Barista.DocumentStore.Entity CreateEntity(string containerTitle, string path, string @namespace, string data)
+    public override Barista.DocumentStore.Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
     {
       var entity =  base.CreateEntity(containerTitle, path, @namespace, data);
 

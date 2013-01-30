@@ -146,7 +146,7 @@
       get
       {
         var result = this.Engine.Array.Construct();
-        foreach (var feature in m_web.Features.OfType<SPFeature>())
+        foreach (var feature in m_web.Features)
         {
           if (feature == null)
             continue;
@@ -615,9 +615,9 @@
     public ArrayInstance GetWebs()
     {
       var result = this.Engine.Array.Construct();
-      foreach (var web in m_web.Webs.OfType<SPWeb>())
+      foreach (var web in m_web.Webs)
       {
-        ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, web));
+        ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, (SPWeb)web));
       }
 
       return result;

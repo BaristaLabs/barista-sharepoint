@@ -13,6 +13,7 @@
   using System.Linq.Expressions;
   using System.Net;
   using Microsoft.SharePoint.Utilities;
+  using System.Text;
 
   /// <summary>
   /// Represents a SharePoint-backed Document Store that uses document sets as containers to hold entities.
@@ -102,19 +103,19 @@
     public virtual Container CreateContainer(string containerTitle, string description)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           web.AllowUnsafeUpdates = true;
           try
           {
-            Guid listId = web.Lists.Add(containerTitle,                         //List Title
-                                        description,                            //List Description
-                                        "Lists/" + containerTitle,              //List Url
-                                        "1e084611-a8c5-449c-a1f0-841a56ee2712", //Feature Id of List definition Provisioning Feature – CustomList Feature Id
-                                        10001,                                  //List Template Type
-                                        "121");                                 //Document Template Type .. 101 is for None
+            var listId = web.Lists.Add(containerTitle,                         //List Title
+                                       description,                            //List Description
+                                       "Lists/" + containerTitle,              //List Url
+                                       "1e084611-a8c5-449c-a1f0-841a56ee2712", //Feature Id of List definition Provisioning Feature – CustomList Feature Id
+                                       10001,                                  //List Template Type
+                                       "121");                                 //Document Template Type .. 101 is for None
             return SPDocumentStoreHelper.MapContainerFromSPList(web.Lists[listId]);
           }
           finally
@@ -133,16 +134,15 @@
     public virtual Container GetContainer(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return null;
-
-          return SPDocumentStoreHelper.MapContainerFromSPList(list);
+          return SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false
+            ? null
+            : SPDocumentStoreHelper.MapContainerFromSPList(list);
         }
       }
     }
@@ -155,9 +155,9 @@
     public virtual bool UpdateContainer(Container container)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -187,9 +187,9 @@
     public virtual void DeleteContainer(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -216,9 +216,9 @@
     public virtual IList<Container> ListContainers()
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           return SPDocumentStoreHelper.GetContainers(web)
                                       .Select(w => SPDocumentStoreHelper.MapContainerFromSPList(w))
@@ -239,9 +239,9 @@
     public virtual Folder CreateFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           var currentFolder = CreateFolderInternal(web, containerTitle, path);
 
@@ -252,22 +252,20 @@
 
     internal SPFolder CreateFolderInternal(SPWeb web, string containerTitle, string path)
     {
-      SPList list = web.Lists.TryGetList(containerTitle);
-      if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
-      {
+      SPList list;
+      if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
         throw new InvalidOperationException("A container with the specified title does not exist: " + web.Url + " " + containerTitle);
-      }
 
-      SPFolder currentFolder = list.RootFolder;
+      var currentFolder = list.RootFolder;
       web.AllowUnsafeUpdates = true;
 
       try
       {
-        foreach (string subFolder in DocumentStoreHelper.GetPathSegments(path))
+        foreach (var subFolder in DocumentStoreHelper.GetPathSegments(path))
         {
           if (currentFolder.SubFolders.OfType<SPFolder>().Any(sf => sf.Name == subFolder) == false)
           {
-            SPFolder folder = currentFolder.SubFolders.Add(subFolder);
+            var folder = currentFolder.SubFolders.Add(subFolder);
 
             //Ensure that the content type is, well, a folder and not a doc set. :-0
             var folderListContentType = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Folder);
@@ -297,16 +295,15 @@
     public virtual Folder GetFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-            return null;
-
-          return SPDocumentStoreHelper.MapFolderFromSPFolder(folder);
+          return SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false
+            ? null
+            : SPDocumentStoreHelper.MapFolderFromSPFolder(folder);
         }
       }
     }
@@ -321,9 +318,9 @@
     public virtual Folder RenameFolder(string containerTitle, string path, string newFolderName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -356,9 +353,9 @@
     public virtual void DeleteFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -387,9 +384,9 @@
     public virtual IList<Folder> ListFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
 
           SPList list;
@@ -406,11 +403,11 @@
           //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
           //}, null);
 
-          SPQuery query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
-          List<Folder> result = list.GetItems(query).OfType<SPListItem>()
-                            .Where(li => li.ContentTypeId == folderContentTypeId)
-                            .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
-                            .ToList();
+          var query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
+          var result = list.GetItems(query).OfType<SPListItem>()
+                           .Where(li => li.ContentTypeId == folderContentTypeId)
+                           .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                           .ToList();
 
           return result;
         }
@@ -426,9 +423,9 @@
     public virtual IList<Folder> ListAllFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -444,11 +441,11 @@
           //    result.Add(SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder));
           //}, null);
 
-          SPQuery query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
-          List<Folder> result = list.GetItems(query).OfType<SPListItem>()
-                            .Where(li => li.ContentTypeId == folderContentTypeId)
-                            .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
-                            .ToList();
+          var query = new SPQuery {QueryThrottleMode = SPQueryThrottleOption.Override, Folder = folder};
+          var result = list.GetItems(query).OfType<SPListItem>()
+                           .Where(li => li.ContentTypeId == folderContentTypeId)
+                           .Select(spListItem => SPDocumentStoreHelper.MapFolderFromSPFolder(spListItem.Folder))
+                           .ToList();
           return result;
         }
       }
@@ -461,12 +458,13 @@
     /// Creates a new entity in the document store, contained in the specified container in the specified namespace.
     /// </summary>
     /// <param name="containerTitle">The container title. Required.</param>
+    /// <param name="title">The title of the entity. Optional.</param>
     /// <param name="namespace">The namespace of the entity. Optional.</param>
     /// <param name="data">The data to store with the entity. Optional.</param>
     /// <returns></returns>
-    public Entity CreateEntity(string containerTitle, string @namespace, string data)
+    public Entity CreateEntity(string containerTitle, string title, string @namespace, string data)
     {
-      return CreateEntity(containerTitle, String.Empty, @namespace, data);
+      return CreateEntity(containerTitle, String.Empty, title, @namespace, data);
     }
 
     /// <summary>
@@ -474,35 +472,39 @@
     /// </summary>
     /// <param name="containerTitle">The container title. Required.</param>
     /// <param name="path">The path. Optional.</param>
+    /// <param name="title">The title of the entity. Optional.</param>
     /// <param name="namespace">The namespace of the entity. Optional.</param>
-    /// <param name="data">The data to store with the entity. Optiona.</param>
+    /// <param name="data">The data to store with the entity. Optional.</param>
     /// <returns></returns>
-    public virtual Entity CreateEntity(string containerTitle, string path, string @namespace, string data)
+    public virtual Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
     {
       if (data == null)
         data = String.Empty;
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             throw new InvalidOperationException("Unable to retrieve the specified folder -- Folder does not exist.");
 
-          Guid newGuid = Guid.NewGuid();
+          var newGuid = Guid.NewGuid();
+          var entityTitle = String.IsNullOrEmpty(title)
+            ? newGuid.ToString()
+            : title;
           var docEntityContentTypeId = list.ContentTypes.BestMatch(new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId));
 
-          Hashtable properties = new Hashtable
+          var properties = new Hashtable
             {
               {"DocumentSetDescription", "Document Store Entity"},
               {"DocumentEntityGuid", newGuid.ToString()},
               {"Namespace", @namespace}
             };
 
-          SPFolder documentSetFolder;
+          DocumentSet documentSet;
 
           web.AllowUnsafeUpdates = true;
           try
@@ -514,40 +516,65 @@
             if (PermissionsHelper.IsRunningUnderElevatedPrivledges(site.WebApplication.ApplicationPool))
             {
               var currentUser = web.AllUsers[CurrentUserLoginName];
-              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true, currentUser);
+              documentSet = DocumentSet.Create(folder, entityTitle, docEntityContentTypeId, properties, false, currentUser);
 
-              documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
+              //Re-retrieve the document set folder, otherwise bad things happen.
+              var documentSetFolder = web.GetFolder(documentSet.Folder.Url);
+              documentSet = DocumentSet.GetDocumentSet(documentSetFolder);
 
-              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), null, currentUser, currentUser, DateTime.UtcNow, DateTime.UtcNow, true);
+              var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
+              var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
+              var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
+
+              var entityPartProperties = new Hashtable
+                {
+                  {"ContentTypeId", entityPartContentType.Id.ToString()},
+                  {"Content Type", entityPartContentType.Name}
+                };
+
+
+              documentSet.Folder.Files.Add(Constants.DocumentStoreDefaultEntityPartFileName, Encoding.Default.GetBytes(data), entityPartProperties, currentUser, currentUser, DateTime.UtcNow, DateTime.UtcNow, true);
 
               //Update the contents entity part and the modified by user stamp.
               string contentHash;
               DateTime contentModified;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash, out contentModified);
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder, null, null, out contentHash, out contentModified);
 
               //Set the created/updated fields of the new document set to the current user.
-              string userLogonName = currentUser.ID + ";#" + currentUser.Name;
-              documentSetFolder.Item[SPBuiltInFieldId.Editor] = userLogonName;
-              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
-              documentSetFolder.Item.UpdateOverwriteVersion();
+              var userLogonName = currentUser.ID + ";#" + currentUser.Name;
+              documentSet.Item[SPBuiltInFieldId.Editor] = userLogonName;
+              documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
+              documentSet.Item.UpdateOverwriteVersion();
             }
             else
             {
-              DocumentSet.Create(folder, newGuid.ToString(), docEntityContentTypeId, properties, true);
+              documentSet = DocumentSet.Create(folder, entityTitle, docEntityContentTypeId, properties, false);
 
-              documentSetFolder = web.GetFolder(folder.Url + "/" + newGuid.ToString());
+              //Re-retrieve the document set folder, otherwise bad things happen.
+              var documentSetFolder = web.GetFolder(documentSet.Folder.Url);
+              documentSet = DocumentSet.GetDocumentSet(documentSetFolder);
 
-              documentSetFolder.Files.Add(documentSetFolder.Url + "/" + Constants.DocumentStoreDefaultEntityPartFileName, System.Text.Encoding.Default.GetBytes(data), true);
+              var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
+              var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
+              var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
+
+              var entityPartProperties = new Hashtable
+                {
+                  {"ContentTypeId", entityPartContentType.Id.ToString()},
+                  {"Content Type", entityPartContentType.Name}
+                };
+
+              documentSet.Folder.Files.Add(Constants.DocumentStoreDefaultEntityPartFileName, Encoding.Default.GetBytes(data), entityPartProperties, true);
 
               //Update the contents Entity Part.
               string contentHash;
               DateTime contentModified;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSetFolder, null, null, out contentHash, out contentModified);
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder, null, null, out contentHash, out contentModified);
 
-              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
-              documentSetFolder.Item.UpdateOverwriteVersion();
+              documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
+              documentSet.Item.UpdateOverwriteVersion();
             }
           }
           finally
@@ -555,7 +582,7 @@
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(documentSetFolder.Item, data);
+          return SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, data);
         }
       }
     }
@@ -581,37 +608,24 @@
     public virtual Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet entityDocumentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out entityDocumentSet) == false)
             return null;
 
-          var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item, null);
-          ProcessEntityFile(containerTitle, entityId, defaultEntityPart, entity);
+          var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet, null);
 
           return entity;
         }
       }
-    }
-
-    /// <summary>
-    /// When overridden in a subclass, allows custom processing to occur on the SPFile/Entity that is retrieved from SharePoint.
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="entityFile">The entity file.</param>
-    /// <param name="entity">The entity.</param>
-    protected virtual void ProcessEntityFile(string containerTitle, Guid entityId, SPFile entityFile, Entity entity)
-    {
-      //Does nothing in the base implementation.
     }
 
     /// <summary>
@@ -626,68 +640,67 @@
     public virtual Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          if (defaultEntityPartFile.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+          if (documentSet.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
             throw new InvalidOperationException("Insufficent Permissions.");
 
           Entity entity;
           web.AllowUnsafeUpdates = true;
           try
           {
-            bool needsUpdate = false;
-            DocumentSet entityDocumentSet = DocumentSet.GetDocumentSet(defaultEntityPartFile.ParentFolder);
-            if (String.IsNullOrEmpty(title) == false && entityDocumentSet.Item.Title != title)
+            var needsUpdate = false;
+            if (String.IsNullOrEmpty(title) == false && documentSet.Item.Title != title)
             {
-              entityDocumentSet.Item["Title"] = title;
+              documentSet.Item["Title"] = title;
               needsUpdate = true;
             }
 
-            if (description != null && (entityDocumentSet.Item["DocumentSetDescription"] as string) != description)
+            if (description != null && (documentSet.Item["DocumentSetDescription"] as string) != description)
             {
-              entityDocumentSet.Item["DocumentSetDescription"] = description;
+              documentSet.Item["DocumentSetDescription"] = description;
               needsUpdate = true;
             }
 
-            if (@namespace != null && (entityDocumentSet.Item["Namespace"] as string) != @namespace)
+            if (@namespace != null && (documentSet.Item["Namespace"] as string) != @namespace)
             {
-              entityDocumentSet.Item["Namespace"] = @namespace;
+              documentSet.Item["Namespace"] = @namespace;
               needsUpdate = true;
             }
 
             if (needsUpdate)
             {
-              entityDocumentSet.Item.SystemUpdate(true);
+              documentSet.Item.SystemUpdate(true);
 
-              entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPartFile.ParentFolder.Item, null);
+              entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null);
 
               //Update the contents entity part
               string contentHash;
               DateTime contentModified;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPartFile.ParentFolder,
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder,
                                                                     entity, null, out contentHash, out contentModified);
 
-              entityDocumentSet.Item["DocumentEntityContentsHash"] = contentHash;
-              entityDocumentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
-              entityDocumentSet.Item.UpdateOverwriteVersion();
+              documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
+              documentSet.Item.UpdateOverwriteVersion();
 
               entity.ContentsETag = contentHash;
               entity.ContentsModified = contentModified;
             }
             else
             {
-              entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPartFile.ParentFolder.Item, null);
+              entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null);
             }
           }
           finally
@@ -711,9 +724,9 @@
     public virtual Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -732,7 +745,7 @@
             throw new InvalidOperationException(String.Format("Could not update the entity, the Entity has been updated by another user. New: {0} Existing:{1}", eTag, defaultEntityPart.ETag));
           }
 
-          Entity entity = SPDocumentStoreHelper.MapEntityFromSPListItem(defaultEntityPart.ParentFolder.Item, data);
+          var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder), data);
           web.AllowUnsafeUpdates = true;
           try
           {
@@ -749,7 +762,7 @@
               DateTime contentModified;
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash, out contentModified);
 
-              SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
+              var documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
               documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
@@ -777,9 +790,9 @@
     public virtual bool DeleteEntity(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -789,11 +802,11 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            SPFile entityPartFile = SPDocumentStoreHelper.GetDocumentStoreDefaultEntityPartForGuid(list, list.RootFolder, entityId);
-            if (entityPartFile == null)
+            var documentSet = SPDocumentStoreHelper.GetDocumentStoreEntityDocumentSet(list, list.RootFolder, entityId);
+            if (documentSet == null)
               return false;
 
-            entityPartFile.ParentFolder.Recycle();
+            documentSet.Folder.Recycle();
           }
           finally
           {
@@ -847,21 +860,21 @@
     public virtual IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
             return null;
 
-          List<Entity> result = new List<Entity>();
+          var result = new List<Entity>();
 
           if (folder.ItemCount == 0)
             return result;
 
-          string queryString = Camlex.Query()
+          var queryString = Camlex.Query()
               .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
               .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()))
               .ToString();
@@ -934,7 +947,7 @@
             }
           }
 
-          SPQuery query = new SPQuery
+          var query = new SPQuery
             {
               Query = queryString,
               ViewFields = Camlex.Query().ViewFields(new List<Guid>
@@ -972,7 +985,6 @@
               query.RowLimit = criteria.Top.Value;
           }
 
-
           //Why doesn't the ContentIterator work? Why does it not iterate through? I have no idea...
           //ContentIterator itemsIterator = new ContentIterator();
           //itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
@@ -988,7 +1000,7 @@
           var listItems = list.GetItems(query).OfType<SPListItem>();
           result.AddRange(
             listItems
-            .Select(li => SPDocumentStoreHelper.MapEntityFromSPListItem(li, null))
+            .Select(li => SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(li.Folder), null))
             .Where(entity => entity != null)
             );
 
@@ -1036,9 +1048,9 @@
     public virtual Entity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, byte[] archiveData)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1049,7 +1061,7 @@
 
           var docEntityContentTypeId = list.ContentTypes.BestMatch(new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId));
 
-          Hashtable properties = new Hashtable
+          var properties = new Hashtable
             {
               {"DocumentSetDescription", "Document Store Entity"},
               {"DocumentEntityGuid", entityId.ToString()},
@@ -1069,7 +1081,7 @@
             web.AllowUnsafeUpdates = false;
           }
 
-          return SPDocumentStoreHelper.MapEntityFromSPListItem(importedDocSet.Item, null);
+          return SPDocumentStoreHelper.MapEntityFromDocumentSet(importedDocSet, null);
         }
       }
     }
@@ -1083,23 +1095,21 @@
     public virtual Stream ExportEntity(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          DocumentSet docSet = DocumentSet.GetDocumentSet(defaultEntityPartFile.ParentFolder);
-
-          MemoryStream ms = new MemoryStream();
-          docSet.Export(ms);
+          var ms = new MemoryStream();
+          documentSet.Export(ms);
           ms.Flush();
           ms.Seek(0, SeekOrigin.Begin);
           return ms;
@@ -1117,9 +1127,9 @@
     public virtual bool MoveEntity(string containerTitle, Guid entityId, string destinationPath)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1131,14 +1141,14 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out destinationList, out destinationFolder, destinationPath) == false)
             throw new InvalidOperationException("The destination folder is invalid.");
 
-          SPFile defaultEntityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPartFile) == false)
-            throw new InvalidOperationException("An entity with the specified id could not be found.");
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
+            return false;
 
           web.AllowUnsafeUpdates = true;
           try
           {
-            defaultEntityPartFile.ParentFolder.MoveTo(destinationFolder.Url + "/" + defaultEntityPartFile.ParentFolder.Name);
+            documentSet.Folder.MoveTo(destinationFolder.Url + "/" + documentSet.Folder.Name);
           }
           finally
           {
@@ -1181,26 +1191,27 @@
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+          var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
+          var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
+          var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
 
           if (entityPartContentType == null)
             throw new InvalidOperationException("Unable to locate the entity part content type");
 
-          Hashtable properties = new Hashtable
+          var properties = new Hashtable
             {
               {"ContentTypeId", entityPartContentType.Id.ToString()},
               {"Content Type", entityPartContentType.Name}
@@ -1212,10 +1223,10 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            if (defaultEntityPart.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
+            if (documentSet.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
               throw new InvalidOperationException("Insufficent Permissions.");
 
-            SPFile partFile = defaultEntityPart.ParentFolder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.Encoding.Default.GetBytes(data), properties, true);
+            var partFile = documentSet.Folder.Files.Add(partName + Constants.DocumentSetEntityPartExtension, System.Text.Encoding.Default.GetBytes(data), properties, true);
             var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile, data);
 
             //Update the content Entity Part
@@ -1223,10 +1234,9 @@
             DateTime contentModified;
             SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, partFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
-            SPFolder documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
-            documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-            documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
-            documentSetFolder.Item.UpdateOverwriteVersion();
+            documentSet.Folder.Item["DocumentEntityContentsHash"] = contentHash;
+            documentSet.Folder.Item["DocumentEntityContentsLastModified"] = contentModified;
+            documentSet.Folder.Item.UpdateOverwriteVersion();
 
             return entityPart;
           }
@@ -1248,9 +1258,9 @@
     public virtual EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1296,9 +1306,9 @@
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1336,9 +1346,9 @@
     public virtual EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1359,14 +1369,14 @@
             entityPartFile.Item.SystemUpdate(true);
 
 
-            EntityPart entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
+            var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
 
             //Update the content entity part
             string contentHash;
             DateTime contentModified;
             SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
-            SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
+            var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
             documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
             documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
             documentSetFolder.Item.UpdateOverwriteVersion();
@@ -1384,9 +1394,9 @@
     public virtual EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1405,9 +1415,9 @@
           web.AllowUnsafeUpdates = true;
           try
           {
-            string currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
+            var currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
 
-            EntityPart entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, data);
+            var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, data);
 
             if (data != currentData)
             {
@@ -1420,7 +1430,7 @@
               DateTime contentModified;
               SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
 
-              SPFolder documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
+              var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
               documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
@@ -1446,9 +1456,9 @@
     public virtual bool DeleteEntityPart(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1490,26 +1500,27 @@
     public virtual IList<EntityPart> ListEntityParts(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
+          var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
+          var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
+          var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
 
           if (entityPartContentType == null)
             throw new InvalidOperationException("Unable to locate the entity part content type");
 
-          return defaultEntityPart.ParentFolder.Files
+          return documentSet.Folder.Files
             .OfType<SPFile>()
             .Where(f =>
               f.Item.ContentTypeId == entityPartContentType.Id &&
@@ -1533,12 +1544,12 @@
     /// <returns></returns>
     public IList<EntityVersion> ListEntityVersions(string containerTitle, Guid entityId)
     {
-      List<EntityVersion> result = new List<EntityVersion>();
+      var result = new List<EntityVersion>();
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1562,8 +1573,6 @@
               VersionLabel = ver.VersionLabel,
             };
 
-            ProcessEntityFile(containerTitle, entityId, ver.ListItem.File, entityVersion.Entity);
-
             result.Add(entityVersion);
           }
         }
@@ -1582,9 +1591,9 @@
     public EntityVersion GetEntityVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1612,8 +1621,6 @@
             VersionLabel = ver.VersionLabel,
           };
 
-          ProcessEntityFile(containerTitle, entityId, ver.ListItem.File, entityVersion.Entity);
-
           return entityVersion;
         }
       }
@@ -1629,9 +1636,9 @@
     public EntityVersion RevertEntityToVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -1656,7 +1663,7 @@
                                              : System.Text.Encoding.Default.GetBytes(String.Empty));
             }
 
-            DocumentSet ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
+            var ds = DocumentSet.GetDocumentSet(defaultEntityPart.ParentFolder);
             if (ds.Item.Title != entityVersion.Entity.Title)
               ds.Item["Title"] = entityVersion.Entity.Title;
 
@@ -1709,24 +1716,26 @@
     public virtual Attachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId));
+          var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+          var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
+          var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
           if (attachmentContentType != null)
           {
-            Hashtable properties = new Hashtable
+            var properties = new Hashtable
               {
                 {"ContentTypeId", attachmentContentType.Id.ToString()},
                 {"Content Type", attachmentContentType.Name}
@@ -1749,7 +1758,7 @@
             web.AllowUnsafeUpdates = true;
             try
             {
-              SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, attachment, properties, true);
+              var attachmentFile = documentSet.Folder.Files.Add(fileName, attachment, properties, true);
               return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
             }
             finally
@@ -1775,11 +1784,11 @@
     public virtual Attachment UploadAttachmentFromSourceUrl(string containerTitle, Guid entityId, string fileName, string sourceUrl, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-          Uri sourceUri = new Uri(sourceUrl);
+          var sourceUri = new Uri(sourceUrl);
 
           byte[] fileContents;
 
@@ -1790,15 +1799,15 @@
           {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(sourceUri);
+            var webRequest = (HttpWebRequest)WebRequest.Create(sourceUri);
             webRequest.Timeout = 10000;
             webRequest.AllowWriteStreamBuffering = false;
             webResponse = (HttpWebResponse)webRequest.GetResponse();
 
-            using (Stream s = webResponse.GetResponseStream())
+            using (var s = webResponse.GetResponseStream())
             {
               byte[] buffer = new byte[32768];
-              using (MemoryStream ms = new MemoryStream())
+              using (var ms = new MemoryStream())
               {
                 int read;
                 while (s != null && (read = s.Read(buffer, 0, buffer.Length)) > 0)
@@ -1823,16 +1832,17 @@
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          SPContentType attachmentContentType = list.ContentTypes.OfType<SPContentType>()
-            .FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId));
+          var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+          var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
+          var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
           if (attachmentContentType != null)
           {
-            Hashtable properties = new Hashtable
+            var properties = new Hashtable
               {
                 {"ContentTypeId", attachmentContentType.Id.ToString()},
                 {"Content Type", attachmentContentType.Name}
@@ -1847,7 +1857,7 @@
             web.AllowUnsafeUpdates = true;
             try
             {
-              SPFile attachmentFile = defaultEntityPart.ParentFolder.Files.Add(fileName, fileContents, properties, true);
+              var attachmentFile = documentSet.Folder.Files.Add(fileName, fileContents, properties, true);
               return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachmentFile);
             }
             finally
@@ -1870,24 +1880,19 @@
     public virtual Attachment GetAttachment(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
-            return null;
-
-          return SPDocumentStoreHelper.MapAttachmentFromSPFile(attachment);
+          return SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false
+            ? null
+            : SPDocumentStoreHelper.MapAttachmentFromSPFile(attachment);
         }
       }
     }
@@ -1903,21 +1908,17 @@
     public virtual bool RenameAttachment(string containerTitle, Guid entityId, string fileName, string newFileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return false;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return false;
 
           web.AllowUnsafeUpdates = true;
@@ -1946,21 +1947,17 @@
     public virtual bool DeleteAttachment(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return false;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return false;
 
           web.AllowUnsafeUpdates = true;
@@ -1987,22 +1984,24 @@
     public virtual IList<Attachment> ListAttachments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
             return null;
 
-          var attachmentContentType = list.ContentTypes.OfType<SPContentType>().FirstOrDefault(ct => ct.Id.ToString().ToLowerInvariant().StartsWith(Constants.AttachmentDocumentContentTypeId.ToLowerInvariant()));
+          var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+          var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
+          var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
-          return defaultEntityPart.ParentFolder.Files.OfType<SPFile>()
+          return documentSet.Folder.Files.OfType<SPFile>()
             .Where(f => attachmentContentType != null && f.Item.ContentTypeId == attachmentContentType.Id)
             .Select(f => SPDocumentStoreHelper.MapAttachmentFromSPFile(f))
             .ToList();
@@ -2019,24 +2018,20 @@
     /// <returns></returns>
     public virtual Stream DownloadAttachment(string containerTitle, Guid entityId, string fileName)
     {
-      MemoryStream result = new MemoryStream();
+      var result = new MemoryStream();
 
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
           var attachmentStream = attachment.OpenBinaryStream();
@@ -2059,9 +2054,9 @@
     public virtual string GetContainerMetadata(string containerTitle, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2085,9 +2080,9 @@
     public virtual bool SetContainerMetadata(string containerTitle, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2118,9 +2113,9 @@
     public virtual IDictionary<string, string> ListContainerMetadata(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2144,9 +2139,9 @@
     public virtual string GetEntityMetadata(string containerTitle, Guid entityId, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2175,9 +2170,9 @@
     public virtual bool SetEntityMetadata(string containerTitle, Guid entityId, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2213,9 +2208,9 @@
     public virtual IDictionary<string, string> ListEntityMetadata(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2244,9 +2239,9 @@
     public virtual string GetEntityPartMetadata(string containerTitle, Guid entityId, string partName, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2276,9 +2271,9 @@
     public virtual bool SetEntityPartMetadata(string containerTitle, Guid entityId, string partName, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2316,9 +2311,9 @@
     public virtual IDictionary<string, string> ListEntityPartMetadata(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2347,21 +2342,17 @@
     public virtual string GetAttachmentMetadata(string containerTitle, Guid entityId, string fileName, string key)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
           if (attachment.Properties.ContainsKey(Constants.MetadataPrefix + key))
@@ -2383,21 +2374,17 @@
     public virtual bool SetAttachmentMetadata(string containerTitle, Guid entityId, string fileName, string key, string value)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return false;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return false;
 
           web.AllowUnsafeUpdates = true;
@@ -2426,21 +2413,17 @@
     public virtual IDictionary<string, string> ListAttachmentMetadata(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
           return attachment.Properties.Keys.OfType<string>()
@@ -2462,9 +2445,9 @@
     public virtual Comment AddEntityComment(string containerTitle, Guid entityId, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2500,9 +2483,9 @@
     public virtual IList<Comment> ListEntityComments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2544,9 +2527,9 @@
     public virtual Comment AddEntityPartComment(string containerTitle, Guid entityId, string partName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2583,9 +2566,9 @@
     public virtual IList<Comment> ListEntityPartComments(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -2627,21 +2610,17 @@
     public virtual Comment AddAttachmentComment(string containerTitle, Guid entityId, string fileName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
           web.AllowUnsafeUpdates = true;
@@ -2670,21 +2649,17 @@
     public virtual IList<Comment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
           List<Comment> result = new List<Comment>();
@@ -2720,21 +2695,20 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToContainer(string containerTitle, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-
-          SPList list = web.Lists.TryGetList(containerTitle);
-          if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
+          SPList list;
+          if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
             throw new InvalidOperationException("A Container with the specified title does not exist.");
 
-          SPPrincipal currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
+          var currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
 
           if (currentPrincipal == null)
             return null;
 
-          SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
+          var roleType = PermissionsHelper.GetRoleType(web, roleName);
 
           PermissionsHelper.AddListPermissionsForPrincipal(web, list, currentPrincipal, roleType);
 
@@ -2754,12 +2728,12 @@
     public virtual bool RemovePrincipalRoleFromContainer(string containerTitle, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-          SPList list = web.Lists.TryGetList(containerTitle);
-          if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
+          SPList list;
+          if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
             throw new InvalidOperationException("A Container with the specified title does not exist.");
 
           list.CheckPermissions(SPBasePermissions.ManagePermissions);
@@ -2783,13 +2757,12 @@
     public virtual PermissionsInfo GetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-
-          SPList list = web.Lists.TryGetList(containerTitle);
-          if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
+          SPList list;
+          if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
             throw new InvalidOperationException("A Container with the specified title does not exist.");
 
           return PermissionsHelper.MapPermissionsFromSPSecurableObject(list);
@@ -2807,13 +2780,12 @@
     public virtual PrincipalRoleInfo GetContainerPermissionsForPrincipal(string containerTitle, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-
-          SPList list = web.Lists.TryGetList(containerTitle);
-          if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
+          SPList list;
+          if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
             throw new InvalidOperationException("A Container with the specified title does not exist.");
 
           var currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
@@ -2834,13 +2806,12 @@
     public virtual PermissionsInfo ResetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
-
-          SPList list = web.Lists.TryGetList(containerTitle);
-          if ((list == null) || (list.TemplateFeatureId != Constants.DocumentContainerFeatureId))
+          SPList list;
+          if (SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list) == false)
             throw new InvalidOperationException("A Container with the specified title does not exist.");
 
           web.AllowUnsafeUpdates = true;
@@ -2874,29 +2845,29 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
+          DocumentSet entityDocumentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, guid, out entityDocumentSet) == false)
             return null;
 
-          SPPrincipal currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
+          var currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
 
           if (currentPrincipal == null)
             return null;
 
-          SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
+          var roleType = PermissionsHelper.GetRoleType(web, roleName);
 
-          PermissionsHelper.AddListItemPermissionsForPrincipal(web, defaultEntityPart.ParentFolder.Item, currentPrincipal, roleType, true);
+          PermissionsHelper.AddListItemPermissionsForPrincipal(web, entityDocumentSet.Item, currentPrincipal, roleType);
 
-          return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(defaultEntityPart.ParentFolder.Item, currentPrincipal);
+          return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(entityDocumentSet.Item, currentPrincipal);
         }
       }
     }
@@ -2913,17 +2884,17 @@
     public virtual bool RemovePrincipalRoleFromEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, guid, out documentSet) == false)
             return false;
 
           SPPrincipal currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
@@ -2933,7 +2904,7 @@
 
           SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
 
-          return PermissionsHelper.RemoveListItemPermissionsForPrincipal(web, defaultEntityPart.ParentFolder.Item, currentPrincipal, roleType, false);
+          return PermissionsHelper.RemoveListItemPermissionsForPrincipal(web, documentSet.Item, currentPrincipal, roleType, false);
         }
       }
     }
@@ -2947,20 +2918,20 @@
     public virtual PermissionsInfo GetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, guid, out documentSet) == false)
             return null;
 
-          return PermissionsHelper.MapPermissionsFromSPSecurableObject(defaultEntityPart.ParentFolder.Item);
+          return PermissionsHelper.MapPermissionsFromSPSecurableObject(documentSet.Item);
         }
       }
     }
@@ -2976,17 +2947,17 @@
     public virtual PrincipalRoleInfo GetEntityPermissionsForPrincipal(string containerTitle, Guid guid, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, guid, out documentSet) == false)
             return null;
 
           var currentPrincipal = PermissionsHelper.GetPrincipal(list.ParentWeb, principalName, principalType);
@@ -2994,7 +2965,7 @@
           if (currentPrincipal == null)
             return null;
 
-          return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(defaultEntityPart.ParentFolder.Item, currentPrincipal);
+          return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(documentSet.Item, currentPrincipal);
         }
       }
     }
@@ -3008,33 +2979,33 @@
     public virtual PermissionsInfo ResetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
+          DocumentSet documentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, guid, out documentSet) == false)
             return null;
 
           web.AllowUnsafeUpdates = true;
 
           try
           {
-            defaultEntityPart.ParentFolder.Item.ResetRoleInheritance();
-            defaultEntityPart.ParentFolder.Item.Update();
-            defaultEntityPart.ParentFolder.Update();
+            documentSet.Item.ResetRoleInheritance();
+            documentSet.Item.Update();
+            documentSet.Folder.Update();
           }
           finally
           {
             web.AllowUnsafeUpdates = false;
           }
 
-          return PermissionsHelper.MapPermissionsFromSPSecurableObject(defaultEntityPart.Item);
+          return PermissionsHelper.MapPermissionsFromSPSecurableObject(documentSet.Item);
         }
       }
     }
@@ -3055,9 +3026,9 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -3075,7 +3046,7 @@
 
           SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
 
-          PermissionsHelper.AddListItemPermissionsForPrincipal(web, entityPart.Item, currentPrincipal, roleType, true);
+          PermissionsHelper.AddListItemPermissionsForPrincipal(web, entityPart.Item, currentPrincipal, roleType);
 
           return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(entityPart.Item, currentPrincipal);
         }
@@ -3095,9 +3066,9 @@
     public virtual bool RemovePrincipalRoleFromEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -3130,9 +3101,9 @@
     public virtual PermissionsInfo GetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -3160,9 +3131,9 @@
     public virtual PrincipalRoleInfo GetEntityPartPermissionsForPrincipal(string containerTitle, Guid guid, string partName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -3193,9 +3164,9 @@
     public virtual PermissionsInfo ResetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
@@ -3238,31 +3209,27 @@
     public virtual PrincipalRoleInfo AddPrincipalRoleToAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, guid, fileName, out attachment) == false)
             return null;
 
-          SPPrincipal currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
+          var currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
 
           if (currentPrincipal == null)
             return null;
 
-          SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
+          var roleType = PermissionsHelper.GetRoleType(web, roleName);
 
-          PermissionsHelper.AddListItemPermissionsForPrincipal(web, attachment.Item, currentPrincipal, roleType, true);
+          PermissionsHelper.AddListItemPermissionsForPrincipal(web, attachment.Item, currentPrincipal, roleType);
 
           return PermissionsHelper.MapPrincipalRoleInfoFromSPSecurableObject(attachment.Item, currentPrincipal);
         }
@@ -3282,29 +3249,25 @@
     public virtual bool RemovePrincipalRoleFromAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return false;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
-            return false;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, guid, fileName, out attachment) == false)
             return false;
 
-          SPPrincipal currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
+          var currentPrincipal = PermissionsHelper.GetPrincipal(web, principalName, principalType);
 
           if (currentPrincipal == null)
             return false;
 
-          SPRoleType roleType = PermissionsHelper.GetRoleType(web, roleName);
+          var roleType = PermissionsHelper.GetRoleType(web, roleName);
 
           return PermissionsHelper.RemoveListItemPermissionsForPrincipal(web, attachment.Item, currentPrincipal, roleType, false);
         }
@@ -3321,24 +3284,19 @@
     public virtual PermissionsInfo GetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
-            return null;
-
-          return PermissionsHelper.MapPermissionsFromSPSecurableObject(attachment.Item);
+          return SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, guid, fileName, out attachment) == false
+            ? null
+            : PermissionsHelper.MapPermissionsFromSPSecurableObject(attachment.Item);
         }
       }
     }
@@ -3355,21 +3313,17 @@
     public virtual PrincipalRoleInfo GetAttachmentPermissionsForPrincipal(string containerTitle, Guid guid, string fileName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, guid, fileName, out attachment) == false)
             return null;
 
           var currentPrincipal = PermissionsHelper.GetPrincipal(list.ParentWeb, principalName, principalType);
@@ -3392,21 +3346,17 @@
     public virtual PermissionsInfo ResetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;
           if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
             return null;
 
-          SPFile defaultEntityPart;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, guid, out defaultEntityPart) == false)
-            return null;
-
           SPFile attachment;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, defaultEntityPart, fileName, out attachment) == false)
+          if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, guid, fileName, out attachment) == false)
             return null;
 
           web.AllowUnsafeUpdates = true;
@@ -3604,9 +3554,9 @@
     private SPFile GetDefaultEntityPart(string containerTitle, string path, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           SPList list;
           SPFolder folder;

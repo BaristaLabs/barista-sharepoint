@@ -1,14 +1,11 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
   using Barista.SharePoint.Services;
   using Microsoft.SharePoint.Administration;
-  using Newtonsoft.Json;
   using System.Text;
   using Barista.Library;
 
@@ -18,8 +15,8 @@
   [Serializable]
   public class SPInstance : ObjectInstance
   {
-    private SPContextInstance m_context;
-    private SPFarmInstance m_farm;
+    private readonly SPContextInstance m_context;
+    private readonly SPFarmInstance m_farm;
 
     public SPInstance(ScriptEngine engine, BaristaContext context, SPFarm farmContext)
       : base(engine)
@@ -57,10 +54,8 @@
       {
         return true;
       }
-      else
-      {
-        return false;
-      }
+
+      return false;
     }
 
     [JSDoc("Loads the file at the specified url as a byte array.")]

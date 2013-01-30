@@ -125,9 +125,10 @@
 
     #region Entity
     [JSFunction(Name = "createEntity")]
-    public EntityInstance CreateEntity(object path, object entityNamespace, object data)
+    public EntityInstance CreateEntity(object path, object title, object entityNamespace, object data)
     {
       string stringPath;
+      var stringTitle = "";
       var stringEntityNamespace = "";
       string stringData;
 
@@ -137,6 +138,9 @@
         stringPath = String.Empty;
       else
         stringPath = path.ToString();
+
+      if (title != Null.Value && title != Undefined.Value)
+        stringTitle = title.ToString();
 
       if (entityNamespace != Null.Value && entityNamespace != Undefined.Value)
         stringEntityNamespace = entityNamespace.ToString();
@@ -148,19 +152,19 @@
       else
         stringData = data.ToString();
 
-      var result = m_repository.CreateEntity(stringPath, stringEntityNamespace, stringData);
+      var result = m_repository.CreateEntity(stringPath, stringTitle, stringEntityNamespace, stringData);
       return new EntityInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "cloneEntity")]
-    public EntityInstance CloneEntity(object entityId, string sourcePath, string targetPath)
+    public EntityInstance CloneEntity(object entityId, string sourcePath, string targetPath, string newTitle)
     {
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
 
       var id = ConvertFromJsObjectToGuid(entityId);
 
-      var result = m_repository.CloneEntity(id, sourcePath, targetPath);
+      var result = m_repository.CloneEntity(id, sourcePath, targetPath, newTitle);
       return new EntityInstance(this.Engine, result);
     }
 

@@ -1,7 +1,5 @@
 ﻿namespace Barista.DocumentStore
 {
-  using System;
-
   /// <summary>
   /// Represents a Document Store that implements all possible capabilities.
   /// </summary>

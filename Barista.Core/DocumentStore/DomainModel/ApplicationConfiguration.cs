@@ -43,7 +43,7 @@
               });
 
             applicationConfigurationEntity =
-              repository.Configuration.DocumentStore.CreateEntity(repository.Configuration.ContainerTitle,
+              repository.Configuration.DocumentStore.CreateEntity(repository.Configuration.ContainerTitle, null,
                                                                   Constants.ApplicationConfigurationV1Namespace, data);
           }
         }

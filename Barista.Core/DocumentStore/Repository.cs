@@ -134,13 +134,14 @@
     /// Creates a new entity in the repository in the specified path with the specified data and returns its value.
     /// </summary>
     /// <param name="path"></param>
+    /// <param name="title"></param>
     /// <param name="entityNamespace"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public Entity CreateEntity(string path, string entityNamespace, string data)
+    public Entity CreateEntity(string path, string title, string entityNamespace, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, entityNamespace, data);
+      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityNamespace, data);
 
       return result;
     }
@@ -151,11 +152,12 @@
     /// <param name="entityId"></param>
     /// <param name="sourcePath"></param>
     /// <param name="targetPath"></param>
+    /// <param name="newTitle"></param>
     /// <returns></returns>
-    public Entity CloneEntity(Guid entityId, string sourcePath, string targetPath)
+    public Entity CloneEntity(Guid entityId, string sourcePath, string targetPath, string newTitle)
     {
       var entity = GetEntity(entityId, sourcePath);
-      var newEntity = CreateEntity(targetPath, entity.Namespace, entity.Data);
+      var newEntity = CreateEntity(targetPath, newTitle, entity.Namespace, entity.Data);
 
       if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
       {

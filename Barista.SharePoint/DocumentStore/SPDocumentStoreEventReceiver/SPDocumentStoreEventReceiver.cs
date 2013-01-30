@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.DocumentStore.SPDocumentStoreEventReceiver
 {
   using Barista.DocumentStore;
+  using Microsoft.Office.DocumentManagement.DocumentSets;
   using Microsoft.SharePoint;
   using System;
 
@@ -177,7 +178,8 @@
         {
           case SPEventReceiverType.ItemFileMoved:
             {
-              var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, null);
+              var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
+              var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null);
 
               using (var site = properties.OpenSite())
               {
@@ -206,7 +208,8 @@
           {
             case SPEventReceiverType.ItemAdded:
               {
-                var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, properties.ListItem.File,
+                var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
+                var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File,
                                                                            null);
                 using (var site = properties.OpenSite())
                 {
@@ -220,7 +223,8 @@
               break;
             case SPEventReceiverType.ItemUpdated:
               {
-                var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, properties.ListItem.File,
+                var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
+                var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File,
                                                                            null);
                 using (var site = properties.OpenSite())
                 {
@@ -297,7 +301,8 @@
                               StringComparison.InvariantCultureIgnoreCase) == 0)
       {
         //Apparently the Default documents in a Doc Set are initially added as a "Document"
-        var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(properties.ListItem, properties.ListItem.File, null);
+        var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.File.ParentFolder);
+        var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File, null);
         switch (properties.EventType)
         {
           case SPEventReceiverType.ItemAdded:
