@@ -236,11 +236,11 @@
     /// Creates a new entity in the repository and returns its value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="path"></param>
     /// <param name="title"></param>
+    /// <param name="path"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public Entity<T> CreateEntity<T>(string path, string title, T value)
+    public Entity<T> CreateEntity<T>(string title, string path, T value)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(T));
 
@@ -270,7 +270,7 @@
     public Entity<T> CloneEntity<T>(Guid entityId, string sourcePath, string targetPath, string newTitle)
     {
       var entity = GetEntity<T>(entityId, sourcePath);
-      var newEntity = CreateEntity<T>(targetPath, newTitle, entity.Data);
+      var newEntity = CreateEntity<T>(newTitle, targetPath, entity.Data);
 
       if (this.Configuration.DocumentStore is IEntityPartCapableDocumentStore)
       {
