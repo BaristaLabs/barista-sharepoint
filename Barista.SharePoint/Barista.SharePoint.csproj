@@ -707,6 +707,7 @@
     <Content Include="Layouts\BaristaJS\arctext\images\texture.png" />
     <Content Include="Layouts\BaristaJS\arctext\index.html" />
     <Content Include="Layouts\BaristaJS\arctext\js\jquery.arctext.js" />
+    <Content Include="Layouts\BaristaJS\backbone-0.9.10.min.js" />
     <Content Include="Layouts\BaristaJS\codemirror-2.37\demo\activeline.html" />
     <Content Include="Layouts\BaristaJS\codemirror-2.37\demo\changemode.html" />
     <Content Include="Layouts\BaristaJS\codemirror-2.37\demo\closetag.html" />
@@ -917,6 +918,7 @@
     <Content Include="Layouts\BaristaJS\codemirror-2.37\theme\vibrant-ink.css" />
     <Content Include="Layouts\BaristaJS\codemirror-2.37\theme\xq-dark.css" />
     <Content Include="Layouts\BaristaJS\ember-1.0.0-pre.3.min.js" />
+    <Content Include="Layouts\BaristaJS\jquery-1.9.0.min.js" />
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.0\css\pepper-grinder\images\ui-bg_diagonal-maze_20_6e4f1c_10x10.png" />
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.0\css\pepper-grinder\images\ui-bg_diagonal-maze_40_000000_10x10.png" />
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.0\css\pepper-grinder\images\ui-bg_fine-grain_10_eceadf_60x60.png" />
@@ -1136,6 +1138,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\Uniform\slider-v.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\Uniform\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\vsdoc\kendo.all-vsdoc.js" />
+    <Content Include="Layouts\BaristaJS\sammy-0.7.4.min.js" />
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\img\icondock-16\addthis.png" />
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\img\icondock-16\amazon.png" />
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\img\icondock-16\aol.png" />
