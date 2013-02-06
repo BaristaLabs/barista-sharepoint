@@ -32,7 +32,7 @@
   [Serializable]
   public class UlsLogEntry : ObjectInstance
   {
-    UlsHelper.UlsLogEntry m_entry;
+    readonly UlsHelper.UlsLogEntry m_entry;
 
     public UlsLogEntry(ScriptEngine engine, UlsHelper.UlsLogEntry entry)
       : base(engine)
@@ -64,7 +64,7 @@
     }
 
     [JSProperty(Name = "EventID")]
-    public string EventID
+    public string EventId
     {
       get { return m_entry.EventID; }
       set { m_entry.EventID = value; }
@@ -91,8 +91,8 @@
       set { m_entry.Process = value; }
     }
 
-    [JSProperty(Name = "TID")]
-    public string TID
+    [JSProperty(Name = "ThreadId")]
+    public string ThreadId
     {
       get { return m_entry.TID; }
       set { m_entry.TID = value; }

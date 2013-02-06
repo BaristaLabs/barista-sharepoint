@@ -255,6 +255,7 @@
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
     <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
     <Compile Include="Library\CsvOptions.cs" />
+    <Compile Include="Library\SPMonitoredScopeInstance.cs" />
     <Compile Include="PowerShell Registration\RemoveBaristaWebSocketsService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaWebSocketsServiceInstance.cs" />
     <Compile Include="PowerShell Registration\NewBaristaWebSocketsService.cs" />

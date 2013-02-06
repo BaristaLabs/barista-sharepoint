@@ -8,6 +8,7 @@
   using Microsoft.SharePoint.Administration;
   using System.Text;
   using Barista.Library;
+  using Microsoft.SharePoint.Utilities;
 
   /// <summary>
   /// SharePoint namespace. Contains functions to interact with SharePoint.
@@ -133,7 +134,7 @@
     {
       byte[] data;
       if (contents is Base64EncodedByteArrayInstance)
-        data = ((Base64EncodedByteArrayInstance)contents).Data;
+        data = (contents as Base64EncodedByteArrayInstance).Data;
       else if (contents is StringInstance || contents is string)
         data = Encoding.UTF8.GetBytes((string)contents);
       else if (contents is ObjectInstance)
@@ -161,15 +162,33 @@
 
       return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
     }
+
+    [JSDoc("Starts a new monitored scope that can be used to profile script executino.")]
+    [JSFunction(Name = "beginMonitoredScope")]
+    public SPMonitoredScopeInstance BeginMonitoredScope(string name)
+    {
+      var monitoredScope = new SPMonitoredScope(name, 11000, new SPExecutionTimeCounter(), new SPCriticalTraceCounter());
+      return new SPMonitoredScopeInstance(this.Engine.Object.Prototype, monitoredScope);
+    }
+
+    [JSDoc("Ends a previously created monitored scope that can be used to profile script execution.")]
+    [JSFunction(Name = "endMonitoredScope")]
+    public object EndMonitoredScope(object monitoredScope)
+    {
+      if (monitoredScope == null || monitoredScope == Undefined.Value || monitoredScope == Null.Value ||
+          (monitoredScope is SPMonitoredScopeInstance) == false)
+        return Null.Value;
+
+      var scope = monitoredScope as SPMonitoredScopeInstance;
+      scope.SPMonitoredScope.Dispose();
+      return scope.ElapsedTime;
+    }
+
     #endregion
 
     #region Nested Classes
     private class HandleEventFiring : SPItemEventReceiver
     {
-      public HandleEventFiring()
-      {
-      }
-
       public void CustomDisableEventFiring()
       {
         this.EventFiringEnabled = false;

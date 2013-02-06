@@ -142,7 +142,15 @@
 
         try
         {
-          var result = engine.Evaluate(source);
+          object result;
+          using (new SPMonitoredScope("Barista Script Eval", 110000,
+                    new SPCriticalTraceCounter(),
+                    new SPExecutionTimeCounter(11000),
+                    new SPRequestUsageCounter(),
+                    new SPSqlQueryCounter()))
+          {
+            result = engine.Evaluate(source);
+          }
 
           var isRaw = false;
 
@@ -167,14 +175,14 @@
         catch (Exception ex)
         {
           BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occurred while evaluating script: ");
-          throw;
+          SPScriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
         {
           //Cleanup
-// ReSharper disable RedundantAssignment
+          // ReSharper disable RedundantAssignment
           engine = null;
-// ReSharper restore RedundantAssignment
+          // ReSharper restore RedundantAssignment
 
           if (BaristaContext.Current != null)
             BaristaContext.Current.Dispose();
@@ -209,7 +217,7 @@
         syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
       }
 
-      WebBundle webBundle = new WebBundle();
+      var webBundle = new WebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       if (syncRoot != null)
@@ -219,31 +227,41 @@
       {
         bool isNewScriptEngineInstance;
         bool errorInInitialization;
-        var engine = SPScriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+        var engine = SPScriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
+                                                           out errorInInitialization);
 
         if (errorInInitialization)
           return;
 
         try
         {
-          engine.Execute(source);
+          using (new SPMonitoredScope("Barista Script Exec", 110000,
+                                      new SPCriticalTraceCounter(),
+                                      new SPExecutionTimeCounter(),
+                                      new SPRequestUsageCounter(),
+                                      new SPSqlQueryCounter()))
+          {
+            engine.Execute(source);
+          }
         }
         catch (JavaScriptException ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+                                                       "A JavaScript exception was thrown while evaluating script: ");
           SPScriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
         }
         catch (Exception ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while executing script: ");
-          throw;
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+                                                       "An internal error occured while executing script: ");
+          SPScriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
         {
           //Cleanup
-// ReSharper disable RedundantAssignment
+          // ReSharper disable RedundantAssignment
           engine = null;
-// ReSharper restore RedundantAssignment
+          // ReSharper restore RedundantAssignment
 
           if (BaristaContext.Current != null)
             BaristaContext.Current.Dispose();

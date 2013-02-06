@@ -54,10 +54,16 @@
     }
 
     [JSProperty(Name = "namespace")]
-    public string Namespace
+    public object Namespace
     {
-      get { return m_entity.Namespace; }
-      set { m_entity.Namespace = value; }
+      get
+      {
+        Uri uri;
+        if (Uri.TryCreate(m_entity.Namespace, UriKind.Absolute, out uri))
+          return new UriInstance(this.Engine.Object.Prototype, uri);
+        return m_entity.Namespace;
+      }
+      set { m_entity.Namespace = value.ToString(); }
     }
 
     [JSProperty(Name = "eTag")]

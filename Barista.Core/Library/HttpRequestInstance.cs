@@ -1,17 +1,14 @@
 ﻿namespace Barista.Library
 {
-  using System.Net;
   using Jurassic;
   using Jurassic.Library;
-  using System.Web;
-  using System.ServiceModel.Web;
   using System.Text;
   using System;
 
   [Serializable]
   public class HttpRequestInstance : ObjectInstance
   {
-    private ObjectInstance m_files = null;
+    private ObjectInstance m_files;
 
     public HttpRequestInstance(ScriptEngine engine, BrewRequest request)
       : base(engine)
@@ -52,9 +49,11 @@
 
           foreach (var file in this.Request.Files)
           {
-            var content = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, file.Value.Content);
-            content.FileName = file.Value.FileName;
-            content.MimeType = file.Value.ContentType;
+            var content = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, file.Value.Content)
+              {
+                FileName = file.Value.FileName,
+                MimeType = file.Value.ContentType
+              };
 
             m_files.SetPropertyValue(file.Key, content, false);
           }

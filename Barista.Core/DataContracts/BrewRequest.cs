@@ -19,6 +19,7 @@
       this.ContentLength = 0;
       this.ContentType = "application/octet-stream";
       this.Cookies = new Dictionary<string, string>();
+      this.ExecutionTimeout = 110000;
       this.Headers = new Dictionary<string, string>();
       this.Files = new Dictionary<string, PostedFile>();
       this.Form = new Dictionary<string, string>();
@@ -125,6 +126,13 @@
 
     [DataMember]
     public string CurrentExecutionFilePath
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public int ExecutionTimeout
     {
       get;
       set;

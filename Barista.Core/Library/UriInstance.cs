@@ -4,6 +4,8 @@
   using System.Linq;
   using Jurassic;
   using Jurassic.Library;
+  using System.Web;
+  using System.Text;
 
   [Serializable]
   public class UriConstructor : ClrFunction
@@ -166,6 +168,21 @@
     public string Query
     {
       get { return m_uri.Query; }
+    }
+
+    [JSProperty(Name = "queryString")]
+    public ObjectInstance QueryString
+    {
+      get
+      {
+        var result = this.Engine.Object.Construct();
+        var queryString = HttpUtility.ParseQueryString(m_uri.Query, Encoding.UTF8);
+        foreach (var key in queryString.Keys.OfType<string>())
+        {
+          result.SetPropertyValue(key, queryString[key], false);
+        }
+        return result;
+      }
     }
 
     [JSProperty(Name = "scheme")]
