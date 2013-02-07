@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using System.Web;
@@ -13,6 +14,7 @@
     public UriConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "Uri", new UriInstance(engine.Object.InstancePrototype))
     {
+      this.PopulateFunctions();
     }
 
     [JSConstructorFunction]
@@ -21,7 +23,7 @@
       Uri uri = null;
       if (uriObject is string)
       {
-        if (type != null && type is string)
+        if (type != Null.Value && type != Undefined.Value && type is string)
         {
           var uriKind = (UriKind)Enum.Parse(typeof(UriKind), type as string);
           uri = new Uri(uriObject as string, uriKind);
@@ -41,6 +43,12 @@
         throw new ArgumentNullException("uri");
 
       return new UriInstance(this.InstancePrototype, uri);
+    }
+
+    [JSFunction(Name = "concatUrls")]
+    public string ConcatUrls(string firstPart, string secondPart)
+    {
+      return firstPart.ConcatUrls(secondPart);
     }
   }
 
@@ -226,12 +234,13 @@
       {
         return m_uri.IsBaseOf((uri as UriInstance).m_uri);
       }
-      else if (uri is string)
+
+      if (uri is string)
       {
         return m_uri.IsBaseOf(new Uri(uri as string));
       }
-      else
-        return false;
+
+      return false;
     }
 
     [JSFunction(Name = "isWellFormedOriginalString")]

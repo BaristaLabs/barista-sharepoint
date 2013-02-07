@@ -1588,12 +1588,14 @@
     <Content Include="UnitTests\BaristaUnitTests\BaristaDocumentTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaFileUploadTest.html" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaK2Tests.js" />
+    <Content Include="UnitTests\BaristaUnitTests\BaristaKendoUIEditor.html" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaSharePointTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\BaristaTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_Deferred.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_DeleteUpload.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_GetUploads.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_Include.js" />
+    <Content Include="UnitTests\BaristaUnitTests\Content\Barista_KendoUI_IB.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_ProcessUpload.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_RecursiveWebsRetrieval.js" />
     <Content Include="UnitTests\BaristaUnitTests\Content\Barista_SimpleExpression.js" />

@@ -23,5 +23,7 @@
     <File Path="\BaristaUnitTests\BaristaTests.js" Url="BaristaTests.js" Type="GhostableInLibrary"/>
     <File Path="\BaristaUnitTests\index.html" Url="index.html" Type="GhostableInLibrary"/>
   
+<File Path="BaristaUnitTests\Content\Barista_KendoUI_IB.js" Url="BaristaUnitTests/Content/Barista_KendoUI_IB.js" />
+<File Path="BaristaUnitTests\BaristaKendoUIEditor.html" Url="BaristaUnitTests/BaristaKendoUIEditor.html" />
 </Module>
 </Elements>

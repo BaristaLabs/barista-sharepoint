@@ -277,6 +277,13 @@
       return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_folder.ParentFolder);
     }
 
+    [JSFunction(Name = "getParentWeb")]
+    public SPWebInstance GetParentWeb()
+    {
+      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_folder.ParentWeb);
+    }
+
+
     [JSFunction(Name = "getPermissions")]
     public SPSecurableObjectInstance GetPermissions()
     {

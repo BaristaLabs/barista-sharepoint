@@ -40,7 +40,7 @@
           FileName = file.Name,
           MimeType = StringHelper.GetMimeTypeFromFileName(file.Name),
           Size = file.Length,
-          Url = file.Web.Url + "/" + file.Url,
+          Url = SPUtility.ConcatUrls(file.Web.Url, file.Url),
           Created = (DateTime) file.Item[SPBuiltInFieldId.Created],
           Modified = (DateTime) file.Item[SPBuiltInFieldId.Modified]
         };

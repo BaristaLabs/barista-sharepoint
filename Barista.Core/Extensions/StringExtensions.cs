@@ -291,5 +291,34 @@
         return false;
       }
     }
+
+    /// <summary>
+    /// Concatenates two urls.
+    /// </summary>
+    /// <param name="firstPart"></param>
+    /// <param name="secondPart"></param>
+    /// <returns></returns>
+    public static string ConcatUrls(this string firstPart, string secondPart)
+    {
+      if (firstPart == null)
+        return secondPart;
+
+      if (secondPart == null)
+        return firstPart;
+
+      const string str = "/";
+      if (!firstPart.EndsWith(str, StringComparison.OrdinalIgnoreCase))
+      {
+        return !secondPart.StartsWith(str, StringComparison.OrdinalIgnoreCase)
+          ? string.Concat(firstPart, str, secondPart)
+          : string.Concat(firstPart, secondPart);
+      }
+
+      if (secondPart.StartsWith(str, StringComparison.OrdinalIgnoreCase))
+      {
+        firstPart = firstPart.TrimEnd(str.ToCharArray());
+      }
+      return string.Concat(firstPart, secondPart);
+    }
   }
 }

@@ -374,11 +374,13 @@
           }
         }
 
+        if (listTemplate == null)
+          return null;
 
         if (listCreationInstance.HasProperty("docTemplate"))
         {
           var docTemplate = JurassicHelper.Coerce<SPDocTemplateInstance>(this.Engine, listCreationInstance.GetPropertyValue("docTemplate"));
-          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, docTemplate.DocTemplate.Type.ToString(), quickLaunchOptions);
+          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, docTemplate.DocTemplate.Type.ToString(CultureInfo.InvariantCulture), quickLaunchOptions);
         }
         else
         {
@@ -429,6 +431,44 @@
     public void Delete()
     {
       m_web.Delete();
+    }
+
+    [JSFunction(Name = "deleteFileIfExists")]
+    public bool DeleteFileIfExists(string serverRelativeUrl)
+    {
+      var file = m_web.GetFile(serverRelativeUrl);
+      if (file != null && file.Exists)
+      {
+        m_web.AllowUnsafeUpdates = true;
+        try
+        {
+          file.Delete();
+        }
+        finally
+        {
+          m_web.AllowUnsafeUpdates = false;
+        }
+      }
+      return false;
+    }
+
+    [JSFunction(Name = "deleteFolderIfExists")]
+    public bool DeleteFolderIfExists(string serverRelativeUrl)
+    {
+      var folder = m_web.GetFolder(serverRelativeUrl);
+      if (folder != null && folder.Exists)
+      {
+        m_web.AllowUnsafeUpdates = true;
+        try
+        {
+          folder.Delete();
+        }
+        finally
+        {
+          m_web.AllowUnsafeUpdates = false;
+        }
+      }
+      return false;
     }
 
     [JSFunction(Name = "ensureUser")]

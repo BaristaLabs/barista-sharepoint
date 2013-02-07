@@ -9,6 +9,7 @@
   using Barista.Library;
   using System.Text;
   using Barista.SharePoint.EventReceivers.BaristaItemEventReceiver;
+  using Microsoft.SharePoint.Utilities;
 
   [Serializable]
   public class SPListConstructor : ClrFunction
@@ -354,7 +355,7 @@
     [JSProperty(Name = "url")]
     public string Url
     {
-      get { return m_list.ParentWeb.Url + "/" + m_list.RootFolder.Url; }
+      get { return SPUtility.ConcatUrls(m_list.ParentWeb.Url, m_list.RootFolder.Url); }
     }
     #endregion
 

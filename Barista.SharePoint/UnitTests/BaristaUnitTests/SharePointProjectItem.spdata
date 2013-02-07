@@ -23,5 +23,7 @@
     <ProjectItemFile Source="Content\Barista_SPListItemCreation.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
     <ProjectItemFile Source="Content\Barista_SPListEventReceiver.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
     <ProjectItemFile Source="Content\Barista_DSEventReceiverExample.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="Content\Barista_KendoUI_IB.js" Target="BaristaUnitTests\Content\" Type="ElementFile" />
+    <ProjectItemFile Source="BaristaKendoUIEditor.html" Target="BaristaUnitTests\" Type="ElementFile" />
   </Files>
 </ProjectItem>

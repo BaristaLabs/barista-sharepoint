@@ -481,7 +481,7 @@
 
       string result = text;
       if (BaristaContext.Current.List != null)
-        result = result.Replace("{ListUrl}", BaristaContext.Current.Web.Url + "/" + BaristaContext.Current.List.RootFolder.Url);
+        result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(BaristaContext.Current.Web.Url, BaristaContext.Current.List.RootFolder.Url));
 
       if (BaristaContext.Current.Web != null)
       {
@@ -511,7 +511,7 @@
 
       string result = text;
       if (context.List != null)
-        result = result.Replace("{ListUrl}", context.Web.Url + "/" + context.List.RootFolder.Url);
+        result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(context.Web.Url, context.List.RootFolder.Url));
 
       if (context.Web != null)
       {

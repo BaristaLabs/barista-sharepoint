@@ -5,6 +5,7 @@
   using Jurassic.Library;
   using Microsoft.SharePoint;
   using Barista.Library;
+  using Microsoft.SharePoint.Utilities;
 
   [Serializable]
   public class SPFileConstructor : ClrFunction
@@ -146,6 +147,12 @@
       }
     }
 
+    [JSProperty(Name = "listRelativeUrl")]
+    public string ListRelativeUrl
+    {
+      get { return m_file.Url; }
+    }
+
     [JSProperty(Name = "level")]
     public string Level
     {
@@ -277,7 +284,7 @@
     {
       get
       {
-        return m_file.Web.Url + "/" + m_file.Url;
+        return SPUtility.ConcatUrls(m_file.Web.Url, m_file.Url);
       }
     }
     #endregion
