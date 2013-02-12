@@ -467,6 +467,26 @@
     }
 
     /// <summary>
+    /// Returns the total number of entities of the specified namespace contained in the specified path.
+    /// </summary>
+    public int CountEntities(EntityFilterCriteria filterCriteria)
+    {
+      int result;
+      if (filterCriteria.Path == null)
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.CountEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
+      }
+      else
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.CountEntities(this.Configuration.ContainerTitle, filterCriteria);
+      }
+
+      return result;
+    }
+
+    /// <summary>
     /// Gets the first entity of the specified type from the repository.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
