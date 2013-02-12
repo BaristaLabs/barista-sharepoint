@@ -227,15 +227,18 @@
               break;
             case SPEventReceiverType.ItemUpdated:
               {
-                var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
-                var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File,
-                                                                           null);
-                using (var site = properties.OpenSite())
+                if (properties.ListItem.Folder != null)
                 {
-                  using (var web = properties.OpenWeb())
+                  var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
+                  var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File,
+                                                                              null);
+                  using (var site = properties.OpenSite())
                   {
-                    var context = new BaristaContext(site, web);
-                    EntityUpdated(context, entity);
+                    using (var web = properties.OpenWeb())
+                    {
+                      var context = new BaristaContext(site, web);
+                      EntityUpdated(context, entity);
+                    }
                   }
                 }
               }
