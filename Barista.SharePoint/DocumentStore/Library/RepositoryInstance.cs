@@ -245,6 +245,21 @@
       return result;
     }
 
+    [JSFunction(Name = "countEntities")]
+    public int CountEntities(object filterCriteria)
+    {
+      var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
+
+      if (filterCriteria is FolderInstance)
+        criteria.EntityFilterCriteria.Path = (filterCriteria as FolderInstance).FullPath;
+      else if (filterCriteria is string || filterCriteria is StringInstance || filterCriteria is ConcatenatedString)
+        criteria.EntityFilterCriteria.Path = filterCriteria.ToString();
+      else if (filterCriteria != null && filterCriteria != Null.Value && filterCriteria != Undefined.Value)
+        criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
+
+      return m_repository.CountEntities(criteria.EntityFilterCriteria);
+    }
+
     [JSFunction(Name = "moveEntity")]
     public bool MoveEntity(object entityId, string destinationPath)
     {

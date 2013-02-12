@@ -101,6 +101,15 @@
     IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria);
 
     /// <summary>
+    /// Returns the total number of entities that correspond to the filter criteria.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <param name="criteria">The criteria.</param>
+    /// <returns></returns>
+    int CountEntities(string containerTitle, string path, EntityFilterCriteria criteria);
+
+    /// <summary>
     /// Moves the specified entity to the specified destination folder.
     /// </summary>
     /// <param name="containerTitle"></param>

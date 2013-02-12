@@ -208,6 +208,10 @@
           {
             case SPEventReceiverType.ItemAdded:
               {
+                //TODO: See if this is appropraite.
+                if (properties.ListItem.Folder == null)
+                  return;
+
                 var documentSet = DocumentSet.GetDocumentSet(properties.ListItem.Folder);
                 var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, properties.ListItem.File,
                                                                            null);

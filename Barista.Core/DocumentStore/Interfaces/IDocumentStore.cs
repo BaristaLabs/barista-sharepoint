@@ -100,6 +100,14 @@
     IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria);
 
     /// <summary>
+    /// Returns the total number of entities contained in the container with the specified namespace.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="criteria"></param>
+    /// <returns></returns>
+    int CountEntities(string containerTitle, EntityFilterCriteria criteria);
+
+    /// <summary>
     /// Updates the entity.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
