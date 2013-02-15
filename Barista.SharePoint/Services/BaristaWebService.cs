@@ -15,6 +15,9 @@
   using System.Text;
   using System.Web;
 
+  /// <summary>
+  /// Represents the Barista WCF service endpoint that responds to REST requests.
+  /// </summary>
   [SilverlightFaultBehavior]
   [BasicHttpBindingServiceMetadataExchangeEndpoint]
   [ServiceContract(Namespace = Barista.Constants.ServiceNamespace)]
@@ -117,7 +120,7 @@
     /// <summary>
     /// Takes an order. E.g. Asserts that the current web is valid, the user has read permissions on the current web, and the current web is a trusted location.
     /// </summary>
-    private void TakeOrder()
+    private static void TakeOrder()
     {
       if (SPContext.Current.Web == null)
         throw new InvalidOperationException("Cannot execute Barista: Barista must execute within the context of a SharePoint Web.");
@@ -131,15 +134,15 @@
     /// <summary>
     /// Grinds the beans. E.g. Attempts to retrieve the code value from the request.
     /// </summary>
-    private string Grind()
+    private static string Grind()
     {
       string code = null;
 
-      //If the request has a header named "c" use that first.
+      //If the request has a header named "X-Barista-Code" use that first.
       if (WebOperationContext.Current != null)
       {
         var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-        var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c");
+        var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code");
         if (codeHeaderKey != null)
           code = requestHeaders[codeHeaderKey];
       }
@@ -194,7 +197,51 @@
       }
 
       if (String.IsNullOrEmpty(code))
-        throw new InvalidOperationException("Code must be specified either through the 'c' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
+        throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
+
+
+      //Determine if a language is specified.
+      string language = null;
+
+      //If the request has a header named "X-Barista-Code-Language" use that first.
+      if (WebOperationContext.Current != null)
+      {
+        var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
+        var languageHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code-Language");
+        if (languageHeaderKey != null)
+          language = requestHeaders[languageHeaderKey];
+      }
+
+      //If the request has a query string parameter named "lang" use that.
+      if (String.IsNullOrEmpty(language) && WebOperationContext.Current != null)
+      {
+        var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+        var languageKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "lang");
+        if (languageKey != null)
+          language = requestQueryParameters[languageKey];
+      }
+
+      //If the request contains a form variable named "lang" use that.
+      if (String.IsNullOrEmpty(language) && HttpContext.Current.Request.HttpMethod == "POST")
+      {
+        var form = HttpContext.Current.Request.Form;
+        var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "lang");
+        if (formKey != null)
+          language = form[formKey];
+      }
+
+      if (String.IsNullOrEmpty(language) != true)
+      {
+        switch (language.ToLowerInvariant())
+        {
+          case "typescript":
+            //Call the command-line compiler and retrieve the javascript.
+
+            //TODO: What about tsc.exe errors? Parse output? Must pass TSC.exe a temp folder location...
+            throw new NotImplementedException();
+        }
+      }
 
       return code;
     }
@@ -205,7 +252,7 @@
     /// <param name="code"></param>
     /// <param name="scriptPath"></param>
     /// <returns></returns>
-    private string Tamp(string code, out string scriptPath)
+    private static string Tamp(string code, out string scriptPath)
     {
       scriptPath = String.Empty;
 
@@ -246,7 +293,7 @@
     /// </summary>
     /// <param name="code"></param>
     /// <param name="codePath"></param>
-    private void Brew(string code, string codePath)
+    private static void Brew(string code, string codePath)
     {
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
 
@@ -272,7 +319,7 @@
     /// <param name="code"></param>
     /// <param name="codePath"></param>
     /// <returns></returns>
-    private Stream Pull(string code, string codePath)
+    private static Stream Pull(string code, string codePath)
     {
       BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
 

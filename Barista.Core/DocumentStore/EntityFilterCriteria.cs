@@ -63,6 +63,8 @@
     EndsWith,
     Contains,
     StartsWithMatchAnyQueryPairs,
+    StartsWithMatchAnyQueryPairsContainsValue,
     StartsWithMatchAllQueryPairs,
+    StartsWithMatchAllQueryPairsContainsValue,
   }
 }
