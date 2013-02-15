@@ -115,5 +115,22 @@ var jsonDataHandler = {
         }
         this.diffing -= 1;
         return diffRes;
+    },
+    clone: function(obj) {
+        var target = {};
+        for (var i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                target[i] = obj[i];
+            }
+        }
+        return target;
+    },
+    mergeChanges: function(original, changes, target) {
+        var d1 = jsonDataHandler.diff(original, changes);
+        var d2 = jsonDataHandler.diff(original, target);
+        var d3 = jsonDataHandler.diff(d1, d2);
+        var targetClone = jsonDataHandler.clone(target);
+        jsonDataHandler.merge(targetClone, d3);
+        return targetClone;
     }
 };

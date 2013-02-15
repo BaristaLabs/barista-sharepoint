@@ -93,7 +93,7 @@
       var result = engine.Evaluate("a;");
       var stringResult = JSONObject.Stringify(engine, result, null, null);
 
-      object parsedJson = JsonConvert.DeserializeObject(stringResult);
+      var parsedJson = JsonConvert.DeserializeObject(stringResult);
       return JsonConvert.SerializeObject(parsedJson, Formatting.Indented, settings);
     }
 
@@ -108,14 +108,40 @@
     /// <returns></returns>
     public static T DiffAndMerge<T>(T original, T source, T target, JsonSerializerSettings settings)
     {
-      string originalJson = JsonConvert.SerializeObject(original, settings);
-      string sourceJson = JsonConvert.SerializeObject(source, settings);
-      string targetJson = JsonConvert.SerializeObject(target, settings);
+      var originalJson = JsonConvert.SerializeObject(original, settings);
+      var sourceJson = JsonConvert.SerializeObject(source, settings);
+      var targetJson = JsonConvert.SerializeObject(target, settings);
 
       var diffJson = JsonHelper.Diff(originalJson, sourceJson, settings);
       var mergeJson = JsonHelper.Merge(targetJson, diffJson, settings);
 
       return JsonConvert.DeserializeObject<T>(mergeJson, settings);
+    }
+
+    /// <summary>
+    /// Given three objects, returns the target object with the changes applied.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="original"></param>
+    /// <param name="changes"></param>
+    /// <param name="target"></param>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public static T MergeChanges<T>(T original, T changes, T target, JsonSerializerSettings settings)
+    {
+      var jsonA = JsonConvert.SerializeObject(original, settings);
+      var jsonB = JsonConvert.SerializeObject(changes, settings);
+      var jsonC = JsonConvert.SerializeObject(target, settings);
+
+      var engine = JsonHelper.Engine;
+      engine.Execute("var a = " + jsonA + ";");
+      engine.Execute("var b = " + jsonB + ";");
+      engine.Execute("var c = " + jsonC + ";");
+      engine.Execute("var res = jsonDataHandler.mergeChanges(a, b, c);");
+      var result = engine.Evaluate("res;");
+      var stringResult = JSONObject.Stringify(engine, result, null, null);
+
+      return JsonConvert.DeserializeObject<T>(stringResult, settings);
     }
   }
 }
