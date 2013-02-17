@@ -129,6 +129,17 @@
     /// <returns></returns>
     public static T MergeChanges<T>(T original, T changes, T target, JsonSerializerSettings settings)
     {
+      if (original.Equals(default(T)) && changes.Equals(default(T)))
+        return target;
+
+      if (original.Equals(default(T)))
+        original = changes;
+      else if (changes.Equals(default(T)))
+        changes = original;
+
+      if (target.Equals(default(T)))
+        target = changes;
+
       var jsonA = JsonConvert.SerializeObject(original, settings);
       var jsonB = JsonConvert.SerializeObject(changes, settings);
       var jsonC = JsonConvert.SerializeObject(target, settings);
