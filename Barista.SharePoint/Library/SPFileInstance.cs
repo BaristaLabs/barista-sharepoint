@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -61,18 +62,19 @@
 
     #region Properties
     [JSProperty(Name = "author")]
+    [JSDoc("Gets the author (original creator) of the file.")]
     public SPUserInstance Author
     {
       get
       {
-        if (m_file.Author == null)
-          return null;
-
-        return new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.Author);
+        return m_file.Author == null
+          ? null
+          : new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.Author);
       }
     }
 
     [JSProperty(Name = "checkedOutByUser")]
+    [JSDoc("Gets the login name of the user who the file is checked out to.")]
     public SPUserInstance CheckedOutByUser
     {
       get
@@ -94,6 +96,7 @@
     }
 
     [JSProperty(Name = "checkOutType")]
+    [JSDoc("Gets the current level of check out of the file.")]
     public string CheckOutType
     {
       get
@@ -130,6 +133,7 @@
     }
 
     [JSProperty(Name = "exists")]
+    [JSDoc("Returns a value that indicates if the file exists.")]
     public bool Exists
     {
       get
@@ -139,6 +143,7 @@
     }
 
     [JSProperty(Name = "length")]
+    [JSDoc("Gets size of the file in bytes.")]
     public double Length
     {
       get
@@ -148,6 +153,7 @@
     }
 
     [JSProperty(Name = "listRelativeUrl")]
+    [JSDoc("Gets the list relative url of the file")]
     public string ListRelativeUrl
     {
       get { return m_file.Url; }
@@ -226,6 +232,7 @@
     }
 
     [JSProperty(Name = "serverRelativeUrl")]
+    [JSDoc("Gets the server relative url of the file")]
     public string ServerRelativeUrl
     {
       get
@@ -280,6 +287,7 @@
     }
 
     [JSProperty(Name = "url")]
+    [JSDoc("Gets the absolute url of the file")]
     public string Url
     {
       get
@@ -290,6 +298,7 @@
     #endregion
 
     [JSFunction(Name="checkIn")]
+    [JSDoc("Checks the file in. The first argument is a (string) comment, the second is an optional (string) value of one of these values: MajorCheckIn, MinorCheckIn, OverwriteCheckIn")]
     public void CheckIn(string comment, string checkInType)
     {
       if (String.IsNullOrEmpty(checkInType))
@@ -298,12 +307,18 @@
       }
       else
       {
-        var checkInTypeValue = (SPCheckinType)Enum.Parse(typeof(SPCheckinType), checkInType);
-        m_file.CheckIn(comment, checkInTypeValue);
+        SPCheckinType checkInTypeValue;
+        if (checkInType.TryParseEnum(true, out checkInTypeValue))
+          m_file.CheckIn(comment, checkInTypeValue);
+        else
+        {
+          throw new JavaScriptException(this.Engine, "Error", "The checkInType argument must be one of the following values: MajorCheckIn, MinorCheckIn, OverwriteCheckIn");
+        }
       }
     }
 
     [JSFunction(Name = "checkOut")]
+    [JSDoc("Sets the checkout state of the file as checked out to the current user.")]
     public void CheckOut()
     {
       m_file.CheckOut();
@@ -368,6 +383,7 @@
     }
 
     [JSFunction(Name = "openBinary")]
+    [JSDoc("Returns a Base-64 Encoded byte array of the contents of the file.")]
     public Base64EncodedByteArrayInstance OpenBinary(string openOptions)
     {
       Base64EncodedByteArrayInstance result;
@@ -388,24 +404,28 @@
     }
 
     [JSFunction(Name = "publish")]
+    [JSDoc("Publishes the file.")]
     public void Publish(string comment)
     {
       m_file.Publish(comment);
     }
 
     [JSFunction(Name = "recycle")]
+    [JSDoc("Moves the file to the recycle bin.")]
     public string Recycle()
     {
       return m_file.Recycle().ToString();
     }
 
     [JSFunction(Name = "undoCheckOut")]
+    [JSDoc("Un-checkouts the file.")]
     public void UndoCheckOut()
     {
       m_file.UndoCheckOut();
     }
 
     [JSFunction(Name = "unPublish")]
+    [JSDoc("Unpublishes the file.")]
     public void UnPublish(string comment)
     {
       m_file.UnPublish(comment);
