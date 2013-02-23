@@ -1,5 +1,5 @@
 Barista - An JavaScript Application Platform for .Net
-Copyright (C) 2012 Sean McLellan
+Copyright (C) 2012-2013 Sean McLellan
 ===================================================================
 
 This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@ FOSS License Exception
 What is the FOSS License Exception?
 
 This Free and Open Source Software ("FOSS") License Exception allows 
-developers of FOSS applications to include RavenDB with their FOSS 
-applications. RavenDB is typically licensed pursuant to version 3
+developers of FOSS applications to include Barista with their FOSS 
+applications. Barista is typically licensed pursuant to version 3
 of the Affero General Public License ("AGPL"), but this exception permits 
-distribution of RavenDB with a developer's FOSS applications licensed 
+distribution of Barista with a developer's FOSS applications licensed 
 under the terms of another FOSS license listed below, even though such 
 other FOSS license may be incompatible with the AGPL.
 
