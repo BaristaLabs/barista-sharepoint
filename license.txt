@@ -41,12 +41,12 @@ Definitions.
 	* "FOSS Application" means a free and open source software application distributed 
 	   subject to a license approved by the Open Source Initiative (OSI) board. A list of 
 	   applicable licenses appears at: http://www.opensource.org/licenses/category.
-	* "FOSS Notice" means a notice placed by Hibernating Rhinos or the RavenDB author 
-	   in a copy of the RavenDB library stating that such copy of the RavenDB library 
-	   may be distributed under Hibernating Rhinos's or RavenDB's FOSS License Exception.
+	* "FOSS Notice" means a notice placed by Sean McLellan or the Barista author 
+	   in a copy of the Barista library stating that such copy of the Barista library 
+	   may be distributed under Sean McLellan's or Barista's FOSS License Exception.
 	* "Independent Work" means portions of the Derivative Work that are not derived 
 	   from the Program and can reasonably be considered independent and separate works.
-	* "Program" means a copy of Hibernating Rhinos's RavenDB library that contains a FOSS 
+	* "Program" means a copy of Sean McLellan's Barista library that contains a FOSS 
 	   Notice.
 
 A FOSS application developer ("you" or "your") may distribute a Derivative Work provided 
@@ -66,7 +66,7 @@ that you and the Derivative Work meet all of the following conditions:
 	  volume of storage are not derivative works of the Program, Derivative Work or FOSS 
 	  Application, and must reasonably be considered independent and separate works.
 
-Hibernating Rhinos reserves all rights not expressly granted in these terms and conditions. 
+Sean McLellan reserves all rights not expressly granted in these terms and conditions. 
 If all of the above conditions are not met, then this FOSS License Exception does not 
 apply to you or your Derivative Work.
 
