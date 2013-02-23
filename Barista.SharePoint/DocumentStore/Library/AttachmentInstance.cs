@@ -47,7 +47,7 @@
     public DateInstance TimeLastModified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_attachment.TimeLastModified); }
-      set { m_attachment.TimeLastModified = DateTime.Parse(value.ToISOString()); }
+      set { m_attachment.TimeLastModified = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "eTag")]
@@ -82,7 +82,7 @@
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_attachment.Created); }
-      set { m_attachment.Created = DateTime.Parse(value.ToISOString()); }
+      set { m_attachment.Created = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -101,7 +101,7 @@
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_attachment.Modified); }
-      set { m_attachment.Modified = DateTime.Parse(value.ToISOString()); }
+      set { m_attachment.Modified = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "modifiedBy")]

@@ -82,10 +82,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\iTextSharp.5.3.3\lib\itextsharp.dll</HintPath>
     </Reference>
-    <Reference Include="Jurassic, Version=2.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Jurassic\Jurassic.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Lucene.Net.dll</HintPath>
@@ -181,10 +177,6 @@
     <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -481,6 +473,7 @@
     <None Include="Layouts\BaristaJS\codemirror-2.37\README.md" />
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.ttf" />
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.woff" />
+    <None Include="Layouts\BaristaJS\toastr-1.1.5\component.json" />
     <None Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{149204ef-d399-4b57-91e9-4ac849a10841}</SharePointProjectItemId>
     </None>
@@ -656,6 +649,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client\" />
+    <Folder Include="Imports\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
@@ -1578,6 +1572,11 @@
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\jquery-sticklr-1.4-light-color.css" />
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\jquery-sticklr-1.4.js" />
     <Content Include="Layouts\BaristaJS\sticklr-1.4.1\jquery-sticklr-1.4.min.js" />
+    <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr-1.1.5.js" />
+    <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr-1.1.5.min.js" />
+    <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr-icon.png" />
+    <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr.css" />
+    <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr.min.css" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\EditDlg.htm" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Elements.xml" />

@@ -532,7 +532,7 @@
         if (item.Value == Null.Value || item.Value == Undefined.Value)
           result.AddParam(DBNull.Value);
         else if (item.Value is DateInstance)
-          result.AddParam(DateTime.Parse(((DateInstance)item.Value).ToISOString()));
+          result.AddParam(DateTime.Parse(((DateInstance)item.Value).ToIsoString()));
         else if (item.Value is Base64EncodedByteArrayInstance)
           result.AddParam(((Base64EncodedByteArrayInstance)item.Value).Data);
         else
@@ -577,7 +577,7 @@
           if (val == Null.Value || val == Undefined.Value)
             result.AddParam(DBNull.Value);
           if (val is DateInstance)
-            result.AddParam(DateTime.Parse(((DateInstance)val).ToISOString()));
+            result.AddParam(DateTime.Parse(((DateInstance)val).ToIsoString()));
           else if (val is Base64EncodedByteArrayInstance)
             result.AddParam(((Base64EncodedByteArrayInstance)val).Data);
           else

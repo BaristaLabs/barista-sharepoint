@@ -246,7 +246,7 @@
       if (absoluteExpiration != Null.Value && absoluteExpiration != Undefined.Value && absoluteExpiration != null)
       {
         if (absoluteExpiration is DateInstance)
-          dtExpiration = DateTime.Parse((absoluteExpiration as DateInstance).ToISOString());
+          dtExpiration = DateTime.Parse((absoluteExpiration as DateInstance).ToIsoString());
         else
           dtExpiration = DateTime.Parse(absoluteExpiration.ToString());
       }

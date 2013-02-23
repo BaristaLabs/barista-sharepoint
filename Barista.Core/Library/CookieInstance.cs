@@ -92,7 +92,7 @@
       set
       {
         if (value != null)
-          m_cookie.Expires = DateTime.Parse(value.ToISOString());
+          m_cookie.Expires = DateTime.Parse(value.ToIsoString());
       }
     }
 

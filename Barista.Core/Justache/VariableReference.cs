@@ -52,7 +52,7 @@ namespace Barista.Justache
         if (dt.ToString() == "Invalid Date")
           return;
 
-        value = DateTime.Parse(dt.ToISOString());
+        value = DateTime.Parse(dt.ToIsoString());
       }
 
       if (String.IsNullOrEmpty(m_formatString) == false)

@@ -84,7 +84,7 @@
     public DateInstance ContentsModified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.ContentsModified); }
-      set { m_entity.ContentsModified = DateTime.Parse(value.ToISOString());  }
+      set { m_entity.ContentsModified = DateTime.Parse(value.ToIsoString());  }
     }
 
     [JSProperty(Name = "path")]
@@ -132,7 +132,7 @@
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Created); }
-      set { m_entity.Created = DateTime.Parse(value.ToISOString()); }
+      set { m_entity.Created = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -151,7 +151,7 @@
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Modified); }
-      set { m_entity.Modified = DateTime.Parse(value.ToISOString()); }
+      set { m_entity.Modified = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "modifiedBy")]

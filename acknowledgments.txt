@@ -1,0 +1,13 @@
+Barista is making use of the following OSS projects:
+
+* Jurassic from Paul Bartrum (http://jurassic.codeplex.com) and is used under the MS PL license: http://jurassic.codeplex.com/license
+* Newtonsoft.Json from James Newton-King (http://json.codeplex.com/) and is used under the MIT license: http://json.codeplex.com/license
+* Lucene.NET, SpellChecker.NET, Spatial.NET - (http://incubator.apache.org/lucene.net/) under the Apache license: https://svn.apache.org/repos/asf/incubator/lucene.net/trunk/LICENSE.txt
+* EPPlus
+* SharpZipLib
+* Camlex.NET
+* iTextSharp
+* HtmlAgilityPack
+
+Javascript Libraries:
+<TBD>

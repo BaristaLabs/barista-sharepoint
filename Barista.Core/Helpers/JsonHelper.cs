@@ -65,7 +65,7 @@
     /// <returns></returns>
     public static T Diff<T>(T a, T b, JsonSerializerSettings settings)
     {
-      var jsonA = JsonConvert.SerializeObject(a, settings);
+      var jsonA = JsonConvert.SerializeObject(a, Formatting.None, settings);
       var jsonB = JsonConvert.SerializeObject(b, settings);
 
       var engine = JsonHelper.Engine;

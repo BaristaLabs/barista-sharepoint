@@ -19,6 +19,14 @@
       return engine.Date.Construct(dateNumeric);
     }
 
+    public static T GetTypedArgumentValue<T>(ScriptEngine engine, object argumentValue, T defaultArgumentValue)
+    {
+      if (argumentValue == Undefined.Value)
+        return defaultArgumentValue;
+
+      return TypeConverter.ConvertTo<T>(engine, argumentValue);
+    }
+
     public static T Coerce<T>(ScriptEngine engine, object instance)
       where T : ObjectInstance
     {

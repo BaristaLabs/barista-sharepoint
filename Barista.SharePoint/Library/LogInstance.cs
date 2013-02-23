@@ -102,7 +102,7 @@
     public DateInstance Timestamp
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entry.Timestamp); }
-      set { m_entry.Timestamp = DateTime.Parse(value.ToISOString()); }
+      set { m_entry.Timestamp = DateTime.Parse(value.ToIsoString()); }
     }
   }
 }

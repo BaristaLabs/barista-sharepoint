@@ -23,6 +23,7 @@
         MissingMemberHandling = MissingMemberHandling.Ignore,
         NullValueHandling = NullValueHandling.Include,
         DefaultValueHandling = DefaultValueHandling.Include,
+        
         DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
       };
     }

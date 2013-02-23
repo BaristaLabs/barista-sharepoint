@@ -77,7 +77,7 @@ namespace Barista.SharePoint.Library
     public DateInstance CalendarDate
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_query.CalendarDate); }
-      set { m_query.CalendarDate = DateTime.Parse(value.ToISOString()); }
+      set { m_query.CalendarDate = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name="datesInUtc")]

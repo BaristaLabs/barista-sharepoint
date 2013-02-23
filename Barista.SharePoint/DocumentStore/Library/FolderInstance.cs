@@ -47,7 +47,7 @@
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_folder.Created); }
-      set { m_folder.Created = DateTime.Parse(value.ToISOString()); }
+      set { m_folder.Created = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -66,7 +66,7 @@
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_folder.Modified); }
-      set { m_folder.Modified = DateTime.Parse(value.ToISOString()); }
+      set { m_folder.Modified = DateTime.Parse(value.ToIsoString()); }
     }
 
     [JSProperty(Name = "modifiedBy")]
