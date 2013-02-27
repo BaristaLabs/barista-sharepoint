@@ -7,6 +7,7 @@
   using Microsoft.SharePoint;
   using Barista.Library;
   using Microsoft.SharePoint.Utilities;
+  using Barista.Extensions;
 
   [Serializable]
   public class SPFileConstructor : ClrFunction
@@ -299,21 +300,16 @@
 
     [JSFunction(Name="checkIn")]
     [JSDoc("Checks the file in. The first argument is a (string) comment, the second is an optional (string) value of one of these values: MajorCheckIn, MinorCheckIn, OverwriteCheckIn")]
-    public void CheckIn(string comment, string checkInType)
+    public void CheckIn(string comment, object checkInType)
     {
-      if (String.IsNullOrEmpty(checkInType))
+      SPCheckinType checkInTypeValue;
+      if (checkInType.TryParseEnum(true, SPCheckinType.MinorCheckIn, out checkInTypeValue))
       {
-        m_file.CheckIn(comment);
+        m_file.CheckIn(comment, checkInTypeValue);
       }
       else
       {
-        SPCheckinType checkInTypeValue;
-        if (checkInType.TryParseEnum(true, out checkInTypeValue))
-          m_file.CheckIn(comment, checkInTypeValue);
-        else
-        {
-          throw new JavaScriptException(this.Engine, "Error", "The checkInType argument must be one of the following values: MajorCheckIn, MinorCheckIn, OverwriteCheckIn");
-        }
+        m_file.CheckIn(comment);
       }
     }
 

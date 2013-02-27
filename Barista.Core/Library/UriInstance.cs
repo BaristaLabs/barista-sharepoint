@@ -23,15 +23,10 @@
       Uri uri = null;
       if (uriObject is string)
       {
-        if (type != Null.Value && type != Undefined.Value && type is string)
-        {
-          var uriKind = (UriKind)Enum.Parse(typeof(UriKind), type as string);
-          uri = new Uri(uriObject as string, uriKind);
-        }
-        else
-        {
-          uri = new Uri(uriObject as string);
-        }
+        UriKind enumValue;
+        uri = type.TryParseEnum(true, UriKind.Absolute, out enumValue)
+          ? new Uri(uriObject as string, enumValue)
+          : new Uri(uriObject as string);
       }
 
       return new UriInstance(this.InstancePrototype, uri);

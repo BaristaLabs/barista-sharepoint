@@ -4,10 +4,13 @@ Barista is making use of the following OSS projects:
 * Newtonsoft.Json from James Newton-King (http://json.codeplex.com/) and is used under the MIT license: http://json.codeplex.com/license
 * Lucene.NET - (http://incubator.apache.org/lucene.net/) under the Apache license: https://svn.apache.org/repos/asf/incubator/lucene.net/trunk/LICENSE.txt
 * EPPlus from Jan Kallman (http://epplus.codeplex.com/) under the GPL license: http://epplus.codeplex.com/license
-* SharpZipLib from ic#code (http://www.icsharpcode.net/opensource/sharpziplib/) under the GPL License (with extension): http://www.icsharpcode.net/opensource/sharpziplib/
+* SharpZipLib from ic#code (http://www.icsharpcode.net/opensource/sharpziplib/) under the GPL license (with extension): http://www.icsharpcode.net/opensource/sharpziplib/
 * Camlex.NET from sadomovalex (http://camlex.codeplex.com/) under the MS PL license: http://camlex.codeplex.com/license
 * iTextSharp from iText (http://itextpdf.com/index.php) under the AGPL License: http://itextpdf.com/terms-of-use/index.php
-* HtmlAgilityPack from Simon Mourier (http://htmlagilitypack.codeplex.com/)  under the MS PL license: http://htmlagilitypack.codeplex.com/license
+* HtmlAgilityPack from Simon Mourier (http://htmlagilitypack.codeplex.com/) under the MS PL license: http://htmlagilitypack.codeplex.com/license
+* Nustache from Jason Diamond (https://github.com/jdiamond/Nustache) under the MIT license: https://github.com/jdiamond/Nustache/blob/master/LICENSE.txt
+* Linq2Rest from Jacob Reimers (http://linq2rest.codeplex.com/) under the MS PL license: http://linq2rest.codeplex.com/license
+* RestSharp from John Sheehan (https://github.com/restsharp/RestSharp) under the Apache license: https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt
 
 Javascript Libraries:
 <To Be Updated>
@@ -33,6 +36,6 @@ Javascript Libraries:
 * More...
 
 Barista is also making use of the following commercial products licensed for redistribution:
-* Telerik Kendo UI
+* Telerik KendoUI Web/DataViz/Mobile
 * Winnovative Html Convert
 

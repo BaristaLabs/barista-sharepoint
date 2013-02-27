@@ -108,6 +108,11 @@
       if (String.IsNullOrEmpty(@namespace))
         throw new ArgumentNullException("namespace", @"A Namespace must be defined when registring an Entity Type.");
 
+      //Validate the namespace parameter.
+      Uri entityNamespaceUri;
+      if (Uri.TryCreate(@namespace, UriKind.Absolute, out entityNamespaceUri) == false)
+        throw new ArgumentException("The Namespace parameter must conform to a valid absolute Uri.");
+
       if (type == null)
         throw new ArgumentNullException("type", @"The Entity Type must be defined.");
 

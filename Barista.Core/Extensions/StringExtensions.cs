@@ -1,5 +1,6 @@
 ﻿namespace Barista.Extensions
 {
+  using Jurassic;
   using System;
   using System.Collections.Generic;
   using System.Text;
@@ -283,6 +284,45 @@
       try
       {
         enumValue = (T)System.Enum.Parse(typeof(T), value, ignoreCase);
+        return true;
+      }
+      catch
+      {
+        enumValue = default(T);
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Tries to parse string to enum type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value">The value.</param>
+    /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
+    /// <param name="defaultValue"></param>
+    /// <param name="enumValue">The enum value.</param>
+    /// <returns></returns>
+    public static bool TryParseEnum<T>(this object value, bool ignoreCase, T defaultValue, out T enumValue)
+        where T : struct
+    {
+      if (value == null || value == Undefined.Value || value == Null.Value)
+      {
+        enumValue = defaultValue;
+        return true;
+      }
+
+      if (value is int)
+      {
+        var intValue = (int) value;
+        enumValue = (T)System.Enum.ToObject(typeof (T), intValue);
+        return true;
+      }
+
+      var stringValue = value.ToString();
+
+      try
+      {
+        enumValue = (T)System.Enum.Parse(typeof(T), stringValue, ignoreCase);
         return true;
       }
       catch

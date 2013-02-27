@@ -477,7 +477,11 @@
       string instanceSlidingExpirationKey;
       if (instanceModeKey != null)
       {
-        result.InstanceMode = (BaristaInstanceMode)Enum.Parse(typeof(BaristaInstanceMode), request.Headers["Barista_InstanceMode"]);
+        BaristaInstanceMode instanceMode;
+        if (request.Headers["Barista_InstanceMode"].TryParseEnum(true, out instanceMode))
+          result.InstanceMode = instanceMode;
+        else
+          throw new InvalidOperationException("Unable to determine the instance mode from the request header. Possible instance modes are PerSession, PerCall, and Single. " + request.Headers["Barista_InstanceMode"]);
 
         if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
         {
@@ -506,7 +510,11 @@
         instanceModeKey = request.QueryString.AllKeys.FirstOrDefault(k => k == "Barista_InstanceMode");
         if (instanceModeKey != null)
         {
-          result.InstanceMode = (BaristaInstanceMode)Enum.Parse(typeof(BaristaInstanceMode), request.QueryString["Barista_InstanceMode"]);
+          BaristaInstanceMode instanceMode;
+          if (request.QueryString["Barista_InstanceMode"].TryParseEnum(true, out instanceMode))
+            result.InstanceMode = instanceMode;
+          else
+            throw new InvalidOperationException("Unable to determine the instance mode from the query string. Possible instance modes are PerSession, PerCall, and Single. " + request.QueryString["Barista_InstanceMode"]);
 
           if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
           {

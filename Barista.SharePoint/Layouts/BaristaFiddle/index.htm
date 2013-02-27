@@ -24,16 +24,16 @@
         }
         .container-fluid
         {
-            padding-left: 0px;
-            padding-right: 0px;
+            padding-left: 0;
+            padding-right: 0;
         }
         .navbar-fixed-top 
         {
-            margin-bottom: 0px;
+            margin-bottom: 0;
         }
         .CodeMirror 
         {
-            border: 0px;
+            border: 0;
         }
         .CodeMirror-scroll
         {
@@ -120,7 +120,7 @@
                            Retrieving Uls Log Result...
                         </div>
                         <div id="gridContainer" style="height: 100%; padding-bottom: 40px;">
-                            <div id="ulsGrid""></div>
+                            <div id="ulsGrid"></div>
                         </div>
                     </div>
                 </div>
@@ -329,14 +329,12 @@ asyncTest("[Your Unit Test Title]", function () {
 
         function setupEditor() {
 
-            CodeMirror.commands.run = function (cm) {
+            CodeMirror.commands.run = function() {
                 executeCode();
-            }
-
+            };
             CodeMirror.commands.autocomplete = function (cm) {
                 CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
-            }
-
+            };
             editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 lineNumbers: true,
                 extraKeys: {
@@ -424,7 +422,6 @@ asyncTest("[Your Unit Test Title]", function () {
                 var current = $("#openDialogTreeView").data("kendoTreeView");
                 if (typeof(current) !== "undefined") {
                     current.destroy();
-                    current = null;
                     $("#openDialogTreeView").removeData("kendoTreeView");
                 }
 
@@ -444,7 +441,7 @@ asyncTest("[Your Unit Test Title]", function () {
                 $("#openDialogTreeView").show();
             });
 
-            request.fail(function (data) {
+            request.fail(function () {
                 //Do something..
             });
 
@@ -471,7 +468,7 @@ asyncTest("[Your Unit Test Title]", function () {
             $("#saveAlertsDialogAlertArea .alert").hide();
             $("#saveAlertsDialog").modal("show");
 
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/GetFileInfo.js"),
@@ -534,7 +531,7 @@ asyncTest("[Your Unit Test Title]", function () {
             var code = getScriptValue();
             store.set("BaristaCode", code);
 
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'POST',
                 contentType: "application/x-www-form-jsonencoded",
                 url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/SaveFile.js") + "&f=" + encodeURIComponent(fileUrl),
@@ -542,14 +539,14 @@ asyncTest("[Your Unit Test Title]", function () {
                 success: function (data) {
                     currentDocLibInfo = data.docLibInfo;
                     currentFileInfo = data.fileInfo;
-                    $('#btnSave').tooltip('destroy')
+                    $('#btnSave').tooltip('destroy');
                     $('#btnSave').tooltip({
                         title: currentFileInfo.fileUrl,
                         placement: "bottom"
                     });
                     $("#saveAlertsDialog").modal("hide");
                 },
-                error: function (data) {
+                error: function () {
                     alert("An error occurred during save.");
                     $("#saveAlertsDialog").modal("hide");
                 }
@@ -557,7 +554,7 @@ asyncTest("[Your Unit Test Title]", function () {
         }
 
         function getCurrentUser() {
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.getCurrentUser()"),
@@ -569,7 +566,7 @@ asyncTest("[Your Unit Test Title]", function () {
         }
 
         function getCurrentWebUrl() {
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.currentContext.web.url"),
@@ -593,7 +590,7 @@ asyncTest("[Your Unit Test Title]", function () {
             var seperator = "?";
 
             if (baristaForceStrict == true) {
-                url += seperator + "Barista_ForceStrict=1;"
+                url += seperator + "Barista_ForceStrict=1;";
                 seperator = "&";
             }
 
@@ -619,16 +616,15 @@ asyncTest("[Your Unit Test Title]", function () {
 
             if (baristaInstanceInitializationCode != null) {
                 url += seperator + "Barista_InstanceInitializationCode=" + encodeURIComponent(baristaInstanceInitializationCode);
-                seperator = "&";
             }
 
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
                 url: url,
                 data: JSON.stringify({ code: code }),
-                success: function (data, textStatus, jqXHR) {
-                    var contentType = jqXHR.getResponseHeader('Content-Type');
+                success: function (data, textStatus, jqXhr) {
+                    var contentType = jqXhr.getResponseHeader('Content-Type');
                     if (contentType != null && contentType.indexOf("text/html") == 0) {
 
                         //var head = $(data).children('head');
@@ -643,27 +639,29 @@ asyncTest("[Your Unit Test Title]", function () {
                         $("#result").text(dataText);
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    var contentType = jqXHR.getResponseHeader('Content-Type');
+                error: function (jqXhr) {
+                    var contentType = jqXhr.getResponseHeader('Content-Type');
                     if (contentType.indexOf("text/html") == 0) {
-                        $("#htmlResult").contents().find('html').html(jqXHR.responseText);
+                        $("#htmlResult").contents().find('html').html(jqXhr.responseText);
                     }
                     else {
-                        $("#result").text($(jqXHR.responseText).children(".intro").text());
+                        $("#result").text($(jqXhr.responseText).children(".intro").text());
                     }
                 },
-                complete: function (jqXHR, textStatus) {
+                complete: function (jqXhr, textStatus) {
 
                     $("#ulsGrid").hide();
                     $("#resultLoading").hide();
 
-                    //If 200 was not returned, display the error.
-                    if (typeof (jqXHR) == "undefined" || jqXHR.statusText == "Bad Request" || textStatus == "Bad Request" || jqXHR.status != 200) {
+                    var contentType;
 
-                        if (typeof (jqXHR) == "undefined")
+                    //If 200 was not returned, display the error.
+                    if (typeof (jqXhr) == "undefined" || jqXhr.statusText == "Bad Request" || textStatus == "Bad Request" || jqXhr.status != 200) {
+
+                        if (typeof (jqXhr) == "undefined")
                             $("#result").show();
 
-                        var contentType = jqXHR.getResponseHeader('Content-Type');
+                        contentType = jqXhr.getResponseHeader('Content-Type');
                         if (contentType != null && contentType.indexOf("text/html") == 0)
                             $("#htmlResult").show();
                         else
@@ -671,7 +669,7 @@ asyncTest("[Your Unit Test Title]", function () {
                     }
                     else {
                         //Show the result.
-                        var contentType = jqXHR.getResponseHeader('Content-Type');
+                        contentType = jqXhr.getResponseHeader('Content-Type');
                         if (contentType != null && contentType.indexOf("text/html") == 0)
                             $("#htmlResult").show();
                         else
@@ -682,12 +680,12 @@ asyncTest("[Your Unit Test Title]", function () {
                     var bottomPaneHeight = $("#bottom-pane").css("height");
                     if (bottomPaneHeight != "0" && bottomPaneHeight != "0px") {
                         $("#ulsLogLoading").show();
-                        var spRequestGuid = jqXHR.getResponseHeader("SPRequestGuid");
+                        var spRequestGuid = jqXhr.getResponseHeader("SPRequestGuid");
                         var items = spRequestGuid.split(",");
 
 
                         setTimeout(function () {
-                            var logRequest = jQuery.ajax({
+                            jQuery.ajax({
                                 type: 'GET',
                                 contentType: "application/json; charset=utf-8",
                                 url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/GetUlsLogEntries.js") + "&cid=" + encodeURIComponent(items[0]),
@@ -719,7 +717,7 @@ asyncTest("[Your Unit Test Title]", function () {
             var code = store.get("BaristaCode");
             var paneSizeSettings = store.get("Barista-Settings-PaneSizes");
 
-            var bottomPaneSize = "240px";
+            var bottomPaneSize = "0px"; // Default to Hidden.
             var leftPaneSize = "50%";
             if (typeof (paneSizeSettings) != "undefined" && paneSizeSettings.length > 0) {
                 var paneSizes = JSON.parse(paneSizeSettings);
@@ -791,7 +789,7 @@ asyncTest("[Your Unit Test Title]", function () {
             var selectedDocLib = $("#openDialogOpenButton").data("selectedDocLib");
 
             if (selectedFile != null) {
-                var codeFileRequest = jQuery.ajax({
+                jQuery.ajax({
                         type: 'GET',
                         contentType: "application/json; charset=utf-8",
                         url: selectedFile.fileUrl,
@@ -801,13 +799,13 @@ asyncTest("[Your Unit Test Title]", function () {
                             $('#openDialog').modal('hide');
                             currentFileInfo = selectedFile;
                             currentDocLibInfo = selectedDocLib;
-                            $('#btnSave').tooltip('destroy')
+                            $('#btnSave').tooltip('destroy');
                             $('#btnSave').tooltip({
                                 title: selectedFile.fileUrl,
                                 placement: "bottom"
                             });
                         },
-                        error: function(data) {
+                        error: function() {
                             //do something...
                         }
                     });
@@ -829,13 +827,13 @@ asyncTest("[Your Unit Test Title]", function () {
 
         $("#btnSaveAlertsDialogCheckout").click(function () {
             $("#saveAlertsDialog").modal("hide");
-            var request = jQuery.ajax({
+            jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/CheckOutFile.js"),
                 cache: false,
                 data: { f: currentFileInfo.fileUrl },
-                success: function(data) {
+                success: function() {
                     validateSaveFile(currentFileInfo.fileUrl);
                     }
                 });
@@ -867,7 +865,7 @@ asyncTest("[Your Unit Test Title]", function () {
 
         $("#btnJSLint").click(function () {
             var code = getScriptValue();
-            var myResult = JSLINT(code, {
+            JSLINT(code, {
                 sloppy: true
             });
 
@@ -921,25 +919,29 @@ asyncTest("[Your Unit Test Title]", function () {
             border: 0;
             width: 100%;
         }
-        #bottom-pane
-        {
+        #bottom-pane {
+            background-color: #3c4650;
             background-color: rgba(60, 70, 80, 0.15);
         }
-        #left-pane
-        {
+
+        #left-pane {
+            background-color: #3c4650;
             background-color: rgba(60, 70, 80, 0.05);
         }
-        #center-pane
-        {
+
+        #center-pane {
+            background-color: #3c4650;
             background-color: rgba(60, 70, 80, 0.05);
         }
-        #right-pane
-        {
+
+        #right-pane {
+            background-color: #3c4650;
             background-color: rgba(60, 70, 80, 0.05);
         }
+
         .pane-content
         {
-            padding: 0 0px;
+            padding: 0 0;
         }
         
         #openDialogTreeView .k-sprite {

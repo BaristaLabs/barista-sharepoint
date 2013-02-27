@@ -5,7 +5,6 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System.Collections.Generic;
 
   [Serializable]
   public class SPFileVersionCollectionConstructor : ClrFunction
@@ -27,7 +26,7 @@
   [Serializable]
   public class SPFileVersionCollectionInstance : ObjectInstance
   {
-    private SPFileVersionCollection m_fileVersionCollection;
+    private readonly SPFileVersionCollection m_fileVersionCollection;
 
     public SPFileVersionCollectionInstance(ObjectInstance prototype)
       : base(prototype)

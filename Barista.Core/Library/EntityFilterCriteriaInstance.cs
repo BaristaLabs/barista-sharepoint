@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
   using Barista.DocumentStore;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
@@ -45,7 +46,14 @@
     public string NamespaceMatchType
     {
       get { return EntityFilterCriteria.NamespaceMatchType.ToString(); }
-      set { EntityFilterCriteria.NamespaceMatchType = (NamespaceMatchType)Enum.Parse(typeof(NamespaceMatchType), value); }
+      set
+      {
+        NamespaceMatchType enumValue;
+        if (value.TryParseEnum(true, out enumValue))
+          EntityFilterCriteria.NamespaceMatchType = enumValue;
+        else
+          throw new JavaScriptException(this.Engine, "Error", "Unknown or invalid namespace match type: " + value);
+      }
     }
 
     [JSProperty(Name = "queryPairs")]
@@ -60,16 +68,36 @@
     [JsonProperty("skip")]
     public int? Skip
     {
-      get { return (int)EntityFilterCriteria.Skip; }
-      set { EntityFilterCriteria.Skip = (uint)value; }
+      get
+      {
+        if (EntityFilterCriteria.Skip != null)
+          return (int)EntityFilterCriteria.Skip;
+        return null;
+      }
+      set
+      {
+        if (value != null)
+          EntityFilterCriteria.Skip = (uint)value;
+        EntityFilterCriteria.Skip = null;
+      }
     }
 
     [JSProperty(Name = "top")]
     [JsonProperty("top")]
     public int? Top
     {
-      get { return (int)EntityFilterCriteria.Top; }
-      set { EntityFilterCriteria.Top = (uint)value; }
+      get
+      {
+        if (EntityFilterCriteria.Top != null)
+          return (int)EntityFilterCriteria.Top;
+        return null;
+      }
+      set
+      {
+        if (value != null)
+          EntityFilterCriteria.Top = (uint)value;
+        EntityFilterCriteria.Top = null;
+      }
     }
   }
 }

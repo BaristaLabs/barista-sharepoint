@@ -3,10 +3,8 @@
   using Jurassic;
   using Jurassic.Library;
   using System;
-  using System.Collections.Generic;
   using System.Linq;
   using System.Reflection;
-  using System.Text;
 
   [Serializable]
   public class BaristaGlobal : ObjectInstance
@@ -136,7 +134,7 @@
       {
         var methodInfo = member as MethodInfo;
         var methodParams = engine.Array.Construct();
-        foreach (var parameter in methodInfo.GetParameters().OrderByDescending(p => p.Position))
+        foreach (var parameter in methodInfo.GetParameters().OrderBy(p => p.Position))
         {
           var parameterDoc = engine.Object.Construct();
           parameterDoc.SetPropertyValue("name", parameter.Name, false);
@@ -157,7 +155,7 @@
 
       else if (member is FieldInfo)
       {
-        var propertyInfo = member as PropertyInfo;
+        var propertyInfo = member as FieldInfo;
         //TODO: Implement this.
       }
 

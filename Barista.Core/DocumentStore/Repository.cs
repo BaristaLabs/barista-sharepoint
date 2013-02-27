@@ -140,6 +140,11 @@
     /// <returns></returns>
     public Entity CreateEntity(string path, string title, string entityNamespace, string data)
     {
+      //Validate the namespace parameter.
+      Uri entityNamespaceUri;
+      if (String.IsNullOrEmpty(entityNamespace) == false && Uri.TryCreate(entityNamespace, UriKind.Absolute, out entityNamespaceUri) == false)
+        throw new ArgumentException("If specified, the Entity Namespace parameter must conform to a valid absolute Uri.");
+
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityNamespace, data);
 
@@ -257,6 +262,11 @@
 
     public Entity UpdateEntity(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
     {
+      //Validate the namespace parameter.
+      Uri entityNamespaceUri;
+      if (String.IsNullOrEmpty(entityNamespace) == false && Uri.TryCreate(entityNamespace, UriKind.Absolute, out entityNamespaceUri) == false)
+        throw new ArgumentException("If specified, the Entity Namespace parameter must conform to a valid absolute Uri.");
+
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
       var result = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entityId, entityTitle, entityDescription, entityNamespace);
