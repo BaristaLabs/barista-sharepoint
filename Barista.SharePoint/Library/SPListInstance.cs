@@ -82,7 +82,18 @@
     [JSProperty(Name = "allowContentTypes")]
     public bool AllowContentTypes
     {
-      get { return m_list.AllowContentTypes; }
+      get
+      {
+        try
+        {
+          return m_list.AllowContentTypes;
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+        
+      }
     }
 
     [JSProperty(Name = "baseTemplate")]

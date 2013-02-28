@@ -41,6 +41,8 @@
         return ToBoolean(value);
       if (type == typeof(int))
         return ToInteger(value);
+      if (type == typeof (uint))
+        return ToUint32(value);
       if (type == typeof(double))
         return ToNumber(value);
       if (type == typeof(string))
@@ -225,12 +227,14 @@
     {
       if (value == null || value is Undefined)
         return 0;
-      double num = ToNumber(value);
+      var num = ToNumber(value);
       if (num > 2147483647.0)
         return 2147483647;
 #pragma warning disable 1718
+// ReSharper disable EqualExpressionComparison
       if (num != num)
         return 0;
+// ReSharper restore EqualExpressionComparison
 #pragma warning restore 1718
       return (int)num;
     }

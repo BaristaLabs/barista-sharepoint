@@ -17,9 +17,9 @@
       set;
     }
 
-    public Lucene.Net.Index.Term GetLuceneTerm()
+    public static Lucene.Net.Index.Term ConvertToLuceneTerm(Term term)
     {
-      return new Lucene.Net.Index.Term(this.FieldName, this.Value);
+      return new Lucene.Net.Index.Term(term.FieldName, term.Value);
     }
   }
 }

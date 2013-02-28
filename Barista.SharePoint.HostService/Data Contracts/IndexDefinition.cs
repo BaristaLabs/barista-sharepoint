@@ -3,6 +3,9 @@
   using System;
   using System.Runtime.Serialization;
 
+  /// <summary>
+  /// Represents the type and location of an index.
+  /// </summary>
   [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
   public class IndexDefinition : IEquatable<IndexDefinition>
   {

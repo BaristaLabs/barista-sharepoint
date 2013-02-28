@@ -105,10 +105,13 @@
     </Compile>
     <Compile Include="Data Contracts\Document.cs" />
     <Compile Include="Data Contracts\Field.cs" />
+    <Compile Include="Data Contracts\FieldStorageType.cs" />
     <Compile Include="Data Contracts\Hit.cs" />
+    <Compile Include="Data Contracts\FieldIndexType.cs" />
     <Compile Include="Data Contracts\IndexDefinition.cs" />
     <Compile Include="Data Contracts\IndexType.cs" />
     <Compile Include="Data Contracts\Term.cs" />
+    <Compile Include="Data Contracts\FieldTermVectorType.cs" />
     <Compile Include="Data Contracts\WebSocketServerOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">

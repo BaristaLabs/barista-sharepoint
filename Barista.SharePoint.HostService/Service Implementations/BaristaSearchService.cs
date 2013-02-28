@@ -3,7 +3,6 @@
   using System.Collections.Generic;
   using System.Linq;
   using Barista.SharePoint.Search;
-  using Lucene.Net;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
@@ -21,6 +20,10 @@
   {
     private static readonly ConcurrentDictionary<IndexDefinition, IndexWriter> IndexWriters = new ConcurrentDictionary<IndexDefinition, IndexWriter>();
 
+    /// <summary>
+    /// Deletes all documents from the specified index.
+    /// </summary>
+    /// <param name="definition"></param>
     public void DeleteAll(IndexDefinition definition)
     {
       var indexWriter = GetOrAddIndexWriter(definition, true);
@@ -34,6 +37,10 @@
       }
     }
 
+    /// <summary>
+    /// Commits all pending changes to the specified index and syncs all referenced index files.
+    /// </summary>
+    /// <param name="definition"></param>
     public void Commit(IndexDefinition definition)
     {
       var indexWriter = GetOrAddIndexWriter(definition, true);
@@ -47,16 +54,27 @@
       }
     }
 
+    /// <summary>
+    /// Adds a document to the specified index.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="document"></param>
     public void AddDocumentToIndex(IndexDefinition definition, Document document)
     {
+      if (document == null)
+        throw new InvalidOperationException("A document must be specified.");
+
+      if (document.Fields == null || !document.Fields.Any())
+        throw new InvalidOperationException("A document must have at least one field specified.");
+
       var indexWriter = GetOrAddIndexWriter(definition, true);
+
+      var luceneDocument = Document.ConvertToLuceneDocument(document);
+
       try
       {
-        //Convert WCF document to Lucene document
-
         //Add it to the index.
-        //indexWriter.AddDocument(doc);
-
+        indexWriter.AddDocument(luceneDocument);
       }
       catch (OutOfMemoryException)
       {
@@ -64,16 +82,26 @@
       }
     }
 
+    /// <summary>
+    /// Updates 
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="term"></param>
+    /// <param name="document"></param>
     public void UpdateDocumentInIndex(IndexDefinition definition, Term term, Document document)
     {
       var indexWriter = GetOrAddIndexWriter(definition, true);
 
+      //Convert WCF document to Lucene document
+      var luceneDocument = Document.ConvertToLuceneDocument(document);
+
+      //Convert WCF term to Lucene term
+      var luceneTerm = Term.ConvertToLuceneTerm(term);
+
       try
       {
-        //Convert WCF document to Lucene document
-        
         //Update the index.
-        //indexWriter.UpdateDocument(term.GetLuceneTerm(),
+        indexWriter.UpdateDocument(luceneTerm, luceneDocument);
       }
       catch (OutOfMemoryException)
       {
@@ -85,10 +113,12 @@
     {
       var indexWriter = GetOrAddIndexWriter(definition, true);
 
+      var luceneTerm = Term.ConvertToLuceneTerm(term);
+
       try
       {
         //Remove the documents from the index
-        indexWriter.DeleteDocuments(term.GetLuceneTerm());
+        indexWriter.DeleteDocuments(luceneTerm);
       }
       catch (OutOfMemoryException)
       {
