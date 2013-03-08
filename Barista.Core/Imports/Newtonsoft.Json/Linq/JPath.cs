@@ -26,9 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Linq
+namespace Barista.Newtonsoft.Json.Linq
 {
   internal class JPath
   {

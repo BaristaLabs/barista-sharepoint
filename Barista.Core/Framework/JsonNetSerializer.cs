@@ -1,7 +1,7 @@
 ﻿namespace Barista.Framework
 {
   using System.IO;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using RestSharp.Serializers;
 
   /// <summary>

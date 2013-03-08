@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
 
     /// <summary>

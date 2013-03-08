@@ -27,10 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 using System.Runtime.Serialization;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies the settings on a <see cref="JsonSerializer"/> object.
@@ -153,7 +153,7 @@ namespace Newtonsoft.Json
     /// Gets or sets the error handler called during serialization and deserialization.
     /// </summary>
     /// <value>The error handler called during serialization and deserialization.</value>
-    public EventHandler<ErrorEventArgs> Error { get; set; }
+    public EventHandler<Barista.Newtonsoft.Json.Serialization.ErrorEventArgs> Error { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="StreamingContext"/> used by the serializer when invoking serialization callback methods.

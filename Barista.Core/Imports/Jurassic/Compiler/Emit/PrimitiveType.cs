@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents a javascript primitive type.

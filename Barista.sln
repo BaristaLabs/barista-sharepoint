@@ -111,9 +111,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fody", "Fody", "{C74F12B1-7
 		Tools\Fody\Mono.Cecil.Rocks.dll = Tools\Fody\Mono.Cecil.Rocks.dll
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.Jurassic", "Barista.UnitTests.Jurassic\Barista.UnitTests.Jurassic.csproj", "{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -129,6 +133,10 @@ Global
 		SccProjectUniqueName4 = Barista.SharePoint.HostService\\Barista.SharePoint.HostService.csproj
 		SccProjectName4 = Barista.SharePoint.HostService
 		SccLocalPath4 = Barista.SharePoint.HostService
+		SccProjectUniqueName5 = Barista.UnitTests.Jurassic\\Barista.UnitTests.Jurassic.csproj
+		SccProjectTopLevelParentUniqueName5 = Barista.sln
+		SccProjectName5 = Barista.UnitTests.Jurassic
+		SccLocalPath5 = Barista.UnitTests.Jurassic
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +163,10 @@ Global
 		{0ECD7803-8177-407B-9F47-7E08D1030105}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,5 +176,6 @@ Global
 		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{81791AE6-02EB-46E1-A8DF-D197A2500D07} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
+		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 	EndGlobalSection
 EndGlobal

@@ -26,15 +26,15 @@
 using System;
 using System.Collections.Generic;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Linq;
 
-namespace Newtonsoft.Json.Schema
+namespace Barista.Newtonsoft.Json.Schema
 {
   internal class JsonSchemaBuilder
   {

@@ -27,7 +27,7 @@ using System;
 using System.Xml;
 using System.Globalization;
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
   internal static class DateTimeUtils
   {

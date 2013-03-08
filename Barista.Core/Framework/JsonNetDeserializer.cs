@@ -1,6 +1,6 @@
 ﻿namespace Barista.Framework
 {
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using RestSharp.Deserializers;
 
   public class JsonNetDeserializer : IDeserializer

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents the information needed to compile global code.

@@ -31,7 +31,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
   internal sealed class DynamicProxyMetaObject<T> : DynamicMetaObject
   {

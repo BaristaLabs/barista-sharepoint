@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace Jurassic
+namespace Barista.Jurassic
 {
     /// <summary>
     /// Represents a wrapper for javascript error objects.

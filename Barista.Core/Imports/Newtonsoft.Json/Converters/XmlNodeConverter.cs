@@ -31,14 +31,14 @@ using System.Xml;
 #if !NET20
 using System.Xml.Linq;
 #endif
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace Newtonsoft.Json.Converters
+namespace Barista.Newtonsoft.Json.Converters
 {
   #region XmlNodeWrappers
 #if !SILVERLIGHT && !NETFX_CORE

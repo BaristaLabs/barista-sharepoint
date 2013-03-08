@@ -25,14 +25,14 @@
 
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Globalization;
 #if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
 using System.Dynamic;
 using System.Linq.Expressions;
 #endif
 
-namespace Newtonsoft.Json.Linq
+namespace Barista.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a value in JSON (string, integer, date, etc).

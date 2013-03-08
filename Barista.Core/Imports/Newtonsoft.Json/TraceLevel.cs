@@ -1,7 +1,7 @@
 ﻿#if (NETFX_CORE || SILVERLIGHT || PORTABLE)
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies what messages to output for the <see cref="ITraceWriter"/> class.

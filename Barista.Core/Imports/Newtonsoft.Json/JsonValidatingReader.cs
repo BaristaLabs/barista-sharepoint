@@ -25,19 +25,19 @@
 
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Schema;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.IO;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Represents a reader that provides <see cref="JsonSchema"/> validation.

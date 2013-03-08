@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Jurassic.Library;
-
-namespace Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Diagnostics;
+
   /// <summary>
   /// Converts a series of tokens into an abstract syntax tree.
   /// </summary>

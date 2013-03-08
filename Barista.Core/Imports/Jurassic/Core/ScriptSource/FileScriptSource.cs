@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Jurassic
+namespace Barista.Jurassic
 {
     /// <summary>
     /// Represents a script file.

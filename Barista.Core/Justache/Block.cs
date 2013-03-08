@@ -1,6 +1,7 @@
-using Jurassic;
 namespace Barista.Justache
 {
+  using Barista.Jurassic;
+
   public class Block : Section
   {
     public Block(string name, params Part[] parts)

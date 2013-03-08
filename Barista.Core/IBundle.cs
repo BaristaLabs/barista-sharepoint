@@ -1,11 +1,7 @@
-﻿using Jurassic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista
+﻿namespace Barista
 {
+  using Barista.Jurassic;
+
   /// <summary>
   /// Represents a Bundle that, when installed, provides additional functionality.
   /// </summary>

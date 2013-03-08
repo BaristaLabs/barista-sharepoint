@@ -25,11 +25,11 @@
 
 #if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
 using System;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace Barista.Newtonsoft.Json.Converters
 {
   internal interface IEntityKeyMember
   {

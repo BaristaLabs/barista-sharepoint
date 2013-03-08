@@ -26,10 +26,10 @@
 using System;
 using System.Globalization;
 using System.ComponentModel;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 using System.Reflection;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 
 #if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
@@ -39,7 +39,7 @@ using System.Data.SqlTypes;
 using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
 #if NETFX_CORE
   internal class Convertible

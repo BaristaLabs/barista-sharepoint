@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   public enum FirebugConsoleMessageStyle
   {

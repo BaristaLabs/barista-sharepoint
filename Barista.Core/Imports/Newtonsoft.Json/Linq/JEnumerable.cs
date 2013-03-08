@@ -25,14 +25,14 @@
 
 using System.Collections.Generic;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Collections;
 
-namespace Newtonsoft.Json.Linq
+namespace Barista.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a collection of <see cref="JToken"/> objects.

@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Instructs the <see cref="JsonSerializer"/> to always serialize the member with the specified name.

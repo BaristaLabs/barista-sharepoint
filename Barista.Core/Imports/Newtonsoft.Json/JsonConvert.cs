@@ -29,9 +29,9 @@ using System.Globalization;
 #if !(NET20 || NET35 || SILVERLIGHT || PORTABLE)
 using System.Threading.Tasks;
 #endif
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Xml;
-using Newtonsoft.Json.Converters;
+using Barista.Newtonsoft.Json.Converters;
 using System.Text;
 #if !NET20 && (!SILVERLIGHT || WINDOWS_PHONE) && !PORTABLE
 using System.Xml.Linq;
@@ -40,7 +40,7 @@ using System.Xml.Linq;
 using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Provides methods for converting between common language runtime types and JSON types.

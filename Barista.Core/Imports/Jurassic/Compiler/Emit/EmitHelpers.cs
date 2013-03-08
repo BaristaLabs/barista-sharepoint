@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Outputs IL for misc tasks.

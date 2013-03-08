@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents the base class of all javascript expressions.

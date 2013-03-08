@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents a set of options that influence the compiler.

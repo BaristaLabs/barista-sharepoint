@@ -5,7 +5,7 @@
   using Barista.SocketBase;
   using Barista.SocketBase.Command;
   using Barista.SocketBase.Config;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using Barista.WebSocket.Command;
   using Barista.WebSocket.Config;
   using Barista.WebSocket.Protocol;

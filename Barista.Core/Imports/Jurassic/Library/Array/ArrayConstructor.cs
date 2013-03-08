@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   using System;
 
@@ -77,7 +77,7 @@
         {
           var length = (double)elements[0];
           var length32 = TypeConverter.ToUint32(length);
-          if (Math.Abs(length - length32) > double.Epsilon)
+          if (Double.IsNaN(length) || Math.Abs(length - length32) > double.Epsilon)
             throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
           return new ArrayInstance(this.InstancePrototype, length32, length32);
         }

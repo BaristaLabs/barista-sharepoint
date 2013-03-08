@@ -25,12 +25,12 @@
 
 using System;
 using System.Reflection;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 #if NETFX_CORE || PORTABLE
 using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvider;
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   internal static class CachedAttributeGetter<T> where T : Attribute
   {

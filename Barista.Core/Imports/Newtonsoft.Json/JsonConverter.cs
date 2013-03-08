@@ -26,10 +26,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Schema;
+using Barista.Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Schema;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Converts an object to and from JSON.

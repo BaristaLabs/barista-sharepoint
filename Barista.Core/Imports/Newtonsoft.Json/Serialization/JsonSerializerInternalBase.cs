@@ -28,9 +28,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   internal abstract class JsonSerializerInternalBase
   {

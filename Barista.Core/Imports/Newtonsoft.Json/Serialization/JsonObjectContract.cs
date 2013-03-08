@@ -28,9 +28,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.

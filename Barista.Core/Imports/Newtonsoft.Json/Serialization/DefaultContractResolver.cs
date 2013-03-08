@@ -40,20 +40,20 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Xml.Serialization;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Converters;
+using Barista.Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Linq;
 using System.Runtime.CompilerServices;
 #if NETFX_CORE || PORTABLE
 using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvider;
 #endif
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   internal struct ResolverContractKey : IEquatable<ResolverContractKey>
   {

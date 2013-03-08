@@ -5,7 +5,7 @@
   using Jurassic.Library;
   using Microsoft.IdentityModel.Claims;
   using Microsoft.IdentityModel.WindowsTokenService;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using System;
   using System.Collections;
   using System.IO;

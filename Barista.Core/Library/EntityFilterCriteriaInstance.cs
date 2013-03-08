@@ -4,7 +4,7 @@
   using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
 

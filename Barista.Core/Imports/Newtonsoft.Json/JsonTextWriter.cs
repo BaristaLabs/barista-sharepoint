@@ -29,9 +29,9 @@ using System.Globalization;
 using System.Text;
 using System.IO;
 using System.Xml;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Represents a writer that provides a fast, non-cached, forward-only way of generating Json data.

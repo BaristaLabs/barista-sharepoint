@@ -1,10 +1,11 @@
 ﻿namespace Barista
 {
   using System;
+  using System.Collections.Generic;
   using System.Text;
   using Jurassic;
   using Jurassic.Library;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
 
   public static class JurassicHelper
   {
@@ -24,7 +25,9 @@
       if (argumentValue == Undefined.Value)
         return defaultArgumentValue;
 
-      return TypeConverter.ConvertTo<T>(engine, argumentValue);
+      return Object.Equals(argumentValue, default(T))
+        ? default(T)
+        : TypeConverter.ConvertTo<T>(engine, argumentValue);
     }
 
     public static T Coerce<T>(ScriptEngine engine, object instance)

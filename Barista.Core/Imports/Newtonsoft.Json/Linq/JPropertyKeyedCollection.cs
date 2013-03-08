@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Newtonsoft.Json.Linq
+namespace Barista.Newtonsoft.Json.Linq
 {
   internal class JPropertyKeyedCollection : Collection<JToken>
   {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Jurassic
+namespace Barista.Jurassic
 {
     /// <summary>
     /// Represents a resource that can provide script code.  This is the abstract base class of all

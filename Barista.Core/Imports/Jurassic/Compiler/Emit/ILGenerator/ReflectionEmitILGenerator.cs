@@ -1,7 +1,7 @@
 ﻿using System;
 using OpCodes = System.Reflection.Emit.OpCodes;
 
-namespace Jurassic.Compiler
+namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents a generator of CIL bytes.

@@ -26,10 +26,10 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Runtime.Serialization;
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   internal class JsonSerializerProxy : JsonSerializer
   {

@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   using System;
   using System.Diagnostics;

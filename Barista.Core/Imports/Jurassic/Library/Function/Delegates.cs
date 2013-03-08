@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   /// <summary>
   /// Represents a delegate that is used for user-defined functions.  For internal use only.

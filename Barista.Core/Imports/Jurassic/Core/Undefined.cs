@@ -1,4 +1,4 @@
-﻿namespace Jurassic
+﻿namespace Barista.Jurassic
 {
   using System;
 

@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace Barista.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Create a custom object

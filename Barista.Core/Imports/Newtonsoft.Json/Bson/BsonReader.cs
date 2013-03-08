@@ -28,10 +28,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.IO;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Linq;
 
-namespace Newtonsoft.Json.Bson
+namespace Barista.Newtonsoft.Json.Bson
 {
   /// <summary>
   /// Represents a reader that provides fast, non-cached, forward-only access to serialized Json data.

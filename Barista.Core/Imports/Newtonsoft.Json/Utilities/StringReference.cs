@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
   internal struct StringReference
   {

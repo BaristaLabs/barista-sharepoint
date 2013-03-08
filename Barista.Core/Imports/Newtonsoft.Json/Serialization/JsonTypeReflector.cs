@@ -31,18 +31,18 @@ using System.Security;
 #if !(NETFX_CORE || PORTABLE)
 using System.Security.Permissions;
 #endif
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 #if NETFX_CORE || PORTABLE
 using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvider;
 #endif
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 using System.Runtime.Serialization;
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
 #if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE
   internal interface IMetadataTypeAttribute

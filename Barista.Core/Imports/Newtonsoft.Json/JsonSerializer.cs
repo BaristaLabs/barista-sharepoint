@@ -28,13 +28,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Converters;
+using Barista.Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Utilities;
 using System.Runtime.Serialization;
-using ErrorEventArgs=Newtonsoft.Json.Serialization.ErrorEventArgs;
+using ErrorEventArgs = Barista.Newtonsoft.Json.Serialization.ErrorEventArgs;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Serializes and deserializes objects into and from the JSON format.
@@ -70,7 +70,7 @@ namespace Newtonsoft.Json
     /// <summary>
     /// Occurs when the <see cref="JsonSerializer"/> errors during serialization and deserialization.
     /// </summary>
-    public virtual event EventHandler<ErrorEventArgs> Error;
+    public virtual event EventHandler<Barista.Newtonsoft.Json.Serialization.ErrorEventArgs> Error;
 
     /// <summary>
     /// Gets or sets the <see cref="IReferenceResolver"/> used by the serializer when resolving references.
@@ -660,9 +660,9 @@ namespace Newtonsoft.Json
       return null;
     }
 
-    internal void OnError(ErrorEventArgs e)
+    internal void OnError(Barista.Newtonsoft.Json.Serialization.ErrorEventArgs e)
     {
-      EventHandler<ErrorEventArgs> error = Error;
+      EventHandler<Barista.Newtonsoft.Json.Serialization.ErrorEventArgs> error = Error;
       if (error != null)
         error(this, e);
     }

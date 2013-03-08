@@ -25,10 +25,10 @@
 
 using System;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Bson;
+using Barista.Newtonsoft.Json.Bson;
 using System.Globalization;
 
-namespace Newtonsoft.Json.Converters
+namespace Barista.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts a <see cref="Regex"/> to and from JSON and BSON.

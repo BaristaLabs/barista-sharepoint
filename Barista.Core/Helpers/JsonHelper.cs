@@ -2,7 +2,7 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
 
   public static class JsonHelper
   {

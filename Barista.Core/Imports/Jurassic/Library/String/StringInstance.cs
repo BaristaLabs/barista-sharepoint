@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   using System;
   using System.Collections.Generic;
@@ -240,7 +240,9 @@
     [JSInternalFunction(Name = "localeCompare", Flags = JSFunctionFlags.HasThisObject)]
     public static int LocaleCompare(string thisObject, string str)
     {
-      return String.CompareOrdinal(thisObject, str);
+// ReSharper disable StringCompareIsCultureSpecific.1
+      return String.Compare(thisObject, str);
+// ReSharper restore StringCompareIsCultureSpecific.1
     }
 
     /// <summary>

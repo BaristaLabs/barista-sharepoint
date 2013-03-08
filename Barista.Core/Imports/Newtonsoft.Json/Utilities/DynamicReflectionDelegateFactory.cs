@@ -27,14 +27,14 @@
 using System;
 using System.Collections.Generic;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System.Reflection;
 using System.Reflection.Emit;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 using System.Globalization;
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
   internal class DynamicReflectionDelegateFactory : ReflectionDelegateFactory
   {

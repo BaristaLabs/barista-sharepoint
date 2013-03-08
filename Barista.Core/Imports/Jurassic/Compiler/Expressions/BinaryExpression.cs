@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
   using System;
 

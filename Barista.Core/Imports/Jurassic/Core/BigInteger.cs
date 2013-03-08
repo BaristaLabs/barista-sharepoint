@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jurassic
+namespace Barista.Jurassic
 {
     /// <summary>
     /// Represents an arbitrarily large signed integer.

@@ -35,15 +35,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Utilities;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json.Serialization
 {
   internal class JsonSerializerInternalReader : JsonSerializerInternalBase
   {

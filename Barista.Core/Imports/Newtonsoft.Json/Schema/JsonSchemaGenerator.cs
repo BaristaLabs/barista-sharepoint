@@ -27,19 +27,19 @@ using System;
 using System.Globalization;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Linq;
+using Barista.Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Serialization;
 #if NETFX_CORE
 using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #else
 using System.Linq;
 #endif
 
-namespace Newtonsoft.Json.Schema
+namespace Barista.Newtonsoft.Json.Schema
 {
   /// <summary>
   /// Generates a <see cref="JsonSchema"/> from a specified <see cref="Type"/>.

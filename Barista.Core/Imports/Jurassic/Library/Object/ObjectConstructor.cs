@@ -1,4 +1,4 @@
-﻿namespace Jurassic.Library
+﻿namespace Barista.Jurassic.Library
 {
   using System;
   using System.Collections.Generic;
@@ -121,7 +121,7 @@
     /// <param name="propertiesArg"> An object containing one or more property descriptors. </param>
     /// <returns> A new object instance. </returns>
     [JSInternalFunction(Name = "create", Flags = JSFunctionFlags.HasEngineParameter)]
-    public static ObjectInstance Create(ScriptEngine engine, object prototype, [DefaultParameterValue(null)] ObjectInstance propertiesArg)
+    public static ObjectInstance Create(ScriptEngine engine, object prototype, [DefaultParameterValue(null)] object propertiesArg)
     {
       var properties = JurassicHelper.GetTypedArgumentValue<ObjectInstance>(engine, propertiesArg, null);
 

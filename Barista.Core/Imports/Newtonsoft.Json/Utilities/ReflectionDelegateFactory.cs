@@ -26,12 +26,12 @@
 using System;
 using System.Globalization;
 using System.Reflection;
-using Newtonsoft.Json.Serialization;
+using Barista.Newtonsoft.Json.Serialization;
 #if NET20
-using Newtonsoft.Json.Utilities.LinqBridge;
+using Barista.Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 
-namespace Newtonsoft.Json.Utilities
+namespace Barista.Newtonsoft.Json.Utilities
 {
   internal abstract class ReflectionDelegateFactory
   {

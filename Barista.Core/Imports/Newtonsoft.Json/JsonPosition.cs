@@ -27,9 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   internal enum JsonContainerType
   {

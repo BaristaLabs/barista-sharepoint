@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 
-namespace Newtonsoft.Json.Linq
+namespace Barista.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a collection of <see cref="JToken"/> objects.

@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using Newtonsoft.Json.Utilities;
+using Barista.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Bson
+namespace Barista.Newtonsoft.Json.Bson
 {
   /// <summary>
   /// Represents a BSON Oid (object id).

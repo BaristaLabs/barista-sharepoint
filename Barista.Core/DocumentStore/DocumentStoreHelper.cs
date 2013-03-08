@@ -4,7 +4,7 @@
   using System.Collections.Generic;
   using System.IO;
   using System.Text.RegularExpressions;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
   using System.Runtime.Serialization.Json;
   using System.Text;
 

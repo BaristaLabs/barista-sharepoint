@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Newtonsoft.Json
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies type name handling options for the <see cref="JsonSerializer"/>.

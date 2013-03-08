@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Jurassic
+namespace Barista.Jurassic
 {
     /// <summary>
     /// Represents a string containing script code.
