@@ -211,7 +211,72 @@
         Name = createdByUser.User.Name,
       };
 
-      var modifiedByUser = new SPFieldUserValue(file.Web, createdByUserValue);
+      var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
+      var modifiedByUser = new SPFieldUserValue(file.Web, modifiedByUserValue);
+
+      entity.ModifiedBy = new User
+      {
+        Email = modifiedByUser.User.Email,
+        LoginName = modifiedByUser.User.LoginName,
+        Name = modifiedByUser.User.Name,
+      };
+
+      return entity;
+    }
+
+    /// <summary>
+    /// Maps the entity from the specified document set without attempting to retrieve data.
+    /// </summary>
+    /// <param name="documentSet"></param>
+    /// <returns></returns>
+    public static Entity MapEntityFromDocumentSet(DocumentSet documentSet)
+    {
+      if (documentSet == null)
+        throw new ArgumentNullException("documentSet");
+
+      var entity = new Entity();
+
+      try
+      {
+        var id = documentSet.Item[Constants.DocumentEntityGuidFieldId] as string;
+
+        if (id != null)
+          entity.Id = new Guid(id);
+      }
+      catch
+      {
+        //Do Nothing...
+      }
+
+      entity.Namespace = documentSet.Item[Constants.NamespaceFieldId] as string;
+
+      entity.Title = documentSet.Item.Title;
+      entity.Description = documentSet.Item["DocumentSetDescription"] as string;
+      entity.Created = (DateTime)documentSet.Item[SPBuiltInFieldId.Created];
+      entity.Modified = (DateTime)documentSet.Item[SPBuiltInFieldId.Modified];
+
+      entity.ContentsETag = documentSet.Item["DocumentEntityContentsHash"] as string;
+
+      if (documentSet.Item["DocumentEntityContentsLastModified"] != null)
+      {
+        entity.ContentsModified = (DateTime)documentSet.Item["DocumentEntityContentsLastModified"];
+      }
+
+      entity.Path = documentSet.ParentFolder.Url.Substring(documentSet.ParentList.RootFolder.Url.Length);
+      entity.Path = entity.Path.TrimStart('/');
+
+      var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
+      var createdByUser = new SPFieldUserValue(documentSet.ParentList.ParentWeb, createdByUserValue);
+
+      entity.CreatedBy = new User
+      {
+        Email = createdByUser.User.Email,
+        LoginName = createdByUser.User.LoginName,
+        Name = createdByUser.User.Name,
+      };
+
+      var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
+      var modifiedByUser = new SPFieldUserValue(documentSet.ParentList.ParentWeb, modifiedByUserValue);
 
       entity.ModifiedBy = new User
       {

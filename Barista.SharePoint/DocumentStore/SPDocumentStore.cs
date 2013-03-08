@@ -840,7 +840,7 @@
     }
 
     /// <summary>
-    /// Lists all entities contained in the container with the specified namespace.
+    /// Lists all entities contained in the container with the specified criteria.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="criteria"></param>
@@ -851,7 +851,7 @@
     }
 
     /// <summary>
-    /// Lists all entities contained in the container with the specified namespace.
+    /// Lists all entities contained in the container with the specified criteria.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="criteria"></param>
@@ -953,8 +953,11 @@
                   var matchAnyExpressions = criteria.QueryPairs
                                                     .Select(queryPair => (Expression<Func<SPListItem, bool>>) (li =>
                                                       (
+                                                        ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                                        ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace) && (
                                                         ((string) li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}&", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))) ||
                                                         ((string) li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value)))
+                                                        )
                                                       )))
                                                     .ToList();
                   var matchAny = Camlex.Query()
@@ -963,11 +966,6 @@
 
                   if (matchAnyExpressions.Count > 0)
                   {
-                    matchAnyExpressions.Insert(0,
-                                               (li =>
-                                                (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(
-                                                  Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
-                                                 ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace))));
                     matchAny = matchAny.WhereAny(matchAnyExpressions);
                   }
                   queryString = matchAny.ToString();
@@ -1097,7 +1095,255 @@
 
           result.AddRange(
             listItems
-            .Select(li => SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(li.Folder), null))
+            .Select(li =>
+              {
+                var listItemFolder = li.Folder ?? web.GetFolder(SPUtility.GetUrlDirectory(li.Url));
+                return SPDocumentStoreHelper.MapEntityFromDocumentSet(
+                  DocumentSet.GetDocumentSet(listItemFolder), null);
+              })
+            .Where(entity => entity != null)
+            );
+
+          ProcessEntityList(containerTitle, path, criteria, folder, result);
+          return result;
+        }
+      }
+    }
+
+    public IList<Entity> ListEntitiesLight(string containerTitle, EntityFilterCriteria criteria)
+    {
+      return ListEntitiesLight(containerTitle, null, criteria);
+    }
+
+    public virtual IList<Entity> ListEntitiesLight(string containerTitle, string path, EntityFilterCriteria criteria)
+    {
+      //Get a new web in case we're executing in elevated permissions.
+      using (var site = new SPSite(this.DocumentStoreUrl))
+      {
+        using (var web = site.OpenWeb())
+        {
+          SPList list;
+          SPFolder folder;
+          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+            return null;
+
+          var result = new List<Entity>();
+
+          if (folder.ItemCount == 0)
+            return result;
+
+          var queryString = Camlex.Query()
+              .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+              .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()))
+              .ToString();
+
+          if (criteria != null)
+          {
+            if (String.IsNullOrEmpty(criteria.Namespace) == false)
+            {
+              switch (criteria.NamespaceMatchType)
+              {
+                case NamespaceMatchType.Equals:
+
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]) == criteria.Namespace)
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.StartsWith:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace))
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.EndsWith:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).EndsWith(criteria.Namespace))
+                      .ToString();
+                  break;
+
+                case NamespaceMatchType.Contains:
+                  queryString = Camlex.Query()
+                      .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId])
+                      .StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) && ((string)li[Constants.NamespaceFieldId]).Contains(criteria.Namespace))
+                      .ToString();
+                  break;
+                case NamespaceMatchType.StartsWithMatchAllQueryPairs:
+                case NamespaceMatchType.StartsWithMatchAllQueryPairsContainsValue:
+                  var matchAllExpressions = criteria.QueryPairs
+                                                    .Select(queryPair => (Expression<Func<SPListItem, bool>>)(li =>
+                                                      (
+                                                        ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}&", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))) ||
+                                                        ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value)))
+                                                      )))
+                                                    .ToList();
+                  var matchAll = Camlex.Query()
+                     .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
+
+                  if (matchAllExpressions.Count > 0)
+                  {
+                    matchAllExpressions.Insert(0,
+                                               (li =>
+                                                (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(
+                                                  Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                                 ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace))));
+                    matchAll = matchAll.WhereAll(matchAllExpressions);
+                  }
+                  queryString = matchAll.ToString();
+                  break;
+                case NamespaceMatchType.StartsWithMatchAnyQueryPairs:
+                case NamespaceMatchType.StartsWithMatchAnyQueryPairsContainsValue:
+                  var matchAnyExpressions = criteria.QueryPairs
+                                                    .Select(queryPair => (Expression<Func<SPListItem, bool>>)(li =>
+                                                      (
+                                                        ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}&", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value))) ||
+                                                        ((string)li[Constants.NamespaceFieldId]).Contains(String.Format("{0}={1}", Uri.EscapeUriString(queryPair.Key), Uri.EscapeUriString(queryPair.Value)))
+                                                      )))
+                                                    .ToList();
+                  var matchAny = Camlex.Query()
+                     .Where(li => ((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                  ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace));
+
+                  if (matchAnyExpressions.Count > 0)
+                  {
+                    matchAnyExpressions.Insert(0,
+                                               (li =>
+                                                (((string)li[SPBuiltInFieldId.ContentTypeId]).StartsWith(
+                                                  Constants.DocumentStoreEntityContentTypeId.ToLowerInvariant()) &&
+                                                 ((string)li[Constants.NamespaceFieldId]).StartsWith(criteria.Namespace))));
+                    matchAny = matchAny.WhereAny(matchAnyExpressions);
+                  }
+                  queryString = matchAny.ToString();
+                  break;
+                default:
+                  throw new ArgumentOutOfRangeException("Unknown or unsupported NamespaceMatchType:" + criteria.NamespaceMatchType);
+              }
+            }
+          }
+
+          var query = new SPQuery
+          {
+            Query = queryString,
+            ViewFields = Camlex.Query().ViewFields(new List<Guid>
+                {
+                  SPBuiltInFieldId.ID,
+                  SPBuiltInFieldId.Title,
+                  SPBuiltInFieldId.FileRef,
+                  SPBuiltInFieldId.FileDirRef,
+                  SPBuiltInFieldId.FileLeafRef,
+                  SPBuiltInFieldId.FSObjType,
+                  SPBuiltInFieldId.ContentTypeId,
+                  SPBuiltInFieldId.Created,
+                  SPBuiltInFieldId.Modified,
+                  SPBuiltInFieldId.Author,
+                  SPBuiltInFieldId.Editor,
+                  Constants.DocumentEntityGuidFieldId,
+                  Constants.NamespaceFieldId,
+                  new Guid("CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E") // DocumentSetDescription
+                }),
+            ViewFieldsOnly = true,
+            QueryThrottleMode = SPQueryThrottleOption.Override,
+            Folder = folder,
+            ViewAttributes = "Scope=\"Recursive\""
+          };
+
+          if (criteria != null)
+          {
+            if (criteria.Skip.HasValue)
+            {
+              var itemPosition = new SPListItemCollectionPosition(String.Format("Paged=TRUE&p_ID={0}", criteria.Skip.Value));
+              query.ListItemCollectionPosition = itemPosition;
+            }
+
+            if (criteria.Top.HasValue)
+              query.RowLimit = criteria.Top.Value;
+          }
+
+          //Why doesn't the ContentIterator work? Why does it not iterate through? I have no idea...
+          //ContentIterator itemsIterator = new ContentIterator();
+          //itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
+          //{
+          //  var entity = SPDocumentStoreHelper.MapEntityFromSPListItem(spListItem);
+          //  result.Add(entity);
+          //},
+          //(spListItem, ex) =>
+          //{
+          //  return true;
+          //});
+
+          var listItems = list.GetItems(query).OfType<SPListItem>().ToList();
+
+          //Perform an additional filter to overcome lack of endswith
+          if (criteria != null)
+          {
+            switch (criteria.NamespaceMatchType)
+            {
+              case NamespaceMatchType.StartsWithMatchAllQueryPairs:
+                {
+                  listItems = listItems.Where(li =>
+                  {
+                    var ns = li[Constants.NamespaceFieldId] as string;
+                    Uri namespaceUri;
+                    if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                      return false;
+
+                    var qs = new QueryString(namespaceUri.Query);
+                    return criteria.QueryPairs.All(qp => qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) && String.Compare(qs[qp.Key], qp.Value, StringComparison.CurrentCultureIgnoreCase) == 0);
+                  }).ToList();
+                }
+                break;
+              case NamespaceMatchType.StartsWithMatchAllQueryPairsContainsValue:
+                {
+                  listItems = listItems.Where(li =>
+                  {
+                    var ns = li[Constants.NamespaceFieldId] as string;
+                    Uri namespaceUri;
+                    if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                      return false;
+
+                    var qs = new QueryString(namespaceUri.Query);
+                    return criteria.QueryPairs.All(qp => qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) && qs[qp.Key].ToLower().Contains(qp.Value.ToLower()));
+                  }).ToList();
+                }
+                break;
+              case NamespaceMatchType.StartsWithMatchAnyQueryPairs:
+                {
+                  listItems = listItems.Where(li =>
+                  {
+                    var ns = li[Constants.NamespaceFieldId] as string;
+                    Uri namespaceUri;
+                    if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                      return false;
+
+                    var qs = new QueryString(namespaceUri.Query);
+                    return criteria.QueryPairs.Any(qp => qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) && String.Compare(qs[qp.Key], qp.Value, StringComparison.CurrentCultureIgnoreCase) == 0);
+                  }).ToList();
+                }
+                break;
+              case NamespaceMatchType.StartsWithMatchAnyQueryPairsContainsValue:
+                {
+                  listItems = listItems.Where(li =>
+                  {
+                    var ns = li[Constants.NamespaceFieldId] as string;
+                    Uri namespaceUri;
+                    if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                      return false;
+
+                    var qs = new QueryString(namespaceUri.Query);
+                    return criteria.QueryPairs.Any(qp => qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) && qs[qp.Key].ToLower().Contains(qp.Value.ToLower()));
+                  }).ToList();
+                }
+                break;
+            }
+          }
+
+          result.AddRange(
+            listItems
+            .Select(li => SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(li.Folder)))
             .Where(entity => entity != null)
             );
 
@@ -1797,10 +2043,8 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          foreach (var ver in defaultEntityPart.Item.Versions.OfType<SPListItemVersion>())
-          {
-            var entityVersion = new EntityVersion
-              {
+          result.AddRange(defaultEntityPart.Item.Versions.OfType<SPListItemVersion>().Select(ver => new EntityVersion
+            {
               Comment = ver.ListItem.File.CheckInComment,
               Created = ver.Created,
               CreatedByLoginName = ver.CreatedBy.User.LoginName,
@@ -1808,10 +2052,7 @@
               IsCurrentVersion = ver.IsCurrentVersion,
               VersionId = ver.VersionId,
               VersionLabel = ver.VersionLabel,
-            };
-
-            result.Add(entityVersion);
-          }
+            }));
         }
       }
 

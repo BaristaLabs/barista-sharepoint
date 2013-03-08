@@ -79,7 +79,7 @@
     public Entity(Entity entity)
     {
       if (entity == null)
-        throw new ArgumentNullException("entity", "When creating a clone of an entity, the entity parameter must not be null.");
+        throw new ArgumentNullException("entity", @"When creating a clone of an entity, the entity parameter must not be null.");
 
       this.ContentsETag = entity.ContentsETag;
       this.ContentsModified = entity.ContentsModified;
@@ -110,7 +110,7 @@
     {
       get
       {
-        return DocumentStoreHelper.SerializeObjectToJson<T>(this.Value);
+        return DocumentStoreHelper.SerializeObjectToJson(this.Value);
       }
       set
       {

@@ -443,23 +443,23 @@
       {
         string hiveFileContents = String.Empty;
         bool hiveFileResult = false;
-        string path = String.Empty;
-        SPSecurity.RunWithElevatedPrivileges(() =>
+        if (HttpContext.Current != null)
         {
-          path = HttpContext.Current.Request.MapPath(fileUrl);
+          string path = HttpContext.Current.Request.MapPath(fileUrl);
           if (File.Exists(path))
           {
             hiveFileContents = File.ReadAllText(path);
             hiveFileResult = true;
           }
-        });
 
-        if (hiveFileResult)
-        {
-          filePath = path;
-          fileContents = hiveFileContents;
-          isHiveFile = true;
-          return true;
+
+          if (hiveFileResult)
+          {
+            filePath = path;
+            fileContents = hiveFileContents;
+            isHiveFile = true;
+            return true;
+          }
         }
       }
       catch { /* Do Nothing... */ }

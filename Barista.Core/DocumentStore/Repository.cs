@@ -224,6 +224,26 @@
     }
 
     /// <summary>
+    /// Returns a collection of entity titles of the specified namespace contained in the specified path.
+    /// </summary>
+    public IList<Entity> ListEntitiesLight(EntityFilterCriteria filterCriteria)
+    {
+      IList<Entity> result;
+      if (filterCriteria.Path == null)
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.ListEntitiesLight(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
+      }
+      else
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.ListEntitiesLight(this.Configuration.ContainerTitle, filterCriteria);
+      }
+
+      return result;
+    }
+
+    /// <summary>
     /// Returns the total number of entities of the specified namespace contained in the specified path.
     /// </summary>
     public int CountEntities(EntityFilterCriteria filterCriteria)

@@ -35,22 +35,20 @@
       if (String.IsNullOrEmpty(loginName))
         loginName = System.Threading.Thread.CurrentPrincipal.Identity.Name;
 
-      ADUser result = null;
-      SPSecurity.RunWithElevatedPrivileges(() =>
+      ADUser result;
+     
+      DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
+      using (ADContext ctx = new ADContext(ldapRoot))
       {
-        DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
-        using (ADContext ctx = new ADContext(ldapRoot))
-        {
-          string domainName = ldapRoot.Path.Replace("LDAP://", "");
-          string preWin2KLoginName = loginName.Replace(domainName + "\\", "");
+        string domainName = ldapRoot.Path.Replace("LDAP://", "");
+        string preWin2KLoginName = loginName.Replace(domainName + "\\", "");
 
-          ctx.Users.Searcher.SizeLimit = 1;
+        ctx.Users.Searcher.SizeLimit = 1;
 
-          result = (from usr in ctx.Users
-                    where usr.PreWin2kLogonName == preWin2KLoginName
-                    select usr).ToList().FirstOrDefault();
-        }
-      });
+        result = (from usr in ctx.Users
+                  where usr.PreWin2kLogonName == preWin2KLoginName
+                  select usr).ToList().FirstOrDefault();
+      }
 
       return result;
     }
@@ -64,19 +62,17 @@
       if (String.IsNullOrEmpty(groupName))
         return null;
 
-      ADGroup result = null;
-      SPSecurity.RunWithElevatedPrivileges(() =>
-      {
-        DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
-        using (ADContext ctx = new ADContext(ldapRoot))
-        {
-          ctx.Groups.Searcher.SizeLimit = 1;
+      ADGroup result;
 
-          result = (from grp in ctx.Groups
-                    where grp.Name == groupName
-                    select grp).ToList().FirstOrDefault();
-        }
-      });
+      DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
+      using (ADContext ctx = new ADContext(ldapRoot))
+      {
+        ctx.Groups.Searcher.SizeLimit = 1;
+
+        result = (from grp in ctx.Groups
+                  where grp.Name == groupName
+                  select grp).ToList().FirstOrDefault();
+      }
 
       return result;
     }
@@ -94,40 +90,37 @@
 
       searchText = searchText.Trim();
 
-      SPSecurity.RunWithElevatedPrivileges(() =>
+      DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
+      using (ADContext ctx = new ADContext(ldapRoot))
       {
-        DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
-        using (ADContext ctx = new ADContext(ldapRoot))
+        ctx.Users.Searcher.SizeLimit = maxResults;
+        ctx.Groups.Searcher.SizeLimit = maxResults;
+
+        if ((principalType & PrincipalType.User) == PrincipalType.User)
         {
-          ctx.Users.Searcher.SizeLimit = maxResults;
-          ctx.Groups.Searcher.SizeLimit = maxResults;
+          var users = from usr in ctx.Users
+                      where usr.FirstName == "*" + searchText + "*" ||
+                            usr.LastName == "*" + searchText + "*" ||
+                            usr.DisplayName == "*" + searchText + "*" ||
+                            usr.Email == "*" + searchText + "*" ||
+                            usr.PreWin2kLogonName == "*" + searchText + "*"
+                      select usr;
 
-          if ((principalType & PrincipalType.User) == PrincipalType.User)
-          {
-            var users = from usr in ctx.Users
-                        where usr.FirstName == "*" + searchText + "*" ||
-                              usr.LastName == "*" + searchText + "*" ||
-                              usr.DisplayName == "*" + searchText + "*" ||
-                              usr.Email == "*" + searchText + "*" ||
-                              usr.PreWin2kLogonName == "*" + searchText + "*"
-                        select usr;
-
-            result.AddRange(Enumerable.Cast<DirectoryEntity>(users));
-          }
-          else if ((principalType & PrincipalType.SecurityGroup) == PrincipalType.SecurityGroup)
-          {
-            var groups = from grp in ctx.Groups
-                         where grp.Name == "*" + searchText + "*"
-                         select grp;
-
-            result.AddRange(Enumerable.Cast<DirectoryEntity>(groups));
-          }
-          else
-          {
-            throw new NotImplementedException();
-          }
+          result.AddRange(Enumerable.Cast<DirectoryEntity>(users));
         }
-      });
+        else if ((principalType & PrincipalType.SecurityGroup) == PrincipalType.SecurityGroup)
+        {
+          var groups = from grp in ctx.Groups
+                        where grp.Name == "*" + searchText + "*"
+                        select grp;
+
+          result.AddRange(Enumerable.Cast<DirectoryEntity>(groups));
+        }
+        else
+        {
+          throw new NotImplementedException();
+        }
+      }
 
       return result;
     }

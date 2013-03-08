@@ -92,7 +92,7 @@
     Entity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, Byte[] archiveData);
 
     /// <summary>
-    /// Lists the entities.
+    /// Lists all entities in the specified path in the container with the specified criteria.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
@@ -101,7 +101,16 @@
     IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria);
 
     /// <summary>
-    /// Returns the total number of entities that correspond to the filter criteria.
+    /// Lists the all the entities in the specified path in the container with the specified criteria without populating their data field.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <param name="criteria">The criteria.</param>
+    /// <returns></returns>
+    IList<Entity> ListEntitiesLight(string containerTitle, string path, EntityFilterCriteria criteria);
+
+    /// <summary>
+    /// Returns the total number of entities that correspond to the specified criteria.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
