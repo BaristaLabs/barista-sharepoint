@@ -153,6 +153,7 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GenericConfigurationElementCollection.cs" />
+    <Compile Include="Helpers\PortUtilities.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\Binder.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\BinderMethod.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\BinderUtilities.cs" />

@@ -115,9 +115,36 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.Jurassic", "Barista.UnitTests.Jurassic\Barista.UnitTests.Jurassic.csproj", "{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Awesomium", "Awesomium", "{95C7B2FD-79C2-452E-BF88-BCDEBF10398A}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\Awesomium\avcodec-53.dll = Lib\Awesomium\avcodec-53.dll
+		Lib\Awesomium\avformat-53.dll = Lib\Awesomium\avformat-53.dll
+		Lib\Awesomium\avutil-51.dll = Lib\Awesomium\avutil-51.dll
+		Lib\Awesomium\Awesomium.Core.dll = Lib\Awesomium\Awesomium.Core.dll
+		Lib\Awesomium\Awesomium.Core.XML = Lib\Awesomium\Awesomium.Core.XML
+		Lib\Awesomium\awesomium.dll = Lib\Awesomium\awesomium.dll
+		Lib\Awesomium\Awesomium.Windows.Controls.dll = Lib\Awesomium\Awesomium.Windows.Controls.dll
+		Lib\Awesomium\Awesomium.Windows.Controls.XML = Lib\Awesomium\Awesomium.Windows.Controls.XML
+		Lib\Awesomium\Awesomium.Windows.Forms.dll = Lib\Awesomium\Awesomium.Windows.Forms.dll
+		Lib\Awesomium\Awesomium.Windows.Forms.XML = Lib\Awesomium\Awesomium.Windows.Forms.XML
+		Lib\Awesomium\awesomium_process = Lib\Awesomium\awesomium_process
+		Lib\Awesomium\icudt.dll = Lib\Awesomium\icudt.dll
+		Lib\Awesomium\inspector.pak = Lib\Awesomium\inspector.pak
+		Lib\Awesomium\libEGL.dll = Lib\Awesomium\libEGL.dll
+		Lib\Awesomium\libGLESv2.dll = Lib\Awesomium\libGLESv2.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{8EB4FA4C-ADAA-4876-92D4-4DAF029C1F63}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\Awesomium\Design\Awesomium.Windows.Controls.Design.dll = Lib\Awesomium\Design\Awesomium.Windows.Controls.Design.dll
+		Lib\Awesomium\Design\Awesomium.Windows.Forms.Design.dll = Lib\Awesomium\Design\Awesomium.Windows.Forms.Design.dll
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.WebKit", "Barista.WebKit\Barista.WebKit.csproj", "{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
+		SccNumberOfProjects = 7
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -137,6 +164,9 @@ Global
 		SccProjectTopLevelParentUniqueName5 = Barista.sln
 		SccProjectName5 = Barista.UnitTests.Jurassic
 		SccLocalPath5 = Barista.UnitTests.Jurassic
+		SccProjectUniqueName6 = Barista.WebKit\\Barista.WebKit.csproj
+		SccProjectName6 = Barista.WebKit
+		SccLocalPath6 = Barista.WebKit
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +197,10 @@ Global
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,7 +209,9 @@ Global
 		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{81791AE6-02EB-46E1-A8DF-D197A2500D07} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
+		{95C7B2FD-79C2-452E-BF88-BCDEBF10398A} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
+		{8EB4FA4C-ADAA-4876-92D4-4DAF029C1F63} = {95C7B2FD-79C2-452E-BF88-BCDEBF10398A}
 	EndGlobalSection
 EndGlobal
