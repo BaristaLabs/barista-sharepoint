@@ -66,50 +66,23 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.ActiveDs, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\Lib\Interop.ActiveDs.dll</HintPath>
     </Reference>
-    <Reference Include="itextsharp, Version=5.3.3.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\iTextSharp.5.3.3\lib\itextsharp.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Lucene.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net.Contrib.Analyzers">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Core">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Highlighter">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Queries">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.Regex">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.SpellChecker">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -135,14 +108,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.SharePoint.Client.ServerRuntime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
@@ -150,10 +115,6 @@
     <Reference Include="Microsoft.SharePoint.Powershell, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Powershell.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Security, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -166,14 +127,6 @@
     <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -202,10 +155,6 @@
     <Reference Include="System.Workflow.ComponentModel" />
     <Reference Include="System.WorkflowServices" />
     <Reference Include="System.Xml" />
-    <Reference Include="wnvhtmlconvert, Version=7.0.0.0, Culture=neutral, PublicKeyToken=5b5f377bc08a4d32, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\wnvhtmlconvert.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ADMIN\BaristaService\Create.aspx.cs">
