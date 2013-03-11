@@ -1,32 +1,25 @@
-﻿namespace Barista.SharePoint
+﻿namespace Barista
 {
-  using System.Runtime.Serialization;
-
-  [DataContract]
-  public sealed class InfoPathAttachment
+  public class PdfAttachment
   {
-    [DataMember]
     public string FileName
     {
       get;
       set;
     }
 
-    [DataMember]
     public string FileDisplayName
     {
       get;
       set;
     }
 
-    [DataMember]
     public string Description
     {
       get;
       set;
     }
 
-    [DataMember]
     public byte[] Data
     {
       get;

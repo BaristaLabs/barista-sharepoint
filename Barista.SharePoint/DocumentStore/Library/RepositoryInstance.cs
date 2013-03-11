@@ -259,9 +259,9 @@
 
       var result = this.Engine.Array.Construct();
 
-      foreach (var title in m_repository.ListEntitiesLight(criteria.EntityFilterCriteria))
+      foreach (var entityLight in m_repository.ListEntitiesLight(criteria.EntityFilterCriteria))
       {
-        ArrayInstance.Push(result, title);
+        ArrayInstance.Push(result, new EntityInstance(this.Engine, entityLight));
       }
 
       return result;

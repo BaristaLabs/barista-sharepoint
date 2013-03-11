@@ -1,10 +1,7 @@
 namespace Barista.SharePoint.Features.BaristaServiceInstaller
 {
-  using System;
   using System.Runtime.InteropServices;
-  using System.Security.Permissions;
   using Microsoft.SharePoint;
-  using Microsoft.SharePoint.Security;
   using Microsoft.SharePoint.Administration;
   using Barista.SharePoint.Services;
 

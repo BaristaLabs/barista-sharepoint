@@ -21,8 +21,14 @@
     {
       engine.SetGlobalValue("ExcelPackage", new ExcelPackageConstructor(engine));
       engine.SetGlobalValue("ZipFile", new ZipFileConstructor(engine));
+      engine.SetGlobalValue("PdfAttachment", new PdfAttachmentConstructor(engine));
 
-      return new DocumentInstance(engine);
+      string pdfConverterLicenseKey = Barista.SharePoint.Utilities.GetFarmKeyValue("Winnovative_HtmlToPdfConverter");
+
+      return new DocumentInstance(engine)
+        {
+          WinnovativeHtmlToPdfConverterLicenseKey = pdfConverterLicenseKey
+        };
     }
   }
 }

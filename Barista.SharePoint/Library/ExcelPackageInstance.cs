@@ -1,14 +1,12 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using System;
-  using System.Linq;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
-  using System.Collections.Generic;
-  using OfficeOpenXml;
-  using System.IO;
   using Microsoft.SharePoint;
-  using Barista.Library;
+  using OfficeOpenXml;
+  using System;
+  using System.IO;
 
   [Serializable]
   public class ExcelPackageConstructor : ClrFunction
@@ -25,7 +23,7 @@
 
       if (excelDocument is string)
       {
-        string fileUrl = excelDocument as string;
+        var fileUrl = excelDocument as string;
         if (SPHelper.TryGetSPFile(fileUrl, out file) == false)
           throw new JavaScriptException(this.Engine, "Error", "A file with the specified url does not exist.");
       }
@@ -35,7 +33,7 @@
       }
       else if (excelDocument == null || excelDocument == Null.Value || excelDocument == Undefined.Value)
       {
-        return new ExcelPackageInstance(this.InstancePrototype, file);
+        return new ExcelPackageInstance(this.InstancePrototype);
       }
 
       if (file == null)
@@ -56,7 +54,7 @@
   [Serializable]
   public class ExcelPackageInstance : ObjectInstance, IDisposable
   {
-    private SPFile m_sourceFile;
+    private readonly SPFile m_sourceFile;
     private ExcelPackage m_excelPackage;
 
     public ExcelPackageInstance(ObjectInstance prototype)

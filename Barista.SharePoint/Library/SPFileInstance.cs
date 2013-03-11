@@ -7,7 +7,6 @@
   using Microsoft.SharePoint;
   using Barista.Library;
   using Microsoft.SharePoint.Utilities;
-  using Barista.Extensions;
 
   [Serializable]
   public class SPFileConstructor : ClrFunction

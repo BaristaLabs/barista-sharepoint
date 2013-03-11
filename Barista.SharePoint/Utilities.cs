@@ -1,8 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
-  using iTextSharp.text;
-  using iTextSharp.text.pdf;
-
+  using System.Globalization;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
 
@@ -64,16 +62,14 @@
     {
       SPSite sourceSite = null;
       SPWeb sourceWeb = null;
-      SPList sourceList = null;
 
       try
       {
+        SPList sourceList;
         return GetListItemFromAbsoluteUrl(absoluteListItemUrl, out sourceSite, out sourceWeb, out sourceList);
       }
       finally
       {
-        if (sourceList != null)
-          sourceList = null;
         if (sourceWeb != null)
           sourceWeb.Dispose();
         if (sourceSite != null)
@@ -91,20 +87,22 @@
 
       sourceList = sourceWeb.GetList(absoluteListItemUrl);
 
-      SPQuery query = new SPQuery();
-      query.ViewAttributes = "Scope=\"Recursive\"";
-      string QueryString = "<Where>" +
+      var query = new SPQuery
+      {
+        ViewAttributes = "Scope=\"Recursive\""
+      };
+      var queryString = "<Where>" +
                           "<Eq>" +
                           "<FieldRef Name=\"EncodedAbsUrl\"/>" +
                           "<Value Type=\"Text\">" + absoluteListItemUrl + "</Value>" +
                           "</Eq>" +
                       "</Where>";
-      query.Query = QueryString;
+      query.Query = queryString;
       var retrievedListItems = sourceList.GetItems(query);
       if (retrievedListItems.Count != 1)
         throw new InvalidOperationException("Unable to locate the specified file in the target list.");
 
-      SPListItem listItem = retrievedListItems[0];
+      var listItem = retrievedListItems[0];
       return listItem;
     }
 
@@ -147,14 +145,10 @@
     {
       string validFileName = title.Trim();
 
-      foreach (char invalChar in Path.GetInvalidFileNameChars())
-      {
-        validFileName = validFileName.Replace(invalChar.ToString(), "");
-      }
-      foreach (char invalChar in Path.GetInvalidPathChars())
-      {
-        validFileName = validFileName.Replace(invalChar.ToString(), "");
-      }
+      validFileName = Path.GetInvalidFileNameChars()
+        .Aggregate(validFileName, (current, invalChar) => current.Replace(invalChar.ToString(CultureInfo.InvariantCulture), ""));
+      validFileName = Path.GetInvalidPathChars()
+        .Aggregate(validFileName, (current, invalChar) => current.Replace(invalChar.ToString(CultureInfo.InvariantCulture), ""));
 
       if (validFileName.Length > 160) //safe value threshold is 260
         validFileName = validFileName.Remove(156) + "...";
@@ -169,13 +163,15 @@
     /// <returns></returns>
     public static string GetTempFileName(string extensionWithDot)
     {
-      string tempFileName = null;
+      string tempFileName;
       do
       {
         tempFileName = Path.GetTempFileName();
-        if (extensionWithDot != null)
+
+        var extension = Path.GetExtension(tempFileName);
+        if (String.IsNullOrEmpty(extension) == false && extensionWithDot != null)
         {
-          tempFileName = tempFileName.Replace(Path.GetExtension(tempFileName), extensionWithDot);
+          tempFileName = tempFileName.Replace(extension, extensionWithDot);
         }
       }
       while (File.Exists(tempFileName));
@@ -221,7 +217,7 @@
             sb.Append("\\t");
             break;
           default:
-            int i = (int)c;
+            int i = c;
             if (i < 32 || i > 127)
             {
               sb.AppendFormat("\\u{0:X04}", i);
@@ -239,82 +235,6 @@
     }
 
     /// <summary>
-    /// Utility function to crop a png into page-sized portions and embed each png into the pdf.
-    /// </summary>
-    /// <param name="png"></param>
-    /// <returns></returns>
-    public static byte[] ConvertPngToPdf(byte[] png)
-    {
-      using (MemoryStream pdfStream = new MemoryStream())
-      {
-        Document pdfDocument = new iTextSharp.text.Document(PageSize.LETTER, 36, 36, 36, 36);
-
-        var writer = PdfWriter.GetInstance(pdfDocument, pdfStream);
-        writer.CloseStream = false;
-
-        pdfDocument.Open();
-
-        var maxImageHeight = pdfDocument.PageSize.Height + 36;
-
-        using (var source = new System.Drawing.Bitmap(new MemoryStream(png)))
-        {
-          if (source.Height > maxImageHeight)
-          {
-            int heightOffset = 0;
-
-            while (heightOffset < source.Height)
-            {
-              System.Drawing.Rectangle sourceRect;
-              if (heightOffset + (int)(maxImageHeight) > source.Height)
-                sourceRect = new System.Drawing.Rectangle(0, heightOffset, source.Width, source.Height);
-              else
-                sourceRect = new System.Drawing.Rectangle(0, heightOffset, source.Width, (int)(maxImageHeight));
-
-              using (var target = new System.Drawing.Bitmap(sourceRect.Width, sourceRect.Height))
-              {
-
-                using (var g = System.Drawing.Graphics.FromImage(target))
-                {
-                  g.DrawImage(source, new System.Drawing.Rectangle(0, 0, target.Width, target.Height),
-                                      sourceRect,
-                                      System.Drawing.GraphicsUnit.Pixel);
-                }
-
-                using (MemoryStream ms = new MemoryStream())
-                {
-                  target.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                  pdfDocument.Add(new Paragraph());
-                  Image img = Image.GetInstance(ms.GetBuffer());
-                  img.ScaleToFit(pdfDocument.PageSize.Width - 72, img.Height);
-                  pdfDocument.Add(img);
-                  if (sourceRect.Height >= maxImageHeight)
-                    pdfDocument.NewPage();
-                }
-              }
-
-              heightOffset += sourceRect.Height;
-            }
-          }
-          else
-          {
-            pdfDocument.Add(new Paragraph());
-
-            Image img = Image.GetInstance(png);
-            img.ScaleToFit(pdfDocument.PageSize.Width - 72, img.Height);
-            pdfDocument.Add(img);
-          }
-        }
-
-        if (pdfDocument.IsOpen())
-          pdfDocument.Close();
-
-        pdfStream.Flush();
-        pdfStream.Seek(0, SeekOrigin.Begin);
-        return pdfStream.GetBuffer();
-      }
-    }
-
-    /// <summary>
     /// Executes the specified PowerShell script.
     /// </summary>
     /// <param name="scriptText"></param>
@@ -324,7 +244,7 @@
       InitialSessionState iss = InitialSessionState.CreateDefault();
       PSSnapInException warning;
       iss.ImportPSSnapIn("Microsoft.SharePoint.PowerShell", out warning);
-      Collection<PSObject> results = null;
+      Collection<PSObject> results;
 
       // create Powershell runspace 
       using (Runspace runspace = RunspaceFactory.CreateRunspace(iss))
@@ -347,7 +267,7 @@
           catch (Exception ex)
           {
             BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.PowerShell, "Unexpected Error while executing PowerShell Script:");
-            throw ex;
+            throw;
           }
         }
         finally

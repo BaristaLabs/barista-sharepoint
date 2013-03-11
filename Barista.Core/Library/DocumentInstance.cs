@@ -1,11 +1,9 @@
-﻿namespace Barista.SharePoint.Library
+﻿namespace Barista.Library
 {
   using System.IO;
   using System.Linq;
   using Barista.Csv;
   using Barista.Extensions;
-  using Barista.Library;
-  using Barista.SharePoint.Services;
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
@@ -24,11 +22,39 @@
       this.PopulateFunctions();
     }
 
-    [JSFunction(Name = "html2Pdf")]
-    public Base64EncodedByteArrayInstance Html2Pdf(string html)
+    /// <summary>
+    /// Gets or sets the Winnovative HtmlToPdf Converter License key that is used for Html to Pdf conversions.
+    /// </summary>
+    /// <remarks>
+    /// If a key is not specified, any generated pdfs will contain a trial watermark.
+    /// </remarks>
+    public string WinnovativeHtmlToPdfConverterLicenseKey
     {
-      HtmlConverterService service = new HtmlConverterService();
-      var result = service.ConvertHtmlToPdfInternal(new List<string> { html }, null);
+      get;
+      set;
+    }
+
+    [JSFunction(Name = "html2Pdf")]
+    public Base64EncodedByteArrayInstance Html2Pdf(string html, object pdfAttachments)
+    {
+      IEnumerable<PdfAttachmentInstance> pdfAttachmentInstances = null;
+      if (pdfAttachments != null && pdfAttachments != Undefined.Value && pdfAttachments != Null.Value &&
+          pdfAttachments is ArrayInstance)
+        pdfAttachmentInstances = (pdfAttachments as ArrayInstance).ElementValues.OfType<PdfAttachmentInstance>();
+
+      IList<PdfAttachment> attachments = null;
+      if (pdfAttachmentInstances != null)
+      {
+        attachments = pdfAttachmentInstances.Select(p => new PdfAttachment
+          {
+            FileName = p.FileName,
+            FileDisplayName = p.FileDisplayName,
+            Description = p.Description,
+            Data = p.Data != null ? p.Data.Data : null,
+          })
+          .ToList();
+      }
+      var result = HtmlConverterHelper.ConvertHtmlToPdf(new List<string> { html }, attachments, this.WinnovativeHtmlToPdfConverterLicenseKey);
       var byteResult =  new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result)
         {
           MimeType = "application/pdf"
