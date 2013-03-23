@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Search
 {
-  using Barista.Framework;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Documents;
   using Lucene.Net.Index;

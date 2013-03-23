@@ -5,7 +5,6 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System.Collections;
   using Microsoft.SharePoint.Taxonomy;
   using Barista.SharePoint.Taxonomy.Library;
   using System.Text;
@@ -74,7 +73,7 @@
       get
       {
         //This is asinine, but when retriving listitems through a filtered view, the display name might not be in the results.
-        string result = String.Empty;
+        var result = String.Empty;
         try
         {
           result = m_listItem.DisplayName;
@@ -133,7 +132,20 @@
     {
       get { return m_listItem.ID; }
     }
-    
+
+    [JSProperty(Name = "moderationInformation")]
+    public SPModerationInformationInstance ModerationInformation
+    {
+      get
+      {
+        if (m_listItem.ModerationInformation == null)
+          return null;
+
+        return new SPModerationInformationInstance(this.Engine.Object.InstancePrototype,
+                                                   m_listItem.ModerationInformation);
+      }
+    }
+
     #endregion
 
     #region Functions
@@ -195,7 +207,7 @@
     [JSFunction(Name = "setFieldValues")]
     public void SetFieldValues(object fieldValues)
     {
-      Hashtable ht = SPHelper.GetFieldValuesHashtableFromPropertyObject(fieldValues);
+      var ht = SPHelper.GetFieldValuesHashtableFromPropertyObject(fieldValues);
       foreach (var key in ht.Keys)
       {
         var fieldName = TypeConverter.ToString(key);
@@ -209,7 +221,7 @@
     [JSFunction(Name = "setFieldValue")]
     public void SetFieldValue(string fieldName, TermInstance fieldValue)
     {
-      TaxonomyField taxonomyField = m_listItem.Fields[fieldName] as TaxonomyField;
+      var taxonomyField = m_listItem.Fields[fieldName] as TaxonomyField;
       if (taxonomyField != null)
       {
         var term = fieldValue;

@@ -65,32 +65,28 @@
     <Reference Include="EPPlus, Version=3.0.0.2, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.ActiveDs, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\Lib\Interop.ActiveDs.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Lucene.Net.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.Regex">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch">
       <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.BusinessData.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,18 +116,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Taxonomy.Intl, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -146,11 +130,11 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\System.Threading.dll</HintPath>
-    </Reference>
     <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Web.dll" />
+    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Workflow.ComponentModel" />
     <Reference Include="System.WorkflowServices" />
@@ -190,7 +174,15 @@
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
+    <Compile Include="Layouts\Barista\v1\MochaServer.aspx.cs">
+      <DependentUpon>MochaServer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Layouts\Barista\v1\MochaServer.aspx.designer.cs">
+      <DependentUpon>MochaServer.aspx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
+    <Compile Include="Library\SPModerationInformationInstance.cs" />
     <Compile Include="Library\SPMonitoredScopeInstance.cs" />
     <Compile Include="PowerShell Registration\RemoveBaristaWebSocketsService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaWebSocketsServiceInstance.cs" />
@@ -268,7 +260,6 @@
     <Compile Include="ServiceManagement\BaristaWebSocketsService.cs" />
     <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPScriptEngineFactory.cs" />
-    <Compile Include="TeamFoundationServer\Libraries\TfsInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
@@ -377,7 +368,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="SPFileScriptSource.cs" />
-    <Compile Include="TfsCredentialsProvider.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>
@@ -386,6 +376,12 @@
       <SharePointProjectItemId>{9a196b90-3a4a-49ac-b3b5-eff220cb60ef}</SharePointProjectItemId>
     </None>
     <None Include="app.config" />
+    <None Include="BaristaDataDocument\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{ac5e19a4-cc1b-4587-a512-83acaccf8a53}</SharePointProjectItemId>
+    </None>
+    <None Include="BaristaTemplates\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{a26f232b-1406-40fa-8035-cf3ea721ee1b}</SharePointProjectItemId>
+    </None>
     <None Include="DocumentStore\DocumentStoreContainerEventReceiver\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{5f6db410-823e-4502-9b8c-ee0b557b158c}</SharePointProjectItemId>
     </None>
@@ -415,6 +411,9 @@
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.ttf" />
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.woff" />
     <None Include="Layouts\BaristaJS\toastr-1.1.5\component.json" />
+    <None Include="BaristaTemplatesList\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{65c15250-c093-4631-a0e4-f536b727b056}</SharePointProjectItemId>
+    </None>
     <None Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{149204ef-d399-4b57-91e9-4ac849a10841}</SharePointProjectItemId>
     </None>
@@ -587,6 +586,9 @@
     <None Include="WebServices\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0319abfb-7418-4653-96ae-f0df6ea3ddf1}</SharePointProjectItemId>
     </None>
+    <None Include="XML\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{efd4bbf6-4fdc-4a50-b706-9669ed1757ae}</SharePointProjectItemId>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client\" />
@@ -596,6 +598,7 @@
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -631,10 +634,18 @@
     <Content Include="ADMIN\BaristaService\Create.aspx" />
     <Content Include="ADMIN\BaristaService\GetTrustedLocations.js" />
     <Content Include="ADMIN\BaristaService\Manage.aspx" />
+    <Content Include="BaristaDataDocument\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="BaristaTemplates\BaristaDataDocument.js" />
+    <Content Include="BaristaTemplates\FormView.html" />
+    <Content Include="BaristaTemplates\FormController.js" />
+    <Content Include="BaristaTemplates\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainerEventReceiver\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
     <Content Include="DocumentStore\SPDocumentStoreEventReceiver\Elements.xml" />
     <Content Include="ISAPI\BaristaHostService\SPBaristaHostService.exe" />
+    <Content Include="Layouts\Barista\v1\MochaServer.aspx" />
     <Content Include="Layouts\BaristaJS\arctext\css\demo.css" />
     <Content Include="Layouts\BaristaJS\arctext\css\style.css" />
     <Content Include="Layouts\BaristaJS\arctext\images\ImageAttribution.txt" />
@@ -1518,6 +1529,7 @@
     <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr-icon.png" />
     <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr.css" />
     <Content Include="Layouts\BaristaJS\toastr-1.1.5\toastr.min.css" />
+    <Content Include="BaristaTemplatesList\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\EditDlg.htm" />
     <Content Include="UnitTests\BaristaUnitTestsDocumentLibrary\Elements.xml" />
@@ -2301,6 +2313,7 @@
     <Content Include="Layouts\BaristaJS\tmpl.min.js" />
     <Content Include="PowerShell Registration\BaristaServiceApplication.xml" />
     <Content Include="WebServices\Barista\Barista.svc" />
+    <Content Include="XML\serverfiles_Barista.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -2326,6 +2339,8 @@
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u Barista.Core</PreBuildEvent>
+    <PreBuildEvent>REM "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u Barista.Core
+"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /i "$(SolutionDir)Lib\Lucene.Net.Dll"
+"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /i "$(SolutionDir)Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.Dll"</PreBuildEvent>
   </PropertyGroup>
 </Project>

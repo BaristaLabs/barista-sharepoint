@@ -120,12 +120,11 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\System.Threading.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Web.dll" />
+    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -1120,6 +1119,8 @@
     <Compile Include="DocumentStore\Repository.cs" />
     <Compile Include="DocumentStore\RepositoryConfiguration.cs" />
     <Compile Include="Extensions\TheadPoolExtensions.cs" />
+    <None Include="TeamFoundationServer\Libraries\TfsInstance.cs" />
+    <None Include="TfsCredentialsProvider.cs" />
     <Compile Include="Tuple.cs" />
     <Compile Include="ValidationAttributeStore.cs" />
     <Compile Include="ValidationContext.cs" />

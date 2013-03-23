@@ -5,6 +5,7 @@
                Name="Document Store Entity Part"
                Group="Document Store Content Types"
                Description="Represents additional data that is contained within a Document Store Entity."
+               ProgId="Barista.EntityPart"
                Inherits="TRUE"
                Version="0">
     <FieldRefs>

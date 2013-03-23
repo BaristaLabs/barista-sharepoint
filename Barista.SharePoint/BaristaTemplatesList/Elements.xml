@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ListInstance Title="Barista Templates" OnQuickLaunch="FALSE" TemplateType="101" FeatureId="00bfea71-e717-4e80-aa17-d0c71b360101" Url="BaristaTemplates" Description="This library contains Barista templates that were activated to this site collection."></ListInstance>
+</Elements>

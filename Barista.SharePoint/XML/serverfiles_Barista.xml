@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServerFiles>
+  <Mapping FileExtension="xml" ProgId="Barista.Document" RedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" VersionRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" CreateRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?new=1"/>
+  <Mapping FileExtension="js" ProgId="Barista.Document" RedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" VersionRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" CreateRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?new=1"/>
+  <Mapping FileExtension="json" ProgId="Barista.Document" RedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" VersionRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" CreateRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?new=1"/>
+  <Mapping FileExtension="dsep" ProgId="Barista.EntityPart" RedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" VersionRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?DocumentLocation=|0" CreateRedirectUrlTemplate="/_layouts/Barista/v1/MochaServer.aspx?new=1"/>
+</ServerFiles>

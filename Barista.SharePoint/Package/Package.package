@@ -5,14 +5,9 @@
     <customAssembly location="EPPlus.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\EPPlus.dll" />
     <customAssembly location="ICSharpCode.SharpZipLib.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\ICSharpCode.SharpZipLib.dll" />
     <customAssembly location="Interop.ActiveDs.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Interop.ActiveDs.dll" />
-    <customAssembly location="System.Threading.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\System.Threading.dll" />
     <customAssembly location="wnvhtmlconvert.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\wnvhtmlconvert.dll" />
     <customAssembly location="itextsharp.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\iTextSharp.5.3.3\lib\itextsharp.dll" />
     <customAssembly location="HtmlAgilityPack.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll" />
-    <customAssembly location="Microsoft.TeamFoundation.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.Client.dll" />
-    <customAssembly location="Microsoft.TeamFoundation.WorkItemTracking.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll" />
-    <customAssembly location="Microsoft.TeamFoundation.VersionControl.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll" />
-    <customAssembly location="Microsoft.TeamFoundation.Common.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.Common.dll" />
     <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene.Net.dll" />
     <customAssembly location="Lucene.Net.Contrib.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll" />
     <customAssembly location="Lucene.Net.Contrib.Highlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll" />
@@ -20,6 +15,7 @@
     <customAssembly location="Lucene.Net.Contrib.SimpleFacetedSearch.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />
     <customAssembly location="Lucene.Net.Contrib.FastVectorHighlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll" />
     <customAssembly location="Camlex.NET.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Camlex.NET.dll.3.3.0.0\lib\net20\Camlex.NET.dll" />
+    <customAssembly location="System.Threading.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />
@@ -34,5 +30,6 @@
     <projectItemReference itemId="9a196b90-3a4a-49ac-b3b5-eff220cb60ef" />
     <projectItemReference itemId="d8d6b1da-c4f5-4de6-9f01-8efb9458bc48" />
     <projectItemReference itemId="e9e563a5-cd69-47c0-b54a-79c9cd85e853" />
+    <projectItemReference itemId="efd4bbf6-4fdc-4a50-b706-9669ed1757ae" />
   </projectItems>
 </package>

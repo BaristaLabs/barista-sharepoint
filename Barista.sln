@@ -52,9 +52,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.xml = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.xml
-		Lib\System.Threading.chm = Lib\System.Threading.chm
-		Lib\System.Threading.dll = Lib\System.Threading.dll
-		Lib\System.Threading.xml = Lib\System.Threading.xml
 		Lib\wnvhtmlconvert.dll = Lib\wnvhtmlconvert.dll
 		Lib\wnvhtmlconvert.xml = Lib\wnvhtmlconvert.xml
 	EndProjectSection
