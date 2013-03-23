@@ -414,6 +414,7 @@
     <None Include="BaristaTemplatesList\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{65c15250-c093-4631-a0e4-f536b727b056}</SharePointProjectItemId>
     </None>
+    <None Include="PreBuild.bat" />
     <None Include="UnitTests\BaristaUnitTestsDocumentLibrary\BaristaUnitTestsDocumentLibraryInstance\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{149204ef-d399-4b57-91e9-4ac849a10841}</SharePointProjectItemId>
     </None>
@@ -2339,8 +2340,6 @@
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>REM "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u Barista.Core
-"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /i "$(SolutionDir)Lib\Lucene.Net.Dll"
-"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /i "$(SolutionDir)Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.Dll"</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)PreBuild.bat $(SolutionDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>
