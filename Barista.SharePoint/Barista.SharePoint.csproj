@@ -26,6 +26,7 @@
     <PreDeploymentCommand>
     </PreDeploymentCommand>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\SetupBaristaHostService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +39,38 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <LangVersion>3</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,23 +98,6 @@
     <Reference Include="EPPlus, Version=3.0.0.2, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\EPPlus.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Lucene.Net.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Regex">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch">
-      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -163,7 +179,6 @@
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="Bundles\K2Bundle.cs" />
-    <Compile Include="Bundles\SPSearchBundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
     <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\TfsBundle.cs" />
@@ -190,35 +205,6 @@
     <Compile Include="PowerShell Registration\RemoveBaristaSearchService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaSearchServiceInstance.cs" />
     <Compile Include="PowerShell Registration\NewBaristaSearchService.cs" />
-    <Compile Include="Search\Hit.cs" />
-    <Compile Include="Search\Library\BooleanQueryInstance.cs" />
-    <Compile Include="Search\Library\ExplanationInstance.cs" />
-    <Compile Include="Search\Library\FilterInstance.cs" />
-    <Compile Include="Search\Library\FuzzyQueryInstance.cs" />
-    <Compile Include="Search\Library\HitsPerFacetInstance.cs" />
-    <Compile Include="Search\Library\IndexSearcherInstance.cs" />
-    <Compile Include="Search\Library\IndexWriterInstance.cs" />
-    <Compile Include="Search\Library\NumericRangeFilterInstance.cs" />
-    <Compile Include="Search\Library\NumericRangeQueryInstance.cs" />
-    <Compile Include="Search\Library\PhraseQueryInstance.cs" />
-    <Compile Include="Search\Library\PrefixFilterInstance.cs" />
-    <Compile Include="Search\Library\PrefixQueryInstance.cs" />
-    <Compile Include="Search\Library\QueryInstance.cs" />
-    <Compile Include="Search\Library\QueryWrapperFilterInstance.cs" />
-    <Compile Include="Search\Library\RegexQueryInstance.cs" />
-    <Compile Include="Search\Library\ScoreDocInstance.cs" />
-    <Compile Include="Search\Library\DocumentInstance.cs" />
-    <Compile Include="Search\Library\SearchField.cs" />
-    <Compile Include="Search\Library\SearchArgumentsInstance.cs" />
-    <Compile Include="Search\Library\SimpleFacetedSearchInstance.cs" />
-    <Compile Include="Search\Library\SortInstance.cs" />
-    <Compile Include="Search\Library\TermQueryInstance.cs" />
-    <Compile Include="Search\Library\TermRangeFilterInstance.cs" />
-    <Compile Include="Search\Library\TermRangeQueryInstance.cs" />
-    <Compile Include="Search\Library\WildcardQueryInstance.cs" />
-    <Compile Include="Search\LuceneHelper.cs" />
-    <Compile Include="Search\SearchArguments.cs" />
-    <Compile Include="Search\SPDirectory.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
     <Compile Include="DocumentStore\SPSearchableDocumentStore.cs" />
     <Compile Include="DocumentStore\SPSimpleDocumentStore.cs" />
@@ -252,7 +238,6 @@
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="Library\ExcelPackageInstance.cs" />
     <Compile Include="Library\SPFarmInstance.cs" />
-    <Compile Include="Search\Library\SPLuceneInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\SPEventReceiverDefinitionInstance.cs" />
     <Compile Include="ServiceManagement\BaristaSearchService.cs" />
@@ -270,10 +255,6 @@
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
-    <Compile Include="Search\SPFileInputStream.cs" />
-    <Compile Include="Search\SPFileOutputStream.cs" />
-    <Compile Include="Search\SPLock.cs" />
-    <Compile Include="Search\SPLockFactory.cs" />
     <Compile Include="Services\ADService.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaDiagnosticService.cs" />
@@ -600,6 +581,10 @@
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.Search.SharePoint\Barista.Search.SharePoint.csproj">
+      <Project>{18b0ebeb-008a-4d5c-985d-3c00f5dcc069}</Project>
+      <Name>Barista.Search.SharePoint</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

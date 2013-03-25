@@ -988,6 +988,31 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SearchMarkState.cs" />
+    <Compile Include="Search\Library\BooleanQueryInstance.cs" />
+    <Compile Include="Search\Library\DocumentInstance.cs" />
+    <Compile Include="Search\Library\ExplanationInstance.cs" />
+    <Compile Include="Search\Library\FilterInstance.cs" />
+    <Compile Include="Search\Library\FuzzyQueryInstance.cs" />
+    <Compile Include="Search\Library\HitsPerFacetInstance.cs" />
+    <Compile Include="Search\Library\IndexSearcherInstance.cs" />
+    <Compile Include="Search\Library\NumericRangeFilterInstance.cs" />
+    <Compile Include="Search\Library\NumericRangeQueryInstance.cs" />
+    <Compile Include="Search\Library\PhraseQueryInstance.cs" />
+    <Compile Include="Search\Library\PrefixFilterInstance.cs" />
+    <Compile Include="Search\Library\PrefixQueryInstance.cs" />
+    <Compile Include="Search\Library\QueryInstance.cs" />
+    <Compile Include="Search\Library\QueryWrapperFilterInstance.cs" />
+    <Compile Include="Search\Library\RegexQueryInstance.cs" />
+    <Compile Include="Search\Library\ScoreDocInstance.cs" />
+    <Compile Include="Search\Library\SearchArguments.cs" />
+    <Compile Include="Search\Library\SearchArgumentsInstance.cs" />
+    <Compile Include="Search\Library\SearchField.cs" />
+    <Compile Include="Search\Library\SimpleFacetedSearchInstance.cs" />
+    <Compile Include="Search\Library\SortInstance.cs" />
+    <Compile Include="Search\Library\TermQueryInstance.cs" />
+    <Compile Include="Search\Library\TermRangeFilterInstance.cs" />
+    <Compile Include="Search\Library\TermRangeQueryInstance.cs" />
+    <Compile Include="Search\Library\WildcardQueryInstance.cs" />
     <Compile Include="SendingQueue.cs" />
     <Compile Include="Helpers\HtmlConverterHelper.cs" />
     <Compile Include="SmartPool.cs" />

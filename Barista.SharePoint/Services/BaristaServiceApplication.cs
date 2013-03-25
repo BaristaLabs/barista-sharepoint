@@ -1,12 +1,9 @@
 ﻿namespace Barista.SharePoint.Services
 {
   using Barista.SharePoint.Bundles;
-  using Barista.SharePoint.Search;
   using Jurassic;
-  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using Microsoft.SharePoint.Utilities;
-  using Newtonsoft.Json.Linq;
   using System;
   using System.Runtime.InteropServices;
   using System.ServiceModel;
@@ -279,26 +276,7 @@
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void AddObjectToIndex(string indexUrl, bool createIndex, string json)
     {
-      using (var site = new SPSite(indexUrl))
-      {
-        using (var web = site.OpenWeb())
-        {
-          var list = web.GetList(indexUrl);
-
-          //If the root folder of the specified list has the index server affinity property defined, check it against the current machine name.
-          if (list.RootFolder.Properties.ContainsKey(IndexServerAffinityKey))
-          {
-            var serverName = list.RootFolder.Properties[IndexServerAffinityKey] as string;
-            if (serverName == null ||
-                String.Compare(serverName, Environment.MachineName, StringComparison.InvariantCultureIgnoreCase) != 0)
-              return;
-          }
-
-          var indexWriter = LuceneHelper.GetIndexWriterSingleton(list.RootFolder, createIndex);
-          var jObj = JObject.Parse(json);
-          LuceneHelper.AddObjectToIndex(indexWriter, jObj);
-        }
-      }
+      throw new NotImplementedException();
     }
 
     #endregion

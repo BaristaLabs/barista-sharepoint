@@ -131,6 +131,10 @@
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Barista.Search.SharePoint\Barista.Search.SharePoint.csproj">
+      <Project>{18b0ebeb-008a-4d5c-985d-3c00f5dcc069}</Project>
+      <Name>Barista.Search.SharePoint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Barista.SharePoint\Barista.SharePoint.csproj">
       <Project>{77bc7214-5d7d-472c-88c5-7d022d93c231}</Project>
       <Name>Barista.SharePoint</Name>
@@ -145,6 +149,9 @@
     <EmbeddedResource Include="BaristaSearchWindowsService.resx">
       <DependentUpon>BaristaSearchWindowsService.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
