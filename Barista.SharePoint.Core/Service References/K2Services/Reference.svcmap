@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="0df6dae8-f941-400a-8c2b-329246457b15" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://ofsdev:81/K2Services/WCF.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="WCF.xsd" MetadataType="Schema" ID="d33c601e-5f17-46e6-b41e-3849fb63aec8" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd3" />
+    <MetadataFile FileName="WCF1.xsd" MetadataType="Schema" ID="43d201fa-6863-4591-a285-f0c84db80f2d" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd7" />
+    <MetadataFile FileName="WCF.wsdl" MetadataType="Wsdl" ID="eae5005b-63ff-4193-8f57-ac573c93482c" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl3" />
+    <MetadataFile FileName="WCF.disco" MetadataType="Disco" ID="9b339040-3b0f-44d6-a8ba-862646a5a996" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?disco" />
+    <MetadataFile FileName="WCF1.wsdl" MetadataType="Wsdl" ID="4cd940df-913e-4ff6-beee-837ea07f755d" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl1" />
+    <MetadataFile FileName="WCF2.xsd" MetadataType="Schema" ID="7480e281-d66a-4353-953d-f801941ca3fa" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd2" />
+    <MetadataFile FileName="WCF3.xsd" MetadataType="Schema" ID="abc99888-607f-4e45-9012-e65a64b830e3" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd6" />
+    <MetadataFile FileName="WCF2.wsdl" MetadataType="Wsdl" ID="4a8ca77e-1eeb-46fb-be55-e0169ed165db" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl2" />
+    <MetadataFile FileName="Wcf3.wsdl" MetadataType="Wsdl" ID="347d0b1f-e03c-4978-9294-019a65f5f59d" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl" />
+    <MetadataFile FileName="WCF4.xsd" MetadataType="Schema" ID="ec9a4d4e-5810-407b-b047-ee187ce1076a" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" />
+    <MetadataFile FileName="WCF5.xsd" MetadataType="Schema" ID="25d2278c-243e-4fb9-ac0c-d9ae25873923" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd5" />
+    <MetadataFile FileName="WCF6.xsd" MetadataType="Schema" ID="ac2a4a25-a11f-4a98-bb9f-6a515a49a366" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd9" />
+    <MetadataFile FileName="WCF4.wsdl" MetadataType="Wsdl" ID="170bcf9b-dbb4-4f19-a96c-e1be23653ea2" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="WCF7.xsd" MetadataType="Schema" ID="39df2044-dfe4-4e70-bdd4-bcab27fb70f6" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" />
+    <MetadataFile FileName="WCF8.xsd" MetadataType="Schema" ID="9e96c435-99c7-4c63-bdf2-613a038d8fa6" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd4" />
+    <MetadataFile FileName="WCF9.xsd" MetadataType="Schema" ID="fa68fd12-6d9a-489d-a3bf-222383a52bb1" SourceId="1" SourceUrl="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd8" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

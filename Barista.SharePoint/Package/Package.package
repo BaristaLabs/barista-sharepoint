@@ -2,7 +2,7 @@
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="true" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
     <projectOutputAssembly location="Barista.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.Core\Barista.Core.csproj" />
-    <customAssembly location="EPPlus.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\EPPlus.dll" />
+    <projectOutputAssembly location="Barista.SharePoint.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj" />
     <customAssembly location="ICSharpCode.SharpZipLib.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\ICSharpCode.SharpZipLib.dll" />
     <customAssembly location="Interop.ActiveDs.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Interop.ActiveDs.dll" />
     <customAssembly location="wnvhtmlconvert.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\wnvhtmlconvert.dll" />
@@ -16,6 +16,7 @@
     <customAssembly location="Lucene.Net.Contrib.FastVectorHighlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll" />
     <customAssembly location="Camlex.NET.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Camlex.NET.dll.3.3.0.0\lib\net20\Camlex.NET.dll" />
     <customAssembly location="System.Threading.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll" />
+    <customAssembly location="EPPlus.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

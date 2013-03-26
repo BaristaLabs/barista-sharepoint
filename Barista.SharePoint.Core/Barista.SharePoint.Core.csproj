@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{17B92DC5-9402-44DF-B03C-4687E99FEF61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Barista.SharePoint</RootNamespace>
+    <AssemblyName>Barista.SharePoint.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Camlex.NET">
+      <HintPath>..\packages\Camlex.NET.dll.3.3.0.0\lib\net20\Camlex.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\Lib\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Core">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Regex">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch">
+      <HintPath>..\Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.BusinessData, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.BusinessData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.DocumentManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.SecureStoreService, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.SecureStoreService.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Server, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Server.Search, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.Office.Server.Search.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.ServerRuntime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Powershell, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Powershell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Taxonomy.Intl, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Threading">
+      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Workflow.ComponentModel" />
+    <Reference Include="System.WorkflowServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaristaConsoleOutput.cs" />
+    <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaDiagnosticService.cs" />
+    <Compile Include="BaristaItemEventProperties.cs" />
+    <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\DocumentBundle.cs" />
+    <Compile Include="Bundles\K2Bundle.cs" />
+    <Compile Include="Bundles\SharePointBundle.cs" />
+    <Compile Include="Bundles\TfsBundle.cs" />
+    <Compile Include="Bundles\UlsLogBundle.cs" />
+    <Compile Include="Bundles\UtilityBundle.cs" />
+    <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="Caml\Library\CamlHump.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilderInstance.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_FieldRef.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_GroupedQuery.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_Membership.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_OrderedQuery.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_Token.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryBuilder_Where.cs" />
+    <Compile Include="Caml\Library\SPCamlQueryInstance.cs" />
+    <Compile Include="Extensions\BrewRequestExtensions.cs" />
+    <Compile Include="Framework\BinaryEndpointBehaviorAttribute.cs" />
+    <Compile Include="Framework\ClientRequestServiceBehaviorAttribute.cs" />
+    <Compile Include="Framework\IisUtility.cs" />
+    <Compile Include="Framework\MultipleHeaderDataServiceHostFactory.cs" />
+    <Compile Include="Framework\MultipleHeaderServiceHostFactory.cs" />
+    <Compile Include="Framework\MultipleHeaderWebServiceHostFactory.cs" />
+    <Compile Include="Framework\MultipleHeaderWorkflowServiceHostFactory.cs" />
+    <Compile Include="Framework\SecurityContext.cs" />
+    <Compile Include="Framework\ServiceUtility.cs" />
+    <Compile Include="HandleEventFiring.cs" />
+    <Compile Include="Helpers\ADHelper.cs" />
+    <Compile Include="Helpers\BaristaHelper.cs" />
+    <Compile Include="Helpers\CacheHelper.cs" />
+    <Compile Include="Helpers\CodeCommentsHelper.cs" />
+    <Compile Include="Helpers\CommonPropertyUtil.cs" />
+    <Compile Include="Helpers\EmailHelper.cs" />
+    <Compile Include="Helpers\EncryptDecrypt.cs" />
+    <Compile Include="Helpers\FarmPropertyBag.cs" />
+    <Compile Include="Helpers\SPHelper.cs" />
+    <Compile Include="Helpers\UlsHelper.cs" />
+    <Compile Include="ImpersonationHelper.cs" />
+    <Compile Include="K2\EventInstanceInstance.cs" />
+    <Compile Include="K2\K2Instance.cs" />
+    <Compile Include="K2\ProcessInstanceInstance.cs" />
+    <Compile Include="K2\WorklistItemInstance.cs" />
+    <Compile Include="Library\ActiveDirectoryInstance.cs" />
+    <Compile Include="Library\ADGroupInstance.cs" />
+    <Compile Include="Library\ADUserInstance.cs" />
+    <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
+    <Compile Include="Library\BaristaSharePointGlobal.cs" />
+    <Compile Include="Library\ExcelPackageInstance.cs" />
+    <Compile Include="Library\LogInstance.cs" />
+    <Compile Include="Library\SPContentTypeIdInstance.cs" />
+    <Compile Include="Library\SPContentTypeInstance.cs" />
+    <Compile Include="Library\SPContextInstance.cs" />
+    <Compile Include="Library\SPDocTemplateInstance.cs" />
+    <Compile Include="Library\SPDocumentSetInstance.cs" />
+    <Compile Include="Library\SPEventReceiverDefinitionInstance.cs" />
+    <Compile Include="Library\SPFarmInstance.cs" />
+    <Compile Include="Library\SPFeatureDefinitionInstance.cs" />
+    <Compile Include="Library\SPFeatureDependencyInstance.cs" />
+    <Compile Include="Library\SPFeatureInstance.cs" />
+    <Compile Include="Library\SPFileInstance.cs" />
+    <Compile Include="Library\SPFileVersionCollectionInstance.cs" />
+    <Compile Include="Library\SPFileVersionInstance.cs" />
+    <Compile Include="Library\SPFolderInstance.cs" />
+    <Compile Include="Library\SPGroupInstance.cs" />
+    <Compile Include="Library\SPInstance.cs" />
+    <Compile Include="Library\SPListCreationInformation.cs" />
+    <Compile Include="Library\SPListInstance.cs" />
+    <Compile Include="Library\SPListItemCollectionPositionInstance.cs" />
+    <Compile Include="Library\SPListItemInstance.cs" />
+    <Compile Include="Library\SPListTemplateInstance.cs" />
+    <Compile Include="Library\SPModerationInformationInstance.cs" />
+    <Compile Include="Library\SPMonitoredScopeInstance.cs" />
+    <Compile Include="Library\SPRecycleBinItemCollection.cs" />
+    <Compile Include="Library\SPRecycleBinItemInstance.cs" />
+    <Compile Include="Library\SPRoleDefinitionInstance.cs" />
+    <Compile Include="Library\SPSecurableObjectInstance.cs" />
+    <Compile Include="Library\SPSiteDataQueryInstance.cs" />
+    <Compile Include="Library\SPSiteInstance.cs" />
+    <Compile Include="Library\SPUserInstance.cs" />
+    <Compile Include="Library\SPViewInstance.cs" />
+    <Compile Include="Library\SPWebCreationInformation.cs" />
+    <Compile Include="Library\SPWebInstance.cs" />
+    <Compile Include="Library\SPWebTemplateInstance.cs" />
+    <Compile Include="Library\UsageInfoInstance.cs" />
+    <Compile Include="Library\WebInstance.cs" />
+    <Compile Include="PrincipalType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\Bundles\SPSearchBundle.cs" />
+    <Compile Include="Search\Hit.cs" />
+    <Compile Include="Search\Library\SPIndexWriterInstance.cs" />
+    <Compile Include="Search\Library\SPLuceneInstance.cs" />
+    <Compile Include="Search\LuceneHelper.cs" />
+    <Compile Include="Search\SPDirectory.cs" />
+    <Compile Include="Search\SPFileInputStream.cs" />
+    <Compile Include="Search\SPFileOutputStream.cs" />
+    <Compile Include="Search\SPLock.cs" />
+    <Compile Include="Search\SPLockFactory.cs" />
+    <Compile Include="Service References\K2Services\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="SPFileScriptSource.cs" />
+    <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermLabel.cs" />
+    <Compile Include="Taxonomy\Library\TermSetInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermStoreInstance.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="_Constants.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="key.snk" />
+    <None Include="packages.config" />
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.Action.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.ActivityInstanceDestination.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.DataField.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.Destination.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.EventInstance.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.ProcessInstance.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.User.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.WorklistItem.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\Barista.SharePoint.K2Services.XmlField.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\K2Services\WCF.wsdl" />
+    <None Include="Service References\K2Services\WCF.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF1.wsdl" />
+    <None Include="Service References\K2Services\WCF1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF2.wsdl" />
+    <None Include="Service References\K2Services\WCF2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\Wcf3.wsdl" />
+    <None Include="Service References\K2Services\WCF3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF4.wsdl" />
+    <None Include="Service References\K2Services\WCF4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\K2Services\WCF9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
+      <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
+      <Name>Barista.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\K2Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\K2Services\WCF.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\K2Services\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\K2Services\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\K2Services\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

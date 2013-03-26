@@ -72,17 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bundles\SPSearchBundle.cs" />
-    <Compile Include="Hit.cs" />
-    <Compile Include="Library\SPIndexWriterInstance.cs" />
-    <Compile Include="Library\SPLuceneInstance.cs" />
-    <Compile Include="LuceneHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SPDirectory.cs" />
-    <Compile Include="SPFileInputStream.cs" />
-    <Compile Include="SPFileOutputStream.cs" />
-    <Compile Include="SPLock.cs" />
-    <Compile Include="SPLockFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />

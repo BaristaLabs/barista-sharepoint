@@ -11,13 +11,6 @@
   /// </summary>
   public class BaristaItemEventReceiver : SPItemEventReceiver
   {
-    /// <summary>
-    /// The key of the Barista Item Event Receiver Code Property Bag setting
-    /// that must exist on the corresponding list which specifies the code, 
-    /// or location of the code file, to execute when an event occurs.
-    /// </summary>
-    public const string BaristaItemEventReceiverCodePropertyBagKey = "BaristaItemEventReceiver_Code";
-
     ////// <summary>
     ////// An item is being added.
     ////// </summary>
@@ -200,13 +193,13 @@
         var list = web.Lists[properties.ListId];
         var item = list.GetItemById(properties.ListItemId);
 
-        if (list.RootFolder.Properties.ContainsKey(BaristaItemEventReceiverCodePropertyBagKey) == false ||
-            (list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey] is string) == false)
+        if (list.RootFolder.Properties.ContainsKey(Constants.BaristaItemEventReceiverCodePropertyBagKey) == false ||
+            (list.RootFolder.Properties[Constants.BaristaItemEventReceiverCodePropertyBagKey] is string) == false)
           return;
 
         request = new BrewRequest
           {
-            Code = (string) list.RootFolder.Properties[BaristaItemEventReceiverCodePropertyBagKey],
+            Code = (string) list.RootFolder.Properties[Constants.BaristaItemEventReceiverCodePropertyBagKey],
           };
 
         request.SetExtendedPropertiesFromSPItemEventProperties(web, list, item, properties);

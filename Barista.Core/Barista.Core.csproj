@@ -142,12 +142,15 @@
     <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
+    <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
+    <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
     <Compile Include="Bundles\MomentBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />
+    <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
     <Compile Include="Bundles\StringBundle.cs" />

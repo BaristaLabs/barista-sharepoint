@@ -37,8 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D414-49D6-900A-8F7C0912C655}"
 	ProjectSection(SolutionItems) = preProject
-		Lib\EPPlus.dll = Lib\EPPlus.dll
-		Lib\EPPlus.XML = Lib\EPPlus.XML
 		Lib\ICSharpCode.SharpZipLib.dll = Lib\ICSharpCode.SharpZipLib.dll
 		Lib\Interop.ActiveDs.dll = Lib\Interop.ActiveDs.dll
 		Lib\Lucene.Net.dll = Lib\Lucene.Net.dll
@@ -114,7 +112,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.Jurassic"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.WebKit", "Barista.WebKit\Barista.WebKit.csproj", "{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Search.SharePoint", "Barista.Search.SharePoint\Barista.Search.SharePoint.csproj", "{18B0EBEB-008A-4D5C-985D-3C00F5DCC069}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.Core", "Barista.SharePoint.Core\Barista.SharePoint.Core.csproj", "{17B92DC5-9402-44DF-B03C-4687E99FEF61}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -141,9 +139,9 @@ Global
 		SccProjectUniqueName6 = Barista.WebKit\\Barista.WebKit.csproj
 		SccProjectName6 = Barista.WebKit
 		SccLocalPath6 = Barista.WebKit
-		SccProjectUniqueName7 = Barista.Search.SharePoint\\Barista.Search.SharePoint.csproj
-		SccProjectName7 = Barista.Search.SharePoint
-		SccLocalPath7 = Barista.Search.SharePoint
+		SccProjectUniqueName7 = Barista.SharePoint.Core\\Barista.SharePoint.Core.csproj
+		SccProjectName7 = Barista.SharePoint.Core
+		SccLocalPath7 = Barista.SharePoint.Core
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,10 +176,10 @@ Global
 		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18B0EBEB-008A-4D5C-985D-3C00F5DCC069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18B0EBEB-008A-4D5C-985D-3C00F5DCC069}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18B0EBEB-008A-4D5C-985D-3C00F5DCC069}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18B0EBEB-008A-4D5C-985D-3C00F5DCC069}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B92DC5-9402-44DF-B03C-4687E99FEF61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B92DC5-9402-44DF-B03C-4687E99FEF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B92DC5-9402-44DF-B03C-4687E99FEF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B92DC5-9402-44DF-B03C-4687E99FEF61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

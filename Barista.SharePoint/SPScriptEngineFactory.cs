@@ -6,7 +6,6 @@
   using Barista.Bundles;
   using Barista.Library;
   using Barista.SharePoint.Bundles;
-  using Barista.SharePoint.EventReceivers.BaristaItemEventReceiver;
   using Barista.SharePoint.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -155,11 +154,11 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
           BaristaContext.Current.Request != null &&
           BaristaContext.Current.Request.ExtendedProperties != null &&
           BaristaContext.Current.Request.ExtendedProperties.ContainsKey(
-            BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey))
+            Constants.BaristaItemEventReceiverCodePropertyBagKey))
         {
           var properties =
             BaristaContext.Current.Request.ExtendedProperties[
-              BaristaItemEventReceiver.BaristaItemEventReceiverCodePropertyBagKey];
+              Constants.BaristaItemEventReceiverCodePropertyBagKey];
 
           var itemEventProperties = JsonConvert.DeserializeObject<BaristaItemEventProperties>(properties);
           engine.SetGlobalValue("CurrentItemEventProperties", new BaristaItemEventPropertiesInstance(engine.Object.InstancePrototype, itemEventProperties));
@@ -174,7 +173,7 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
         //Execute any instance initialization code.
         if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCode) == false)
         {
-          BaristaScriptSource initializationScriptSource = new BaristaScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
+          var initializationScriptSource = new BaristaScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
 
           try
           {
