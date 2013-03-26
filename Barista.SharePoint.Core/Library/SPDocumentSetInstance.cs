@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -20,7 +19,7 @@
     {
       SPSite site = null;
       SPWeb web = null;
-      DocumentSet result = null;
+      DocumentSet result;
 
       if (obj is SPFolderInstance)
       {
@@ -55,7 +54,7 @@
   {
     private SPSite m_site;
     private SPWeb m_web;
-    private DocumentSet m_documentSet;
+    private readonly DocumentSet m_documentSet;
 
     public SPDocumentSetInstance(ObjectInstance prototype)
       : base(prototype)

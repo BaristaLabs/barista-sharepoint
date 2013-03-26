@@ -1,16 +1,10 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
+  using System.Globalization;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using Microsoft.Office.DocumentManagement.DocumentSets;
-  using System.Collections;
-  using System.Text;
-  using System.Collections.Generic;
-  using Microsoft.Office.Server.Utilities;
-  using Barista.Library;
 
   [Serializable]
   public class SPSiteDataQueryConstructor : ClrFunction
@@ -30,7 +24,7 @@
   [Serializable]
   public class SPSiteDataQueryInstance : ObjectInstance
   {
-    SPSiteDataQuery m_siteDataQuery;
+    private readonly SPSiteDataQuery m_siteDataQuery;
 
     public SPSiteDataQueryInstance(ObjectInstance prototype)
       : base(prototype)
@@ -71,7 +65,7 @@
     [JSProperty(Name = "rowLimit")]
     public string RowLimit
     {
-      get { return m_siteDataQuery.RowLimit.ToString(); }
+      get { return m_siteDataQuery.RowLimit.ToString(CultureInfo.InvariantCulture); }
       set { m_siteDataQuery.RowLimit = uint.Parse(value); }
     }
 
