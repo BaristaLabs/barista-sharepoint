@@ -585,7 +585,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Black\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\imagebrowser.png" />
@@ -593,7 +593,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\BlueOpal\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\imagebrowser.png" />
@@ -601,7 +601,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Bootstrap\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\imagebrowser.png" />
@@ -609,7 +609,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Default\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\imagebrowser.png" />
@@ -617,7 +617,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\HighContrast\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\images\back.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\kendo.black.min.css" />
@@ -655,7 +655,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\MetroBlack\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\imagebrowser.png" />
@@ -663,7 +663,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Metro\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\imagebrowser.png" />
@@ -671,7 +671,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Moonlight\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\editor.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\imagebrowser.png" />
@@ -679,7 +679,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Silver\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\textures\brushed-metal.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\textures\dots1.png" />
@@ -717,7 +717,7 @@
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\loading.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\slider-h.gif" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\slider-v.gif" />
-    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\sprite%402x.png" />
+    <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\sprite_2x.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\styles\Uniform\sprite.png" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\typescript\kendo.all.d.ts" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\vsdoc\kendo.all-vsdoc.js" />
