@@ -69,7 +69,7 @@
       set { m_siteDataQuery.RowLimit = uint.Parse(value); }
     }
 
-    [JSProperty(Name = "rowLimit")]
+    [JSProperty(Name = "viewFields")]
     public string ViewFields
     {
       get { return m_siteDataQuery.ViewFields; }

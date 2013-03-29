@@ -931,10 +931,12 @@
     <Content Include="Layouts\BaristaJS\select2.min.js" />
     <Content Include="Layouts\BaristaJS\select2.png" />
     <Content Include="Layouts\BaristaJS\select2x2.png" />
-    <Content Include="Layouts\BaristaJS\toastr.css" />
-    <Content Include="Layouts\BaristaJS\toastr.js" />
-    <Content Include="Layouts\BaristaJS\toastr.min.css" />
-    <Content Include="Layouts\BaristaJS\toastr.min.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop-amd.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.gz.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop.min.gz.js" />
+    <Content Include="Layouts\BaristaJS\TrafficCop.min.js" />
     <Content Include="Layouts\Barista\v1\MochaServer.aspx" />
     <Content Include="Layouts\BaristaJS\arctext\css\demo.css" />
     <Content Include="Layouts\BaristaJS\arctext\css\style.css" />

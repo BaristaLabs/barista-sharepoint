@@ -36,6 +36,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPListItem", new SPListItemConstructor(engine));
       engine.SetGlobalValue("SPCamlQuery", new SPCamlQueryConstructor(engine));
       engine.SetGlobalValue("SPCamlQueryBuilder", new SPCamlQueryBuilderConstructor(engine));
+      engine.SetGlobalValue("SPSiteDataQuery", new SPSiteDataQueryConstructor(engine));
       engine.SetGlobalValue("SPUser", new SPUserConstructor(engine));
 
       return new SPInstance(engine, BaristaContext.Current, SPFarm.Local);
