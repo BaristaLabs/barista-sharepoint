@@ -22,22 +22,22 @@
   {
     #region Private members
 
-    private Expression _ex;
+    private readonly Expression m_ex;
 
-    private IDirectorySource _source;
+    private IDirectorySource m_source;
 
-    private Type originalType;
+    private Type m_originalType;
 
     #region Projection information
 
-    private HashSet<string> properties = new HashSet<string>();
-    private Delegate project;
+    private readonly HashSet<string> m_properties = new HashSet<string>();
+    private Delegate m_project;
 
     #endregion
 
     #region Query information
 
-    private string query;
+    private string m_query;
 
     #endregion
 
@@ -47,7 +47,7 @@
 
     internal DirectoryQuery(Expression ex)
     {
-      _ex = ex;
+      m_ex = ex;
     }
 
     #endregion
@@ -61,7 +61,7 @@
 
     public Expression Expression
     {
-      get { return _ex; }
+      get { return m_ex; }
     }
 
     public IQueryProvider Provider
@@ -100,20 +100,20 @@
     /// <returns>Query results represented as entity objects or projection results.</returns>
     private IEnumerator<T> GetResults()
     {
-      DirectorySchemaAttribute[] attr = (DirectorySchemaAttribute[])originalType.GetCustomAttributes(typeof(DirectorySchemaAttribute), false);
+      DirectorySchemaAttribute[] attr = (DirectorySchemaAttribute[])m_originalType.GetCustomAttributes(typeof(DirectorySchemaAttribute), false);
       if (attr == null || attr.Length == 0)
         throw new InvalidOperationException("Missing schema mapping attribute.");
 
       string classQuery = String.Format("(objectClass={0})", attr[0].Schema);
 
       DirectorySearcher s = Helpers.CloneSearcher(
-          _source.Searcher,
-          !string.IsNullOrEmpty(query) ? String.Format("(&{0}{1})", classQuery, query) : classQuery,
-          properties.ToArray()
+          m_source.Searcher,
+          !string.IsNullOrEmpty(m_query) ? String.Format("(&{0}{1})", classQuery, m_query) : classQuery,
+          m_properties.ToArray()
       );
 
-      if (_source.Log != null)
-        _source.Log.WriteLine(s.Filter);
+      if (m_source.Log != null)
+        m_source.Log.WriteLine(s.Filter);
 
       Type helper = attr[0].ActiveDsHelperType;
 
@@ -121,34 +121,34 @@
       {
         DirectoryEntry e = sr.GetDirectoryEntry();
 
-        object result = Activator.CreateInstance(project == null ? typeof(T) : originalType);
+        object result = Activator.CreateInstance(m_project == null ? typeof(T) : m_originalType);
 
-        /// *** UPDATE ***
+        // *** UPDATE ***
         DirectoryEntity entity = result as DirectoryEntity;
         if (entity != null)
           entity.DirectoryEntry = e;
 
-        if (project == null)
+        if (m_project == null)
         {
           foreach (PropertyInfo p in typeof(T).GetProperties())
             AssignResultProperty(helper, sr, result, p.Name);
 
-          /// *** UPDATE ***
+          // *** UPDATE ***
           if (entity != null)
-            entity.PropertyChanged += new PropertyChangedEventHandler(_source.UpdateNotification);
+            entity.PropertyChanged += new PropertyChangedEventHandler(m_source.UpdateNotification);
 
           yield return (T)result;
         }
         else
         {
-          foreach (string prop in properties)
+          foreach (string prop in m_properties)
             AssignResultProperty(helper, sr, result, prop);
 
-          /// *** UPDATE ***
+          // *** UPDATE ***
           if (entity != null)
-            entity.PropertyChanged += new PropertyChangedEventHandler(_source.UpdateNotification);
+            entity.PropertyChanged += new PropertyChangedEventHandler(m_source.UpdateNotification);
 
-          yield return (T)project.DynamicInvoke(result);
+          yield return (T)m_project.DynamicInvoke(result);
         }
       }
     }
@@ -162,7 +162,7 @@
     /// <param name="prop">Property to be set.</param>
     private void AssignResultProperty(Type helper, SearchResult searchResult, object result, string prop)
     {
-      PropertyInfo i = originalType.GetProperty(prop);
+      PropertyInfo i = m_originalType.GetProperty(prop);
       DirectoryAttributeAttribute[] da = i.GetCustomAttributes(typeof(DirectoryAttributeAttribute), false) as DirectoryAttributeAttribute[];
       if (da != null && da.Length != 0)
       {
@@ -188,7 +188,7 @@
             // property but we support splatting the contents of the value into
             // the byte[] array.
             //
-            byte[] value = null;
+            byte[] value;
             if (i.PropertyType.GetElementType() == typeof(byte) && (value = resultValue[0] as byte[]) != null)
             {
               i.SetValue(result, value, null);
@@ -248,7 +248,7 @@
     /// </summary>
     public void Parse()
     {
-      Parse(_ex);
+      Parse(m_ex);
     }
 
     /// <summary>
@@ -262,8 +262,8 @@
 
       if (ce != null)
       {
-        _source = ce.Value as IDirectorySource;
-        originalType = _source.OriginalType;
+        m_source = ce.Value as IDirectorySource;
+        m_originalType = m_source.OriginalType;
       }
       else if (mce != null)
       {
@@ -314,12 +314,12 @@
       // Store projection information including the compiled lambda for subsequent execution
       // and a minimal set of properties to be retrieved (improves efficiency of queries).
       //
-      project = p.Compile();
+      m_project = p.Compile();
 
       //
       // Original type is kept for reflection during querying.
       //
-      originalType = p.Parameters[0].Type;
+      m_originalType = p.Parameters[0].Type;
 
       //
       // Support for (anonymous) type initialization based on "member init expressions".
@@ -354,8 +354,8 @@
       // Support for identity projections (e.g. user => user), getting all properties back.
       //
       else
-        foreach (PropertyInfo i in originalType.GetProperties())
-          properties.Add(i.Name);
+        foreach (PropertyInfo i in m_originalType.GetProperties())
+          m_properties.Add(i.Name);
     }
 
     /// <summary>
@@ -371,16 +371,16 @@
       if (e.NodeType == ExpressionType.MemberAccess)
       {
         MemberExpression me = e as MemberExpression;
-        if (me.Member.DeclaringType == originalType)
+        if (me.Member.DeclaringType == m_originalType)
         {
           DirectoryAttributeAttribute[] da = me.Member.GetCustomAttributes(typeof(DirectoryAttributeAttribute), false) as DirectoryAttributeAttribute[];
           if (da != null && da.Length != 0)
           {
             if (da[0].QuerySource != DirectoryAttributeType.ActiveDs)
-              properties.Add(me.Member.Name);
+              m_properties.Add(me.Member.Name);
           }
           else
-            properties.Add(me.Member.Name);
+            m_properties.Add(me.Member.Name);
         }
       }
       else
@@ -477,7 +477,7 @@
       //
       ParsePredicate(q.Body, sb);
 
-      query = sb.ToString();
+      m_query = sb.ToString();
     }
 
     /// <summary>
@@ -597,14 +597,14 @@
       //
       // Find the order of the operands in the binary expression. At least one should refer to the entity type.
       //
-      if (e.Left is MemberExpression && ((MemberExpression)e.Left).Member.DeclaringType == originalType)
+      if (e.Left is MemberExpression && ((MemberExpression)e.Left).Member.DeclaringType == m_originalType)
       {
         neg = false;
 
         attrib = GetFieldName(((MemberExpression)e.Left).Member);
         val = Expression.Lambda(e.Right).Compile().DynamicInvoke().ToString();
       }
-      else if (e.Right is MemberExpression && ((MemberExpression)e.Right).Member.DeclaringType == originalType)
+      else if (e.Right is MemberExpression && ((MemberExpression)e.Right).Member.DeclaringType == m_originalType)
       {
         neg = true;
 
@@ -617,7 +617,7 @@
       //
       // Normalize some common characters that cannot be used in LDAP filters.
       //
-      val = val.ToString().Replace("(", "0x28").Replace(")", "0x29").Replace(@"\", "0x5c");
+      val = val.ToString(CultureInfo.InvariantCulture).Replace("(", "0x28").Replace(")", "0x29").Replace(@"\", "0x5c");
 
       //
       // Determine the operator and swap the operandi if necessary (LDAP requires a field=value order).
@@ -631,23 +631,19 @@
         case ExpressionType.GreaterThanOrEqual:
           if (!neg)
             return String.Format(CultureInfo.InvariantCulture, "{0}>={1}", attrib, val);
-          else
-            return String.Format(CultureInfo.InvariantCulture, "{0}<={1}", attrib, val);
+          return String.Format(CultureInfo.InvariantCulture, "{0}<={1}", attrib, val);
         case ExpressionType.GreaterThan:
           if (!neg)
             return String.Format(CultureInfo.InvariantCulture, "&({0}>={1})(!({0}={1}))", attrib, val);
-          else
-            return String.Format(CultureInfo.InvariantCulture, "&({0}<={1})(!({0}={1}))", attrib, val);
+          return String.Format(CultureInfo.InvariantCulture, "&({0}<={1})(!({0}={1}))", attrib, val);
         case ExpressionType.LessThanOrEqual:
           if (!neg)
             return String.Format(CultureInfo.InvariantCulture, "{0}<={1}", attrib, val);
-          else
-            return String.Format(CultureInfo.InvariantCulture, "{0}>={1}", attrib, val);
+          return String.Format(CultureInfo.InvariantCulture, "{0}>={1}", attrib, val);
         case ExpressionType.LessThan:
           if (!neg)
             return String.Format(CultureInfo.InvariantCulture, "&({0}<={1})(!({0}={1}))", attrib, val);
-          else
-            return String.Format(CultureInfo.InvariantCulture, "&({0}>={1})(!({0}={1}))", attrib, val);
+          return String.Format(CultureInfo.InvariantCulture, "&({0}>={1})(!({0}={1}))", attrib, val);
         default:
           throw new NotSupportedException("Unsupported filtering operator detected: " + e.NodeType);
       }
@@ -665,11 +661,9 @@
       {
         if (da[0].QuerySource == DirectoryAttributeType.ActiveDs)
           throw new InvalidOperationException("Can't execute query filters for ADSI properties.");
-        else
-          return da[0].Attribute;
+        return da[0].Attribute;
       }
-      else
-        return member.Name;
+      return member.Name;
     }
 
     #endregion

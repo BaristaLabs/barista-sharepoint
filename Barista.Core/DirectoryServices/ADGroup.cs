@@ -1,9 +1,5 @@
 ﻿namespace Barista.DirectoryServices
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using Interop.ActiveDs;
   using System.Runtime.Serialization;
 

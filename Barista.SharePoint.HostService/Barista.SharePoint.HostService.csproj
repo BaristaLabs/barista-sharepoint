@@ -103,16 +103,6 @@
     <Compile Include="BaristaWebSocketsWindowsService.Designer.cs">
       <DependentUpon>BaristaWebSocketsWindowsService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Data Contracts\Document.cs" />
-    <Compile Include="Data Contracts\Field.cs" />
-    <Compile Include="Data Contracts\FieldStorageType.cs" />
-    <Compile Include="Data Contracts\Hit.cs" />
-    <Compile Include="Data Contracts\FieldIndexType.cs" />
-    <Compile Include="Data Contracts\IndexDefinition.cs" />
-    <Compile Include="Data Contracts\IndexType.cs" />
-    <Compile Include="Data Contracts\Term.cs" />
-    <Compile Include="Data Contracts\FieldTermVectorType.cs" />
-    <Compile Include="Data Contracts\WebSocketServerOptions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -121,10 +111,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service Contracts\IBaristaSearch.cs" />
-    <Compile Include="Service Contracts\IBaristaWebSockets.cs" />
-    <Compile Include="Service Implementations\BaristaSearchService.cs" />
-    <Compile Include="Service Implementations\BaristaWebSocketsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
@@ -152,6 +138,10 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data Contracts\" />
+    <Folder Include="Service Contracts\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

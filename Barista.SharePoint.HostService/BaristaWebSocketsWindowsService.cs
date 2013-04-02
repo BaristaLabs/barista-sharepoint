@@ -10,6 +10,7 @@ using System.Text;
 namespace Barista.SharePoint.HostService
 {
   using System.ServiceModel;
+  using Barista.Services;
 
   partial class BaristaWebSocketsWindowsService : ServiceBase
   {

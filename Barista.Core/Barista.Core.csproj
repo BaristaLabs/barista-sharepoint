@@ -48,6 +48,10 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Barista.Interop.ActiveDs">
+      <HintPath>..\Lib\Barista.Interop.ActiveDs.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="EPPlus, Version=3.1.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll</HintPath>
@@ -59,12 +63,6 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Interop.ActiveDs, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\Lib\Interop.ActiveDs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="itextsharp, Version=5.3.3.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
@@ -1017,6 +1015,20 @@
     <Compile Include="Search\Library\WildcardQueryInstance.cs" />
     <Compile Include="SendingQueue.cs" />
     <Compile Include="Helpers\HtmlConverterHelper.cs" />
+    <Compile Include="Services\Data Contracts\Document.cs" />
+    <Compile Include="Services\Data Contracts\Field.cs" />
+    <Compile Include="Services\Data Contracts\FieldIndexType.cs" />
+    <Compile Include="Services\Data Contracts\FieldStorageType.cs" />
+    <Compile Include="Services\Data Contracts\FieldTermVectorType.cs" />
+    <Compile Include="Services\Data Contracts\Hit.cs" />
+    <Compile Include="Services\Data Contracts\IndexDefinition.cs" />
+    <Compile Include="Services\Data Contracts\IndexType.cs" />
+    <Compile Include="Services\Data Contracts\Term.cs" />
+    <Compile Include="Services\Data Contracts\WebSocketServerOptions.cs" />
+    <Compile Include="Services\Service Contracts\IBaristaSearch.cs" />
+    <Compile Include="Services\Service Contracts\IBaristaWebSockets.cs" />
+    <Compile Include="Services\Service Implementations\BaristaSearchService.cs" />
+    <Compile Include="Services\Service Implementations\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />
     <Compile Include="SocketBase\AppServer.cs" />
     <Compile Include="SocketBase\AppServerBase.cs" />
@@ -1220,7 +1232,6 @@
     <Folder Include="DocumentStore\Helpers\" />
     <Folder Include="DocumentStore\SharpKit\" />
     <Folder Include="Serialization\" />
-    <Folder Include="Services\" />
     <Folder Include="SharpKit\" />
   </ItemGroup>
   <ItemGroup>
