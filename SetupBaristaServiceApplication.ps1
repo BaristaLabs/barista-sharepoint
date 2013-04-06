@@ -4,7 +4,7 @@ param (
 	[ValidateNotNullOrEmpty()]
 	[string]$ManagedAccount = "TREASURY\SP_WorkerProcess",
 
-	[Parameter(Mandatory=$false, Position=2, ParameterSetName="FileOrDirectory")]
+	[Parameter(Mandatory=$false, Position=1, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
 	[string]$SPApplicationPoolName = "Barista Application Pool"
 )

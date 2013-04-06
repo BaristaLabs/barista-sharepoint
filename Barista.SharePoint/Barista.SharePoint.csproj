@@ -16,17 +16,18 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <ActiveDeploymentConfiguration>Deploy Barista Service Application</ActiveDeploymentConfiguration>
-    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>..\UninstallBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>
-    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>..\SetupBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>..\UninstallBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>..\UninstallBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\SetupBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
     <PreDeploymentCommand>
     </PreDeploymentCommand>
-    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>..\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2620,7 +2621,7 @@
       <FlavorProperties GUID="{BB1F664B-9266-4fd6-B973-E1E44974B511}">
         <DeploymentConfigurations>
           <DeploymentConfiguration Name="Deploy Barista Service Application">
-            <DeploymentSteps>CKS.Dev.SharePoint.Deployment.RunPowerShellScript;Microsoft.VisualStudio.SharePoint.PreDeploymentCommand;CKS.Dev.SharePoint.Deployment.ResetIIS;Microsoft.VisualStudio.SharePoint.RetractSolution;Microsoft.VisualStudio.SharePoint.AddSolution;Microsoft.VisualStudio.SharePoint.ActivateFeatures;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RestartIis;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.WarmUpSite</DeploymentSteps>
+            <DeploymentSteps>CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;Microsoft.VisualStudio.SharePoint.PreDeploymentCommand;CKS.Dev.SharePoint.Deployment.ResetIIS;Microsoft.VisualStudio.SharePoint.RetractSolution;Microsoft.VisualStudio.SharePoint.AddSolution;Microsoft.VisualStudio.SharePoint.ActivateFeatures;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RestartIis;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.WarmUpSite</DeploymentSteps>
             <RetractionSteps>Microsoft.VisualStudio.SharePoint.RecycleApplicationPool;Microsoft.VisualStudio.SharePoint.RetractSolution</RetractionSteps>
           </DeploymentConfiguration>
         </DeploymentConfigurations>

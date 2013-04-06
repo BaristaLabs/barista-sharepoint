@@ -1,11 +1,11 @@
 <Deployment>
   <Solutions>
-    <Solution Path=".\Barista.SharePoint.wsp" UpgradeExisting="false">
+    <Solution Path=".\Barista.SharePoint\bin\Debug\Barista.SharePoint.wsp" UpgradeExisting="false">
       <WebApplications>            
       <WebApplication>http://ofsdev/</WebApplication>        
 	  </WebApplications>    
     </Solution>
-    <Solution Path=".\Barista.SharePoint.WebParts.wsp" UpgradeExisting="false">
+    <Solution Path=".\Barista.SharePoint.WebParts\bin\Debug\Barista.SharePoint.WebParts.wsp" UpgradeExisting="false">
       <WebApplications>
         <WebApplication>http://ofsdev/</WebApplication>
       </WebApplications>

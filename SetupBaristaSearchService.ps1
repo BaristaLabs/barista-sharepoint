@@ -20,7 +20,8 @@ if ($searchService -ne $null)
 	# deactivate in SharePoint
 	Remove-BaristaSearchService
 
-    & $serviceLocation uninstall
+	& $serviceLocation stop --sudo
+    & $serviceLocation uninstall --sudo
 	$searchService.Delete()
 	write-host 
 	write-host "Search Service Removed..." -foregroundcolor Green
@@ -33,7 +34,7 @@ write-host
 write-host "[[STEP]] Installing Search Service" -foregroundcolor Yellow
 write-host 
 
-& $serviceLocation install
+& $serviceLocation install --sudo
 
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'"
 
@@ -49,8 +50,8 @@ if ($searchService -eq $null)
 write-host 
 write-host "[[STEP]] Creating Barista Service Hooks." -foregroundcolor Yellow
 write-host 
-New-BaristaSearchService -ManagedAccount $ManagedAccount
-New-BaristaSearchServiceInstance
+New-BaristaSearchService -ManagedAccount $ManagedAccount -ErrorAction SilentlyContinue
+New-BaristaSearchServiceInstance -ErrorAction SilentlyContinue
 
 write-host 
 write-host "Successfully installed service $($searchService.name)" -foregroundcolor Green
