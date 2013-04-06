@@ -1,8 +1,10 @@
 ﻿namespace Barista.Services
 {
   using System.Collections.Generic;
+  using System.Diagnostics;
   using System.Linq;
   using Barista.Extensions;
+  using Barista.Logging;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Barista.Search;
@@ -24,6 +26,9 @@
     private const string IndexVersion = "1.0.0.0";
     private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
     private static readonly ConcurrentDictionary<DirectoryDefinition, Index> Indexes = new ConcurrentDictionary<DirectoryDefinition, Index>();
+
+    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILog StartupLog = LogManager.GetLogger(typeof(BaristaSearchService).FullName + ".Startup");
 
     /// <summary>
     /// Deletes all documents from the specified index.
@@ -125,7 +130,8 @@
         {
           batch.Add(searchDocument, false);
         }
-
+        //TODO: Add the batch to a BlockingCollection<IndexingBatch> and run a thread that consumes the batches
+        //See http://www.codethinked.com/blockingcollection-and-iproducerconsumercollection
         index.IndexDocuments(batch);
       }
       catch (OutOfMemoryException)
@@ -198,7 +204,7 @@
           }
           else
           {
-            //EnsureIndexVersionMatches(indexName, directory);
+            EnsureIndexVersionMatches(indexDefinition.Name, targetDirectory);
 
             if (targetDirectory.FileExists("write.lock"))// force lock release, because it was still open when we shut down
             {
@@ -212,7 +218,7 @@
               //if (configuration.ResetIndexOnUncleanShutdown)
               //  throw new InvalidOperationException("Rude shutdown detected on: " + indexDirectory);
 
-              //CheckIndexAndRecover(directory, indexDirectory);
+              CheckIndexAndRecover(targetDirectory, definition.IndexStoragePath);
               targetDirectory.DeleteFile("writing-to-index.lock");
             }
           }
@@ -263,6 +269,54 @@
                  .ToList();
 
       return results;
+    }
+
+    private static void EnsureIndexVersionMatches(string indexName, Lucene.Net.Store.Directory directory)
+    {
+      if (directory.FileExists("index.version") == false)
+      {
+        throw new InvalidOperationException("Could not find index.version " + indexName + ", resetting index");
+      }
+      using (var indexInput = directory.OpenInput("index.version"))
+      {
+        var versionFromDisk = indexInput.ReadString();
+        if (versionFromDisk != IndexVersion)
+          throw new InvalidOperationException("Index " + indexName + " is of version " + versionFromDisk +
+                            " which is not compatible with " + IndexVersion + ", resetting index");
+      }
+    }
+
+    private static void CheckIndexAndRecover(Lucene.Net.Store.Directory directory, string indexDirectory)
+    {
+      StartupLog.Warn("Unclean shutdown detected on {0}, checking the index for errors. This may take a while.", indexDirectory);
+
+      var memoryStream = new MemoryStream();
+      var stringWriter = new StreamWriter(memoryStream);
+      var checkIndex = new CheckIndex(directory);
+
+      if (StartupLog.IsWarnEnabled)
+        checkIndex.SetInfoStream(stringWriter);
+
+      var sp = Stopwatch.StartNew();
+      var status = checkIndex.CheckIndex_Renamed_Method();
+      sp.Stop();
+      if (StartupLog.IsWarnEnabled)
+      {
+        StartupLog.Warn("Checking index {0} took: {1}, clean: {2}", indexDirectory, sp.Elapsed, status.clean);
+        memoryStream.Position = 0;
+
+        Log.Warn(new StreamReader(memoryStream).ReadToEnd());
+      }
+
+      if (status.clean)
+        return;
+
+      StartupLog.Warn("Attempting to fix index: {0}", indexDirectory);
+      sp.Stop();
+      sp.Reset();
+      sp.Start();
+      checkIndex.FixIndex(status);
+      StartupLog.Warn("Fixed index {0} in {1}", indexDirectory, sp.Elapsed);
     }
 
     private static void WriteIndexVersion(Lucene.Net.Store.Directory directory)

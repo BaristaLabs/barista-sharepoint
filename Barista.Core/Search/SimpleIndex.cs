@@ -27,6 +27,8 @@
       var start = DateTime.UtcNow;
       Write((indexWriter, analyzer) =>
       {
+        //TODO: The following would be a perfect candidate for a TPL DataFlow impl. Too bad we're currently on .Net 3.5
+        
         var processedKeys = new HashSet<string>();
 
         var docIdTerm = new Term(Constants.DocumentIdFieldName);
