@@ -2,6 +2,11 @@
 {
   using System.Collections.Generic;
   using System.Linq;
+  using Barista.Extensions;
+  using Barista.Newtonsoft.Json;
+  using Barista.Newtonsoft.Json.Linq;
+  using Barista.Search;
+  using Lucene.Net.Analysis;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
@@ -12,23 +17,24 @@
   using System.IO;
   using System.ServiceModel;
   using Version = Lucene.Net.Util.Version;
-  using Directory = Lucene.Net.Store.Directory;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
-  public class BaristaSearchService : IBaristaSearch
+  public class BaristaSearchService : IBaristaSearch, IDisposable
   {
-    private static readonly ConcurrentDictionary<IndexDefinition, IndexWriter> IndexWriters = new ConcurrentDictionary<IndexDefinition, IndexWriter>();
+    private const string IndexVersion = "1.0.0.0";
+    private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
+    private static readonly ConcurrentDictionary<DirectoryDefinition, Index> Indexes = new ConcurrentDictionary<DirectoryDefinition, Index>();
 
     /// <summary>
     /// Deletes all documents from the specified index.
     /// </summary>
     /// <param name="definition"></param>
-    public void DeleteAll(IndexDefinition definition)
+    public void DeleteAllDocuments(DirectoryDefinition definition)
     {
-      var indexWriter = GetOrAddIndexWriter(definition, true);
+      var index = GetOrAddIndex(definition, true);
       try
       {
-        indexWriter.DeleteAll();
+        index.DeleteAll();
       }
       catch (OutOfMemoryException)
       {
@@ -36,88 +42,14 @@
       }
     }
 
-    /// <summary>
-    /// Commits all pending changes to the specified index and syncs all referenced index files.
-    /// </summary>
-    /// <param name="definition"></param>
-    public void Commit(IndexDefinition definition)
+    public void DeleteDocuments(DirectoryDefinition definition, IEnumerable<string> keys)
     {
-      var indexWriter = GetOrAddIndexWriter(definition, true);
-      try
-      {
-        indexWriter.Commit();
-      }
-      catch (OutOfMemoryException)
-      {
-        CloseIndexWriter(definition, false);
-      }
-    }
-
-    /// <summary>
-    /// Adds a document to the specified index.
-    /// </summary>
-    /// <param name="definition"></param>
-    /// <param name="document"></param>
-    public void AddDocumentToIndex(IndexDefinition definition, Document document)
-    {
-      if (document == null)
-        throw new InvalidOperationException("A document must be specified.");
-
-      if (document.Fields == null || !document.Fields.Any())
-        throw new InvalidOperationException("A document must have at least one field specified.");
-
-      var indexWriter = GetOrAddIndexWriter(definition, true);
-
-      var luceneDocument = Document.ConvertToLuceneDocument(document);
-
-      try
-      {
-        //Add it to the index.
-        indexWriter.AddDocument(luceneDocument);
-      }
-      catch (OutOfMemoryException)
-      {
-        CloseIndexWriter(definition, false);
-      }
-    }
-
-    /// <summary>
-    /// Updates 
-    /// </summary>
-    /// <param name="definition"></param>
-    /// <param name="term"></param>
-    /// <param name="document"></param>
-    public void UpdateDocumentInIndex(IndexDefinition definition, Term term, Document document)
-    {
-      var indexWriter = GetOrAddIndexWriter(definition, true);
-
-      //Convert WCF document to Lucene document
-      var luceneDocument = Document.ConvertToLuceneDocument(document);
-
-      //Convert WCF term to Lucene term
-      var luceneTerm = Term.ConvertToLuceneTerm(term);
-
-      try
-      {
-        //Update the index.
-        indexWriter.UpdateDocument(luceneTerm, luceneDocument);
-      }
-      catch (OutOfMemoryException)
-      {
-        CloseIndexWriter(definition, false);
-      }
-    }
-
-    public void DeleteDocuments(IndexDefinition definition, Term term)
-    {
-      var indexWriter = GetOrAddIndexWriter(definition, true);
-
-      var luceneTerm = Term.ConvertToLuceneTerm(term);
+      var index = GetOrAddIndex(definition, true);
 
       try
       {
         //Remove the documents from the index
-        indexWriter.DeleteDocuments(luceneTerm);
+        index.Remove(keys.ToArray());
       }
       catch (OutOfMemoryException)
       {
@@ -125,87 +57,243 @@
       }
     }
 
-    public IList<Hit> Search(IndexDefinition definition, string defaultField, string query, int maxResults)
+    /// <summary>
+    /// Indexes the specified document.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="document"></param>
+    public void IndexDocument(DirectoryDefinition definition, Document document)
     {
-      var indexWriter = GetOrAddIndexWriter(definition, false);
-      var indexReader = indexWriter.GetReader();
-      var indexSearcher = new IndexSearcher(indexReader);
+      if (document == null)
+        throw new InvalidOperationException("A document must be specified.");
+
+      var index = GetOrAddIndex(definition, true);
+
       try
+      {
+        //Add it to the index.
+        throw new NotImplementedException();
+        //var batch = new IndexingBatch();
+        //batch.Add(document, false);
+        //index.IndexDocuments(batch);
+      }
+      catch (OutOfMemoryException)
+      {
+        CloseIndexWriter(definition, false);
+      }
+    }
+
+    /// <summary>
+    /// Indexes the specified document.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="document"></param>
+    public void IndexJsonDocument(DirectoryDefinition definition, JsonDocument document)
+    {
+      if (document == null)
+        throw new ArgumentNullException("document", @"A document must be specified.");
+
+      IndexJsonDocuments(definition, new List<JsonDocument> { document });
+    }
+
+    public void IndexJsonDocuments(DirectoryDefinition definition, IEnumerable<JsonDocument> documents)
+    {
+      if (documents == null)
+        throw new ArgumentNullException("documents", @"A collection of documents must be specified.");
+
+      var jsonDocuments = documents as IList<JsonDocument> ?? documents.ToList();
+
+      if (jsonDocuments.Any() == false)
+        throw new ArgumentNullException("documents", @"At least one document must be contained within the collection.");
+
+      var index = GetOrAddIndex(definition, true);
+
+      try
+      {
+        //Add it to the index.
+        var batch = new IndexingBatch();
+
+        //Attempt to create a new Search.JsonDocument from the document
+        foreach (var searchDocument in jsonDocuments.Select(document => new Search.JsonDocument
+          {
+            DocumentId = document.DocumentId,
+            Metadata = document.MetadataAsJson.IsNullOrWhiteSpace() == false
+                         ? JObject.Parse(document.MetadataAsJson)
+                         : new JObject(),
+            DataAsJson = JObject.Parse(document.DataAsJson)
+          }))
+        {
+          batch.Add(searchDocument, false);
+        }
+
+        index.IndexDocuments(batch);
+      }
+      catch (OutOfMemoryException)
+      {
+        CloseIndexWriter(definition, false);
+      }
+    }
+
+    public JsonDocument Retrieve(DirectoryDefinition definition, string documentId)
+    {
+      var index = GetOrAddIndex(definition, false);
+      IndexSearcher indexSearcher;
+      using (index.GetSearcher(out indexSearcher))
+      {
+        var term = new Lucene.Net.Index.Term(Constants.DocumentIdFieldName, documentId.ToLowerInvariant());
+
+        var termQuery = new TermQuery(term);
+
+        var hits = indexSearcher.Search(termQuery, 1);
+
+        if (hits.TotalHits == 0)
+          return null;
+
+        var result = RetrieveSearchResults(indexSearcher, hits).FirstOrDefault();
+
+        return result == null
+          ? null
+          : result.Document;
+      }
+    }
+
+    public IList<SearchResult> Search(DirectoryDefinition definition, string defaultField, string query, int maxResults)
+    {
+      var index = GetOrAddIndex(definition, false);
+      IndexSearcher indexSearcher;
+      using (index.GetSearcher(out indexSearcher))
       {
         var parser = new QueryParser(Version.LUCENE_30, defaultField, new StandardAnalyzer(Version.LUCENE_30));
         var lQuery = parser.Parse(query);
 
         var hits = indexSearcher.Search(lQuery, maxResults);
 
-        //iterate over the results.
-        var results = hits.ScoreDocs.AsQueryable()
-                   .OrderByDescending(hit => hit.Score)
-                   .Select(hit => new Hit
-                   {
-                     Score = hit.Score,
-                     DocumentId = hit.Doc,
-                     //Document = indexSearcher.Doc(hit.Doc)
-                   })
-                   .ToList();
-        return results;
-      }
-      finally
-      {
-        indexSearcher.Dispose();
+        return RetrieveSearchResults(indexSearcher, hits);
       }
     }
 
-    public IList<Hit> SearchOData(IndexDefinition definition, string defaultField, IDictionary<string, string> filterParameters)
+    public IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, IDictionary<string, string> filterParameters)
     {
       throw new NotImplementedException();
     }
 
-    public static IndexWriter GetOrAddIndexWriter(IndexDefinition definition, bool createIndex)
+    public static Index GetOrAddIndex(DirectoryDefinition definition, bool createIndex)
     {
-      return IndexWriters.GetOrAdd(definition, indexDefinition =>
+      return Indexes.GetOrAdd(definition, key =>
         {
-          Directory targetDirectory;
-          switch (indexDefinition.DirectoryType)
+          var di = new DirectoryInfo(key.IndexStoragePath);
+          var targetDirectory = new RAMDirectory();
+          
+          var indexDefinition = new IndexDefinition();
+
+          if (!IndexReader.IndexExists(targetDirectory))
           {
-            case DirectoryType.SharePointDirectory:
-              //targetDirectory = new SPDirectory(definition.DirectoryUri);
-              throw new NotImplementedException();
-              break;
-            case DirectoryType.SimpleFileSystemDirectory:
-              var targetDirectoryInfo = new DirectoryInfo(indexDefinition.DirectoryUri);
-              targetDirectory = new SimpleFSDirectory(targetDirectoryInfo);
-              break;
-            default:
-              throw new ArgumentOutOfRangeException("Unknown or unsupported Directory Type: " + indexDefinition.DirectoryType);
+            //if (createIfMissing == false)
+            //  throw new InvalidOperationException("Index does not exists: " + indexDirectory);
+
+            WriteIndexVersion(targetDirectory);
+
+            //creating index structure if we need to
+            new IndexWriter(targetDirectory, DummyAnalyzer, IndexWriter.MaxFieldLength.UNLIMITED).Dispose();
           }
-          var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-          var writer = new IndexWriter(targetDirectory, analyzer, createIndex, IndexWriter.MaxFieldLength.UNLIMITED);
-          return writer;
+          else
+          {
+            //EnsureIndexVersionMatches(indexName, directory);
+
+            if (targetDirectory.FileExists("write.lock"))// force lock release, because it was still open when we shut down
+            {
+              IndexWriter.Unlock(targetDirectory);
+              // for some reason, just calling unlock doesn't remove this file
+              targetDirectory.DeleteFile("write.lock");
+            }
+
+            if (targetDirectory.FileExists("writing-to-index.lock")) // we had an unclean shutdown
+            {
+              //if (configuration.ResetIndexOnUncleanShutdown)
+              //  throw new InvalidOperationException("Rude shutdown detected on: " + indexDirectory);
+
+              //CheckIndexAndRecover(directory, indexDirectory);
+              targetDirectory.DeleteFile("writing-to-index.lock");
+            }
+          }
+
+          //switch (indexDefinition.DirectoryType)
+          //{
+          //  case DirectoryType.SharePointDirectory:
+          //    //targetDirectory = new SPDirectory(definition.DirectoryUri);
+          //    throw new NotImplementedException();
+          //    break;
+          //  case DirectoryType.SimpleFileSystemDirectory:
+          //    var targetDirectoryInfo = new DirectoryInfo(indexDefinition.DirectoryUri);
+          //    targetDirectory = new SimpleFSDirectory(targetDirectoryInfo);
+          //    break;
+          //  default:
+          //    throw new ArgumentOutOfRangeException("Unknown or unsupported Directory Type: " + indexDefinition.DirectoryType);
+          //}
+
+          
+          var simpleIndex = new SimpleIndex(targetDirectory, "DefaultIndex", indexDefinition);
+          return simpleIndex;
         });
     }
 
-    public static void CloseAllIndexWriters()
+    private static IList<SearchResult> RetrieveSearchResults(IndexSearcher indexSearcher, TopDocs hits)
     {
-      foreach (var kvp in IndexWriters)
+      //iterate over the results.
+      var results = hits.ScoreDocs.AsQueryable()
+                 .OrderByDescending(hit => hit.Score)
+                 .ToList()
+                 .Select(hit =>
+                 {
+                   var jsonDocumentField = indexSearcher.Doc(hit.Doc).GetField(Constants.JsonDocumentFieldName);
+
+                   if (jsonDocumentField == null)
+                     return new SearchResult
+                     {
+                       Score = hit.Score,
+                       Document = null
+                     };
+
+                   return new SearchResult
+                   {
+                     Score = hit.Score,
+                     Document = JsonConvert.DeserializeObject<JsonDocument>(jsonDocumentField.StringValue)
+                   };
+                 })
+                 .ToList();
+
+      return results;
+    }
+
+    private static void WriteIndexVersion(Lucene.Net.Store.Directory directory)
+    {
+      using (var indexOutput = directory.CreateOutput("index.version"))
+      {
+        indexOutput.WriteString(IndexVersion);
+        indexOutput.Flush();
+      }
+    }
+
+    public static void CloseAllIndexes()
+    {
+      foreach (var kvp in Indexes)
       {
         CloseIndexWriter(kvp.Key, true);
       }
     }
 
-    public static void CloseIndexWriter(IndexDefinition definition, bool waitForMerges)
+    public static void CloseIndexWriter(DirectoryDefinition definition, bool waitForMerges)
     {
-      IndexWriter indexWriter;
-      if (IndexWriters.TryRemove(definition, out indexWriter))
+      Index index;
+      if (Indexes.TryRemove(definition, out index))
       {
-        try
-        {
-          indexWriter.Dispose(waitForMerges);
-        }
-        catch (OutOfMemoryException)
-        {
-          indexWriter.Dispose(false);
-        }
+        index.Dispose();
       }
+    }
+
+    public void Dispose()
+    {
+      CloseAllIndexes();
     }
   }
 }

@@ -14,11 +14,11 @@
           s.WhenStarted(wa => wa.Start());
           s.WhenStopped(wa => wa.Stop());
         });
-        x.RunAsLocalSystem();
+        x.RunAsLocalService();
 
-        x.SetDescription("Service that allows for indexing and queries.");
-        x.SetDisplayName("Barista Index and Query Service");
-        x.SetServiceName("BaristaIndexQueryWindowsService");
+        x.SetDescription("Service that allows for adding documents to an index and querying on those documents.");
+        x.SetDisplayName("Barista Search Service");
+        x.SetServiceName("BaristaSearchWindowsService");
       });     
     }
   }

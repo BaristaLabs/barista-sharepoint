@@ -1,5 +1,4 @@
-﻿using System;
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
   internal static class Constants
   {

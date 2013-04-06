@@ -1,5 +1,6 @@
 ﻿namespace Barista.DocumentStore
 {
+  using Barista.Logging;
   using System;
 
   public class ApplicationConfiguration

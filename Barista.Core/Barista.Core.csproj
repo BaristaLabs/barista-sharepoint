@@ -158,11 +158,16 @@
     <Compile Include="DocumentStore\TypedRepository.cs" />
     <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
     <Compile Include="ErrorEventArgs.cs" />
+    <Compile Include="Extensions\DisposableAction.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\JsonExtensions.cs" />
+    <Compile Include="Extensions\TimeSpanExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GenericConfigurationElementCollection.cs" />
+    <Compile Include="Helpers\DynamicHelper.cs" />
     <Compile Include="Helpers\PdfAttachment.cs" />
     <Compile Include="Helpers\PortUtilities.cs" />
+    <Compile Include="IJsonDocumentMetadata.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\Binder.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\BinderMethod.cs" />
     <Compile Include="Imports\Jurassic\Compiler\Binders\BinderUtilities.cs" />
@@ -778,6 +783,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Imports\Newtonsoft.Json\WriteState.cs" />
+    <Compile Include="Search\JsonDocument.cs" />
     <Compile Include="Justache\Block.cs" />
     <Compile Include="Justache\Encoders.cs" />
     <Compile Include="Justache\EndSection.cs" />
@@ -884,7 +890,6 @@
     <Compile Include="DocumentStore\DomainModel\ApplicationLogPart.cs" />
     <Compile Include="DocumentStore\DomainModel\Index.cs" />
     <Compile Include="DocumentStore\DomainModel\LockStatus.cs" />
-    <Compile Include="DocumentStore\DomainModel\LogLevel.cs" />
     <Compile Include="DocumentStore\DomainModel\Script.cs" />
     <Compile Include="DocumentStore\DSSecurity.cs" />
     <Compile Include="DocumentStore\EntityDefinition.cs" />
@@ -969,6 +974,15 @@
     <Compile Include="Linq2Rest\RuntimeTypeProvider.cs" />
     <Compile Include="Linq2Rest\StringConstants.cs" />
     <Compile Include="Linq2Rest\UntypedQueryable.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\LogExtensions.cs" />
+    <Compile Include="Logging\ILogManager.cs" />
+    <Compile Include="Logging\LoggerExecutionWrapper.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Logging\LogProviders\Log4NetLogManager.cs" />
+    <Compile Include="Logging\LogProviders\LogManagerBase.cs" />
+    <Compile Include="Logging\LogProviders\NLogLogManager.cs" />
     <Compile Include="ObjectComparison\GraphNode.cs" />
     <Compile Include="ObjectComparison\GraphNodeTuple.cs" />
     <Compile Include="ObjectComparison\NamespaceDoc.cs" />
@@ -988,6 +1002,27 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SearchMarkState.cs" />
+    <Compile Include="Search\AbstractAnalyzerGenerator.cs" />
+    <Compile Include="Search\AggregationOperation.cs" />
+    <Compile Include="Search\AggregationOperationExtensions.cs" />
+    <Compile Include="Search\Analyzers\LowerCaseKeywordAnalyzer.cs" />
+    <Compile Include="Search\Analyzers\LowerCaseKeywordTokenizer.cs" />
+    <Compile Include="Search\Analyzers\PerFieldAnalyzerWrapper.cs" />
+    <Compile Include="Search\Default.cs" />
+    <Compile Include="Services\Data Contracts\DirectoryDefinition.cs" />
+    <Compile Include="Search\FieldIndexing.cs" />
+    <Compile Include="Search\FieldsToFetch.cs" />
+    <Compile Include="Search\FieldStorage.cs" />
+    <Compile Include="Search\FieldTermVector.cs" />
+    <Compile Include="Search\Index.cs" />
+    <Compile Include="Search\IndexDefinition.cs" />
+    <Compile Include="Search\IndexedTerms.cs" />
+    <Compile Include="Search\IndexingBatch.cs" />
+    <Compile Include="Search\IndexingExtensions.cs" />
+    <Compile Include="Search\IndexPerformanceStats.cs" />
+    <Compile Include="Search\IndexQueryResult.cs" />
+    <Compile Include="Search\IndexSearcherHolder.cs" />
+    <Compile Include="Search\JsonDocumentToLuceneDocumentConverter.cs" />
     <Compile Include="Search\Library\BooleanQueryInstance.cs" />
     <Compile Include="Search\Library\DocumentInstance.cs" />
     <Compile Include="Search\Library\ExplanationInstance.cs" />
@@ -1013,6 +1048,10 @@
     <Compile Include="Search\Library\TermRangeFilterInstance.cs" />
     <Compile Include="Search\Library\TermRangeQueryInstance.cs" />
     <Compile Include="Search\Library\WildcardQueryInstance.cs" />
+    <Compile Include="Search\NotForQueryingAttribute.cs" />
+    <Compile Include="Search\NumberUtil.cs" />
+    <Compile Include="Search\SimpleIndex.cs" />
+    <Compile Include="Search\SortOptions.cs" />
     <Compile Include="SendingQueue.cs" />
     <Compile Include="Helpers\HtmlConverterHelper.cs" />
     <Compile Include="Services\Data Contracts\Document.cs" />
@@ -1020,9 +1059,9 @@
     <Compile Include="Services\Data Contracts\FieldIndexType.cs" />
     <Compile Include="Services\Data Contracts\FieldStorageType.cs" />
     <Compile Include="Services\Data Contracts\FieldTermVectorType.cs" />
-    <Compile Include="Services\Data Contracts\Hit.cs" />
-    <Compile Include="Services\Data Contracts\IndexDefinition.cs" />
+    <Compile Include="Services\Data Contracts\SearchResult.cs" />
     <Compile Include="Services\Data Contracts\IndexType.cs" />
+    <Compile Include="Services\Data Contracts\JsonDocument.cs" />
     <Compile Include="Services\Data Contracts\Term.cs" />
     <Compile Include="Services\Data Contracts\WebSocketServerOptions.cs" />
     <Compile Include="Services\Service Contracts\IBaristaSearch.cs" />

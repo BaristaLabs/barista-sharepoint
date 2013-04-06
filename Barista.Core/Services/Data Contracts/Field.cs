@@ -4,7 +4,6 @@
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  [KnownType(typeof(FieldBase<>))]
   [KnownType(typeof(DateField))]
   [KnownType(typeof(StringField))]
   [KnownType(typeof(NumericField))]

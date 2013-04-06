@@ -15,7 +15,7 @@
       set;
     }
 
-    public static Lucene.Net.Documents.Document ConvertToLuceneDocument (Document document)
+    public static Lucene.Net.Documents.Document ConvertToLuceneDocument(Document document)
     {
       //Convert WCF document to Lucene document
       var luceneDocument = new Lucene.Net.Documents.Document();

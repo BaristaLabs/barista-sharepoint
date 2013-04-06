@@ -17,11 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		acknowledgments.txt = acknowledgments.txt
 		license.txt = license.txt
 		Performance1.psess = Performance1.psess
-		SetupBaristaHostService.ps1 = SetupBaristaHostService.ps1
+		SetupBaristaSearchService.ps1 = SetupBaristaSearchService.ps1
 		SetupBaristaServiceApplication.ps1 = SetupBaristaServiceApplication.ps1
 		SetupBaristaServiceApplicationProxy.ps1 = SetupBaristaServiceApplicationProxy.ps1
 		TestBaristaServiceApplication.ps1 = TestBaristaServiceApplication.ps1
-		UninstallBaristaHostService.ps1 = UninstallBaristaHostService.ps1
+		UninstallBaristaSearchService.ps1 = UninstallBaristaSearchService.ps1
 		UninstallBaristaServiceApplication.ps1 = UninstallBaristaServiceApplication.ps1
 	EndProjectSection
 EndProject
@@ -84,8 +84,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lucene Contrib", "Lucene Co
 		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.HostService", "Barista.SharePoint.HostService\Barista.SharePoint.HostService.csproj", "{0ECD7803-8177-407B-9F47-7E08D1030105}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0384B6AA-AF6D-45DC-A583-C87DF988372A}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\Costura.targets = Tools\Costura.targets
@@ -124,9 +122,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebSocke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.SearchService", "Barista.SharePoint.SearchService\Barista.SharePoint.SearchService.csproj", "{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", "{C2439767-5A7B-4D56-93B6-A5FBA91FECB0}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 10
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -134,34 +134,36 @@ Global
 		SccProjectName1 = Barista.Core
 		SccLocalPath1 = Barista.Core
 		SccProjectUniqueName2 = Barista.SharePoint.WebParts\\Barista.SharePoint.WebParts.csproj
+		SccProjectTopLevelParentUniqueName2 = Barista.sln
 		SccProjectName2 = Barista.SharePoint.WebParts
 		SccLocalPath2 = Barista.SharePoint.WebParts
 		SccProjectUniqueName3 = Barista.SharePoint\\Barista.SharePoint.csproj
+		SccProjectTopLevelParentUniqueName3 = Barista.sln
 		SccProjectName3 = Barista.SharePoint
 		SccLocalPath3 = Barista.SharePoint
-		SccProjectUniqueName4 = Barista.SharePoint.HostService\\Barista.SharePoint.HostService.csproj
-		SccProjectName4 = Barista.SharePoint.HostService
-		SccLocalPath4 = Barista.SharePoint.HostService
-		SccProjectUniqueName5 = Barista.UnitTests.Jurassic\\Barista.UnitTests.Jurassic.csproj
-		SccProjectTopLevelParentUniqueName5 = Barista.sln
-		SccProjectName5 = Barista.UnitTests.Jurassic
-		SccLocalPath5 = Barista.UnitTests.Jurassic
-		SccProjectUniqueName6 = Barista.WebKit\\Barista.WebKit.csproj
-		SccProjectName6 = Barista.WebKit
-		SccLocalPath6 = Barista.WebKit
-		SccProjectUniqueName7 = Barista.SharePoint.Core\\Barista.SharePoint.Core.csproj
-		SccProjectName7 = Barista.SharePoint.Core
-		SccLocalPath7 = Barista.SharePoint.Core
-		SccProjectUniqueName8 = Server\\Barista.Server\\Barista.Server.csproj
+		SccProjectUniqueName4 = Barista.UnitTests.Jurassic\\Barista.UnitTests.Jurassic.csproj
+		SccProjectTopLevelParentUniqueName4 = Barista.sln
+		SccProjectName4 = Barista.UnitTests.Jurassic
+		SccLocalPath4 = Barista.UnitTests.Jurassic
+		SccProjectUniqueName5 = Barista.WebKit\\Barista.WebKit.csproj
+		SccProjectName5 = Barista.WebKit
+		SccLocalPath5 = Barista.WebKit
+		SccProjectUniqueName6 = Barista.SharePoint.Core\\Barista.SharePoint.Core.csproj
+		SccProjectTopLevelParentUniqueName6 = Barista.sln
+		SccProjectName6 = Barista.SharePoint.Core
+		SccLocalPath6 = Barista.SharePoint.Core
+		SccProjectUniqueName7 = Server\\Barista.Server\\Barista.Server.csproj
+		SccProjectTopLevelParentUniqueName7 = Barista.sln
+		SccProjectName7 = Server/Barista.Server
+		SccLocalPath7 = Server\\Barista.Server
+		SccProjectUniqueName8 = Barista.SharePoint.WebSocketsService\\Barista.SharePoint.WebSocketsService.csproj
 		SccProjectTopLevelParentUniqueName8 = Barista.sln
-		SccProjectName8 = Server/Barista.Server
-		SccLocalPath8 = Server\\Barista.Server
-		SccProjectUniqueName9 = Barista.SharePoint.WebSocketsService\\Barista.SharePoint.WebSocketsService.csproj
-		SccProjectName9 = Barista.SharePoint.WebSocketsService
-		SccLocalPath9 = Barista.SharePoint.WebSocketsService
-		SccProjectUniqueName10 = Barista.SharePoint.SearchService\\Barista.SharePoint.SearchService.csproj
-		SccProjectName10 = Barista.SharePoint.SearchService
-		SccLocalPath10 = Barista.SharePoint.SearchService
+		SccProjectName8 = Barista.SharePoint.WebSocketsService
+		SccLocalPath8 = Barista.SharePoint.WebSocketsService
+		SccProjectUniqueName9 = Barista.SharePoint.SearchService\\Barista.SharePoint.SearchService.csproj
+		SccProjectTopLevelParentUniqueName9 = Barista.sln
+		SccProjectName9 = Barista.SharePoint.SearchService
+		SccLocalPath9 = Barista.SharePoint.SearchService
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,10 +186,6 @@ Global
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{0ECD7803-8177-407B-9F47-7E08D1030105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0ECD7803-8177-407B-9F47-7E08D1030105}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0ECD7803-8177-407B-9F47-7E08D1030105}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -223,5 +221,10 @@ Global
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
+		{77BC7214-5D7D-472C-88C5-7D022D93C231} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{17B92DC5-9402-44DF-B03C-4687E99FEF61} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 	EndGlobalSection
 EndGlobal

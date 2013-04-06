@@ -2,25 +2,25 @@
 {
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
-  public class Hit
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class JsonDocument
   {
     [DataMember]
-    public float Score
+    public string DocumentId
     {
       get;
       set;
     }
 
     [DataMember]
-    public int DocumentId
+    public string MetadataAsJson
     {
       get;
       set;
     }
 
     [DataMember]
-    public Document Document
+    public string DataAsJson
     {
       get;
       set;

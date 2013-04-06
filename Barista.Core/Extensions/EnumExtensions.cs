@@ -4,6 +4,19 @@
 
   public static class EnumExtensions
   {
+    /// <summary>
+    /// Determines whether one or more bit fields are set in the current instance.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="flag"></param>
+    /// <returns></returns>
+    public static bool HasFlag<T> (this T value, T flag)
+      where T : struct
+    {
+      return IsSet(value, flag);
+    }
+
     public static bool IsSet<T>(this T value, T flags)
         where T : struct
     {

@@ -1,9 +1,9 @@
-﻿namespace Barista.DocumentStore
+﻿namespace Barista.Logging
 {
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public enum LogLevel : int
+  [DataContract(Namespace = Constants.ServiceNamespace)]
+  public enum LogLevel
   {
     [EnumMember]
     Trace = 0,

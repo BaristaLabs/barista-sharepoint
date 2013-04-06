@@ -25,7 +25,7 @@
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
     <PreDeploymentCommand>
     </PreDeploymentCommand>
-    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\SetupBaristaHostService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
+    <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -242,7 +242,7 @@
     <None Include="EventReceivers\BaristaItemEventReceiver\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0b4817fb-dfd3-401f-b84c-b925b2eb1f3e}</SharePointProjectItemId>
     </None>
-    <None Include="ISAPI\BaristaHostService\SPBaristaHostService.exe.config" />
+    <None Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe.config" />
     <None Include="Layouts\BaristaJS\arctext\images\Thumbs.db" />
     <None Include="Layouts\BaristaJS\codemirror-2.37\.gitattributes" />
     <None Include="Layouts\BaristaJS\codemirror-2.37\.gitignore" />
@@ -430,7 +430,8 @@
     <Content Include="DocumentStore\DocumentStoreContainerEventReceiver\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\Schema.xml" />
     <Content Include="DocumentStore\SPDocumentStoreEventReceiver\Elements.xml" />
-    <Content Include="ISAPI\BaristaHostService\SPBaristaHostService.exe" />
+    <Content Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe" />
+    <Content Include="ISAPI\BaristaServices\Search\Topshelf.dll" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap-prettify.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap-prettify.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap.js" />

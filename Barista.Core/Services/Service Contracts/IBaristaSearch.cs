@@ -7,24 +7,27 @@
   public interface IBaristaSearch
   {
     [OperationContract]
-    void DeleteAll(IndexDefinition definition);
+    void IndexDocument(DirectoryDefinition definition, Document document);
 
     [OperationContract]
-    void Commit(IndexDefinition definition);
+    void IndexJsonDocument(DirectoryDefinition definition, JsonDocument document);
 
     [OperationContract]
-    void AddDocumentToIndex(IndexDefinition definition, Document document);
+    void IndexJsonDocuments(DirectoryDefinition definition, IEnumerable<JsonDocument> documents);
 
     [OperationContract]
-    void UpdateDocumentInIndex(IndexDefinition definition, Term term, Document document);
+    void DeleteDocuments(DirectoryDefinition definition, IEnumerable<string> documentIds);
 
     [OperationContract]
-    void DeleteDocuments(IndexDefinition definition, Term term);
+    void DeleteAllDocuments(DirectoryDefinition definition);
 
     [OperationContract]
-    IList<Hit> Search(IndexDefinition definition, string defaultField, string query, int maxResults);
+    JsonDocument Retrieve(DirectoryDefinition definition, string documentId);
+   
+    [OperationContract]
+    IList<SearchResult> Search(DirectoryDefinition definition, string defaultField, string query, int maxResults);
 
     [OperationContract]
-    IList<Hit> SearchOData(IndexDefinition definition, string defaultField, IDictionary<string, string> filterParameters);
+    IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, IDictionary<string, string> filterParameters);
   }
 }

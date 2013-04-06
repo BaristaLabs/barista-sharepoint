@@ -3,7 +3,7 @@
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public enum LockStatus : int
+  public enum LockStatus
   {
     [EnumMember]
     Unlocked = 0,

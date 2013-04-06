@@ -16,11 +16,11 @@
 
     public void Stop()
     {
-      if (m_serviceHost != null)
-      {
-        m_serviceHost.Close();
-        m_serviceHost = null;
-      }
+      if (m_serviceHost == null)
+        return;
+
+      m_serviceHost.Close();
+      m_serviceHost = null;
     }
   }
 }
