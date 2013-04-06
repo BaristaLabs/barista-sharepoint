@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
+  using System;
+  using System.Collections.Generic;
+
   public interface IVersionHistoryCapableDocumentStore
   {
     IList<EntityVersion> ListEntityVersions(string containerTitle, Guid entityId);

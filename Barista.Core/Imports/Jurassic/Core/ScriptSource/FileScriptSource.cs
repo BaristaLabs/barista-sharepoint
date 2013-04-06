@@ -9,8 +9,8 @@ namespace Barista.Jurassic
     /// </summary>
     public class FileScriptSource : ScriptSource
     {
-        private string path;
-        private Encoding encoding;
+        private readonly string m_path;
+        private readonly Encoding m_encoding;
 
         /// <summary>
         /// Creates a new FileScriptSource instance.
@@ -22,8 +22,8 @@ namespace Barista.Jurassic
         {
             if (path == null)
                 throw new ArgumentNullException("path");
-            this.path = path;
-            this.encoding = encoding ?? Encoding.UTF8;
+            this.m_path = path;
+            this.m_encoding = encoding ?? Encoding.UTF8;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Barista.Jurassic
         /// </summary>
         public override string Path
         {
-            get { return this.path; }
+            get { return this.m_path; }
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Barista.Jurassic
         /// same source code. </remarks>
         public override TextReader GetReader()
         {
-            return new StreamReader(this.Path, this.encoding, true);
+            return new StreamReader(this.Path, this.m_encoding, true);
         }
     }
 }

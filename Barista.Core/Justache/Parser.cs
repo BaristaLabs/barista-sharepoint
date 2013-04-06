@@ -17,33 +17,38 @@
       {
         section.Add(part);
 
-        if (part is Section)
+        var part1 = part as Section;
+        if (part1 != null)
         {
           sectionStack.Push(section);
-          section = (Section)part;
+          section = part1;
         }
-        else if (part is EndSection)
+        else
         {
-          var endSection = (EndSection)part;
-
-          if (sectionStack.Count == 1)
+          var section1 = part as EndSection;
+          if (section1 != null)
           {
-            throw new JustacheException(
-                string.Format(
-                    "End section {0} does not match any start section!",
-                    endSection.Name));
-          }
+            var endSection = section1;
 
-          if (endSection.Name != section.Name)
-          {
-            throw new JustacheException(
+            if (sectionStack.Count == 1)
+            {
+              throw new JustacheException(
                 string.Format(
-                    "End section {0} does not match start section {1}!",
-                    endSection.Name,
-                    section.Name));
-          }
+                  "End section {0} does not match any start section!",
+                  endSection.Name));
+            }
 
-          section = sectionStack.Pop();
+            if (endSection.Name != section.Name)
+            {
+              throw new JustacheException(
+                string.Format(
+                  "End section {0} does not match start section {1}!",
+                  endSection.Name,
+                  section.Name));
+            }
+
+            section = sectionStack.Pop();
+          }
         }
       }
     }

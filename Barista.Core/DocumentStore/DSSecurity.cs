@@ -16,7 +16,7 @@
       if (codeToRunElevated == null)
         return;
 
-      using (var wiCtx = WindowsIdentity.Impersonate(IntPtr.Zero))
+      using (WindowsIdentity.Impersonate(IntPtr.Zero))
       {
         codeToRunElevated();
       }

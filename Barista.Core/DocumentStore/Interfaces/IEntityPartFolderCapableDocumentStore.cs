@@ -62,6 +62,7 @@
     /// Lists the entity parts associated with the specified entity in the specified container.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
+    /// <param name="path"></param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
     IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId);

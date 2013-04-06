@@ -1,6 +1,5 @@
 ﻿namespace Barista.Justache
 {
-  using Jurassic.Library;
   using System.IO;
 
   public class Template : Section

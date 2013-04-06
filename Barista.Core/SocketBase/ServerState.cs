@@ -3,7 +3,7 @@
   /// <summary>
   /// Server's state enum class
   /// </summary>
-  public enum ServerState : int
+  public enum ServerState
   {
     /// <summary>
     /// Not initialized

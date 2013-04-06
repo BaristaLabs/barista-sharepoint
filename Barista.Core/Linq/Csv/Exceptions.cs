@@ -2,8 +2,6 @@
 {
   using System;
   using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
 
   /// <summary>
   /// All exceptions have a human readable message in the Message property,

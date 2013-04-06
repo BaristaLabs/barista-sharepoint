@@ -8,9 +8,9 @@
   /// </summary>
   internal sealed class JSONParser
   {
-    private ScriptEngine engine;
-    private JSONLexer lexer;
-    private Token nextToken;
+    private readonly ScriptEngine m_engine;
+    private readonly JSONLexer m_lexer;
+    private Token m_nextToken;
 
 
     //     INITIALIZATION
@@ -27,8 +27,8 @@
         throw new ArgumentNullException("engine");
       if (lexer == null)
         throw new ArgumentNullException("lexer");
-      this.engine = engine;
-      this.lexer = lexer;
+      this.m_engine = engine;
+      this.m_lexer = lexer;
       this.Consume();
     }
 
@@ -58,8 +58,8 @@
     {
       do
       {
-        this.nextToken = this.lexer.NextToken();
-      } while ((this.nextToken is WhiteSpaceToken) == true);
+        this.m_nextToken = this.m_lexer.NextToken();
+      } while ((this.m_nextToken is WhiteSpaceToken) == true);
     }
 
     /// <summary>
@@ -69,10 +69,10 @@
     /// <param name="token"> The expected token. </param>
     private void Expect(Token token)
     {
-      if (this.nextToken == token)
+      if (this.m_nextToken == token)
         Consume();
       else
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected '{0}'", token.Text));
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected '{0}'", token.Text));
     }
 
     /// <summary>
@@ -82,7 +82,7 @@
     /// <returns> The identifier name. </returns>
     private string ExpectIdentifier()
     {
-      var token = this.nextToken;
+      var token = this.m_nextToken;
       if (token is IdentifierToken)
       {
         Consume();
@@ -90,7 +90,7 @@
       }
       else
       {
-        throw new JavaScriptException(this.engine, "SyntaxError", "Expected identifier");
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected identifier");
       }
     }
 
@@ -110,13 +110,13 @@
       object root = ParseValue();
 
       // We should now be at the end of the input.
-      if (this.nextToken != null)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Expected end of input");
+      if (this.m_nextToken != null)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected end of input");
 
       // Apply the reviver function, if there is one.
       if (this.ReviverFunction != null)
       {
-        var tempObject = this.engine.Object.Construct();
+        var tempObject = this.m_engine.Object.Construct();
         tempObject[string.Empty] = root;
         return this.ReviverFunction.CallFromNative("parse", tempObject, string.Empty, root);
       }
@@ -131,23 +131,23 @@
     private object ParseValue()
     {
       object result;
-      if (this.nextToken is LiteralToken)
+      if (this.m_nextToken is LiteralToken)
       {
-        result = ((LiteralToken)this.nextToken).Value;
+        result = ((LiteralToken)this.m_nextToken).Value;
         this.Consume();
       }
-      else if (this.nextToken == PunctuatorToken.LeftBrace)
+      else if (this.m_nextToken == PunctuatorToken.LeftBrace)
       {
         result = ParseObjectLiteral();
       }
-      else if (this.nextToken == PunctuatorToken.LeftBracket)
+      else if (this.m_nextToken == PunctuatorToken.LeftBracket)
       {
         result = ParseArrayLiteral();
       }
-      else if (this.nextToken == null)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Unexpected end of input");
+      else if (this.m_nextToken == null)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Unexpected end of input");
       else
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Unexpected token {0}", this.nextToken));
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Unexpected token {0}", this.m_nextToken));
       return result;
     }
 
@@ -161,9 +161,9 @@
       this.Expect(PunctuatorToken.LeftBracket);
 
       // Loop until the next token is ']'.
-      var result = this.engine.Array.New();
+      var result = this.m_engine.Array.New();
       uint arrayIndex = 0;
-      while (this.nextToken != PunctuatorToken.RightBracket)
+      while (this.m_nextToken != PunctuatorToken.RightBracket)
       {
         // Expect a comma except for the first element.
         if (arrayIndex > 0)
@@ -211,9 +211,9 @@
       this.Expect(PunctuatorToken.LeftBrace);
 
       // If the next token is '}', then the object literal is complete.
-      var result = this.engine.Object.Construct();
+      var result = this.m_engine.Object.Construct();
       bool expectComma = false;
-      while (this.nextToken != PunctuatorToken.RightBrace)
+      while (this.m_nextToken != PunctuatorToken.RightBrace)
       {
         // Expect a comma except for the first element.
         if (expectComma == true)
@@ -222,16 +222,16 @@
 
         // Read the next property name.
         string propertyName;
-        if (this.nextToken is LiteralToken)
+        if (this.m_nextToken is LiteralToken)
         {
           // The property name must be a string.
-          object literalValue = ((LiteralToken)this.nextToken).Value;
+          object literalValue = ((LiteralToken)this.m_nextToken).Value;
           if ((literalValue is string) == false)
-            throw new JavaScriptException(this.engine, "SyntaxError", "Expected property name");
+            throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected property name");
           propertyName = (string)literalValue;
         }
         else
-          throw new JavaScriptException(this.engine, "SyntaxError", "Expected property name");
+          throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected property name");
         this.Consume();
 
         // Read the colon.

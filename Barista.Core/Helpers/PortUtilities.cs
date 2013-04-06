@@ -7,8 +7,8 @@
   {
     public static int FindFreePort()
     {
-      int port = 0;
-      Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+      int port;
+      var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
       try
       {
         IPEndPoint pEndPoint = new IPEndPoint(IPAddress.Any, 0);

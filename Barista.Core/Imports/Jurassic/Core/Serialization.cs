@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Barista.Jurassic
+﻿namespace Barista.Jurassic
 {
 
     // Silverlight does not support serialization.  The following two attributes prevent the need

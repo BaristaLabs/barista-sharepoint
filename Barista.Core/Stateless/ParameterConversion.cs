@@ -14,7 +14,7 @@
 
       var arg = args[index];
 
-      if (arg != null && !argType.IsAssignableFrom(arg.GetType()))
+      if (arg != null && !argType.IsInstanceOfType(arg))
         throw new ArgumentException(
             string.Format("The argument in position {0} is of type {1} but must be of type {2}.", index, arg.GetType(), argType));
 

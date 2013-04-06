@@ -1,9 +1,6 @@
 ﻿namespace Barista
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
 
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false, AllowMultiple = true)]
   public class JSDocAttribute : Attribute

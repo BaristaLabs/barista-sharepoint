@@ -9,11 +9,11 @@
 
   public static class Validator
   {
-    private static ValidationAttributeStore _store;
+    private static ValidationAttributeStore s_store;
 
     static Validator()
     {
-      Validator._store = ValidationAttributeStore.Instance;
+      Validator.s_store = ValidationAttributeStore.Instance;
     }
 
     private static bool CanBeAssigned(Type destinationType, object value)
@@ -22,53 +22,34 @@
       {
         if (value != null)
         {
-          return destinationType.IsAssignableFrom(value.GetType());
+          return destinationType.IsInstanceOfType(value);
         }
-        else
+        if (!destinationType.IsValueType)
         {
-          if (!destinationType.IsValueType)
-          {
-            return true;
-          }
-          else
-          {
-            if (!destinationType.IsGenericType)
-            {
-              return false;
-            }
-            else
-            {
-              return destinationType.GetGenericTypeDefinition() == typeof(Nullable<>);
-            }
-          }
+          return true;
         }
+        if (!destinationType.IsGenericType)
+        {
+          return false;
+        }
+        return destinationType.GetGenericTypeDefinition() == typeof(Nullable<>);
       }
-      else
-      {
-        throw new ArgumentNullException("destinationType");
-      }
+      throw new ArgumentNullException("destinationType");
     }
 
     internal static ValidationContext CreateValidationContext(object instance, ValidationContext validationContext)
     {
       if (validationContext != null)
       {
-        ValidationContext validationContext1 = new ValidationContext(instance, validationContext, validationContext.Items);
+        var validationContext1 = new ValidationContext(instance, validationContext, validationContext.Items);
         return validationContext1;
       }
-      else
-      {
-        throw new ArgumentNullException("validationContext");
-      }
+      throw new ArgumentNullException("validationContext");
     }
 
     private static void EnsureValidPropertyType(string propertyName, Type propertyType, object value)
     {
-      if (Validator.CanBeAssigned(propertyType, value))
-      {
-        return;
-      }
-      else
+      if (!Validator.CanBeAssigned(propertyType, value))
       {
         string message = String.Format("The Property Value is of the wrong type: {0} on {1}", propertyType, propertyName);
         throw new ArgumentException(message, "value");
@@ -89,11 +70,11 @@
             break;
           }
           KeyValuePair<ValidationContext, object> current = enumerator.Current;
-          IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator._store.GetPropertyValidationAttributes(current.Key);
+          IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator.s_store.GetPropertyValidationAttributes(current.Key);
           if (!validateAllProperties)
           {
             IEnumerable<ValidationAttribute> validationAttributes = propertyValidationAttributes;
-            RequiredAttribute requiredAttribute = validationAttributes.FirstOrDefault<ValidationAttribute>((ValidationAttribute a) => a is RequiredAttribute) as RequiredAttribute;
+            RequiredAttribute requiredAttribute = validationAttributes.FirstOrDefault(a => a is RequiredAttribute) as RequiredAttribute;
             if (requiredAttribute == null)
             {
               continue;
@@ -110,7 +91,7 @@
             validationErrors.AddRange(Validator.GetValidationErrors(current.Value, current.Key, propertyValidationAttributes, breakOnFirstError));
           }
         }
-        while (!breakOnFirstError || !validationErrors.Any<Validator.ValidationError>());
+        while (!breakOnFirstError || !validationErrors.Any());
       }
       return validationErrors;
     }
@@ -123,11 +104,11 @@
         {
           List<Validator.ValidationError> validationErrors = new List<Validator.ValidationError>();
           validationErrors.AddRange(Validator.GetObjectPropertyValidationErrors(instance, validationContext, validateAllProperties, breakOnFirstError));
-          if (!validationErrors.Any<Validator.ValidationError>())
+          if (!validationErrors.Any())
           {
-            IEnumerable<ValidationAttribute> typeValidationAttributes = Validator._store.GetTypeValidationAttributes(validationContext);
+            IEnumerable<ValidationAttribute> typeValidationAttributes = Validator.s_store.GetTypeValidationAttributes(validationContext);
             validationErrors.AddRange(Validator.GetValidationErrors(instance, validationContext, typeValidationAttributes, breakOnFirstError));
-            if (!validationErrors.Any<Validator.ValidationError>())
+            if (!validationErrors.Any())
             {
               //IValidatableObject validatableObject = instance as IValidatableObject;
               //if (validatableObject != null)
@@ -141,25 +122,14 @@
               //}
               return validationErrors;
             }
-            else
-            {
-              return validationErrors;
-            }
-          }
-          else
-          {
+
             return validationErrors;
           }
+          return validationErrors;
         }
-        else
-        {
-          throw new ArgumentNullException("validationContext");
-        }
+        throw new ArgumentNullException("validationContext");
       }
-      else
-      {
-        throw new ArgumentNullException("instance");
-      }
+      throw new ArgumentNullException("instance");
     }
 
     private static ICollection<KeyValuePair<ValidationContext, object>> GetPropertyValues(object instance, ValidationContext validationContext)
@@ -170,7 +140,7 @@
       {
         ValidationContext name = Validator.CreateValidationContext(instance, validationContext);
         name.MemberName = property.Name;
-        if (!Validator._store.GetPropertyValidationAttributes(name).Any<ValidationAttribute>())
+        if (!Validator.s_store.GetPropertyValidationAttributes(name).Any())
         {
           continue;
         }
@@ -181,12 +151,12 @@
 
     private static IEnumerable<Validator.ValidationError> GetValidationErrors(object value, ValidationContext validationContext, IEnumerable<ValidationAttribute> attributes, bool breakOnFirstError)
     {
-      Validator.ValidationError validationError = null;
       if (validationContext != null)
       {
         List<Validator.ValidationError> validationErrors = new List<Validator.ValidationError>();
         IEnumerable<ValidationAttribute> validationAttributes = attributes;
         RequiredAttribute requiredAttribute = validationAttributes.FirstOrDefault<ValidationAttribute>((ValidationAttribute a) => a is RequiredAttribute) as RequiredAttribute;
+        Validator.ValidationError validationError;
         if (requiredAttribute == null || Validator.TryValidate(value, validationContext, requiredAttribute, out validationError))
         {
           IEnumerator<ValidationAttribute> enumerator = attributes.GetEnumerator();
@@ -213,16 +183,10 @@
           }
           return validationErrors;
         }
-        else
-        {
-          validationErrors.Add(validationError);
-          return validationErrors;
-        }
+        validationErrors.Add(validationError);
+        return validationErrors;
       }
-      else
-      {
-        throw new ArgumentNullException("validationContext");
-      }
+      throw new ArgumentNullException("validationContext");
     }
 
     private static bool TryValidate(object value, ValidationContext validationContext, ValidationAttribute attribute, out Validator.ValidationError validationError)
@@ -235,17 +199,12 @@
           validationError = null;
           return true;
         }
-        else
-        {
-          validationError = new Validator.ValidationError(attribute, value, validationResult);
-          return false;
-        }
+        validationError = new Validator.ValidationError(attribute, value, validationResult);
+        return false;
       }
-      else
-      {
-        throw new ArgumentNullException("validationContext");
-      }
+      throw new ArgumentNullException("validationContext");
     }
+
     public static bool TryValidateObject(object instance, ValidationContext validationContext, ICollection<ValidationResult> validationResults)
     {
       return Validator.TryValidateObject(instance, validationContext, validationResults, false);
@@ -270,25 +229,19 @@
           }
           return isValid;
         }
-        else
-        {
-          throw new ArgumentException("Instance must match validation context instance.", "instance");
-        }
+        throw new ArgumentException(@"Instance must match validation context instance.", "instance");
       }
-      else
-      {
-        throw new ArgumentNullException("instance");
-      }
+      throw new ArgumentNullException("instance");
     }
 
     public static bool TryValidateProperty(object value, ValidationContext validationContext, ICollection<ValidationResult> validationResults)
     {
       bool isValid = true;
-      Type propertyType = Validator._store.GetPropertyType(validationContext);
+      Type propertyType = Validator.s_store.GetPropertyType(validationContext);
       string memberName = validationContext.MemberName;
       Validator.EnsureValidPropertyType(memberName, propertyType, value);
       bool flag1 = validationResults == null;
-      IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator._store.GetPropertyValidationAttributes(validationContext);
+      IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator.s_store.GetPropertyValidationAttributes(validationContext);
       foreach (Validator.ValidationError validationError in Validator.GetValidationErrors(value, validationContext, propertyValidationAttributes, flag1))
       {
         isValid = false;
@@ -330,35 +283,26 @@
         {
           if (instance == validationContext.ObjectInstance)
           {
-            Validator.ValidationError validationError = Validator.GetObjectValidationErrors(instance, validationContext, validateAllProperties, false).FirstOrDefault<Validator.ValidationError>();
+            Validator.ValidationError validationError = Validator.GetObjectValidationErrors(instance, validationContext, validateAllProperties, false).FirstOrDefault();
             if (validationError != null)
             {
               validationError.ThrowValidationException();
             }
             return;
           }
-          else
-          {
-            throw new ArgumentException("Instance Must Match Validation Context Instance.", "instance");
-          }
+          throw new ArgumentException(@"Instance Must Match Validation Context Instance.", "instance");
         }
-        else
-        {
-          throw new ArgumentNullException("validationContext");
-        }
+        throw new ArgumentNullException("validationContext");
       }
-      else
-      {
-        throw new ArgumentNullException("instance");
-      }
+      throw new ArgumentNullException("instance");
     }
 
     public static void ValidateProperty(object value, ValidationContext validationContext)
     {
-      Type propertyType = Validator._store.GetPropertyType(validationContext);
+      Type propertyType = Validator.s_store.GetPropertyType(validationContext);
       Validator.EnsureValidPropertyType(validationContext.MemberName, propertyType, value);
-      IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator._store.GetPropertyValidationAttributes(validationContext);
-      Validator.ValidationError validationError = Validator.GetValidationErrors(value, validationContext, propertyValidationAttributes, false).FirstOrDefault<Validator.ValidationError>();
+      IEnumerable<ValidationAttribute> propertyValidationAttributes = Validator.s_store.GetPropertyValidationAttributes(validationContext);
+      Validator.ValidationError validationError = Validator.GetValidationErrors(value, validationContext, propertyValidationAttributes, false).FirstOrDefault();
       if (validationError != null)
       {
         validationError.ThrowValidationException();
@@ -369,12 +313,11 @@
     {
       if (validationContext != null)
       {
-        Validator.ValidationError validationError = Validator.GetValidationErrors(value, validationContext, validationAttributes, false).FirstOrDefault<Validator.ValidationError>();
+        Validator.ValidationError validationError = Validator.GetValidationErrors(value, validationContext, validationAttributes, false).FirstOrDefault();
         if (validationError != null)
         {
           validationError.ThrowValidationException();
         }
-        return;
       }
       else
       {

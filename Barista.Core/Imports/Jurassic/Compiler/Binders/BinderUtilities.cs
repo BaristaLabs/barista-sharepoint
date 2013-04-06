@@ -4,8 +4,9 @@ using System.Reflection;
 
 namespace Barista.Jurassic.Compiler
 {
+  using System.Linq;
 
-    /// <summary>
+  /// <summary>
     /// This class is public for technical reasons and is intended only for internal use.
     /// </summary>
     public static class BinderUtilities
@@ -72,7 +73,7 @@ namespace Barista.Jurassic.Compiler
                         case TypeCode.UInt64:
                         case TypeCode.Single:
                         case TypeCode.Decimal:
-                            if (TypeUtilities.IsNumeric(input) == true)
+                            if (TypeUtilities.IsNumeric(input))
                                 demeritPoints[i] ++;
                             else
                                 demeritPoints[i] += disqualification;
@@ -84,7 +85,7 @@ namespace Barista.Jurassic.Compiler
                             break;
 
                         case TypeCode.Char:
-                            if (TypeUtilities.IsString(input) == true)
+                            if (TypeUtilities.IsString(input))
                                 demeritPoints[i]++;
                             else
                                 demeritPoints[i] += disqualification;
@@ -103,10 +104,10 @@ namespace Barista.Jurassic.Compiler
                             }
                             else if (input == Null.Value)
                             {
-                                if (outputType.IsValueType == true)
+                                if (outputType.IsValueType)
                                     demeritPoints[i] += disqualification;
                             }
-                            else if (outputType.IsAssignableFrom(input.GetType()) == false)
+                            else if (outputType.IsInstanceOfType(input) == false)
                             {
                                 demeritPoints[i] += disqualification;
                             }
@@ -139,9 +140,8 @@ namespace Barista.Jurassic.Compiler
             if (lowestIndices.Count > 1)
             {
                 var ambiguousMethods = new List<BinderMethod>(lowestIndices.Count);
-                foreach (var index in lowestIndices)
-                    ambiguousMethods.Add(methods[index]);
-                throw new JavaScriptException(engine, "TypeError", "The method call is ambiguous between the following methods: " + StringHelpers.Join(", ", ambiguousMethods));
+              ambiguousMethods.AddRange(lowestIndices.Select(index => methods[index]));
+              throw new JavaScriptException(engine, "TypeError", "The method call is ambiguous between the following methods: " + StringHelpers.Join(", ", ambiguousMethods));
             }
 
             // Throw an error is there is an invalid argument.

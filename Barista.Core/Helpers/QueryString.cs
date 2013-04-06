@@ -39,7 +39,7 @@
       if (!string.IsNullOrEmpty(s))
       {
         if (s.Contains("?"))
-          return s.Substring(s.IndexOf("?") + 1);
+          return s.Substring(s.IndexOf("?", System.StringComparison.Ordinal) + 1);
       }
       return s;
     }

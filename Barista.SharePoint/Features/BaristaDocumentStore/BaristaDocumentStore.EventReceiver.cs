@@ -23,6 +23,9 @@ namespace Barista.SharePoint.Features.BaristaDocumentStore
     {
       //Remove all _cts/Document Store Entity folders...
       var spSite = properties.Feature.Parent as SPSite;
+      if (spSite == null)
+        return;
+
       var ctsFolder = spSite.RootWeb.RootFolder.SubFolders["_cts"];
       PermissionsHelper.ToggleEventFiring(false);
 

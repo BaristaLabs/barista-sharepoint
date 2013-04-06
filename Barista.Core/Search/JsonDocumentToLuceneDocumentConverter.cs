@@ -1,12 +1,10 @@
 ﻿namespace Barista.Search
 {
   using System;
-  using System.Collections;
   using System.Collections.Generic;
   using System.Globalization;
   using System.IO;
   using System.Linq;
-  using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Lucene.Net.Documents;
   using Barista.Extensions;

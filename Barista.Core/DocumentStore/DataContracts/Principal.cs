@@ -1,6 +1,5 @@
 ﻿namespace Barista.DocumentStore
 {
-  using System;
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Constants.ServiceV1Namespace)]

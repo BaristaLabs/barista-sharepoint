@@ -1,14 +1,9 @@
 ﻿namespace Barista.DocumentStore.Linq.Csv
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
-
   public class DataRowItem
   {
-    private string m_value;
-    private int m_lineNbr;
+    private readonly string m_value;
+    private readonly int m_lineNbr;
 
     public DataRowItem(string value, int lineNbr)
     {

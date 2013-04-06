@@ -130,7 +130,7 @@
     {
       get
       {
-        if (base.Request.QueryString != null)
+        if (Request.QueryString != null)
         {
           string s = base.Request.QueryString["appid"];
           if (string.IsNullOrEmpty(s))

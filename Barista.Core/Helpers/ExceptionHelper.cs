@@ -83,10 +83,10 @@
   /// </example>
   public class ExceptionHelper
   {
-    private static readonly IDictionary<Assembly, XDocument> _exceptionInfos = new Dictionary<Assembly, XDocument>();
-    private static readonly object _exceptionInfosLock = new object();
-    private readonly Type _forType;
-    private const string _typeAttributeName = "type";
+    private static readonly IDictionary<Assembly, XDocument> ExceptionInfos = new Dictionary<Assembly, XDocument>();
+    private static readonly object ExceptionInfosLock = new object();
+    private readonly Type m_forType;
+    private const string TypeAttributeName = "type";
 
     /// <summary>
     /// Initializes a new instance of the <c>ExceptionHelper</c> class.
@@ -97,7 +97,7 @@
     public ExceptionHelper(Type forType)
     {
       forType.AssertNotNull("forType");
-      _forType = forType;
+      m_forType = forType;
     }
 
     /// <summary>
@@ -204,22 +204,22 @@
     {
       exceptionKey.AssertNotNull("exceptionKey");
 
-      var exceptionInfo = GetExceptionInfo(_forType.Assembly);
+      var exceptionInfo = GetExceptionInfo(m_forType.Assembly);
       var exceptionNode = (from exceptionGroup in exceptionInfo.Element("exceptionHelper").Elements("exceptionGroup")
                            from exception in exceptionGroup.Elements("exception")
-                           where string.Equals(exceptionGroup.Attribute("type").Value, _forType.FullName, StringComparison.Ordinal) && string.Equals(exception.Attribute("key").Value, exceptionKey, StringComparison.Ordinal)
+                           where string.Equals(exceptionGroup.Attribute("type").Value, m_forType.FullName, StringComparison.Ordinal) && string.Equals(exception.Attribute("key").Value, exceptionKey, StringComparison.Ordinal)
                            select exception).FirstOrDefault();
 
       if (exceptionNode == null)
       {
-        throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The exception details for key '{0}' could not be found at /exceptionHelper/exceptionGroup[@type'{1}']/exception[@key='{2}'].", exceptionKey, _forType, exceptionKey));
+        throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The exception details for key '{0}' could not be found at /exceptionHelper/exceptionGroup[@type'{1}']/exception[@key='{2}'].", exceptionKey, m_forType, exceptionKey));
       }
 
-      var typeAttribute = exceptionNode.Attribute(_typeAttributeName);
+      var typeAttribute = exceptionNode.Attribute(TypeAttributeName);
 
       if (typeAttribute == null)
       {
-        throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The '{0}' attribute could not be found for exception with key '{1}'", _typeAttributeName, exceptionKey));
+        throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The '{0}' attribute could not be found for exception with key '{1}'", TypeAttributeName, exceptionKey));
       }
 
       var type = Type.GetType(typeAttribute.Value);
@@ -241,9 +241,10 @@
         message = string.Format(CultureInfo.InvariantCulture, message, messageArgs);
       }
 
-      var constructorArgsList = new List<object>();
-      // message is always first
-      constructorArgsList.Add(message);
+      var constructorArgsList = new List<object> {
+        // message is always first
+        message
+      };
 
       // next, any additional constructor args
       if (constructorArgs != null)
@@ -258,7 +259,7 @@
       }
 
       var constructorArgsArr = constructorArgsList.ToArray();
-      var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+      const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
       ConstructorInfo constructor = null;
 
       try
@@ -402,13 +403,13 @@
     [DebuggerHidden]
     private static XDocument GetExceptionInfo(Assembly assembly)
     {
-      var retVal = (XDocument)null;
+      XDocument retVal;
 
-      lock (_exceptionInfosLock)
+      lock (ExceptionInfosLock)
       {
-        if (_exceptionInfos.ContainsKey(assembly))
+        if (ExceptionInfos.ContainsKey(assembly))
         {
-          retVal = _exceptionInfos[assembly];
+          retVal = ExceptionInfos[assembly];
         }
         else
         {
@@ -430,7 +431,7 @@
             }
           }
 
-          _exceptionInfos[assembly] = retVal;
+          ExceptionInfos[assembly] = retVal;
         }
       }
 

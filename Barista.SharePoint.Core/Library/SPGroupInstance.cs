@@ -5,7 +5,6 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System.Collections.Generic;
 
   [Serializable]
   public class SPGroupConstructor : ClrFunction

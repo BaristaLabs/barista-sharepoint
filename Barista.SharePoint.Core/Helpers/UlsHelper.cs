@@ -104,7 +104,9 @@
         set;
       }
 
+// ReSharper disable InconsistentNaming
       public string TID
+// ReSharper restore InconsistentNaming
       {
         get;
         set;
@@ -122,7 +124,9 @@
         set;
       }
 
+// ReSharper disable InconsistentNaming
       public string EventID
+// ReSharper restore InconsistentNaming
       {
         get;
         set;

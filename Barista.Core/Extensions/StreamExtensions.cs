@@ -18,7 +18,6 @@
               if (destination.CanWrite)
               {
                 StreamExtensions.InternalCopyTo(input, destination, 81920);
-                return;
               }
               else
               {
@@ -53,9 +52,9 @@
     /// <returns></returns>
     public static byte[] ToByteArray(this Stream stream)
     {
-      using (MemoryStream ms = new MemoryStream())
+      using (var ms = new MemoryStream())
       {
-        StreamExtensions.CopyTo(stream, ms);
+        stream.CopyTo(ms);
         ms.Flush();
         ms.Seek(0, SeekOrigin.Begin);
         return ms.ToArray();
@@ -143,7 +142,7 @@
       byte[] numArray = new byte[bufferSize];
       while (true)
       {
-        int num = input.Read(numArray, 0, (int)numArray.Length);
+        int num = input.Read(numArray, 0, numArray.Length);
         int num1 = num;
         if (num == 0)
         {

@@ -36,7 +36,7 @@
       }
       else
       {
-        if (item.GetType() == typeof(Guid))
+        if (item is Guid)
         {
           p.Value = item.ToString();
           p.DbType = DbType.String;
@@ -52,7 +52,7 @@
           p.Value = item;
         }
 
-        if (item.GetType() == typeof(string))
+        if (item is string)
           p.Size = ((string)item).Length > 4000 ? -1 : 4000;
       }
       cmd.Parameters.Add(p);

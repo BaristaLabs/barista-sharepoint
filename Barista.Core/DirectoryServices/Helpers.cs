@@ -14,7 +14,7 @@
     /// <returns>Cloned DirectorySearcher object with applied filter and properties.</returns>
     public static DirectorySearcher CloneSearcher(DirectorySearcher searcher, string filter, string[] properties)
     {
-      DirectorySearcher result = new DirectorySearcher()
+      DirectorySearcher result = new DirectorySearcher
       {
         Asynchronous = searcher.Asynchronous,
         AttributeScopeQuery = searcher.AttributeScopeQuery,

@@ -23,7 +23,7 @@
 
     /// <include file='ArgumentHelper.doc.xml' path='doc/member[@name="AssertNotNull{T}(Nullable{T},string)"]/*' />
     [DebuggerHidden]
-    public static void AssertNotNull<T>(this Nullable<T> arg, string argName)
+    public static void AssertNotNull<T>(this T? arg, string argName)
       where T : struct
     {
       ArgumentHelper.AssertNotNull(arg, argName);

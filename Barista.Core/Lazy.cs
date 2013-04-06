@@ -47,7 +47,6 @@
       if (createValue != null)
       {
         this.m_createValue = createValue;
-        return;
       }
       else
       {

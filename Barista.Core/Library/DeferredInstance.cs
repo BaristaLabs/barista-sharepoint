@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -18,16 +19,18 @@
     [JSConstructorFunction]
     public DeferredInstance Construct(FunctionInstance function, params object[] parameters)
     {
-      var state = new DeferredState()
-      {
+      var state = new DeferredState
+        {
         This = this.Engine.Evaluate("this;"),
         Parameters = parameters,
       };
 
-      var task = new Task<object>( new Func<object, object>( s => {
-        var localState = s as DeferredState;
-        return function.Call(localState.This, localState.Parameters);
-      }), (object)state);
+      var task = new Task<object>( s => {
+                                          var localState = s as DeferredState;
+                                          return localState == null
+                                            ? null
+                                            : function.Call(localState.This, localState.Parameters);
+      }, state);
 
       task.Start();
 
@@ -46,9 +49,9 @@
   [Serializable]
   public class DeferredInstance : ObjectInstance
   {
-    private Task<object> m_task;
-    private List<Task<bool>> m_continuations = new List<Task<bool>>();
-    private SemaphoreSlim m_scriptEngineSemaphore = new SemaphoreSlim(1);
+    private readonly Task<object> m_task;
+    private readonly List<Task<bool>> m_continuations = new List<Task<bool>>();
+    private readonly SemaphoreSlim m_scriptEngineSemaphore = new SemaphoreSlim(1);
 
     public DeferredInstance(ObjectInstance prototype)
       : base(prototype)
@@ -147,7 +150,7 @@
           if (item is FunctionInstance)
           {
             var func = item as FunctionInstance;
-            this.Continuations.Add(this.Task.ContinueWith((result) =>
+            this.Continuations.Add(this.Task.ContinueWith(result =>
             {
               m_scriptEngineSemaphore.Wait();
               func.Call(that, result.Result);
@@ -167,7 +170,7 @@
         var that = this.Engine.Evaluate("this;");
         var func = callback as FunctionInstance;
 
-        this.Continuations.Add(this.Task.ContinueWith((result) =>
+        this.Continuations.Add(this.Task.ContinueWith(result =>
         {
           m_scriptEngineSemaphore.Wait();
           func.Call(that, result.Result);
@@ -186,7 +189,9 @@
     [JSFunction(Name = "wait")]
     public void Wait()
     {
-      Task<bool>.WaitAll(this.Continuations.ToArray());
+// ReSharper disable CoVariantArrayConversion
+      System.Threading.Tasks.Task.WaitAll(this.Continuations.ToArray());
+// ReSharper restore CoVariantArrayConversion
     }
 
     public static void WaitAll(object deferreds, object timeout)
@@ -212,31 +217,27 @@
       {
         var deferredInstance = deferreds as DeferredInstance;
 
-        tasks.AddRange((deferreds as DeferredInstance).Continuations);
+        tasks.AddRange(deferredInstance.Continuations);
       }
       
       try
       {
         if (timeout == null || timeout is Null || timeout is Undefined)
-          Task<bool>.WaitAll(tasks.ToArray());
+// ReSharper disable CoVariantArrayConversion
+          System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+// ReSharper restore CoVariantArrayConversion
         else
         {
-          if (timeout.GetType() == typeof(int))
-            Task<bool>.WaitAll(tasks.ToArray(), (int)timeout);
+          if (timeout is int)
+// ReSharper disable CoVariantArrayConversion
+            System.Threading.Tasks.Task.WaitAll(tasks.ToArray(), (int)timeout);
+// ReSharper restore CoVariantArrayConversion
         }
       }
       catch(AggregateException ex)
       {
-        List<Exception> rethrow = new List<Exception>();
+        var rethrow = ex.InnerExceptions.Where(innerException => !(innerException is TaskCanceledException)).ToList();
 
-        foreach(var innerException in ex.InnerExceptions)
-        {
-          //Ignore TaskCancelledExceptions
-          if (innerException is TaskCanceledException)
-            continue;
-
-          rethrow.Add(innerException);
-        }
         if (rethrow.Count > 0)
           throw new AggregateException(rethrow);
       }

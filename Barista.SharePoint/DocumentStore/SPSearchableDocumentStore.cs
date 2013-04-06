@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Barista.Newtonsoft.Json.Linq;
-
-namespace Barista.SharePoint.DocumentStore
+﻿namespace Barista.SharePoint.DocumentStore
 {
+  using System;
+
   /// <summary>
   /// Represents a SharePoint-backed document store that is able to be searched via Lucene.Net.
   /// </summary>
@@ -13,7 +9,7 @@ namespace Barista.SharePoint.DocumentStore
   {
     public override Barista.DocumentStore.Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
     {
-      var entity =  base.CreateEntity(containerTitle, path, @namespace, data);
+      var entity =  CreateEntity(containerTitle, path, @namespace, data);
 
       ////Insert the data into Lucene.Net
       //try

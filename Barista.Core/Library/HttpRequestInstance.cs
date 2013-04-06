@@ -29,7 +29,9 @@
     [JSProperty(Name = "accept")]
     public ArrayInstance Accept
     {
+// ReSharper disable CoVariantArrayConversion
       get { return this.Engine.Array.Construct(this.Request.AcceptTypes); }
+// ReSharper restore CoVariantArrayConversion
     }
 
     [JSProperty(Name="contentType")]

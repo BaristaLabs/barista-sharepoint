@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Barista.Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
     /// <summary>
     /// Represents a "new" expression.

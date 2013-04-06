@@ -1,6 +1,5 @@
 ﻿namespace Barista.DocumentStore
 {
-  using System;
   using System.Collections.Generic;
   using System.Runtime.Serialization;
 

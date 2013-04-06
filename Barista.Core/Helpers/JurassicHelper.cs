@@ -1,7 +1,6 @@
 ﻿namespace Barista
 {
   using System;
-  using System.Collections.Generic;
   using System.Text;
   using Jurassic;
   using Jurassic.Library;

@@ -4,13 +4,14 @@
   using System.Collections.Generic;
   using System.Linq;
   using System.ServiceModel.Description;
+  using System.Web.Services.Description;
   using System.Xml;
 
   public class DynamicResponseTypeAttribute : Attribute, IOperationBehavior, IWsdlExportExtension
   {
     private const string WsdlPolicyNamespace = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     private const string WsSecurityUtilityNamespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-    private List<string> m_operationsToRemove = new List<string>();
+    private readonly List<string> m_operationsToRemove = new List<string>();
 
     /// <summary>
     /// Gets or sets a value that, if true, does not include the service operation in the generated WSDL.
@@ -106,10 +107,7 @@
         {
           if (m_operationsToRemove.Contains(portType.Operations[i].Name))
           {
-            foreach (System.Web.Services.Description.OperationMessage operationMessage in portType.Operations[i].Messages)
-            {
-              messageNamesToRemove.Add(operationMessage.Message.Name);
-            }
+            messageNamesToRemove.AddRange(from OperationMessage operationMessage in portType.Operations[i].Messages select operationMessage.Message.Name);
 
             portType.Operations.RemoveAt(i);
           }
@@ -138,9 +136,8 @@
     {
       if (binding != null)
       {
-        System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection extensions =
-            binding.Extensions as System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection;
-        if (extensions != null && extensions.Count > 0)
+        var extensions = binding.Extensions;
+        if (extensions.Count > 0)
         {
           XmlElement extensionElement = extensions[0] as XmlElement;
           if (extensionElement != null)

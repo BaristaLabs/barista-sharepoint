@@ -13,17 +13,12 @@
   public class DirectoryEntity : INotifyPropertyChanged
   {
     /// <summary>
-    /// Wrapped DirectoryEntry.
-    /// </summary>
-    private DirectoryEntry directoryEntry;
-
-    /// <summary>
     /// Gets/sets the underlying DirectoryEntry.
     /// </summary>
     protected internal DirectoryEntry DirectoryEntry
     {
-      get { return directoryEntry; }
-      set { directoryEntry = value; }
+      get;
+      set;
     }
 
     /// <summary>

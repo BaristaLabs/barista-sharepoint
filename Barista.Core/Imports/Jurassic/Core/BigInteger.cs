@@ -7,15 +7,15 @@ namespace Barista.Jurassic
     /// </summary>
     internal struct BigInteger
     {
-        private uint[] bits;
-        private int wordCount;
-        private int sign;
+        private readonly uint[] m_bits;
+        private int m_wordCount;
+        private int m_sign;
 
         private BigInteger(uint[] bits, int wordCount, int sign)
         {
-            this.bits = bits;
-            this.wordCount = wordCount;
-            this.sign = sign;
+            this.m_bits = bits;
+            this.m_wordCount = wordCount;
+            this.m_sign = sign;
         }
 
         /// <summary>
@@ -25,10 +25,10 @@ namespace Barista.Jurassic
         /// <param name="value"> A 32-bit signed integer. </param>
         public BigInteger(int value)
         {
-            this.bits = new uint[1];
-            this.bits[0] = (uint)Math.Abs(value);
-            this.wordCount = 1;
-            this.sign = Math.Sign(value);
+            this.m_bits = new uint[1];
+            this.m_bits[0] = (uint)Math.Abs(value);
+            this.m_wordCount = 1;
+            this.m_sign = Math.Sign(value);
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace Barista.Jurassic
         /// <param name="value"> A 64-bit signed integer. </param>
         public BigInteger(long value)
         {
-            this.bits = new uint[2];
-            this.bits[0] = (uint)Math.Abs(value);
-            this.bits[1] = (uint)(Math.Abs(value) >> 32);
-            this.wordCount = this.bits[1] != 0 ? 2 : 1;
-            this.sign = Math.Sign(value);
+            this.m_bits = new uint[2];
+            this.m_bits[0] = (uint)Math.Abs(value);
+            this.m_bits[1] = (uint)(Math.Abs(value) >> 32);
+            this.m_wordCount = this.m_bits[1] != 0 ? 2 : 1;
+            this.m_sign = Math.Sign(value);
         }
 
         /// <summary>
@@ -61,27 +61,27 @@ namespace Barista.Jurassic
         /// </summary>
         public int Sign
         {
-            get { return this.sign; }
+            get { return this.m_sign; }
         }
 
         public uint HighWord
         {
-            get { return this.bits[this.wordCount - 1]; }
+            get { return this.m_bits[this.m_wordCount - 1]; }
         }
 
         public int BitCount
         {
-            get { return (32 - CountLeadingZeroBits(this.bits[this.wordCount - 1])) + (this.wordCount - 1) * 32; }
+            get { return (32 - CountLeadingZeroBits(this.m_bits[this.m_wordCount - 1])) + (this.m_wordCount - 1) * 32; }
         }
 
         public uint[] Words
         {
-            get { return this.bits; }
+            get { return this.m_bits; }
         }
 
         public int WordCount
         {
-            get { return this.wordCount; }
+            get { return this.m_wordCount; }
         }
 
         /// <summary>
@@ -105,31 +105,31 @@ namespace Barista.Jurassic
                 return Subtract(left, Negate(right));
 
             // From here the sign of both numbers is the same.
-            int outputWordCount = Math.Max(left.wordCount, right.wordCount);
+            int outputWordCount = Math.Max(left.m_wordCount, right.m_wordCount);
             uint[] outputBits = new uint[outputWordCount + 1];
 
             uint borrow = 0;
             int i = 0;
-            for (; i < Math.Min(left.wordCount, right.wordCount); i++)
+            for (; i < Math.Min(left.m_wordCount, right.m_wordCount); i++)
             {
-                ulong temp = (ulong)left.bits[i] + right.bits[i] + borrow;
+                ulong temp = (ulong)left.m_bits[i] + right.m_bits[i] + borrow;
                 borrow = (uint)(temp >> 32);
                 outputBits[i] = (uint)temp;
             }
-            if (left.wordCount > right.wordCount)
+            if (left.m_wordCount > right.m_wordCount)
             {
-                for (; i < left.wordCount; i++)
+                for (; i < left.m_wordCount; i++)
                 {
-                    ulong temp = (ulong)left.bits[i] + borrow;
+                    ulong temp = (ulong)left.m_bits[i] + borrow;
                     borrow = (uint)(temp >> 32);
                     outputBits[i] = (uint)temp;
                 }
             }
-            else if (left.wordCount < right.wordCount)
+            else if (left.m_wordCount < right.m_wordCount)
             {
-                for (; i < right.wordCount; i++)
+                for (; i < right.m_wordCount; i++)
                 {
-                    ulong temp = (ulong)right.bits[i] + borrow;
+                    ulong temp = (ulong)right.m_bits[i] + borrow;
                     borrow = (uint)(temp >> 32);
                     outputBits[i] = (uint)temp;
                 }
@@ -152,52 +152,52 @@ namespace Barista.Jurassic
         public static BigInteger Multiply(BigInteger left, BigInteger right)
         {
             // Check for special cases.
-            if (left.wordCount == 1)
+            if (left.m_wordCount == 1)
             {
                 // 0 * right = 0
-                if (left.bits[0] == 0)
+                if (left.m_bits[0] == 0)
                     return BigInteger.Zero;
 
                 // 1 * right = right
                 // -1 * right = -right
-                if (left.bits[0] == 1)
-                    return left.sign == -1 ? Negate(right) : right;
+                if (left.m_bits[0] == 1)
+                    return left.m_sign == -1 ? Negate(right) : right;
             }
-            if (right.wordCount == 1)
+            if (right.m_wordCount == 1)
             {
                 // left * 0 = 0
-                if (right.bits[0] == 0)
+                if (right.m_bits[0] == 0)
                     return BigInteger.Zero;
 
                 // left * 1 = left
                 // left * -1 = -left
-                if (right.bits[0] == 1)
-                    return right.sign == -1 ? Negate(left) : left;
+                if (right.m_bits[0] == 1)
+                    return right.m_sign == -1 ? Negate(left) : left;
             }
 
-            uint[] outputBits = new uint[left.wordCount + right.wordCount];
-            int outputWordCount = left.wordCount + right.wordCount - 1;
+            uint[] outputBits = new uint[left.m_wordCount + right.m_wordCount];
+            int outputWordCount = left.m_wordCount + right.m_wordCount - 1;
 
-            for (int i = 0; i < left.wordCount; i++)
+            for (int i = 0; i < left.m_wordCount; i++)
             {
                 uint carry = 0;
-                for (int j = 0; j < right.wordCount; j++)
+                for (int j = 0; j < right.m_wordCount; j++)
                 {
-                    ulong temp = (ulong)left.bits[i] * right.bits[j] + outputBits[i + j] + carry;
+                    ulong temp = (ulong)left.m_bits[i] * right.m_bits[j] + outputBits[i + j] + carry;
                     carry = (uint)(temp >> 32);
                     outputBits[i + j] = (uint)temp;
                 }
                 if (carry != 0)
                 {
-                    outputWordCount = Math.Max(outputWordCount, i + right.wordCount + 1);
-                    outputBits[i + right.wordCount] = (uint)carry;
+                    outputWordCount = Math.Max(outputWordCount, i + right.m_wordCount + 1);
+                    outputBits[i + right.m_wordCount] = (uint)carry;
                 }
             }
 
             while (outputWordCount > 1 && outputBits[outputWordCount - 1] == 0)
                 outputWordCount--;
 
-            return new BigInteger(outputBits, outputWordCount, left.sign * right.sign);
+            return new BigInteger(outputBits, outputWordCount, left.m_sign * right.m_sign);
         }
 
         /// <summary>
@@ -222,21 +222,21 @@ namespace Barista.Jurassic
                 return Add(left, Negate(right));
 
             // From here the sign of both numbers is the same.
-            uint[] outputBits = new uint[Math.Max(left.wordCount, right.wordCount)];
+            uint[] outputBits = new uint[Math.Max(left.m_wordCount, right.m_wordCount)];
             int outputWordCount = outputBits.Length;
-            int outputSign = left.sign;
+            int outputSign = left.m_sign;
             int i;
 
             // Arrange it so that Abs(a) > Abs(b).
             bool swap = false;
-            if (left.wordCount < right.wordCount)
+            if (left.m_wordCount < right.m_wordCount)
                 swap = true;
-            else if (left.wordCount == right.wordCount)
+            else if (left.m_wordCount == right.m_wordCount)
             {
-                for (i = left.wordCount - 1; i >= 0; i--)
-                    if (left.bits[i] != right.bits[i])
+                for (i = left.m_wordCount - 1; i >= 0; i--)
+                    if (left.m_bits[i] != right.m_bits[i])
                     {
-                        if (left.bits[i] < right.bits[i])
+                        if (left.m_bits[i] < right.m_bits[i])
                             swap = true;
                         break;
                     }
@@ -250,15 +250,15 @@ namespace Barista.Jurassic
             }
 
             ulong y, borrow = 0;
-            for (i = 0; i < right.wordCount; i++)
+            for (i = 0; i < right.m_wordCount; i++)
             {
-                y = (ulong)left.bits[i] - right.bits[i] - borrow;
+                y = (ulong)left.m_bits[i] - right.m_bits[i] - borrow;
                 borrow = y >> 32 & 1;
                 outputBits[i] = (uint)y;
             }
-            for (; i < left.wordCount; i++)
+            for (; i < left.m_wordCount; i++)
             {
-                y = (ulong)left.bits[i] - borrow;
+                y = (ulong)left.m_bits[i] - borrow;
                 borrow = y >> 32 & 1;
                 outputBits[i] = (uint)y;
             }
@@ -287,13 +287,13 @@ namespace Barista.Jurassic
             int wordShift = shift / 32;
             int bitShift = shift - (wordShift * 32);
 
-            uint[] outputBits = new uint[value.wordCount + wordShift + 1];
+            uint[] outputBits = new uint[value.m_wordCount + wordShift + 1];
             int outputWordCount = outputBits.Length - 1;
 
             uint carry = 0;
-            for (int i = 0; i < value.wordCount; i++)
+            for (int i = 0; i < value.m_wordCount; i++)
             {
-                uint word = value.bits[i];
+                uint word = value.m_bits[i];
                 outputBits[i + wordShift] = (word << bitShift) | carry;
                 carry = bitShift == 0 ? 0 : word >> (32 - bitShift);
             }
@@ -303,7 +303,7 @@ namespace Barista.Jurassic
                 outputWordCount++;
             }
 
-            return new BigInteger(outputBits, outputWordCount, value.sign);
+            return new BigInteger(outputBits, outputWordCount, value.m_sign);
         }
 
         /// <summary>
@@ -327,23 +327,23 @@ namespace Barista.Jurassic
 
             int wordShift = shift / 32;
             int bitShift = shift - (wordShift * 32);
-            if (wordShift >= value.wordCount)
+            if (wordShift >= value.m_wordCount)
                 return BigInteger.Zero;
 
-            uint[] outputBits = new uint[value.wordCount - wordShift];
+            uint[] outputBits = new uint[value.m_wordCount - wordShift];
             int outputWordCount = outputBits.Length - 1;
 
             uint carry = 0;
-            for (int i = value.wordCount - 1; i >= wordShift; i--)
+            for (int i = value.m_wordCount - 1; i >= wordShift; i--)
             {
-                uint word = value.bits[i];
+                uint word = value.m_bits[i];
                 outputBits[i - wordShift] = (word >> bitShift) | (carry << (32 - bitShift));
                 carry = word & (((uint)1 << bitShift) - 1);
             }
             if (outputBits[outputBits.Length - 1] != 0)
                 outputWordCount++;
 
-            return new BigInteger(outputBits, outputWordCount, value.sign);
+            return new BigInteger(outputBits, outputWordCount, value.m_sign);
         }
 
         /// <summary>
@@ -359,14 +359,14 @@ namespace Barista.Jurassic
                 throw new ArgumentOutOfRangeException("m");
             if (a < 0)
                 throw new ArgumentOutOfRangeException("a");
-            if (b.sign == 0)
+            if (b.m_sign == 0)
                 return new BigInteger(a);
-            uint[] outputBits = new uint[b.wordCount + 1];
-            int outputWordCount = b.wordCount;
+            uint[] outputBits = new uint[b.m_wordCount + 1];
+            int outputWordCount = b.m_wordCount;
             uint carry = (uint)a;
-            for (int i = 0; i < b.wordCount; i++)
+            for (int i = 0; i < b.m_wordCount; i++)
             {
-                ulong temp = b.bits[i] * (ulong)m + carry;
+                ulong temp = b.m_bits[i] * (ulong)m + carry;
                 carry = (uint)(temp >> 32);
                 outputBits[i] = (uint)temp;
             }
@@ -416,32 +416,32 @@ namespace Barista.Jurassic
         /// <returns></returns>
         public static int Compare(BigInteger a, BigInteger b)
         {
-            if (a.sign != b.sign)
-                return a.sign < b.sign ? -1 : 1;
-            if (a.sign > 0)
+            if (a.m_sign != b.m_sign)
+                return a.m_sign < b.m_sign ? -1 : 1;
+            if (a.m_sign > 0)
             {
                 // Comparison of positive numbers.
-                if (a.wordCount < b.wordCount)
+                if (a.m_wordCount < b.m_wordCount)
                     return -1;
-                if (a.wordCount > b.wordCount)
+                if (a.m_wordCount > b.m_wordCount)
                     return 1;
-                for (int i = a.wordCount - 1; i >= 0; i--)
+                for (int i = a.m_wordCount - 1; i >= 0; i--)
                 {
-                    if (a.bits[i] != b.bits[i])
-                        return a.bits[i] < b.bits[i] ? -1 : 1;
+                    if (a.m_bits[i] != b.m_bits[i])
+                        return a.m_bits[i] < b.m_bits[i] ? -1 : 1;
                 }
             }
-            else if (a.sign < 0)
+            else if (a.m_sign < 0)
             {
                 // Comparison of negative numbers.
-                if (a.wordCount < b.wordCount)
+                if (a.m_wordCount < b.m_wordCount)
                     return 1;
-                if (a.wordCount > b.wordCount)
+                if (a.m_wordCount > b.m_wordCount)
                     return -1;
-                for (int i = a.wordCount - 1; i >= 0; i--)
+                for (int i = a.m_wordCount - 1; i >= 0; i--)
                 {
-                    if (a.bits[i] != b.bits[i])
-                        return a.bits[i] < b.bits[i] ? 1 : -1;
+                    if (a.m_bits[i] != b.m_bits[i])
+                        return a.m_bits[i] < b.m_bits[i] ? 1 : -1;
                 }
             }
             return 0;
@@ -455,7 +455,7 @@ namespace Barista.Jurassic
         /// one (-1). </returns>
         public static BigInteger Negate(BigInteger value)
         {
-            value.sign = -value.sign;
+            value.m_sign = -value.m_sign;
             return value;
         }
 
@@ -466,7 +466,7 @@ namespace Barista.Jurassic
         /// <param name="divisor"> The number to divide by. </param>
         public static void SetupQuorum(ref BigInteger dividend, ref BigInteger divisor)
         {
-            var leadingZeroCount = CountLeadingZeroBits(divisor.bits[divisor.wordCount - 1]);
+            var leadingZeroCount = CountLeadingZeroBits(divisor.m_bits[divisor.m_wordCount - 1]);
             if (leadingZeroCount < 4 || leadingZeroCount > 28)
             {
                 dividend = BigInteger.LeftShift(dividend, 8);
@@ -482,7 +482,7 @@ namespace Barista.Jurassic
         /// <param name="other"> Another value involved in the division. </param>
         public static void SetupQuorum(ref BigInteger dividend, ref BigInteger divisor, ref BigInteger other)
         {
-            var leadingZeroCount = CountLeadingZeroBits(divisor.bits[divisor.wordCount - 1]);
+            var leadingZeroCount = CountLeadingZeroBits(divisor.m_bits[divisor.m_wordCount - 1]);
             if (leadingZeroCount < 4 || leadingZeroCount > 28)
             {
                 dividend = BigInteger.LeftShift(dividend, 8);
@@ -501,46 +501,46 @@ namespace Barista.Jurassic
         /// <paramref name="divisor"/>. </returns>
         public static int Quorem(ref BigInteger dividend, BigInteger divisor)
         {
-            int n = divisor.wordCount;
-            if (dividend.wordCount > n)
+            int n = divisor.m_wordCount;
+            if (dividend.m_wordCount > n)
                 throw new ArgumentException("b is too large");
-            if (dividend.wordCount < n)
+            if (dividend.m_wordCount < n)
                 return 0;
-            uint q = dividend.bits[dividend.wordCount - 1] / (divisor.bits[divisor.wordCount - 1] + 1);	/* ensure q <= true quotient */
+            uint q = dividend.m_bits[dividend.m_wordCount - 1] / (divisor.m_bits[divisor.m_wordCount - 1] + 1);	/* ensure q <= true quotient */
 
             if (q != 0)
             {
                 ulong borrow = 0;
                 ulong carry = 0;
-                for (int i = 0; i < divisor.wordCount; i++)
+                for (int i = 0; i < divisor.m_wordCount; i++)
                 {
-                    ulong ys = divisor.bits[i] * (ulong)q + carry;
+                    ulong ys = divisor.m_bits[i] * (ulong)q + carry;
                     carry = ys >> 32;
-                    ulong y = dividend.bits[i] - (ys & 0xFFFFFFFF) - borrow;
+                    ulong y = dividend.m_bits[i] - (ys & 0xFFFFFFFF) - borrow;
                     borrow = y >> 32 & 1;
-                    dividend.bits[i] = (uint)y;
+                    dividend.m_bits[i] = (uint)y;
                 }
-                while (dividend.wordCount > 1 && dividend.bits[dividend.wordCount - 1] == 0)
-                    dividend.wordCount--;
+                while (dividend.m_wordCount > 1 && dividend.m_bits[dividend.m_wordCount - 1] == 0)
+                    dividend.m_wordCount--;
             }
             if (Compare(dividend, divisor) >= 0)
             {
                 q++;
                 ulong borrow = 0;
                 ulong carry = 0;
-                for (int i = 0; i < divisor.wordCount; i++)
+                for (int i = 0; i < divisor.m_wordCount; i++)
                 {
-                    ulong ys = divisor.bits[i] + carry;
+                    ulong ys = divisor.m_bits[i] + carry;
                     carry = ys >> 32;
-                    ulong y = dividend.bits[i] - (ys & 0xFFFFFFFF) - borrow;
+                    ulong y = dividend.m_bits[i] - (ys & 0xFFFFFFFF) - borrow;
                     borrow = y >> 32 & 1;
-                    dividend.bits[i] = (uint)y;
+                    dividend.m_bits[i] = (uint)y;
                 }
-                while (dividend.wordCount > 1 && dividend.bits[dividend.wordCount - 1] == 0)
-                    dividend.wordCount--;
+                while (dividend.m_wordCount > 1 && dividend.m_bits[dividend.m_wordCount - 1] == 0)
+                    dividend.m_wordCount--;
             }
-            if (dividend.wordCount == 1 && dividend.bits[0] == 0)
-                dividend.sign = 0;
+            if (dividend.m_wordCount == 1 && dividend.m_bits[0] == 0)
+                dividend.m_sign = 0;
             return (int)q;
         }
 
@@ -549,37 +549,37 @@ namespace Barista.Jurassic
         /// </summary>
         public void InPlaceDecrement()
         {
-            if (this.sign < 0)
+            if (this.m_sign < 0)
                 throw new InvalidOperationException("Operand must be positive.");
-            uint lowWord = this.bits[0];
+            uint lowWord = this.m_bits[0];
             if (lowWord > 1)
             {
                 // Fast case: subtract from lowest word.
-                this.bits[0]--;
+                this.m_bits[0]--;
             }
-            else if (this.wordCount == 1)
+            else if (this.m_wordCount == 1)
             {
                 // value = 0 or 1 - requires sign change.
-                this.bits[0]--;
+                this.m_bits[0]--;
                 if (lowWord == 1)
-                    this.sign = 0;
+                    this.m_sign = 0;
                 else if (lowWord == 0)
-                    this.sign = -this.sign;
+                    this.m_sign = -this.m_sign;
             }
             else
             {
                 // Slow case: have to underflow.
-                this.bits[0]--;
+                this.m_bits[0]--;
                 bool carry = false;
-                for (int i = 1; i < this.wordCount; i++)
+                for (int i = 1; i < this.m_wordCount; i++)
                 {
-                    carry = this.bits[i] == 0;
-                    this.bits[i]--;
+                    carry = this.m_bits[i] == 0;
+                    this.m_bits[i]--;
                     if (carry == false)
                         break;
                 }
-                if (this.bits[this.wordCount - 1] == 0)
-                    this.wordCount--;
+                if (this.m_bits[this.m_wordCount - 1] == 0)
+                    this.m_wordCount--;
             }
         }
 
@@ -666,7 +666,7 @@ namespace Barista.Jurassic
         /// <returns> The absolute value of <paramref name="value"/> </returns>
         public static BigInteger Abs(BigInteger b)
         {
-            return new BigInteger(b.bits, b.wordCount, Math.Abs(b.sign));
+            return new BigInteger(b.m_bits, b.m_wordCount, Math.Abs(b.m_sign));
         }
 
         /// <summary>
@@ -679,23 +679,23 @@ namespace Barista.Jurassic
         {
             if (baseValue <= 1.0 || double.IsPositiveInfinity(baseValue) || double.IsNaN(baseValue))
                 throw new ArgumentOutOfRangeException("baseValue", "Unsupported logarithmic base.");
-            if (value.sign < 0)
+            if (value.m_sign < 0)
                 return double.NaN;
-            if (value.sign == 0)
+            if (value.m_sign == 0)
                 return double.NegativeInfinity;
-            if (value.wordCount == 1)
-                return Math.Log((double)value.bits[0], baseValue);
+            if (value.m_wordCount == 1)
+                return Math.Log((double)value.m_bits[0], baseValue);
 
             double d = 0.0;
             double residual = 0.5;
-            int bitsInLastWord = 32 - CountLeadingZeroBits(value.bits[value.wordCount - 1]);
-            int bitCount = ((value.wordCount - 1) * 32) + bitsInLastWord;
+            int bitsInLastWord = 32 - CountLeadingZeroBits(value.m_bits[value.m_wordCount - 1]);
+            int bitCount = ((value.m_wordCount - 1) * 32) + bitsInLastWord;
             uint highBit = ((uint)1) << (bitsInLastWord - 1);
-            for (int i = value.wordCount - 1; i >= 0; i--)
+            for (int i = value.m_wordCount - 1; i >= 0; i--)
             {
                 while (highBit != 0)
                 {
-                    if ((value.bits[i] & highBit) != 0)
+                    if ((value.m_bits[i] & highBit) != 0)
                         d += residual;
                     residual *= 0.5;
                     highBit = highBit >> 1;
@@ -717,7 +717,7 @@ namespace Barista.Jurassic
         {
             if ((obj is BigInteger) == false)
                 return false;
-            if (this.wordCount != ((BigInteger)obj).wordCount)
+            if (this.m_wordCount != ((BigInteger)obj).m_wordCount)
                 return false;
             return Compare(this, (BigInteger)obj) == 0;
         }
@@ -729,8 +729,8 @@ namespace Barista.Jurassic
         public override int GetHashCode()
         {
             uint result = 0;
-            for (int i = 0; i < this.wordCount; i++)
-                result ^= this.bits[i];
+            for (int i = 0; i < this.m_wordCount; i++)
+                result ^= this.m_bits[i];
             return (int)result;
         }
 
@@ -759,8 +759,8 @@ namespace Barista.Jurassic
                     throw new FormatException("Invalid character in number.");
                 result = MultiplyAdd(result, 10, c - '0');
             }
-            if (result.wordCount != 1 || result.bits[0] != 0)
-                result.sign = negative == true ? -1 : 1;
+            if (result.m_wordCount != 1 || result.m_bits[0] != 0)
+                result.m_sign = negative == true ? -1 : 1;
             return result;
         }
 
@@ -779,7 +779,7 @@ namespace Barista.Jurassic
             if (value.Sign < 0)
             {
                 result.Append('-');
-                value.sign = 1;
+                value.m_sign = 1;
             }
 
             // Overestimate of Floor(Log10(value))
@@ -853,7 +853,7 @@ namespace Barista.Jurassic
         public double ToDouble()
         {
             // Special case: zero.
-            if (this.wordCount == 1 && this.bits[0] == 0)
+            if (this.m_wordCount == 1 && this.m_bits[0] == 0)
                 return 0.0;
 
             // Get the number of bits in the BigInteger.
@@ -861,14 +861,14 @@ namespace Barista.Jurassic
 
             // The top 53 bits can be packed into the double (the top-most bit is implied).
             var temp = BigInteger.RightShift(this, bitCount - 53);
-            ulong doubleBits = (((ulong)temp.bits[1] << 32) | temp.bits[0]) & 0xFFFFFFFFFFFFF;
+            ulong doubleBits = (((ulong)temp.m_bits[1] << 32) | temp.m_bits[0]) & 0xFFFFFFFFFFFFF;
 
             // Base-2 exponent is however much we shifted, plus 52 (because the decimal point is
             // effectively at the 52nd bit), plus 1023 (the bias).
             doubleBits |= (ulong)(bitCount - 53 + 52 + 1023) << 52;
 
             // Handle the sign bit.
-            if (this.sign == -1)
+            if (this.m_sign == -1)
                 doubleBits |= (ulong)1 << 63;
 
             // Convert the bit representation to a double.

@@ -1,7 +1,5 @@
 ﻿namespace Barista.Search
 {
-  using Barista.Newtonsoft.Json;
-
   public static class Default
   {
     public static readonly string[] OnlyDateTimeFormat = new[]

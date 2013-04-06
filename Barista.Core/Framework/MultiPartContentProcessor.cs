@@ -10,8 +10,8 @@
 
   public class MultipartContentProcessor
   {
-    private static Regex s_filenameRegex = new Regex(@"Content-Disposition\:\s*?form-data;\s*?name=""files\[\]"";.*?filename=""(?<filename>.*?)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static Regex s_contentTypeRegex = new Regex(@"Content-Type\:\s*?(?<contenttype>.*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex FilenameRegex = new Regex(@"Content-Disposition\:\s*?form-data;\s*?name=""files\[\]"";.*?filename=""(?<filename>.*?)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex ContentTypeRegex = new Regex(@"Content-Type\:\s*?(?<contenttype>.*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public MultipartContentProcessor(Stream stream)
       : this(stream, Encoding.UTF8)
@@ -21,23 +21,26 @@
 
     public MultipartContentProcessor(Stream stream, Encoding encoding)
     {
-      var contentType = WebOperationContext.Current.IncomingRequest.ContentType;
-
-      if (String.IsNullOrEmpty(contentType) || contentType.StartsWith("multipart/form-data") == false)
+      if (WebOperationContext.Current != null)
       {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.UnsupportedMediaType;
-        throw new WebException("Expected multipart/form-data content type.");
+        var contentType = WebOperationContext.Current.IncomingRequest.ContentType;
+
+        if (String.IsNullOrEmpty(contentType) || contentType.StartsWith("multipart/form-data") == false)
+        {
+          WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.UnsupportedMediaType;
+          throw new WebException("Expected multipart/form-data content type.");
+        }
+
+        var index = contentType.IndexOf("boundary=", StringComparison.InvariantCultureIgnoreCase);
+        if (index == -1)
+        {
+
+        }
+
+        var delimiter = contentType.Substring(index + 9);
+
+        this.Parse(stream, encoding, delimiter);
       }
-
-      var index = contentType.IndexOf("boundary=");
-      if (index == -1)
-      {
-
-      }
-
-      var delimiter = contentType.Substring(index + 9);
-
-      this.Parse(stream, encoding, delimiter);
     }
 
     public bool IsValid
@@ -95,7 +98,7 @@
           }
           else
           {
-            startPos = Array.IndexOf<byte>(searchWithin, searchFor[0], startPos + index);
+            startPos = Array.IndexOf(searchWithin, searchFor[0], startPos + index);
             if (startPos == -1)
             {
               return -1;
@@ -119,11 +122,11 @@
       var content = encoding.GetString(data);
 
       // Look for Form Data
-      var formDataIndex = content.IndexOf("form-data\r\n\r\n");
+      var formDataIndex = content.IndexOf("form-data\r\n\r\n", StringComparison.InvariantCultureIgnoreCase);
       if (formDataIndex > -1)
       {
         var startForm = formDataIndex + "form-data\r\n\r\n".Length;
-        var endForm = content.Substring(startForm).IndexOf("\r\n" + delimiter);
+        var endForm = content.Substring(startForm).IndexOf("\r\n" + delimiter, System.StringComparison.InvariantCultureIgnoreCase);
         var formData = content.Substring(startForm, endForm);
 
         if (!string.IsNullOrEmpty(formData))
@@ -159,10 +162,10 @@
         var headerContent = contentStartMatch.Value;
 
         // Look for filename
-        Match filenameMatch = s_filenameRegex.Match(headerContent);
+        Match filenameMatch = FilenameRegex.Match(headerContent);
 
         // Look for contentType
-        Match contentTypeMatch = s_contentTypeRegex.Match(headerContent);
+        Match contentTypeMatch = ContentTypeRegex.Match(headerContent);
 
         if (contentTypeMatch.Success)
         {

@@ -9,7 +9,7 @@ namespace Barista.ObjectComparison
     /// Contains facilities for comparing of two objects for equivalence. 
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812")]
-    [System.Runtime.CompilerServices.CompilerGenerated()]
+    [System.Runtime.CompilerServices.CompilerGenerated]
     public class NamespaceDoc
     {
         // Empty class used only for generation of namespace comments.

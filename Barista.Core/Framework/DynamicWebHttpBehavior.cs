@@ -22,10 +22,10 @@
         webGetAttribute.ResponseFormat = WebMessageFormat.Xml;
         IDispatchMessageFormatter xmlDispatchMessageFormatter =
             base.GetReplyDispatchFormatter(operationDescription, endpoint);
-        return new DynamicFormatter()
-        {
-          jsonDispatchMessageFormatter = jsonDispatchMessageFormatter,
-          xmlDispatchMessageFormatter = xmlDispatchMessageFormatter
+        return new DynamicFormatter
+          {
+          JsonDispatchMessageFormatter = jsonDispatchMessageFormatter,
+          XmlDispatchMessageFormatter = xmlDispatchMessageFormatter
         };
       }
       return base.GetReplyDispatchFormatter(operationDescription, endpoint);

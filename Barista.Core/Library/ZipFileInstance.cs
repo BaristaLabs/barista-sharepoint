@@ -51,9 +51,11 @@
     [JSFunction(Name = "addFile")]
     public void AddFile(string fileName, Base64EncodedByteArrayInstance fileData)
     {
-      ZipEntry entry = new ZipEntry(fileName);
-      entry.DateTime = DateTime.Now;
-      entry.Size = fileData.Data.LongLength;
+      var entry = new ZipEntry(fileName)
+      {
+        DateTime = DateTime.Now,
+        Size = fileData.Data.LongLength
+      };
 
       m_zipOutputStream.PutNextEntry(entry);
       m_zipOutputStream.Write(fileData.Data, 0, fileData.Data.Length);
@@ -74,9 +76,11 @@
       m_memoryStream = null;
       m_zipOutputStream = null;
 
-      var byteResult = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result);
-      byteResult.FileName = this.FileName;
-      byteResult.MimeType = StringHelper.GetMimeTypeFromFileName(this.FileName);
+      var byteResult = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result)
+        {
+          FileName = this.FileName,
+          MimeType = StringHelper.GetMimeTypeFromFileName(this.FileName)
+        };
       return byteResult;
     }
   }

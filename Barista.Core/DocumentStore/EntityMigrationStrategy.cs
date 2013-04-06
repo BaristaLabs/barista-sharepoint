@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Barista.Newtonsoft.Json.Linq;
-
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
+  using System;
+  using System.Collections.Generic;
+  using Barista.Newtonsoft.Json.Linq;
+
   public interface IEntityMigrationStrategy
   {
     string FromNamespace

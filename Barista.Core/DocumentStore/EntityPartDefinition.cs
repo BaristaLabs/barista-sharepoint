@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-
-namespace Barista.DocumentStore
+﻿namespace Barista.DocumentStore
 {
+  using System;
+  using System.Collections.ObjectModel;
+
   public class EntityPartDefinition
   {
     public string EntityPartName

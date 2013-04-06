@@ -58,13 +58,14 @@
     /// <param name="newPartName">New name of the part.</param>
     /// <returns></returns>
     bool RenameEntityPart(string containerTitle, Guid entityId, string partName, string newPartName);
-      
+
     /// <summary>
     /// Updates the entity part.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
-    /// <param name="entityPart">The entity part.</param>
+    /// <param name="partName"></param>
+    /// <param name="category"></param>
     /// <returns></returns>
     EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category);
 
@@ -74,6 +75,7 @@
     /// <param name="containerTitle"></param>
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
+    /// <param name="eTag"></param>
     /// <param name="data"></param>
     /// <returns></returns>
     EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data);

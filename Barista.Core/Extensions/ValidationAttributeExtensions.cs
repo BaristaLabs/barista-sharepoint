@@ -6,13 +6,13 @@
 
   public static class ValidationAttributeExtensions
   {
-    private static object _syncLock = new object();
+    private static readonly object SyncLock = new object();
 
     public static ValidationResult IsValid(this ValidationAttribute validationAttribute, object value, ValidationContext validationContext)
     {
       ValidationResult validationResult;
       object obj;
-      lock (_syncLock)
+      lock (SyncLock)
       {
         ValidationResult success = ValidationResult.Success;
         if (!validationAttribute.IsValid(value))

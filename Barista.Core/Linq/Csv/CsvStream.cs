@@ -1,7 +1,7 @@
 ﻿namespace Barista.DocumentStore.Linq.Csv
 {
-  using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.IO;
   using System.Text;
 
@@ -13,10 +13,10 @@
   /// </summary>
   internal class CsvStream
   {
-    private TextReader m_instream;
-    private TextWriter m_outStream;
-    private char m_SeparatorChar;
-    private char[] m_SpecialChars;
+    private readonly TextReader m_instream;
+    private readonly TextWriter m_outStream;
+    private readonly char m_separatorChar;
+    private readonly char[] m_specialChars;
 
     // Current line number in the file. Only used when reading a file, not when writing a file.
     private int m_lineNbr;
@@ -24,12 +24,12 @@
     /// ///////////////////////////////////////////////////////////////////////
     /// CsvStream
     /// 
-    public CsvStream(TextReader inStream, TextWriter outStream, char SeparatorChar)
+    public CsvStream(TextReader inStream, TextWriter outStream, char separatorChar)
     {
       m_instream = inStream;
       m_outStream = outStream;
-      m_SeparatorChar = SeparatorChar;
-      m_SpecialChars = ("\"\x0A\x0D" + m_SeparatorChar.ToString()).ToCharArray();
+      m_separatorChar = separatorChar;
+      m_specialChars = ("\"\x0A\x0D" + m_separatorChar.ToString(CultureInfo.InvariantCulture)).ToCharArray();
       m_lineNbr = 1;
     }
 
@@ -41,7 +41,7 @@
       bool firstItem = true;
       foreach (string item in row)
       {
-        if (!firstItem) { m_outStream.Write(m_SeparatorChar); }
+        if (!firstItem) { m_outStream.Write(m_separatorChar); }
 
         // If the item is null, don't write anything.
         if (item != null)
@@ -51,7 +51,7 @@
           // white space, surround the item with quotes.
 
           if ((quoteAllFields ||
-              (item.IndexOfAny(m_SpecialChars) > -1) ||
+              (item.IndexOfAny(m_specialChars) > -1) ||
               (item.Trim() == "")))
           {
             m_outStream.Write("\"" + item.Replace("\"", "\"\"") + "\"");
@@ -104,17 +104,17 @@
       }
     }
 
-    private bool EOS = false;
-    private bool EOL = false;
-    private bool previousWasCr = false;
+    private bool m_eos;
+    private bool m_eol;
+    private bool m_previousWasCr;
 
     private bool GetNextItem(ref string itemString)
     {
       itemString = null;
-      if (EOL)
+      if (m_eol)
       {
         // previous item was last in line, start new line
-        EOL = false;
+        m_eol = false;
         return false;
       }
 
@@ -127,7 +127,7 @@
       while (true)
       {
         char c = GetNextChar(true);
-        if (EOS)
+        if (m_eos)
         {
           if (itemFound) { itemString = item.ToString(); }
           return itemFound;
@@ -139,7 +139,7 @@
         // end of a record.
 
         // Don't count 0D0A as two line breaks.
-        if ((!previousWasCr) && (c == '\x0A'))
+        if ((!m_previousWasCr) && (c == '\x0A'))
         {
           m_lineNbr++;
         }
@@ -147,16 +147,16 @@
         if (c == '\x0D')
         {
           m_lineNbr++;
-          previousWasCr = true;
+          m_previousWasCr = true;
         }
         else
         {
-          previousWasCr = false;
+          m_previousWasCr = false;
         }
 
         // ---------
 
-        if ((postdata || !quoted) && c == m_SeparatorChar)
+        if ((postdata || !quoted) && c == m_separatorChar)
         {
           // end of item, return
           if (itemFound) { itemString = item.ToString(); }
@@ -166,7 +166,7 @@
         if ((predata || postdata || !quoted) && (c == '\x0A' || c == '\x0D'))
         {
           // we are at the end of the line, eat newline characters and exit
-          EOL = true;
+          m_eol = true;
           if (c == '\x0D' && GetNextChar(false) == '\x0A')
           {
             // new line sequence is 0D0A
@@ -220,26 +220,26 @@
       }
     }
 
-    private char[] buffer = new char[4096];
-    private int pos = 0;
-    private int length = 0;
+    private readonly char[] m_buffer = new char[4096];
+    private int m_pos;
+    private int m_length;
 
     private char GetNextChar(bool eat)
     {
-      if (pos >= length)
+      if (m_pos >= m_length)
       {
-        length = m_instream.ReadBlock(buffer, 0, buffer.Length);
-        if (length == 0)
+        m_length = m_instream.ReadBlock(m_buffer, 0, m_buffer.Length);
+        if (m_length == 0)
         {
-          EOS = true;
+          m_eos = true;
           return '\0';
         }
-        pos = 0;
+        m_pos = 0;
       }
       if (eat)
-        return buffer[pos++];
-      else
-        return buffer[pos];
+        return m_buffer[m_pos++];
+
+      return m_buffer[m_pos];
     }
   }
 }

@@ -71,22 +71,22 @@
     /// <summary>
     /// Associated directory context if bound to a context; otherwise null.
     /// </summary>
-    private DirectoryContext _context;
+    private readonly DirectoryContext m_context;
 
     /// <summary>
     /// Searcher object to perform the directory search. Captures the search root and options.
     /// </summary>
-    private DirectorySearcher _searcher;
+    private readonly DirectorySearcher m_searcher;
 
     /// <summary>
     /// Logger for diagnostic output.
     /// </summary>
-    private TextWriter logger;
+    private TextWriter m_logger;
 
     /// <summary>
     /// Update catalog; keeps track of update entity instances.
     /// </summary>
-    private Dictionary<object, HashSet<string>> updates = new Dictionary<object, HashSet<string>>();
+    private readonly Dictionary<object, HashSet<string>> m_updates = new Dictionary<object, HashSet<string>>();
 
     #endregion
 
@@ -99,7 +99,7 @@
     /// <param name="searchScope">Search scope for all queries performed through this data source.</param>
     public DirectorySource(DirectoryEntry searchRoot, SearchScope searchScope)
     {
-      _searcher = new DirectorySearcher(searchRoot) { SearchScope = searchScope };
+      m_searcher = new DirectorySearcher(searchRoot) { SearchScope = searchScope };
     }
 
     /// <summary>
@@ -108,7 +108,7 @@
     /// <param name="searcher">DirectorySearcher object to use for directory searches.</param>
     public DirectorySource(DirectorySearcher searcher)
     {
-      _searcher = searcher;
+      m_searcher = searcher;
     }
 
     /// <summary>
@@ -118,9 +118,9 @@
     /// <param name="searchScope">Search scope for all queries performed through this data source.</param>
     internal DirectorySource(DirectoryContext context, SearchScope searchScope)
     {
-      _context = context;
-      _searcher = Helpers.CloneSearcher(context.Searcher, null, null);
-      _searcher.SearchScope = searchScope;
+      m_context = context;
+      m_searcher = Helpers.CloneSearcher(context.Searcher, null, null);
+      m_searcher.SearchScope = searchScope;
     }
 
     #endregion
@@ -134,19 +134,19 @@
     {
       get
       {
-        if (logger != null)
-          return logger;
+        if (m_logger != null)
+          return m_logger;
 
         // Fall back to parent context if applicable.
-        if (_context != null)
-          return _context.Log;
+        if (m_context != null)
+          return m_context.Log;
 
         return null;
       }
       set
       {
         // Can override on the leaf level.
-        logger = value;
+        m_logger = value;
       }
     }
 
@@ -203,7 +203,7 @@
     /// </summary>
     public DirectorySearcher Searcher
     {
-      get { return _searcher; }
+      get { return m_searcher; }
     }
 
     #endregion
@@ -229,7 +229,7 @@
       Type t = typeof(T);
       DirectorySchemaAttribute[] attr = (DirectorySchemaAttribute[])t.GetCustomAttributes(typeof(DirectorySchemaAttribute), false);
 
-      foreach (var e in updates)
+      foreach (var e in m_updates)
       {
         if (e.Key is T && e.Key is DirectoryEntity)
         {
@@ -243,7 +243,7 @@
             {
               if (da[0].QuerySource == DirectoryAttributeType.ActiveDs)
               {
-                if (attr != null && attr.Length != 0)
+                if (attr.Length != 0)
                   attr[0].ActiveDsHelperType.GetProperty(da[0].Attribute).SetValue(entry.NativeObject, i.GetValue(e.Key, null), null);
                 else
                   throw new InvalidOperationException("Missing schema mapping attribute for updates through ADSI.");
@@ -260,17 +260,17 @@
           throw new InvalidOperationException("Can't apply update because updates type doesn't match original entity type.");
       }
 
-      updates.Clear();
+      m_updates.Clear();
     }
 
     public void UpdateNotification(object sender, PropertyChangedEventArgs e)
     {
       T source = (T)sender;
 
-      if (!updates.ContainsKey(source))
-        updates.Add(source, new HashSet<string>());
+      if (!m_updates.ContainsKey(source))
+        m_updates.Add(source, new HashSet<string>());
 
-      updates[source].Add(e.PropertyName);
+      m_updates[source].Add(e.PropertyName);
     }
 
     #endregion

@@ -1,7 +1,6 @@
 ﻿namespace Barista.Bundles
 {
   using Barista.Library;
-  using Jurassic;
   using System;
 
   [Serializable]

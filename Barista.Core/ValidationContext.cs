@@ -4,46 +4,44 @@
   using System.Collections.Generic;
   using System.ComponentModel.Design;
   using System.Globalization;
-  using System.Linq;
-  using System.Text;
 
   public sealed class ValidationContext : IServiceProvider
   {
-    private string _displayName;
+    private string m_displayName;
 
     private Dictionary<object, object> _items;
 
-    private string _memberName;
+    private string m_memberName;
 
-    private object _objectInstance;
+    private readonly object m_objectInstance;
 
-    private IServiceContainer _serviceContainer;
+    private IServiceContainer m_serviceContainer;
 
-    private Func<Type, object> _serviceProvider;
+    private Func<Type, object> m_serviceProvider;
 
     public string DisplayName
     {
       get
       {
-        if (string.IsNullOrEmpty(this._displayName))
+        if (string.IsNullOrEmpty(this.m_displayName))
         {
-          this._displayName = this.GetDisplayName();
-          if (string.IsNullOrEmpty(this._displayName))
+          this.m_displayName = this.GetDisplayName();
+          if (string.IsNullOrEmpty(this.m_displayName))
           {
-            this._displayName = this.MemberName;
-            if (string.IsNullOrEmpty(this._displayName))
+            this.m_displayName = this.MemberName;
+            if (string.IsNullOrEmpty(this.m_displayName))
             {
-              this._displayName = this.ObjectType.Name;
+              this.m_displayName = this.ObjectType.Name;
             }
           }
         }
-        return this._displayName;
+        return this.m_displayName;
       }
       set
       {
         if (!string.IsNullOrEmpty(value))
         {
-          this._displayName = value;
+          this.m_displayName = value;
           return;
         }
         else
@@ -65,11 +63,11 @@
     {
       get
       {
-        return this._memberName;
+        return this.m_memberName;
       }
       set
       {
-        this._memberName = value;
+        this.m_memberName = value;
       }
     }
 
@@ -77,7 +75,7 @@
     {
       get
       {
-        return this._objectInstance;
+        return this.m_objectInstance;
       }
     }
 
@@ -93,11 +91,11 @@
     {
       get
       {
-        if (this._serviceContainer == null)
+        if (this.m_serviceContainer == null)
         {
-          this._serviceContainer = new ValidationContext.ValidationContextServiceContainer();
+          this.m_serviceContainer = new ValidationContext.ValidationContextServiceContainer();
         }
-        return this._serviceContainer;
+        return this.m_serviceContainer;
       }
     }
 
@@ -128,11 +126,11 @@
         IServiceContainer serviceContainer = serviceProvider as IServiceContainer;
         if (serviceContainer == null)
         {
-          this._serviceContainer = new ValidationContext.ValidationContextServiceContainer();
+          this.m_serviceContainer = new ValidationContext.ValidationContextServiceContainer();
         }
         else
         {
-          this._serviceContainer = new ValidationContext.ValidationContextServiceContainer(serviceContainer);
+          this.m_serviceContainer = new ValidationContext.ValidationContextServiceContainer(serviceContainer);
         }
         if (items == null)
         {
@@ -142,7 +140,7 @@
         {
           this._items = new Dictionary<object, object>(items);
         }
-        this._objectInstance = instance;
+        this.m_objectInstance = instance;
         return;
       }
       else
@@ -167,20 +165,20 @@
     public object GetService(Type serviceType)
     {
       object service = null;
-      if (this._serviceContainer != null)
+      if (this.m_serviceContainer != null)
       {
-        service = this._serviceContainer.GetService(serviceType);
+        service = this.m_serviceContainer.GetService(serviceType);
       }
-      if (service == null && this._serviceProvider != null)
+      if (service == null && this.m_serviceProvider != null)
       {
-        service = this._serviceProvider(serviceType);
+        service = this.m_serviceProvider(serviceType);
       }
       return service;
     }
 
     public void InitializeServiceProvider(Func<Type, object> serviceProvider)
     {
-      this._serviceProvider = serviceProvider;
+      this.m_serviceProvider = serviceProvider;
     }
 
     private class ValidationContextServiceContainer : IServiceContainer, IServiceProvider

@@ -1,6 +1,5 @@
 ﻿namespace Barista.DirectoryServices
 {
-  using System;
   using System.DirectoryServices;
 
   public sealed class ADContext : DirectoryContext

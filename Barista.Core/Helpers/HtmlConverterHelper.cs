@@ -12,6 +12,7 @@
   using System.IO;
   using System.Linq;
   using Image = iTextSharp.text.Image;
+  using Rectangle = System.Drawing.Rectangle;
 
   /// <summary>
   /// Represents helper class that converts Html to various formats
@@ -181,10 +182,9 @@
 
             while (heightOffset < source.Height)
             {
-              System.Drawing.Rectangle sourceRect;
-              sourceRect = heightOffset + (int)(maxImageHeight) > source.Height
-                ? new System.Drawing.Rectangle(0, heightOffset, source.Width, source.Height)
-                : new System.Drawing.Rectangle(0, heightOffset, source.Width, (int)(maxImageHeight));
+              Rectangle sourceRect = heightOffset + (int)(maxImageHeight) > source.Height
+                                       ? new System.Drawing.Rectangle(0, heightOffset, source.Width, source.Height)
+                                       : new System.Drawing.Rectangle(0, heightOffset, source.Width, (int)(maxImageHeight));
 
               using (var target = new System.Drawing.Bitmap(sourceRect.Width, sourceRect.Height))
               {

@@ -262,9 +262,10 @@
 
       if (contentType.ResourceFolder.Files != null)
       {
-        IEnumerable<SPFile> files =
+        var files =
             contentType.ResourceFolder.Files.Cast<SPFile>().Where(f => f.Name == "docsethomepage.aspx");
-        return files.Count() == 0 ? null : files.First();
+        var spFiles = files as IList<SPFile> ?? files.ToList();
+        return !spFiles.Any() ? null : spFiles.First();
       }
 
       return null;

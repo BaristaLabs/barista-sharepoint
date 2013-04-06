@@ -14,8 +14,17 @@
   /// </summary>
   public class DynamicFormatter : IDispatchMessageFormatter
   {
-    public IDispatchMessageFormatter jsonDispatchMessageFormatter { get; set; }
-    public IDispatchMessageFormatter xmlDispatchMessageFormatter { get; set; }
+    public IDispatchMessageFormatter JsonDispatchMessageFormatter
+    {
+      get;
+      set;
+    }
+
+    public IDispatchMessageFormatter XmlDispatchMessageFormatter
+    {
+      get;
+      set;
+    }
 
     public void DeserializeRequest(System.ServiceModel.Channels.Message message, object[] parameters)
     {
@@ -35,22 +44,24 @@
       {
         if (queryString["$format"] == "xml")
         {
-          return xmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+          return XmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
         }
-        else if (queryString["$format"] == "json")
+
+        if (queryString["$format"] == "json")
         {
-          return jsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+          return JsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
         }
       }
       else if (accepts != null)
       {
         if (accepts.Contains("text/xml") || accepts.Contains("application/xml") || queryString["$format"] == "xml")
         {
-          return xmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+          return XmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
         }
-        else if (accepts.Contains("application/json") || queryString["$format"] == "json")
+
+        if (accepts.Contains("application/json") || queryString["$format"] == "json")
         {
-          return jsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+          return JsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
         }
       }
       else
@@ -60,17 +71,18 @@
         {
           if (contentType.Contains("text/xml") || contentType.Contains("application/xml") || queryString["$format"] == "xml")
           {
-            return xmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+            return XmlDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
           }
-          else if (contentType.Contains("application/json") || queryString["$format"] == "json")
+
+          if (contentType.Contains("application/json") || queryString["$format"] == "json")
           {
-            return jsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+            return JsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
           }
         }
       }
 
       //Use JSON by default...
-      return jsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+      return JsonDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
     }
 
   }

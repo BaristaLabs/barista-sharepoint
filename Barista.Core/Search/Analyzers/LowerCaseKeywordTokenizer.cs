@@ -9,30 +9,30 @@
     public LowerCaseKeywordTokenizer(System.IO.TextReader input)
       : base(input)
     {
-      offsetAtt = AddAttribute<IOffsetAttribute>();
-      termAtt = AddAttribute<ITermAttribute>();
+      m_offsetAtt = AddAttribute<IOffsetAttribute>();
+      m_termAtt = AddAttribute<ITermAttribute>();
     }
 
     protected LowerCaseKeywordTokenizer(AttributeSource source, System.IO.TextReader input)
       : base(source, input)
     {
-      offsetAtt = AddAttribute<IOffsetAttribute>();
-      termAtt = AddAttribute<ITermAttribute>();
+      m_offsetAtt = AddAttribute<IOffsetAttribute>();
+      m_termAtt = AddAttribute<ITermAttribute>();
     }
 
     protected LowerCaseKeywordTokenizer(AttributeFactory factory, System.IO.TextReader input)
       : base(factory, input)
     {
-      offsetAtt = AddAttribute<IOffsetAttribute>();
-      termAtt = AddAttribute<ITermAttribute>();
+      m_offsetAtt = AddAttribute<IOffsetAttribute>();
+      m_termAtt = AddAttribute<ITermAttribute>();
     }
 
-    private int offset = 0, bufferIndex = 0, dataLen = 0;
-    private const int IO_BUFFER_SIZE = 4096;
-    private readonly char[] ioBuffer = new char[IO_BUFFER_SIZE];
+    private int m_offset = 0, m_bufferIndex = 0, m_dataLen = 0;
+    private const int IOBufferSize = 4096;
+    private readonly char[] m_ioBuffer = new char[IOBufferSize];
 
-    private readonly ITermAttribute termAtt;
-    private readonly IOffsetAttribute offsetAtt;
+    private readonly ITermAttribute m_termAtt;
+    private readonly IOffsetAttribute m_offsetAtt;
 
     /// <summary>Returns true iff a character should be included in a token.  This
     /// tokenizer generates as tokens adjacent sequences of characters which
@@ -57,26 +57,26 @@
     {
       ClearAttributes();
       int length = 0;
-      int start = bufferIndex;
-      char[] buffer = termAtt.TermBuffer();
+      int start = m_bufferIndex;
+      char[] buffer = m_termAtt.TermBuffer();
       while (true)
       {
 
-        if (bufferIndex >= dataLen)
+        if (m_bufferIndex >= m_dataLen)
         {
-          offset += dataLen;
-          dataLen = input.Read(ioBuffer, 0, ioBuffer.Length);
-          if (dataLen <= 0)
+          m_offset += m_dataLen;
+          m_dataLen = input.Read(m_ioBuffer, 0, m_ioBuffer.Length);
+          if (m_dataLen <= 0)
           {
-            dataLen = 0; // so next offset += dataLen won't decrement offset
+            m_dataLen = 0; // so next offset += dataLen won't decrement offset
             if (length > 0)
               break;
             return false;
           }
-          bufferIndex = 0;
+          m_bufferIndex = 0;
         }
 
-        char c = ioBuffer[bufferIndex++];
+        char c = m_ioBuffer[m_bufferIndex++];
 
         if (IsTokenChar(c))
         {
@@ -84,9 +84,9 @@
 
           if (length == 0)
             // start of token
-            start = offset + bufferIndex - 1;
+            start = m_offset + m_bufferIndex - 1;
           else if (length == buffer.Length)
-            buffer = termAtt.ResizeTermBuffer(1 + length);
+            buffer = m_termAtt.ResizeTermBuffer(1 + length);
 
           buffer[length++] = Normalize(c); // buffer it, normalized
         }
@@ -95,24 +95,24 @@
           break; // return 'em
       }
 
-      termAtt.SetTermLength(length);
-      offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + length));
+      m_termAtt.SetTermLength(length);
+      m_offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + length));
       return true;
     }
 
     public override void End()
     {
       // set final offset
-      int finalOffset = CorrectOffset(offset);
-      offsetAtt.SetOffset(finalOffset, finalOffset);
+      int finalOffset = CorrectOffset(m_offset);
+      m_offsetAtt.SetOffset(finalOffset, finalOffset);
     }
 
     public override void Reset(System.IO.TextReader input)
     {
       base.Reset(input);
-      bufferIndex = 0;
-      offset = 0;
-      dataLen = 0;
+      m_bufferIndex = 0;
+      m_offset = 0;
+      m_dataLen = 0;
     }
   }
 }

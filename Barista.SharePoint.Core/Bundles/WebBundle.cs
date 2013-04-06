@@ -1,4 +1,4 @@
-﻿namespace Barista.Bundles
+﻿namespace Barista.SharePoint.Bundles
 {
   using Barista.Library;
   using Barista.SharePoint.Library;
