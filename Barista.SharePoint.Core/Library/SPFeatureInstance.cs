@@ -20,7 +20,7 @@
     {
       Guid featureGuid = new Guid(featureId);
 
-      var featureQueryResult = BaristaContext.Current.Site.QueryFeatures(featureGuid).OfType<SPFeature>();
+      var featureQueryResult = BaristaContext.Current.Site.QueryFeatures(featureGuid);
       var feature = featureQueryResult.OrderByDescending(f => f.Version).FirstOrDefault();
       
       if (feature == null)
@@ -41,7 +41,7 @@
   [Serializable]
   public class SPFeatureInstance : ObjectInstance
   {
-    private SPFeature m_feature;
+    private readonly SPFeature m_feature;
 
     public SPFeatureInstance(ObjectInstance prototype)
       : base(prototype)

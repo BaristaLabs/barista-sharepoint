@@ -26,7 +26,7 @@
   [Serializable]
   public class SPRecycleBinItemCollectionInstance : ObjectInstance
   {
-    private SPRecycleBinItemCollection m_recycleBinItemCollection;
+    private readonly SPRecycleBinItemCollection m_recycleBinItemCollection;
 
     public SPRecycleBinItemCollectionInstance(ObjectInstance prototype)
       : base(prototype)

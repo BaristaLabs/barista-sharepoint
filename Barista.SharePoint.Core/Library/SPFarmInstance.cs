@@ -1,19 +1,15 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
-  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
-  using Newtonsoft.Json;
 
   [Serializable]
   public class SPFarmInstance : ObjectInstance
   {
     [NonSerialized]
-    private SPFarm m_farm;
+    private readonly SPFarm m_farm;
 
     public SPFarmInstance(ObjectInstance prototype)
       : base(prototype)
@@ -36,7 +32,7 @@
 
       string val = Convert.ToString(m_farm.Properties[key]);
 
-      object result = val;
+      object result;
 
       //Attempt to convert the string into a JSON Object.
       try
@@ -57,7 +53,7 @@
       if (value == null || value == Undefined.Value || value == Null.Value)
         throw new ArgumentNullException("value");
 
-      string stringValue = String.Empty;
+      string stringValue;
       if (value is ObjectInstance)
       {
         stringValue = JSONObject.Stringify(this.Engine, value, null, null);

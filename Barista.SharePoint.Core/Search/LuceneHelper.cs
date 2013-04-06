@@ -5,7 +5,6 @@
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
-  using Lucene.Net.Search.Vectorhighlight;
   using Lucene.Net.Store;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Utilities;

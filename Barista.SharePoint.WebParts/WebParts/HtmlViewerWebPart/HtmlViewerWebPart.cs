@@ -16,27 +16,27 @@
   public class HtmlViewerWebPart : WebPart
   {
     #region Fields
-    private const string _DefaultTargetUrl = "";
-    private const string _DefaultProxyAddress = "";
-    private const string _DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705)";
-    private const int _DefaultTimeout = 60000;
-    private const int _DefaultRetries = 3;
-    private const bool _DefaultConvertRelativeUrlsToAbsolute = false;
-    private const bool _DefaultRenderResultWithinIFrame = false;
-    private const bool _DefaultUseProxy = true;
+    private const string DefaultTargetUrl = "";
+    private const string DefaultProxyAddress = "";
+    private const string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705)";
+    private const int DefaultTimeout = 60000;
+    private const int DefaultRetries = 3;
+    private const bool DefaultConvertRelativeUrlsToAbsolute = false;
+    private const bool DefaultRenderResultWithinIFrame = false;
+    private const bool DefaultUseProxy = true;
     #endregion
 
     #region Constructor
     public HtmlViewerWebPart()
     {
-      this.ConvertRelativeUrlsToAbsolute = _DefaultConvertRelativeUrlsToAbsolute;
-      this.ProxyAddress = _DefaultProxyAddress;
+      this.ConvertRelativeUrlsToAbsolute = DefaultConvertRelativeUrlsToAbsolute;
+      this.ProxyAddress = DefaultProxyAddress;
       this.TargetUrl = String.Empty;
-      this.Timeout = _DefaultTimeout;
-      this.Retries = _DefaultRetries;
-      this.RenderResultWithinIFrame = _DefaultRenderResultWithinIFrame;
-      this.UseProxy = _DefaultUseProxy;
-      this.UserAgent = _DefaultUserAgent;
+      this.Timeout = DefaultTimeout;
+      this.Retries = DefaultRetries;
+      this.RenderResultWithinIFrame = DefaultRenderResultWithinIFrame;
+      this.UseProxy = DefaultUseProxy;
+      this.UserAgent = DefaultUserAgent;
     }
     #endregion
 
@@ -46,7 +46,7 @@
     [WebDescription("True to convert all relative urls to absolute urls in the response.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultConvertRelativeUrlsToAbsolute)]
+    [DefaultValue(DefaultConvertRelativeUrlsToAbsolute)]
     public bool ConvertRelativeUrlsToAbsolute
     {
       get;
@@ -58,7 +58,7 @@
     [WebDescription("Please enter the proxy address to use when making the web request.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultProxyAddress)]
+    [DefaultValue(DefaultProxyAddress)]
     public string ProxyAddress
     {
       get;
@@ -70,7 +70,7 @@
     [WebDescription("True if the result should be contained as the contents of a IFrame - Use this to resove scripting issues.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultRenderResultWithinIFrame)]
+    [DefaultValue(DefaultRenderResultWithinIFrame)]
     public bool RenderResultWithinIFrame
     {
       get;
@@ -82,7 +82,7 @@
     [WebDescription("Please enter the number of retries to attempt.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultRetries)]
+    [DefaultValue(DefaultRetries)]
     public int Retries
     {
       get;
@@ -94,7 +94,7 @@
     [WebDescription("Please enter the url of the web page to retrieve.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultTargetUrl)]
+    [DefaultValue(DefaultTargetUrl)]
     public string TargetUrl
     {
       get;
@@ -106,7 +106,7 @@
     [WebDescription("Please enter time-out in milliseconds to wait for the response.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultTimeout)]
+    [DefaultValue(DefaultTimeout)]
     public int Timeout
     {
       get;
@@ -118,7 +118,7 @@
     [WebDescription("True to use proxy settings.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultUseProxy)]
+    [DefaultValue(DefaultUseProxy)]
     public bool UseProxy
     {
       get;
@@ -130,7 +130,7 @@
     [WebDescription("Please enter the User Agent to use when making the web request.")]
     [Personalizable(PersonalizationScope.Shared)]
     [Category("Settings")]
-    [DefaultValue(_DefaultUserAgent)]
+    [DefaultValue(DefaultUserAgent)]
     public string UserAgent
     {
       get;
@@ -151,7 +151,7 @@
 
       try
       {
-        int retries = _DefaultRetries;
+        int retries = DefaultRetries;
         if (this.Retries > 0)
           retries = this.Retries;
 
@@ -172,7 +172,7 @@ response;",
           else
             code = String.Format(@"
 var web = require(""Web"");
-var response = web.ajax('{0}', { useDefaultCredentials: true, proxy: { useDefaultCredentials: true, address: {1} }});
+var response = web.ajax('{0}', {{ useDefaultCredentials: true, proxy: {{ useDefaultCredentials: true, address: {1} }});
 web.response.contentType = ""text/html"";
 response;",
           this.TargetUrl.Trim(), this.ProxyAddress.Trim());
@@ -210,9 +210,9 @@ response;",
       {
         try
         {
-          HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+          var noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
-          HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(targetUri);
+          var httpWebRequest = (HttpWebRequest)WebRequest.Create(targetUri);
           httpWebRequest.UseDefaultCredentials = true;
           httpWebRequest.Credentials = CredentialCache.DefaultNetworkCredentials;
           httpWebRequest.CachePolicy = noCachePolicy;
@@ -222,16 +222,10 @@ response;",
             httpWebRequest.Timeout = this.Timeout;
           }
 
-          if (String.IsNullOrEmpty(this.UserAgent) == false)
-          {
-            httpWebRequest.UserAgent = this.UserAgent;
-          }
-          else
-          {
-            httpWebRequest.UserAgent = _DefaultUserAgent;
-          }
+          httpWebRequest.UserAgent = String.IsNullOrEmpty(this.UserAgent) == false
+            ? this.UserAgent
+            : DefaultUserAgent;
           
-
           //Use The Default Proxy
           if (this.UseProxy)
           {

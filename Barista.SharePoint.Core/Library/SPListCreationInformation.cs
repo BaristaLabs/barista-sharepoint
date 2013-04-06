@@ -1,10 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
-  using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
   using Microsoft.SharePoint;

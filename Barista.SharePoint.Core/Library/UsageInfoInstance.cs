@@ -1,11 +1,12 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
-  using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
 
+  /// <summary>
+  /// Wraps the SharePoint UsageInfo object -- obtained by SPSite.usageInfo
+  /// </summary>
   [Serializable]
   public class UsageInfoInstance : ObjectInstance
   {

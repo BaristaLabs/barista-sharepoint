@@ -3,6 +3,9 @@
   using Barista.SharePoint.Library;
   using System;
 
+  /// <summary>
+  /// Installs the SharePoint-specific implementation of the Active Directory instance.
+  /// </summary>
   [Serializable]
   public class ActiveDirectoryBundle : IBundle
   {

@@ -18,8 +18,7 @@
     public SPListTemplateInstance Construct(string listTemplateName)
     {
       var template = BaristaContext.Current.Web.ListTemplates.OfType<SPListTemplate>()
-                                           .Where( wt => wt.Name == listTemplateName)
-                                           .FirstOrDefault();
+                                   .FirstOrDefault(wt => wt.Name == listTemplateName);
  
       if (template == null)
         throw new JavaScriptException(this.Engine, "Error", "A list template with the specified name does not exist in the current web.");
@@ -39,7 +38,7 @@
   [Serializable]
   public class SPListTemplateInstance : ObjectInstance
   {
-    private SPListTemplate m_listTemplate;
+    private readonly SPListTemplate m_listTemplate;
 
     public SPListTemplateInstance(ObjectInstance prototype)
       : base(prototype)
@@ -151,7 +150,9 @@
     }
 
     [JSProperty(Name = "type_Client")]
+// ReSharper disable InconsistentNaming
     public int Type_Client
+// ReSharper restore InconsistentNaming
     {
       get { return m_listTemplate.Type_Client; }
     }

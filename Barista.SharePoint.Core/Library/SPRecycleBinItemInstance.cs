@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -26,7 +25,7 @@
   [Serializable]
   public class SPRecycleBinItemInstance : ObjectInstance
   {
-    private SPRecycleBinItem m_recycleBinItem;
+    private readonly SPRecycleBinItem m_recycleBinItem;
 
     public SPRecycleBinItemInstance(ObjectInstance prototype)
       : base(prototype)

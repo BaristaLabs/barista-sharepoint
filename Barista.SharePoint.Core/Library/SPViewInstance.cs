@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using System.Globalization;
   using System.Linq;
   using Jurassic;
   using Jurassic.Library;
@@ -37,7 +38,7 @@
   [Serializable]
   public class SPViewInstance : ObjectInstance
   {
-    private SPView m_view;
+    private readonly SPView m_view;
 
     public SPViewInstance(ObjectInstance prototype)
       : base(prototype)
@@ -305,7 +306,7 @@
     {
       get
       {
-        return m_view.RowLimit.ToString();
+        return m_view.RowLimit.ToString(CultureInfo.InvariantCulture);
       }
       set
       {

@@ -8,16 +8,15 @@
   using System.Linq;
   using System.Runtime.Serialization.Formatters.Binary;
   using System.Text;
-using System.Web;
 
   [Serializable]
   public class UtilInstance : ObjectInstance
   {
-    private static Random s_random = new Random();
-    private static string PASSWORD_CHARS_LCASE = "abcdefghijklmnopqrstuvwxyz";
-    private static string PASSWORD_CHARS_NUMERIC = "0123456789";
-    private static string PASSWORD_CHARS_SPECIAL = "*$-+?_&=!%{}/";
-    private static string PASSWORD_CHARS_WHITESPACE = " \r\n\t\f\v";
+    private static readonly Random RandomInstance = new Random();
+    private const string PasswordCharsLcase = "abcdefghijklmnopqrstuvwxyz";
+    private const string PasswordCharsNumeric = "0123456789";
+    private const string PasswordCharsSpecial = "*$-+?_&=!%{}/";
+    private const string PasswordCharsWhitespace = " \r\n\t\f\v";
 
     [System.Runtime.InteropServices.DllImport("advapi32.dll")]
     public static extern uint EventActivityIdControl(uint controlCode, ref Guid activityId);
@@ -31,7 +30,7 @@ using System.Web;
 
     public static Random Random
     {
-      get { return s_random; }
+      get { return RandomInstance; }
     }
 
     [JSFunction(Name = "randomString")]
@@ -46,19 +45,19 @@ using System.Web;
 
       List<char> validCharList = new List<char>();
       if (allowNumbers)
-        validCharList.AddRange(PASSWORD_CHARS_NUMERIC.ToCharArray());
+        validCharList.AddRange(PasswordCharsNumeric.ToCharArray());
       if (allowLowerCase)
-        validCharList.AddRange(PASSWORD_CHARS_LCASE.ToCharArray());
+        validCharList.AddRange(PasswordCharsLcase.ToCharArray());
       if (allowUpperCase)
-        validCharList.AddRange(PASSWORD_CHARS_LCASE.ToUpper().ToCharArray());
+        validCharList.AddRange(PasswordCharsLcase.ToUpper().ToCharArray());
       if (allowSpecialChars)
-        validCharList.AddRange(PASSWORD_CHARS_SPECIAL.ToCharArray());
+        validCharList.AddRange(PasswordCharsSpecial.ToCharArray());
       if (allowWhitespace)
-        validCharList.AddRange(PASSWORD_CHARS_WHITESPACE.ToCharArray());
+        validCharList.AddRange(PasswordCharsWhitespace.ToCharArray());
 
       while (builder.Length < size)
       {
-        builder.Append(validCharList[s_random.Next(0, validCharList.Count)]);
+        builder.Append(validCharList[RandomInstance.Next(0, validCharList.Count)]);
       }
 
       return builder.ToString();
@@ -121,10 +120,8 @@ using System.Web;
           return result;
         }
       }
-      else
-      {
-        return Null.Value;
-      }
+
+      return Null.Value;
     }
 
     [JSFunction(Name = "replaceJsonReferences")]
@@ -154,16 +151,19 @@ using System.Web;
         if (properties.Count == 1 && properties[0].Name == "$ref" && dictionary.ContainsKey((string)properties[0].Value))
           return dictionary[(string)properties[0].Value];
 
-        var idProperty = properties.Where(p => p.Name == "$id").FirstOrDefault();
+        var idProperty = properties.FirstOrDefault(p => p.Name == "$id");
         if (idProperty != null && dictionary.ContainsKey((string)idProperty.Value) == false)
         {
           var str = JSONObject.Stringify(obj.Engine, obj, null, null);
           var clone = JSONObject.Parse(obj.Engine, str, null) as ObjectInstance;
 
-          if (clone.HasProperty("$id"))
-            clone.Delete("$id", false);
+          if (clone != null)
+          {
+            if (clone.HasProperty("$id"))
+              clone.Delete("$id", false);
 
-          dictionary.Add((string)idProperty.Value, clone);
+            dictionary.Add((string) idProperty.Value, clone);
+          }
         }
 
         foreach (var property in properties)

@@ -37,7 +37,7 @@
   [Serializable]
   public class SPUserInstance : ObjectInstance
   {
-    private SPUser m_user;
+    private readonly SPUser m_user;
 
     public SPUserInstance(ObjectInstance prototype)
       : base(prototype)
@@ -88,7 +88,7 @@
     }
 
     [JSProperty(Name = "isSiteAuditor")]
-    public bool isSiteAdmin
+    public bool IsSiteAuditor
     {
       get { return m_user.IsSiteAuditor; }
     }

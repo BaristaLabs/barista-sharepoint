@@ -1,11 +1,9 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System.Collections.Generic;
   using Barista.Library;
 
   [Serializable]
@@ -28,7 +26,7 @@
   [Serializable]
   public class SPFileVersionInstance : ObjectInstance
   {
-    private SPFileVersion m_fileVersion;
+    private readonly SPFileVersion m_fileVersion;
 
     public SPFileVersionInstance(ObjectInstance prototype)
       : base(prototype)
@@ -114,10 +112,12 @@
     [JSFunction(Name = "openBinary")]
     public Base64EncodedByteArrayInstance OpenBinary()
     {
-      Base64EncodedByteArrayInstance result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, m_fileVersion.OpenBinary());
+      var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, m_fileVersion.OpenBinary())
+        {
+          FileName = m_fileVersion.File.Name,
+          MimeType = StringHelper.GetMimeTypeFromFileName(m_fileVersion.File.Name)
+        };
 
-      result.FileName = m_fileVersion.File.Name;
-      result.MimeType = StringHelper.GetMimeTypeFromFileName(m_fileVersion.File.Name);
       return result;
     }
 

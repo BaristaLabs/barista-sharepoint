@@ -5,8 +5,8 @@
 
   public class SPFileScriptSource : ScriptSource
   {
-    private string m_code;
-    private string m_codePath;
+    private readonly string m_code;
+    private readonly string m_codePath;
 
     public SPFileScriptSource(ScriptEngine engine, string scriptUrl)
     {

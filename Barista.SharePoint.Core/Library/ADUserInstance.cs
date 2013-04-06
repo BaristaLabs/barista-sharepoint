@@ -1,8 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.IO;
-  using System.Web;
   using Jurassic;
   using Jurassic.Library;
   using Barista.DirectoryServices;
@@ -35,7 +33,7 @@
   [Serializable]
   public class ADUserInstance : ObjectInstance
   {
-    private ADUser m_user;
+    private readonly ADUser m_user;
 
     public ADUserInstance(ObjectInstance prototype)
       : base(prototype)
@@ -55,13 +53,17 @@
 
     #region General
     [JSProperty(Name = "rawSid")]
+// ReSharper disable InconsistentNaming
     public object RawsID
+// ReSharper restore InconsistentNaming
     {
       get { return StringHelper.ByteArrayToString((byte[])m_user.RawsID); }
     }
 
     [JSProperty(Name="sId")]
+// ReSharper disable InconsistentNaming
     public object sID
+// ReSharper restore InconsistentNaming
     {
       get { return m_user.sID; }
     }
@@ -131,7 +133,9 @@
     }
 
     [JSProperty(Name="poBox")]
+// ReSharper disable InconsistentNaming
     public string POBox
+// ReSharper restore InconsistentNaming
     {
       get { return m_user.POBox; }
     }
@@ -168,7 +172,9 @@
     }
 
     [JSProperty(Name="preWin2kLogonName")]
+// ReSharper disable InconsistentNaming
     public string PreWin2kLogonName
+// ReSharper restore InconsistentNaming
     {
       get { return m_user.PreWin2kLogonName; }
     }

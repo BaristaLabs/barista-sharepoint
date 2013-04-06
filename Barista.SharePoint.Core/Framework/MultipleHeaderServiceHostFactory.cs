@@ -23,7 +23,7 @@
   public class MultipleHeaderServiceHost : ServiceHost
   {
     // Fields
-    private Uri[] m_baseAddresses;
+    private readonly Uri[] m_baseAddresses;
 
     // Methods
     public MultipleHeaderServiceHost(Type serviceType, params Uri[] baseAddresses)
@@ -34,22 +34,22 @@
 
     private void CreateEndpoints()
     {
-      Type contractType = ServiceUtility.GetContractType(base.ImplementedContracts);
+      Type contractType = ServiceUtility.GetContractType(ImplementedContracts);
       AuthenticationSchemes oneAuthScheme;
-      AuthenticationSchemes allAuthenticationSchemes = ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
+      ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
       foreach (Uri baseAddress in this.m_baseAddresses)
       {
-        BasicHttpBinding binding = new BasicHttpBinding()
-        {
+        BasicHttpBinding binding = new BasicHttpBinding
+          {
           AllowCookies = true,
           ReceiveTimeout = TimeSpan.FromHours(1),
           SendTimeout = TimeSpan.FromHours(1),
           OpenTimeout = TimeSpan.FromHours(1),
           CloseTimeout = TimeSpan.FromHours(1),
           MaxReceivedMessageSize = int.MaxValue,
-          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas()
-          {
+          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
+            {
             MaxArrayLength = int.MaxValue,
             MaxBytesPerRead = 2048,
             MaxDepth = int.MaxValue,
@@ -75,29 +75,34 @@
           binding.Security.Mode = BasicHttpSecurityMode.None;
         }
         binding.Security.Transport.ClientCredentialType = ServiceUtility.ClientCredentialTypeFromAuthenticationScheme(oneAuthScheme);
-        ServiceEndpoint endpoint = AddServiceEndpoint(contractType, binding, baseAddress);
+        AddServiceEndpoint(contractType, binding, baseAddress);
 
         if ((Description.ServiceType != null) && Attribute.IsDefined(Description.ServiceType, typeof(BinaryEndpointBehaviorAttribute), true))
         {
           var binaryEndpointBehaviorAttribute = Attribute.GetCustomAttribute(Description.ServiceType, typeof(BinaryEndpointBehaviorAttribute), true) as BinaryEndpointBehaviorAttribute;
 
-          NetTcpBinding binaryBinding = new NetTcpBinding()
+          if (binaryEndpointBehaviorAttribute != null)
           {
-            ReceiveTimeout = TimeSpan.FromHours(1),
-            SendTimeout = TimeSpan.FromHours(1),
-            OpenTimeout = TimeSpan.FromHours(1),
-            CloseTimeout = TimeSpan.FromHours(1),
-            MaxReceivedMessageSize = int.MaxValue,
-          };
+            var binaryBinding = new NetTcpBinding
+              {
+                ReceiveTimeout = TimeSpan.FromHours(1),
+                SendTimeout = TimeSpan.FromHours(1),
+                OpenTimeout = TimeSpan.FromHours(1),
+                CloseTimeout = TimeSpan.FromHours(1),
+                MaxReceivedMessageSize = int.MaxValue,
+              };
 
-          binaryBinding.Security.Mode = SecurityMode.Transport;
-          binaryBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+            binaryBinding.Security.Mode = SecurityMode.Transport;
+            binaryBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
-          UriBuilder builder = new UriBuilder(baseAddress.ToString());
-          builder.Scheme = "net.tcp";
-          builder.Port = binaryEndpointBehaviorAttribute.PortNumber;
+            var builder = new UriBuilder(baseAddress.ToString())
+              {
+                Scheme = "net.tcp",
+                Port = binaryEndpointBehaviorAttribute.PortNumber
+              };
 
-          ServiceEndpoint binaryEndpoint = AddServiceEndpoint(contractType, binaryBinding, builder.Uri);
+            AddServiceEndpoint(contractType, binaryBinding, builder.Uri);
+          }
         }
 
         //Add a MEX endpoint if the attribute is defined on the service type.
@@ -117,15 +122,18 @@
 
       if (this.Description.Behaviors.Find<ServiceDebugBehavior>() == null)
       {
-        ServiceDebugBehavior item = new ServiceDebugBehavior();
-        item.IncludeExceptionDetailInFaults = true;
+        var item = new ServiceDebugBehavior {
+          IncludeExceptionDetailInFaults = true
+        };
         this.Description.Behaviors.Add(item);
       }
 
       if (this.Description.Behaviors.Find<ServiceAuthorizationBehavior>() == null)
       {
-        ServiceAuthorizationBehavior item = new ServiceAuthorizationBehavior();
-        item.ImpersonateCallerForAllOperations = true;
+        var item = new ServiceAuthorizationBehavior
+        {
+          ImpersonateCallerForAllOperations = true
+        };
         this.Description.Behaviors.Add(item);
       }
       else
@@ -135,8 +143,10 @@
 
       if (this.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
       {
-        ServiceMetadataBehavior item = new ServiceMetadataBehavior();
-        item.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+        var item = new ServiceMetadataBehavior
+          {
+            MetadataExporter = {PolicyVersion = PolicyVersion.Policy15}
+          };
         this.Description.Behaviors.Add(item);
       }
       else

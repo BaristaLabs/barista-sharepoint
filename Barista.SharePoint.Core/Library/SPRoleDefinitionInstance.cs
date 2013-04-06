@@ -18,9 +18,7 @@
     public SPRoleDefinitionInstance Construct(string name)
     {
       var roleDefinition = BaristaContext.Current.Web.RoleDefinitions
-                                                .OfType<SPRoleDefinition>()
-                                                .Where(rd => rd.Name == name)
-                                                .FirstOrDefault();
+                                         .OfType<SPRoleDefinition>().FirstOrDefault(rd => rd.Name == name);
 
       if (roleDefinition == null)
         throw new JavaScriptException(this.Engine, "Error", "A role definition with the specified name does not exist on the current web.");
@@ -40,7 +38,7 @@
   [Serializable]
   public class SPRoleDefinitionInstance : ObjectInstance
   {
-    private SPRoleDefinition m_roleDefinition;
+    private readonly SPRoleDefinition m_roleDefinition;
 
     public SPRoleDefinitionInstance(ObjectInstance prototype)
       : base(prototype)

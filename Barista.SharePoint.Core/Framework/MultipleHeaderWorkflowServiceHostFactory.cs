@@ -103,7 +103,7 @@
     {
       Type contractType = ServiceUtility.GetContractType(ImplementedContracts);
       AuthenticationSchemes oneAuthScheme;
-      AuthenticationSchemes allAuthenticationSchemes = ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
+      ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
       foreach (Uri baseAddress in this.m_baseAddresses)
       {
@@ -142,7 +142,7 @@
           binding.Security.Mode = BasicHttpSecurityMode.None;
         }
         binding.Security.Transport.ClientCredentialType = ServiceUtility.ClientCredentialTypeFromAuthenticationScheme(oneAuthScheme);
-        ServiceEndpoint endpoint = this.AddServiceEndpoint(contractType, binding, baseAddress);
+        this.AddServiceEndpoint(contractType, binding, baseAddress);
         ServiceUtility.EnableMetadataExchange(this, baseAddress, oneAuthScheme, true);
 
         //TODO: Add a REST endpoint (Workflow instantiated/consumed by a REST based client = AWESOME!)

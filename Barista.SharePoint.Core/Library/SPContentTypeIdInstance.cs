@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -66,10 +65,11 @@
     {
       if (id is string)
         return m_contentTypeId.IsParentOf(new SPContentTypeId(id as string));
-      else if (id is SPContentTypeIdInstance)
+      
+      if (id is SPContentTypeIdInstance)
         return m_contentTypeId.IsParentOf((id as SPContentTypeIdInstance).m_contentTypeId);
-      else
-        return false;
+      
+      return false;
     }
 
     [JSFunction(Name = "isChildOf")]
@@ -77,12 +77,13 @@
     {
       if (id is string)
         return m_contentTypeId.IsChildOf(new SPContentTypeId(id as string));
-      else if (id is SPContentTypeIdInstance)
+      
+      if (id is SPContentTypeIdInstance)
         return m_contentTypeId.IsChildOf((id as SPContentTypeIdInstance).m_contentTypeId);
-      else
-        return false;
+      
+      return false;
     }
-    
+
     [JSFunction(Name = "toString")]
     public override string ToString()
     {

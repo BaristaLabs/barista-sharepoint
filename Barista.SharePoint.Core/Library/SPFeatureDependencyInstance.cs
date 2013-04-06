@@ -1,11 +1,9 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using Microsoft.SharePoint.Administration;
 
   [Serializable]
   public class SPFeatureDependencyConstructor : ClrFunction
@@ -27,7 +25,7 @@
   [Serializable]
   public class SPFeatureDependencyInstance : ObjectInstance
   {
-    private SPFeatureDependency m_featureDependency;
+    private readonly SPFeatureDependency m_featureDependency;
 
     public SPFeatureDependencyInstance(ObjectInstance prototype)
       : base(prototype)

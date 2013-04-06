@@ -8,12 +8,12 @@
   {
     public string BundleName
     {
-      get { return "SPSearch"; }
+      get { return "Barista Search"; }
     }
 
     public string BundleDescription
     {
-      get { return "SPSearch Bundle. Provides search functionality via Lucene within SharePoint."; }
+      get { return "Barista Search Bundle. Provides Information Retrieval functionality via Lucene within SharePoint."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)

@@ -19,7 +19,7 @@
     public SPFeatureDefinitionInstance Construct(string featureId)
     {
       Guid featureGuid = new Guid(featureId);
-      var featureDefinition = SPFarm.Local.FeatureDefinitions.OfType<SPFeatureDefinition>().Where(fd => fd.Id == featureGuid).FirstOrDefault();
+      var featureDefinition = SPFarm.Local.FeatureDefinitions.FirstOrDefault(fd => fd.Id == featureGuid);
       
       if (featureDefinition == null)
         throw new JavaScriptException(this.Engine, "Error", "A feature with the specified id is not installed in the farm.");
@@ -39,7 +39,7 @@
   [Serializable]
   public class SPFeatureDefinitionInstance : ObjectInstance
   {
-    private SPFeatureDefinition m_featureDefinition;
+    private readonly SPFeatureDefinition m_featureDefinition;
 
     public SPFeatureDefinitionInstance(ObjectInstance prototype)
       : base(prototype)

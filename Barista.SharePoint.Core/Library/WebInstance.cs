@@ -6,6 +6,9 @@
   using Jurassic.Library;
   using Barista.Library;
 
+  /// <summary>
+  /// Represents a SharePoint-specific implementation of a WebInstance.
+  /// </summary>
   public class WebInstance : WebInstanceBase
   {
     private HttpRequestInstance m_httpRequest;

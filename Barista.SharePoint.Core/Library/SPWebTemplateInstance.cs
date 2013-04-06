@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using System.Globalization;
   using System.Linq;
   using Jurassic;
   using Jurassic.Library;
@@ -18,9 +19,7 @@
     public SPWebTemplateInstance Construct(string templateName)
     {
       var template = BaristaContext.Current.Site.GetWebTemplates((uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID)
-                                           .OfType<SPWebTemplate>()
-                                           .Where( wt => wt.Title == templateName)
-                                           .FirstOrDefault();
+                                   .OfType<SPWebTemplate>().FirstOrDefault(wt => wt.Title == templateName);
  
       if (template == null)
         throw new JavaScriptException(this.Engine, "Error", "A web template with the specified name does not exist in the current site collection.");
@@ -40,7 +39,7 @@
   [Serializable]
   public class SPWebTemplateInstance : ObjectInstance
   {
-    private SPWebTemplate m_webTemplate;
+    private readonly SPWebTemplate m_webTemplate;
 
     public SPWebTemplateInstance(ObjectInstance prototype)
       : base(prototype)
@@ -125,7 +124,7 @@
     [JSProperty(Name = "lcid")]
     public string Lcid
     {
-      get { return m_webTemplate.Lcid.ToString(); }
+      get { return m_webTemplate.Lcid.ToString(CultureInfo.InvariantCulture); }
     }
 
     [JSProperty(Name = "name")]

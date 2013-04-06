@@ -24,7 +24,7 @@
   [Guid("B7D45781-D64D-4B23-ABA3-33398DB1249B")]
   public class BaristaDiagnosticsService : SPDiagnosticsServiceBase
   {
-    private static string DiagnosticsAreaName = "Barista";
+    private const string DiagnosticsAreaName = "Barista";
 
     public BaristaDiagnosticsService()
     {

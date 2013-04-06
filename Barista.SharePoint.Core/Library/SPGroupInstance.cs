@@ -39,7 +39,7 @@
   [Serializable]
   public class SPGroupInstance : ObjectInstance
   {
-    private SPGroup m_group;
+    private readonly SPGroup m_group;
 
     public SPGroupInstance(ObjectInstance prototype)
       : base(prototype)
@@ -284,11 +284,13 @@
     [JSFunction(Name = "setDistributionGroupArchives")]
     public void SetDistributionGroupArchives(ArrayInstance lists)
     {
-      List<SPList> m_lists = new List<SPList>();
-      for (int i = 0; i < lists.Length; i++)
-      {
-        m_group.SetDistributionGroupArchives(m_lists.AsReadOnly(), null);
-      }
+      var strongLists = lists.ElementValues
+                             .OfType<SPListInstance>()
+                             .Select(l => l.List)
+                             .ToList()
+                             .AsReadOnly();
+
+      m_group.SetDistributionGroupArchives(strongLists, null);
     }
 
     [JSFunction(Name = "update")]

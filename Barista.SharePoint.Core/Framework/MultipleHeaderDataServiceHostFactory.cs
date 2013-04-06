@@ -2,10 +2,8 @@
 {
   using System;
   using System.Data.Services;
-  using System.Diagnostics;
   using System.ServiceModel;
   using System.ServiceModel.Description;
-  using Microsoft.SharePoint.Client.Services;
   using System.Net;
 
   public class MultipleHeaderDataServiceHostFactory : DataServiceHostFactory
@@ -20,7 +18,7 @@
   public class MultipleHeaderDataServiceHost : DataServiceHost
   {
     // Fields
-    private Uri[] m_baseAddresses;
+    private readonly Uri[] m_baseAddresses;
 
     // Methods
     public MultipleHeaderDataServiceHost(Type serviceType, params Uri[] baseAddresses)
@@ -31,22 +29,22 @@
 
     private void CreateEndpoints()
     {
-      Type contractType = ServiceUtility.GetContractType(base.ImplementedContracts);
+      Type contractType = ServiceUtility.GetContractType(ImplementedContracts);
       AuthenticationSchemes oneAuthScheme;
-      AuthenticationSchemes allAuthenticationSchemes = ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
+      ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
       foreach (Uri baseAddress in this.m_baseAddresses)
       {
-        WebHttpBinding binding = new WebHttpBinding()
-        {
+        WebHttpBinding binding = new WebHttpBinding
+          {
           AllowCookies = true,
           ReceiveTimeout = TimeSpan.FromHours(1),
           SendTimeout = TimeSpan.FromHours(1),
           OpenTimeout = TimeSpan.FromHours(1),
           CloseTimeout = TimeSpan.FromHours(1),
           MaxReceivedMessageSize = int.MaxValue,
-          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas()
-          {
+          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
+            {
             MaxArrayLength = int.MaxValue,
             MaxBytesPerRead = 2048,
             MaxDepth = int.MaxValue,
@@ -86,15 +84,19 @@
 
       if (this.Description.Behaviors.Find<ServiceDebugBehavior>() == null)
       {
-        ServiceDebugBehavior item = new ServiceDebugBehavior();
-        item.IncludeExceptionDetailInFaults = true;
+        ServiceDebugBehavior item = new ServiceDebugBehavior
+        {
+          IncludeExceptionDetailInFaults = true
+        };
         this.Description.Behaviors.Add(item);
       }
 
       if (this.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
       {
-        ServiceMetadataBehavior item = new ServiceMetadataBehavior();
-        item.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+        ServiceMetadataBehavior item = new ServiceMetadataBehavior
+          {
+            MetadataExporter = {PolicyVersion = PolicyVersion.Policy15}
+          };
         this.Description.Behaviors.Add(item);
       }
       else

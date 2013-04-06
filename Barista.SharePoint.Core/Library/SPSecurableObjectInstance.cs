@@ -9,7 +9,7 @@
   [Serializable]
   public class SPSecurableObjectInstance : ObjectInstance
   {
-    private SPSecurableObject m_securableObject;
+    private readonly SPSecurableObject m_securableObject;
 
     public SPSecurableObjectInstance(ObjectInstance prototype)
       : base(prototype)

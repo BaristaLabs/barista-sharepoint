@@ -22,7 +22,7 @@
   public class MultipleHeaderWebServiceHost : WebServiceHost
   {
     // Fields
-    private Uri[] m_baseAddresses;
+    private readonly Uri[] m_baseAddresses;
 
     // Methods
     public MultipleHeaderWebServiceHost(Type serviceType, params Uri[] baseAddresses)
@@ -34,12 +34,12 @@
     private void CreateEndpoints()
     {
       AuthenticationSchemes oneAuthScheme;
-      AuthenticationSchemes allAuthenticationSchemes = ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
+      ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
       foreach (Uri baseAddress in this.m_baseAddresses)
       {
-        WebHttpBinding binding = new WebHttpBinding()
-        {
+        var binding = new WebHttpBinding
+          {
           AllowCookies = true,
           ReceiveTimeout = TimeSpan.FromHours(1),
           SendTimeout = TimeSpan.FromHours(1),
@@ -47,8 +47,8 @@
           CloseTimeout = TimeSpan.FromHours(1),
           MaxReceivedMessageSize = int.MaxValue,
           TransferMode = TransferMode.Streamed,
-          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas()
-          {
+          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
+            {
             MaxArrayLength = int.MaxValue,
             MaxBytesPerRead = 2048,
             MaxDepth = int.MaxValue,
@@ -77,16 +77,16 @@
         binding.Security.Transport.ClientCredentialType = ServiceUtility.ClientCredentialTypeFromAuthenticationScheme(oneAuthScheme);
 
         //Set the content type mapper on the binding to return raw elements (for json.)
-        CustomBinding cb = new CustomBinding(binding);
-        var webMEBE = cb.Elements.Find<WebMessageEncodingBindingElement>();
+        var cb = new CustomBinding(binding);
+        var webMebe = cb.Elements.Find<WebMessageEncodingBindingElement>();
 
         var rawMapper = new RawMapper();
         if (this.Description.Behaviors.Find<RawJsonRequestBehaviorAttribute>() != null)
           rawMapper.UseRawForJson = true;
 
-        webMEBE.ContentTypeMapper = rawMapper;
+        webMebe.ContentTypeMapper = rawMapper;
 
-        Type contractType = ServiceUtility.GetContractType(base.ImplementedContracts);
+        Type contractType = ServiceUtility.GetContractType(ImplementedContracts);
         AddServiceEndpoint(contractType, cb, baseAddress);
       }
     }
@@ -109,22 +109,28 @@
 
       if (this.Description.Behaviors.Find<ServiceDebugBehavior>() == null)
       {
-        ServiceDebugBehavior item = new ServiceDebugBehavior();
-        item.IncludeExceptionDetailInFaults = true;
+        var item = new ServiceDebugBehavior
+        {
+          IncludeExceptionDetailInFaults = true
+        };
         this.Description.Behaviors.Add(item);
       }
 
       if (this.Description.Behaviors.Find<ServiceAuthorizationBehavior>() == null)
       {
-        ServiceAuthorizationBehavior item = new ServiceAuthorizationBehavior();
-        item.ImpersonateCallerForAllOperations = true;
+        var item = new ServiceAuthorizationBehavior
+        {
+          ImpersonateCallerForAllOperations = true
+        };
         this.Description.Behaviors.Add(item);
       }
 
       if (this.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
       {
-        ServiceMetadataBehavior item = new ServiceMetadataBehavior();
-        item.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
+        var item = new ServiceMetadataBehavior
+          {
+            MetadataExporter = {PolicyVersion = PolicyVersion.Policy15}
+          };
         this.Description.Behaviors.Add(item);
       }
       else
@@ -148,12 +154,14 @@
       {
         if (String.IsNullOrEmpty(contentType))
           return WebContentFormat.Default;
-        else if (IsJsonContentType(contentType) && UseRawForJson == false)
+        
+        if (IsJsonContentType(contentType) && UseRawForJson == false)
           return WebContentFormat.Json;
-        else if (IsXmlContentType(contentType))
+        
+        if (IsXmlContentType(contentType))
           return WebContentFormat.Xml;
-        else
-          return WebContentFormat.Raw;
+        
+        return WebContentFormat.Raw;
       }
 
       private bool IsJsonContentType(string contentType)

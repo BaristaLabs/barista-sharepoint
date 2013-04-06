@@ -34,7 +34,7 @@
   [Serializable]
   public class SPListItemCollectionPositionInstance : ObjectInstance
   {
-    private SPListItemCollectionPosition m_position;
+    private readonly SPListItemCollectionPosition m_position;
 
     public SPListItemCollectionPositionInstance(ObjectInstance prototype)
       : base(prototype)

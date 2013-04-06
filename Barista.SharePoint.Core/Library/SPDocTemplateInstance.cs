@@ -18,9 +18,8 @@
     public SPDocTemplateInstance Construct(int type)
     {
       var docTemplate = BaristaContext.Current.Web.DocTemplates
-                                             .OfType<SPDocTemplate>()
-                                             .Where(dt => dt.Type == type)
-                                             .FirstOrDefault();
+                                      .OfType<SPDocTemplate>()
+                                      .FirstOrDefault(dt => dt.Type == type);
 
       if (docTemplate == null)
         throw new JavaScriptException(this.Engine, "Error", "A document template with the specified type id does not exist on the current web.");
@@ -40,7 +39,7 @@
   [Serializable]
   public class SPDocTemplateInstance : ObjectInstance
   {
-    private SPDocTemplate m_docTemplate;
+    private readonly SPDocTemplate m_docTemplate;
 
     public SPDocTemplateInstance(ObjectInstance prototype)
       : base(prototype)

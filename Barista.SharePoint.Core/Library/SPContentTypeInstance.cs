@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -39,7 +38,7 @@
   [Serializable]
   public class SPContentTypeInstance : ObjectInstance
   {
-    private SPContentType m_contentType;
+    private readonly SPContentType m_contentType;
 
     public SPContentTypeInstance(ObjectInstance prototype)
       : base(prototype)

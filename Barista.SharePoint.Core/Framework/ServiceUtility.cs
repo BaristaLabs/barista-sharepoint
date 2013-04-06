@@ -7,8 +7,6 @@
   using System.ServiceModel;
   using System.ServiceModel.Description;
   using System.Web;
-  using System.Configuration;
-  using System.ServiceModel.Configuration;
   using System.ServiceModel.Channels;
 
   public static class ServiceUtility
@@ -31,7 +29,7 @@
       {
         var currentHostName = HttpContext.Current.Request.Url.Host;
 
-        result = baseAddresses.Where(item => String.Compare(item.Host, currentHostName, true) == 0).FirstOrDefault();
+        result = baseAddresses.FirstOrDefault(item => String.Compare(item.Host, currentHostName, StringComparison.OrdinalIgnoreCase) == 0);
       }
 
       //Attempt to find the fully qualified host name
@@ -39,20 +37,23 @@
       {
         var fullyQualifiedHostName = System.Net.Dns.GetHostEntry("").HostName;
 
-        result = baseAddresses.Where(item => String.Compare(item.Host, fullyQualifiedHostName, true) == 0).FirstOrDefault();
+        result = baseAddresses.FirstOrDefault(item => String.Compare(item.Host, fullyQualifiedHostName, StringComparison.OrdinalIgnoreCase) == 0);
       }
 
       if (result == null)
         return null;
 
-      return new Uri[1] { result };
+      return new[] { result };
     }
 
     public static void ConfigureServiceHost()
     {
-      Configuration config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
-      ServiceModelSectionGroup serviceModelGroup = System.ServiceModel.Configuration.ServiceModelSectionGroup.GetSectionGroup(config);
-      serviceModelGroup.ServiceHostingEnvironment.AspNetCompatibilityEnabled = true;
+      var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+
+      var serviceModelGroup = System.ServiceModel.Configuration.ServiceModelSectionGroup.GetSectionGroup(config);
+
+      if (serviceModelGroup != null)
+        serviceModelGroup.ServiceHostingEnvironment.AspNetCompatibilityEnabled = true;
     }
 
     /// <summary>
@@ -65,9 +66,8 @@
         throw new InvalidOperationException("Host is already opened");
       }
 
-      ServiceMetadataBehavior metadataBehavior;
-      metadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
-      Uri address = new Uri(baseAddress, "/" + baseAddress.GetComponents(UriComponents.Path, UriFormat.Unescaped) + "/mex");
+      var metadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+      var address = new Uri(baseAddress, "/" + baseAddress.GetComponents(UriComponents.Path, UriFormat.Unescaped) + "/mex");
 
       if (metadataBehavior == null)
       {
@@ -106,7 +106,7 @@
 
     public static HttpClientCredentialType ClientCredentialTypeFromAuthenticationScheme(AuthenticationSchemes oneAuthScheme)
     {
-      HttpClientCredentialType none = HttpClientCredentialType.None;
+      const HttpClientCredentialType none = HttpClientCredentialType.None;
       switch (oneAuthScheme)
       {
         case AuthenticationSchemes.Digest:
@@ -138,7 +138,7 @@
       Dictionary<string, Uri> dictionary = new Dictionary<string, Uri>();
 
       if (baseAddresses == null)
-        throw new ArgumentNullException("No base addresses were supplied.");
+        throw new ArgumentNullException("baseAddresses", @"No base addresses were supplied.");
 
       foreach (Uri uri in baseAddresses)
       {
@@ -158,12 +158,7 @@
 
     public static Type GetContractType(IDictionary<string, ContractDescription> implementedContracts)
     {
-      foreach (ContractDescription description in implementedContracts.Values)
-      {
-        return description.ContractType;
-      }
-      return null;
+      return implementedContracts.Values.Select(description => description.ContractType).FirstOrDefault();
     }
-
   }
 }
