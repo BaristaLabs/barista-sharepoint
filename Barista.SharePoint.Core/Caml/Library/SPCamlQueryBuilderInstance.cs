@@ -1,7 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System.Linq;
-  using Barista.Linq2Rest;
+  using Barista.Imports.Linq2Rest;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -75,7 +75,7 @@
       if (queryParameters.ContainsKey(StringConstants.TopParameter))
         top = queryParameters[StringConstants.TopParameter];
 
-      var parser = new Barista.Linq2Rest.Parser.ParameterParser<SPListItem>();
+      var parser = new Barista.Imports.Linq2Rest.Parser.ParameterParser<SPListItem>();
       var filterExpression = parser.FilterExpressionFactory.Create<SPListItem>(filter);
       var sortDescriptions = parser.SortExpressionFactory.Create<SPListItem>(orderByField);
 

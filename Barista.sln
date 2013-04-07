@@ -32,10 +32,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D414-49D6-900A-8F7C0912C655}"
 	ProjectSection(SolutionItems) = preProject
 		Lib\Barista.Interop.ActiveDs.dll = Lib\Barista.Interop.ActiveDs.dll
-		Lib\ICSharpCode.SharpZipLib.dll = Lib\ICSharpCode.SharpZipLib.dll
-		Lib\Lucene.Net.dll = Lib\Lucene.Net.dll
-		Lib\Lucene.Net.pdb = Lib\Lucene.Net.pdb
-		Lib\Lucene.Net.XML = Lib\Lucene.Net.XML
 		Lib\Microsoft.TeamFoundation.Client.dll = Lib\Microsoft.TeamFoundation.Client.dll
 		Lib\Microsoft.TeamFoundation.Common.dll = Lib\Microsoft.TeamFoundation.Common.dll
 		Lib\Microsoft.TeamFoundation.Common.xml = Lib\Microsoft.TeamFoundation.Common.xml
@@ -49,34 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lucene Contrib", "Lucene Contrib", "{81791AE6-02EB-46E1-A8DF-D197A2500D07}"
-	ProjectSection(SolutionItems) = preProject
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Analyzers.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Core.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Core.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Core.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.FastVectorHighlighter.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Highlighter.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Memory.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Queries.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Regex.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SimpleFacetedSearch.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Snowball.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.NTS.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.Spatial.pdb
-		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.dll
-		Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb = Lib\Lucene Contrib\Lucene.Net.Contrib.SpellChecker.pdb
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0384B6AA-AF6D-45DC-A583-C87DF988372A}"
 	ProjectSection(SolutionItems) = preProject
@@ -132,6 +100,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 		Scripts\UninstallBaristaServiceApplication.ps1 = Scripts\UninstallBaristaServiceApplication.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 10
@@ -139,6 +109,7 @@ Global
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = Barista.Core\\Barista.Core.csproj
+		SccProjectTopLevelParentUniqueName1 = Barista.sln
 		SccProjectName1 = Barista.Core
 		SccLocalPath1 = Barista.Core
 		SccProjectUniqueName2 = Barista.SharePoint.WebParts\\Barista.SharePoint.WebParts.csproj
@@ -154,6 +125,7 @@ Global
 		SccProjectName4 = Barista.UnitTests.Jurassic
 		SccLocalPath4 = Barista.UnitTests.Jurassic
 		SccProjectUniqueName5 = Barista.WebKit\\Barista.WebKit.csproj
+		SccProjectTopLevelParentUniqueName5 = Barista.sln
 		SccProjectName5 = Barista.WebKit
 		SccLocalPath5 = Barista.WebKit
 		SccProjectUniqueName6 = Barista.SharePoint.Core\\Barista.SharePoint.Core.csproj
@@ -231,9 +203,10 @@ Global
 		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{E2F2E77D-5F2F-4B96-88C0-A42845185B92} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
-		{81791AE6-02EB-46E1-A8DF-D197A2500D07} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
+		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
+		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 	EndGlobalSection
 EndGlobal

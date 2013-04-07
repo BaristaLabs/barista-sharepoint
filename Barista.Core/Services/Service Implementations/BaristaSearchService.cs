@@ -1,9 +1,11 @@
 ﻿namespace Barista.Services
 {
+  using System.Collections;
   using System.Collections.Generic;
   using System.Diagnostics;
   using System.Linq;
   using Barista.Extensions;
+  using Barista.Imports.Linq2Rest.Parser;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
@@ -18,7 +20,9 @@
   using System.Collections.Concurrent;
   using System.IO;
   using System.ServiceModel;
+  using Barista.Imports.Linq2Rest;
   using Version = Lucene.Net.Util.Version;
+  using System.Web;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public class BaristaSearchService : IBaristaSearch, IDisposable
@@ -47,6 +51,11 @@
       }
     }
 
+    /// <summary>
+    /// Deletes the documents that have the specified document ids
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="keys"></param>
     public void DeleteDocuments(DirectoryDefinition definition, IEnumerable<string> keys)
     {
       var index = GetOrAddIndex(definition, true);
@@ -66,21 +75,32 @@
     /// Indexes the specified document.
     /// </summary>
     /// <param name="definition"></param>
+    /// <param name="documentId"></param>
     /// <param name="document"></param>
-    public void IndexDocument(DirectoryDefinition definition, Document document)
+    public void IndexDocument(DirectoryDefinition definition, string documentId, Document document)
     {
+      if (documentId.IsNullOrWhiteSpace())
+        throw new ArgumentNullException("documentId", @"A document id must be specified.");
+
       if (document == null)
-        throw new InvalidOperationException("A document must be specified.");
+        throw new ArgumentNullException("document", @"A document must be specified.");
 
       var index = GetOrAddIndex(definition, true);
 
       try
       {
         //Add it to the index.
-        throw new NotImplementedException();
-        //var batch = new IndexingBatch();
-        //batch.Add(document, false);
-        //index.IndexDocuments(batch);
+        var luceneDocument = Document.ConvertToLuceneDocument(document);
+
+        var batch = new IndexingBatch();
+        batch.Add(new BatchedDocument
+          {
+            DocumentId = documentId,
+            Document = luceneDocument,
+            SkipDeleteFromIndex = false,
+          });
+
+        index.IndexDocuments(batch);
       }
       catch (OutOfMemoryException)
       {
@@ -98,9 +118,17 @@
       if (document == null)
         throw new ArgumentNullException("document", @"A document must be specified.");
 
+      if (document.DocumentId.IsNullOrWhiteSpace())
+        throw new InvalidOperationException(@"The json document must specify a document id.");
+
       IndexJsonDocuments(definition, new List<JsonDocument> { document });
     }
 
+    /// <summary>
+    /// Indexes the specified documents.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="documents"></param>
     public void IndexJsonDocuments(DirectoryDefinition definition, IEnumerable<JsonDocument> documents)
     {
       if (documents == null)
@@ -119,17 +147,24 @@
         var batch = new IndexingBatch();
 
         //Attempt to create a new Search.JsonDocument from the document
-        foreach (var searchDocument in jsonDocuments.Select(document => new Search.JsonDocument
+        var searchJsonDocuments = jsonDocuments.Select(document => new Search.JsonDocument
           {
             DocumentId = document.DocumentId,
             Metadata = document.MetadataAsJson.IsNullOrWhiteSpace() == false
                          ? JObject.Parse(document.MetadataAsJson)
                          : new JObject(),
             DataAsJson = JObject.Parse(document.DataAsJson)
-          }))
+          });
+
+        var luceneDocuments =
+          JsonDocumentToLuceneDocumentConverter.ConvertJsonDocumentToLuceneDocument(index.IndexDefinition,
+                                                                                    searchJsonDocuments);
+
+        foreach (var luceneDocument in luceneDocuments)
         {
-          batch.Add(searchDocument, false);
+          batch.Add(luceneDocument);
         }
+
         //TODO: Add the batch to a BlockingCollection<IndexingBatch> and run a thread that consumes the batches
         //See http://www.codethinked.com/blockingcollection-and-iproducerconsumercollection
         index.IndexDocuments(batch);
@@ -140,6 +175,12 @@
       }
     }
 
+    /// <summary>
+    /// Retrieves the document with the corresponding document id.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="documentId"></param>
+    /// <returns></returns>
     public JsonDocument Retrieve(DirectoryDefinition definition, string documentId)
     {
       var index = GetOrAddIndex(definition, false);
@@ -163,6 +204,14 @@
       }
     }
 
+    /// <summary>
+    /// Returns documents that match the specified lucene query, limiting to the specified number of items.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="defaultField"></param>
+    /// <param name="query"></param>
+    /// <param name="maxResults"></param>
+    /// <returns></returns>
     public IList<SearchResult> Search(DirectoryDefinition definition, string defaultField, string query, int maxResults)
     {
       var index = GetOrAddIndex(definition, false);
@@ -178,9 +227,36 @@
       }
     }
 
-    public IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, IDictionary<string, string> filterParameters)
+    /// <summary>
+    /// Returns documents that matche the specified OData-based query.
+    /// </summary>
+    /// <param name="definition"></param>
+    /// <param name="defaultField"></param>
+    /// <param name="queryString"></param>
+    /// <returns></returns>
+    public IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, string queryString)
     {
+      var query = HttpUtility.ParseQueryString(queryString);
+
+
       throw new NotImplementedException();
+
+      //Convert the query into a lucene query via linq2rest + re-linq?
+      //var queryParser = new Remotion.Linq.QueryModel.
+      //var queryParser = Remotion.Linq.Parsing.Structure.QueryParser.CreateDefault();
+
+      //var index = GetOrAddIndex(definition, false);
+      //IList<SearchResult> results;
+      //IndexSearcher indexSearcher;
+
+      //using (index.GetSearcher(out indexSearcher))
+      //{
+      //  var provider = new LuceneQueryable<SearchResult>(queryParser, new LuceneQueryExecutor(indexSearcher));
+
+      //  results = provider.Filter(query).OfType<SearchResult>().ToList();
+      //}
+
+      //return results;
     }
 
     public static Index GetOrAddIndex(DirectoryDefinition definition, bool createIndex)

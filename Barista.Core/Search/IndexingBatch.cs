@@ -1,27 +1,62 @@
 ﻿namespace Barista.Search
 {
+  using Lucene.Net.Documents;
   using System;
   using System.Collections.Generic;
 
   public class IndexingBatch
   {
-    public IndexingBatch()
+    public List<BatchedDocument> Documents
     {
-      Ids = new List<string>();
-      Docs = new List<JsonDocument>();
-      SkipDeleteFromIndex = new List<bool>();
+      get;
+      set;
     }
 
-    public readonly List<string> Ids;
-    public readonly List<JsonDocument> Docs;
-    public readonly List<bool> SkipDeleteFromIndex;
-    public DateTime? DateTime;
-
-    public void Add(JsonDocument doc, bool skipDeleteFromIndex)
+    public DateTime? DateTime
     {
-      Ids.Add(doc.DocumentId);
-      Docs.Add(doc);
-      SkipDeleteFromIndex.Add(skipDeleteFromIndex);
+      get;
+      set;
+    }
+
+    public IndexingBatch()
+    {
+      Documents = new List<BatchedDocument>();
+    }
+
+    public void Add(string documentId, Document doc, bool skipDeleteFromIndex)
+    {
+      Documents.Add(new BatchedDocument
+        {
+          DocumentId = documentId,
+          Document = doc,
+          SkipDeleteFromIndex = skipDeleteFromIndex
+        });
+    }
+
+    public void Add(BatchedDocument document)
+    {
+      Documents.Add(document);
+    }
+  }
+
+  public class BatchedDocument
+  {
+    public string DocumentId
+    {
+      get;
+      set;
+    }
+
+    public Document Document
+    {
+      get;
+      set;
+    }
+
+    public bool SkipDeleteFromIndex
+    {
+      get;
+      set;
     }
   }
 }

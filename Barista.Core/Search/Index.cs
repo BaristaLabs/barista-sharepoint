@@ -29,7 +29,6 @@
     protected static readonly ILog LogIndexing = LogManager.GetLogger(typeof (Index).FullName + ".Indexing");
     protected static readonly ILog LogQuerying = LogManager.GetLogger(typeof (Index).FullName + ".Querying");
     private static readonly StopAnalyzer StopAnalyzer = new StopAnalyzer(Version.LUCENE_30);
-    protected readonly IndexDefinition IndexDefinition;
 
     internal readonly string Name;
     private readonly List<AbstractAnalyzerGenerator> m_analyzerGenerators;
@@ -75,6 +74,12 @@
     #endregion
 
     #region Properties
+
+    public IndexDefinition IndexDefinition
+    {
+      get;
+      private set;
+    }
 
     /// <summary>
     /// Gets the last time a query was performed on the index.

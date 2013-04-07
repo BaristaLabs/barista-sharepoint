@@ -5,6 +5,7 @@
   using System.Globalization;
   using System.IO;
   using System.Linq;
+  using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Lucene.Net.Documents;
   using Barista.Extensions;
@@ -363,6 +364,46 @@
       }
 
       return true;
+    }
+
+    public static IEnumerable<BatchedDocument> ConvertJsonDocumentToLuceneDocument(IndexDefinition definition,
+                                                               IEnumerable<JsonDocument> jsonDocuments)
+    {
+      var converter = new JsonDocumentToLuceneDocumentConverter(definition);
+      return jsonDocuments.Select(jsonDocument =>
+        {
+          var fields = converter.Index(jsonDocument, Field.Store.NO);
+
+          var luceneDoc = new Document();
+          var documentIdField = new Field(Constants.DocumentIdFieldName, jsonDocument.DocumentId, Field.Store.YES,
+                                          Field.Index.ANALYZED_NO_NORMS);
+          luceneDoc.Add(documentIdField);
+
+          var tempJsonDocument = new Services.JsonDocument
+          {
+            DocumentId = jsonDocument.DocumentId,
+            MetadataAsJson = jsonDocument.Metadata.ToString(),
+            DataAsJson = jsonDocument.DataAsJson.ToString()
+          };
+
+          var jsonDocumentField = new Field(Constants.JsonDocumentFieldName, JsonConvert.SerializeObject(tempJsonDocument), Field.Store.YES,
+                                          Field.Index.NOT_ANALYZED_NO_NORMS);
+
+          luceneDoc.Add(jsonDocumentField);
+
+          foreach (var field in fields)
+          {
+            luceneDoc.Add(field);
+          }
+
+          return new BatchedDocument
+            {
+              DocumentId = jsonDocument.DocumentId,
+              Document = luceneDoc,
+              SkipDeleteFromIndex = false,
+            };
+        });
+
     }
   }
 }

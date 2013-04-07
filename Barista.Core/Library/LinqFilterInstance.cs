@@ -2,7 +2,7 @@
 {
   using System.Collections.Generic;
   using System.Collections.Specialized;
-  using Barista.Linq2Rest;
+  using Barista.Imports.Linq2Rest;
   using Jurassic;
   using Jurassic.Library;
   using System;

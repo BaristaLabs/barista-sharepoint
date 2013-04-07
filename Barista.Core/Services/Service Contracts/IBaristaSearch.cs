@@ -7,7 +7,7 @@
   public interface IBaristaSearch
   {
     [OperationContract]
-    void IndexDocument(DirectoryDefinition definition, Document document);
+    void IndexDocument(DirectoryDefinition definition, string documentId, Document document);
 
     [OperationContract]
     void IndexJsonDocument(DirectoryDefinition definition, JsonDocument document);
@@ -28,6 +28,6 @@
     IList<SearchResult> Search(DirectoryDefinition definition, string defaultField, string query, int maxResults);
 
     [OperationContract]
-    IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, IDictionary<string, string> filterParameters);
+    IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, string queryString);
   }
 }

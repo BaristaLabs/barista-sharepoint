@@ -32,7 +32,7 @@
         var processedKeys = new HashSet<string>();
 
         var docIdTerm = new Term(Constants.DocumentIdFieldName);
-        var documentsWrapped = batch.Docs.Select((doc, i) =>
+        var documentsWrapped = batch.Documents.Select((doc, i) =>
         {
           Interlocked.Increment(ref sourceCount);
           if (doc.DocumentId == null)
@@ -44,43 +44,19 @@
           if (processedKeys.Add(documentId) == false)
             return doc;
 
-          if (batch.SkipDeleteFromIndex[i] == false)
+          if (doc.SkipDeleteFromIndex == false)
             indexWriter.DeleteDocuments(docIdTerm.CreateTerm(documentId.ToLowerInvariant()));
 
           return doc;
         })
           .ToList();
 
-        var jsonDocumentToLuceneDocumentConverter = new JsonDocumentToLuceneDocumentConverter(IndexDefinition);
-
-        foreach (var jsonDocument in documentsWrapped)
+        foreach (var document in documentsWrapped)
         {
           Interlocked.Increment(ref count);
-          var fields = jsonDocumentToLuceneDocumentConverter.Index(jsonDocument, Field.Store.NO);
-
-          var luceneDoc = new Document();
-          var documentIdField = new Field(Constants.DocumentIdFieldName, jsonDocument.DocumentId, Field.Store.YES,
-                                          Field.Index.ANALYZED_NO_NORMS);
-          luceneDoc.Add(documentIdField);
-
-          var tempJsonDocument = new Services.JsonDocument
-            {
-              DocumentId = jsonDocument.DocumentId,
-              MetadataAsJson = jsonDocument.Metadata.ToString(),
-              DataAsJson = jsonDocument.DataAsJson.ToString()
-            };
-
-          var jsonDocumentField = new Field(Constants.JsonDocumentFieldName, JsonConvert.SerializeObject(tempJsonDocument), Field.Store.YES,
-                                          Field.Index.NOT_ANALYZED_NO_NORMS);
-         
-          luceneDoc.Add(jsonDocumentField);
-
-          foreach (var field in fields)
-          {
-            luceneDoc.Add(field);
-          }
-          LogIndexedDocument(jsonDocument.DocumentId, luceneDoc);
-          AddDocumentToIndex(indexWriter, luceneDoc, analyzer);
+          
+          LogIndexedDocument(document.DocumentId, document.Document);
+          AddDocumentToIndex(indexWriter, document.Document, analyzer);
 
           indexWriter.Commit();
         }
