@@ -40,6 +40,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.DataStoreLoader.dll
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll
 		Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.xml = Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.xml
+		Lib\RestSharp.dll = Lib\RestSharp.dll
+		Lib\RestSharp.pdb = Lib\RestSharp.pdb
+		Lib\RestSharp.xml = Lib\RestSharp.xml
 		Lib\wnvhtmlconvert.dll = Lib\wnvhtmlconvert.dll
 		Lib\wnvhtmlconvert.xml = Lib\wnvhtmlconvert.xml
 	EndProjectSection
