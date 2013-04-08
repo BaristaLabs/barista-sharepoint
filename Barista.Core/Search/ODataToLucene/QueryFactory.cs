@@ -44,12 +44,9 @@
                    //    ?? GetArithmeticFilter(query)
       var lQuery = GetFunctionFilter(query);
 
-      if (lQuery.IsNullOrWhiteSpace())
-      {
-        throw new InvalidOperationException("Could not create query from: " + query);
-      }
-
-      return lQuery;
+      return lQuery.IsNullOrWhiteSpace()
+        ? query
+        : lQuery;
     }
 
     private static Type GetFunctionParameterType(string operation)
@@ -113,9 +110,9 @@
       switch (token.ToLowerInvariant())
       {
         case "eq":
-          return String.Format("\"{0}\":\"{1}\"", left, right);
+          return String.Format("{0}:\"{1}\"", left, right);
         case "ne":
-          return String.Format("NOT \"{0}\":\"{1}\"", left, right);
+          return String.Format("NOT {0}:\"{1}\"", left, right);
         case "gt":
           return String.Format("[{0} TO {1}]", left, right);
           //  case "ge":
