@@ -1,28 +1,22 @@
 ﻿namespace Barista.Services
 {
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Diagnostics;
-  using System.Linq;
   using Barista.Extensions;
-  using Barista.Imports.Linq2Rest.Parser;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Barista.Search;
+  using Barista.Search.ODataToLucene;
   using Lucene.Net.Analysis;
-  using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Index;
-  using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
   using Lucene.Net.Store;
   using System;
   using System.Collections.Concurrent;
+  using System.Collections.Generic;
+  using System.Diagnostics;
   using System.IO;
+  using System.Linq;
   using System.ServiceModel;
-  using Barista.Imports.Linq2Rest;
-  using Version = Lucene.Net.Util.Version;
-  using System.Web;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public class BaristaSearchService : IBaristaSearch, IDisposable
@@ -218,11 +212,8 @@
       IndexSearcher indexSearcher;
       using (index.GetSearcher(out indexSearcher))
       {
-        var parser = new QueryParser(Version.LUCENE_30, defaultField, new StandardAnalyzer(Version.LUCENE_30));
-        var lQuery = parser.Parse(query);
-
+        var lQuery = LuceneModelFilter.ParseQuery(defaultField, query);
         var hits = indexSearcher.Search(lQuery, maxResults);
-
         return RetrieveSearchResults(indexSearcher, hits);
       }
     }
@@ -236,27 +227,45 @@
     /// <returns></returns>
     public IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, string queryString)
     {
-      var query = HttpUtility.ParseQueryString(queryString);
+      var parser = new ODataQueryParser();
+      var filter = parser.ParseQuery(defaultField, queryString);
 
+      var index = GetOrAddIndex(definition, false);
+      IndexSearcher indexSearcher;
 
-      throw new NotImplementedException();
+      using (index.GetSearcher(out indexSearcher))
+      {
+        var lQuery = filter.Query.IsNullOrWhiteSpace()
+                       ? new MatchAllDocsQuery()
+                       : LuceneModelFilter.ParseQuery(defaultField, filter.Query);
 
-      //Convert the query into a lucene query via linq2rest + re-linq?
-      //var queryParser = new Remotion.Linq.QueryModel.
-      //var queryParser = Remotion.Linq.Parsing.Structure.QueryParser.CreateDefault();
+        var lFilter = filter.Filter.IsNullOrWhiteSpace()
+                       ? null
+                       : LuceneModelFilter.ParseFilter(defaultField, filter.Filter);
 
-      //var index = GetOrAddIndex(definition, false);
-      //IList<SearchResult> results;
-      //IndexSearcher indexSearcher;
+        var lSort = filter.Sort ?? new Sort(SortField.FIELD_SCORE);
 
-      //using (index.GetSearcher(out indexSearcher))
-      //{
-      //  var provider = new LuceneQueryable<SearchResult>(queryParser, new LuceneQueryExecutor(indexSearcher));
+        if (filter.Skip <= 0 && filter.Take > 0)
+        {
+          var hits = indexSearcher.Search(lQuery, lFilter, filter.Take, lSort);
+          return RetrieveSearchResults(indexSearcher, hits)
+            .Take(filter.Take)
+            .ToList();
+        }
 
-      //  results = provider.Filter(query).OfType<SearchResult>().ToList();
-      //}
+        if (filter.Skip > 0 && filter.Take > 0)
+        {
+          var hits = indexSearcher.Search(lQuery, lFilter, filter.Skip + filter.Take, lSort);
+          return RetrieveSearchResults(indexSearcher, hits)
+            .Skip(filter.Skip)
+            .Take(filter.Take)
+            .ToList();
+        }
+        
 
-      //return results;
+        var allHits = indexSearcher.Search(lQuery, lFilter, 1024, lSort);
+        return RetrieveSearchResults(indexSearcher, allHits);
+      }
     }
 
     public static Index GetOrAddIndex(DirectoryDefinition definition, bool createIndex)
