@@ -5,7 +5,7 @@
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Barista.Search;
-  using Barista.Search.ODataToLucene;
+  using Barista.Search.OData2Lucene;
   using Lucene.Net.Analysis;
   using Lucene.Net.Index;
   using Lucene.Net.Search;

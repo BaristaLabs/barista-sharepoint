@@ -793,11 +793,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Imports\Newtonsoft.Json\WriteState.cs" />
-    <Compile Include="Search\ODataToLucene\ExpressionTokenizer.cs" />
-    <Compile Include="Search\ODataToLucene\QueryFactory.cs" />
-    <Compile Include="Search\ODataToLucene\FunctionTokenSet.cs" />
-    <Compile Include="Search\ODataToLucene\ISelectFilterFactory.cs" />
-    <Compile Include="Search\ODataToLucene\IQueryFactory.cs" />
+    <Compile Include="Search\OData2Lucene\ExpressionTokenizer.cs" />
+    <Compile Include="Search\OData2Lucene\QueryFactory.cs" />
+    <Compile Include="Search\OData2Lucene\FunctionTokenSet.cs" />
+    <Compile Include="Search\OData2Lucene\ISelectFilterFactory.cs" />
+    <Compile Include="Search\OData2Lucene\IQueryFactory.cs" />
     <Compile Include="Search\JsonDocument.cs" />
     <Compile Include="Justache\Block.cs" />
     <Compile Include="Justache\Encoders.cs" />
@@ -1023,12 +1023,13 @@
     <Compile Include="Search\Analyzers\LowerCaseKeywordTokenizer.cs" />
     <Compile Include="Search\Analyzers\PerFieldAnalyzerWrapper.cs" />
     <Compile Include="Search\Default.cs" />
-    <Compile Include="Search\ODataToLucene\ISortFactory.cs" />
-    <Compile Include="Search\ODataToLucene\LuceneModelFilter.cs" />
-    <Compile Include="Search\ODataToLucene\ODataQueryParser.cs" />
-    <Compile Include="Search\ODataToLucene\StringConstants.cs" />
-    <Compile Include="Search\ODataToLucene\TokenOperatorExtensions.cs" />
-    <Compile Include="Search\ODataToLucene\TokenSet.cs" />
+    <Compile Include="Search\OData2Lucene\ISortFactory.cs" />
+    <Compile Include="Search\OData2Lucene\LuceneModelFilter.cs" />
+    <Compile Include="Search\OData2Lucene\ODataQueryParser.cs" />
+    <Compile Include="Search\OData2Lucene\StringConstants.cs" />
+    <Compile Include="Search\OData2Lucene\TokenOperatorExtensions.cs" />
+    <Compile Include="Search\OData2Lucene\TokenSet.cs" />
+    <Compile Include="Search\OData2Lucene\SortFactory.cs" />
     <Compile Include="Services\Data Contracts\DirectoryDefinition.cs" />
     <Compile Include="Search\FieldIndexing.cs" />
     <Compile Include="Search\FieldsToFetch.cs" />

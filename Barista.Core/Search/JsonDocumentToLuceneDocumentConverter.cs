@@ -218,30 +218,6 @@
       //Create the range fields for numeric field types:
       foreach (var numericField in CreateNumericFieldWithCaching(name, value, storage, termVector))
         yield return numericField;
-
-      //var itemsToIndex = value as IEnumerable;
-      //if (itemsToIndex != null && ShouldTreatAsEnumerable(itemsToIndex))
-      //{
-
-      //  yield break;
-      //}
-
-      //else if (value is IConvertible) // we need this to store numbers in invariant format, so JSON could read them
-      //{
-      //  var convert = ((IConvertible)value);
-      //  yield return CreateFieldWithCaching(name, convert.ToString(CultureInfo.InvariantCulture), storage,
-      //               m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
-      //}
-      //else
-      //{
-      //  var jsonVal = JToken.FromObject(value).ToString(Formatting.None);
-      //  if (jsonVal.StartsWith("{") || jsonVal.StartsWith("["))
-      //    yield return CreateFieldWithCaching(name + "_ConvertToJson", "true", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
-      //  else if (jsonVal.StartsWith("\"") && jsonVal.EndsWith("\"") && jsonVal.Length > 1)
-      //    jsonVal = jsonVal.Substring(1, jsonVal.Length - 2);
-      //  yield return CreateFieldWithCaching(name, jsonVal, storage,
-      //               m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
-      //}
     }
 
     private IEnumerable<AbstractField> CreateNumericFieldWithCaching(string name, JToken value,
@@ -364,7 +340,7 @@
       return field;
     }
 
-    private bool CanCreateFieldsForNestedArray(JToken value, Field.Index fieldIndexingOptions)
+    private static bool CanCreateFieldsForNestedArray(JToken value, Field.Index fieldIndexingOptions)
     {
       if (!fieldIndexingOptions.IsAnalyzed())
         return true;
@@ -375,7 +351,7 @@
       return true;
     }
 
-    private bool CanCreateFieldsForNestedObject(JToken value, Field.Index fieldIndexingOptions)
+    private static bool CanCreateFieldsForNestedObject(JToken value, Field.Index fieldIndexingOptions)
     {
       if (!fieldIndexingOptions.IsAnalyzed())
         return true;

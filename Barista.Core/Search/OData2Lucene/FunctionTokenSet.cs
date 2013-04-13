@@ -1,4 +1,4 @@
-namespace Barista.Search.ODataToLucene
+namespace Barista.Search.OData2Lucene
 {
   internal class FunctionTokenSet : TokenSet
   {

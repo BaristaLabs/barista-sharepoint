@@ -1,4 +1,4 @@
-﻿namespace Barista.Search.ODataToLucene
+﻿namespace Barista.Search.OData2Lucene
 {
   using System;
   using System.Collections.Specialized;
@@ -17,7 +17,7 @@
       m_queryFactory = new QueryFactory();
       //m_selectFilterFactory = new SelectFilterFactory();
       m_filterFactory = new QueryFactory();
-      //m_sortFactory = new SortFactory();
+      m_sortFactory = new SortFactory();
     }
 
     public IQueryFactory QueryFactory
@@ -53,16 +53,25 @@
       var luceneQuery = m_queryFactory.Create(query);
       //var luceneSelectFilter = m_selectFilterFactory.Create(selects);
       var luceneFilter = m_filterFactory.Create(filter);
-      //var luceneSort = m_sortFactory.Create(orderbyField);
+      var luceneSort = m_sortFactory.Create(orderbyField);
       
+      //Validation on Skip/Top
+      var skipValue = -1;
+      if (skip.IsNullOrWhiteSpace() == false && int.TryParse(skip, out skipValue) == false)
+        throw new FormatException("When specified, the Skip parameter must be an integer.");
+
+      var topValue = -1;
+      if (top.IsNullOrWhiteSpace() == false && int.TryParse(top, out topValue) == false)
+        throw new FormatException("When specified, the Top parameter must be an integer.");
+
       var modelFilter = new LuceneModelFilter
         {
           Query = luceneQuery,
           //SelectFilter =  luceneSelectFilter,
           Filter = luceneFilter,
-          //Sort = luceneSort,
-          Skip = skip.IsNullOrWhiteSpace() ? -1 : Convert.ToInt32(skip),
-          Take = top.IsNullOrWhiteSpace() ? -1 : Convert.ToInt32(top)
+          Sort = luceneSort,
+          Skip = skipValue,
+          Take = topValue
         };
       return modelFilter;
     }

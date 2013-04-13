@@ -1,4 +1,4 @@
-﻿namespace Barista.Search.ODataToLucene
+﻿namespace Barista.Search.OData2Lucene
 {
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.QueryParsers;
