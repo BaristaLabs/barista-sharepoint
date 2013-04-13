@@ -26,7 +26,7 @@
     {
       return from property in document.Properties()
              where property.Name != Constants.DocumentIdFieldName
-             from field in CreateFields(property.Name, property.Value, defaultStorage, false, Field.TermVector.NO)
+             from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.NO)
              select field;
     }
 
@@ -34,12 +34,12 @@
     {
       var metadataFields = from property in document.Metadata.Properties()
                            where property.Name != Constants.DocumentIdFieldName
-                           from field in CreateFields("@" + property.Name, property.Value, defaultStorage, false, Field.TermVector.NO)
+                           from field in CreateFields("@" + property.Name, property.Value, defaultStorage, Field.TermVector.NO)
                            select field;
 
       var dataFields = from property in document.DataAsJson.Properties()
                        where property.Name != Constants.DocumentIdFieldName
-                       from field in CreateFields(property.Name, property.Value, defaultStorage, false, Field.TermVector.NO)
+                       from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.NO)
                        select field;
 
       return metadataFields.Union(dataFields);
@@ -56,7 +56,7 @@
     ///		1. with the supplied name, containing the numeric value as an unanalyzed string - useful for direct queries
     ///		2. with the name: name +'_Range', containing the numeric value in a form that allows range queries
     /// </summary>
-    public IEnumerable<AbstractField> CreateFields(string name, JToken value, Field.Store defaultStorage, bool nestedArray, Field.TermVector defaultTermVector)
+    public IEnumerable<AbstractField> CreateFields(string name, JToken value, Field.Store defaultStorage, Field.TermVector defaultTermVector)
     {
       if (name.IsNullOrWhiteSpace())
         throw new ArgumentException(@"Field must be not null, not empty and cannot contain whitespace", "name");
@@ -87,8 +87,26 @@
         switch (value.Type)
         {
           case JTokenType.Array:
-            //Add each item in the array as a field with the same name.
-            break;
+            {
+              //Add each item in the array as a field with the same name.
+              int count = 1;
+
+              //Return an _IsArray field.
+              if (Equals(storage, Field.Store.NO) == false)
+                yield return new Field(name + "_IsArray", "true", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+
+              foreach (var arrayValue in value.Values())
+              {
+                if (CanCreateFieldsForNestedArray(arrayValue, fieldIndexingOptions) == false)
+                  continue;
+
+                m_multipleItemsSameFieldCount.Add(count++);
+                foreach (var field in CreateFields(name, arrayValue, storage, Field.TermVector.NO))
+                  yield return field;
+                m_multipleItemsSameFieldCount.RemoveAt(m_multipleItemsSameFieldCount.Count - 1);
+              }
+              break;
+            }
           case JTokenType.Boolean:
             {
               yield return new Field(name, (value.Value<bool>()) ? "true" : "false", storage,
@@ -130,7 +148,21 @@
             }
             break;
           case JTokenType.Object:
-            //Recursively add properties on the object.
+            {
+              //Add an _IsObject field
+              if (Equals(storage, Field.Store.NO) == false)
+                yield return new Field(name + "_IsObject", "true", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+
+              //Recursively add properties on the object.
+              foreach (var objectValue in value.Children<JProperty>())
+              {
+                if (CanCreateFieldsForNestedObject(objectValue, fieldIndexingOptions) == false)
+                  continue;
+
+                foreach (var field in CreateFields(name + "." + objectValue.Name, objectValue.Value, storage, defaultTermVector))
+                  yield return field;
+              }
+            }
             break;
           case JTokenType.String:
             {
@@ -190,26 +222,7 @@
       //var itemsToIndex = value as IEnumerable;
       //if (itemsToIndex != null && ShouldTreatAsEnumerable(itemsToIndex))
       //{
-      //  var sentArrayField = false;
-      //  int count = 1;
-      //  foreach (var itemToIndex in itemsToIndex)
-      //  {
-      //    if (nestedArray == false && !Equals(storage, Field.Store.NO) && sentArrayField == false)
-      //    {
-      //      sentArrayField = true;
-      //      yield return new Field(name + "_IsArray", "true", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
-      //    }
 
-      //    if (CanCreateFieldsForNestedArray(itemToIndex, fieldIndexingOptions))
-      //    {
-      //      m_multipleItemsSameFieldCount.Add(count++);
-      //      foreach (var field in CreateFields(name, itemToIndex, storage, true, Field.TermVector.NO))
-      //      {
-      //        yield return field;
-      //      }
-      //      m_multipleItemsSameFieldCount.RemoveAt(m_multipleItemsSameFieldCount.Count - 1);
-      //    }
-      //  }
       //  yield break;
       //}
 
@@ -351,17 +364,24 @@
       return field;
     }
 
-    private bool CanCreateFieldsForNestedArray(object value, Field.Index fieldIndexingOptions)
+    private bool CanCreateFieldsForNestedArray(JToken value, Field.Index fieldIndexingOptions)
     {
       if (!fieldIndexingOptions.IsAnalyzed())
-      {
         return true;
-      }
 
-      if (value == null)
-      {
+      if (value == null || value.Type == JTokenType.Null)
         return false;
-      }
+
+      return true;
+    }
+
+    private bool CanCreateFieldsForNestedObject(JToken value, Field.Index fieldIndexingOptions)
+    {
+      if (!fieldIndexingOptions.IsAnalyzed())
+        return true;
+
+      if (value == null || value.Type == JTokenType.Null)
+        return false;
 
       return true;
     }
