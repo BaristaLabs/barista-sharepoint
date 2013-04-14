@@ -14,8 +14,5 @@
 
     [OperationContract]
     void Exec(BrewRequest request);
-
-    [OperationContract]
-    void AddObjectToIndex(string indexUrl, bool createIndex, string json);
   }
 }

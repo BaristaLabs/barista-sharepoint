@@ -256,11 +256,16 @@
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="PrincipalType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\Bundles\BaristaSearchBundle.cs" />
+    <Compile Include="Search\Bundles\BaristaSearchIndexBundle.cs" />
     <Compile Include="Search\Hit.cs" />
+    <Compile Include="Search\Library\JsonDocumentInstance.cs" />
+    <Compile Include="Search\Library\SearchResultInstance.cs" />
+    <Compile Include="Search\Library\SPBaristaSearchServiceInstance.cs" />
     <Compile Include="Search\Library\SPIndexWriterInstance.cs" />
     <Compile Include="Search\Library\SPLuceneInstance.cs" />
     <Compile Include="Search\LuceneHelper.cs" />
+    <Compile Include="Search\SPBaristaSearchService.cs" />
+    <Compile Include="Search\SPBaristaSearchServiceProxy.cs" />
     <Compile Include="Search\SPDirectory.cs" />
     <Compile Include="Search\SPFileInputStream.cs" />
     <Compile Include="Search\SPFileOutputStream.cs" />
@@ -271,6 +276,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\SPBaristaSearchService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceManagement\BaristaSearchService.cs" />
+    <Compile Include="ServiceManagement\BaristaSearchServiceInstance.cs" />
+    <Compile Include="ServiceManagement\BaristaWebSocketsService.cs" />
+    <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPFileScriptSource.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />
@@ -347,6 +361,23 @@
     <None Include="Service References\K2Services\WCF9.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\SPBaristaSearchService\Barista.SharePoint.SPBaristaSearchService.JsonDocument.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SPBaristaSearchService\Barista.SharePoint.SPBaristaSearchService.SearchResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SPBaristaSearchService\Search.wsdl" />
+    <None Include="Service References\SPBaristaSearchService\Search1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SPBaristaSearchService\Search2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SPBaristaSearchService\Search3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SPBaristaSearchService\SPBaristaSearchService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
@@ -359,6 +390,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\K2Services\" />
+    <WCFMetadataStorage Include="Service References\SPBaristaSearchService\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\K2Services\WCF.disco" />
@@ -371,6 +403,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\K2Services\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SPBaristaSearchService\Search.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SPBaristaSearchService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SPBaristaSearchService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\SPBaristaSearchService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

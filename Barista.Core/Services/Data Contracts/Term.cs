@@ -5,12 +5,14 @@
   [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
   public class Term
   {
+    [DataMember]
     public string FieldName
     {
       get;
       set;
     }
 
+    [DataMember]
     public string Value
     {
       get;

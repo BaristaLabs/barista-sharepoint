@@ -1,11 +1,11 @@
-﻿namespace Barista.SharePoint.Library
+﻿namespace Barista.SharePoint.Search.Library
 {
   using System.Collections.Generic;
   using Barista.Search.Library;
   using Barista.SharePoint.Search;
   using Contrib.Regex;
-  using Jurassic;
-  using Jurassic.Library;
+  using Barista.Jurassic;
+  using Barista.Jurassic.Library;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.Index;
   using Lucene.Net.QueryParsers;

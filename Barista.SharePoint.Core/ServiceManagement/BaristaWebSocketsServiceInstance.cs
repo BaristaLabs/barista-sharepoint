@@ -2,7 +2,7 @@
 {
   using Microsoft.SharePoint.Administration;
 
-  internal class BaristaWebSocketsServiceInstance : SPWindowsServiceInstance
+  public class BaristaWebSocketsServiceInstance : SPWindowsServiceInstance
   {
     public const string ServiceInstanceName = "BaristaWebSocketsServiceInstance";
 

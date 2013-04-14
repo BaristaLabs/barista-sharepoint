@@ -36,7 +36,6 @@
 
       m_folderUrl = SPUtility.ConcatUrls(folder.ParentWeb.Url, folder.ServerRelativeUrl);
 
-      //TODO: Change this to use a custom SPLockFactory instance.
       if (lockFactory == null)
         lockFactory = new SPLockFactory(m_folderUrl);
 
@@ -65,7 +64,6 @@
 
       m_folderUrl = folderUrl;
 
-      //TODO: Change this to use a custom SPLockFactory instance.
       if (lockFactory == null)
         lockFactory = new SPLockFactory(m_folderUrl);
 

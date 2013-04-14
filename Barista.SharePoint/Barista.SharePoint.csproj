@@ -193,10 +193,6 @@
     <Compile Include="DocumentStore\Library\PrincipalRoleInfoInstance.cs" />
     <Compile Include="DocumentStore\Library\RepositoryInstance.cs" />
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
-    <Compile Include="ServiceManagement\BaristaSearchService.cs" />
-    <Compile Include="ServiceManagement\BaristaSearchServiceInstance.cs" />
-    <Compile Include="ServiceManagement\BaristaWebSocketsService.cs" />
-    <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="DocumentStore\HandleEventFiring.cs" />

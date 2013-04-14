@@ -12,7 +12,7 @@ Remove-BaristaSearchService -ErrorAction SilentlyContinue
 write-host 
 write-host "[[STEP]] Removing existing Search Service" -foregroundcolor Yellow
 write-host 
-$searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'"
+$searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'" -ComputerName $env:COMPUTERNAME
 if ($searchService -ne $null) 
 { 
 	$searchService.Delete()

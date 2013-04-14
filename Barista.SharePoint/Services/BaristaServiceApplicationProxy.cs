@@ -182,12 +182,6 @@
       // execute the call against the service app
       ExecuteOnChannel(channel => channel.Exec(request));
     }
-
-    public void AddObjectToIndex(string indexUrl, bool createIndex, string json)
-    {
-      // execute the call against the service app
-      ExecuteOnChannel(channel => channel.AddObjectToIndex(indexUrl, createIndex, json));
-    }
     #endregion
   }
 }

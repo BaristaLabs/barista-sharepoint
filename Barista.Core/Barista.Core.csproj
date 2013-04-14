@@ -1030,7 +1030,6 @@
     <Compile Include="Search\OData2Lucene\TokenOperatorExtensions.cs" />
     <Compile Include="Search\OData2Lucene\TokenSet.cs" />
     <Compile Include="Search\OData2Lucene\SortFactory.cs" />
-    <Compile Include="Services\Data Contracts\DirectoryDefinition.cs" />
     <Compile Include="Search\FieldIndexing.cs" />
     <Compile Include="Search\FieldsToFetch.cs" />
     <Compile Include="Search\FieldStorage.cs" />
@@ -1081,7 +1080,6 @@
     <Compile Include="Services\Data Contracts\FieldStorageType.cs" />
     <Compile Include="Services\Data Contracts\FieldTermVectorType.cs" />
     <Compile Include="Services\Data Contracts\SearchResult.cs" />
-    <Compile Include="Services\Data Contracts\IndexType.cs" />
     <Compile Include="Services\Data Contracts\JsonDocument.cs" />
     <Compile Include="Services\Data Contracts\Term.cs" />
     <Compile Include="Services\Data Contracts\WebSocketServerOptions.cs" />

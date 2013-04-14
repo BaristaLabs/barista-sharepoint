@@ -1,14 +1,14 @@
-﻿namespace Barista.SharePoint.Library
+﻿namespace Barista.SharePoint.Search.Library
 {
   using Barista.Extensions;
   using Barista.Search.Library;
   using Barista.SharePoint.Search;
-  using Jurassic;
-  using Jurassic.Library;
+  using Barista.Jurassic;
+  using Barista.Jurassic.Library;
   using Lucene.Net.Index;
   using Lucene.Net.Search;
   using Microsoft.SharePoint;
-  using Newtonsoft.Json.Linq;
+  using Barista.Newtonsoft.Json.Linq;
   using System;
   using System.Reflection;
 

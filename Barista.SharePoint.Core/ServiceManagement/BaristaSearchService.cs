@@ -3,15 +3,15 @@
   using System;
   using Microsoft.SharePoint.Administration;
 
-  internal class BaristaWebSocketsService : SPWindowsService
+  public class BaristaSearchService : SPWindowsService
   {
-    public const string NtServiceName = "BaristaWebSocketsWindowsService";
+    public const string NtServiceName = "BaristaSearchWindowsService";
 
-    public BaristaWebSocketsService()
+    public BaristaSearchService()
     {
     }
 
-    public BaristaWebSocketsService(SPFarm spFarm, SPManagedAccount managedAccount)
+    public BaristaSearchService(SPFarm spFarm, SPManagedAccount managedAccount)
       : base(NtServiceName, spFarm)
     {
       if (managedAccount == null)
@@ -27,7 +27,7 @@
     {
       get
       {
-        return "Barista Web Sockets Service";
+        return "Barista Search Service";
       }
     }
   }

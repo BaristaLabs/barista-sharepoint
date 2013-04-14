@@ -2,7 +2,7 @@
 {
   using Microsoft.SharePoint.Administration;
 
-  internal class BaristaSearchServiceInstance : SPWindowsServiceInstance
+  public class BaristaSearchServiceInstance : SPWindowsServiceInstance
   {
     public const string ServiceInstanceName = "BaristaSearchServiceInstance";
 

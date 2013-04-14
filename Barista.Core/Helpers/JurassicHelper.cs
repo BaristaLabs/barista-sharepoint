@@ -19,6 +19,14 @@
       return engine.Date.Construct(dateNumeric);
     }
 
+    /// <summary>
+    /// Helper method to be used with optional arguments.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="engine"></param>
+    /// <param name="argumentValue"></param>
+    /// <param name="defaultArgumentValue"></param>
+    /// <returns></returns>
     public static T GetTypedArgumentValue<T>(ScriptEngine engine, object argumentValue, T defaultArgumentValue)
     {
       if (argumentValue == Undefined.Value)
@@ -29,6 +37,13 @@
         : TypeConverter.ConvertTo<T>(engine, argumentValue);
     }
 
+    /// <summary>
+    /// Helper method that supports duck typing of Jurassic Object Instances with their .Net counterparts.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="engine"></param>
+    /// <param name="instance"></param>
+    /// <returns></returns>
     public static T Coerce<T>(ScriptEngine engine, object instance)
       where T : ObjectInstance
     {

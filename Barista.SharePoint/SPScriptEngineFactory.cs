@@ -7,6 +7,7 @@
   using Barista.Library;
   using Barista.SharePoint.Bundles;
   using Barista.SharePoint.Library;
+  using Barista.SharePoint.Search.Bundles;
   using Jurassic;
   using Jurassic.Library;
   using Newtonsoft.Json;
@@ -136,6 +137,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
         instance.Common.RegisterBundle(new StateMachineBundle());
         instance.Common.RegisterBundle(new DeferredBundle());
         instance.Common.RegisterBundle(new TfsBundle());
+        instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
 
         //Global Types
         engine.SetGlobalValue("Barista", instance);

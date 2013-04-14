@@ -272,13 +272,6 @@
           syncRoot.ReleaseMutex();
       }
     }
-
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    public void AddObjectToIndex(string indexUrl, bool createIndex, string json)
-    {
-      throw new NotImplementedException();
-    }
-
     #endregion
   }
 }

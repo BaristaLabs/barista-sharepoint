@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.SearchService
 {
   using Barista.Services;
+  using Barista.SharePoint.Search;
   using System.ServiceModel;
 
   /// <summary>
@@ -17,7 +18,7 @@
 
     public void Start()
     {
-      m_serviceHost = new ServiceHost(typeof(BaristaSearchService));
+      m_serviceHost = new ServiceHost(typeof(SPBaristaSearchService));
 
       m_serviceHost.Open();
     }

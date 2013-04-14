@@ -9,7 +9,6 @@
   using Lucene.Net.Analysis;
   using Lucene.Net.Index;
   using Lucene.Net.Search;
-  using Lucene.Net.Store;
   using System;
   using System.Collections.Concurrent;
   using System.Collections.Generic;
@@ -19,11 +18,11 @@
   using System.ServiceModel;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
-  public class BaristaSearchService : IBaristaSearch, IDisposable
+  public abstract class BaristaSearchService : IBaristaSearch, IDisposable
   {
     private const string IndexVersion = "1.0.0.0";
     private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
-    private static readonly ConcurrentDictionary<DirectoryDefinition, Index> Indexes = new ConcurrentDictionary<DirectoryDefinition, Index>();
+    private static readonly ConcurrentDictionary<string, Index> Indexes = new ConcurrentDictionary<string, Index>();
 
     private static readonly ILog Log = LogManager.GetCurrentClassLogger();
     private static readonly ILog StartupLog = LogManager.GetLogger(typeof(BaristaSearchService).FullName + ".Startup");
@@ -31,28 +30,28 @@
     /// <summary>
     /// Deletes all documents from the specified index.
     /// </summary>
-    /// <param name="definition"></param>
-    public void DeleteAllDocuments(DirectoryDefinition definition)
+    /// <param name="indexName"></param>
+    public void DeleteAllDocuments(string indexName)
     {
-      var index = GetOrAddIndex(definition, true);
+      var index = GetOrAddIndex(indexName, true);
       try
       {
         index.DeleteAll();
       }
       catch (OutOfMemoryException)
       {
-        CloseIndexWriter(definition, false);
+        CloseIndexWriter(indexName, false);
       }
     }
 
     /// <summary>
     /// Deletes the documents that have the specified document ids
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="keys"></param>
-    public void DeleteDocuments(DirectoryDefinition definition, IEnumerable<string> keys)
+    public void DeleteDocuments(string indexName, IEnumerable<string> keys)
     {
-      var index = GetOrAddIndex(definition, true);
+      var index = GetOrAddIndex(indexName, true);
 
       try
       {
@@ -61,17 +60,17 @@
       }
       catch (OutOfMemoryException)
       {
-        CloseIndexWriter(definition, false);
+        CloseIndexWriter(indexName, false);
       }
     }
 
     /// <summary>
     /// Indexes the specified document.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="documentId"></param>
     /// <param name="document"></param>
-    public void IndexDocument(DirectoryDefinition definition, string documentId, Document document)
+    public void IndexDocument(string indexName, string documentId, Document document)
     {
       if (documentId.IsNullOrWhiteSpace())
         throw new ArgumentNullException("documentId", @"A document id must be specified.");
@@ -79,7 +78,7 @@
       if (document == null)
         throw new ArgumentNullException("document", @"A document must be specified.");
 
-      var index = GetOrAddIndex(definition, true);
+      var index = GetOrAddIndex(indexName, true);
 
       try
       {
@@ -98,16 +97,16 @@
       }
       catch (OutOfMemoryException)
       {
-        CloseIndexWriter(definition, false);
+        CloseIndexWriter(indexName, false);
       }
     }
 
     /// <summary>
     /// Indexes the specified document.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="document"></param>
-    public void IndexJsonDocument(DirectoryDefinition definition, JsonDocument document)
+    public void IndexJsonDocument(string indexName, JsonDocument document)
     {
       if (document == null)
         throw new ArgumentNullException("document", @"A document must be specified.");
@@ -115,15 +114,15 @@
       if (document.DocumentId.IsNullOrWhiteSpace())
         throw new InvalidOperationException(@"The json document must specify a document id.");
 
-      IndexJsonDocuments(definition, new List<JsonDocument> { document });
+      IndexJsonDocuments(indexName, new List<JsonDocument> { document });
     }
 
     /// <summary>
     /// Indexes the specified documents.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="documents"></param>
-    public void IndexJsonDocuments(DirectoryDefinition definition, IEnumerable<JsonDocument> documents)
+    public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocument> documents)
     {
       if (documents == null)
         throw new ArgumentNullException("documents", @"A collection of documents must be specified.");
@@ -133,7 +132,7 @@
       if (jsonDocuments.Any() == false)
         throw new ArgumentNullException("documents", @"At least one document must be contained within the collection.");
 
-      var index = GetOrAddIndex(definition, true);
+      var index = GetOrAddIndex(indexName, true);
 
       try
       {
@@ -165,19 +164,19 @@
       }
       catch (OutOfMemoryException)
       {
-        CloseIndexWriter(definition, false);
+        CloseIndexWriter(indexName, false);
       }
     }
 
     /// <summary>
     /// Retrieves the document with the corresponding document id.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="documentId"></param>
     /// <returns></returns>
-    public JsonDocument Retrieve(DirectoryDefinition definition, string documentId)
+    public JsonDocument Retrieve(string indexName, string documentId)
     {
-      var index = GetOrAddIndex(definition, false);
+      var index = GetOrAddIndex(indexName, false);
       IndexSearcher indexSearcher;
       using (index.GetSearcher(out indexSearcher))
       {
@@ -201,14 +200,14 @@
     /// <summary>
     /// Returns documents that match the specified lucene query, limiting to the specified number of items.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="defaultField"></param>
     /// <param name="query"></param>
     /// <param name="maxResults"></param>
     /// <returns></returns>
-    public IList<SearchResult> Search(DirectoryDefinition definition, string defaultField, string query, int maxResults)
+    public IList<SearchResult> Search(string indexName, string defaultField, string query, int maxResults)
     {
-      var index = GetOrAddIndex(definition, false);
+      var index = GetOrAddIndex(indexName, false);
       IndexSearcher indexSearcher;
       using (index.GetSearcher(out indexSearcher))
       {
@@ -221,16 +220,16 @@
     /// <summary>
     /// Returns documents that matche the specified OData-based query.
     /// </summary>
-    /// <param name="definition"></param>
+    /// <param name="indexName"></param>
     /// <param name="defaultField"></param>
     /// <param name="queryString"></param>
     /// <returns></returns>
-    public IList<SearchResult> SearchOData(DirectoryDefinition definition, string defaultField, string queryString)
+    public IList<SearchResult> SearchOData(string indexName, string defaultField, string queryString)
     {
       var parser = new ODataQueryParser();
       var filter = parser.ParseQuery(defaultField, queryString);
 
-      var index = GetOrAddIndex(definition, false);
+      var index = GetOrAddIndex(indexName, false);
       IndexSearcher indexSearcher;
 
       using (index.GetSearcher(out indexSearcher))
@@ -268,19 +267,25 @@
       }
     }
 
-    public static Index GetOrAddIndex(DirectoryDefinition definition, bool createIndex)
+    /// <summary>
+    /// When implemented in a concrete class, returns the lucene directory that corresponds to the specified name.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <returns></returns>
+    protected abstract Lucene.Net.Store.Directory GetLuceneDirectoryFromIndexName(string indexName);
+
+    protected Index GetOrAddIndex(string indexName, bool createIfMissing)
     {
-      return Indexes.GetOrAdd(definition, key =>
+      return Indexes.GetOrAdd(indexName, key =>
         {
-          var di = new DirectoryInfo(key.IndexStoragePath);
-          var targetDirectory = new RAMDirectory();
-          
+          var targetDirectory = GetLuceneDirectoryFromIndexName(indexName);
+
           var indexDefinition = new IndexDefinition();
 
           if (!IndexReader.IndexExists(targetDirectory))
           {
-            //if (createIfMissing == false)
-            //  throw new InvalidOperationException("Index does not exists: " + indexDirectory);
+            if (createIfMissing == false)
+              throw new InvalidOperationException("Index does not exist: " + targetDirectory);
 
             WriteIndexVersion(targetDirectory);
 
@@ -303,26 +308,11 @@
               //if (configuration.ResetIndexOnUncleanShutdown)
               //  throw new InvalidOperationException("Rude shutdown detected on: " + indexDirectory);
 
-              CheckIndexAndRecover(targetDirectory, definition.IndexStoragePath);
+              CheckIndexAndRecover(targetDirectory, indexName);
               targetDirectory.DeleteFile("writing-to-index.lock");
             }
           }
 
-          //switch (indexDefinition.DirectoryType)
-          //{
-          //  case DirectoryType.SharePointDirectory:
-          //    //targetDirectory = new SPDirectory(definition.DirectoryUri);
-          //    throw new NotImplementedException();
-          //    break;
-          //  case DirectoryType.SimpleFileSystemDirectory:
-          //    var targetDirectoryInfo = new DirectoryInfo(indexDefinition.DirectoryUri);
-          //    targetDirectory = new SimpleFSDirectory(targetDirectoryInfo);
-          //    break;
-          //  default:
-          //    throw new ArgumentOutOfRangeException("Unknown or unsupported Directory Type: " + indexDefinition.DirectoryType);
-          //}
-
-          
           var simpleIndex = new SimpleIndex(targetDirectory, "DefaultIndex", indexDefinition);
           return simpleIndex;
         });
@@ -371,9 +361,9 @@
       }
     }
 
-    private static void CheckIndexAndRecover(Lucene.Net.Store.Directory directory, string indexDirectory)
+    private static void CheckIndexAndRecover(Lucene.Net.Store.Directory directory, string indexName)
     {
-      StartupLog.Warn("Unclean shutdown detected on {0}, checking the index for errors. This may take a while.", indexDirectory);
+      StartupLog.Warn("Unclean shutdown detected on {0}, checking the index for errors. This may take a while.", indexName);
 
       var memoryStream = new MemoryStream();
       var stringWriter = new StreamWriter(memoryStream);
@@ -387,7 +377,7 @@
       sp.Stop();
       if (StartupLog.IsWarnEnabled)
       {
-        StartupLog.Warn("Checking index {0} took: {1}, clean: {2}", indexDirectory, sp.Elapsed, status.clean);
+        StartupLog.Warn("Checking index {0} took: {1}, clean: {2}", indexName, sp.Elapsed, status.clean);
         memoryStream.Position = 0;
 
         Log.Warn(new StreamReader(memoryStream).ReadToEnd());
@@ -396,12 +386,12 @@
       if (status.clean)
         return;
 
-      StartupLog.Warn("Attempting to fix index: {0}", indexDirectory);
+      StartupLog.Warn("Attempting to fix index: {0}", indexName);
       sp.Stop();
       sp.Reset();
       sp.Start();
       checkIndex.FixIndex(status);
-      StartupLog.Warn("Fixed index {0} in {1}", indexDirectory, sp.Elapsed);
+      StartupLog.Warn("Fixed index {0} in {1}", indexName, sp.Elapsed);
     }
 
     private static void WriteIndexVersion(Lucene.Net.Store.Directory directory)
@@ -421,10 +411,10 @@
       }
     }
 
-    public static void CloseIndexWriter(DirectoryDefinition definition, bool waitForMerges)
+    public static void CloseIndexWriter(string indexName, bool waitForMerges)
     {
       Index index;
-      if (Indexes.TryRemove(definition, out index))
+      if (Indexes.TryRemove(indexName, out index))
       {
         index.Dispose();
       }
