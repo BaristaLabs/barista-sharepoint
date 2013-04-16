@@ -1,9 +1,9 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class JsonDocument
+  public class JsonDocumentDto
   {
     [DataMember]
     public string DocumentId

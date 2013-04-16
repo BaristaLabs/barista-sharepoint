@@ -2,8 +2,6 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Index;
-  using Lucene.Net.Search;
   using System;
 
   [Serializable]
@@ -48,7 +46,7 @@
     }
 
     [JSProperty(Name = "slop")]
-    public int Slop
+    public int? Slop
     {
       get { return m_phraseQuery.Slop; }
       set { m_phraseQuery.Slop = value; }
@@ -57,7 +55,7 @@
     [JSFunction(Name = "add")]
     public void Add(string fieldName, string text)
     {
-      m_phraseQuery.Add(new Term(fieldName, text));
+      m_phraseQuery.Terms.Add(new Term { FieldName = fieldName, Value = text });
     }
   }
 }

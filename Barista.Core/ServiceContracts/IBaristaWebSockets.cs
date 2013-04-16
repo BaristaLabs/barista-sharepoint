@@ -1,6 +1,7 @@
-﻿namespace Barista.Services
+﻿namespace Barista
 {
   using System.ServiceModel;
+  using Barista.WebSockets;
 
   [ServiceContract(Namespace = Barista.Constants.ServiceNamespace)]
   public interface IBaristaWebSockets

@@ -1,6 +1,5 @@
 ﻿namespace Barista.Search
 {
-  using Lucene.Net.Documents;
   using System;
   using System.Collections.Generic;
 
@@ -23,7 +22,7 @@
       Documents = new List<BatchedDocument>();
     }
 
-    public void Add(string documentId, Document doc, bool skipDeleteFromIndex)
+    public void Add(string documentId, Lucene.Net.Documents.Document doc, bool skipDeleteFromIndex)
     {
       Documents.Add(new BatchedDocument
         {
@@ -47,7 +46,7 @@
       set;
     }
 
-    public Document Document
+    public Lucene.Net.Documents.Document Document
     {
       get;
       set;

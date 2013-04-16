@@ -1,4 +1,4 @@
-﻿namespace Barista.Services
+﻿namespace Barista.WebSockets
 {
   using System.Runtime.Serialization;
 

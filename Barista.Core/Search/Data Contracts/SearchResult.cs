@@ -1,4 +1,4 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System.Runtime.Serialization;
 
@@ -13,7 +13,7 @@
     }
 
     [DataMember]
-    public JsonDocument Document
+    public JsonDocumentDto Document
     {
       get;
       set;

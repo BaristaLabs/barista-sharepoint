@@ -13,9 +13,6 @@
   public class JsonDocumentToLuceneDocumentConverter
   {
     private readonly IndexDefinition m_indexDefinition;
-    private readonly List<int> m_multipleItemsSameFieldCount = new List<int>();
-    private readonly Dictionary<FieldCacheKey, Field> m_fieldsCache = new Dictionary<FieldCacheKey, Field>();
-    private readonly Dictionary<FieldCacheKey, NumericField> m_numericFieldsCache = new Dictionary<FieldCacheKey, NumericField>();
 
     public JsonDocumentToLuceneDocumentConverter(IndexDefinition indexDefinition)
     {
@@ -77,9 +74,8 @@
         // date time, time span and date time offset have the same structure for analyzed and not analyzed.
         if (value.Type != JTokenType.Date && value.Type != JTokenType.TimeSpan)
         {
-          yield return CreateFieldWithCaching(name, value.ToString(), storage,
+          yield return new Field(name, value.ToString(), storage,
                             m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
-          yield break;
         }
       }
       else
@@ -100,10 +96,8 @@
                 if (CanCreateFieldsForNestedArray(arrayValue, fieldIndexingOptions) == false)
                   continue;
 
-                m_multipleItemsSameFieldCount.Add(count++);
                 foreach (var field in CreateFields(name, arrayValue, storage, Field.TermVector.NO))
                   yield return field;
-                m_multipleItemsSameFieldCount.RemoveAt(m_multipleItemsSameFieldCount.Count - 1);
               }
               break;
             }
@@ -118,7 +112,7 @@
               var bytes = value.Value<byte[]>();
               if (bytes != null)
               {
-                yield return CreateBinaryFieldWithCaching(name, bytes, storage, fieldIndexingOptions, termVector);
+                yield return CreateBinaryField(name, bytes, storage, fieldIndexingOptions, termVector);
               }
             }
             break;
@@ -128,7 +122,7 @@
               var dateAsString = val.ToString(Default.DateTimeFormatsToWrite);
               if (val.Kind == DateTimeKind.Utc)
                 dateAsString += "Z";
-              yield return CreateFieldWithCaching(name, dateAsString, storage,
+              yield return new Field(name, dateAsString, storage,
                                                   m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS),
                                                   termVector);
             }
@@ -143,7 +137,7 @@
           case JTokenType.None:
           case JTokenType.Null:
             {
-              yield return CreateFieldWithCaching(name, Constants.NullValue, storage,
+              yield return new Field(name, Constants.NullValue, storage,
                                                   Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
             }
             break;
@@ -168,33 +162,48 @@
             {
               if (Equals(value.Value<string>(), string.Empty))
               {
-                yield return CreateFieldWithCaching(name, Constants.EmptyString, storage,
+                yield return new Field(name, Constants.EmptyString, storage,
                        Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
                 yield break;
               }
               var index = m_indexDefinition.GetIndex(name, Field.Index.ANALYZED);
-              yield return CreateFieldWithCaching(name, value.ToString(), storage, index, termVector);
+              yield return new Field(name, value.ToString(), storage, index, termVector);
             }
             break;
           case JTokenType.Float:
             {
               var f = value.Value<float>();
-              yield return CreateFieldWithCaching(name, f.ToString(CultureInfo.InvariantCulture), storage,
-                 m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
+              var index = m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS);
+              yield return new Field(name, f.ToString(CultureInfo.InvariantCulture), storage, index, termVector);
+
+              var numericField = new NumericField(name + "_Range", storage, true);
+              if (m_indexDefinition.GetSortOption(name) == SortOptions.Double)
+                yield return numericField.SetDoubleValue(value.Value<double>());
+              else
+                yield return numericField.SetFloatValue(value.Value<float>());
             }
             break;
           case JTokenType.Integer:
             {
               var i = value.Value<int>();
-              yield return CreateFieldWithCaching(name, i.ToString(CultureInfo.InvariantCulture), storage,
-                 m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
+              var index = m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS);
+              yield return new Field(name, i.ToString(CultureInfo.InvariantCulture), storage, index, termVector);
+
+              var numericField = new NumericField(name + "_Range", storage, true);
+              if (m_indexDefinition.GetSortOption(name) == SortOptions.Long)
+                yield return numericField.SetLongValue(value.Value<long>());
+              else
+                yield return numericField.SetIntValue(value.Value<int>());
             }
             break;
           case JTokenType.TimeSpan:
             {
               var val = value.Value<TimeSpan>();
-              yield return CreateFieldWithCaching(name, val.ToString("c"), storage,
-                     m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS), termVector);
+              var index = m_indexDefinition.GetIndex(name, Field.Index.NOT_ANALYZED_NO_NORMS);
+              yield return new Field(name, val.ToString("c"), storage, index, termVector);
+
+              var numericField = new NumericField(name + "_Range", storage, true);
+              yield return numericField.SetLongValue(val.Ticks);
             }
             break;
           case JTokenType.Uri:
@@ -214,52 +223,13 @@
             throw new ArgumentOutOfRangeException("The specified JToken Type: " + value.Type + " is invalid or has not been implemented.");
         }
       }
-
-      //Create the range fields for numeric field types:
-      foreach (var numericField in CreateNumericFieldWithCaching(name, value, storage, termVector))
-        yield return numericField;
     }
 
-    private IEnumerable<AbstractField> CreateNumericFieldWithCaching(string name, JToken value,
-      Field.Store defaultStorage, Field.TermVector termVector)
-    {
-
-      var fieldName = name + "_Range";
-      var storage = m_indexDefinition.GetStorage(name, defaultStorage);
-      var cacheKey = new FieldCacheKey(name, null, storage, termVector, m_multipleItemsSameFieldCount.ToArray());
-      NumericField numericField;
-      if (m_numericFieldsCache.TryGetValue(cacheKey, out numericField) == false)
-      {
-        m_numericFieldsCache[cacheKey] = numericField = new NumericField(fieldName, storage, true);
-      }
-
-      switch (value.Type)
-      {
-        case JTokenType.Float:
-          if (m_indexDefinition.GetSortOption(name) == SortOptions.Double)
-            yield return numericField.SetDoubleValue(value.Value<float>());
-          else
-            yield return numericField.SetFloatValue(value.Value<float>());
-          break;
-        case JTokenType.Integer:
-          if (m_indexDefinition.GetSortOption(name) == SortOptions.Long)
-            yield return numericField.SetLongValue(value.Value<long>());
-          else
-            yield return numericField.SetIntValue(value.Value<int>());
-          break;
-        case JTokenType.TimeSpan:
-          yield return numericField.SetLongValue(((TimeSpan)value).Ticks);
-          break;
-      }
-    }
-
-    private Field CreateBinaryFieldWithCaching(string name, byte[] value, Field.Store store, Field.Index index, Field.TermVector termVector)
+    private Field CreateBinaryField(string name, byte[] value, Field.Store store, Field.Index index, Field.TermVector termVector)
     {
       if (value.Length > 1024)
         throw new ArgumentException("Binary values must be smaller than 1Kb");
 
-      var cacheKey = new FieldCacheKey(name, null, store, termVector, m_multipleItemsSameFieldCount.ToArray());
-      Field field;
       var stringWriter = new StringWriter();
       JsonExtensions.CreateDefaultJsonSerializer().Serialize(stringWriter, value);
       var sb = stringWriter.GetStringBuilder();
@@ -267,74 +237,8 @@
       sb.Remove(sb.Length - 1, 1); // remove postfix "
       var val = sb.ToString();
 
-      if (m_fieldsCache.TryGetValue(cacheKey, out field) == false)
-      {
-        m_fieldsCache[cacheKey] = field = new Field(name, val, store, index, termVector);
-      }
+      var field = new Field(name, val, store, index, termVector);
       field.SetValue(val);
-      field.Boost = 1;
-      field.OmitNorms = true;
-      return field;
-    }
-
-    public class FieldCacheKey
-    {
-      private readonly string m_name;
-      private readonly Field.Index? m_index;
-      private readonly Field.Store m_store;
-      private readonly Field.TermVector m_termVector;
-      private readonly int[] m_multipleItemsSameField;
-
-      public FieldCacheKey(string name, Field.Index? index, Field.Store store, Field.TermVector termVector, int[] multipleItemsSameField)
-      {
-        this.m_name = name;
-        this.m_index = index;
-        this.m_store = store;
-        this.m_termVector = termVector;
-        this.m_multipleItemsSameField = multipleItemsSameField;
-      }
-
-
-      protected bool Equals(FieldCacheKey other)
-      {
-        return string.Equals(m_name, other.m_name) &&
-          Equals(m_index, other.m_index) &&
-          Equals(m_store, other.m_store) &&
-          Equals(m_termVector, other.m_termVector) &&
-          m_multipleItemsSameField.SequenceEqual(other.m_multipleItemsSameField);
-      }
-
-      public override bool Equals(object obj)
-      {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof(FieldCacheKey)) return false;
-        return Equals((FieldCacheKey)obj);
-      }
-
-      public override int GetHashCode()
-      {
-        unchecked
-        {
-          int hashCode = (m_name != null ? m_name.GetHashCode() : 0);
-          hashCode = (hashCode * 397) ^ (m_index != null ? m_index.GetHashCode() : 0);
-          hashCode = (hashCode * 397) ^ m_store.GetHashCode();
-          hashCode = (hashCode * 397) ^ m_termVector.GetHashCode();
-          hashCode = m_multipleItemsSameField.Aggregate(hashCode, (h, x) => h * 397 ^ x);
-          return hashCode;
-        }
-      }
-    }
-
-    private Field CreateFieldWithCaching(string name, string value, Field.Store store, Field.Index index, Field.TermVector termVector)
-    {
-      var cacheKey = new FieldCacheKey(name, index, store, termVector, m_multipleItemsSameFieldCount.ToArray());
-      Field field;
-
-      if (m_fieldsCache.TryGetValue(cacheKey, out field) == false)
-        m_fieldsCache[cacheKey] = field = new Field(name, value, store, index, termVector);
-
-      field.SetValue(value);
       field.Boost = 1;
       field.OmitNorms = true;
       return field;
@@ -375,7 +279,7 @@
                                           Field.Index.ANALYZED_NO_NORMS);
           luceneDoc.Add(documentIdField);
 
-          var tempJsonDocument = new Services.JsonDocument
+          var tempJsonDocument = new JsonDocumentDto
           {
             DocumentId = jsonDocument.DocumentId,
             MetadataAsJson = jsonDocument.Metadata.ToString(),

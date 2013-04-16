@@ -2,20 +2,18 @@
 {
   using System.Security.Principal;
   using Barista.Extensions;
-  using Barista.SharePoint.SPBaristaSearchService;
+  using Barista.Search;
   using Microsoft.SharePoint.Administration;
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.ServiceModel;
-  using Document = Barista.SharePoint.SPBaristaSearchService.Document;
-  using IBaristaSearch = Barista.SharePoint.SPBaristaSearchService.IBaristaSearch;
-  using JsonDocument = Barista.SharePoint.SPBaristaSearchService.JsonDocument;
-  using SearchResult = Barista.SharePoint.SPBaristaSearchService.SearchResult;
+  using Barista.Newtonsoft.Json;
 
   public class SPBaristaSearchServiceProxy : IBaristaSearch
   {
     private readonly Uri m_serviceAddress;
+    private readonly EndpointIdentity m_serviceIdentity;
     private readonly WSHttpBinding m_baristaSearchBinding;
 
     public SPBaristaSearchServiceProxy()
@@ -55,6 +53,9 @@
         throw new InvalidOperationException("A Barista Search Service Instance was located, however it is currently not online.");
 
       var serverAddress = searchServiceInstance.Server.Address;
+      //serverAddress = System.Net.Dns.GetHostEntry(serverAddress).HostName;
+
+      m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(serverAddress);
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
       m_baristaSearchBinding = InitServiceBinding();
     }
@@ -79,7 +80,7 @@
         ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
         {
           MaxArrayLength = int.MaxValue,
-          MaxBytesPerRead = 2048,
+          MaxBytesPerRead = int.MaxValue,
           MaxDepth = int.MaxValue,
           MaxNameTableCharCount = int.MaxValue,
           MaxStringContentLength = int.MaxValue,
@@ -94,15 +95,18 @@
     private BaristaSearchClient GetSearchClient()
     {
       var client = new BaristaSearchClient(m_baristaSearchBinding,
-        new EndpointAddress(m_serviceAddress.ToString()));
+        new EndpointAddress(m_serviceAddress, m_serviceIdentity));
 
-      client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
-      client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
+      if (client.ClientCredentials != null)
+      {
+        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
+        client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
+      }
 
       return client;
     }
 
-    public void DeleteDocuments(string indexName, List<string> documentIds)
+    public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -118,7 +122,7 @@
       }
     }
 
-    public void IndexDocument(string indexName, string documentId, Document document)
+    public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -126,7 +130,24 @@
       }
     }
 
-    public void IndexJsonDocument(string indexName, JsonDocument document)
+    public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata)
+    {
+      using (var searchClient = GetSearchClient())
+      {
+        var document = new JsonDocumentDto
+          {
+            DocumentId = documentId,
+            DataAsJson = JsonConvert.SerializeObject(docObject, Formatting.Indented),
+          };
+
+        if (metadata != null)
+          document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented);
+
+        searchClient.IndexJsonDocument(indexName, document);
+      }
+    }
+
+    public void IndexJsonDocument(string indexName, JsonDocumentDto document)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -134,7 +155,7 @@
       }
     }
 
-    public void IndexJsonDocuments(string indexName, List<JsonDocument> documents)
+    public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -142,7 +163,7 @@
       }
     }
 
-    public JsonDocument Retrieve(string indexName, string documentId)
+    public JsonDocumentDto Retrieve(string indexName, string documentId)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -150,19 +171,27 @@
       }
     }
 
-    public List<SearchResult> Search(string indexName, string defaultField, string query, int maxResults)
+    public IList<SearchResult> SearchWithQuery(string indexName, Query query, int maxResults)
     {
       using (var searchClient = GetSearchClient())
       {
-        return searchClient.Search(indexName, defaultField, query, maxResults);
+        return searchClient.SearchWithQuery(indexName, query, maxResults);
       }
     }
 
-    public List<SearchResult> SearchOData(string indexName, string defaultField, string queryString)
+    public IList<SearchResult> SearchWithQueryParser(string indexName, string defaultField, string query, int maxResults)
     {
       using (var searchClient = GetSearchClient())
       {
-        return searchClient.SearchOData(indexName, defaultField, queryString);
+        return searchClient.SearchWithQueryParser(indexName, defaultField, query, maxResults);
+      }
+    }
+
+    public IList<SearchResult> SearchWithOData(string indexName, string defaultField, string queryString)
+    {
+      using (var searchClient = GetSearchClient())
+      {
+        return searchClient.SearchWithOData(indexName, defaultField, queryString);
       }
     }
   }

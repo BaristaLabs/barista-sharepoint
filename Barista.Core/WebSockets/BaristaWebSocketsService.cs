@@ -2,11 +2,11 @@
 {
   using System;
   using System.Collections.Concurrent;
-  using System.Collections.Generic;
   using System.Linq;
   using System.Net.NetworkInformation;
   using Barista.WebSocket;
   using System.ServiceModel;
+  using Barista.WebSockets;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public class BaristaWebSocketsService : IBaristaWebSockets

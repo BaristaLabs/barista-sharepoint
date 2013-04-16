@@ -1,12 +1,12 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System;
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  [KnownType(typeof(DateField))]
-  [KnownType(typeof(StringField))]
-  [KnownType(typeof(NumericField))]
+  [KnownType(typeof(DateFieldDto))]
+  [KnownType(typeof(StringFieldDto))]
+  [KnownType(typeof(NumericFieldDto))]
   public abstract class FieldBase
   {
     [DataMember]
@@ -46,9 +46,9 @@
   }
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  [KnownType(typeof(DateField))]
-  [KnownType(typeof(StringField))]
-  [KnownType(typeof(NumericField))]
+  [KnownType(typeof(DateFieldDto))]
+  [KnownType(typeof(StringFieldDto))]
+  [KnownType(typeof(NumericFieldDto))]
   public abstract class FieldBase<T> : FieldBase
   {
     [DataMember]
@@ -60,17 +60,17 @@
   }
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class DateField : FieldBase<DateTime>
+  public class DateFieldDto : FieldBase<DateTime>
   {
   }
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class StringField : FieldBase<String>
+  public class StringFieldDto : FieldBase<String>
   {
   }
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class NumericField : FieldBase<Double>
+  public class NumericFieldDto : FieldBase<Double>
   {
     [DataMember]
     public int PrecisionStep

@@ -1,17 +1,15 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public enum FieldTermVectorType
+  public enum Occur
   {
     [EnumMember]
-    Yes,
+    Must,
     [EnumMember]
-    WithPositions,
+    MustNot,
     [EnumMember]
-    WithOffsets,
-    [EnumMember]
-    WithPositionsOffsets
+    Should,
   }
 }

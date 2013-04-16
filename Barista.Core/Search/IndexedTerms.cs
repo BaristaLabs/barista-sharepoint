@@ -8,13 +8,13 @@
 
   public class IndexedTerms
   {
-    public static void ReadEntriesForFields(IndexReader reader, HashSet<string> fieldsToRead, HashSet<int> docIds, Action<Term> onTermFound)
+    public static void ReadEntriesForFields(IndexReader reader, HashSet<string> fieldsToRead, HashSet<int> docIds, Action<Lucene.Net.Index.Term> onTermFound)
     {
       using (var termDocs = reader.TermDocs())
       {
         foreach (var field in fieldsToRead)
         {
-          using (var termEnum = reader.Terms(new Term(field)))
+          using (var termEnum = reader.Terms(new Lucene.Net.Index.Term(field)))
           {
             do
             {
@@ -41,7 +41,7 @@
       }
     }
 
-    private static bool LowPrecisionNumber(Term term)
+    private static bool LowPrecisionNumber(Lucene.Net.Index.Term term)
     {
       if (term.Field.EndsWith("_Range") == false)
         return false;

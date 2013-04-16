@@ -1,8 +1,7 @@
-﻿namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.Search.Library
 {
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
-  using Barista.SharePoint.SPBaristaSearchService;
   using System;
 
   [Serializable]
@@ -23,7 +22,7 @@
   [Serializable]
   public class JsonDocumentInstance : ObjectInstance
   {
-    private readonly JsonDocument m_jsonDocument;
+    private readonly JsonDocumentDto m_jsonDocument;
 
     public JsonDocumentInstance(ObjectInstance prototype)
       : base(prototype)
@@ -32,7 +31,7 @@
       this.PopulateFunctions();
     }
 
-    public JsonDocumentInstance(ObjectInstance prototype, JsonDocument jsonDocument)
+    public JsonDocumentInstance(ObjectInstance prototype, JsonDocumentDto jsonDocument)
       : this(prototype)
     {
       if (jsonDocument == null)
@@ -41,7 +40,7 @@
       m_jsonDocument = jsonDocument;
     }
 
-    public JsonDocument JsonDocument
+    public JsonDocumentDto JsonDocument
     {
       get { return m_jsonDocument; }
     }

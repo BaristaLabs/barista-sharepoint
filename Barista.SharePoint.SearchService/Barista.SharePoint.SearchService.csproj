@@ -60,9 +60,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>

@@ -7,10 +7,7 @@
   using System.Linq;
   using System.Threading;
   using Barista.Logging;
-  using Lucene.Net.Documents;
-  using Lucene.Net.Index;
   using Directory = Lucene.Net.Store.Directory;
-  using Barista.Newtonsoft.Json;
 
   public class SimpleIndex : Index
   {
@@ -31,7 +28,7 @@
         
         var processedKeys = new HashSet<string>();
 
-        var docIdTerm = new Term(Constants.DocumentIdFieldName);
+        var docIdTerm = new Lucene.Net.Index.Term(Constants.DocumentIdFieldName);
         var documentsWrapped = batch.Documents.Select((doc, i) =>
         {
           Interlocked.Increment(ref sourceCount);
@@ -82,7 +79,7 @@
       {
         LogIndexing.Debug(() => string.Format("Deleting ({0}) from {1}", string.Join(", ", keys), Name));
 
-        writer.DeleteDocuments(keys.Select(k => new Term(Constants.DocumentIdFieldName, k.ToLowerInvariant())).ToArray());
+        writer.DeleteDocuments(keys.Select(k => new Lucene.Net.Index.Term(Constants.DocumentIdFieldName, k.ToLowerInvariant())).ToArray());
         
         return keys.Length;
       });

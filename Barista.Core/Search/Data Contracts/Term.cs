@@ -1,4 +1,4 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System.Runtime.Serialization;
 

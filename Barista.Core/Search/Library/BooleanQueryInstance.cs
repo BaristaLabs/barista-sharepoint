@@ -3,7 +3,6 @@
   using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
   using System.Reflection;
 
@@ -53,7 +52,7 @@
     {
       Occur lOccur;
       if (occur == Null.Value || occur == Undefined.Value || occur == null || (occur is string) == false)
-        lOccur = Occur.MUST;
+        lOccur = Occur.Must;
       else
         lOccur = (Occur) Enum.Parse(typeof (Occur), occur as string);
 
@@ -67,8 +66,8 @@
       }
       else
         throw new JavaScriptException(this.Engine, "Error", "The first parameter must be a query object.");
-      
-      m_booleanQuery.Add(new BooleanClause(query, lOccur));
+
+      m_booleanQuery.Clauses.Add(new BooleanClause {Query = query, Occur = lOccur});
     }
   }
 }

@@ -8,7 +8,8 @@
   public class ODataQueryParser
   {
     private readonly IQueryFactory m_queryFactory;
-    private readonly ISelectFilterFactory m_selectFilterFactory;
+    //TODO: Define a select filter factory and use it for projections.
+    //private readonly ISelectFilterFactory m_selectFilterFactory;
     private readonly IQueryFactory m_filterFactory;
     private readonly ISortFactory m_sortFactory;
 
@@ -45,7 +46,7 @@
     {
       var orderbyField = queryParameters[StringConstants.OrderByParameter];
       var query = queryParameters[StringConstants.QueryParameter];
-      var selects = queryParameters[StringConstants.SelectParameter];
+      //var selects = queryParameters[StringConstants.SelectParameter];
       var filter = queryParameters[StringConstants.FilterParameter];
       var skip = queryParameters[StringConstants.SkipParameter];
       var top = queryParameters[StringConstants.TopParameter];

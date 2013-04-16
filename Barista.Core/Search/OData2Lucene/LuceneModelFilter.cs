@@ -43,12 +43,24 @@
       set;
     }
 
+    /// <summary>
+    /// Returns a query based on the Lucene Query Parser format.
+    /// </summary>
+    /// <param name="defaultField"></param>
+    /// <param name="query"></param>
+    /// <returns></returns>
     public static Query ParseQuery(string defaultField, string query)
     {
       var parser = new QueryParser(Version.LUCENE_30, defaultField, new StandardAnalyzer(Version.LUCENE_30));
       return parser.Parse(query);
     }
 
+    /// <summary>
+    /// Returns a filter based on the Lucene Query Parser format.
+    /// </summary>
+    /// <param name="defaultField"></param>
+    /// <param name="filterQuery"></param>
+    /// <returns></returns>
     public static Filter ParseFilter(string defaultField, string filterQuery)
     {
       var parser = new QueryParser(Version.LUCENE_30, defaultField, new StandardAnalyzer(Version.LUCENE_30));

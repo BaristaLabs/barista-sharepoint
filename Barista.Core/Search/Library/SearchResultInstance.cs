@@ -1,8 +1,8 @@
-﻿namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.Search.Library
 {
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
-  using Barista.SharePoint.SPBaristaSearchService;
+  using Barista.Search;
   using System;
 
   [Serializable]

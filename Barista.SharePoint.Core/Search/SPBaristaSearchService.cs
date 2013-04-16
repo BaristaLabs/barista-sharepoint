@@ -1,8 +1,7 @@
-﻿using Barista.Services;
-
-namespace Barista.SharePoint.Search
+﻿namespace Barista.SharePoint.Search
 {
   using System;
+  using Barista.Services;
 
   public class SPBaristaSearchService : BaristaSearchService
   {

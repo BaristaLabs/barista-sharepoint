@@ -1,6 +1,5 @@
 ﻿namespace Barista.Search.Library
 {
-  using Contrib.Regex;
   using Jurassic;
   using Jurassic.Library;
   using System;

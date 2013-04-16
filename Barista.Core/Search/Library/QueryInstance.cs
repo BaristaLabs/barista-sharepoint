@@ -1,7 +1,6 @@
 ﻿namespace Barista.Search.Library
 {
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
 
   [Serializable]

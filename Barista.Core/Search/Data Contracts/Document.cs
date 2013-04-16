@@ -1,4 +1,4 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using System;
   using System.Collections.Generic;
@@ -6,7 +6,7 @@
   using Lucene.Net.Documents;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class Document
+  public class DocumentDto
   {
     [DataMember]
     public ICollection<FieldBase> Fields
@@ -15,7 +15,7 @@
       set;
     }
 
-    public static Lucene.Net.Documents.Document ConvertToLuceneDocument(Document document)
+    public static Lucene.Net.Documents.Document ConvertToLuceneDocument(DocumentDto document)
     {
       //Convert WCF document to Lucene document
       var luceneDocument = new Lucene.Net.Documents.Document();
@@ -78,23 +78,23 @@
 
         IFieldable luceneField;
 
-        if (field is StringField)
+        if (field is StringFieldDto)
         {
-          var stringField = field as StringField;
+          var stringField = field as StringFieldDto;
 
           luceneField = new Lucene.Net.Documents.Field(stringField.Name, true, stringField.Value,
                                                                  storeType, indexType, termVectorType);
         }
-        else if (field is DateField)
+        else if (field is DateFieldDto)
         {
-          var dateField = field as DateField;
+          var dateField = field as DateFieldDto;
 
           var dateString = DateTools.DateToString(dateField.Value, DateTools.Resolution.MILLISECOND);
           luceneField = new Field(dateField.Name, dateString, storeType, Field.Index.NOT_ANALYZED, termVectorType);
         }
-        else if (field is NumericField)
+        else if (field is NumericFieldDto)
         {
-          var numericField = field as NumericField;
+          var numericField = field as NumericFieldDto;
 
           luceneField = new Lucene.Net.Documents.NumericField(numericField.Name, numericField.PrecisionStep,
                                                                          storeType,
