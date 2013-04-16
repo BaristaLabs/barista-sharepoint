@@ -2,7 +2,6 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
 
   [Serializable]
@@ -25,7 +24,7 @@
   public class NumericRangeQueryInstance<T> : ObjectInstance
     where T : struct, IComparable<T>
   {
-    private readonly NumericRangeQuery<T> m_numericRangeQuery;
+    private readonly NumericRangeQueryBase<T> m_numericRangeQuery;
 
     public NumericRangeQueryInstance(ObjectInstance prototype)
       : base(prototype)
@@ -34,7 +33,7 @@
       this.PopulateFunctions();
     }
 
-    public NumericRangeQueryInstance(ObjectInstance prototype, NumericRangeQuery<T> numericRangeQuery)
+    public NumericRangeQueryInstance(ObjectInstance prototype, NumericRangeQueryBase<T> numericRangeQuery)
       : this(prototype)
     {
       if (numericRangeQuery == null)
@@ -43,7 +42,7 @@
       m_numericRangeQuery = numericRangeQuery;
     }
 
-    public NumericRangeQuery<T> NumericRangeQuery
+    public NumericRangeQueryBase<T> Query
     {
       get { return m_numericRangeQuery; }
     }

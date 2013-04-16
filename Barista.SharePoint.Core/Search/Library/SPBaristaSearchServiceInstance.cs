@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Search.Library
 {
   using System.Collections.Generic;
+  using System.Reflection;
   using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -67,49 +68,84 @@
         });
     }
 
-    //[JSFunction(Name = "createTermRangeQuery")]
-    //public TermRangeQueryInstance CreateTermRangeQuery(string fieldName, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
-    //{
-    //  return new TermRangeQueryInstance(this.Engine.Object.InstancePrototype, new TermRangeQuery(fieldName, lowerTerm, upperTerm, includeLower, includeUpper));
-    //}
+    [JSFunction(Name = "createTermRangeQuery")]
+    public TermRangeQueryInstance CreateTermRangeQuery(string fieldName, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
+    {
+      return new TermRangeQueryInstance(this.Engine.Object.InstancePrototype, new TermRangeQuery {
+        FieldName = fieldName,
+        LowerTerm = lowerTerm, 
+        UpperTerm = upperTerm,
+        LowerInclusive = includeLower,
+        UpperInclusive = includeUpper
+      });
+    }
 
-    //[JSFunction(Name = "createPrefixQuery")]
-    //public PrefixQueryInstance CreatePrefixQuery(string fieldName, string text)
-    //{
-    //  return new PrefixQueryInstance(this.Engine.Object.InstancePrototype, new PrefixQuery(new Term(fieldName, text)));
-    //}
+    [JSFunction(Name = "createPrefixQuery")]
+    public PrefixQueryInstance CreatePrefixQuery(string fieldName, string text)
+    {
+      return new PrefixQueryInstance(this.Engine.Object.InstancePrototype, new PrefixQuery
+        {
+          Term = new Term
+            {
+              FieldName = fieldName,
+              Value = text
+            }
+        });
+    }
 
-    //[JSFunction(Name = "createIntRangeQuery")]
-    //public NumericRangeQueryInstance<int> CreateIntRangeQuery(string fieldName, int precisionStep, object min, object max, bool minInclusive, bool maxInclusive)
-    //{
-    //  int? intMin = null;
-    //  if (min != null && min != Null.Value && min != Undefined.Value && min is int)
-    //    intMin = Convert.ToInt32(min);
+    [JSFunction(Name = "createIntRangeQuery")]
+    public NumericRangeQueryInstance<int> CreateIntRangeQuery(string fieldName, object min, object max, bool minInclusive, bool maxInclusive)
+    {
+      int? intMin;
+      if (min == null || min == Null.Value || min == Undefined.Value)
+        intMin = null;
+      else
+        intMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
 
-    //  int? intMax = null;
-    //  if (max != null && max != Null.Value && max != Undefined.Value && max is int)
-    //    intMax = Convert.ToInt32(max);
+      int? intMax;
+      if (max == null || max == Null.Value || max == Undefined.Value)
+        intMax = null;
+      else
+        intMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
 
-    //  var query = NumericRangeQuery.NewIntRange(fieldName, precisionStep, intMin, intMax, minInclusive, maxInclusive);
+      var query = new IntNumericRangeQuery
+        {
+          FieldName = fieldName,
+          Min = intMin,
+          Max = intMax,
+          MinInclusive = minInclusive,
+          MaxInclusive = maxInclusive
+        };
 
-    //  return new NumericRangeQueryInstance<int>(this.Engine.Object.InstancePrototype, query);
-    //}
+      return new NumericRangeQueryInstance<int>(this.Engine.Object.InstancePrototype, query);
+    }
 
-    //[JSFunction(Name = "createDoubleRangeQuery")]
-    //public NumericRangeQueryInstance<double> CreateDoubleRangeQuery(string fieldName, int precisionStep, object min, object max, bool minInclusive, bool maxInclusive)
-    //{
-    //  double? doubleMin = null;
-    //  if (min != null && min != Null.Value && min != Undefined.Value && min is int)
-    //    doubleMin = Convert.ToDouble(min);
+    [JSFunction(Name = "createDoubleRangeQuery")]
+    public NumericRangeQueryInstance<double> CreateDoubleRangeQuery(string fieldName,object min, object max, bool minInclusive, bool maxInclusive)
+    {
+      double? doubleMin;
+      if (min == null || min == Null.Value || min == Undefined.Value)
+        doubleMin = null;
+      else
+        doubleMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
 
-    //  double? doubleMax = null;
-    //  if (max != null && max != Null.Value && max != Undefined.Value && max is int)
-    //    doubleMax = Convert.ToDouble(max);
+      int? doubleMax;
+      if (max == null || max == Null.Value || max == Undefined.Value)
+        doubleMax = null;
+      else
+        doubleMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
 
-    //  var query = NumericRangeQuery.NewDoubleRange(fieldName, precisionStep, doubleMin, doubleMax, minInclusive, maxInclusive);
+      var query = new DoubleNumericRangeQuery
+      {
+        FieldName = fieldName,
+        Min = doubleMin,
+        Max = doubleMax,
+        MinInclusive = minInclusive,
+        MaxInclusive = maxInclusive
+      };
 
-    //  return new NumericRangeQueryInstance<double>(this.Engine.Object.InstancePrototype, query);
-    //}
+      return new NumericRangeQueryInstance<double>(this.Engine.Object.InstancePrototype, query);
+    }
 
     [JSFunction(Name = "createBooleanQuery")]
     public BooleanQueryInstance CreateBooleanQuery()
@@ -125,19 +161,35 @@
       return new PhraseQueryInstance(this.Engine.Object.InstancePrototype, query);
     }
 
-    //[JSFunction(Name = "createWildcardQuery")]
-    //public WildcardQueryInstance CreateWildcardQuery(string fieldName, string text)
-    //{
-    //  var query = new WildcardQuery(new Term(fieldName, text));
-    //  return new WildcardQueryInstance(this.Engine.Object.InstancePrototype, query);
-    //}
+    [JSFunction(Name = "createWildcardQuery")]
+    public WildcardQueryInstance CreateWildcardQuery(string fieldName, string text)
+    {
+      var query = new WildcardQuery
+        {
+          Term = new Term
+            {
+              FieldName = fieldName,
+              Value = text,
+            }
+        };
 
-    //[JSFunction(Name = "createFuzzyQuery")]
-    //public FuzzyQueryInstance CreateFuzzyQuery(string fieldName, string text)
-    //{
-    //  var query = new FuzzyQuery(new Term(fieldName, text));
-    //  return new FuzzyQueryInstance(this.Engine.Object.InstancePrototype, query);
-    //}
+      return new WildcardQueryInstance(this.Engine.Object.InstancePrototype, query);
+    }
+
+    [JSFunction(Name = "createFuzzyQuery")]
+    public FuzzyQueryInstance CreateFuzzyQuery(string fieldName, string text)
+    {
+      var query = new FuzzyQuery
+        {
+          Term = new Term
+            {
+              FieldName = fieldName,
+              Value = text
+            }
+        };
+
+      return new FuzzyQueryInstance(this.Engine.Object.InstancePrototype, query);
+    }
 
     //[JSFunction(Name = "createQuery")]
     //public GenericQueryInstance CreateQuery(string fieldName, string text)
@@ -158,12 +210,20 @@
     //  return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
     //}
 
-    //[JSFunction(Name = "createRegexQuery")]
-    //public RegexQueryInstance CreateRegexQuery(string fieldName, string text)
-    //{
-    //  var query = new RegexQuery(new Term(fieldName, text));
-    //  return new RegexQueryInstance(this.Engine.Object.InstancePrototype, query);
-    //}
+    [JSFunction(Name = "createRegexQuery")]
+    public RegexQueryInstance CreateRegexQuery(string fieldName, string text)
+    {
+      var query = new RegexQuery
+        {
+          Term = new Term
+            {
+              FieldName = fieldName,
+              Value = text
+            }
+        };
+
+      return new RegexQueryInstance(this.Engine.Object.InstancePrototype, query);
+    }
 
     [JSFunction(Name = "createMatchAllDocsQuery")]
     public GenericQueryInstance CreateMatchAllDocsQuery()
@@ -248,9 +308,20 @@
     }
 
     [JSFunction(Name = "searchWithQuery")]
-    public ArrayInstance SearchWithQuery(string defaultField, object query, object maxResults)
+    public ArrayInstance SearchWithQuery(object query, object maxResults)
     {
-      var queryValue = JurassicHelper.GetTypedArgumentValue(this.Engine, query, new MatchAllDocsQuery());
+      Query queryValue;
+      if (query == null || query == Null.Value || query == Undefined.Value)
+        queryValue = new MatchAllDocsQuery();
+      else
+      {
+        var searchQueryType = query.GetType();
+        var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+        if (queryProperty == null || typeof(Query).IsAssignableFrom(queryProperty.PropertyType) == false)
+          throw new JavaScriptException(this.Engine, "Error", "Unsupported query object.");
+
+        queryValue = queryProperty.GetValue(query, null) as Query;
+      }
 
       var maxResultsValue = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
 
