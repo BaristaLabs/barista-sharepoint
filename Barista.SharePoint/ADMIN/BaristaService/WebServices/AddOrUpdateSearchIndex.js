@@ -67,7 +67,7 @@ if (currentSearchIndex == null) {
 else {
     currentSearchIndex.description = newSearchIndex.description;
     currentSearchIndex.typeName = searchIndexType.Value;
-    currentSearchIndex.indexStoragePath = newSearchIndex.indexStorageLocation;
+    currentSearchIndex.indexStoragePath = newSearchIndex.indexStoragePath;
     result = true;
 }
 
