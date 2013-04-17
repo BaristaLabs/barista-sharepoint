@@ -85,6 +85,13 @@
       // provision the service app
       serviceApp.Provision();
 
+      //Check for and copy a property bag setting
+      if (farm.Properties.ContainsKey("BaristaTrustedLocations"))
+      {
+        serviceApp.Properties.Add("BaristaTrustedLocations", farm.Properties["BaristaTrustedLocations"]);
+        serviceApp.Update();
+      }
+
       // pass service app back to the PowerShell
       WriteObject(serviceApp);
     }

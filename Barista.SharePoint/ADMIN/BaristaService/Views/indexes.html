@@ -1,0 +1,150 @@
+﻿<table border="0" cellspacing="0" cellpadding="0" width="90%" style="margin: 5px;">
+	<tr>
+		<td style="padding-top: 10px">
+            <b>Barista Search Indexes:</b>
+			<div id="searchIndexesGrid"></div>	
+		</td>
+	</tr>
+</table>
+<script type="text/x-kendo-template" id="searchIndexTemplate">
+    <div class="editor form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="inputName">Name </label>
+            <div class="controls">
+                <input id="inputName" type="text" placeholder="Name" 
+                    required data-required-msg="You need to enter an index name" data-url-msg="A name must be entered."
+                    data-bind="value:name"></input>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputDescription">Description </label>
+            <div class="controls">
+                <textarea id="inputDescription" rows="3" placeholder="Description"
+                    data-bind="value:description">
+                </textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputIndexType">Index Type </label>
+            <div class="controls">
+                <select id="inputIndexType" data-bind="value:indexType">
+                    <option value="RAM Directory">RAM Directory</option>
+                    <option value="File Directory">File Directory</option>
+                    <option value="SharePoint Directory">SharePoint Directory</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputIndexStoragePath">Index Storage Path </label>
+            <div class="controls">
+                <input id="inputIndexStoragePath" type="text" placeholder="Index Storage Path" 
+                    data-bind="value:indexStoragePath"></input>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="toolbarTemplate">
+    <div class="toolbar">
+        <div class="btn-group" stop-event="click">
+            <a id="btnNewIndex" class="btn btn-primary" ng-click="addNewIndex()">
+                <img src="/_layouts/images/newitem.gif" alt="New" /><span style="color: white;"> New Index</span>
+            </a>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var searchIndexesDataSource;
+    $(document).ready(function () {
+        //Kill the search area, it just looks bad (style conflict?)
+        $("#s4-searcharea").hide();
+
+        var searchIndexesServiceBaseUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
+        var searchIndexesServiceBasePostUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
+        searchIndexesDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: searchIndexesServiceBaseUrl + encodeURIComponent("/_admin/BaristaService/WebServices/GetSearchIndexes.js"),
+                    dataType: "json",
+                    type: "GET"
+                },
+                update: {
+                    url: searchIndexesServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/WebServices/AddOrUpdateSearchIndex.js"),
+                    contentType: "application/x-www-form-jsonencoded",
+                    dataType: "json",
+                    type: "POST"
+                },
+                destroy: {
+                    url: searchIndexesServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/WebServices/DeleteSearchIndex.js"),
+                    contentType: "application/x-www-form-jsonencoded",
+                    dataType: "json",
+                    type: "POST",
+                },
+                create: {
+                    url: searchIndexesServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/WebServices/AddOrUpdateSearchIndex.js"),
+                    contentType: "application/x-www-form-jsonencoded",
+                    dataType: "json",
+                    type: "POST",
+                },
+                parameterMap: function (options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return kendo.stringify(options.models[0]);
+                    }
+                }
+            },
+            batch: true,
+            pageSize: 15,
+            schema: {
+                model: {
+                    id: "name",
+                    fields: {
+                        name: { type: "string", required: true },
+                        description: { type: "string" },
+                        indexType: { type: "string", defaultValue: "RAM Directory" },
+                        indexStoragePath: { type: "string" }
+                    }
+                }
+            }
+        });
+
+        $("#searchIndexesGrid").kendoGrid({
+            dataSource: searchIndexesDataSource,
+            height: 350,
+            scrollable: true,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                input: true,
+                numeric: false
+            },
+            toolbar: $("#toolbarTemplate").html(),
+            columns: [
+                {
+                    field: "name",
+                    title: "Name",
+                    width: 400
+                },
+                {
+                    field: "description",
+                    title: "Description",
+                    width: 200
+                },
+                {
+                    field: "indexType",
+                    title: "Index Type",
+                    width: 100
+                },
+                {
+                    field: "indexStoragePath",
+                    title: "Index Storage Path",
+                    width: 400
+                },
+                { command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }
+            ],
+            editable: {
+                mode: "popup",
+                template: $("#searchIndexTemplate").html(),
+            }
+        });
+    });
+</script>

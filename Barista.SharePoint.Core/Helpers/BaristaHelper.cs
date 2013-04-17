@@ -147,6 +147,7 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Local
     private class IndexDefinition
     {
+      [JsonProperty("name")]
       public string Name
       {
         get;
@@ -154,12 +155,21 @@
         set;
       }
 
+      [JsonProperty("description")]
+      public string Description
+      {
+        get;
+        set;
+      }
+
+      [JsonProperty("typeName")]
       public string TypeName
       {
         get;
         set;
       }
 
+      [JsonProperty("indexStoragePath")]
       public string IndexStoragePath
       {
         get;

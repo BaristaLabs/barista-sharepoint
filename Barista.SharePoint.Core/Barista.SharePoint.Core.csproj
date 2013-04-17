@@ -245,6 +245,9 @@
     <Compile Include="Library\SPRecycleBinItemInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionInstance.cs" />
     <Compile Include="Library\SPSecurableObjectInstance.cs" />
+    <Compile Include="Library\SPServerInstance.cs" />
+    <Compile Include="Library\SPServiceInstance.cs" />
+    <Compile Include="Library\SPServiceApplicationInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\SPSiteInstance.cs" />
     <Compile Include="Library\SPUserInstance.cs" />

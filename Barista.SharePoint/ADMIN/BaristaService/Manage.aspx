@@ -16,9 +16,10 @@
 </asp:Content>
 
 <asp:Content ID="PlaceHolderAdditionalPageHead" ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
-    <SharePoint:CssLink Id="BootstrapCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/bootstrap-2.1.1/css/bootstrap.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="KendoCommonCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.web.2012.2.913/styles/kendo.common.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="KendoDefaultCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.web.2012.2.913/styles/kendo.default.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="BootstrapCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/bootstrap-2.3.1/css/bootstrap.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="AngularUiCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="KendoCommonCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.complete.2013.1.319/styles/kendo.common.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="KendoDefaultCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.complete.2013.1.319/styles/kendo.default.min.css"></SharePoint:CssLink>
     <style type="text/css">
         a:visited {
             color: black;
@@ -31,169 +32,43 @@
         div.k-window {
             display: table;
         }
+
+        /* Override Bootstrap styles that conflict with corev4.css*/
+        img {
+            max-width: none;
+        }
     </style>
 </asp:Content>
 
 <asp:Content ID="Main" ContentPlaceHolderID="PlaceHolderMain" runat="server">
-	<table border="0" cellspacing="0" cellpadding="0" width="90%" style="margin: 5px;">
-		<tr>
-			<td style="padding-top: 10px">
-                <b>Trusted Barista Locations:</b>
-				<div id="trustedLocationsGrid"></div>	
-			</td>
-		</tr>
-	</table>
-    <script type="text/x-kendo-template" id="trustedLocationTemplate">
-        <div class="editor form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="inputUrl">Url </label>
-                <div class="controls">
-                    <input id="inputUrl" type="text" placeholder="SharePoint Web Url" 
-                        required data-required-msg="You need to enter a URL" data-url-msg="This url is invalid"
-                        pattern="http(s?)\://.*"
-                        data-bind="value:Url"></input>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputDescription">Description </label>
-                <div class="controls">
-                    <textarea id="inputDescription" rows="3" placeholder="Description"
-                        data-bind="value:Description">
-                    </textarea>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputLocationType">Location Type </label>
-                <div class="controls">
-                    <select id="inputLocationType" data-bind="value:LocationType">
-                        <option value="Web">Web</option>
-                    </select>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputTrustChildren">Trust Children? </label>
-                <div class="controls">
-                    <input id="inputTrustChildren" type="checkbox"
-                        data-bind="checked:TrustChildren"></input>
-                </div>
-            </div>
+    <div class="container-fluid" style="padding-top:5px;" ng-app="managebarista">
+        <ul class="nav nav-tabs" style="height: 37px" ng-controller="ManageMainCtrl">
+            <li ui-route="{{tab.route}}" ng-repeat="tab in tabs" ng-class="{active: $uiRoute}" class="ng-scope ng-binding" style="cursor:pointer">
+                <a ng-click="reload($event, tab.route)">{{tab.title}}</a>
+            </li>
+        </ul>
+        <div id="main-content">
+            <div ng-view></div>
         </div>
-    </script>
-    <script type="text/x-kendo-template" id="toolbarTemplate">
-        <div class="toolbar">
-            <div class="btn-group">
-                <a id="btnNewLocation" class="btn btn-primary" href="\#">
-                    <img src="/_layouts/images/newitem.gif" alt="New" /><span style="color: white;"> New Location</span>
-                </a>
-            </div>
-        </div>
-    </script>
+    </div>
+    
     <script type="text/javascript" src="/_layouts/BaristaJS/json2.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/underscore-1.4.4.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/modernizr-2.6.2.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/jquery.validate-1.10.0.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/jquery.validate.additional-methods-1.10.0.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/bootstrap-2.1.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/kendoui.web.2012.2.913/js/kendo.web.min.js"></script>
-    <script type="text/javascript">
-        var trustedLocationsDataSource;
-        $(document).ready(function () {
-            //Kill the search area, it just looks bad (style conflict?)
-            $("#s4-searcharea").hide();
-
-            var trustedLocationsServiceBaseUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
-            var trustedLocationsServiceBasePostUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
-            trustedLocationsDataSource = new kendo.data.DataSource({
-                transport: {
-                    read: {
-                        url: trustedLocationsServiceBaseUrl + encodeURIComponent("/_admin/BaristaService/GetTrustedLocations.js"),
-                        dataType: "json",
-                        type: "GET"
-                    },
-                    update: {
-                        url: trustedLocationsServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/AddOrUpdateTrustedLocation.js"),
-                        contentType: "application/x-www-form-jsonencoded",
-                        dataType: "json",
-                        type: "POST"
-                    },
-                    destroy: {
-                        url: trustedLocationsServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/DeleteTrustedLocation.js"),
-                        contentType: "application/x-www-form-jsonencoded",
-                        dataType: "json",
-                        type: "POST",
-                    },
-                    create: {
-                        url: trustedLocationsServiceBasePostUrl + encodeURIComponent("/_admin/BaristaService/AddOrUpdateTrustedLocation.js"),
-                        contentType: "application/x-www-form-jsonencoded",
-                        dataType: "json",
-                        type: "POST",
-                    },
-                    parameterMap: function (options, operation) {
-                        if (operation !== "read" && options.models) {
-                            return kendo.stringify(options.models[0]);
-                        }
-                    }
-                },
-                batch: true,
-                pageSize: 15,
-                schema: {
-                    model: {
-                        id: "Url",
-                        fields: {
-                            Url: { type: "url", required: true },
-                            Description: { type: "string" },
-                            LocationType: { type: "string", defaultValue: "Web" },
-                            TrustChildren: { type: "boolean" }
-                        }
-                    }
-                }
-            });
-
-            $("#trustedLocationsGrid").kendoGrid({
-                dataSource: trustedLocationsDataSource,
-                height: 350,
-                scrollable: true,
-                sortable: true,
-                filterable: true,
-                pageable: {
-                    input: true,
-                    numeric: false
-                },
-                toolbar: $("#toolbarTemplate").html(),
-                columns: [
-                    {
-                        field: "Url",
-                        title: "Url",
-                        width: 400
-                    },
-                    {
-                        field: "Description",
-                        title: "Description",
-                        width: 200
-                    },
-                    {
-                        field: "LocationType",
-                        title: "Location Type",
-                        width: 100
-                    },
-                    {
-                        field: "TrustChildren",
-                        title: "Trust Children",
-                        width: 100
-                    },
-                    { command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }
-                ],
-                editable: {
-                    mode: "popup",
-                    template: $("#trustedLocationTemplate").html(),
-                    }
-            });
-
-            $("#btnNewLocation").click(function (event) {
-                event.stopPropagation();
-                var grid = $("#trustedLocationsGrid").data("kendoGrid");
-                grid.addRow();
-            });
-        });
-    </script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-ieshiv.min.js"></script>
+    
+    <script type="text/javascript" src="/_layouts/BaristaJS/bootstrap-2.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.min.js"></script>
+<%--    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.tpls.min.js"></script>--%>
+    <script type="text/javascript" src="/_layouts/BaristaJS/kendoui.complete.2013.1.319/js/kendo.web.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-kendo.min.js"></script>
+    
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js"></script>
 </asp:Content>

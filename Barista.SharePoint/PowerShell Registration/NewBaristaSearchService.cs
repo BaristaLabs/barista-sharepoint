@@ -62,6 +62,13 @@
       // provision the service
       searchService.Provision();
 
+      //Check for and copy a property bag setting
+      if (farm.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
+      {
+        searchService.Properties.Add("BaristaSearchIndexDefinitions", farm.Properties["BaristaSearchIndexDefinitions"]);
+        searchService.Update();
+      }
+
       // pass service back to PowerShell
       WriteObject(searchService);
     }

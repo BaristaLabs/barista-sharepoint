@@ -391,6 +391,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ADMIN\BaristaService\Scripts\Services\" />
     <Folder Include="Helpers\" />
     <Folder Include="Imports\" />
   </ItemGroup>
@@ -412,10 +413,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ADMIN\BaristaService\AddOrUpdateTrustedLocation.js" />
-    <Content Include="ADMIN\BaristaService\DeleteTrustedLocation.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\app.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManageIndexesCtrl.js" />
+    <Content Include="ADMIN\BaristaService\Views\indexes.html" />
+    <Content Include="ADMIN\BaristaService\Views\main.html" />
+    <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateTrustedLocation.js" />
+    <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateSearchIndex.js" />
+    <Content Include="ADMIN\BaristaService\WebServices\DeleteSearchIndex.js" />
+    <Content Include="ADMIN\BaristaService\WebServices\GetSearchIndexes.js" />
+    <Content Include="ADMIN\BaristaService\WebServices\DeleteTrustedLocation.js" />
     <Content Include="ADMIN\BaristaService\Create.aspx" />
-    <Content Include="ADMIN\BaristaService\GetTrustedLocations.js" />
+    <Content Include="ADMIN\BaristaService\WebServices\GetTrustedLocations.js" />
     <Content Include="ADMIN\BaristaService\Manage.aspx" />
     <Content Include="BaristaDataDocument\Elements.xml">
       <SubType>Designer</SubType>
@@ -435,6 +443,7 @@
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-cookies.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-cookies.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-kendo.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-loader.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-loader.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-mocks.js" />
@@ -445,6 +454,7 @@
     <Content Include="Layouts\BaristaJS\angular\angular-scenario.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-0.4.0.min.css" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-0.4.0.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-ui-bootstrap-0.2.0.tpls.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-ieshiv.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-ieshiv.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui.css" />
@@ -608,6 +618,7 @@
     <Content Include="Layouts\BaristaJS\angular\i18n\angular-locale_zh-hk.js" />
     <Content Include="Layouts\BaristaJS\angular\i18n\angular-locale_zh-tw.js" />
     <Content Include="Layouts\BaristaJS\angular\i18n\angular-locale_zh.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-ui-bootstrap-0.2.0.min.js" />
     <Content Include="Layouts\BaristaJS\backbone-1.0.0.min.js" />
     <Content Include="Layouts\BaristaJS\bootstrap-2.3.1\css\bootstrap-responsive.css" />
     <Content Include="Layouts\BaristaJS\bootstrap-2.3.1\css\bootstrap-responsive.min.css" />
@@ -935,6 +946,7 @@
     <Content Include="Layouts\BaristaJS\TrafficCop.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop.min.gz.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop.min.js" />
+    <Content Include="Layouts\BaristaJS\underscore-1.4.4.min.js" />
     <Content Include="Layouts\Barista\v1\MochaServer.aspx" />
     <Content Include="Layouts\BaristaJS\arctext\css\demo.css" />
     <Content Include="Layouts\BaristaJS\arctext\css\style.css" />

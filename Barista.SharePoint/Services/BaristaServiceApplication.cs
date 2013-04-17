@@ -13,12 +13,6 @@
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
   public sealed class BaristaServiceApplication : SPIisWebServiceApplication, IBaristaServiceApplication
   {
-    #region Constants
-
-    private const string IndexServerAffinityKey = "Barista_IndexServerAffinity";
-
-    #endregion
-
     #region Fields
     [Persisted]
     private int m_settings;
@@ -93,13 +87,17 @@
     public override SPAdministrationLink ManageLink
     {
       get
-      { return new SPAdministrationLink("/_admin/BaristaService/Manage.aspx"); }
+      {
+        return new SPAdministrationLink(String.Concat("/_admin/BaristaService/Manage.aspx?appid=", Id));
+      }
     }
 
     public override SPAdministrationLink PropertiesLink
     {
       get
-      { return new SPAdministrationLink("/_admin/BaristaService/Manage.aspx"); }
+      {
+        return new SPAdministrationLink(String.Concat("/_admin/BaristaService/Manage.aspx?appid=", Id));
+      }
     }
 
     #endregion

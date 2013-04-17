@@ -1,6 +1,8 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using System.Linq;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint.Administration;
@@ -22,6 +24,41 @@
       : this(prototype)
     {
       this.m_farm = farm;
+    }
+
+    [JSFunction(Name = "getServersInFarm")]
+    public ArrayInstance GetServersInFarm()
+    {
+      return this.Engine.Array.Construct(
+// ReSharper disable CoVariantArrayConversion
+        m_farm.Servers.Select(s => new SPServerInstance(this.Engine.Object.Prototype, s)).ToArray());
+// ReSharper restore CoVariantArrayConversion
+    }
+
+    [JSFunction(Name = "getServicesInFarm")]
+    public ArrayInstance GetServicesInFarm()
+    {
+      return this.Engine.Array.Construct(
+        // ReSharper disable CoVariantArrayConversion
+        m_farm.Services.Select(s => new SPServiceInstance(this.Engine.Object.Prototype, s)).ToArray());
+      // ReSharper restore CoVariantArrayConversion
+    }
+
+    [JSFunction(Name = "getServiceApplicationById")]
+    public object GetServiceApplicationById(object id)
+    {
+      var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
+
+      foreach (var service in m_farm.Services)
+      {
+        foreach (var serviceApplication in service.Applications)
+        {
+          if (serviceApplication.Id == guid)
+            return new SPServiceApplicationInstance(this.Engine.Object.Prototype, serviceApplication);
+        }
+      }
+
+      return Null.Value;
     }
 
     [JSFunction(Name = "getFarmKeyValue")]
