@@ -1395,12 +1395,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataContracts\" />
     <Folder Include="DocumentStore\Framework\" />
     <Folder Include="DocumentStore\Helpers\" />
     <Folder Include="DocumentStore\SharpKit\" />
-    <Folder Include="Serialization\" />
-    <Folder Include="SharpKit\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\jsonDataHandler.js" />
