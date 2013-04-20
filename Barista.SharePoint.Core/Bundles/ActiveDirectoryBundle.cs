@@ -1,27 +1,20 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
-  using Barista.SharePoint.Library;
+  using Barista.Bundles;
+  using Barista.Library;
   using System;
 
   /// <summary>
-  /// Installs the SharePoint-specific implementation of the Active Directory instance.
+  /// Installs the SharePoint-specific implementation of the Active Directory bundle.
   /// </summary>
   [Serializable]
-  public class ActiveDirectoryBundle : IBundle
+  public class SPActiveDirectoryBundle : ActiveDirectoryBundle
   {
-    public string BundleName
+    public override object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      get { return "Active Directory"; }
-    }
+      var adInstance = (ActiveDirectoryInstance)base.InstallBundle(engine);
 
-    public string BundleDescription
-    {
-      get { return "Active Directory Bundle. Provides a mechanism to query Active Directory."; } 
-    }
-
-    public object InstallBundle(Jurassic.ScriptEngine engine)
-    {
-      var adInstance = new ActiveDirectoryInstance(engine);
+      //Set the current login name based on the current user associated with the context.
       if (BaristaContext.Current.Web != null)
         adInstance.CurrentUserLoginName = BaristaContext.Current.Web.CurrentUser.LoginName;
 

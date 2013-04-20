@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint
+﻿namespace Barista
 {
   using System;
 

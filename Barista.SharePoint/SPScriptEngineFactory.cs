@@ -126,7 +126,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
         instance.Common.RegisterBundle(new LinqBundle());
         instance.Common.RegisterBundle(new JsonDataBundle());
         instance.Common.RegisterBundle(new SharePointBundle());
-        instance.Common.RegisterBundle(new ActiveDirectoryBundle());
+        instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
         instance.Common.RegisterBundle(new DocumentBundle());
         instance.Common.RegisterBundle(new K2Bundle());
         instance.Common.RegisterBundle(new UtilityBundle());

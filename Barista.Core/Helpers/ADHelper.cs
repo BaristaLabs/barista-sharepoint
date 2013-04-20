@@ -1,11 +1,13 @@
-﻿namespace Barista.SharePoint
+﻿namespace Barista
 {
+  using System.Runtime.InteropServices;
   using Barista.DirectoryServices;
 
   using System;
   using System.Collections.Generic;
   using System.DirectoryServices;
   using System.Linq;
+  using Barista.Extensions;
 
   /// <summary>
   /// Represents a class that 
@@ -15,18 +17,47 @@
   /// </remarks>
   public static class ADHelper
   {
+    #region DLL Imports
+    [DllImport("Netapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern int NetGetJoinInformation(
+      string server,
+      out IntPtr domain,
+      out NetJoinStatus status);
+
+    [DllImport("Netapi32.dll")]
+// ReSharper disable InconsistentNaming
+    static extern int NetApiBufferFree(IntPtr Buffer);
+// ReSharper restore InconsistentNaming
+
+    // Win32 Result Code Constant
+    const int ErrorSuccess = 0;
+
+    // NetGetJoinInformation() Enumeration
+    public enum NetJoinStatus
+    {
+      NetSetupUnknownStatus = 0,
+      NetSetupUnjoined,
+      NetSetupWorkgroupName,
+      NetSetupDomainName
+    } // NETSETUP_JOIN_STATUS
+    #endregion
+
     public static ADUser GetADUser(string loginName)
     {
       if (String.IsNullOrEmpty(loginName))
         loginName = System.Threading.Thread.CurrentPrincipal.Identity.Name;
 
       ADUser result;
-     
-      var ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
+
+      var ldapPath = GetJoinedDomain();
+      if (ldapPath.IsNullOrWhiteSpace())
+        throw new InvalidOperationException("The current machine is not joined to a domain.");
+
+      var ldapRoot = new DirectoryEntry(ldapPath);
       using (var ctx = new ADContext(ldapRoot))
       {
-        string domainName = ldapRoot.Path.Replace("LDAP://", "");
-        string preWin2KLoginName = loginName.Replace(domainName + "\\", "");
+        var domainName = ldapRoot.Path.Replace("LDAP://", "");
+        var preWin2KLoginName = loginName.Replace(domainName + "\\", "");
 
         ctx.Users.Searcher.SizeLimit = 1;
 
@@ -45,7 +76,12 @@
 
       ADGroup result;
 
-      var ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
+      var ldapPath = GetJoinedDomain();
+      if (ldapPath.IsNullOrWhiteSpace())
+        throw new InvalidOperationException("The current machine is not joined to a domain.");
+
+      var ldapRoot = new DirectoryEntry(ldapPath);
+
       using (var ctx = new ADContext(ldapRoot))
       {
         ctx.Groups.Searcher.SizeLimit = 1;
@@ -60,12 +96,17 @@
 
     public static IEnumerable<DirectoryEntity> SearchAllDirectoryEntities(string searchText, int maxResults, PrincipalType principalType)
     {
-      List<DirectoryEntity> result = new List<DirectoryEntity>();
+      var result = new List<DirectoryEntity>();
 
       searchText = searchText.Trim();
 
-      DirectoryEntry ldapRoot = new DirectoryEntry(GetCurrentLdapPath());
-      using (ADContext ctx = new ADContext(ldapRoot))
+      var ldapPath = GetJoinedDomain();
+      if (ldapPath.IsNullOrWhiteSpace())
+        throw new InvalidOperationException("The current machine is not joined to a domain.");
+
+      var ldapRoot = new DirectoryEntry(ldapPath);
+
+      using (var ctx = new ADContext(ldapRoot))
       {
         ctx.Users.Searcher.SizeLimit = maxResults;
         ctx.Groups.Searcher.SizeLimit = maxResults;
@@ -109,10 +150,31 @@
       return SearchAllDirectoryEntities(searchText, maxResults, PrincipalType.SecurityGroup).OfType<ADGroup>().ToList();
     }
 
-    private static string GetCurrentLdapPath()
+    // Returns the domain name the computer is joined to, or "" if not joined.
+    public static string GetJoinedDomain()
     {
-      var domain = Utilities.GetFarmKeyValue("WindowsDomainShortName");
-      return "LDAP://" + domain;
+      string domain = null;
+      var pDomain = IntPtr.Zero;
+      try
+      {
+// ReSharper disable RedundantAssignment
+        var status = NetJoinStatus.NetSetupUnknownStatus;
+// ReSharper restore RedundantAssignment
+
+        var result = NetGetJoinInformation(null, out pDomain, out status);
+        if (result == ErrorSuccess &&
+            status == NetJoinStatus.NetSetupDomainName)
+        {
+          domain = Marshal.PtrToStringAuto(pDomain);
+        }
+      }
+      finally
+      {
+        if (pDomain != IntPtr.Zero)
+          NetApiBufferFree(pDomain);
+      }
+
+      return domain;
     }
   }
 }

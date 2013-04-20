@@ -150,6 +150,7 @@
     <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
+    <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="Extensions\TimeSpanExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GenericConfigurationElementCollection.cs" />
+    <Compile Include="Helpers\ADHelper.cs" />
     <Compile Include="Helpers\DynamicHelper.cs" />
     <Compile Include="Helpers\EncryptDecrypt.cs" />
     <Compile Include="Helpers\PdfAttachment.cs" />
@@ -950,6 +952,10 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
+    <Compile Include="Library\ActiveDirectoryInstance.cs" />
+    <Compile Include="Library\ADGroupInstance.cs" />
+    <Compile Include="Library\ADUserInstance.cs" />
+    <Compile Include="PrincipalType.cs" />
     <Compile Include="Search\BaristaSearchClient.cs" />
     <Compile Include="Search\Data Contracts\BooleanClause.cs" />
     <Compile Include="Search\Data Contracts\Occur.cs" />

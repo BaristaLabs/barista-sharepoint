@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.Library
+﻿namespace Barista.Library
 {
   using Jurassic;
   using Jurassic.Library;

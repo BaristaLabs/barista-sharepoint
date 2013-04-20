@@ -197,7 +197,6 @@
     <Compile Include="Framework\SecurityContext.cs" />
     <Compile Include="Framework\ServiceUtility.cs" />
     <Compile Include="HandleEventFiring.cs" />
-    <Compile Include="Helpers\ADHelper.cs" />
     <Compile Include="Helpers\BaristaHelper.cs" />
     <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="Helpers\CodeCommentsHelper.cs" />
@@ -211,9 +210,6 @@
     <Compile Include="K2\Library\K2Instance.cs" />
     <Compile Include="K2\Library\ProcessInstanceInstance.cs" />
     <Compile Include="K2\Library\WorklistItemInstance.cs" />
-    <Compile Include="Library\ActiveDirectoryInstance.cs" />
-    <Compile Include="Library\ADGroupInstance.cs" />
-    <Compile Include="Library\ADUserInstance.cs" />
     <Compile Include="Library\BaristaItemEventPropertiesInstance.cs" />
     <Compile Include="Library\BaristaSharePointGlobal.cs" />
     <Compile Include="Library\ExcelPackageInstance.cs" />
@@ -257,7 +253,6 @@
     <Compile Include="Library\SPWebTemplateInstance.cs" />
     <Compile Include="Library\UsageInfoInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
-    <Compile Include="PrincipalType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\Bundles\BaristaSearchIndexBundle.cs" />
     <None Include="Search\Hit.cs" />
