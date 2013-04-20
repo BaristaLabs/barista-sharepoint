@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Search.Library
 {
-  using System.Collections.Generic;
   using System.Reflection;
   using Barista.Extensions;
   using Barista.Jurassic;
@@ -129,7 +128,7 @@
       else
         doubleMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
 
-      int? doubleMax;
+      float? doubleMax;
       if (max == null || max == Null.Value || max == Undefined.Value)
         doubleMax = null;
       else
@@ -145,6 +144,33 @@
       };
 
       return new NumericRangeQueryInstance<double>(this.Engine.Object.InstancePrototype, query);
+    }
+
+    [JSFunction(Name = "createFloatRangeQuery")]
+    public NumericRangeQueryInstance<float> CreateFloatRangeQuery(string fieldName, object min, object max, bool minInclusive, bool maxInclusive)
+    {
+      float? floatMin;
+      if (min == null || min == Null.Value || min == Undefined.Value)
+        floatMin = null;
+      else
+        floatMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
+
+      float? floatMax;
+      if (max == null || max == Null.Value || max == Undefined.Value)
+        floatMax = null;
+      else
+        floatMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
+
+      var query = new FloatNumericRangeQuery
+      {
+        FieldName = fieldName,
+        Min = floatMin,
+        Max = floatMax,
+        MinInclusive = minInclusive,
+        MaxInclusive = maxInclusive
+      };
+
+      return new NumericRangeQueryInstance<float>(this.Engine.Object.InstancePrototype, query);
     }
 
     [JSFunction(Name = "createBooleanQuery")]
@@ -250,13 +276,13 @@
     [JSFunction(Name = "deleteDocuments")]
     public void DeleteDocuments(ArrayInstance documentIds)
     {
-      var documentIdValues = new List<string>();
-      foreach (var documentId in documentIds.ElementValues)
-      {
-        var documentIdValue = TypeConverter.ConvertTo<string>(this.Engine, documentId);
-        if (documentIdValue.IsNullOrWhiteSpace() == false && documentIdValue != "undefined")
-          documentIdValues.Add(documentIdValue);
-      }
+      var documentIdValues = documentIds.ElementValues
+                                        .Select(documentId => TypeConverter.ConvertTo<string>(this.Engine, documentId))
+                                        .Where(
+                                          documentIdValue =>
+                                          documentIdValue.IsNullOrWhiteSpace() == false &&
+                                          documentIdValue != "undefined")
+                                        .ToList();
 
       m_baristaSearchServiceProxy.DeleteDocuments(this.IndexName, documentIdValues);
     }

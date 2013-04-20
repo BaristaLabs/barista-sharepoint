@@ -34,8 +34,8 @@
     /// <param name="indexName"></param>
     public void DeleteAllDocuments(string indexName)
     {
-      try
-      {
+      //try
+      //{
         var index = GetOrAddIndex(indexName, true);
         try
         {
@@ -45,11 +45,11 @@
         {
           CloseIndexWriter(indexName, false);
         }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
+      //}
+      //catch (Exception ex)
+      //{
+      //  throw new FaultException(ex.Message);
+      //}
       
     }
 
@@ -167,8 +167,8 @@
 
         var index = GetOrAddIndex(indexName, true);
 
-        try
-        {
+        //try
+        //{
           //Add it to the index.
           var batch = new IndexingBatch();
 
@@ -199,11 +199,11 @@
         {
           CloseIndexWriter(indexName, false);
         }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
+      //}
+      //catch (Exception ex)
+      //{
+      //  throw new FaultException(ex.Message);
+      //}
     }
 
     /// <summary>

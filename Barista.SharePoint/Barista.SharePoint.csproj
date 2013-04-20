@@ -15,7 +15,7 @@
     <SandboxedSolution>False</SandboxedSolution>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <ActiveDeploymentConfiguration>Deploy Barista Service Application</ActiveDeploymentConfiguration>
+    <ActiveDeploymentConfiguration>Barista Deployment</ActiveDeploymentConfiguration>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>..\Scripts\UninstallBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>..\Scripts\UninstallBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>
     <SccProjectName>SAK</SccProjectName>
@@ -23,12 +23,12 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\Scripts\SetupBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
-    <PreDeploymentCommand>
-    </PreDeploymentCommand>
+    <PreDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -file "%24%28SolutionDir%29Scripts\VSDeploy-PreSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PreDeploymentCommand>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\Scripts\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>..\Scripts\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>
     <CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>../Scripts/Deploy.ps1 -Config ./Deployment/Solutions-LocalDev-Debug.xml</CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>
+    <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2628,13 +2628,9 @@
     <VisualStudio>
       <FlavorProperties GUID="{BB1F664B-9266-4fd6-B973-E1E44974B511}">
         <DeploymentConfigurations>
-          <DeploymentConfiguration Name="Deploy Barista Service Application">
-            <DeploymentSteps>CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;Microsoft.VisualStudio.SharePoint.PreDeploymentCommand;CKS.Dev.SharePoint.Deployment.ResetIIS;Microsoft.VisualStudio.SharePoint.RetractSolution;Microsoft.VisualStudio.SharePoint.AddSolution;Microsoft.VisualStudio.SharePoint.ActivateFeatures;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RestartIis;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.RunPowerShellScript;CKS.Dev.SharePoint.Deployment.WarmUpSite</DeploymentSteps>
-            <RetractionSteps>Microsoft.VisualStudio.SharePoint.RecycleApplicationPool;Microsoft.VisualStudio.SharePoint.RetractSolution</RetractionSteps>
-          </DeploymentConfiguration>
-          <DeploymentConfiguration Name="Deploy Barista Service Application Via Deploy Script">
-            <DeploymentSteps>CKS.Dev.SharePoint.Deployment.RunPowerShellScript</DeploymentSteps>
-            <RetractionSteps>Microsoft.VisualStudio.SharePoint.RecycleApplicationPool;Microsoft.VisualStudio.SharePoint.RetractSolution</RetractionSteps>
+          <DeploymentConfiguration Name="Barista Deployment">
+            <DeploymentSteps>Microsoft.VisualStudio.SharePoint.PreDeploymentCommand;Microsoft.VisualStudio.SharePoint.RetractSolution;Microsoft.VisualStudio.SharePoint.AddSolution;Microsoft.VisualStudio.SharePoint.ActivateFeatures;Microsoft.VisualStudio.SharePoint.PostDeploymentCommand</DeploymentSteps>
+            <RetractionSteps>Microsoft.VisualStudio.SharePoint.RecycleApplicationPool;Microsoft.VisualStudio.SharePoint.RetractSolution;Microsoft.VisualStudio.SharePoint.PreDeploymentCommand</RetractionSteps>
           </DeploymentConfiguration>
         </DeploymentConfigurations>
       </FlavorProperties>

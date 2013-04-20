@@ -269,9 +269,12 @@
     <Compile Include="Search\SPBaristaSearchServiceProxy.cs" />
     <Compile Include="Search\SPDirectory.cs" />
     <Compile Include="Search\SPFileInputStream.cs" />
+    <Compile Include="Search\SPFileMutexManager.cs" />
     <Compile Include="Search\SPFileOutputStream.cs" />
     <Compile Include="Search\SPLock.cs" />
     <Compile Include="Search\SPLockFactory.cs" />
+    <Compile Include="Search\StreamInput.cs" />
+    <Compile Include="Search\StreamOutput.cs" />
     <Compile Include="Service References\K2Services\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

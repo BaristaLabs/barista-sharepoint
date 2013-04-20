@@ -1,11 +1,9 @@
 ﻿namespace Barista.Search.Library
 {
-  using System.Collections.Generic;
   using System.Linq;
   using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Analysis;
   using Lucene.Net.Analysis.Standard;
   using Lucene.Net.QueryParsers;
   using Lucene.Net.Search;
@@ -98,7 +96,9 @@
                                         new HitsPerFacetInstance(this.Engine.Object.InstancePrototype, hit)
                                   );
 
+// ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(hitsPerFacetInstances.ToArray());
+// ReSharper restore CoVariantArrayConversion
     }
   }
 }

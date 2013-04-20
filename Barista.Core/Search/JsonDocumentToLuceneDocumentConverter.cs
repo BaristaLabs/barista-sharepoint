@@ -85,7 +85,6 @@
           case JTokenType.Array:
             {
               //Add each item in the array as a field with the same name.
-              int count = 1;
 
               //Return an _IsArray field.
               if (Equals(storage, Field.Store.NO) == false)

@@ -1,28 +1,59 @@
 ﻿namespace Barista.SharePoint.Search
 {
+  using System.Threading;
+  using Barista.DocumentStore;
   using Lucene.Net.Store;
   using Microsoft.SharePoint;
   using System;
-  using System.IO;
+  using Microsoft.SharePoint.Utilities;
 
   /// <summary>
   /// Represents an index input that uses a SPFile as a backing store.
   /// </summary>
   public sealed class SPFileInputStream : IndexInput
   {
-    private readonly string m_fileUrl;
+    private readonly SPDirectory m_directory;
+    private readonly IndexInput m_indexInput;
 
-    private MemoryStream m_data;
-    private string m_eTag;
+    private readonly Mutex m_mutex;
 
-    public SPFileInputStream(string fileUrl)
+    public SPFileInputStream(SPDirectory directory, SPFile file)
     {
-      if (String.IsNullOrEmpty(fileUrl))
-        throw new ArgumentNullException("fileUrl");
+      if (directory == null)
+        throw new ArgumentNullException("directory");
 
-      m_fileUrl = fileUrl;
+      if (file == null)
+        throw new ArgumentNullException("file");
 
-      RefreshData();
+      var fileUrl = SPUtility.ConcatUrls(file.Web.Url, file.ServerRelativeUrl);
+
+      m_directory = directory;
+
+      m_mutex = SPFileMutexManager.GrabMutex(fileUrl);
+      m_mutex.WaitOne();
+
+      try
+      {
+        if (!m_directory.CacheDirectory.FileExists(file.Name))
+        {
+          CreateOrUpdateCachedFile(file, directory);
+        }
+        else
+        {
+          //Check the eTag.
+          var cachedETag = m_directory.ReadCachedFileETag(file.Name);
+
+          //If it doesn't match, re-retrieve the file from SharePoint.
+          if (cachedETag != file.ETag)
+            CreateOrUpdateCachedFile(file, directory);
+        }
+
+        m_indexInput = m_directory.CacheDirectory.OpenInput(file.Name);
+      }
+      finally
+      {
+        m_mutex.ReleaseMutex();
+      }
     }
 
     /// <summary>
@@ -34,7 +65,7 @@
     ///   </seealso>
     public override long FilePointer
     {
-      get { return m_data.Position; }
+      get { return m_indexInput.FilePointer; }
     }
 
 
@@ -44,8 +75,7 @@
     /// <returns>System.Int64.</returns>
     public override long Length()
     {
-      RefreshData();
-      return m_data.Length;
+      return m_indexInput.Length();
     }
 
     /// <summary>
@@ -56,8 +86,7 @@
     ///   </seealso>
     public override byte ReadByte()
     {
-      RefreshData();
-      return (byte) m_data.ReadByte();
+      return m_indexInput.ReadByte();
     }
 
     /// <summary>
@@ -70,8 +99,7 @@
     ///   </seealso>
     public override void ReadBytes(byte[] b, int offset, int len)
     {
-      RefreshData();
-      m_data.Read(b, offset, len);
+      m_indexInput.ReadBytes(b, offset, len);
     }
 
     /// <summary>
@@ -82,8 +110,7 @@
     ///   </seealso>
     public override void Seek(long pos)
     {
-      RefreshData();
-      m_data.Seek(pos, SeekOrigin.Begin);
+      m_indexInput.Seek(pos);
     }
 
     /// <summary>
@@ -92,48 +119,29 @@
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     protected override void Dispose(bool disposing)
     {
-      // Do Nothing...
+      m_mutex.WaitOne();
+      try
+      {
+        m_indexInput.Dispose();
+      }
+      finally
+      {
+        m_mutex.ReleaseMutex();
+      }
     }
 
-    /// <summary>
-    /// Refreshes the data from the underlying SPFile if the e-tag has changed.
-    /// </summary>
-    /// <exception cref="System.IO.FileNotFoundException">Unable to open SharePoint File: File does not exist.</exception>
-    private void RefreshData()
+    private static void CreateOrUpdateCachedFile(SPFile spFile, SPDirectory directory)
     {
-      using (var site = new SPSite(m_fileUrl))
+      using (var spFileStream = spFile.OpenBinaryStream())
       {
-        using (var web = site.OpenWeb())
+        using (var outputStream = directory.CreateCachedOutputAsStream(spFile.Name))
         {
-          var file = web.GetFile(m_fileUrl);
-
-          if (file.Exists == false)
-            throw new FileNotFoundException("Unable to open SharePoint File: File does not exist.");
-
-          long currentPosition = 0;
-          if (m_data != null)
-            currentPosition = m_data.Position;
-
-          if (file.ETag != m_eTag)
-          {
-            lock (file)
-            {
-              if (file.ETag != m_eTag)
-              {
-                var fileData = file.OpenBinary();
-                m_data = new MemoryStream(fileData.Length);
-                m_data.Write(fileData, 0, fileData.Length);
-                m_data.Flush();
-
-                m_eTag = file.ETag;
-              }
-            }
-          }
-
-          if (m_data != null && currentPosition != m_data.Position)
-            m_data.Seek(currentPosition, SeekOrigin.Begin);
+          DocumentStoreHelper.CopyStream(spFileStream, outputStream);
+          outputStream.Flush();
         }
       }
+
+      directory.WriteCachedFileETag(spFile.Name, spFile.ETag);
     }
   }
 }

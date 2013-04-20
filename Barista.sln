@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Barista.sln.DotSettings = Barista.sln.DotSettings
 		license.txt = license.txt
 		Performance1.psess = Performance1.psess
+		Performance2.psess = Performance2.psess
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84}"
@@ -98,10 +99,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 		Scripts\SetupBaristaSearchService.ps1 = Scripts\SetupBaristaSearchService.ps1
 		Scripts\SetupBaristaServiceApplication.ps1 = Scripts\SetupBaristaServiceApplication.ps1
 		Scripts\SetupBaristaServiceApplicationProxy.ps1 = Scripts\SetupBaristaServiceApplicationProxy.ps1
+		Scripts\spServiceCleanup.ps1 = Scripts\spServiceCleanup.ps1
 		Scripts\TestBaristaServiceApplication.ps1 = Scripts\TestBaristaServiceApplication.ps1
 		Scripts\UninstallBaristaSearchService.ps1 = Scripts\UninstallBaristaSearchService.ps1
 		Scripts\UninstallBaristaServiceApplication.ps1 = Scripts\UninstallBaristaServiceApplication.ps1
-		WarmUpSharePointSites.ps1 = WarmUpSharePointSites.ps1
+		Scripts\VSDeploy-PostSolutionDeployment.ps1 = Scripts\VSDeploy-PostSolutionDeployment.ps1
+		Scripts\VSDeploy-PreSolutionDeployment.ps1 = Scripts\VSDeploy-PreSolutionDeployment.ps1
+		Scripts\WarmUpSharePointSites.ps1 = Scripts\WarmUpSharePointSites.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}"
