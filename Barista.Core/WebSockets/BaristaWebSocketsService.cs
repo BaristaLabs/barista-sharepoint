@@ -1,12 +1,11 @@
-﻿namespace Barista.Services
+﻿namespace Barista.WebSockets
 {
   using System;
   using System.Collections.Concurrent;
   using System.Linq;
   using System.Net.NetworkInformation;
-  using Barista.WebSocket;
   using System.ServiceModel;
-  using Barista.WebSockets;
+  using SuperWebSocket;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public class BaristaWebSocketsService : IBaristaWebSockets
@@ -17,11 +16,6 @@
     {
       var appServer = new WebSocketServer();
       return appServer.Setup(port) && Servers.TryAdd(port, appServer);
-    }
-
-    public bool SetupWebSocketServerWithReceiver(int port, string receiverCode)
-    {
-      throw new NotImplementedException();
     }
 
     public bool IsPortAvailable(int port)

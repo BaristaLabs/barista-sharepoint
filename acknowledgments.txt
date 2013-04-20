@@ -11,6 +11,8 @@ Barista is making use of the following OSS projects:
 * Nustache from Jason Diamond (https://github.com/jdiamond/Nustache) under the MIT license: https://github.com/jdiamond/Nustache/blob/master/LICENSE.txt
 * Linq2Rest from Jacob Reimers (http://linq2rest.codeplex.com/) under the MS PL license: http://linq2rest.codeplex.com/license
 * RestSharp from John Sheehan (https://github.com/restsharp/RestSharp) under the Apache license: https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt
+* SuperSocket from Kerry Jiang (http://supersocket.codeplex.com/) under the Apache license: http://supersocket.codeplex.com/license
+* SuperWebSocket from Kerry Jiang (http://superwebsocket.codeplex.com/) under the Apache license: http://superwebsocket.codeplex.com/license
 
 Javascript Libraries:
 <To Be Updated>
@@ -33,6 +35,9 @@ Javascript Libraries:
 * rx
 * sticklr
 * toastr
+* angular
+* angular ui
+
 * More...
 
 Barista is also making use of the following commercial products licensed for redistribution:

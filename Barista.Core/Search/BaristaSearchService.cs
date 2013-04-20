@@ -1,10 +1,9 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Search
 {
   using Barista.Extensions;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
-  using Barista.Search;
   using Barista.Search.OData2Lucene;
   using Lucene.Net.Analysis;
   using Lucene.Net.Index;
@@ -16,7 +15,6 @@
   using System.IO;
   using System.Linq;
   using System.ServiceModel;
-  using TermQuery = Lucene.Net.Search.TermQuery;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public abstract class BaristaSearchService : IBaristaSearch, IDisposable
@@ -222,7 +220,7 @@
         {
           var term = new Lucene.Net.Index.Term(Constants.DocumentIdFieldName, documentId.ToLowerInvariant());
 
-          var termQuery = new TermQuery(term);
+          var termQuery = new Lucene.Net.Search.TermQuery(term);
 
           var hits = indexSearcher.Search(termQuery, 1);
 

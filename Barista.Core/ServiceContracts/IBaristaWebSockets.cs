@@ -16,9 +16,6 @@
     bool SetupWebSocketServer(int port, WebSocketServerOptions options);
 
     [OperationContract]
-    bool SetupWebSocketServerWithReceiver(int port, string receiverCode);
-
-    [OperationContract]
     bool StartWebSocketServer(int port);
 
     [OperationContract]
