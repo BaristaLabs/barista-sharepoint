@@ -53,7 +53,7 @@
       if (ldapPath.IsNullOrWhiteSpace())
         throw new InvalidOperationException("The current machine is not joined to a domain.");
 
-      var ldapRoot = new DirectoryEntry(ldapPath);
+      var ldapRoot = new DirectoryEntry("LDAP://" + ldapPath);
       using (var ctx = new ADContext(ldapRoot))
       {
         var domainName = ldapRoot.Path.Replace("LDAP://", "");

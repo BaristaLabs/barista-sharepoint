@@ -16,13 +16,12 @@ function Get-WebPage([string]$url)
     return $pageContents;
 }
 
-write-host 
+write-host
 LoadSharePointPowerShellEnvironment
 
 # Enumerate the web app along with the site collections within it, and send a request to each one of them
-foreach ($site in Get-SPSite)
-{
-	write-host $site.Url;
-	$html = get-webpage -url $site.Url -cred $cred;
+Get-SPWebApplication | ForEach-Object {
+	write-host "Warming Up" $_.Url;
+	$html = get-webpage -url $_.Url -cred $cred;
 }
 

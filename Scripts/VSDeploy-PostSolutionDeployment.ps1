@@ -28,8 +28,10 @@ $script1 = $Path + "\SetupBaristaSearchService.ps1"
 $script2 = $Path + "\SetupBaristaServiceApplication.ps1"
 $script3 = $Path + "\SetupBaristaServiceApplicationProxy.ps1"
 $script4 = $Path + "\TestBaristaServiceApplication.ps1"
+$script5 = $Path + "\WarmUpSharePointSites.ps1"
 
 & $script1 $ManagedAccount
 & $script2 $ManagedAccount $SPApplicationPoolName
 & $script3
 & $script4 $Uri
+& $script5

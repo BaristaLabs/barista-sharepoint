@@ -1,6 +1,5 @@
 ﻿namespace Barista.Bundles
 {
-  using Jurassic;
   using System;
 
   [Serializable]
@@ -13,13 +12,12 @@
 
     public string BundleDescription
     {
-      get { return "String Bundle. Includes a library that provides extra string methods."; }
+      get { return "String Bundle. Includes a library that provides extra string methods. (See http://stringjs.com/)"; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      engine.Execute(Barista.Properties.Resources.string_min);
-      return Null.Value;
+      return engine.Evaluate(Barista.Properties.Resources._string);
     }
   }
 }

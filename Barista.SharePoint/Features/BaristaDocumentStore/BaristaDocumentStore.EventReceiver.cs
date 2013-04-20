@@ -1,9 +1,11 @@
 namespace Barista.SharePoint.Features.BaristaDocumentStore
 {
+  using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Administration;
+  using System;
   using System.Linq;
   using System.Runtime.InteropServices;
-  using Microsoft.SharePoint;
-  using Barista.SharePoint.DocumentStore;
+  using global::Barista.SharePoint.DocumentStore;
 
   /// <summary>
   /// This class handles events raised during feature activation, deactivation, installation, uninstallation, and upgrade.
@@ -16,6 +18,24 @@ namespace Barista.SharePoint.Features.BaristaDocumentStore
   {
     public override void FeatureActivated(SPFeatureReceiverProperties properties)
     {
+      //Ensure that the Barista farm feature has been activated.
+      var isBaristaServiceFeatureActivated =
+        SPWebService.ContentService.Features[new Guid("90fb8db4-2b5f-4de7-882b-6faba092942c")] != null;
+
+      if (isBaristaServiceFeatureActivated == false)
+        throw new SPException(
+          "The Farm-Level Barista Service Feature (90fb8db4-2b5f-4de7-882b-6faba092942c) must first be activated.");
+
+      //Ensure that the Document Set feature has been activated.
+// ReSharper disable PossibleNullReferenceException
+      var isDocumentSetFeatureActivated =
+       (properties.Feature.Parent as SPSite).Features[new Guid("3bae86a2-776d-499d-9db8-fa4cdc7884f8")] != null;
+// ReSharper restore PossibleNullReferenceException
+
+      if (isDocumentSetFeatureActivated == false)
+        throw new SPException(
+          "The Document Set Feature (3bae86a2-776d-499d-9db8-fa4cdc7884f8) must first be activated.");
+
       base.FeatureActivated(properties);
     }
 

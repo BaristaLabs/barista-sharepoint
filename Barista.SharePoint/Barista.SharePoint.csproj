@@ -155,6 +155,9 @@
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
+    <Compile Include="Features\Barista\Barista.EventReceiver.cs">
+      <DependentUpon>Barista.feature</DependentUpon>
+    </Compile>
     <Compile Include="Layouts\Barista\v1\MochaServer.aspx.cs">
       <DependentUpon>MochaServer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

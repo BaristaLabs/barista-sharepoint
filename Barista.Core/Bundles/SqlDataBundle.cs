@@ -15,7 +15,7 @@
 
     public string BundleDescription
     {
-      get { return "Provides access to SQL Server Databases"; }
+      get { return "Provides access to SQL Server Databases."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)

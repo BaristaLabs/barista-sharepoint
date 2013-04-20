@@ -17,6 +17,5 @@ $script2 = $Path + "\UninstallBaristaServiceApplication.ps1"
 $script3 = $Path + "\spServiceCleanup.ps1"
 & $script1
 & $script2
-& $script3 -listOrphans
-& $script3 -removeOrphans -removeIISWebSvc
+& $script3 -removeOrphans
 iisreset /noforce /TIMEOUT:60

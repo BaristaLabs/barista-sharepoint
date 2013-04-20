@@ -3,6 +3,7 @@
   using System;
   using System.Collections.Generic;
   using System.Globalization;
+  using System.Linq;
   using Barista;
 
   /// <summary>
@@ -805,6 +806,20 @@
     public static string Sup(string thisObject)
     {
       return string.Format("<sup>{0}</sup>", thisObject);
+    }
+
+    //     JAVASCRIPT FUNCTIONS (.NET WRAPPER FUNCTIONS)
+    //_________________________________________________________________________________________
+    [JSInternalFunction(Name = "startsWith", Flags = JSFunctionFlags.HasThisObject, NonStandard = true)]
+    public static bool StartsWith(string thisObject, string value)
+    {
+      return thisObject.StartsWith(value);
+    }
+
+    [JSInternalFunction(Name = "endsWith", Flags = JSFunctionFlags.HasThisObject, NonStandard = true)]
+    public static bool EndsWith(string thisObject, string value)
+    {
+      return thisObject.EndsWith(value);
     }
   }
 }

@@ -3,7 +3,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
   using System.Runtime.InteropServices;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
-  using Barista.SharePoint.Services;
+  using global::Barista.SharePoint.Services;
 
   [Guid("08c45199-e04f-4033-80bb-16e015f096f8")]
   public class BaristaServiceInstallerEventReceiver : SPFeatureReceiver
@@ -11,7 +11,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
     public override void FeatureActivated(SPFeatureReceiverProperties properties)
     {
       // install the service
-      BaristaService service = SPFarm.Local.Services.GetValue<BaristaService>();
+      var service = SPFarm.Local.Services.GetValue<BaristaService>();
       if (service == null)
       {
         service = new BaristaService(SPFarm.Local);
@@ -20,7 +20,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
       
 
       // install the service proxy
-      BaristaServiceProxy serviceProxy = SPFarm.Local.ServiceProxies.GetValue<BaristaServiceProxy>();
+      var serviceProxy = SPFarm.Local.ServiceProxies.GetValue<BaristaServiceProxy>();
       if (serviceProxy == null)
       {
         serviceProxy = new BaristaServiceProxy(SPFarm.Local);

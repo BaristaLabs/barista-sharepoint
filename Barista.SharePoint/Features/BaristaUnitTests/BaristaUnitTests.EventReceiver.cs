@@ -19,6 +19,18 @@ namespace Barista.SharePoint.Features.BaristaUnitTests
   [Guid("03bbb69f-c338-4af9-9df2-5012bf868a79")]
   public class BaristaUnitTestsEventReceiver : SPFeatureReceiver
   {
+    public override void FeatureActivated(SPFeatureReceiverProperties properties)
+    {
+      //Ensure that the Barista farm feature has been activated.
+      var isBaristaServiceFeatureActivated =
+        SPWebService.ContentService.Features[new Guid("90fb8db4-2b5f-4de7-882b-6faba092942c")] != null;
+
+      if (isBaristaServiceFeatureActivated == false)
+        throw new SPException(
+          "The Farm-Level Barista Service Feature (90fb8db4-2b5f-4de7-882b-6faba092942c) must first be activated.");
+
+      base.FeatureActivated(properties);
+    }
     public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
     {
       SPWeb web = properties.Feature.Parent as SPWeb;

@@ -1,6 +1,7 @@
 ﻿namespace Barista.Jurassic.Library
 {
   using System;
+  using System.Collections.Generic;
 
   /// <summary>
   /// Represents the built-in javascript String object.
@@ -87,5 +88,19 @@
       return result.ToString();
     }
 
+    [JSInternalFunction(Name = "format", NonStandard = true)]
+    public static string Format(string format, params object[] args)
+    {
+      var netArgs = new List<object>();
+      foreach (var arg in args)
+      {
+        if (arg is DateInstance)
+          netArgs.Add(((DateInstance)arg).Value);
+        else
+          netArgs.Add(arg);
+      }
+
+      return String.Format(format, netArgs.ToArray());
+    }
   }
 }

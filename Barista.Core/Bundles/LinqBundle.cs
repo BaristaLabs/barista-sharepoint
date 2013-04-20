@@ -15,7 +15,7 @@
 
     public string BundleDescription
     {
-      get { return "Linq Bundle. Adds objects to allow javascript arrays to be queried via linq-like syntax."; } 
+      get { return "Linq Bundle. Adds objects to allow javascript arrays to be queried via linq-like syntax. (See http://linqjs.codeplex.com/)"; } 
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)

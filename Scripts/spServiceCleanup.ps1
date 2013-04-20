@@ -57,7 +57,7 @@ param(
 
 #region Initialize Clean Up Script
 
-[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint") 
+$sharepointAssembly = [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint") 
 
 Import-Module "WebAdministration"
 	    
@@ -80,19 +80,80 @@ $OBJECT_INFO_EXPORT = $reportFilePath + "\sharepointPersistedObjects.txt"
 
 #region Methods
  
- 
- function Get-InternalValue($obj, $propertyName)  
- {  
+function Get-InternalValue($obj, $propertyName)  
+{  
     #use reflection to get property values
-	  if ($obj)  
-       {  
-            $type = $obj.GetType()  
-            $property = $type.GetProperties([Reflection.BindingFlags] "Static,NonPublic,Instance,Public") | ? { $_.Name -eq $propertyName }       
-            if ($property)  
-            {  
-                 $property.GetValue($obj, $null);  
-            }  
-       }  
+	if ($obj)  
+	{  
+	    $type = $obj.GetType()  
+	    $property = $type.GetProperties([Reflection.BindingFlags] "Static,NonPublic,Instance,Public") | ? { $_.Name -eq $propertyName }       
+	    if ($property)  
+	    {  
+	         $property.GetValue($obj, $null);  
+	    }  
+	}  
+}
+
+function GetPersistedObjectsForType() {
+param(
+	[string]$typeName,
+	[string]$serviceAppName
+)
+	#Get all SharePoint Configuration Database SPPersisted Objects
+	$type = 'Microsoft.SharePoint.Administration.SPPersistedTypeCollection`1' -as "Type"  
+	$type = $type.MakeGenericType( ([Microsoft.SharePoint.Administration.SPPersistedObject]) )
+
+	#Set reflection binding flags
+	$flags = [Reflection.BindingFlags] "Static,NonPublic,Instance,Public"
+
+	#Get active service application
+	$activeServiceApp = Get-SPServiceApplication | Where { $_.GetType().FullName -ieq $typeName -and $_.Name -ieq $serviceAppName }
+	
+	if ($activeServiceApp -eq $null) {
+		Write-Host "Unable to locate a SPServiceApplication with the specified Type Name and Service Application Name."
+		return $null;
+	}
+	
+	#Get active ID
+	$activeId = $activeServiceApp.Id.ToString().Replace("-","").Trim();
+	
+	#Create Instance collection of sppersisted objects
+	$instance = [Activator]::CreateInstance($type,$flags,$null,$farm, [System.Globalization.CultureInfo]::CurrentCulture);
+
+	#Filter objects by script parameter SPObjectType
+	$filterObjs = $instance | Select * | Where {$_.TypeName -ieq $spObjectType}
+
+	#List matching object types
+	if($listObjectTypes -eq $true) {
+	   Write-Host "List filtered objects..."
+	   
+		foreach($o in $filterObjs)
+		{
+
+			$farmObj = $farm.GetObject($o.Id.Guid);
+			$appUrl = Get-InternalValue -obj $farmObj -propertyName "ApplicationAddresses"
+			$module = Get-InternalValue -obj $farmObj -propertyName "Name"
+
+			Write-Host $appUrl 
+			Write-Host "Name: " $farmObj.DisplayName
+			Write-Host "ID:" $farmObj.Id
+			Write-Host "Base Type:" $farmObj.TypeName
+			Write-Host "Version:" $farmObj.Version
+			Write-Host "Status:" $o.Status
+			Write-Host 
+		   
+		}
+	}
+
+	#Export configuration of all persisted objects to a file
+	if($exportObjectInfo -eq $true) {  
+		Write-Host "Exporting SharePoint Objects List...." -ForegroundColor DarkYellow
+		$instance | Out-File $OBJECT_INFO_EXPORT
+		
+		Write-Host "SharePoint Persisted Object information has been written to " $OBJECT_INFO_EXPORT
+	}
+	
+	return $filteredObjs
 }
 
 function GetActiveService {
@@ -100,231 +161,176 @@ function GetActiveService {
      $filteredObjs
   )
  
-		$actService = $null;
-		
-		# Get Internal Properties for active sharepoint service
-		foreach($obj in $filteredObjs)
+	$actService = $null;
+	
+	# Get Internal Properties for active sharepoint service
+	foreach($obj in $filteredObjs)
+	{
+		$fObj = $farm.GetObject($obj.Id.Guid);
+		$id =  Get-InternalValue -obj $fObj -propertyName "id"
+
+		$appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
+
+		if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36))
 		{
-			  $fObj = $farm.GetObject($obj.Id.Guid);
-			  $id =  Get-InternalValue -obj $fObj -propertyName "id"
-			  
-			  $appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
-			  
-			  if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36))
-			  {
-			 	  Write-Host "Active service application " $appAddresses
-				  Write-Host $obj
-				  Write-Host 
-				  
-				  $actService = $fobj;
-				  break;
-			  }
+		  Write-Host "Active service application " $appAddresses
+		  Write-Host $obj
+		  Write-Host 
 		  
+		  $actService = $fobj;
+		  break;
 		}
+	}
 
     return $actService
-
 }
 
-
-
-function CleanUpServiceApps {
- param(
-     $filteredObjs
- )
-
-#TODO: break regions into methods 
-
- #region Find Active Valid Service Applications
+function GetOrphanedServiceApplications {
+param(
+     $serviceApplicationDefinitions
+)
+	$orphans = @();
+	
+	#region Find Active Valid Service Applications
  
-        #matching variables
-		$classIDMatch = ""
-		$parentIDMatch = ""
-		$originalString = ""
+	#matching variables
+	$classIDMatch = ""
+	$parentIDMatch = ""
+	$originalString = ""
 
-		# Get Internal Properties for active sharepoint service
-		foreach($obj in $filteredObjs)
-		{
-			  $fObj = $farm.GetObject($obj.Id.Guid);
-			  $id =  Get-InternalValue -obj $fObj -propertyName "id"
-			  
-			  $appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
-			  	  
-			  $classId = $fObj.GetType().GUID
-			  
-			  $parentId = $fObj.get_Parent().Id
-			  
-			  if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36))
-			  {
-			 	  Write-Host "Found active service application "
-				  Write-Host $obj | Format-List 
-				  
-				  #set values for match condition for finding orphaned services
-				  $classIDMatch = $classId
-				  $parentIDMatch = $parentId
-			      $originalString = $appAddresses	  
-				  break;
-			  }
+	# Get Internal Properties for active sharepoint service
+	foreach($obj in $serviceApplicationDefinitions)
+	{
+		$fObj = $farm.GetObject($obj.Id.Guid);
+		$id =  Get-InternalValue -obj $fObj -propertyName "id"
 		  
+		$appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
+		  	  
+		$classId = $fObj.GetType().GUID
+		  
+		$parentId = $fObj.get_Parent().Id
+		  
+		if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36))
+		{
+			Write-Host "Found active service application "
+			Write-Host $obj | Format-List 
+			  
+			#set values for match condition for finding orphaned services
+			$classIDMatch = $classId
+			$parentIDMatch = $parentId
+			$originalString = $appAddresses	  
+			break;
 		}
+	}
+	
+	# Find orphan services
+	# Get Internal Properties for SharePoint object
+	foreach($obj in $serviceApplicationDefinitions) {
 
-  #endregion
-  
- 
- #region Find List or Remove Orphaned Service apps
-  
-# Find orphan services
-# Get Internal Properties for SharePoint object
-foreach($obj in $filterObjs)
-{
-	  $fObj = $farm.GetObject($obj.Id.Guid);
-	  $id =  Get-InternalValue -obj $fObj -propertyName "id"
-	  
-	  $classId = $fObj.GetType().GUID
-	  
-	  $parentId = $fObj.get_Parent().Id
-	  
-	  #get application addresses from internal property in assembly
-	  $appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
-      $wildCardSvcName = "*{0}*" -f $serviceWebSvcName 
+		$fObj = $farm.GetObject($obj.Id.Guid);
+		$id =  Get-InternalValue -obj $fObj -propertyName "id"
 
-	  if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36)) {
-	 	  Write-Host
+		$classId = $fObj.GetType().GUID
+
+		$parentId = $fObj.get_Parent().Id
+
+		#get application addresses from internal property in assembly
+		$appAddresses = Get-InternalValue -obj $fObj -propertyName "ApplicationAddresses"
+		$wildCardSvcName = "*{0}*" -f $serviceWebSvcName 
+		
+		if ($activeServiceApp.Id -ieq $obj.Name.Substring(0,36)) {
+		  Write-Host
 		  Write-Host "Active service "
 		  Write-Host $appAddresses 
 		  Write-Host $obj 
 		  Write-Host
-		  
-	  } elseif($classId -eq $classIDMatch -and $parentId -eq $parentIDMatch -and $appAddresses -like $wildCardSvcName ) {
-	     #else if matches objects by class id, parent id and service name
-		 
-		 $msg =  "Orphaned service application {0} {1} {2}" -f $id, $obj.Name, $appAddresses
-		
-		 if($listOrphans -eq $true) {
-		    
-		    Write-Host $msg -ForegroundColor Yellow;
-			Write-Host
-			
-		  } else {
-			
-			 if ($removeOrphans) {
-				 $fObj.Delete()
-				 $fObj.Unprovision()  #TODO: 
-				 
-				  Write-Host "Removing " $msg -ForegroundColor Red;
-			      Write-Host
-			 }
-		 }
-		
-		 #Log or remove IIS Web application
-		 #Get IIS web application
-		 $webApp = Get-WebApplication | Where {$_.Path -eq ("/" + $obj.Name.Substring(0,36).Replace("-",""))}
-		
-		if($webApp -ne $null) { 
-		 
-		  if($removeIISWebSvc) {
-			 Write-Host "Removing $webApp.path"
-			 $webAppName = $webApp.path.Replace("/","")
-		     Remove-WebApplication -Site "SharePoint Web Services" -Name $webAppName
-		   }
-		 }
-	  }
+
+		} elseif($classId -eq $classIDMatch -and $parentId -eq $parentIDMatch -and $appAddresses -like $wildCardSvcName ) {
+			 #else if matches objects by class id, parent id and service name
+		 	$orphans = $orphans + $fObj
+		}
+	}
+	
+	return $orphans
 }
 
- #endregion
+function CleanUpOrphanedServiceApplications {
+param(
+	$serviceApplicationsToClean
+)
+	Write-Host "Cleaning up " $serviceApplicationsToClean.Length " Service Applications..."
 
+	if ($serviceApplicationsToClean.Length -ne 0) {
+		Write-Host "Backing up the IIS Metabase.."
+		
+		#backup IIS Metabase 
+		$folderName = "IISBackup{0}" -f [DateTime]::Today.Ticks
+		Backup-WebConfiguration -Name $folderName
+	}
+	
+	foreach($fObj in $serviceApplicationsToClean)
+	{
+		$fObj.Delete()
+		$fObj.Unprovision()
+	 
+		Write-Host "Removing " $msg -ForegroundColor Red;
+		Write-Host
+		
+		#Clean Up IIS web application
+		$webApp = Get-WebApplication | Where {$_.Path -eq ("/" + $obj.Name.Substring(0,36).Replace("-",""))}
+		
+		if($webApp -ne $null) { 
+			Write-Host "Removing $webApp.path"
+			$webAppName = $webApp.path.Replace("/","")
+			Remove-WebApplication -Site "SharePoint Web Services" -Name $webAppName
+		}
+	}
 }
 
 #endregion
 
 #region Main Entry Point
 
-#region backup prompts
-
-if ($removeIISWebSvc) {
-
-    Write-Host "Backing up the IIS Metabase.."
-	#backup IIS Metabase 
-	$folderName = "IISBackup{0}" -f [DateTime]::Today.Ticks
-	Backup-WebConfiguration -Name $folderName
-}
-
-Write-Host "SharePoint Service Applications Utility...."
-
 #Get Farm
 $farm = [Microsoft.SharePoint.Administration.SPFarm]::Local
-
-#Get all SharePoint Configuration Databse SPPersisted Objects
-$type = 'Microsoft.SharePoint.Administration.SPPersistedTypeCollection`1' -as "Type"  
-$type = $type.MakeGenericType( ([Microsoft.SharePoint.Administration.SPPersistedObject]) )
-
-#Set reflection binding flags
-$flags = [Reflection.BindingFlags] "Static,NonPublic,Instance,Public"
-
-#Get active service application
-$activeServiceApp = Get-SPServiceApplication | Where { $_.GetType().FullName -ieq $serviceFullTypeName -and $_.Name -ieq $serviceAppName }
-
-#Get active ID
-
-$activeId = $NULL
-
-IF ($activeServiceApp -ne $NULL)
-{  
-	$activeId = $activeServiceApp.Id.ToString().Replace("-","").Trim()
-}
-
-#Create Instance collection of sppersisted objects
-$instance = [Activator]::CreateInstance($type,$flags,$null,$farm, [System.Globalization.CultureInfo]::CurrentCulture);
-
-
-#Filter objects by script parameter SPObjectType
-$filterObjs = $instance | Select * | Where {$_.TypeName -ieq $spObjectType}
-
-#List matching object types
-if($listObjectTypes -eq $true) {
-   Write-Host "List filtered objects..."
-   
-   foreach($o in $filterObjs)
-   {
-   
-      $farmObj = $farm.GetObject($o.Id.Guid);
-      $appUrl = Get-InternalValue -obj $farmObj -propertyName "ApplicationAddresses"
-	  $module = Get-InternalValue -obj $farmObj -propertyName "Name"
-	  
-	  Write-Host $appUrl 
-	  Write-Host "Name: " $farmObj.DisplayName
-	  Write-Host "ID:" $farmObj.Id
-	  Write-Host "Base Type:" $farmObj.TypeName
-	  Write-Host "Version:" $farmObj.Version
-	  Write-Host "Status:" $o.Status
-	  Write-Host 
-	   
-   }
-}
-
-#Export configuration of all persisted objects to a file
-if($exportObjectInfo -eq $true) {  
-	Write-Host "Exporting SharePoint Objects List...." -ForegroundColor DarkYellow
-	$instance | Out-File $OBJECT_INFO_EXPORT
 	
-	Write-Host "SharePoint Persisted Object information has been written to " $OBJECT_INFO_EXPORT
+Write-Host "Retrieving SPPersistedObjects for $serviceFullTypeName..."
+$filteredObjs = GetPersistedObjectsForType -typeName $serviceFullTypeName -serviceAppName $serviceAppName
+
+if ($filteredObjs -eq $null) {
+	return;
 }
 
-#Call function to remove or list orphaned objects
+Write-Host "Located" $filteredObjs.Length "Persisted Objects for the specified type..."
+
+#Define a variable to hold orphans.
+$orphans = @()
+
+#If we're removing or listing, get the orphans.
 if($removeOrphans -eq $true -or $listOrphans -eq $true) {
-    CleanUpServiceApps -filteredObjs $filterObjs
+	Write-Host "Retrieving orphaned service applications for $serviceFullTypeName..."
+	$orphans = GetOrphanedServiceApplications -serviceApplicationDefinitions $filteredObjs
+}
+
+#Display the orphans.
+if ($removeOrphans -eq $true -or $listOrphans -eq $true) {
+	foreach($orphan in $orphans)
+	{
+		$appAddresses = Get-InternalValue -obj $orphan -propertyName "ApplicationAddresses"
+		$msg =  "Orphaned service application {0} {1} {2}" -f $id, $obj.Name, $appAddresses
+		Write-Host $msg -ForegroundColor Yellow
+		Write-Host
+	}
+}
+
+#Remove the orphans
+if ($removeOrphans -eq $true) {
+	Write-Host "Cleaning up orphaned service applications for $serviceFullTypeName..."
+	CleanUpOrphanedServiceApplications -serviceApplicationsToClean $orphans
 }
 
 #Return / show the active service
 if($showActiveService) {
-
    $svc = GetActiveService -filteredObjs $filterObjs
-
 }
-
-Write-Host "Script execution completed!"
- 
- 
-#endregion
-
 

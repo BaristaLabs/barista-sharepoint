@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <feature xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="1e084611-a8c5-449c-a1f0-841a56ee2712" description="Provides the content types and list definitions required for Barista Document Store functionality." featureId="1e084611-a8c5-449c-a1f0-841a56ee2712" imageUrl="" receiverAssembly="$SharePoint.Project.AssemblyFullName$" receiverClass="$SharePoint.Type.6ca8eee8-ab24-48e0-9f39-bba9dea18621.FullName$" scope="Site" solutionId="00000000-0000-0000-0000-000000000000" title="Barista Document Store" version="" deploymentPath="$SharePoint.Project.FileNameWithoutExtension$_$SharePoint.Feature.FileNameWithoutExtension$" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/FeatureModel">
-  <activationDependencies>
-    <customFeatureActivationDependency minimumVersion="" featureTitle="Document Sets" featureDescription="Document Sets Feature" featureId="3bae86a2-776d-499d-9db8-fa4cdc7884f8" solutionId="00000000-0000-0000-0000-000000000000" solutionUrl="" />
-  </activationDependencies>
   <projectItems>
     <projectItemReference itemId="80a584d0-36de-495c-a64b-ef5ea5af19c5" />
     <projectItemReference itemId="d33d4891-c132-43dc-86ec-f0258c07b03e" />
