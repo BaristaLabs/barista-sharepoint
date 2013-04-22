@@ -51,11 +51,22 @@
       var result = new Explanation
         {
           Description = lExplanation.Description,
-          Details = lExplanation.GetDetails().ToList().Select(e => Explanation.ConvertLuceneExplanationToExplanation(e)).ToList(),
+          
           ExplanationHtml = lExplanation.ToHtml(),
           IsMatch = lExplanation.IsMatch,
           Value = lExplanation.Value,
         };
+
+      var lDetails = lExplanation
+        .GetDetails();
+
+      if (lDetails != null)
+      {
+        result.Details = lDetails.ToList()
+                                 .Select(e => Explanation.ConvertLuceneExplanationToExplanation(e))
+                                 .ToList();
+      }
+
       return result;
     }
   }

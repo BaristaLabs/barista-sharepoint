@@ -2,7 +2,6 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
   using System.Linq;
 
@@ -33,13 +32,13 @@
       this.PopulateFunctions();
     }
 
-    public ExplanationInstance(ObjectInstance prototype, Explanation explination)
+    public ExplanationInstance(ObjectInstance prototype, Explanation explanation)
       : this(prototype)
     {
-      if (explination == null)
-        throw new ArgumentNullException("explination");
+      if (explanation == null)
+        throw new ArgumentNullException("explanation");
 
-      m_explanation = explination;
+      m_explanation = explanation;
     }
 
     public Explanation Explanation
@@ -65,32 +64,28 @@
       get { return m_explanation.Value; }
     }
 
-    [JSFunction(Name = "getDetails")]
-    public ArrayInstance GetDetails()
+    [JSProperty(Name = "details")]
+    public ArrayInstance Details
     {
-      var details = m_explanation.GetDetails()
-                                 .Select(d => new ExplanationInstance(this.Engine.Object.InstancePrototype, d))
-                                 .ToArray();
-      return
-        this.Engine.Array.Construct(details);
+      get
+      {
+        if (m_explanation.Details == null)
+          return this.Engine.Array.Construct();
+
+        var details = m_explanation.Details
+                                   .Select(d => new ExplanationInstance(this.Engine.Object.InstancePrototype, d))
+                                   .ToArray();
+        return
+          // ReSharper disable CoVariantArrayConversion
+          this.Engine.Array.Construct(details);
+        // ReSharper restore CoVariantArrayConversion
+      }
     }
 
-    [JSFunction(Name = "toHtml")]
-    public string ToHtml()
+    [JSProperty(Name = "explanationHtml")]
+    public string ExplanationHtml
     {
-      return m_explanation.ToHtml();
-    }
-
-    [JSFunction(Name = "ToString")]
-    public string ToStringJS()
-    {
-      return this.ToString();
-    }
-
-    [JSFunction(Name = "toString")]
-    public override string ToString()
-    {
-      return m_explanation.ToString();
+      get { return m_explanation.ExplanationHtml; }
     }
   }
 }

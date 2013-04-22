@@ -10,6 +10,7 @@
     {
       Filter = null;
       Sort = null;
+      Skip = null;
       Take = 100;
     }
 
@@ -36,6 +37,13 @@
 
     [DataMember]
     public Sort Sort
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public int? Skip
     {
       get;
       set;

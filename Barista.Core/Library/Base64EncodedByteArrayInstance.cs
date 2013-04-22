@@ -24,7 +24,7 @@
         : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
     }
 
-    [JSFunction(Name = "CreateFromString")]
+    [JSFunction(Name = "createFromString")]
     public Base64EncodedByteArrayInstance CreateFromString(string data)
     {
       return String.IsNullOrEmpty(data)

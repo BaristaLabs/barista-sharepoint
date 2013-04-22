@@ -303,13 +303,6 @@
       if (arguments == null)
         arguments = new SearchArguments();
 
-      //Set Defaults
-      if (arguments.Query == null)
-        arguments.Query = new MatchAllDocsQuery();
-
-      if (arguments.Take.HasValue == false)
-        arguments.Take = 1000;
-
       try
       {
         var index = GetOrAddIndex(indexName, false);
@@ -344,13 +337,6 @@
       if (arguments == null)
         arguments = new SearchArguments();
 
-      //Set Defaults
-      if (arguments.Query == null)
-        arguments.Query = new MatchAllDocsQuery();
-
-      if (arguments.Take.HasValue == false)
-        arguments.Take = 1000;
-
       try
       {
         var index = GetOrAddIndex(indexName, false);
@@ -360,6 +346,9 @@
         using (index.GetSearcher(out indexSearcher))
         {
           var reader = indexSearcher.IndexReader;
+
+          if (arguments.GroupByFields == null)
+            arguments.GroupByFields = new List<string>();
 
           var facetedSearch = new SimpleFacetedSearch(reader, arguments.GroupByFields.ToArray());
           var hits = facetedSearch.Search(searchParams.Query, searchParams.MaxResults);
@@ -441,7 +430,11 @@
 
     private static LuceneParams GetLuceneSearchParams(SearchArguments arguments)
     {
-      LuceneParams result = new LuceneParams();
+      var result = new LuceneParams();
+
+      //Set Defaults
+      if (arguments.Query == null)
+        arguments.Query = new MatchAllDocsQuery();
 
       //Special Behavior for OData Queries since OData queries potentially specify the query/filter/skip/take all in one.
       if (arguments.Query is ODataQuery)
@@ -477,8 +470,12 @@
           result.Filter = Barista.Search.Filter.ConvertFilterToLuceneFilter(arguments.Filter);
         }
 
-        if (arguments.Take.HasValue)
-          result.MaxResults = arguments.Take.Value;
+        if (arguments.Skip.HasValue)
+          result.Skip = arguments.Skip.Value;
+
+        result.MaxResults = arguments.Take.HasValue
+          ? arguments.Take.Value
+          : 1000;
       }
 
       return result;

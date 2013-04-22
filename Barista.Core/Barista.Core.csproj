@@ -965,6 +965,7 @@
     <Compile Include="Search\Data Contracts\Occur.cs" />
     <Compile Include="Search\Data Contracts\SearchArguments.cs" />
     <Compile Include="Search\Data Contracts\Sort.cs" />
+    <Compile Include="Search\Library\FacetedSearchResultInstance.cs" />
     <Compile Include="Search\Library\JsonDocumentInstance.cs" />
     <Compile Include="Search\Library\ODataQueryInstance.cs" />
     <Compile Include="Search\Library\QueryParserQueryInstance.cs" />
@@ -1226,7 +1227,6 @@
     <Compile Include="Search\Library\FilterInstance.cs" />
     <Compile Include="Search\Library\FuzzyQueryInstance.cs" />
     <Compile Include="Search\Library\HitsPerFacetInstance.cs" />
-    <Compile Include="Search\Library\IndexSearcherInstance.cs" />
     <Compile Include="Search\Library\NumericRangeFilterInstance.cs" />
     <Compile Include="Search\Library\NumericRangeQueryInstance.cs" />
     <Compile Include="Search\Library\PhraseQueryInstance.cs" />
@@ -1236,10 +1236,8 @@
     <Compile Include="Search\Library\QueryWrapperFilterInstance.cs" />
     <Compile Include="Search\Library\RegexQueryInstance.cs" />
     <Compile Include="Search\Library\ScoreDocInstance.cs" />
-    <Compile Include="Search\Library\SearchArguments.cs" />
     <Compile Include="Search\Library\SearchArgumentsInstance.cs" />
     <Compile Include="Search\Library\SearchField.cs" />
-    <Compile Include="Search\Library\SimpleFacetedSearchInstance.cs" />
     <Compile Include="Search\Library\SortInstance.cs" />
     <Compile Include="Search\Library\TermQueryInstance.cs" />
     <Compile Include="Search\Library\TermRangeFilterInstance.cs" />

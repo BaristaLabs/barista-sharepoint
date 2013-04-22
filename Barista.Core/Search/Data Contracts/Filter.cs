@@ -6,8 +6,13 @@
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   [KnownType(typeof(TermsFilter))]
+  [KnownType(typeof(TermRangeFilter))]
   [KnownType(typeof(PrefixFilter))]
   [KnownType(typeof(QueryWrapperFilter))]
+  [KnownType(typeof(DoubleNumericRangeFilter))]
+  [KnownType(typeof(FloatNumericRangeFilter))]
+  [KnownType(typeof(IntNumericRangeFilter))]
+  [KnownType(typeof(LongNumericRangeFilter))]
   [KnownType(typeof(DuplicateFilter))]
   public abstract class Filter
   {
@@ -49,6 +54,16 @@
 
         lFilter = lTermsFilter;
       }
+      else if (filter is TermRangeFilter)
+      {
+        var termRangeFilter = filter as TermRangeFilter;
+        var lTermRangeFilter = new Lucene.Net.Search.TermRangeFilter(termRangeFilter.FieldName,
+                                                                     termRangeFilter.LowerTerm,
+                                                                     termRangeFilter.UpperTerm,
+                                                                     termRangeFilter.IncludeLower,
+                                                                     termRangeFilter.IncludeUpper);
+        lFilter = lTermRangeFilter;
+      }
       else if (filter is PrefixFilter)
       {
         var prefixFilter = filter as PrefixFilter;
@@ -63,6 +78,45 @@
       }
 
       return lFilter;
+    }
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class TermRangeFilter : Filter
+  {
+    [DataMember]
+    public string FieldName
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string LowerTerm
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string UpperTerm
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public bool IncludeLower
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public bool IncludeUpper
+    {
+      get;
+      set;
     }
   }
 
@@ -97,6 +151,74 @@
       get;
       set;
     }
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class NumericRangeFilterBase : Filter
+  {
+    [DataMember]
+    public string FieldName
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public bool MinInclusive
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public bool MaxInclusive
+    {
+      get;
+      set;
+    }
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  [KnownType(typeof(DoubleNumericRangeFilter))]
+  [KnownType(typeof(FloatNumericRangeFilter))]
+  [KnownType(typeof(IntNumericRangeFilter))]
+  [KnownType(typeof(LongNumericRangeFilter))]
+  public abstract class NumericRangeFilterBase<T> : NumericRangeFilterBase
+    where T : struct
+  {
+    [DataMember]
+    public T? Min
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public T? Max
+    {
+      get;
+      set;
+    }
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class LongNumericRangeFilter : NumericRangeFilterBase<long>
+  {
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class IntNumericRangeFilter : NumericRangeFilterBase<int>
+  {
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class DoubleNumericRangeFilter : NumericRangeFilterBase<double>
+  {
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class FloatNumericRangeFilter : NumericRangeFilterBase<float>
+  {
   }
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]

@@ -15,7 +15,7 @@
     }
 
     [DataMember]
-    public double HitCount
+    public long HitCount
     {
       get;
       set;

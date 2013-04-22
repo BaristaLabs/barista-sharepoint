@@ -18,6 +18,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      engine.SetGlobalValue("SearchArguments", new SearchArgumentsConstructor(engine));
       engine.SetGlobalValue("JsonDocument", new JsonDocumentConstructor(engine));
 
       return new SearchServiceInstance(engine.Object.InstancePrototype, new SPBaristaSearchServiceProxy());

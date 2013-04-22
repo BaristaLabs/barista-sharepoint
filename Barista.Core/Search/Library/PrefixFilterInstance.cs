@@ -2,7 +2,6 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
 
   [Serializable]

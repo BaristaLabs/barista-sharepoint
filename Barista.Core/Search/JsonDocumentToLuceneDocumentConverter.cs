@@ -36,7 +36,7 @@
 
       var dataFields = from property in document.DataAsJson.Properties()
                        where property.Name != Constants.DocumentIdFieldName
-                       from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.NO)
+                       from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.WITH_POSITIONS_OFFSETS) // Maybe we shouldn't use position offsets.
                        select field;
 
       return metadataFields.Union(dataFields);
@@ -271,7 +271,7 @@
       var converter = new JsonDocumentToLuceneDocumentConverter(definition);
       return jsonDocuments.Select(jsonDocument =>
         {
-          var fields = converter.Index(jsonDocument, Field.Store.NO);
+          var fields = converter.Index(jsonDocument, Field.Store.YES); // This might be No to save space..
 
           var luceneDoc = new Document();
           var documentIdField = new Field(Constants.DocumentIdFieldName, jsonDocument.DocumentId, Field.Store.YES,

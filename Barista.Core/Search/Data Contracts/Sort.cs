@@ -32,7 +32,7 @@
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class SortField
   {
-     [DataMember]
+    [DataMember]
     public string FieldName
     {
       get;

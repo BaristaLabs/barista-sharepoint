@@ -53,6 +53,13 @@
       set { m_searchResult.Score = Convert.ToSingle(value); }
     }
 
+    [JSProperty(Name = "luceneDocId")]
+    public int LuceneDocId
+    {
+      get { return m_searchResult.LuceneDocId; }
+      set { m_searchResult.LuceneDocId = value; }
+    }
+
     [JSProperty(Name = "document")]
     public JsonDocumentInstance Document
     {

@@ -2,7 +2,6 @@
 {
   using Jurassic;
   using Jurassic.Library;
-  using Lucene.Net.Search;
   using System;
 
   [Serializable]
@@ -22,10 +21,10 @@
   }
 
   [Serializable]
-  public class NumericRangeFilterInstance<T> : FilterInstance<NumericRangeFilter<T>>
+  public class NumericRangeFilterInstance<T> : ObjectInstance
     where T : struct, IComparable<T>
   {
-    private readonly NumericRangeFilter<T> m_numericRangeFilter;
+    private readonly NumericRangeFilterBase<T> m_numericRangeFilter;
 
     public NumericRangeFilterInstance(ObjectInstance prototype)
       : base(prototype)
@@ -34,7 +33,7 @@
       this.PopulateFunctions();
     }
 
-    public NumericRangeFilterInstance(ObjectInstance prototype, NumericRangeFilter<T> numericRangeFilter)
+    public NumericRangeFilterInstance(ObjectInstance prototype, NumericRangeFilterBase<T> numericRangeFilter)
       : this(prototype)
     {
       if (numericRangeFilter == null)
@@ -43,7 +42,7 @@
       m_numericRangeFilter = numericRangeFilter;
     }
 
-    public override NumericRangeFilter<T> Filter
+    public NumericRangeFilterBase<T> Filter
     {
       get { return m_numericRangeFilter; }
     }
