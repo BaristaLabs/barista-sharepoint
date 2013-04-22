@@ -959,9 +959,17 @@
     <Compile Include="PrincipalType.cs" />
     <Compile Include="Search\BaristaSearchClient.cs" />
     <Compile Include="Search\Data Contracts\BooleanClause.cs" />
+    <Compile Include="Search\Data Contracts\Explanation.cs" />
+    <Compile Include="Search\Data Contracts\FacetedSearchResult.cs" />
+    <Compile Include="Search\Data Contracts\Filter.cs" />
     <Compile Include="Search\Data Contracts\Occur.cs" />
+    <Compile Include="Search\Data Contracts\SearchArguments.cs" />
+    <Compile Include="Search\Data Contracts\Sort.cs" />
     <Compile Include="Search\Library\JsonDocumentInstance.cs" />
+    <Compile Include="Search\Library\ODataQueryInstance.cs" />
+    <Compile Include="Search\Library\QueryParserQueryInstance.cs" />
     <Compile Include="Search\Library\SearchResultInstance.cs" />
+    <Compile Include="Search\Library\SearchServiceInstance.cs" />
     <Compile Include="Search\OData2Lucene\ExpressionTokenizer.cs" />
     <Compile Include="Search\OData2Lucene\QueryFactory.cs" />
     <Compile Include="Search\OData2Lucene\FunctionTokenSet.cs" />

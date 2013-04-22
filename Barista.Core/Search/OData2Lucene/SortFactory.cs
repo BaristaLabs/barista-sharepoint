@@ -20,7 +20,7 @@
           var reverse = false;
           var reverseToken = sortOption.ElementAtOrDefault(1);
           if (reverseToken != null)
-            reverse = reverseToken.ToLowerInvariant() != "desc";
+            reverse = reverseToken.ToLowerInvariant() == "desc";
 
           var type = SortField.STRING;
           var typeToken = sortOption.ElementAtOrDefault(2);

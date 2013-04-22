@@ -11,7 +11,9 @@ function Get-WebPage([string]$url)
 {
     $wc = new-object net.webclient;
     $wc.credentials = [System.Net.CredentialCache]::DefaultCredentials;
-    $pageContents = $wc.DownloadString($url);
+    $pageContents = $wc.DownloadStringAsync($url);
+	# Wait for a small delay to let the request process...
+	Start-Sleep -Second 5
     $wc.Dispose();
     return $pageContents;
 }

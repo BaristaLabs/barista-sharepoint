@@ -122,6 +122,22 @@
       }
     }
 
+    public Explanation Explain(string indexName, Query query, int documentId)
+    {
+      using (var searchClient = GetSearchClient())
+      {
+        return searchClient.Explain(indexName, query, documentId);
+      }
+    }
+
+    public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
+    {
+      using (var searchClient = GetSearchClient())
+      {
+        return searchClient.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+      }
+    }
+
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
       using (var searchClient = GetSearchClient())
@@ -171,27 +187,19 @@
       }
     }
 
-    public IList<SearchResult> SearchWithQuery(string indexName, Query query, int maxResults)
+    public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
       using (var searchClient = GetSearchClient())
       {
-        return searchClient.SearchWithQuery(indexName, query, maxResults);
+        return searchClient.Search(indexName, arguments);
       }
     }
 
-    public IList<SearchResult> SearchWithQueryParser(string indexName, string defaultField, string query, int maxResults)
+    public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
       using (var searchClient = GetSearchClient())
       {
-        return searchClient.SearchWithQueryParser(indexName, defaultField, query, maxResults);
-      }
-    }
-
-    public IList<SearchResult> SearchWithOData(string indexName, string defaultField, string queryString)
-    {
-      using (var searchClient = GetSearchClient())
-      {
-        return searchClient.SearchWithOData(indexName, defaultField, queryString);
+        return searchClient.FacetedSearch(indexName, arguments);
       }
     }
   }

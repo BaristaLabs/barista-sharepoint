@@ -1,26 +1,28 @@
 ﻿namespace Barista.Search
 {
+  using System.Collections.Generic;
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
-  public class SearchResult
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class FacetedSearchResult
   {
+
     [DataMember]
-    public float Score
+    public string FacetName
     {
       get;
       set;
     }
 
     [DataMember]
-    public int LuceneDocId
+    public double HitCount
     {
       get;
       set;
     }
 
     [DataMember]
-    public JsonDocumentDto Document
+    public IList<SearchResult> Documents
     {
       get;
       set;

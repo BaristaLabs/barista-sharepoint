@@ -2,7 +2,6 @@
 {
   using System;
   using Barista.Search.Library;
-  using Barista.SharePoint.Search.Library;
 
   [Serializable]
   public class BaristaSearchIndexBundle : IBundle
@@ -21,7 +20,7 @@
     {
       engine.SetGlobalValue("JsonDocument", new JsonDocumentConstructor(engine));
 
-      return new SPBaristaSearchServiceInstance(engine.Object.InstancePrototype, new SPBaristaSearchServiceProxy());
+      return new SearchServiceInstance(engine.Object.InstancePrototype, new SPBaristaSearchServiceProxy());
     }
   }
 }

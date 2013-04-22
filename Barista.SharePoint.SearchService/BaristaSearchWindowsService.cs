@@ -1,6 +1,6 @@
 ﻿namespace Barista.SharePoint.SearchService
 {
-  using Barista.Services;
+  using Barista.Search;
   using Barista.SharePoint.Search;
   using System.ServiceModel;
 

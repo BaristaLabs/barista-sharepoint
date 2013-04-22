@@ -256,7 +256,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\Bundles\BaristaSearchIndexBundle.cs" />
     <None Include="Search\Hit.cs" />
-    <Compile Include="Search\Library\SPBaristaSearchServiceInstance.cs" />
     <None Include="Search\Library\SPIndexWriterInstance.cs" />
     <None Include="Search\Library\SPLuceneInstance.cs" />
     <None Include="Search\LuceneHelper.cs" />

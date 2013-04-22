@@ -3,6 +3,8 @@
   using System;
   using System.Collections.Generic;
   using System.Runtime.Serialization;
+  using Lucene.Net.Analysis.Standard;
+  using Version = Lucene.Net.Util.Version;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   [KnownType(typeof(MatchAllDocsQuery))]
@@ -18,9 +20,11 @@
   [KnownType(typeof(IntNumericRangeQuery))]
   [KnownType(typeof(LongNumericRangeQuery))]
   [KnownType(typeof(WildcardQuery))]
+  [KnownType(typeof(QueryParserQuery))]
+  [KnownType(typeof(ODataQuery))]
   public abstract class Query
   {
-    //[DataMember]
+    [DataMember]
     public float? Boost
     {
       get;
@@ -187,6 +191,20 @@
           longNumericRangeQuery.MaxInclusive);
 
         lQuery = llongNumericRangeQuery;
+      }
+      else if (query is QueryParserQuery)
+      {
+        var queryParserQuery = query as QueryParserQuery;
+
+        var queryParser = new Lucene.Net.QueryParsers.QueryParser(Version.LUCENE_30,
+                                                                  queryParserQuery.DefaultField,
+                                                                  new StandardAnalyzer(Version.LUCENE_30))
+          {
+            AllowLeadingWildcard =
+              queryParserQuery.AllowLeadingWildcard
+          };
+
+        lQuery = queryParser.Parse(queryParserQuery.Query);
       }
       else
       {
@@ -412,5 +430,55 @@
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class FloatNumericRangeQuery : NumericRangeQueryBase<float>
   {
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class QueryParserQuery : Query
+  {
+    [DataMember]
+    public bool AllowLeadingWildcard
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string DefaultField
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string Query
+    {
+      get;
+      set;
+    }
+  }
+
+  [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
+  public class ODataQuery : Query
+  {
+    [DataMember]
+    public bool AllowLeadingWildcard
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string DefaultField
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public string Query
+    {
+      get;
+      set;
+    }
   }
 }

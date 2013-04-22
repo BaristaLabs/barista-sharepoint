@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.Search.Library
+﻿namespace Barista.Search.Library
 {
   using System.Reflection;
   using Barista.Extensions;
@@ -8,46 +8,45 @@
   using System;
   using Barista.Newtonsoft.Json;
   using Barista.Search;
-  using Barista.Search.Library;
   using Barista.Newtonsoft.Json.Linq;
 
   [Serializable]
-  public class SPBaristaSearchServiceConstructor : ClrFunction
+  public class SearchServiceConstructor : ClrFunction
   {
-    public SPBaristaSearchServiceConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "SPBaristaSearchService", new SPBaristaSearchServiceInstance(engine.Object.InstancePrototype))
+    public SearchServiceConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "SearchService", new SearchServiceInstance(engine.Object.InstancePrototype))
     {
     }
 
     [JSConstructorFunction]
-    public SPBaristaSearchServiceInstance Construct()
+    public SearchServiceInstance Construct()
     {
-      return new SPBaristaSearchServiceInstance(this.InstancePrototype);
+      return new SearchServiceInstance(this.InstancePrototype);
     }
   }
 
   [Serializable]
-  public class SPBaristaSearchServiceInstance : ObjectInstance
+  public class SearchServiceInstance : ObjectInstance
   {
-    private readonly SPBaristaSearchServiceProxy m_baristaSearchServiceProxy;
+    private readonly IBaristaSearch m_baristaSearchServiceProxy;
 
-    public SPBaristaSearchServiceInstance(ObjectInstance prototype)
+    public SearchServiceInstance(ObjectInstance prototype)
       : base(prototype)
     {
       this.PopulateFields();
       this.PopulateFunctions();
     }
 
-    public SPBaristaSearchServiceInstance(ObjectInstance prototype, SPBaristaSearchServiceProxy baristaSearchServiceProxy)
+    public SearchServiceInstance(ObjectInstance prototype, IBaristaSearch baristaSearch)
       : this(prototype)
     {
-      if (baristaSearchServiceProxy == null)
-        throw new ArgumentNullException("baristaSearchServiceProxy");
+      if (baristaSearch == null)
+        throw new ArgumentNullException("baristaSearch");
 
-      m_baristaSearchServiceProxy = baristaSearchServiceProxy;
+      m_baristaSearchServiceProxy = baristaSearch;
     }
 
-    public SPBaristaSearchServiceProxy SPBaristaSearchServiceProxy
+    public IBaristaSearch BaristaSearch
     {
       get { return m_baristaSearchServiceProxy; }
     }
@@ -217,13 +216,31 @@
       return new FuzzyQueryInstance(this.Engine.Object.InstancePrototype, query);
     }
 
-    //[JSFunction(Name = "createQuery")]
-    //public GenericQueryInstance CreateQuery(string fieldName, string text)
-    //{
-    //  var parser = new QueryParser(Version.LUCENE_30, fieldName, new StandardAnalyzer(Version.LUCENE_30));
-    //  var query = parser.Parse(text);
-    //  return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
-    //}
+    [JSFunction(Name = "createQueryParserQuery")]
+    public QueryParserQueryInstance CreateQueryParserQuery(string query, string defaultField, bool allowLeadingWildcard)
+    {
+      var qPq = new QueryParserQuery
+      {
+        AllowLeadingWildcard = allowLeadingWildcard,
+        DefaultField = defaultField,
+        Query = query
+      };
+
+      return new QueryParserQueryInstance(this.Engine.Object.InstancePrototype, qPq);
+    }
+
+    [JSFunction(Name = "createODataQuery")]
+    public ODataQueryInstance CreateODataQuery(string query, string defaultField, bool allowLeadingWildcard)
+    {
+      var oDataQuery = new ODataQuery
+      {
+        AllowLeadingWildcard = allowLeadingWildcard,
+        DefaultField = defaultField,
+        Query = query
+      };
+
+      return new ODataQueryInstance(this.Engine.Object.InstancePrototype, oDataQuery);
+    }
 
     //[JSFunction(Name = "createMultiFieldQuery")]
     //public GenericQueryInstance CreateMultiFieldQuery(ArrayInstance fieldNames, string text)
@@ -259,6 +276,8 @@
     }
     #endregion
 
+    #region Filter Creation
+    #endregion
 
     [JSProperty(Name = "indexName")]
     public string IndexName
@@ -270,12 +289,18 @@
     [JSFunction(Name = "deleteAllDocuments")]
     public void DeleteAllDocuments()
     {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+      
       m_baristaSearchServiceProxy.DeleteAllDocuments(this.IndexName);
     }
 
     [JSFunction(Name = "deleteDocuments")]
     public void DeleteDocuments(ArrayInstance documentIds)
     {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+
       var documentIdValues = documentIds.ElementValues
                                         .Select(documentId => TypeConverter.ConvertTo<string>(this.Engine, documentId))
                                         .Where(
@@ -290,6 +315,9 @@
     [JSFunction(Name = "index")]
     public void Index(object documentObject)
     {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+
       //TODO: Recognize DocumentInstance, recognize StringInstance, recognize SPListItemInstance.
       //And convert/create a JsonDocumentInstance appropriately.
 
@@ -329,13 +357,19 @@
     [JSFunction(Name = "retrieve")]
     public JsonDocumentInstance Retrieve(string documentId)
     {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+
       var result = m_baristaSearchServiceProxy.Retrieve(this.IndexName, documentId);
       return new JsonDocumentInstance(this.Engine.Object.Prototype, result);
     }
 
-    [JSFunction(Name = "searchWithQuery")]
-    public ArrayInstance SearchWithQuery(object query, object maxResults)
+    [JSFunction(Name = "search")]
+    public ArrayInstance Search(object query, object maxResults)
     {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+
       Query queryValue;
       if (query == null || query == Null.Value || query == Undefined.Value)
         queryValue = new MatchAllDocsQuery();
@@ -351,29 +385,13 @@
 
       var maxResultsValue = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
 
-      var searchResults = m_baristaSearchServiceProxy.SearchWithQuery(this.IndexName, queryValue, maxResultsValue);
+      var args = new Barista.Search.SearchArguments
+        {
+          Query = queryValue,
+          Take = maxResultsValue
+        };
 
-      // ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine.Object.Prototype, sr)).ToArray());
-      // ReSharper restore CoVariantArrayConversion
-    }
-
-    [JSFunction(Name = "searchWithQueryParser")]
-    public ArrayInstance SearchWithQueryParser(string defaultField, string query, object maxResults)
-    {
-      var maxResultsValue = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-
-      var searchResults = m_baristaSearchServiceProxy.SearchWithQueryParser(this.IndexName, defaultField, query, maxResultsValue);
-
-// ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine.Object.Prototype, sr)).ToArray());
-// ReSharper restore CoVariantArrayConversion
-    }
-
-    [JSFunction(Name = "searchWithOData")]
-    public ArrayInstance SearchWithOData(string defaultField, string queryString)
-    {
-      var searchResults = m_baristaSearchServiceProxy.SearchWithOData(this.IndexName, defaultField, queryString);
+      var searchResults = m_baristaSearchServiceProxy.Search(this.IndexName, args);
 
       // ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine.Object.Prototype, sr)).ToArray());

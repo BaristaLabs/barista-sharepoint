@@ -15,6 +15,7 @@
   using System.IO;
   using System.Linq;
   using System.ServiceModel;
+  using Lucene.Net.Search.Vectorhighlight;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public abstract class BaristaSearchService : IBaristaSearch, IDisposable
@@ -32,8 +33,8 @@
     /// <param name="indexName"></param>
     public void DeleteAllDocuments(string indexName)
     {
-      //try
-      //{
+      try
+      {
         var index = GetOrAddIndex(indexName, true);
         try
         {
@@ -43,12 +44,11 @@
         {
           CloseIndexWriter(indexName, false);
         }
-      //}
-      //catch (Exception ex)
-      //{
-      //  throw new FaultException(ex.Message);
-      //}
-      
+      }
+      catch (Exception ex)
+      {
+        throw new FaultException(ex.Message);
+      }
     }
 
     /// <summary>
@@ -76,7 +76,59 @@
       {
         throw new FaultException(ex.Message);
       }
-      
+    }
+
+    /// <summary>
+    /// Returns an explanation for a particular result in a search query.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="query"></param>
+    /// <param name="docId"></param>
+    /// <returns></returns>
+    public Explanation Explain(string indexName, Barista.Search.Query query, int docId)
+    {
+       var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
+      Explanation explanation;
+
+      var index = GetOrAddIndex(indexName, false);
+      IndexSearcher indexSearcher;
+      using (index.GetSearcher(out indexSearcher))
+      {
+        var lexplanation = indexSearcher.Explain(lQuery, docId);
+        explanation = Explanation.ConvertLuceneExplanationToExplanation(lexplanation);
+      }
+
+      return explanation;
+    }
+
+    /// <summary>
+    /// Returns a highlighted string for the specified query, results doc id, fieldname and fragment size.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="query"></param>
+    /// <param name="docId"></param>
+    /// <param name="fieldName"></param>
+    /// <param name="fragCharSize"></param>
+    /// <returns></returns>
+    public string Highlight(string indexName, Barista.Search.Query query, int docId, string fieldName, int fragCharSize)
+    {
+      var highlighter = GetFastVectorHighlighter();
+      var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
+
+      var fieldQuery = highlighter.GetFieldQuery(lQuery);
+      string highlightedResult;
+
+      var index = GetOrAddIndex(indexName, false);
+      IndexSearcher indexSearcher;
+      using (index.GetSearcher(out indexSearcher))
+      {
+        highlightedResult = highlighter.GetBestFragment(fieldQuery, indexSearcher.IndexReader,
+                                                        docId,
+                                                        fieldName,
+                                                        fragCharSize);
+      }
+
+      return highlightedResult;
     }
 
     /// <summary>
@@ -165,8 +217,8 @@
 
         var index = GetOrAddIndex(indexName, true);
 
-        //try
-        //{
+        try
+        {
           //Add it to the index.
           var batch = new IndexingBatch();
 
@@ -197,11 +249,11 @@
         {
           CloseIndexWriter(indexName, false);
         }
-      //}
-      //catch (Exception ex)
-      //{
-      //  throw new FaultException(ex.Message);
-      //}
+      }
+      catch (Exception ex)
+      {
+        throw new FaultException(ex.Message);
+      }
     }
 
     /// <summary>
@@ -240,65 +292,45 @@
       }
     }
 
-    public IList<SearchResult> IntRangeQuery(string indexName, string fieldName, int? min, int? max, bool minInclusive, bool maxInclusive, int maxResults)
-    {
-      try
-      {
-        var index = GetOrAddIndex(indexName, false);
-        IndexSearcher indexSearcher;
-        using (index.GetSearcher(out indexSearcher))
-        {
-          var rangeQuery = Lucene.Net.Search.NumericRangeQuery.NewIntRange(fieldName, min, max, minInclusive, maxInclusive);
-
-          var hits = indexSearcher.Search(rangeQuery, maxResults);
-          return RetrieveSearchResults(indexSearcher, hits);
-        }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
-    }
-
-    public IList<SearchResult> FloatRangeQuery(string indexName, string fieldName, float? min, float? max, bool minInclusive,
-                                               bool maxInclusive, int maxResults)
-    {
-      try
-      {
-        var index = GetOrAddIndex(indexName, false);
-        IndexSearcher indexSearcher;
-        using (index.GetSearcher(out indexSearcher))
-        {
-          var rangeQuery = Lucene.Net.Search.NumericRangeQuery.NewFloatRange(fieldName, min, max, minInclusive, maxInclusive);
-
-          var hits = indexSearcher.Search(rangeQuery, maxResults);
-          return RetrieveSearchResults(indexSearcher, hits);
-        }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
-    }
-
     /// <summary>
     /// Returns documents that match the specified lucene query, limiting to the specified number of items.
     /// </summary>
     /// <param name="indexName"></param>
-    /// <param name="query"></param>
-    /// <param name="maxResults"></param>
+    /// <param name="arguments"></param>
     /// <returns></returns>
-    public IList<SearchResult> SearchWithQuery(string indexName, Barista.Search.Query query, int maxResults)
+    public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
+      if (arguments == null)
+        arguments = new SearchArguments();
+
+      //Set Defaults
+      if (arguments.Query == null)
+        arguments.Query = new MatchAllDocsQuery();
+
+      if (arguments.Take.HasValue == false)
+        arguments.Take = 1000;
+
       try
       {
         var index = GetOrAddIndex(indexName, false);
+        var searchParams = GetLuceneSearchParams(arguments);
+
         IndexSearcher indexSearcher;
         using (index.GetSearcher(out indexSearcher))
         {
-          var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
-          var hits = indexSearcher.Search(lQuery, maxResults);
-          return RetrieveSearchResults(indexSearcher, hits);
+          if (searchParams.Skip.HasValue == false)
+          {
+            var hits = indexSearcher.Search(searchParams.Query, searchParams.Filter, searchParams.MaxResults, searchParams.Sort);
+            return RetrieveSearchResults(indexSearcher, hits);
+          }
+          else
+          {
+            var hits = indexSearcher.Search(searchParams.Query, searchParams.Filter, searchParams.MaxResults + searchParams.Skip.Value, searchParams.Sort);
+            return RetrieveSearchResults(indexSearcher, hits)
+              .Skip(searchParams.Skip.Value)
+              .Take(searchParams.MaxResults)
+              .ToList();
+          }
         }
       }
       catch (Exception ex)
@@ -307,85 +339,36 @@
       }
     }
 
-    /// <summary>
-    /// Returns documents that match the specified lucene query, limiting to the specified number of items.
-    /// </summary>
-    /// <param name="indexName"></param>
-    /// <param name="defaultField"></param>
-    /// <param name="query"></param>
-    /// <param name="maxResults"></param>
-    /// <returns></returns>
-    public IList<SearchResult> SearchWithQueryParser(string indexName, string defaultField, string query, int maxResults)
+    public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
+      if (arguments == null)
+        arguments = new SearchArguments();
+
+      //Set Defaults
+      if (arguments.Query == null)
+        arguments.Query = new MatchAllDocsQuery();
+
+      if (arguments.Take.HasValue == false)
+        arguments.Take = 1000;
+
       try
       {
         var index = GetOrAddIndex(indexName, false);
+        var searchParams = GetLuceneSearchParams(arguments);
+
         IndexSearcher indexSearcher;
         using (index.GetSearcher(out indexSearcher))
         {
-          var lQuery = query.IsNullOrWhiteSpace()
-                         ? new Lucene.Net.Search.MatchAllDocsQuery()
-                         : LuceneModelFilter.ParseQuery(defaultField, query);
-          
-          var hits = indexSearcher.Search(lQuery, maxResults);
-          return RetrieveSearchResults(indexSearcher, hits);
-        }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
-    }
+          var reader = indexSearcher.IndexReader;
 
-    /// <summary>
-    /// Returns documents that matches the specified OData-based query.
-    /// </summary>
-    /// <param name="indexName"></param>
-    /// <param name="defaultField"></param>
-    /// <param name="queryString"></param>
-    /// <returns></returns>
-    public IList<SearchResult> SearchWithOData(string indexName, string defaultField, string queryString)
-    {
-      try
-      {
-        var parser = new ODataQueryParser();
-        var filter = parser.ParseQuery(defaultField, queryString);
-
-        var index = GetOrAddIndex(indexName, false);
-        IndexSearcher indexSearcher;
-
-        using (index.GetSearcher(out indexSearcher))
-        {
-          var lQuery = filter.Query.IsNullOrWhiteSpace()
-                         ? new Lucene.Net.Search.MatchAllDocsQuery()
-                         : LuceneModelFilter.ParseQuery(defaultField, filter.Query);
-
-          var lFilter = filter.Filter.IsNullOrWhiteSpace()
-                         ? null
-                         : LuceneModelFilter.ParseFilter(defaultField, filter.Filter);
-
-          var lSort = filter.Sort ?? new Sort(SortField.FIELD_SCORE);
-
-          if (filter.Skip <= 0 && filter.Take > 0)
-          {
-            var hits = indexSearcher.Search(lQuery, lFilter, filter.Take, lSort);
-            return RetrieveSearchResults(indexSearcher, hits)
-              .Take(filter.Take)
-              .ToList();
-          }
-
-          if (filter.Skip > 0 && filter.Take > 0)
-          {
-            var hits = indexSearcher.Search(lQuery, lFilter, filter.Skip + filter.Take, lSort);
-            return RetrieveSearchResults(indexSearcher, hits)
-              .Skip(filter.Skip)
-              .Take(filter.Take)
-              .ToList();
-          }
-
-
-          var allHits = indexSearcher.Search(lQuery, lFilter, 1024, lSort);
-          return RetrieveSearchResults(indexSearcher, allHits);
+          var facetedSearch = new SimpleFacetedSearch(reader, arguments.GroupByFields.ToArray());
+          var hits = facetedSearch.Search(searchParams.Query, searchParams.MaxResults);
+          var result = hits.HitsPerFacet
+                           .AsQueryable()
+                           .OrderByDescending(hit => hit.HitCount)
+                           .Select(facetHits => RetrieveFacetSearchResults(facetHits))
+                           .ToList();
+          return result;
         }
       }
       catch (Exception ex)
@@ -445,6 +428,62 @@
         });
     }
 
+    /// <summary>
+    /// Utility method to get a default FastVectorHighlighter.
+    /// </summary>
+    /// <returns></returns>
+    private static FastVectorHighlighter GetFastVectorHighlighter()
+    {
+      FragListBuilder fragListBuilder = new SimpleFragListBuilder();
+      FragmentsBuilder fragmentBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
+      return new FastVectorHighlighter(true, true, fragListBuilder, fragmentBuilder);
+    }
+
+    private static LuceneParams GetLuceneSearchParams(SearchArguments arguments)
+    {
+      LuceneParams result = new LuceneParams();
+
+      //Special Behavior for OData Queries since OData queries potentially specify the query/filter/skip/take all in one.
+      if (arguments.Query is ODataQuery)
+      {
+        var oDataQuery = arguments.Query as ODataQuery;
+        var parser = new ODataQueryParser();
+        var modelFilter = parser.ParseQuery(oDataQuery.DefaultField, oDataQuery.Query);
+
+        result.Query = modelFilter.Query.IsNullOrWhiteSpace()
+                   ? new Lucene.Net.Search.MatchAllDocsQuery()
+                   : LuceneModelFilter.ParseQuery(oDataQuery.DefaultField, modelFilter.Query);
+
+        result.Filter = modelFilter.Filter.IsNullOrWhiteSpace()
+                    ? null
+                    : LuceneModelFilter.ParseFilter(oDataQuery.DefaultField, modelFilter.Filter);
+
+        result.Sort = modelFilter.Sort ?? new Lucene.Net.Search.Sort();
+
+        if (modelFilter.Take > 0)
+          result.MaxResults = modelFilter.Take;
+
+        if (modelFilter.Skip > 0)
+          result.Skip = modelFilter.Skip;
+      }
+      else
+      {
+        result.Query = Barista.Search.Query.ConvertQueryToLuceneQuery(arguments.Query);
+        result.Filter = null;
+        result.Sort = Barista.Search.Sort.ConvertSortToLuceneSort(arguments.Sort);
+
+        if (arguments.Filter != null)
+        {
+          result.Filter = Barista.Search.Filter.ConvertFilterToLuceneFilter(arguments.Filter);
+        }
+
+        if (arguments.Take.HasValue)
+          result.MaxResults = arguments.Take.Value;
+      }
+
+      return result;
+    }
+
     private static IList<SearchResult> RetrieveSearchResults(IndexSearcher indexSearcher, TopDocs hits)
     {
       //iterate over the results.
@@ -459,18 +498,49 @@
                      return new SearchResult
                      {
                        Score = hit.Score,
+                       LuceneDocId = hit.Doc,
                        Document = null
                      };
 
                    return new SearchResult
                    {
                      Score = hit.Score,
+                     LuceneDocId = hit.Doc,
                      Document = JsonConvert.DeserializeObject<JsonDocumentDto>(jsonDocumentField.StringValue)
                    };
                  })
                  .ToList();
 
       return results;
+    }
+
+    private static FacetedSearchResult RetrieveFacetSearchResults(SimpleFacetedSearch.HitsPerFacet hits)
+    {
+      var result = new FacetedSearchResult
+        {
+          FacetName = hits.Name.ToString(),
+          HitCount = hits.HitCount,
+          Documents = hits.Select(hit =>
+            {
+              var jsonDocumentField = hit.GetField(Constants.JsonDocumentFieldName);
+
+              if (jsonDocumentField == null)
+                return new SearchResult
+                  {
+                    Score = 0,
+                    LuceneDocId = 0,
+                    Document = null
+                  };
+
+              return new SearchResult
+                {
+                  Score = 0,
+                  LuceneDocId = 0,
+                  Document = JsonConvert.DeserializeObject<JsonDocumentDto>(jsonDocumentField.StringValue)
+                };
+            }).ToList()
+        };
+      return result;
     }
 
     private static void EnsureIndexVersionMatches(string indexName, Lucene.Net.Store.Directory directory)
@@ -551,5 +621,48 @@
     {
       CloseAllIndexes();
     }
+
+    #region Nested Classes
+
+    private class LuceneParams
+    {
+      public LuceneParams()
+      {
+        this.MaxResults = 1000;
+        this.Skip = null;
+      }
+
+      public Lucene.Net.Search.Query Query
+      {
+        get;
+        set;
+      }
+
+      public Lucene.Net.Search.Filter Filter
+      {
+        get;
+        set;
+      }
+
+      public Lucene.Net.Search.Sort Sort
+      {
+        get;
+        set;
+      }
+
+      public int MaxResults
+      {
+        get;
+        set;
+      }
+
+      public int? Skip
+      {
+        get;
+        set;
+      }
+    }
+
+    #endregion
   }
 }

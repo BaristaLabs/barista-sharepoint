@@ -32,6 +32,11 @@
     {
     }
 
+    public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
+    {
+      return Channel.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+    }
+
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
       Channel.IndexDocument(indexName, documentId, document);
@@ -57,24 +62,24 @@
       Channel.DeleteAllDocuments(indexName);
     }
 
+    public Explanation Explain(string indexName, Query query, int documentId)
+    {
+      return Channel.Explain(indexName, query, documentId);
+    }
+
     public JsonDocumentDto Retrieve(string indexName, string documentId)
     {
       return Channel.Retrieve(indexName, documentId);
     }
 
-    public IList<SearchResult> SearchWithQuery(string indexName, Query query, int maxResults)
+    public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
-      return Channel.SearchWithQuery(indexName, query, maxResults);
+      return Channel.Search(indexName, arguments);
     }
 
-    public IList<SearchResult> SearchWithQueryParser(string indexName, string defaultField, string query, int maxResults)
+    public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
-      return Channel.SearchWithQueryParser(indexName, defaultField, query, maxResults);
-    }
-
-    public IList<SearchResult> SearchWithOData(string indexName, string defaultField, string queryString)
-    {
-      return Channel.SearchWithOData(indexName, defaultField, queryString);
+      return Channel.FacetedSearch(indexName, arguments);
     }
   }
 }
