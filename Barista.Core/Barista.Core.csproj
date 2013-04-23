@@ -1261,6 +1261,7 @@
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
     <Compile Include="Search\BaristaSearchService.cs" />
+    <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
