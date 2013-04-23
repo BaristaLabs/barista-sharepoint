@@ -595,6 +595,17 @@
           if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
             args.Query = queryProperty.GetValue(queryObj, null) as Query;
         }
+        else
+        {
+          var queryObjType = query.GetType();
+
+          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
+            args.Query = queryProperty.GetValue(query, null) as Query;
+
+          if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
+            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+        }
 
         if (argumentsObj.HasProperty("filter"))
         {
