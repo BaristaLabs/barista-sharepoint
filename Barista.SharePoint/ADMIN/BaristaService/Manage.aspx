@@ -18,8 +18,8 @@
 <asp:Content ID="PlaceHolderAdditionalPageHead" ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
     <SharePoint:CssLink Id="BootstrapCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/bootstrap-2.3.1/css/bootstrap.min.css"></SharePoint:CssLink>
     <SharePoint:CssLink Id="AngularUiCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="KendoCommonCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.complete.2013.1.319/styles/kendo.common.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="KendoDefaultCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/kendoui.complete.2013.1.319/styles/kendo.default.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="AngularNgGridCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/angular/ng-grid.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="ToastrCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/toastr-1.2.3/toastr.min.css"></SharePoint:CssLink>
     <style type="text/css">
         a:visited {
             color: black;
@@ -31,6 +31,16 @@
 
         div.k-window {
             display: table;
+        }
+
+        .toolbar {
+            padding-top: 5px;
+            padding-bottom: 10px;
+        }
+
+        .gridStyle {
+            border: 1px solid rgb(212,212,212);
+            height: 300px;
         }
 
         /* Override Bootstrap styles that conflict with corev4.css*/
@@ -53,22 +63,25 @@
     </div>
     
     <script type="text/javascript" src="/_layouts/BaristaJS/json2.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/underscore-1.4.4.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/modernizr-2.6.2.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/jquery.validate-1.10.0.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/jquery.validate.additional-methods-1.10.0.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/toastr-1.2.3/toastr.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-ieshiv.min.js"></script>
     
     <script type="text/javascript" src="/_layouts/BaristaJS/bootstrap-2.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.min.js"></script>
-<%--    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.tpls.min.js"></script>--%>
-    <script type="text/javascript" src="/_layouts/BaristaJS/kendoui.complete.2013.1.319/js/kendo.web.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-kendo.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.tpls.min.js"></script>
+    <script type="text/javascript" src="/_layouts/BaristaJS/angular/ng-grid-2.0.4.min.js"></script>
     
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js"></script>
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Kill the search area, it just looks bad (style conflict?)
+            $("#s4-searcharea").hide();
+        });
+    </script>
 </asp:Content>

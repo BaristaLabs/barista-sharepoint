@@ -418,8 +418,10 @@
   <ItemGroup>
     <Content Include="ADMIN\BaristaService\Scripts\app.js" />
     <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManageIndexesCtrl.js" />
+    <Content Include="ADMIN\BaristaService\Views\addeditindexdialog.html" />
     <Content Include="ADMIN\BaristaService\Views\indexes.html" />
     <Content Include="ADMIN\BaristaService\Views\main.html" />
+    <Content Include="ADMIN\BaristaService\Views\addedittrustedlocationdialog.html" />
     <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateTrustedLocation.js" />
     <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateSearchIndex.js" />
     <Content Include="ADMIN\BaristaService\WebServices\DeleteSearchIndex.js" />
@@ -622,6 +624,8 @@
     <Content Include="Layouts\BaristaJS\angular\i18n\angular-locale_zh-tw.js" />
     <Content Include="Layouts\BaristaJS\angular\i18n\angular-locale_zh.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-bootstrap-0.2.0.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\ng-grid-2.0.4.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\ng-grid.css" />
     <Content Include="Layouts\BaristaJS\backbone-1.0.0.min.js" />
     <Content Include="Layouts\BaristaJS\bootstrap-2.3.1\css\bootstrap-responsive.css" />
     <Content Include="Layouts\BaristaJS\bootstrap-2.3.1\css\bootstrap-responsive.min.css" />
@@ -700,6 +704,7 @@
     <Content Include="Layouts\BaristaJS\images\glyphicons-halflings-white.png" />
     <Content Include="Layouts\BaristaJS\images\glyphicons-halflings.png" />
     <Content Include="Layouts\BaristaJS\jquery-1.9.1.min.js" />
+    <Content Include="Layouts\BaristaJS\jquery.blockUI.js" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\js\cultures\kendo.culture.en-US.min.js" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\js\cultures\kendo.culture.en.min.js" />
     <Content Include="Layouts\BaristaJS\kendoui.complete.2013.1.319\js\jquery.min.js" />
@@ -943,6 +948,8 @@
     <Content Include="Layouts\BaristaJS\select2.min.js" />
     <Content Include="Layouts\BaristaJS\select2.png" />
     <Content Include="Layouts\BaristaJS\select2x2.png" />
+    <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.js" />
+    <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.min.css" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.gz.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.js" />

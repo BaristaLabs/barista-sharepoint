@@ -31,21 +31,21 @@ namespace Barista.SharePoint {
         protected global::Microsoft.SharePoint.WebControls.CssLink AngularUiCssLink;
         
         /// <summary>
-        /// KendoCommonCssLink control.
+        /// AngularNgGridCssLink control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.CssLink KendoCommonCssLink;
+        protected global::Microsoft.SharePoint.WebControls.CssLink AngularNgGridCssLink;
         
         /// <summary>
-        /// KendoDefaultCssLink control.
+        /// ToastrCssLink control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.CssLink KendoDefaultCssLink;
+        protected global::Microsoft.SharePoint.WebControls.CssLink ToastrCssLink;
     }
 }

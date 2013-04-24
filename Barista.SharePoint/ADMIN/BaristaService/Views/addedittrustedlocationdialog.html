@@ -1,0 +1,48 @@
+﻿<div class="editor form-horizontal" style="margin: 25px;">
+    <form name="form" novalidate>
+        <div class="control-group">
+            <label class="control-label">Url </label>
+            <div class="controls">
+                <input type="url" name="url" ng-model="trustedLocation.Url" placeholder="SharePoint Web Url" ng-disabled="!isNew" required />
+                <div ng-show="form.url.$dirty && form.url.$invalid">Invalid:
+                  <span ng-show="form.url.$error.required">You need to enter a url.</span>
+                  <span ng-show="form.url.$error.url">This is not a valid url.</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Description </label>
+            <div class="controls">
+                <textarea rows="3" ng-model="trustedLocation.Description" placeholder="Description">
+            </textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Location Type </label>
+            <div class="controls">
+                <select name="locationType" ng-model="trustedLocation.LocationType" required>
+                    <option value="Web">Web</option>
+                </select>
+                <div ng-show="form.locationType.$dirty && form.locationType.$invalid">Invalid:
+                  <span ng-show="form.locationType.$error.required">You need to enter a location type.</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Trust Children? </label>
+            <div class="controls">
+                <input type="checkbox" ng-model="trustedLocation.TrustChildren"/>
+            </div>
+        </div>
+        <div class="btn-group" style="float:right">
+            <button class="btn btn-primary" ng-click="addOrUpdate(trustedLocation)" ng-disabled="form.$invalid">
+                <div ng-switch="isNew">
+                    <div ng-switch-when="true">Add</div>
+                    <div ng-switch-when="false">Update</div>
+                </div>
+            </button>
+            <button class="btn" ng-click="cancel()">Cancel</button>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>

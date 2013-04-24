@@ -1,0 +1,50 @@
+﻿<div class="editor form-horizontal" style="margin: 25px">
+    <form name="form" novalidate>
+        <div class="control-group">
+            <label class="control-label">Name </label>
+            <div class="controls">
+                <input type="text" name="name" ng-model="index.name" placeholder="Name" required ng-disabled="!isNew"/>
+                <div ng-show="form.name.$dirty && form.name.$invalid">Invalid:
+                    <span ng-show="form.name.$error.required">You need to enter an index name.</span>
+                    <span ng-show="form.name.$error.text">A name must be entered.</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Description </label>
+            <div class="controls">
+                <textarea rows="3" ng-model="index.description" placeholder="Description">
+            </textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Index Type </label>
+            <div class="controls">
+                <select name="indexType" ng-model="index.indexType" required>
+                    <option value="RAM Directory">RAM Directory</option>
+                    <option value="File Directory">File Directory</option>
+                    <option value="SharePoint Directory">SharePoint Directory</option>
+                </select>
+                <div ng-show="form.indexType.$dirty && form.indexType.$invalid">Invalid:
+                  <span ng-show="form.indexType.$error.required">You need to enter an index type.</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Index Storage Path </label>
+            <div class="controls">
+                <input type="text" ng-model="index.indexStoragePath" placeholder="Index Storage Path" />
+            </div>
+        </div>
+         <div class="btn-group" style="float:right">
+            <button class="btn btn-primary" ng-click="addOrUpdate(index)" ng-disabled="form.$invalid">
+                <div ng-switch="isNew">
+                    <div ng-switch-when="true">Add</div>
+                    <div ng-switch-when="false">Update</div>
+                </div>
+            </button>
+            <button class="btn" ng-click="cancel()">Cancel</button>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>
