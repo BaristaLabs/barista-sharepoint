@@ -2,6 +2,7 @@
 
 namespace Barista
 {
+  using Barista.Extensions;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -249,10 +250,15 @@ namespace Barista
     /// Determines the content type from the specified result.
     /// </summary>
     /// <param name="result"></param>
+    /// <param name="defaultContentType"></param>
     /// <returns></returns>
-    public static string AutoDetectContentTypeFromResult(object result)
+    public static string AutoDetectContentTypeFromResult(object result, string defaultContentType)
     {
-      var contentType = "application/json";
+      var contentType = defaultContentType;
+      if (contentType.IsNullOrWhiteSpace())
+      {
+        contentType = "application/json";
+      }
 
       if (result is Base64EncodedByteArrayInstance)
       {

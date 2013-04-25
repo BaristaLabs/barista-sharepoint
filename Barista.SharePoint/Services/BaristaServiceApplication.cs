@@ -109,8 +109,11 @@
       if (request == null)
         throw new ArgumentNullException("request");
 
-      var response = new BrewResponse();
-
+      var response = new BrewResponse
+      {
+        ContentType = request.ContentType
+      };
+      
       BaristaContext.Current = new BaristaContext(request, response);
 
       Mutex syncRoot = null;
@@ -152,7 +155,7 @@
           //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
           if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
           {
-            response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result);
+            response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
           }
 
           if (webBundle.WebInstance != null)
@@ -200,7 +203,9 @@
       if (request == null)
         throw new ArgumentNullException("request");
 
-      var response = new BrewResponse();
+      var response = new BrewResponse {
+        ContentType = request.ContentType
+      };
 
       //Set the current context with information from the current request and response.
       BaristaContext.Current = new BaristaContext(request, response);

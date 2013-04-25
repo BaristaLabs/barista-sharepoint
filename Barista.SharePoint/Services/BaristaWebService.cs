@@ -148,7 +148,7 @@
       }
 
       //If the request has a query string parameter named "c" use that.
-      if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null)
+      if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
@@ -164,6 +164,17 @@
         var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
         if (formKey != null)
           code = form[formKey];
+      }
+
+      //If the request contains a Message header named "c" or "code in the appropriate namespace, use that.
+      if (String.IsNullOrEmpty(code) && OperationContext.Current != null)
+      {
+        var headers = OperationContext.Current.IncomingMessageHeaders;
+        
+        if (headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "code"))
+          code = headers.GetHeader<string>("code", Barista.Constants.ServiceNamespace);
+        else if (String.IsNullOrEmpty(code) && headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "c"))
+          code = headers.GetHeader<string>("c", Barista.Constants.ServiceNamespace);
       }
 
       //Otherwise, use the body of the post as code.
@@ -197,7 +208,7 @@
       }
 
       if (String.IsNullOrEmpty(code))
-        throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
+        throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, through a 'c' or 'code' soap message header in the http://barista/services/v1 namespace, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
 
 
       //Determine if a language is specified.
@@ -213,7 +224,7 @@
       }
 
       //If the request has a query string parameter named "lang" use that.
-      if (String.IsNullOrEmpty(language) && WebOperationContext.Current != null)
+      if (String.IsNullOrEmpty(language) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
@@ -269,7 +280,7 @@
           {
             if (isHiveFile == false)
             {
-              string lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
+              var lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
               if (String.IsNullOrEmpty(lockDownMode) == false && lockDownMode.ToLowerInvariant() == "BaristaContentLibraryOnly")
               {
                 //TODO: implement this.
@@ -295,7 +306,7 @@
     /// <param name="codePath"></param>
     private static void Brew(string code, string codePath)
     {
-      BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
+      var client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;
@@ -321,7 +332,7 @@
     /// <returns></returns>
     private static Stream Pull(string code, string codePath)
     {
-      BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
+      var client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = code;

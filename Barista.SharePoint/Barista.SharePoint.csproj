@@ -220,6 +220,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\BaristaWcfService.cs" />
     <Compile Include="SPScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +443,8 @@
     <Content Include="DocumentStore\SPDocumentStoreEventReceiver\Elements.xml" />
     <Content Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe" />
     <Content Include="ISAPI\BaristaServices\Search\Topshelf.dll" />
+    <Content Include="ISAPI\Barista\v1\BaristaSoap.svc" />
+    <Content Include="ISAPI\Barista\v1\BaristaWcf.svc" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap-prettify.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap-prettify.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap.js" />

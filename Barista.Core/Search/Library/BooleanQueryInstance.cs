@@ -54,20 +54,22 @@
       if (occur == Null.Value || occur == Undefined.Value || occur == null || (occur is string) == false)
         lOccur = Occur.Must;
       else
-        lOccur = (Occur) Enum.Parse(typeof (Occur), occur as string);
+      {
+        Occur tempOccur;
+        lOccur = (occur as string).TryParseEnum(true, Occur.Must, out tempOccur)
+          ? tempOccur
+          : Occur.Must;
+      }
 
       var searchQueryType = searchQuery.GetType();
 
-      Query query;
-      if (searchQueryType.IsSubclassOfRawGeneric(typeof(QueryInstance<>)))
-      {
-        var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-        query = queryProperty.GetValue(searchQuery, null) as Query;
-      }
-      else
+      var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+      if (queryProperty == null || typeof(Query).IsAssignableFrom(queryProperty.PropertyType) == false)
         throw new JavaScriptException(this.Engine, "Error", "The first parameter must be a query object.");
 
-      m_booleanQuery.Clauses.Add(new BooleanClause {Query = query, Occur = lOccur});
+      var queryValue = queryProperty.GetValue(searchQuery, null) as Query;
+
+      m_booleanQuery.Clauses.Add(new BooleanClause {Query = queryValue, Occur = lOccur});
     }
   }
 }

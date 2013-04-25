@@ -287,6 +287,14 @@
     #endregion
 
     #region Filter Creation
+
+    [JSFunction(Name = "createPrefixFilter")]
+    public PrefixFilterInstance CreatePrefixFilter(string fieldName, string text)
+    {
+      var filter = new PrefixFilter {Term = new Term {FieldName = fieldName, Value = text}};
+      return new PrefixFilterInstance(this.Engine.Object.InstancePrototype, filter);
+    }
+
     [JSFunction(Name = "createQueryWrapperFilter")]
     public QueryWrapperFilterInstance CreateQueryWrapperFilter(object query)
     {
