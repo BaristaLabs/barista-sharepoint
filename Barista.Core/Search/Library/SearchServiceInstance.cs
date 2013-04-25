@@ -295,6 +295,19 @@
       return new PrefixFilterInstance(this.Engine.Object.InstancePrototype, filter);
     }
 
+    [JSFunction(Name = "createTermsFilter")]
+    public TermsFilterInstance CreateTermsFilter(object fieldName, object text)
+    {
+      var fieldNameValue = JurassicHelper.GetTypedArgumentValue(this.Engine, fieldName, String.Empty);
+      var textValue = JurassicHelper.GetTypedArgumentValue(this.Engine, text, String.Empty);
+
+      var termsFilter = new TermsFilter();
+      if (fieldNameValue.IsNullOrWhiteSpace() == false && textValue.IsNullOrWhiteSpace() == false)
+        termsFilter.Terms.Add(new Term {FieldName = fieldNameValue, Value = textValue});
+
+      return new TermsFilterInstance(this.Engine.Object.InstancePrototype, termsFilter);
+    }
+
     [JSFunction(Name = "createQueryWrapperFilter")]
     public QueryWrapperFilterInstance CreateQueryWrapperFilter(object query)
     {

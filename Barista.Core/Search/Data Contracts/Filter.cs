@@ -123,6 +123,11 @@
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class TermsFilter : Filter
   {
+    public TermsFilter()
+    {
+      this.Terms = new List<Term>();
+    }
+
     [DataMember]
     public IList<Term> Terms
     {

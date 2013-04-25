@@ -971,6 +971,7 @@
     <Compile Include="Search\Library\QueryParserQueryInstance.cs" />
     <Compile Include="Search\Library\SearchResultInstance.cs" />
     <Compile Include="Search\Library\SearchServiceInstance.cs" />
+    <Compile Include="Search\Library\TermsFilterInstance.cs" />
     <Compile Include="Search\OData2Lucene\ExpressionTokenizer.cs" />
     <Compile Include="Search\OData2Lucene\QueryFactory.cs" />
     <Compile Include="Search\OData2Lucene\FunctionTokenSet.cs" />
