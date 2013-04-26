@@ -46,10 +46,22 @@
     }
 
     [JSProperty(Name = "slop")]
-    public int? Slop
+    public object Slop
     {
-      get { return m_phraseQuery.Slop; }
-      set { m_phraseQuery.Slop = value; }
+      get
+      {
+        if (m_phraseQuery.Slop.HasValue == false)
+          return Null.Value;
+
+        return m_phraseQuery.Slop.Value;
+      }
+      set
+      {
+        if (value == Null.Value || value == Undefined.Value)
+          m_phraseQuery.Slop = null;
+
+        m_phraseQuery.Slop = TypeConverter.ToInteger(value);
+      }
     }
 
     [JSFunction(Name = "add")]

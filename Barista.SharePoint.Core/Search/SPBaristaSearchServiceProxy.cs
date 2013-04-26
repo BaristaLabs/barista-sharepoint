@@ -146,7 +146,7 @@
       }
     }
 
-    public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata)
+    public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata, IDictionary<string, string> fieldOptions)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -158,6 +158,9 @@
 
         if (metadata != null)
           document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented);
+
+        if (fieldOptions != null)
+          document.FieldOptions = fieldOptions;
 
         searchClient.IndexJsonDocument(indexName, document);
       }
