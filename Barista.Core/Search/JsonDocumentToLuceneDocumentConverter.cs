@@ -5,7 +5,6 @@
   using System.Globalization;
   using System.IO;
   using System.Linq;
-  using System.Text.RegularExpressions;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Lucene.Net.Documents;
@@ -31,10 +30,6 @@
     /// <returns></returns>
     public IEnumerable<AbstractField> Index(JObject document, Field.Store defaultStorage)
     {
-      //Obtain all data properties that start with @@ and store any index options.
-      var dataAnalysisFields = document.Properties()
-                                       .Where(property => property.Name.StartsWith("@@"));
-
       return from property in document.Properties()
              where property.Name != Constants.DocumentIdFieldName && property.Name.StartsWith("@@") == false
              from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.NO)
@@ -49,10 +44,6 @@
     /// <returns></returns>
     public IEnumerable<AbstractField> Index(JsonDocument document, Field.Store defaultStorage)
     {
-      //Obtain all metadata properties that start with @@ and store any index options.
-      var metadataAnalysisFields = document.Metadata.Properties()
-                                       .Where(property => property.Name.StartsWith("@@"));
-
       var metadataFields = from property in document.Metadata.Properties()
                            where property.Name != Constants.DocumentIdFieldName && property.Name.StartsWith("@@") == false
                            from field in CreateFields("@" + property.Name, property.Value, defaultStorage, Field.TermVector.NO)
@@ -114,7 +105,11 @@
               if (Equals(storage, Field.Store.NO) == false)
                 yield return new Field(name + "_IsArray", "true", Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
 
-              foreach (var arrayValue in value.Values())
+              var jArray = value as JArray;
+              if (jArray == null)
+                throw new InvalidOperationException("Shouldn't Happen");
+
+              foreach (var arrayValue in jArray)
               {
                 if (CanCreateFieldsForNestedArray(arrayValue, fieldIndexingOptions) == false)
                   continue;
