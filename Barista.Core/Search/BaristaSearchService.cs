@@ -1,5 +1,6 @@
 ﻿namespace Barista.Search
 {
+  using System.Text.RegularExpressions;
   using Barista.Extensions;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
@@ -20,6 +21,10 @@
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public abstract class BaristaSearchService : IBaristaSearch, IDisposable
   {
+    private static readonly Regex FieldIndexDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<Index>Index)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex FieldStoreDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<Store>Store)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex FieldTermVectorDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<TermVector>TermVector)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    
     private const string IndexVersion = "1.0.0.0";
     private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
     private static readonly ConcurrentDictionary<string, Index> Indexes = new ConcurrentDictionary<string, Index>();
@@ -222,6 +227,10 @@
           //Add it to the index.
           var batch = new IndexingBatch();
 
+          //Update the indexDefinition for the index based on the options specified.
+          foreach (var document in jsonDocuments)
+            UpdateIndexDefinitionFromFieldOptions(index.IndexDefinition, document.FieldOptions);
+
           //Attempt to create a new Search.JsonDocument from the document
           var searchJsonDocuments = jsonDocuments.Select(document => new Search.JsonDocument
           {
@@ -372,6 +381,108 @@
     /// <param name="indexName"></param>
     /// <returns></returns>
     protected abstract Lucene.Net.Store.Directory GetLuceneDirectoryFromIndexName(string indexName);
+
+    private void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<KeyValuePair<string, string>> fieldOptions)
+    {
+      foreach (var dataAnalysisField in fieldOptions)
+      {
+        if (dataAnalysisField.Value == null)
+          continue;
+
+        var option = dataAnalysisField.Value;
+
+        if (option.IsNullOrWhiteSpace())
+          continue;
+
+        if (FieldIndexDeclarative.IsMatch(dataAnalysisField.Key))
+        {
+          FieldIndexing indexOption;
+
+          switch (option.ToLowerInvariant())
+          {
+            case "no":
+              indexOption = FieldIndexing.No;
+              break;
+            case "notanalyzed":
+              indexOption = FieldIndexing.NotAnalyzed;
+              break;
+            case "analyzed":
+              indexOption = FieldIndexing.Analyzed;
+              break;
+            default:
+              indexOption = FieldIndexing.Default;
+              break;
+          }
+
+          var fieldName = FieldIndexDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
+
+          if (indexDefinition.Indexes.ContainsKey(fieldName) == false)
+            indexDefinition.Indexes.Add(fieldName, indexOption);
+          else
+            indexDefinition.Indexes[fieldName] = indexOption;
+        }
+        else if (FieldStoreDeclarative.IsMatch(dataAnalysisField.Key))
+        {
+          FieldStorage store;
+
+          switch (option.ToLowerInvariant())
+          {
+            case "yes":
+            case "true":
+            case "1":
+              store = FieldStorage.Yes;
+              break;
+            case "no":
+            case "false":
+            case "0":
+              store = FieldStorage.No;
+              break;
+            default:
+              store = FieldStorage.No;
+              break;
+          }
+
+          var fieldName = FieldStoreDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
+
+          if (indexDefinition.Stores.ContainsKey(fieldName) == false)
+            indexDefinition.Stores.Add(fieldName, store);
+          else
+            indexDefinition.Stores[fieldName] = store;
+        }
+        else if (FieldTermVectorDeclarative.IsMatch(dataAnalysisField.Key))
+        {
+          FieldTermVector vector;
+          switch (option.ToLowerInvariant())
+          {
+            case "no":
+              vector = FieldTermVector.No;
+              break;
+            case "withoffsets":
+              vector = FieldTermVector.WithOffsets;
+              break;
+            case "withpositions":
+              vector = FieldTermVector.WithPositions;
+              break;
+            case "withpositionsandoffsets":
+              vector = FieldTermVector.WithPositionsAndOffsets;
+              break;
+            case "yes":
+              vector = FieldTermVector.Yes;
+              break;
+            default:
+              vector = FieldTermVector.Yes;
+              break;
+          }
+
+          var fieldName = FieldTermVectorDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
+
+          if (indexDefinition.Stores.ContainsKey(fieldName) == false)
+            indexDefinition.TermVectors.Add(fieldName, vector);
+          else
+            indexDefinition.TermVectors[fieldName] = vector;
+        }
+      }
+    }
 
     protected Index GetOrAddIndex(string indexName, bool createIfMissing)
     {

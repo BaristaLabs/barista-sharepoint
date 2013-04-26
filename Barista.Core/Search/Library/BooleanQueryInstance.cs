@@ -47,6 +47,27 @@
       get { return m_booleanQuery; }
     }
 
+    [JSProperty(Name = "minimimumNumberShouldMatch")]
+    public object MinimimumNumberShouldMatch
+    {
+      get
+      {
+        if (m_booleanQuery.MinimumNumberShouldMatch.HasValue == false)
+          return Null.Value;
+        return m_booleanQuery.MinimumNumberShouldMatch.Value;
+      }
+      set
+      {
+        if (value == Null.Value || value == Undefined.Value)
+        {
+          m_booleanQuery.MinimumNumberShouldMatch = null;
+          return;
+        }
+
+        m_booleanQuery.MinimumNumberShouldMatch = TypeConverter.ToInteger(value);
+      }
+    }
+
     [JSFunction(Name = "add")]
     public void Add(object searchQuery, object occur)
     {

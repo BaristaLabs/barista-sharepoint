@@ -7,6 +7,12 @@
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class Sort
   {
+
+    public Sort()
+    {
+      this.SortFields = new List<SortField>();
+    }
+
     [DataMember]
     public IList<SortField> SortFields
     {

@@ -1,5 +1,6 @@
 ﻿namespace Barista.Search.Library
 {
+  using System.Collections.Generic;
   using System.Reflection;
   using Barista.Extensions;
   using Barista.Jurassic;
@@ -331,6 +332,13 @@
       return new QueryWrapperFilterInstance(this.Engine.Object.InstancePrototype, filter);
     }
 
+    [JSFunction(Name = "createSort")]
+    public SortInstance CreateSort()
+    {
+      var sort = new Sort();
+      return new SortInstance(this.Engine.Object.InstancePrototype, sort);
+    }
+
     //TODO: More filter types...
     #endregion
 
@@ -437,7 +445,7 @@
           throw new JavaScriptException(this.Engine, "Error",
                                         "When adding a POJO to the index, a property named @id must be specified on the object that indicates the document id.");
 
-        string metadata = String.Empty;
+        var metadata = String.Empty;
         if (obj.HasProperty("@metadata"))
           metadata = JSONObject.Stringify(this.Engine, obj.GetPropertyValue("@metadata"), null, null);
 
@@ -447,9 +455,23 @@
         jObject.Remove("@id");
         jObject.Remove("@metadata");
 
+        //Obtain any field options, add them to the field options collection and remove them from the cloned object.
+        var fieldOptions = new Dictionary<string, string>();
+        foreach (var property in jObject.Properties().ToList())
+        {
+          if (property.Name.StartsWith("@@") == false|| property.Value == null)
+            continue;
+
+          var fieldName = property.Name.Substring(2, property.Name.Length - 2);
+          var fieldValue = property.Value.ToString();
+          fieldOptions.Add(fieldName, fieldValue);
+          jObject.Remove(property.Name);
+        }
+
         documentToIndex = new JsonDocumentDto
           {
             DocumentId = obj.GetPropertyValue("@id").ToString(),
+            FieldOptions = fieldOptions,
             MetadataAsJson = metadata,
             DataAsJson = jObject.ToString(Formatting.None)
           };
@@ -542,6 +564,12 @@
           {
             args.GroupByFields = groupByFields.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
           }
+        }
+
+        if (argumentsObj.HasProperty("sort") && argumentsObj["sort"] is SortInstance)
+        {
+          var sortValue = argumentsObj["sort"] as SortInstance;
+          args.Sort = sortValue.Sort;
         }
 
         if (argumentsObj.HasProperty("skip"))

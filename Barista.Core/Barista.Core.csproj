@@ -176,6 +176,7 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GenericConfigurationElementCollection.cs" />
     <Compile Include="Helpers\ADHelper.cs" />
+    <Compile Include="Helpers\CodeCommentsHelper.cs" />
     <Compile Include="Helpers\DynamicHelper.cs" />
     <Compile Include="Helpers\EncryptDecrypt.cs" />
     <Compile Include="Helpers\PdfAttachment.cs" />
@@ -1056,7 +1057,6 @@
     <Compile Include="Library\HttpResponseInstance.cs" />
     <Compile Include="Library\HttpWebResponseInstance.cs" />
     <Compile Include="Library\PdfAttachmentInstance.cs" />
-    <Compile Include="Library\JSDocAttribute.cs" />
     <Compile Include="Library\LinqFilterInstance.cs" />
     <Compile Include="Library\MustacheInstance.cs" />
     <Compile Include="Library\ProxySettingsInstance.cs" />
@@ -1251,13 +1251,13 @@
     <Compile Include="Search\SortOptions.cs" />
     <Compile Include="SendingQueue.cs" />
     <Compile Include="Helpers\HtmlConverterHelper.cs" />
-    <Compile Include="Search\Data Contracts\Document.cs" />
+    <Compile Include="Search\Data Contracts\DocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Field.cs" />
     <Compile Include="Search\Data Contracts\FieldIndexType.cs" />
     <Compile Include="Search\Data Contracts\FieldStorageType.cs" />
     <Compile Include="Search\Data Contracts\FieldTermVectorType.cs" />
     <Compile Include="Search\Data Contracts\SearchResult.cs" />
-    <Compile Include="Search\Data Contracts\JsonDocument.cs" />
+    <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Term.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />

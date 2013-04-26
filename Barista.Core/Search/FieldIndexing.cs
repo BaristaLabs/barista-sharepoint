@@ -19,7 +19,7 @@ namespace Barista.Search
 		/// </summary>
 		NotAnalyzed,
 		/// <summary>
-		/// Index this field using the default internal analyzer: LowerCaseKeywordAnalyzer
+		/// Index this field using the default internal analyzer: StandardAnalyzer
 		/// </summary>
 		Default,
 	}

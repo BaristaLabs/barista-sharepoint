@@ -5,11 +5,15 @@
   using System.Globalization;
   using System.IO;
   using System.Linq;
+  using System.Text.RegularExpressions;
   using Barista.Newtonsoft.Json;
   using Barista.Newtonsoft.Json.Linq;
   using Lucene.Net.Documents;
   using Barista.Extensions;
 
+  /// <summary>
+  /// Converts a Json Document to a Lucene Document
+  /// </summary>
   public class JsonDocumentToLuceneDocumentConverter
   {
     private readonly IndexDefinition m_indexDefinition;
@@ -19,23 +23,43 @@
       this.m_indexDefinition = indexDefinition;
     }
 
+    /// <summary>
+    /// Returns a collection of fields that represent the properties contained in the specified JObject.
+    /// </summary>
+    /// <param name="document"></param>
+    /// <param name="defaultStorage"></param>
+    /// <returns></returns>
     public IEnumerable<AbstractField> Index(JObject document, Field.Store defaultStorage)
     {
+      //Obtain all data properties that start with @@ and store any index options.
+      var dataAnalysisFields = document.Properties()
+                                       .Where(property => property.Name.StartsWith("@@"));
+
       return from property in document.Properties()
-             where property.Name != Constants.DocumentIdFieldName
+             where property.Name != Constants.DocumentIdFieldName && property.Name.StartsWith("@@") == false
              from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.NO)
              select field;
     }
 
+    /// <summary>
+    /// Returns a collection of fields that represent the properties contained in the specified JsonDocument.
+    /// </summary>
+    /// <param name="document"></param>
+    /// <param name="defaultStorage"></param>
+    /// <returns></returns>
     public IEnumerable<AbstractField> Index(JsonDocument document, Field.Store defaultStorage)
     {
+      //Obtain all metadata properties that start with @@ and store any index options.
+      var metadataAnalysisFields = document.Metadata.Properties()
+                                       .Where(property => property.Name.StartsWith("@@"));
+
       var metadataFields = from property in document.Metadata.Properties()
-                           where property.Name != Constants.DocumentIdFieldName
+                           where property.Name != Constants.DocumentIdFieldName && property.Name.StartsWith("@@") == false
                            from field in CreateFields("@" + property.Name, property.Value, defaultStorage, Field.TermVector.NO)
                            select field;
 
       var dataFields = from property in document.DataAsJson.Properties()
-                       where property.Name != Constants.DocumentIdFieldName
+                       where property.Name != Constants.DocumentIdFieldName && property.Name.StartsWith("@@") == false
                        from field in CreateFields(property.Name, property.Value, defaultStorage, Field.TermVector.WITH_POSITIONS_OFFSETS) // Maybe we shouldn't use position offsets.
                        select field;
 
@@ -53,7 +77,7 @@
     ///		1. with the supplied name, containing the numeric value as an unanalyzed string - useful for direct queries
     ///		2. with the name: name +'_Range', containing the numeric value in a form that allows range queries
     /// </summary>
-    public IEnumerable<AbstractField> CreateFields(string name, JToken value, Field.Store defaultStorage, Field.TermVector defaultTermVector)
+    private IEnumerable<AbstractField> CreateFields(string name, JToken value, Field.Store defaultStorage, Field.TermVector defaultTermVector)
     {
       if (name.IsNullOrWhiteSpace())
         throw new ArgumentException(@"Field must be not null, not empty and cannot contain whitespace", "name");

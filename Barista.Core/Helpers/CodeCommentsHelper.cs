@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.Helpers
+﻿namespace Barista
 {
   using System;
   using System.Collections.Generic;

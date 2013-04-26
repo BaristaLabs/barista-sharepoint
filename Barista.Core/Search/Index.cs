@@ -219,7 +219,7 @@
         try
         {
           m_waitReason = "Write";
-          searchAnalyzer = CreateAnalyzer(new LowerCaseKeywordAnalyzer(), toDispose, false);
+          searchAnalyzer = CreateAnalyzer(new StandardAnalyzer(Version.LUCENE_30), toDispose, false);
 
           if (m_indexWriter == null)
           {
@@ -469,7 +469,7 @@
               continue;
             if (standardAnalyzer == null)
             {
-              standardAnalyzer = new StandardAnalyzer(Version.LUCENE_29);
+              standardAnalyzer = new StandardAnalyzer(Version.LUCENE_30);
               toDispose.Add(standardAnalyzer.Close);
             }
             perFieldAnalyzerWrapper.AddAnalyzer(fieldIndexing.Key, standardAnalyzer);

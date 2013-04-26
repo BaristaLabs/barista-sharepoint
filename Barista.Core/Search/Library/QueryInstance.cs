@@ -1,5 +1,6 @@
 ﻿namespace Barista.Search.Library
 {
+  using Barista.Jurassic;
   using Jurassic.Library;
   using System;
 
@@ -10,6 +11,27 @@
     protected QueryInstance(ObjectInstance prototype)
       : base(prototype)
     {
+    }
+
+    [JSProperty(Name = "boost")]
+    public object Boost
+    {
+      get
+      {
+        if (Query.Boost.HasValue == false)
+          return Null.Value;
+
+        return (double)Query.Boost.Value;
+      }
+      set
+      {
+        if (value == Null.Value || value == Undefined.Value)
+        {
+          Query.Boost = null;
+          return;
+        }
+        Query.Boost = (float)TypeConverter.ToNumber(value);
+      }
     }
 
     public abstract T Query

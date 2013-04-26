@@ -4,7 +4,7 @@
   using Lucene.Net.Analysis.Tokenattributes;
   using Lucene.Net.Util;
 
-  public class LowerCaseKeywordTokenizer : Tokenizer
+  public sealed class LowerCaseKeywordTokenizer : Tokenizer
   {
     public LowerCaseKeywordTokenizer(System.IO.TextReader input)
       : base(input)
@@ -13,21 +13,21 @@
       m_termAtt = AddAttribute<ITermAttribute>();
     }
 
-    protected LowerCaseKeywordTokenizer(AttributeSource source, System.IO.TextReader input)
+    public LowerCaseKeywordTokenizer(AttributeSource source, System.IO.TextReader input)
       : base(source, input)
     {
       m_offsetAtt = AddAttribute<IOffsetAttribute>();
       m_termAtt = AddAttribute<ITermAttribute>();
     }
 
-    protected LowerCaseKeywordTokenizer(AttributeFactory factory, System.IO.TextReader input)
+    public LowerCaseKeywordTokenizer(AttributeFactory factory, System.IO.TextReader input)
       : base(factory, input)
     {
       m_offsetAtt = AddAttribute<IOffsetAttribute>();
       m_termAtt = AddAttribute<ITermAttribute>();
     }
 
-    private int m_offset = 0, m_bufferIndex = 0, m_dataLen = 0;
+    private int m_offset, m_bufferIndex, m_dataLen;
     private const int IOBufferSize = 4096;
     private readonly char[] m_ioBuffer = new char[IOBufferSize];
 
@@ -39,7 +39,7 @@
     /// satisfy this predicate.  Characters for which this is false are used to
     /// define token boundaries and are not included in tokens. 
     /// </summary>
-    protected virtual internal bool IsTokenChar(char c)
+    internal bool IsTokenChar(char c)
     {
       return true;
     }
@@ -48,7 +48,7 @@
     /// token.  The default implementation does nothing.  Subclasses may use this
     /// to, e.g., lowercase tokens. 
     /// </summary>
-    protected internal virtual char Normalize(char c)
+    internal char Normalize(char c)
     {
       return char.ToLowerInvariant(c);
     }
@@ -107,9 +107,9 @@
       m_offsetAtt.SetOffset(finalOffset, finalOffset);
     }
 
-    public override void Reset(System.IO.TextReader input)
+    public override void Reset(System.IO.TextReader reader)
     {
-      base.Reset(input);
+      base.Reset(reader);
       m_bufferIndex = 0;
       m_offset = 0;
       m_dataLen = 0;

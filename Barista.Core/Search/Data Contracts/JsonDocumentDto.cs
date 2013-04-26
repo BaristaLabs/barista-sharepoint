@@ -1,5 +1,6 @@
 ﻿namespace Barista.Search
 {
+  using System.Collections.Generic;
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
@@ -7,6 +8,13 @@
   {
     [DataMember]
     public string DocumentId
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public IDictionary<string, string> FieldOptions
     {
       get;
       set;

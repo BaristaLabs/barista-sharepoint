@@ -25,6 +25,11 @@
       set;
     }
 
+    /// <summary>
+    /// Returns a JSON object that contains the shape of the specified object with any JSDoc attributes applied.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
     [JSFunction(Name = "help")]
     public object Help(object obj)
     {
@@ -123,7 +128,7 @@
       var doc = engine.Object.Construct();
       foreach (var attribute in jsDocAttributes)
       {
-        string tag = "Summary";
+        var tag = "Summary";
         if (String.IsNullOrEmpty(attribute.Tag) == false)
           tag = attribute.Tag;
 
@@ -137,9 +142,23 @@
         foreach (var parameter in methodInfo.GetParameters().OrderBy(p => p.Position))
         {
           var parameterDoc = engine.Object.Construct();
+
+          var propertyJSDocAttributes =
+            parameter.GetCustomAttributes(typeof (JSDocAttribute), false).OfType<JSDocAttribute>();
+
+          foreach (var attribute in propertyJSDocAttributes)
+          {
+            var tag = "Param";
+            if (String.IsNullOrEmpty(attribute.Tag) == false)
+              tag = attribute.Tag;
+
+            parameterDoc.SetPropertyValue(tag, attribute.Text, false);
+          }
+
           parameterDoc.SetPropertyValue("name", parameter.Name, false);
           parameterDoc.SetPropertyValue("type", parameter.ParameterType.ToString().Replace("System.", ""), false);
 
+          
           ArrayInstance.Push(methodParams, parameterDoc);
         }
 
@@ -152,11 +171,10 @@
         doc.SetPropertyValue("hasGetter", propertyInfo.CanRead, false);
         doc.SetPropertyValue("hasSetter", propertyInfo.CanWrite, false);
       }
-
       else if (member is FieldInfo)
       {
-        var propertyInfo = member as FieldInfo;
-        //TODO: Implement this.
+        var fieldInfo = member as FieldInfo;
+        doc.SetPropertyValue("type", GetTypeString(fieldInfo.FieldType), false);
       }
 
       return doc;

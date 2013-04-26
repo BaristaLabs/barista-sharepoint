@@ -173,6 +173,7 @@
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\WebBundle.cs" />
+    <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="K2\Bundles\K2Bundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
     <Compile Include="Bundles\TfsBundle.cs" />
@@ -198,8 +199,6 @@
     <Compile Include="Framework\ServiceUtility.cs" />
     <Compile Include="HandleEventFiring.cs" />
     <Compile Include="Helpers\BaristaHelper.cs" />
-    <Compile Include="Helpers\CacheHelper.cs" />
-    <Compile Include="Helpers\CodeCommentsHelper.cs" />
     <Compile Include="Helpers\CommonPropertyUtil.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\FarmPropertyBag.cs" />
