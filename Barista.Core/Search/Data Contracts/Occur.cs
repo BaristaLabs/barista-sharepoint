@@ -6,10 +6,10 @@
   public enum Occur
   {
     [EnumMember]
-    Must,
+    Must = 0,
     [EnumMember]
-    MustNot,
+    Should = 1,
     [EnumMember]
-    Should,
+    MustNot = 2,
   }
 }

@@ -117,7 +117,7 @@
               lOccur = Lucene.Net.Search.Occur.MUST_NOT;
               break;
             case Occur.Should:
-              lOccur = Lucene.Net.Search.Occur.MUST_NOT;
+              lOccur = Lucene.Net.Search.Occur.SHOULD;
               break;
             default:
               throw new InvalidOperationException("Occur not implemented or defined.");
