@@ -428,6 +428,9 @@
 
     private void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
     {
+      if (fieldOptions == null)
+        return;
+
       foreach (var fieldOption in fieldOptions)
       {
 
