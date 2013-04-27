@@ -36,5 +36,8 @@
 
     [OperationContract]
     IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments);
+
+    [OperationContract]
+    void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions);
   }
 }

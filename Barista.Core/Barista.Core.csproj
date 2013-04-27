@@ -962,6 +962,7 @@
     <Compile Include="Search\Data Contracts\BooleanClause.cs" />
     <Compile Include="Search\Data Contracts\Explanation.cs" />
     <Compile Include="Search\Data Contracts\FacetedSearchResult.cs" />
+    <Compile Include="Search\Data Contracts\FieldOptions.cs" />
     <Compile Include="Search\Data Contracts\Filter.cs" />
     <Compile Include="Search\Data Contracts\Occur.cs" />
     <Compile Include="Search\Data Contracts\SearchArguments.cs" />

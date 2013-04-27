@@ -1,34 +1,33 @@
 ﻿namespace Barista.Search
 {
-  using System.Collections.Generic;
   using System.Runtime.Serialization;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
-  public class JsonDocumentDto
+  public class FieldOptions
   {
     [DataMember]
-    public string DocumentId
+    public string FieldName
     {
       get;
       set;
     }
 
     [DataMember]
-    public IEnumerable<FieldOptions> FieldOptions
+    public FieldIndexType? Index
     {
       get;
       set;
     }
 
     [DataMember]
-    public string MetadataAsJson
+    public FieldStorageType? Storage
     {
       get;
       set;
     }
 
     [DataMember]
-    public string DataAsJson
+    public FieldTermVectorType? TermVectorType
     {
       get;
       set;

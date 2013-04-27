@@ -2,6 +2,7 @@
 {
   using System.Collections.Generic;
   using System.Reflection;
+  using System.Text.RegularExpressions;
   using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -29,6 +30,10 @@
   [Serializable]
   public class SearchServiceInstance : ObjectInstance
   {
+    private static readonly Regex FieldIndexDeclarative = new Regex(@"^@@(?<FieldName>.*?)\.(?<Index>Index)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex FieldStoreDeclarative = new Regex(@"^@@(?<FieldName>.*?)\.(?<Store>Store)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex FieldTermVectorDeclarative = new Regex(@"^@@(?<FieldName>.*?)\.(?<TermVector>TermVector)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    
     private readonly IBaristaSearch m_baristaSearchServiceProxy;
 
     public SearchServiceInstance(ObjectInstance prototype)
@@ -456,22 +461,66 @@
         jObject.Remove("@metadata");
 
         //Obtain any field options, add them to the field options collection and remove them from the cloned object.
-        var fieldOptions = new Dictionary<string, string>();
+        var fieldOptions = new Dictionary<string, FieldOptions>();
         foreach (var property in jObject.Properties().ToList())
         {
-          if (property.Name.StartsWith("@@") == false|| property.Value == null)
-            continue;
+          var fieldOption = new FieldOptions();
+         
+          var foundMatch = false;
 
-          var fieldName = property.Name.Substring(2, property.Name.Length - 2);
-          var fieldValue = property.Value.ToString();
-          fieldOptions.Add(fieldName, fieldValue);
-          jObject.Remove(property.Name);
+          if (FieldIndexDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldIndexDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldIndexType indexType;
+            if (property.Value.ToString().TryParseEnum(true, FieldIndexType.Analyzed, out indexType))
+            {
+              fieldOption.Index = indexType;
+              foundMatch = true;
+            }
+          }
+          else if (FieldStoreDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldStoreDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldStorageType storageType;
+            if (property.Value.ToString().TryParseEnum(true, FieldStorageType.Stored, out storageType))
+            {
+              fieldOption.Storage = storageType;
+              foundMatch = true;
+            }
+          }
+          else if (FieldTermVectorDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldTermVectorDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldTermVectorType termVectorType;
+            if (property.Value.ToString().TryParseEnum(true, FieldTermVectorType.Yes, out termVectorType))
+            {
+              fieldOption.TermVectorType = termVectorType;
+              foundMatch = true;
+            }
+          }
+
+          if (foundMatch)
+          {
+            if (fieldOptions.ContainsKey(fieldOption.FieldName))
+            {
+              var efo = fieldOptions[fieldOption.FieldName];
+              efo.Index = fieldOption.Index ?? efo.Index;
+              efo.Storage = fieldOption.Storage ?? efo.Storage;
+              efo.TermVectorType = fieldOption.TermVectorType ?? efo.TermVectorType;
+            }
+            else
+            {
+              fieldOptions.Add(fieldOption.FieldName, fieldOption);
+            }
+
+            jObject.Remove(property.Name);
+          }
         }
 
         documentToIndex = new JsonDocumentDto
           {
             DocumentId = obj.GetPropertyValue("@id").ToString(),
-            FieldOptions = fieldOptions,
+            FieldOptions = fieldOptions.Values,
             MetadataAsJson = metadata,
             DataAsJson = jObject.ToString(Formatting.None)
           };

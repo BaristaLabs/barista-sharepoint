@@ -146,7 +146,7 @@
       }
     }
 
-    public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata, IDictionary<string, string> fieldOptions)
+    public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata, IEnumerable<FieldOptions> fieldOptions)
     {
       using (var searchClient = GetSearchClient())
       {
@@ -203,6 +203,14 @@
       using (var searchClient = GetSearchClient())
       {
         return searchClient.FacetedSearch(indexName, arguments);
+      }
+    }
+
+    public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+    {
+      using (var searchClient = GetSearchClient())
+      {
+        searchClient.SetFieldOptions(indexName, fieldOptions);
       }
     }
   }

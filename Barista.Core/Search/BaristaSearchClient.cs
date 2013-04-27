@@ -81,5 +81,10 @@
     {
       return Channel.FacetedSearch(indexName, arguments);
     }
+
+    public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+    {
+      Channel.SetFieldOptions(indexName, fieldOptions);
+    }
   }
 }

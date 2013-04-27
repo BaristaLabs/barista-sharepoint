@@ -1,6 +1,5 @@
 ﻿namespace Barista.Search
 {
-  using System.Text.RegularExpressions;
   using Barista.Extensions;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
@@ -21,10 +20,6 @@
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public abstract class BaristaSearchService : IBaristaSearch, IDisposable
   {
-    private static readonly Regex FieldIndexDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<Index>Index)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex FieldStoreDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<Store>Store)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex FieldTermVectorDeclarative = new Regex(@"^(?<FieldName>.*?)\.(?<TermVector>TermVector)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    
     private const string IndexVersion = "1.0.0.0";
     private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
     private static readonly ConcurrentDictionary<string, Index> Indexes = new ConcurrentDictionary<string, Index>();
@@ -375,6 +370,55 @@
       }
     }
 
+    public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+    {
+      try
+      {
+        var index = GetOrAddIndex(indexName, false);
+        var indexDefinition = index.IndexDefinition;
+        foreach (var fieldOption in fieldOptions)
+        {
+          if (fieldOption.FieldName.IsNullOrWhiteSpace())
+            continue;
+
+          if (fieldOption.Index.HasValue)
+          {
+            var fieldIndexingType = MapFieldIndexTypeToFieldIndexing(fieldOption.Index.Value);
+
+            if (indexDefinition.Indexes.ContainsKey(fieldOption.FieldName))
+              indexDefinition.Indexes[fieldOption.FieldName] = fieldIndexingType;
+            else
+              indexDefinition.Indexes.Add(fieldOption.FieldName, fieldIndexingType);
+          }
+
+          if (fieldOption.Storage.HasValue)
+          {
+            var fieldStorageType = MapFieldStorageTypeToFieldStorage(fieldOption.Storage.Value);
+
+            if (indexDefinition.Stores.ContainsKey(fieldOption.FieldName))
+              indexDefinition.Stores[fieldOption.FieldName] = fieldStorageType;
+            else
+              indexDefinition.Stores.Add(fieldOption.FieldName, fieldStorageType);
+          }
+
+          if (fieldOption.TermVectorType.HasValue)
+          {
+            var fieldTermVector = MapFieldTermVectorTypeToFieldTermVector(fieldOption.TermVectorType.Value);
+
+            if (indexDefinition.TermVectors.ContainsKey(fieldOption.FieldName))
+              indexDefinition.TermVectors[fieldOption.FieldName] = fieldTermVector;
+            else
+              indexDefinition.TermVectors.Add(fieldOption.FieldName, fieldTermVector);
+          }
+
+        }
+      }
+      catch (Exception ex)
+      {
+        throw new FaultException(ex.Message);
+      }
+    }
+
     /// <summary>
     /// When implemented in a concrete class, returns the lucene directory that corresponds to the specified name.
     /// </summary>
@@ -382,104 +426,36 @@
     /// <returns></returns>
     protected abstract Lucene.Net.Store.Directory GetLuceneDirectoryFromIndexName(string indexName);
 
-    private void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<KeyValuePair<string, string>> fieldOptions)
+    private void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
     {
-      foreach (var dataAnalysisField in fieldOptions)
+      foreach (var fieldOption in fieldOptions)
       {
-        if (dataAnalysisField.Value == null)
-          continue;
 
-        var option = dataAnalysisField.Value;
-
-        if (option.IsNullOrWhiteSpace())
-          continue;
-
-        if (FieldIndexDeclarative.IsMatch(dataAnalysisField.Key))
+        if (fieldOption.Index.HasValue)
         {
-          FieldIndexing indexOption;
-
-          switch (option.ToLowerInvariant())
-          {
-            case "no":
-              indexOption = FieldIndexing.No;
-              break;
-            case "notanalyzed":
-              indexOption = FieldIndexing.NotAnalyzed;
-              break;
-            case "analyzed":
-              indexOption = FieldIndexing.Analyzed;
-              break;
-            default:
-              indexOption = FieldIndexing.Default;
-              break;
-          }
-
-          var fieldName = FieldIndexDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
-
-          if (indexDefinition.Indexes.ContainsKey(fieldName) == false)
-            indexDefinition.Indexes.Add(fieldName, indexOption);
+          var indexOption = MapFieldIndexTypeToFieldIndexing(fieldOption.Index.Value);
+          if (indexDefinition.Indexes.ContainsKey(fieldOption.FieldName) == false)
+            indexDefinition.Indexes.Add(fieldOption.FieldName, indexOption);
           else
-            indexDefinition.Indexes[fieldName] = indexOption;
+            indexDefinition.Indexes[fieldOption.FieldName] = indexOption;
         }
-        else if (FieldStoreDeclarative.IsMatch(dataAnalysisField.Key))
+
+        if (fieldOption.Storage.HasValue)
         {
-          FieldStorage store;
-
-          switch (option.ToLowerInvariant())
-          {
-            case "yes":
-            case "true":
-            case "1":
-              store = FieldStorage.Yes;
-              break;
-            case "no":
-            case "false":
-            case "0":
-              store = FieldStorage.No;
-              break;
-            default:
-              store = FieldStorage.No;
-              break;
-          }
-
-          var fieldName = FieldStoreDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
-
-          if (indexDefinition.Stores.ContainsKey(fieldName) == false)
-            indexDefinition.Stores.Add(fieldName, store);
+          var storageOption = MapFieldStorageTypeToFieldStorage(fieldOption.Storage.Value);
+          if (indexDefinition.Stores.ContainsKey(fieldOption.FieldName) == false)
+            indexDefinition.Stores.Add(fieldOption.FieldName, storageOption);
           else
-            indexDefinition.Stores[fieldName] = store;
+            indexDefinition.Stores[fieldOption.FieldName] = storageOption;
         }
-        else if (FieldTermVectorDeclarative.IsMatch(dataAnalysisField.Key))
+
+        if (fieldOption.TermVectorType.HasValue)
         {
-          FieldTermVector vector;
-          switch (option.ToLowerInvariant())
-          {
-            case "no":
-              vector = FieldTermVector.No;
-              break;
-            case "withoffsets":
-              vector = FieldTermVector.WithOffsets;
-              break;
-            case "withpositions":
-              vector = FieldTermVector.WithPositions;
-              break;
-            case "withpositionsandoffsets":
-              vector = FieldTermVector.WithPositionsAndOffsets;
-              break;
-            case "yes":
-              vector = FieldTermVector.Yes;
-              break;
-            default:
-              vector = FieldTermVector.Yes;
-              break;
-          }
-
-          var fieldName = FieldTermVectorDeclarative.Match(dataAnalysisField.Key).Groups["FieldName"].Value;
-
-          if (indexDefinition.Stores.ContainsKey(fieldName) == false)
-            indexDefinition.TermVectors.Add(fieldName, vector);
+          var termVector = MapFieldTermVectorTypeToFieldTermVector(fieldOption.TermVectorType.Value);
+          if (indexDefinition.TermVectors.ContainsKey(fieldOption.FieldName) == false)
+            indexDefinition.TermVectors.Add(fieldOption.FieldName, termVector);
           else
-            indexDefinition.TermVectors[fieldName] = vector;
+            indexDefinition.TermVectors[fieldOption.FieldName] = termVector;
         }
       }
     }
@@ -706,6 +682,70 @@
         indexOutput.WriteString(IndexVersion);
         indexOutput.Flush();
       }
+    }
+
+    private static FieldIndexing MapFieldIndexTypeToFieldIndexing(FieldIndexType indexType)
+    {
+      var fieldIndexingType = FieldIndexing.Analyzed;
+      switch (indexType)
+      {
+        case FieldIndexType.Analyzed:
+        case FieldIndexType.AnalyzedNoNorms:
+          fieldIndexingType = FieldIndexing.Analyzed;
+          break;
+        case FieldIndexType.NotAnalyzed:
+        case FieldIndexType.NotAnalyzedNoNorms:
+          fieldIndexingType = FieldIndexing.NotAnalyzed;
+          break;
+        case FieldIndexType.NotIndexed:
+          fieldIndexingType = FieldIndexing.No;
+          break;
+      }
+
+      return fieldIndexingType;
+    }
+
+    private static FieldStorage MapFieldStorageTypeToFieldStorage(FieldStorageType fieldStorageType)
+    {
+      var fieldStorage = FieldStorage.Yes;
+
+      switch (fieldStorageType)
+      {
+        case FieldStorageType.NotStored:
+          fieldStorage = FieldStorage.No;
+          break;
+        case FieldStorageType.Stored:
+          fieldStorage = FieldStorage.Yes;
+          break;
+      }
+
+      return fieldStorage;
+    }
+
+    private static FieldTermVector MapFieldTermVectorTypeToFieldTermVector(FieldTermVectorType fieldTermVectorType)
+    {
+      var fieldTermVector = FieldTermVector.WithOffsets;
+
+      switch (fieldTermVectorType)
+      {
+        case FieldTermVectorType.WithOffsets:
+          fieldTermVector = FieldTermVector.WithOffsets;
+          break;
+        case FieldTermVectorType.WithPositions:
+          fieldTermVector = FieldTermVector.WithPositions;
+          break;
+        case FieldTermVectorType.WithPositionsOffsets:
+          fieldTermVector = FieldTermVector.WithPositionsAndOffsets;
+          break;
+        case FieldTermVectorType.Yes:
+          fieldTermVector = FieldTermVector.Yes;
+          break;
+        case FieldTermVectorType.No:
+          fieldTermVector = FieldTermVector.No;
+          break;
+      }
+
+      return fieldTermVector;
     }
 
     public static void CloseAllIndexes()

@@ -12,6 +12,8 @@
     [EnumMember]
     WithOffsets,
     [EnumMember]
-    WithPositionsOffsets
+    WithPositionsOffsets,
+    [EnumMember]
+    No,
   }
 }

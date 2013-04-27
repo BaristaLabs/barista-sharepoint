@@ -72,6 +72,9 @@
           case FieldTermVectorType.WithPositionsOffsets:
             termVectorType = Field.TermVector.WITH_POSITIONS_OFFSETS;
             break;
+          case FieldTermVectorType.No:
+            termVectorType = Field.TermVector.NO;
+            break;
           default:
             throw new ArgumentOutOfRangeException("Unknown or invalid field term vector type: " + field.TermVector);
         }
