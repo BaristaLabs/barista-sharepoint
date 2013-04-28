@@ -82,6 +82,14 @@
     Entity GetEntity(string containerTitle, Guid entityId);
 
     /// <summary>
+    /// Gets the specified untyped entity without populating the data field.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="entityId">The entity id.</param>
+    /// <returns>An entity that does not have its Data property populated.</returns>
+    Entity GetEntityLight(string containerTitle, Guid entityId);
+
+    /// <summary>
     /// Imports an entity from a previous export.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>

@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.DocumentStore
 {
   using Barista.DocumentStore;
+  using CamlexNET;
   using Microsoft.Office.DocumentManagement.DocumentSets;
   using Microsoft.Office.Server.Utilities;
   using Microsoft.SharePoint;
@@ -647,6 +648,24 @@
                       <Eq><FieldRef Name=""FSObjType""/><Value Type=""Text"">1</Value></Eq>
                     </And>
                  </Where>",
+        ViewFields = Camlex.Query().ViewFields(new List<Guid>
+                {
+                  SPBuiltInFieldId.ID,
+                  SPBuiltInFieldId.Title,
+                  SPBuiltInFieldId.FileRef,
+                  SPBuiltInFieldId.FileDirRef,
+                  SPBuiltInFieldId.FileLeafRef,
+                  SPBuiltInFieldId.FSObjType,
+                  SPBuiltInFieldId.ContentTypeId,
+                  SPBuiltInFieldId.Created,
+                  SPBuiltInFieldId.Modified,
+                  SPBuiltInFieldId.Author,
+                  SPBuiltInFieldId.Editor,
+                  Constants.DocumentEntityGuidFieldId,
+                  Constants.NamespaceFieldId,
+                  new Guid("CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E") // DocumentSetDescription
+                }),
+        ViewFieldsOnly = true,
         RowLimit = 1,
         QueryThrottleMode = SPQueryThrottleOption.Override,
         ViewAttributes = "Scope=\"Recursive\""

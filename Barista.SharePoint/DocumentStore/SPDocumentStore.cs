@@ -599,6 +599,17 @@
     }
 
     /// <summary>
+    /// Gets the specified untyped entity without its data property populated.
+    /// </summary>
+    /// <param name="containerTitle"></param>
+    /// <param name="entityId"></param>
+    /// <returns></returns>
+    public Entity GetEntityLight(string containerTitle, Guid entityId)
+    {
+      return GetEntityLight(containerTitle, entityId, String.Empty);
+    }
+
+    /// <summary>
     /// Gets the specified untyped entity in the specified path.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
@@ -622,6 +633,36 @@
             return null;
 
           var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet, null);
+
+          return entity;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the specified untyped entity in the specified path without its data property populated.
+    /// </summary>
+    /// <param name="containerTitle"></param>
+    /// <param name="entityId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public virtual Entity GetEntityLight(string containerTitle, Guid entityId, string path)
+    {
+      //Get a new web in case we're executing in elevated permissions.
+      using (var site = new SPSite(this.DocumentStoreUrl))
+      {
+        using (var web = site.OpenWeb())
+        {
+          SPList list;
+          SPFolder folder;
+          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+            return null;
+
+          DocumentSet entityDocumentSet;
+          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out entityDocumentSet) == false)
+            return null;
+
+          var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet);
 
           return entity;
         }

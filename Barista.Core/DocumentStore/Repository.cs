@@ -204,6 +204,19 @@
     }
 
     /// <summary>
+    /// Gets the specifed entity of the specified type from the underlying repository with its data field unpopulated.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public Entity GetEntityLight(Guid entityId, string path)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+      var entity = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId, path);
+      return entity;
+    }
+
+    /// <summary>
     /// Returns a collection of entities of the specified namespace contained in the specified path.
     /// </summary>
     public IList<Entity> ListEntities(EntityFilterCriteria filterCriteria)

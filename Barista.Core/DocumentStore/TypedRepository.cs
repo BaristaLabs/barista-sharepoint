@@ -333,6 +333,29 @@
     }
 
     /// <summary>
+    /// Gets the specifed entity of the specified type from the underlying repository, optionally restricting to a path.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="entityId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public Entity<T> GetEntityLight<T>(Guid entityId, string path)
+    {
+      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(T));
+
+      if (entityDefinition == null)
+        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(T));
+
+      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+      var entity = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId, path);
+
+      if (entity == null)
+        return null;
+
+      return new Entity<T>(entity);
+    }
+
+    /// <summary>
     /// Returns an instance of an entity of the given type in the given path. If no entity exists, one is created. If more than one entity of the given type exists in the given path, an exception is thrown.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
