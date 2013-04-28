@@ -73,12 +73,6 @@
       if (name.IsNullOrWhiteSpace())
         throw new ArgumentException(@"Field must be not null, not empty and cannot contain whitespace", "name");
 
-      if (char.IsLetter(name[0]) == false &&
-        name[0] != '_')
-      {
-        name = "_" + name;
-      }
-
       var fieldIndexingOptions = m_indexDefinition.GetIndex(name, null);
       var storage = m_indexDefinition.GetStorage(name, defaultStorage);
       var termVector = m_indexDefinition.GetTermVector(name, defaultTermVector);
