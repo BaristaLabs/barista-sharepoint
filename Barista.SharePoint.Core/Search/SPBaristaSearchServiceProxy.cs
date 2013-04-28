@@ -106,6 +106,13 @@
       return client;
     }
 
+    public bool DoesIndexExist(string indexName)
+    {
+      var directory = BaristaHelper.GetDirectoryFromIndexName(indexName);
+
+      return directory != null;
+    }
+
     public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
     {
       using (var searchClient = GetSearchClient())

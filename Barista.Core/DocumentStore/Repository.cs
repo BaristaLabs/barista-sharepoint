@@ -545,10 +545,6 @@
     }
     #endregion
 
-    public IEnumerable<Entity> EntityQuery()
-    {
-      throw new NotImplementedException();
-    }
     #endregion
 
     #region Static Methods

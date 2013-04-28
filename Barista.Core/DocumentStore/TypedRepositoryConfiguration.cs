@@ -1,8 +1,11 @@
 ﻿namespace Barista.DocumentStore
 {
   using System;
+  using System.Collections.Generic;
   using System.Configuration;
   using System.Linq;
+  using Barista.Extensions;
+  using System.Text.RegularExpressions;
 
   public class TypedRepositoryConfiguration
   {
@@ -13,6 +16,8 @@
     {
       this.RegisteredEntityDefinitions = new EntityDefinitionCollection();
       this.RegisteredEntityMigrationStrategies = new EntityMigrationStrategyCollection();
+      this.RegisteredSynchronousEntityTriggers = new Dictionary<string, Action<TriggerProperties>>();
+      this.RegisteredSynchronousEntityPartTriggers = new Dictionary<string, Action<TriggerProperties>>();
 
       //Register Built-In Types
       RegisterEntity<ApplicationConfiguration>(Constants.ApplicationConfigurationV1Namespace);
@@ -84,6 +89,25 @@
       get;
       set;
     }
+
+    /// <summary>
+    /// Gets or sets the interal collection of registered synchronous entity triggers.
+    /// </summary>
+    internal IDictionary<string, Action<TriggerProperties>> RegisteredSynchronousEntityTriggers
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
+    /// Gets or sets the interal collection of registered synchronous entity part triggers.
+    /// </summary>
+    internal IDictionary<string, Action<TriggerProperties>> RegisteredSynchronousEntityPartTriggers
+    {
+      get;
+      set;
+    }
+
     #endregion
 
     #region Public Methods
@@ -179,9 +203,64 @@
       return this;
     }
 
-    public RepositoryConfiguration RegisterEntityMigration<TDestinationEntityType>(EntityMigrationStrategy<TDestinationEntityType> entityMigrationDefinition)
+    public TypedRepositoryConfiguration RegisterEntityMigration<TDestinationEntityType>(EntityMigrationStrategy<TDestinationEntityType> entityMigrationDefinition)
     {
       throw new NotImplementedException();
+    }
+
+    public TypedRepositoryConfiguration RegisterSynchronousEntityTrigger(string entityNamespacePattern, Action<TriggerProperties> trigger)
+    {
+      if (entityNamespacePattern.IsNullOrWhiteSpace())
+        throw new ArgumentNullException("entityNamespacePattern", @"A namespace pattern must be provided.");
+
+      if (trigger == null)
+        throw new ArgumentNullException("trigger", @"A trigger action must be provided.");
+
+      lock (SyncRoot)
+      {
+        if (this.RegisteredSynchronousEntityTriggers.ContainsKey(entityNamespacePattern))
+          this.RegisteredSynchronousEntityTriggers.Remove(entityNamespacePattern);
+
+        this.RegisteredSynchronousEntityTriggers.Add(entityNamespacePattern, trigger);
+      }
+      return this;
+    }
+
+    public TypedRepositoryConfiguration RegisterSynchronousEntityPartTrigger(string entityNamespacePattern, Action<TriggerProperties> trigger)
+    {
+      if (entityNamespacePattern.IsNullOrWhiteSpace())
+        throw new ArgumentNullException("entityNamespacePattern", @"A namespace pattern must be provided.");
+
+      if (trigger == null)
+        throw new ArgumentNullException("trigger", @"A trigger action must be provided.");
+
+      lock (SyncRoot)
+      {
+        if (this.RegisteredSynchronousEntityPartTriggers.ContainsKey(entityNamespacePattern))
+          this.RegisteredSynchronousEntityPartTriggers.Remove(entityNamespacePattern);
+
+        this.RegisteredSynchronousEntityPartTriggers.Add(entityNamespacePattern, trigger);
+      }
+
+      return this;
+    }
+
+    internal IEnumerable<Action<TriggerProperties>> GetEntityTriggersForNamespace(string entityNamespace)
+    {
+      foreach (var pattern in RegisteredSynchronousEntityTriggers.Keys)
+      {
+        if (Regex.IsMatch(entityNamespace, pattern))
+          yield return RegisteredSynchronousEntityTriggers[pattern];
+      }
+    }
+
+    internal IEnumerable<Action<TriggerProperties>> GetEntityPartTriggersForNamespace(string entityNamespace)
+    {
+      foreach (var pattern in RegisteredSynchronousEntityPartTriggers.Keys)
+      {
+        if (Regex.IsMatch(pattern, entityNamespace))
+          yield return RegisteredSynchronousEntityPartTriggers[pattern];
+      }
     }
 
     /// <summary>

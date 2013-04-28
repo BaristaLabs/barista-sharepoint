@@ -164,6 +164,9 @@
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
+    <Compile Include="DocumentStore\EntityMetadata.cs" />
+    <Compile Include="DocumentStore\TriggerProperties.cs" />
+    <Compile Include="DocumentStore\TriggerType.cs" />
     <Compile Include="Extensions\ConfigurationExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="DocumentStore\TypedRepository.cs" />
