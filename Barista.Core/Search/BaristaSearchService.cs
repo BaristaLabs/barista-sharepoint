@@ -90,7 +90,7 @@
        var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
       Explanation explanation;
 
-      var index = GetOrAddIndex(indexName, false);
+      var index = GetOrAddIndex(indexName, true);
       IndexSearcher indexSearcher;
       using (index.GetSearcher(out indexSearcher))
       {
@@ -118,7 +118,7 @@
       var fieldQuery = highlighter.GetFieldQuery(lQuery);
       string highlightedResult;
 
-      var index = GetOrAddIndex(indexName, false);
+      var index = GetOrAddIndex(indexName, true);
       IndexSearcher indexSearcher;
       using (index.GetSearcher(out indexSearcher))
       {
@@ -270,7 +270,7 @@
     {
       try
       {
-        var index = GetOrAddIndex(indexName, false);
+        var index = GetOrAddIndex(indexName, true);
         IndexSearcher indexSearcher;
         using (index.GetSearcher(out indexSearcher))
         {
@@ -309,7 +309,7 @@
 
       try
       {
-        var index = GetOrAddIndex(indexName, false);
+        var index = GetOrAddIndex(indexName, true);
         var searchParams = GetLuceneSearchParams(arguments);
 
         IndexSearcher indexSearcher;
@@ -343,7 +343,7 @@
 
       try
       {
-        var index = GetOrAddIndex(indexName, false);
+        var index = GetOrAddIndex(indexName, true);
         var searchParams = GetLuceneSearchParams(arguments);
 
         IndexSearcher indexSearcher;
@@ -374,7 +374,7 @@
     {
       try
       {
-        var index = GetOrAddIndex(indexName, false);
+        var index = GetOrAddIndex(indexName, true);
         var indexDefinition = index.IndexDefinition;
         foreach (var fieldOption in fieldOptions)
         {
