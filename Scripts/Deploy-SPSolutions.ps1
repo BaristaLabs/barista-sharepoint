@@ -114,14 +114,32 @@ function global:Deploy-SPSolutions() {
         
             switch ($action) {
                 "Enable" {
-                    Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabling $identity" -PercentComplete -1
-                    Enable-SPFeature –Identity $identity –url $url -Confirm:$false
-                    Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabled" -Completed
+					if ($url -ne $null) {
+						Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabling $identity" -PercentComplete -1
+						Enable-SPFeature –Identity $identity -Url $url -Confirm:$false
+						Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabled" -Completed
+					}
+					else {
+						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabling $identity" -PercentComplete -1
+						Enable-SPFeature –Identity $identity -Confirm:$false
+						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
+					}
                 }
                 "Disable" {
-                    Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabling $identity" -PercentComplete -1
-                    Disable-SPFeature –Identity $identity –url $url -Confirm:$false
-                    Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabled" -Completed
+					Try {
+					if ($url -ne $null) {
+						Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabling $identity" -PercentComplete -1
+						Disable-SPFeature –Identity $identity -url $url -Confirm:$false
+						Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabled" -Completed
+					}
+					else {
+						Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
+						Disable-SPFeature –Identity $identity -Confirm:$false
+						Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
+					}
+					}
+					Catch {
+					}
                 }
             }
         }
@@ -189,18 +207,18 @@ function global:Deploy-SPSolutions() {
         
         if (!$solution.ContainsWebApplicationResource) {
           Write-Progress -Activity "Deploying solution $name" -Status "Installing $name" -PercentComplete 75
-          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -Confirm:$false
+          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -Confirm:$false -Force:$true
           Block-SPDeployment $solution $true "Installing $name" 85
         } else {
           if ($WebApplication -eq $null -or $WebApplication.Length -eq 0) {
             Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to all Web Applications" -PercentComplete 75
-            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -AllWebApplications -Confirm:$false
+            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -AllWebApplications -Force:$true -Confirm:$false
             Block-SPDeployment $solution $true "Installing $name to all Web Applications" 85
           } else {
             $WebApplication | ForEach-Object {
               $webApp = $_.Read()
               Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to $($webApp.Url)" -PercentComplete 75
-              $solution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$cas -WebApplication $webApp -Confirm:$false
+              $solution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$cas -WebApplication $webApp -Confirm:$false -Force:$true
               Block-SPDeployment $solution $true "Installing $name to $($webApp.Url)" 85
             }
           }
