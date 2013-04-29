@@ -249,7 +249,7 @@
     {
       foreach (var pattern in RegisteredSynchronousEntityTriggers.Keys)
       {
-        if (Regex.IsMatch(entityNamespace, pattern))
+        if (Regex.IsMatch(entityNamespace, pattern, RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Singleline))
           yield return RegisteredSynchronousEntityTriggers[pattern];
       }
     }
@@ -258,7 +258,7 @@
     {
       foreach (var pattern in RegisteredSynchronousEntityPartTriggers.Keys)
       {
-        if (Regex.IsMatch(pattern, entityNamespace))
+        if (Regex.IsMatch(pattern, entityNamespace, RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Singleline))
           yield return RegisteredSynchronousEntityPartTriggers[pattern];
       }
     }
