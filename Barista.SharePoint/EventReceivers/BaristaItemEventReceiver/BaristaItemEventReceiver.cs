@@ -199,6 +199,7 @@
 
         request = new BrewRequest
           {
+            ContentType = "application/json", //default to application/json.
             Code = (string) list.RootFolder.Properties[Constants.BaristaItemEventReceiverCodePropertyBagKey],
           };
 

@@ -66,15 +66,16 @@
         return;
       }
 
-      BaristaServiceClient client = new BaristaServiceClient(serviceContext);
+      var client = new BaristaServiceClient(serviceContext);
 
       var request = new BrewRequest {
+        ContentType = "application/json", //default to application/json.
         Code = m_code,
       };
 
       if (m_isEval)
       {
-        BrewResponse response = client.Eval(request);
+        var response = client.Eval(request);
 
         if (response.ContentType.StartsWith("application/json", StringComparison.InvariantCultureIgnoreCase) ||
             response.ContentType.StartsWith("application/xml", StringComparison.InvariantCultureIgnoreCase) ||

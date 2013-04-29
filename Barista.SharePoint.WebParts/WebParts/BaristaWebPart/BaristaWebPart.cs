@@ -108,7 +108,7 @@
       string codePath;
       var codeToExecute = Tamp(this.Code, out codePath);
 
-      BaristaServiceClient client = new BaristaServiceClient(SPServiceContext.Current);
+      var client = new BaristaServiceClient(SPServiceContext.Current);
 
       var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
       request.Code = codeToExecute;
