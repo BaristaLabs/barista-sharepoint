@@ -1869,104 +1869,137 @@
     /// <returns></returns>
     public virtual EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
-      //Get a new web in case we're executing in elevated permissions.
-      using (var site = new SPSite(this.DocumentStoreUrl))
+      var mutex = SPEntityMutexManager.GrabMutex(this.DocumentStoreUrl, entityId);
+      mutex.WaitOne();
+
+      try
       {
-        using (var web = site.OpenWeb())
+        //Get a new web in case we're executing in elevated permissions.
+        using (var site = new SPSite(this.DocumentStoreUrl))
         {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return null;
-
-          SPFile entityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
-            return null;
-
-          web.AllowUnsafeUpdates = true;
-          try
+          using (var web = site.OpenWeb())
           {
-            if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
-              throw new InvalidOperationException("Insufficent Permissions.");
 
-            entityPartFile.Item["Category"] = category;
-            entityPartFile.Item.SystemUpdate(true);
+            SPList list;
+            SPFolder folder;
+            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                false)
+              return null;
 
+            SPFile entityPartFile;
+            if (
+              SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) ==
+              false)
+              return null;
 
-            var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
-
-            //Update the content entity part
-            string contentHash;
-            DateTime contentModified;
-            SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
-
-            var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
-            documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
-            documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
-            documentSetFolder.Item.UpdateOverwriteVersion();
-            
-            return entityPart;
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
-          }
-        }
-      }
-    }
-
-    public virtual EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
-    {
-      //Get a new web in case we're executing in elevated permissions.
-      using (var site = new SPSite(this.DocumentStoreUrl))
-      {
-        using (var web = site.OpenWeb())
-        {
-          SPList list;
-          SPFolder folder;
-          if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-            return null;
-
-          SPFile entityPartFile;
-          if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
-            return null;
-
-          if (String.IsNullOrEmpty(eTag) == false && entityPartFile.ETag != eTag)
-          {
-            throw new InvalidOperationException(string.Format("Could not update the entity part, the entity part has been updated by another user. New:{0} Existing{1}", eTag, entityPartFile.ETag));
-          }
-
-          web.AllowUnsafeUpdates = true;
-          try
-          {
-            var currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
-
-            var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, data);
-
-            if (data != currentData)
+            web.AllowUnsafeUpdates = true;
+            try
             {
-              entityPartFile.SaveBinary(String.IsNullOrEmpty(data) == false
-                                          ? System.Text.Encoding.Default.GetBytes(data)
-                                          : System.Text.Encoding.Default.GetBytes(String.Empty));
+              if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+                throw new InvalidOperationException("Insufficent Permissions.");
+
+              entityPartFile.Item["Category"] = category;
+              entityPartFile.Item.SystemUpdate(true);
+
+
+              var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
 
               //Update the content entity part
               string contentHash;
               DateTime contentModified;
-              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null, entityPart, out contentHash, out contentModified);
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null,
+                                                                    entityPart, out contentHash, out contentModified);
 
               var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
               documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
               documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
+
+              return entityPart;
+            }
+            finally
+            {
+              web.AllowUnsafeUpdates = false;
+            }
+          }
+
+        }
+      }
+      finally
+      {
+        mutex.ReleaseMutex();
+      }
+    }
+
+    public virtual EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
+    {
+      var mutex = SPEntityMutexManager.GrabMutex(this.DocumentStoreUrl, entityId);
+      mutex.WaitOne();
+
+      try
+      {
+        //Get a new web in case we're executing in elevated permissions.
+        using (var site = new SPSite(this.DocumentStoreUrl))
+        {
+          using (var web = site.OpenWeb())
+          {
+            SPList list;
+            SPFolder folder;
+            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                false)
+              return null;
+
+            SPFile entityPartFile;
+            if (
+              SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) ==
+              false)
+              return null;
+
+            if (String.IsNullOrEmpty(eTag) == false && entityPartFile.ETag != eTag)
+            {
+              throw new InvalidOperationException(
+                string.Format(
+                  "Could not update the entity part, the entity part has been updated by another user. New:{0} Existing{1}",
+                  eTag, entityPartFile.ETag));
             }
 
-            return entityPart;
-          }
-          finally
-          {
-            web.AllowUnsafeUpdates = false;
+            web.AllowUnsafeUpdates = true;
+            try
+            {
+              var currentData = entityPartFile.Web.GetFileAsString(entityPartFile.Url);
+
+              var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, data);
+
+              if (data != currentData)
+              {
+                entityPartFile.SaveBinary(String.IsNullOrEmpty(data) == false
+                                            ? System.Text.Encoding.Default.GetBytes(data)
+                                            : System.Text.Encoding.Default.GetBytes(String.Empty));
+
+                //Update the content entity part
+                string contentHash;
+                DateTime contentModified;
+                SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null,
+                                                                      entityPart, out contentHash, out contentModified);
+
+                var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
+                documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+                documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
+                documentSetFolder.Item.UpdateOverwriteVersion();
+              }
+
+              return entityPart;
+            }
+            finally
+            {
+              web.AllowUnsafeUpdates = false;
+            }
           }
         }
+      }
+      finally
+      {
+        mutex.ReleaseMutex();
       }
     }
 

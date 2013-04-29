@@ -3,6 +3,8 @@
   using System;
   using System.Collections.Generic;
   using System.IO;
+  using System.Runtime.Serialization.Formatters;
+  using System.Runtime.Serialization.Formatters.Binary;
   using System.Text.RegularExpressions;
   using Barista.Newtonsoft.Json;
   using System.Runtime.Serialization.Json;
@@ -43,6 +45,27 @@
     {
       var data = JsonConvert.SerializeObject(entity);
       return JsonConvert.DeserializeObject<T>(data);
+    }
+
+    /// <summary>
+    /// Using a Binary Formatter, makes a clone of the object.
+    /// </summary>
+    /// <remarks>
+    /// The Object being cloned, and all nested objects, must be marked serializable.
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public static T CloneObjectBinary<T>(T entity)
+    {
+      using (var ms = new MemoryStream())
+      {
+        var formatter = new BinaryFormatter();
+        formatter.Serialize(ms, entity);
+        ms.Position = 0;
+
+        return (T)formatter.Deserialize(ms);
+      }
     }
 
     /// <summary>

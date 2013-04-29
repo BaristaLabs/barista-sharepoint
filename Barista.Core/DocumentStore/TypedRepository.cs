@@ -23,6 +23,7 @@
     #region Fields
     private readonly TypedRepositoryConfiguration m_configuration;
     private readonly object m_syncRoot = new object();
+    private readonly static object StaticSyncRoot = new object();
     #endregion
 
     #region Properties
@@ -420,12 +421,12 @@
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
       //Double-check locking pattern.
-      var result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1}).SingleOrDefault();
+      var result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1 }).SingleOrDefault();
       if (result == null)
       {
-        lock (m_syncRoot)
+        lock (StaticSyncRoot)
         {
-          result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1}).SingleOrDefault();
+          result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1 }).SingleOrDefault();
 
           if (result == null)
           {
@@ -457,12 +458,12 @@
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
       //Double-check locking pattern.
-      var result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria  { Namespace = entityDefinition.EntityNamespace, Top = 1}).SingleOrDefault();
+      var result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1 }).SingleOrDefault();
       if (result == null)
       {
-        lock (m_syncRoot)
+        lock (StaticSyncRoot)
         {
-          result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1}).SingleOrDefault();
+          result = documentStore.ListEntities(this.Configuration.ContainerTitle, path, new EntityFilterCriteria { Namespace = entityDefinition.EntityNamespace, Top = 1 }).SingleOrDefault();
 
           if (result == null)
           {
@@ -496,7 +497,7 @@
       else
       {
         var documentStore2 = this.Configuration.GetDocumentStore<IDocumentStore>();
-        lock (m_syncRoot)
+        lock (StaticSyncRoot)
         {
           var json = DocumentStoreHelper.SerializeObjectToJson(entity);
           documentStore2.UpdateEntityData(this.Configuration.ContainerTitle, result.Id, "", json);
@@ -519,7 +520,7 @@
 
       return ListEntities<TEntity>(new EntityFilterCriteria
         {
-          Namespace =  entityDefinition.EntityNamespace,
+          Namespace = entityDefinition.EntityNamespace,
           NamespaceMatchType = NamespaceMatchType.Equals,
         });
     }
@@ -607,14 +608,15 @@
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
-      var result = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entityId, entityTitle, entityDescription, entityNamespace);
+      var result = documentStore.UpdateEntity(this.Configuration.ContainerTitle, entityId, entityTitle,
+                                                entityDescription, entityNamespace);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityUpdated,
-        EntityId = result.Id,
-        Entity = result
-      };
+        {
+          TriggerType = TriggerType.EntityUpdated,
+          EntityId = result.Id,
+          Entity = result
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(result.Namespace))
       {
@@ -645,17 +647,18 @@
       var json = DocumentStoreHelper.SerializeObjectToJson(entity.Value);
 
       //TODO: Fix ETag
-      var updatedEntity = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entity.Id, String.Empty, json);
+      var updatedEntity = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entity.Id, String.Empty,
+                                                         json);
 
       if (updatedEntity == null)
         return null;
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityUpdated,
-        EntityId = updatedEntity.Id,
-        Entity = updatedEntity
-      };
+        {
+          TriggerType = TriggerType.EntityUpdated,
+          EntityId = updatedEntity.Id,
+          Entity = updatedEntity
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(updatedEntity.Namespace))
       {
@@ -675,17 +678,18 @@
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
       var json = DocumentStoreHelper.SerializeObjectToJson(value);
+
       var result = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entityId, eTag, json);
 
       if (result == null)
         return null;
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityUpdated,
-        EntityId = result.Id,
-        Entity = result
-      };
+        {
+          TriggerType = TriggerType.EntityUpdated,
+          EntityId = result.Id,
+          Entity = result
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(result.Namespace))
       {
@@ -711,11 +715,11 @@
       var movedEntity = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId, destinationPath);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityMoved,
-        EntityId = entityId,
-        Entity = movedEntity
-      };
+        {
+          TriggerType = TriggerType.EntityMoved,
+          EntityId = entityId,
+          Entity = movedEntity
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(movedEntity.Namespace))
       {
@@ -741,7 +745,7 @@
           EntityId = entityId,
           Entity = entityToBeDeleted
         };
-      
+
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entityToBeDeleted.Namespace))
       {
         trigger(triggerProperties);
@@ -1086,13 +1090,13 @@
       var entity = ds1.GetEntityLight(this.Configuration.ContainerTitle, entityId);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityPartUpdated,
-        EntityId = entityId,
-        Entity = entity,
-        EntityPart = result,
-        EntityPartName = partName,
-      };
+        {
+          TriggerType = TriggerType.EntityPartUpdated,
+          EntityId = entityId,
+          Entity = entity,
+          EntityPart = result,
+          EntityPartName = partName,
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entity.Namespace))
       {
@@ -1121,7 +1125,8 @@
 
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
-      var result = documentStore.UpdateEntityPart(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, category);
+      var result = documentStore.UpdateEntityPart(this.Configuration.ContainerTitle, entityId,
+                                                  entityPartDefinition.EntityPartName, category);
 
       if (result == null)
         return null;
@@ -1130,13 +1135,13 @@
       var entity = ds1.GetEntityLight(this.Configuration.ContainerTitle, entityId);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityPartUpdated,
-        EntityId = entityId,
-        Entity = entity,
-        EntityPart = result,
-        EntityPartName = entityPartDefinition.EntityPartName
-      };
+        {
+          TriggerType = TriggerType.EntityPartUpdated,
+          EntityId = entityId,
+          Entity = entity,
+          EntityPart = result,
+          EntityPartName = entityPartDefinition.EntityPartName
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entity.Namespace))
       {
@@ -1177,7 +1182,9 @@
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
       var json = DocumentStoreHelper.SerializeObjectToJson(value);
-      var result = documentStore.UpdateEntityPartData(this.Configuration.ContainerTitle, entityId, entityPartDefinition.EntityPartName, eTag, json);
+
+      var result = documentStore.UpdateEntityPartData(this.Configuration.ContainerTitle, entityId,
+                                                      entityPartDefinition.EntityPartName, eTag, json);
 
       if (result == null)
         return null;
@@ -1186,13 +1193,13 @@
       var entity = ds1.GetEntityLight(this.Configuration.ContainerTitle, entityId);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityPartUpdated,
-        EntityId = entityId,
-        Entity = entity,
-        EntityPart = result,
-        EntityPartName = entityPartDefinition.EntityPartName
-      };
+        {
+          TriggerType = TriggerType.EntityPartUpdated,
+          EntityId = entityId,
+          Entity = entity,
+          EntityPart = result,
+          EntityPartName = entityPartDefinition.EntityPartName
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entity.Namespace))
       {
@@ -1226,7 +1233,9 @@
 
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
       var json = DocumentStoreHelper.SerializeObjectToJson(value);
-      var result = documentStore.UpdateEntityPartData(this.Configuration.ContainerTitle, entityId, entityPartName, eTag, json);
+
+      var result = documentStore.UpdateEntityPartData(this.Configuration.ContainerTitle, entityId, entityPartName,
+                                                      eTag, json);
 
       if (result == null)
         return null;
@@ -1235,13 +1244,13 @@
       var entity = ds1.GetEntityLight(this.Configuration.ContainerTitle, entityId);
 
       var triggerProperties = new TriggerProperties
-      {
-        TriggerType = TriggerType.EntityPartUpdated,
-        EntityId = entityId,
-        Entity = entity,
-        EntityPart = result,
-        EntityPartName = entityPartName
-      };
+        {
+          TriggerType = TriggerType.EntityPartUpdated,
+          EntityId = entityId,
+          Entity = entity,
+          EntityPart = result,
+          EntityPartName = entityPartName
+        };
 
       foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entity.Namespace))
       {
@@ -1585,7 +1594,7 @@
 
             if (documentStoreType == null)
               throw new InvalidOperationException("The BaristaDS_RepositoryFactory type name was specified within web.config, but was null");
-            
+
             s_repositoryFactory = Activator.CreateInstance(documentStoreType) as IRepositoryFactory;
           }
         }

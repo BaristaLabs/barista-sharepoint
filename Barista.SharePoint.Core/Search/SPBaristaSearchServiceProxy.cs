@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Search
 {
+  using System.Runtime.Serialization.Formatters;
   using System.Security.Principal;
   using Barista.Extensions;
   using Barista.Search;
@@ -16,6 +17,11 @@
     private readonly EndpointIdentity m_serviceIdentity;
     private readonly WSHttpBinding m_baristaSearchBinding;
 
+    public static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+    {
+      TypeNameHandling = TypeNameHandling.Auto
+    };
+
     public SPBaristaSearchServiceProxy()
     {
       var farm = SPFarm.Local;
@@ -29,7 +35,7 @@
 
       if (searchService == null)
         throw new InvalidOperationException("The Barista Search Service is not registered with the farm. Please have your administrator run SetupBaristSearchService.ps1 referenced in the Barista installation documentation.");
-      
+
       //TODO: Make this multi-service application aware.
       var serviceAffinity = Utilities.GetFarmKeyValue("BaristaSearchServiceAffinity");
       SPServiceInstance searchServiceInstance;
@@ -160,11 +166,11 @@
         var document = new JsonDocumentDto
           {
             DocumentId = documentId,
-            DataAsJson = JsonConvert.SerializeObject(docObject, Formatting.Indented),
+            DataAsJson = JsonConvert.SerializeObject(docObject, Formatting.Indented, SerializerSettings),
           };
 
         if (metadata != null)
-          document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented);
+          document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented, SerializerSettings);
 
         if (fieldOptions != null)
           document.FieldOptions = fieldOptions;
