@@ -451,7 +451,7 @@
         perFieldAnalyzerWrapper.AddAnalyzer(analyzer.Key, analyzerInstance);
       }
       StandardAnalyzer standardAnalyzer = null;
-      KeywordAnalyzer keywordAnalyzer = null;
+      LowerCaseKeywordAnalyzer keywordAnalyzer = null;
       foreach (var fieldIndexing in IndexDefinition.Indexes)
       {
         switch (fieldIndexing.Value)
@@ -459,7 +459,7 @@
           case FieldIndexing.NotAnalyzed:
             if (keywordAnalyzer == null)
             {
-              keywordAnalyzer = new KeywordAnalyzer();
+              keywordAnalyzer = new LowerCaseKeywordAnalyzer();
               toDispose.Add(keywordAnalyzer.Close);
             }
             perFieldAnalyzerWrapper.AddAnalyzer(fieldIndexing.Key, keywordAnalyzer);
