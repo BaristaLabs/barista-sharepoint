@@ -236,6 +236,7 @@
     <Compile Include="Library\SPListTemplateInstance.cs" />
     <Compile Include="Library\SPModerationInformationInstance.cs" />
     <Compile Include="Library\SPMonitoredScopeInstance.cs" />
+    <Compile Include="Library\SPProcessIdentityInstance.cs" />
     <Compile Include="Library\SPRecycleBinItemCollection.cs" />
     <Compile Include="Library\SPRecycleBinItemInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionInstance.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Library\SPWebCreationInformation.cs" />
     <Compile Include="Library\SPWebInstance.cs" />
     <Compile Include="Library\SPWebTemplateInstance.cs" />
+    <Compile Include="Library\SPWindowsServiceInstance.cs" />
     <Compile Include="Library\UsageInfoInstance.cs" />
     <Compile Include="Library\WebInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

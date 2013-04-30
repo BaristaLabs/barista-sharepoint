@@ -57,16 +57,22 @@
         throw new InvalidOperationException("A Barista Search Service Instance was located, however it is currently not online.");
 
       var serverAddress = searchServiceInstance.Server.Address;
-      //serverAddress = System.Net.Dns.GetHostEntry(serverAddress).HostName;
-
-      //This makes my brain hurt... if the service is hosted locally, it's gotta have the proper DNS server name, otherwise, blank suffices...
-      //@@@@BOGGLE@@@@@
-      m_serviceIdentity =
-        EndpointIdentity.CreateDnsIdentity(SPServer.Local.Address.ToLowerInvariant() == serverAddress.ToLowerInvariant()
-        ? serverAddress
-        : "");
-
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
+
+      if (searchService.ProcessIdentity != null)
+      {
+        var upn = ADHelper.GetUserUpn(searchService.ProcessIdentity.Username);
+        m_serviceIdentity = EndpointIdentity.CreateUpnIdentity(upn);
+      }
+      else
+      {
+        m_serviceIdentity =
+          EndpointIdentity.CreateDnsIdentity(SPServer.Local.Address.ToLowerInvariant() ==
+                                             serverAddress.ToLowerInvariant()
+                                               ? serverAddress
+                                               : "");
+      }
+
       m_baristaSearchBinding = InitServiceBinding();
     }
 

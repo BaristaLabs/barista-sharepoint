@@ -40,7 +40,12 @@
     {
       return this.Engine.Array.Construct(
         // ReSharper disable CoVariantArrayConversion
-        m_farm.Services.Select(s => new SPServiceInstance(this.Engine.Object.Prototype, s)).ToArray());
+        m_farm.Services.Select(s =>
+          {
+            if (s is SPWindowsService)
+              return new SPWindowsServiceInstance(this.Engine.Object.InstancePrototype, s as SPWindowsService);
+            return new SPServiceInstance(this.Engine.Object.InstancePrototype, s);
+          }).ToArray());
       // ReSharper restore CoVariantArrayConversion
     }
 

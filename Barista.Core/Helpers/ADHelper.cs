@@ -13,7 +13,7 @@
   /// Represents a class that 
   /// </summary>
   /// <remarks>
-  /// This is a layer of abstraction over the Active Directory.
+  /// This is a layer of abstraction over Active Directory.
   /// </remarks>
   public static class ADHelper
   {
@@ -67,6 +67,15 @@
       }
 
       return result;
+    }
+
+    public static string GetUserUpn(string loginName)
+    {
+      var user = GetADUser(loginName);
+      if (user == null)
+        return null;
+
+      return user.UserLogonName;
     }
 
     public static ADGroup GetADGroup(string groupName)

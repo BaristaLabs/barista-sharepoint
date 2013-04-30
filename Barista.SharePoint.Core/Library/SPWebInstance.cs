@@ -5,6 +5,7 @@
   using System.Globalization;
   using System.Linq;
   using System.Text;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -471,6 +472,17 @@
       return false;
     }
 
+    [JSFunction(Name = "doesUserHavePermissions")]
+    public bool DoesUserHavePermissions(string loginName, string permissions)
+    {
+      SPBasePermissions basePermissions;
+      if (permissions.TryParseEnum(true, out basePermissions))
+      {
+        this.m_web.DoesUserHavePermissions(loginName, basePermissions);
+      }
+      return false;
+    }
+
     [JSFunction(Name = "ensureUser")]
     public SPUserInstance EnsureUser(string logonName)
     {
@@ -560,7 +572,7 @@
     }
 
     [JSFunction(Name = "getListByServerRelativeUrl")]
-    public SPListInstance GetListFromServerRelativeUrl(string serverRelativeUrl)
+    public object GetListFromServerRelativeUrl(string serverRelativeUrl)
     {
       SPList list = null;
       try
@@ -578,7 +590,7 @@
       }
 
       if (list == null)
-        return null;
+        return Null.Value;
 
       return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
     }
@@ -615,7 +627,7 @@
     [JSFunction(Name = "getListByTitle")]
     public SPListInstance GetListByTitle(string listTitle)
     {
-      SPList list = m_web.Lists.TryGetList(listTitle);
+      var list = m_web.Lists.TryGetList(listTitle);
       
       return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
     }
@@ -649,6 +661,15 @@
     public SPListInstance GetSiteUserInfoList()
     {
       return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_web.SiteUserInfoList);
+    }
+
+    [JSFunction(Name = "getUser")]
+    public object GetUser(string loginName)
+    {
+       var user = m_web.Users[loginName];
+       if (user != null)
+         return new SPUserInstance(this.Engine.Object.InstancePrototype, user);
+       return Null.Value;
     }
 
     [JSFunction(Name = "getWebs")]
