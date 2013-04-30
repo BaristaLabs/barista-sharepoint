@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Search
 {
-  using System.Security.Principal;
   using Barista.Extensions;
   using Barista.Search;
   using Microsoft.SharePoint.Administration;
@@ -62,10 +61,11 @@
 
       //This makes my brain hurt... if the service is hosted locally, it's gotta have the proper DNS server name, otherwise, blank suffices...
       //@@@@BOGGLE@@@@@
-      if (SPServer.Local.Address.ToLowerInvariant() == serverAddress.ToLowerInvariant())
-        m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(serverAddress);
-      else
-        m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(""); //Just ignore the dns identity.
+      m_serviceIdentity =
+        EndpointIdentity.CreateDnsIdentity(SPServer.Local.Address.ToLowerInvariant() == serverAddress.ToLowerInvariant()
+        ? serverAddress
+        : "");
+
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
       m_baristaSearchBinding = InitServiceBinding();
     }
@@ -107,11 +107,11 @@
       var client = new BaristaSearchClient(m_baristaSearchBinding,
         new EndpointAddress(m_serviceAddress, m_serviceIdentity));
 
-      if (client.ClientCredentials != null)
-      {
-        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
-        client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
-      }
+      //if (client.ClientCredentials != null)
+      //{
+      //  client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
+      //  client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
+      //}
 
       return client;
     }
@@ -125,109 +125,195 @@
 
     public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.DeleteDocuments(indexName, documentIds);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.DeleteDocuments(indexName, documentIds);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public void DeleteAllDocuments(string indexName)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.DeleteAllDocuments(indexName);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.DeleteAllDocuments(indexName);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public Explanation Explain(string indexName, Query query, int documentId)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        return searchClient.Explain(indexName, query, documentId);
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.Explain(indexName, query, documentId);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        return searchClient.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+        }
       }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
+      }
+
     }
 
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.IndexDocument(indexName, documentId, document);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.IndexDocument(indexName, documentId, document);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata, IEnumerable<FieldOptions> fieldOptions)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        var document = new JsonDocumentDto
-          {
-            DocumentId = documentId,
-            DataAsJson = JsonConvert.SerializeObject(docObject, Formatting.Indented, SerializerSettings),
-          };
+        using (var searchClient = GetSearchClient())
+        {
+          var document = new JsonDocumentDto
+            {
+              DocumentId = documentId,
+              DataAsJson = JsonConvert.SerializeObject(docObject, Formatting.Indented, SerializerSettings),
+            };
 
-        if (metadata != null)
-          document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented, SerializerSettings);
+          if (metadata != null)
+            document.MetadataAsJson = JsonConvert.SerializeObject(metadata, Formatting.Indented, SerializerSettings);
 
-        if (fieldOptions != null)
-          document.FieldOptions = fieldOptions;
+          if (fieldOptions != null)
+            document.FieldOptions = fieldOptions;
 
-        searchClient.IndexJsonDocument(indexName, document);
+          searchClient.IndexJsonDocument(indexName, document);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public void IndexJsonDocument(string indexName, JsonDocumentDto document)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.IndexJsonDocument(indexName, document);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.IndexJsonDocument(indexName, document);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.IndexJsonDocuments(indexName, documents);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.IndexJsonDocuments(indexName, documents);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
-    public JsonDocumentDto Retrieve(string indexName, string documentId)
+    public
+      JsonDocumentDto Retrieve(string indexName, string documentId)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        return searchClient.Retrieve(indexName, documentId);
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.Retrieve(indexName, documentId);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        return searchClient.Search(indexName, arguments);
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.Search(indexName, arguments);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        return searchClient.FacetedSearch(indexName, arguments);
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.FacetedSearch(indexName, arguments);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
 
     public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
     {
-      using (var searchClient = GetSearchClient())
+      try
       {
-        searchClient.SetFieldOptions(indexName, fieldOptions);
+        using (var searchClient = GetSearchClient())
+        {
+          searchClient.SetFieldOptions(indexName, fieldOptions);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        throw ex.InnerException;
       }
     }
   }
