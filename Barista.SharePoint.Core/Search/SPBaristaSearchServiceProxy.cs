@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Search
 {
-  using System.Runtime.Serialization.Formatters;
   using System.Security.Principal;
   using Barista.Extensions;
   using Barista.Search;
@@ -61,7 +60,7 @@
       var serverAddress = searchServiceInstance.Server.Address;
       //serverAddress = System.Net.Dns.GetHostEntry(serverAddress).HostName;
 
-      m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(serverAddress);
+      m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(""); //Just ignore the dns identity.
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
       m_baristaSearchBinding = InitServiceBinding();
     }
