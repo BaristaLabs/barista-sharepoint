@@ -86,25 +86,33 @@
     private static WSHttpBinding InitServiceBinding()
     {
       var binding = new WSHttpBinding
-      {
-        AllowCookies = true,
-        ReceiveTimeout = TimeSpan.FromHours(1),
-        SendTimeout = TimeSpan.FromHours(1),
-        OpenTimeout = TimeSpan.FromHours(1),
-        CloseTimeout = TimeSpan.FromHours(1),
-        MaxReceivedMessageSize = int.MaxValue,
-        ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
         {
-          MaxArrayLength = int.MaxValue,
-          MaxBytesPerRead = int.MaxValue,
-          MaxDepth = int.MaxValue,
-          MaxNameTableCharCount = int.MaxValue,
-          MaxStringContentLength = int.MaxValue,
-        }
-      };
+          AllowCookies = true,
+          ReceiveTimeout = TimeSpan.FromHours(1),
+          SendTimeout = TimeSpan.FromHours(1),
+          OpenTimeout = TimeSpan.FromHours(1),
+          CloseTimeout = TimeSpan.FromHours(1),
+          MaxReceivedMessageSize = int.MaxValue,
+          ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
+            {
+              MaxArrayLength = int.MaxValue,
+              MaxBytesPerRead = int.MaxValue,
+              MaxDepth = int.MaxValue,
+              MaxNameTableCharCount = int.MaxValue,
+              MaxStringContentLength = int.MaxValue,
+            },
+          BypassProxyOnLocal = true,
+          UseDefaultWebProxy = false,
+        };
 
-      //binding.Security.Mode = BasicHttpSecurityMode.TransportCredentialOnly;
+      binding.Security.Mode = SecurityMode.Message;
       binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
+      binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+      binding.Security.Transport.Realm = "";
+
+      binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
+      binding.Security.Message.NegotiateServiceCredential = true;
+
       return binding;
     }
 
