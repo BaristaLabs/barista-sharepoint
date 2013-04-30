@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.SearchService
 {
+  using System;
   using Barista.Search;
   using Barista.SharePoint.Search;
+  using Microsoft.SharePoint.Administration;
   using System.ServiceModel;
 
   /// <summary>
@@ -18,8 +20,15 @@
 
     public void Start()
     {
-      m_serviceHost = new ServiceHost(typeof(SPBaristaSearchService));
+      var localServer = SPServer.Local;
 
+      if (localServer == null)
+        throw new InvalidOperationException("Unable to locate a SharePoint farm. Ensure that the current machine is joined to a SharePoint farm and the farm is online.");
+      
+      m_serviceHost = new ServiceHost(typeof(SPBaristaSearchService));
+      //m_serviceHost.AddServiceEndpoint(typeof (IBaristaSearch),
+      //                                 new WSHttpBinding(SecurityMode.TransportWithMessageCredential,
+      //                                                   true), localServer.Address);
       m_serviceHost.Open();
     }
 

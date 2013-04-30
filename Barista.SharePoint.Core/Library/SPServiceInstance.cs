@@ -66,6 +66,12 @@
       get { return new GuidInstance(this.Engine.Object, m_service.Id); }
     }
 
+    [JSProperty(Name = "status")]
+    public string Status
+    {
+      get { return m_service.Status.ToString(); }
+    }
+
     [JSProperty(Name = "typeName")]
     public string TypeName
     {
@@ -81,6 +87,17 @@
           m_service.Applications.Select(s => new SPServiceApplicationInstance(this.Engine.Object.Prototype, s))
                    .ToArray());
 // ReSharper restore CoVariantArrayConversion
+    }
+
+    [JSFunction(Name = "getInstances")]
+    public ArrayInstance GetInstances()
+    {
+      return
+       this.Engine.Array.Construct(
+        // ReSharper disable CoVariantArrayConversion
+         m_service.Instances.Select(instance => new SPServiceInstanceInstance(this.Engine.Object.Prototype, instance))
+                  .ToArray());
+      // ReSharper restore CoVariantArrayConversion
     }
   }
 }

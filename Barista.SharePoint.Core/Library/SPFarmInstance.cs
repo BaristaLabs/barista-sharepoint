@@ -49,13 +49,10 @@
     {
       var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
 
-      foreach (var service in m_farm.Services)
+      foreach (var serviceApplication in m_farm.Services
+        .SelectMany(service => service.Applications.Where(serviceApplication => serviceApplication.Id == guid)))
       {
-        foreach (var serviceApplication in service.Applications)
-        {
-          if (serviceApplication.Id == guid)
-            return new SPServiceApplicationInstance(this.Engine.Object.Prototype, serviceApplication);
-        }
+        return new SPServiceApplicationInstance(this.Engine.Object.Prototype, serviceApplication);
       }
 
       return Null.Value;
