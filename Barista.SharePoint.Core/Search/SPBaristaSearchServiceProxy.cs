@@ -60,7 +60,12 @@
       var serverAddress = searchServiceInstance.Server.Address;
       //serverAddress = System.Net.Dns.GetHostEntry(serverAddress).HostName;
 
-      m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(""); //Just ignore the dns identity.
+      //This makes my brain hurt... if the service is hosted locally, it's gotta have the proper DNS server name, otherwise, blank suffices...
+      //@@@@BOGGLE@@@@@
+      if (SPServer.Local.Address.ToLowerInvariant() == serverAddress.ToLowerInvariant())
+        m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(serverAddress);
+      else
+        m_serviceIdentity = EndpointIdentity.CreateDnsIdentity(""); //Just ignore the dns identity.
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
       m_baristaSearchBinding = InitServiceBinding();
     }

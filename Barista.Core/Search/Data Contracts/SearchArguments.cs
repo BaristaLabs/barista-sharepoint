@@ -11,7 +11,7 @@
       Filter = null;
       Sort = null;
       Skip = null;
-      Take = 100;
+      Take = 1000;
     }
 
     [DataMember]
