@@ -23,33 +23,33 @@
   [Serializable]
   public class SPWindowsServiceInstance : SPServiceInstance
   {
-    private readonly SPWindowsService m_windowsService;
-
     public SPWindowsServiceInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
     }
 
     public SPWindowsServiceInstance(ObjectInstance prototype, SPWindowsService windowsService)
-      : this(prototype)
+      : base(prototype, windowsService)
     {
       if (windowsService == null)
         throw new ArgumentNullException("windowsService");
-
-      m_windowsService = windowsService;
     }
 
     public SPWindowsService SPWindowsService
     {
-      get { return m_windowsService; }
+      get { return SPService as SPWindowsService; }
     }
 
     [JSProperty(Name = "processIdentity")]
-    public SPProcessIdentityInstance ProcessIdentity
+    public object ProcessIdentity
     {
-      get { return new SPProcessIdentityInstance(this.Engine.Object.InstancePrototype, m_windowsService.ProcessIdentity); }
+      get
+      {
+        if (this.SPWindowsService.ProcessIdentity == null)
+          return Null.Value;
+
+        return new SPProcessIdentityInstance(this.Engine.Object.InstancePrototype, this.SPWindowsService.ProcessIdentity);
+      }
     }
   }
 }

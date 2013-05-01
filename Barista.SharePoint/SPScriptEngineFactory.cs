@@ -139,6 +139,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
         instance.Common.RegisterBundle(new DeferredBundle());
         instance.Common.RegisterBundle(new TfsBundle());
         instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
+        instance.Common.RegisterBundle(new WebAdministrationBundle());
 
         //Global Types
         engine.SetGlobalValue("Barista", instance);

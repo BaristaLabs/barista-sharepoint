@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using System.Linq;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Microsoft.SharePoint.Administration;
@@ -52,10 +53,36 @@
       get { return m_server.Address; }
     }
 
+    [JSProperty(Name = "name")]
+    public string Name
+    {
+      get { return m_server.Name; }
+    }
+
+    [JSProperty(Name = "displayName")]
+    public string DisplayName
+    {
+      get { return m_server.DisplayName; }
+    }
+
     [JSProperty(Name = "role")]
     public string Role
     {
       get { return m_server.Role.ToString(); }
+    }
+
+    [JSFunction(Name = "getServiceInstances")]
+    public ArrayInstance GetServiceInstances()
+    {
+      var serviceInstances = m_server.ServiceInstances;
+// ReSharper disable CoVariantArrayConversion
+      return this.Engine.Array.Construct(serviceInstances
+                                           .Select(
+                                             si =>
+                                             new SPServiceInstanceInstance(this.Engine.Object.InstancePrototype, si))
+                                           .ToArray()
+        );
+// ReSharper restore CoVariantArrayConversion
     }
   }
 }

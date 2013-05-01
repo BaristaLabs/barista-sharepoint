@@ -59,6 +59,18 @@
       get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_processIdentity.Id);}
     }
 
+    [JSProperty(Name = "managedAccount")]
+    public object ManagedAccount
+    {
+      get
+      {
+        if (m_processIdentity.ManagedAccount == null)
+          return Null.Value;
+
+        return new SPManagedAccountInstance(this.Engine.Object.InstancePrototype, m_processIdentity.ManagedAccount);
+      }
+    }
+
     [JSProperty(Name = "status")]
     public string Status
     {

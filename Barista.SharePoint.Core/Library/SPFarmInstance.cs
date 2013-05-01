@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using System.Collections.ObjectModel;
   using System.Linq;
   using Barista.Library;
   using Jurassic;
@@ -26,7 +27,7 @@
       this.m_farm = farm;
     }
 
-    [JSFunction(Name = "getServersInFarm")]
+    [JSFunction(Name = "getFarmServers")]
     public ArrayInstance GetServersInFarm()
     {
       return this.Engine.Array.Construct(
@@ -35,7 +36,7 @@
 // ReSharper restore CoVariantArrayConversion
     }
 
-    [JSFunction(Name = "getServicesInFarm")]
+    [JSFunction(Name = "getFarmServices")]
     public ArrayInstance GetServicesInFarm()
     {
       return this.Engine.Array.Construct(
@@ -61,6 +62,23 @@
       }
 
       return Null.Value;
+    }
+
+    [JSFunction(Name = "getFarmManagedAccounts")]
+    public ArrayInstance GetFarmManagedAccounts()
+    {
+      var managedAccounts = new Collection<SPManagedAccountInstance>();
+
+      var local = SPFarm.Local;
+      var farmManagedAccountCollection = new SPFarmManagedAccountCollection(local);
+      foreach (var farmManagedAccount in farmManagedAccountCollection)
+      {
+        managedAccounts.Add(new SPManagedAccountInstance(this.Engine.Object.InstancePrototype, farmManagedAccount));
+      }
+
+// ReSharper disable CoVariantArrayConversion
+      return this.Engine.Array.Construct(managedAccounts.ToArray());
+// ReSharper restore CoVariantArrayConversion
     }
 
     [JSFunction(Name = "getFarmKeyValue")]

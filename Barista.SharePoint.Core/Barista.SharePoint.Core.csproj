@@ -234,6 +234,7 @@
     <Compile Include="Library\SPListItemCollectionPositionInstance.cs" />
     <Compile Include="Library\SPListItemInstance.cs" />
     <Compile Include="Library\SPListTemplateInstance.cs" />
+    <Compile Include="Library\SPManagedAccountInstance.cs" />
     <Compile Include="Library\SPModerationInformationInstance.cs" />
     <Compile Include="Library\SPMonitoredScopeInstance.cs" />
     <Compile Include="Library\SPProcessIdentityInstance.cs" />

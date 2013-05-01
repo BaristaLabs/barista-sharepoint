@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Search
 {
+  using System.Reflection;
   using Barista.Extensions;
   using Barista.Search;
   using Microsoft.SharePoint.Administration;
@@ -61,7 +62,9 @@
 
       if (searchService.ProcessIdentity != null)
       {
-        var upn = ADHelper.GetUserUpn(searchService.ProcessIdentity.Username);
+        var propertyInfo = typeof (SPManagedAccount).GetProperty("UPNName",
+                                                                 BindingFlags.Instance | BindingFlags.NonPublic);
+        var upn = (string)propertyInfo.GetValue(searchService.ProcessIdentity.ManagedAccount, null);
         m_serviceIdentity = EndpointIdentity.CreateUpnIdentity(upn);
       }
       else
