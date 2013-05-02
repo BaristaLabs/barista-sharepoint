@@ -133,7 +133,7 @@
 
       if (client.ClientCredentials != null)
       {
-        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Delegation;
+        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
         client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
       }
 
@@ -321,6 +321,7 @@
         using (var searchClient = GetSearchClient())
         {
           return searchClient.Search(indexName, arguments);
+         
         }
       }
       catch (CommunicationObjectFaultedException ex)

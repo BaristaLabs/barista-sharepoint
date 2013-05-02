@@ -31,6 +31,7 @@
     /// Deletes all documents from the specified index.
     /// </summary>
     /// <param name="indexName"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void DeleteAllDocuments(string indexName)
     {
       try
@@ -56,6 +57,7 @@
     /// </summary>
     /// <param name="indexName"></param>
     /// <param name="keys"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void DeleteDocuments(string indexName, IEnumerable<string> keys)
     {
       try
@@ -85,6 +87,7 @@
     /// <param name="query"></param>
     /// <param name="docId"></param>
     /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public Explanation Explain(string indexName, Barista.Search.Query query, int docId)
     {
        var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
@@ -110,6 +113,7 @@
     /// <param name="fieldName"></param>
     /// <param name="fragCharSize"></param>
     /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public string Highlight(string indexName, Barista.Search.Query query, int docId, string fieldName, int fragCharSize)
     {
       var highlighter = GetFastVectorHighlighter();
@@ -137,6 +141,7 @@
     /// <param name="indexName"></param>
     /// <param name="documentId"></param>
     /// <param name="document"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
       try
@@ -180,6 +185,7 @@
     /// </summary>
     /// <param name="indexName"></param>
     /// <param name="document"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void IndexJsonDocument(string indexName, JsonDocumentDto document)
     {
       try
@@ -203,6 +209,7 @@
     /// </summary>
     /// <param name="indexName"></param>
     /// <param name="documents"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
     {
       try
@@ -266,6 +273,7 @@
     /// <param name="indexName"></param>
     /// <param name="documentId"></param>
     /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public JsonDocumentDto Retrieve(string indexName, string documentId)
     {
       try
@@ -302,6 +310,7 @@
     /// <param name="indexName"></param>
     /// <param name="arguments"></param>
     /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
       if (arguments == null)
@@ -336,6 +345,13 @@
       }
     }
 
+    /// <summary>
+    /// Performs a faceted search with the specified search arguments using the specified index.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="arguments"></param>
+    /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
       if (arguments == null)
@@ -370,6 +386,12 @@
       }
     }
 
+    /// <summary>
+    /// Sets field options
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="fieldOptions"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
     public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
     {
       try
@@ -463,6 +485,12 @@
       }
     }
 
+    /// <summary>
+    /// Utility method to retrieve the specifed index, optionally creating the index if it is missing.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="createIfMissing"></param>
+    /// <returns></returns>
     protected Index GetOrAddIndex(string indexName, bool createIfMissing)
     {
       return Indexes.GetOrAdd(indexName, key =>
