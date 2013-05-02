@@ -115,7 +115,10 @@
           UseDefaultWebProxy = false,
         };
 
-      binding.Security.Mode = SecurityMode.Message;
+      binding.ReliableSession.Enabled = true;
+      binding.ReliableSession.Ordered = true;
+
+      binding.Security.Mode = SecurityMode.None;
       binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
       binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
       binding.Security.Transport.Realm = "";
