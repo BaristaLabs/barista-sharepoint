@@ -1,7 +1,9 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using System.Linq;
   using Barista.Extensions;
+  using Barista.Newtonsoft.Json;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -61,6 +63,30 @@
     }
 
     #region Properties
+    [JSProperty(Name = "allProperties")]
+    public ObjectInstance AllProperties
+    {
+      get
+      {
+        var result = this.Engine.Object.Construct();
+
+        foreach (var key in m_file.Properties.Keys)
+        {
+          string serializedKey;
+          if (key is string)
+            serializedKey = key as string;
+          else
+            serializedKey = JsonConvert.SerializeObject(key);
+
+          var serializedValue = JsonConvert.SerializeObject(m_file.Properties[key]);
+
+          result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+        }
+
+        return result;
+      }
+    }
+
     [JSProperty(Name = "author")]
     [JSDoc("Gets the author (original creator) of the file.")]
     public SPUserInstance Author
@@ -231,6 +257,12 @@
       }
     }
 
+    [JSProperty(Name = "progId")]
+    public string ProgId
+    {
+      get { return m_file.ProgID; }
+    }
+
     [JSProperty(Name = "serverRelativeUrl")]
     [JSDoc("Gets the server relative url of the file")]
     public string ServerRelativeUrl
@@ -296,6 +328,12 @@
       }
     }
     #endregion
+    [JSFunction(Name = "approve")]
+    [JSDoc("Approves the file submitted for content approval with the specified comment.")]
+    public void Approve(string comment)
+    {
+      m_file.Approve(comment);
+    }
 
     [JSFunction(Name="checkIn")]
     [JSDoc("Checks the file in. The first argument is a (string) comment, the second is an optional (string) value of one of these values: MajorCheckIn, MinorCheckIn, OverwriteCheckIn")]
@@ -329,6 +367,13 @@
     public void Delete()
     {
       m_file.Delete();
+    }
+    
+    [JSFunction(Name = "deny")]
+    [JSDoc("Denies approval for a file that was submitted for content approval.")]
+    public void Deny(string comment)
+    {
+      m_file.Deny(comment);
     }
 
     [JSFunction(Name = "getDocumentLibrary")]
@@ -412,6 +457,32 @@
       return m_file.Recycle().ToString();
     }
 
+    [JSFunction(Name = "revertToLastApprovedVersion")]
+    [JSDoc("")]
+    public string RevertToLastApprovedVersion()
+    {
+      throw new JavaScriptException(this.Engine, "Error", "Not Yet Implemented");
+
+      var currentApprovedVersion = m_file.Item.Versions[0];
+
+      var lastApprovedVersion = m_file.Versions
+                                      .OfType<SPFileVersion>()
+                                      .OrderByDescending(v => v.ID)
+                                      .FirstOrDefault(
+                                        v => v.Level == SPFileLevel.Published &&
+                                             v.IsCurrentVersion == false);
+
+      if (lastApprovedVersion == null)
+        return "";
+
+      m_file.Versions.RestoreByID(lastApprovedVersion.ID);
+      m_file.Publish("Reverting to Last Approved Verison");
+      m_file.Approve("Approving Last Approved Version.");
+
+      m_file.Versions.RestoreByLabel(currentApprovedVersion.VersionLabel);
+      return lastApprovedVersion.VersionLabel;
+    }
+
     [JSFunction(Name = "undoCheckOut")]
     [JSDoc("Un-checkouts the file.")]
     public void UndoCheckOut()
@@ -424,6 +495,13 @@
     public void UnPublish(string comment)
     {
       m_file.UnPublish(comment);
+    }
+
+    [JSFunction(Name = "update")]
+    [JSDoc("Updates the file with any changes.")]
+    public void Update()
+    {
+      m_file.Update();
     }
   }
 }

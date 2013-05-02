@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
+  using Barista.Newtonsoft.Json;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -96,6 +97,30 @@
       get { return m_fileVersion.VersionLabel; }
     }
     #endregion
+
+    [JSProperty(Name = "allProperties")]
+    public ObjectInstance AllProperties
+    {
+      get
+      {
+        var result = this.Engine.Object.Construct();
+
+        foreach (var key in m_fileVersion.Properties.Keys)
+        {
+          string serializedKey;
+          if (key is string)
+            serializedKey = key as string;
+          else
+            serializedKey = JsonConvert.SerializeObject(key);
+
+          var serializedValue = JsonConvert.SerializeObject(m_fileVersion.Properties[key]);
+
+          result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+        }
+
+        return result;
+      }
+    }
 
     [JSFunction(Name = "delete")]
     public void Delete()

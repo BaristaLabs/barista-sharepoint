@@ -662,7 +662,7 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out entityDocumentSet) == false)
             return null;
 
-          var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet);
+          var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet, null, null);
 
           return entity;
         }
@@ -1384,7 +1384,7 @@
 
           result.AddRange(
             listItems
-            .Select(li => SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(li.Folder)))
+            .Select(li => SPDocumentStoreHelper.MapEntityFromDocumentSet(DocumentSet.GetDocumentSet(li.Folder), null, null))
             .Where(entity => entity != null)
             );
 

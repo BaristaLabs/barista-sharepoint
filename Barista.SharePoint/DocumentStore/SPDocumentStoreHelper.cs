@@ -146,10 +146,6 @@
 
       var dataFile = documentSet.ParentList.ParentWeb.GetFile(SPUtility.ConcatUrls(documentSet.Folder.Url, Constants.DocumentStoreDefaultEntityPartFileName));
 
-      if (dataFile == null || dataFile.Exists == false) //The default entity part file doesn't exist, get outta dodge (something happened here...)
-        throw new InvalidOperationException(
-          "No corresponding entity file exists on the document set that represents the entity.");
-
       return MapEntityFromDocumentSet(documentSet, dataFile, data);
     }
 
@@ -157,84 +153,14 @@
     /// Returns an entity that represents the specified document set
     /// </summary>
     /// <param name="documentSet">The entity document set.</param>
-    /// <param name="file">The file that represents the default entity part.</param>
-    /// <param name="data">Optionally, the data within the default entity part.</param>
+    /// <param name="file">The file that represents the default entity part. If no file is supplied, and no data is supplied, the data value of the entity will be null.</param>
+    /// <param name="data">Optionally, the data within the default entity part. If a null string is provided, the file's contents will be retrieved.</param>
     /// <returns></returns>
     public static Entity MapEntityFromDocumentSet(DocumentSet documentSet, SPFile file, string data)
     {
       if (documentSet == null)
         throw new ArgumentNullException("documentSet");
 
-      if (file == null)
-        throw new ArgumentNullException("file");
-
-      var entity = new Entity();
-
-      try
-      {
-        var id = documentSet.Item[Constants.DocumentEntityGuidFieldId] as string;
-
-        if (id != null)
-          entity.Id = new Guid(id);
-      }
-      catch
-      {
-        //Do Nothing...
-      }
-
-      entity.Namespace = documentSet.Item[Constants.NamespaceFieldId] as string;
-
-      entity.ETag = file.ETag;
-      entity.Title = documentSet.Item.Title;
-      entity.Description = documentSet.Item["DocumentSetDescription"] as string;
-      entity.Created = (DateTime)documentSet.Item[SPBuiltInFieldId.Created];
-      entity.Modified = (DateTime)documentSet.Item[SPBuiltInFieldId.Modified];
-
-      entity.ContentsETag = documentSet.Item["DocumentEntityContentsHash"] as string;
-
-      if (documentSet.Item["DocumentEntityContentsLastModified"] != null)
-      {
-        entity.ContentsModified = (DateTime)documentSet.Item["DocumentEntityContentsLastModified"];
-      }
-
-      entity.Path = documentSet.ParentFolder.Url.Substring(documentSet.ParentList.RootFolder.Url.Length);
-      entity.Path = entity.Path.TrimStart('/');
-
-      entity.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
-
-      var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
-      var createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
-
-      entity.CreatedBy = new User
-      {
-        Email = createdByUser.User.Email,
-        LoginName = createdByUser.User.LoginName,
-        Name = createdByUser.User.Name,
-      };
-
-      var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
-      var modifiedByUser = new SPFieldUserValue(file.Web, modifiedByUserValue);
-
-      entity.ModifiedBy = new User
-      {
-        Email = modifiedByUser.User.Email,
-        LoginName = modifiedByUser.User.LoginName,
-        Name = modifiedByUser.User.Name,
-      };
-
-      return entity;
-    }
-
-    /// <summary>
-    /// Maps the entity from the specified document set without attempting to retrieve data.
-    /// </summary>
-    /// <param name="documentSet"></param>
-    /// <returns></returns>
-    public static Entity MapEntityFromDocumentSet(DocumentSet documentSet)
-    {
-      if (documentSet == null)
-        throw new ArgumentNullException("documentSet");
-
       var entity = new Entity();
 
       try
@@ -266,8 +192,22 @@
       entity.Path = documentSet.ParentFolder.Url.Substring(documentSet.ParentList.RootFolder.Url.Length);
       entity.Path = entity.Path.TrimStart('/');
 
+      if (data != null)
+      {
+        entity.ETag = StringHelper.CreateMD5Hash(data);
+        entity.Data = data;
+      }
+      else
+      {
+        if (file != null)
+        {
+          entity.ETag = file.ETag;
+          entity.Data = Encoding.UTF8.GetString(file.OpenBinary());
+        }
+      }
+      
       var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
-      var createdByUser = new SPFieldUserValue(documentSet.ParentList.ParentWeb, createdByUserValue);
+      var createdByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, createdByUserValue);
 
       entity.CreatedBy = new User
       {
@@ -277,7 +217,7 @@
       };
 
       var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
-      var modifiedByUser = new SPFieldUserValue(documentSet.ParentList.ParentWeb, modifiedByUserValue);
+      var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
 
       entity.ModifiedBy = new User
       {
@@ -608,7 +548,20 @@
       defaultEntityPart = list.ParentWeb.GetFile(SPUtility.ConcatUrls(documentSet.Folder.Url, Constants.DocumentStoreDefaultEntityPartFileName));
 
       var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
-      if (defaultEntityPart.Exists == false || defaultEntityPart.Item.ContentTypeId.IsChildOf(entityPartContentTypeId) == false)
+      var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
+      var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
+
+      if (defaultEntityPart.Exists == false)
+      {
+        var entityPartProperties = new Hashtable
+                {
+                  {"ContentTypeId", entityPartContentTypeId.ToString()},
+                  {"Content Type", entityPartContentType.Name}
+                };
+
+        defaultEntityPart = documentSet.Folder.Files.Add(Constants.DocumentStoreDefaultEntityPartFileName, Encoding.Default.GetBytes(""), entityPartProperties, true);
+      }
+      else if (defaultEntityPart.Item.ContentTypeId.IsChildOf(entityPartContentTypeId) == false)
       {
         defaultEntityPart = null;
         return false;

@@ -50,6 +50,12 @@
     #endregion
 
     #region Functions
+    [JSFunction(Name = "delete")]
+    public void Delete(int index)
+    {
+      m_fileVersionCollection.Delete(index);
+    }
+
     [JSFunction(Name = "deleteAll")]
     public void DeleteAll()
     {
@@ -85,6 +91,26 @@
       return new SPFileInstance(this.Engine.Object.InstancePrototype, m_fileVersionCollection.File);
     }
 
+    [JSFunction(Name = "getVersionFromId")]
+    public object GetVersionByLabel(int id)
+    {
+      var version = m_fileVersionCollection.GetVersionFromID(id);
+      if (version == null)
+        return Null.Value;
+
+      return new SPFileVersionInstance(this.Engine.Object.InstancePrototype, version);
+    }
+
+    [JSFunction(Name = "getVersionFromLabel")]
+    public object GetVersionByLabel(string versionLabel)
+    {
+      var version = m_fileVersionCollection.GetVersionFromLabel(versionLabel);
+      if (version == null)
+        return Null.Value;
+
+      return new SPFileVersionInstance(this.Engine.Object.InstancePrototype, version);
+    }
+
     [JSFunction(Name = "getWeb")]
     public SPWebInstance GetWeb()
     {
@@ -101,6 +127,27 @@
     public void RecycleAllMinorVersions()
     {
       m_fileVersionCollection.RecycleAllMinorVersions();
+    }
+
+    [JSFunction(Name = "restore")]
+    public void Restore(int index)
+    {
+      m_fileVersionCollection.Restore(index);
+    }
+
+    [JSFunction(Name = "restoreById")]
+    public void RestoreById(int versionId, object bypassSharedLockId)
+    {
+      if (bypassSharedLockId == Undefined.Value || bypassSharedLockId == Null.Value || bypassSharedLockId == null)
+        m_fileVersionCollection.RestoreByID(versionId);
+      else
+       m_fileVersionCollection.RestoreByID(versionId, TypeConverter.ToString(bypassSharedLockId));
+    }
+
+    [JSFunction(Name = "restoreByLabel")]
+    public void RestoreByLabel(string versionLabel)
+    {
+      m_fileVersionCollection.RestoreByLabel(versionLabel);
     }
     #endregion
   }

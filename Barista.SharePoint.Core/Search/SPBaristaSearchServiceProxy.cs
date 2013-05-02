@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Search
 {
   using System.Reflection;
+  using System.Security.Principal;
   using Barista.Extensions;
   using Barista.Search;
   using Microsoft.SharePoint.Administration;
@@ -29,7 +30,7 @@
 
       //Obtain the search (windows) service registered with the farm.
       var searchService =
-          SPFarm.Local.Services.GetValue<Barista.SharePoint.ServiceManagement.BaristaSearchService>(
+          farm.Services.GetValue<Barista.SharePoint.ServiceManagement.BaristaSearchService>(
             Barista.SharePoint.ServiceManagement.BaristaSearchService.NtServiceName);
 
       if (searchService == null)
@@ -57,14 +58,20 @@
       if (searchServiceInstance.Status != SPObjectStatus.Online)
         throw new InvalidOperationException("A Barista Search Service Instance was located, however it is currently not online.");
 
+      if (searchServiceInstance.Server == null)
+        throw new InvalidOperationException("A Barista Search Service Instance was located, however, it is not currently associated with a server.");
+
       var serverAddress = searchServiceInstance.Server.Address;
       m_serviceAddress = new Uri("http://" + serverAddress + ":8500/Barista/Search", UriKind.Absolute);
 
-      if (searchService.ProcessIdentity != null)
+      if (searchService.ProcessIdentity != null && searchService.ProcessIdentity.ManagedAccount != null)
       {
         var propertyInfo = typeof (SPManagedAccount).GetProperty("UPNName",
                                                                  BindingFlags.Instance | BindingFlags.NonPublic);
         var upn = (string)propertyInfo.GetValue(searchService.ProcessIdentity.ManagedAccount, null);
+        if (upn.IsNullOrWhiteSpace())
+          throw new InvalidOperationException("Unable to determine service accout UPN for authentication.");
+
         m_serviceIdentity = EndpointIdentity.CreateUpnIdentity(upn);
       }
       else
@@ -124,11 +131,11 @@
       var client = new BaristaSearchClient(m_baristaSearchBinding,
         new EndpointAddress(m_serviceAddress, m_serviceIdentity));
 
-      //if (client.ClientCredentials != null)
-      //{
-      //  client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
-      //  client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
-      //}
+      if (client.ClientCredentials != null)
+      {
+        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Delegation;
+        client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
+      }
 
       return client;
     }
@@ -151,7 +158,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -166,7 +175,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -181,7 +192,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -196,7 +209,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
 
     }
@@ -212,7 +227,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -239,7 +256,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -254,7 +273,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -269,7 +290,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -285,7 +308,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -300,7 +325,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -315,7 +342,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
 
@@ -330,7 +359,9 @@
       }
       catch (CommunicationObjectFaultedException ex)
       {
-        throw ex.InnerException;
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
       }
     }
   }

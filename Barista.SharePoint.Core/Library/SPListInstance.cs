@@ -76,7 +76,7 @@
       get { return m_list; }
     }
 
-  #region Properties
+    #region Properties
 
     [JSProperty(Name = "allowContentTypes")]
     public bool AllowContentTypes

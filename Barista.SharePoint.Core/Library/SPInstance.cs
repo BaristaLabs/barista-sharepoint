@@ -17,13 +17,14 @@
   {
     private readonly SPContextInstance m_context;
     private readonly SPFarmInstance m_farm;
+    private readonly SPServerInstance m_server;
 
-    public SPInstance(ScriptEngine engine, BaristaContext context, SPFarm farmContext)
+    public SPInstance(ScriptEngine engine, BaristaContext context, SPFarm farmContext, SPServer serverContext)
       : base(engine)
     {
       m_context = new SPContextInstance(this.Engine, context);
       m_farm = new SPFarmInstance(this.Engine.Object.InstancePrototype, farmContext);
-
+      m_server = new SPServerInstance(this.Engine.Object.InstancePrototype, serverContext);
       this.PopulateFields();
       this.PopulateFunctions();
     }
@@ -41,6 +42,13 @@
     public SPFarmInstance Farm
     {
       get { return m_farm; }
+    }
+
+    [JSDoc("Gets the local server instance. Equivalent to SPFarm.Server in the server object model.")]
+    [JSProperty(Name = "server")]
+    public SPServerInstance Server
+    {
+      get { return m_server; }
     }
     #endregion
 
