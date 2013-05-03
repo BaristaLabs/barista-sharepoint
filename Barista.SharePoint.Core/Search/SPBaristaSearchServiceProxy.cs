@@ -118,6 +118,7 @@
       binding.ReliableSession.Enabled = true;
       binding.ReliableSession.Ordered = true;
 
+      //FIXME: This should use message-based security, change it back to SecurityMode.None.
       binding.Security.Mode = SecurityMode.None;
       binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
       binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
