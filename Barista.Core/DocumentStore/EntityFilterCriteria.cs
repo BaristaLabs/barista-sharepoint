@@ -11,6 +11,7 @@
       this.Path = null;
       this.Skip = null;
       this.Top = null;
+      this.IncludeData = true;
     }
 
     public string Path
@@ -44,6 +45,12 @@
     }
 
     public uint? Top
+    {
+      get;
+      set;
+    }
+
+    public bool IncludeData
     {
       get;
       set;

@@ -199,7 +199,7 @@
       }
       else
       {
-        if (file != null)
+        if (file != null && file.Exists)
         {
           entity.ETag = file.ETag;
           entity.Data = Encoding.UTF8.GetString(file.OpenBinary());
@@ -585,23 +585,11 @@
       return entityDocumentSet != null;
     }
 
-    public static DocumentSet GetDocumentStoreEntityDocumentSet(SPList list, SPFolder folder, Guid id)
+    public static string GetDocumentStoreEntityViewFieldsXml()
     {
-      var query = new SPQuery
-      {
-        Folder = folder,
-        Query = @"<Where>
-                    <And>
-                      <And>
-                        <BeginsWith>
-                          <FieldRef Name=""ContentTypeId""/><Value Type=""Text"">" + Constants.DocumentStoreEntityContentTypeId.ToUpperInvariant() + @"</Value>
-                        </BeginsWith>
-                          <Eq><FieldRef Name=""DocumentEntityGuid"" /><Value Type=""Text"">" + id + @"</Value></Eq>
-                      </And>
-                      <Eq><FieldRef Name=""FSObjType""/><Value Type=""Text"">1</Value></Eq>
-                    </And>
-                 </Where>",
-        ViewFields = Camlex.Query().ViewFields(new List<Guid>
+      var viewFields =
+        Camlex.Query()
+              .ViewFields(new List<Guid>
                 {
                   SPBuiltInFieldId.ID,
                   SPBuiltInFieldId.Title,
@@ -617,24 +605,45 @@
                   Constants.DocumentEntityGuidFieldId,
                   Constants.NamespaceFieldId,
                   new Guid("CBB92DA4-FD46-4C7D-AF6C-3128C2A5576E") // DocumentSetDescription
-                }),
-        ViewFieldsOnly = true,
-        RowLimit = 1,
-        QueryThrottleMode = SPQueryThrottleOption.Override,
-        ViewAttributes = "Scope=\"Recursive\""
-      };
+                });
 
-      //SPFile dataFile = null;
-      //ContentIterator itemsIterator = new ContentIterator();
-      //itemsIterator.ProcessListItems(list, query, false, (spListItem) =>
-      //{
-      //  dataFile = spListItem.File;
-      //  itemsIterator.Cancel = true;
-      //}, null);
-      //
-      //return dataFile;
+      return viewFields;
+    }
 
-      var item = list.GetItems(query).OfType<SPListItem>().FirstOrDefault();
+    public static DocumentSet GetDocumentStoreEntityDocumentSet(SPList list, SPFolder folder, Guid id)
+    {
+      ContentIterator.EnsureContentTypeIndexed(list);
+
+      var documentEntityGuidField = list.Fields["Document Entity Guid"];
+      ContentIterator.EnsureFieldIndexed(list, documentEntityGuidField.Id);
+
+      var documentStoreEntityContentTypeId = list.ContentTypes.BestMatch(new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId));
+
+      var camlQuery = @"<Where>
+  <And>
+    <Eq>
+      <FieldRef Name=""ContentTypeId"" />
+      <Value Type=""ContentTypeId"">" + documentStoreEntityContentTypeId + @"</Value>
+    </Eq>
+    <Eq>
+      <FieldRef Name=""DocumentEntityGuid"" />
+      <Value Type=""Text"">" + id + @"</Value>
+    </Eq>
+  </And>
+</Where>";
+      
+      var viewFields = GetDocumentStoreEntityViewFieldsXml();
+      
+      SPListItem item = null;
+      var itemsIterator = new ContentIterator();
+      itemsIterator.ProcessListItems(list, camlQuery + ContentIterator.ItemEnumerationOrderByPath + viewFields, 1, true, folder,
+                                     spListItems =>
+                                       {
+                                         item = spListItems.OfType<SPListItem>().FirstOrDefault();
+                                         if (item != null)
+                                           itemsIterator.Cancel = true;
+                                       },
+                                     null);
 
       return item != null
         ? DocumentSet.GetDocumentSet(item.Folder)
@@ -881,7 +890,7 @@
         documentSetFolder.Files.OfType<SPFile>()
                          .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
 
-      return (contentFile != null);
+      return (contentFile != null && contentFile.Exists);
     }
 
     /// <summary>

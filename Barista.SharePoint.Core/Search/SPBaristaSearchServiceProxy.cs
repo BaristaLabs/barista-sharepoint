@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Search
 {
   using System.Reflection;
-  using System.Security.Principal;
   using Barista.Extensions;
   using Barista.Search;
   using Microsoft.SharePoint.Administration;
@@ -115,17 +114,17 @@
           UseDefaultWebProxy = false,
         };
 
-      binding.ReliableSession.Enabled = true;
-      binding.ReliableSession.Ordered = true;
+      //binding.ReliableSession.Enabled = true;
+      //binding.ReliableSession.Ordered = true;
 
       //FIXME: This should use message-based security, change it back to SecurityMode.None.
-      binding.Security.Mode = SecurityMode.None;
-      binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
-      binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-      binding.Security.Transport.Realm = "";
+      //binding.Security.Mode = SecurityMode.None;
+      //binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
+      //binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+      //binding.Security.Transport.Realm = "";
 
-      binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
-      binding.Security.Message.NegotiateServiceCredential = true;
+      //binding.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
+      //binding.Security.Message.NegotiateServiceCredential = true;
 
       return binding;
     }
@@ -135,11 +134,12 @@
       var client = new BaristaSearchClient(m_baristaSearchBinding,
         new EndpointAddress(m_serviceAddress, m_serviceIdentity));
 
-      if (client.ClientCredentials != null)
-      {
-        client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
-        client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
-      }
+      //FIXME: This should use message-based security, change it back to SecurityMode.None.
+      //if (client.ClientCredentials != null)
+      //{
+      //  client.ClientCredentials.Windows.AllowedImpersonationLevel = TokenImpersonationLevel.Impersonation;
+      //  client.ClientCredentials.Windows.ClientCredential = System.Net.CredentialCache.DefaultNetworkCredentials;
+      //}
 
       return client;
     }

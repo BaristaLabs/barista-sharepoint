@@ -739,16 +739,19 @@
 
       var entityToBeDeleted = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId);
 
-      var triggerProperties = new TriggerProperties
-        {
-          TriggerType = TriggerType.EntityDeleting,
-          EntityId = entityId,
-          Entity = entityToBeDeleted
-        };
-
-      foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entityToBeDeleted.Namespace))
+      if (entityToBeDeleted != null)
       {
-        trigger(triggerProperties);
+        var triggerProperties = new TriggerProperties
+          {
+            TriggerType = TriggerType.EntityDeleting,
+            EntityId = entityId,
+            Entity = entityToBeDeleted
+          };
+
+        foreach (var trigger in this.Configuration.GetEntityTriggersForNamespace(entityToBeDeleted.Namespace))
+        {
+          trigger(triggerProperties);
+        }
       }
 
       var result = documentStore.DeleteEntity(this.Configuration.ContainerTitle, entityId);

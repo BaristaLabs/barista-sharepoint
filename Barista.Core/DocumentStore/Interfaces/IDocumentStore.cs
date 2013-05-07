@@ -108,14 +108,6 @@
     IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria);
 
     /// <summary>
-    /// Lists the all the entities in the specified container with the specified criteria without populating their data field.
-    /// </summary>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="criteria"></param>
-    /// <returns></returns>
-    IList<Entity> ListEntitiesLight(string containerTitle, EntityFilterCriteria criteria);
-
-    /// <summary>
     /// Returns the total number of entities contained in the container with the specified criteria.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>

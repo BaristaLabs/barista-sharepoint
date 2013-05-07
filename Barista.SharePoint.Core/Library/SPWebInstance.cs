@@ -303,16 +303,20 @@
     }
 
     [JSFunction(Name = "activateFeature")]
-    public SPFeatureInstance ActivateFeature(object feature, [DefaultParameterValue(false)] bool force)
+    public SPFeatureInstance ActivateFeature(object feature, object force)
     {
-      Guid featureId = Guid.Empty;
+      var featureId = Guid.Empty;
       if (feature is string)
       {
         featureId = new Guid(feature as string);
       }
+      else if (feature is GuidInstance)
+      {
+        featureId = (feature as GuidInstance).Value;
+      }
       else if (feature is SPFeatureInstance)
       {
-        featureId = (feature as SPFeatureInstance).Feature.DefinitionId; 
+        featureId = (feature as SPFeatureInstance).Feature.DefinitionId;
       }
       else if (feature is SPFeatureDefinitionInstance)
       {
@@ -322,7 +326,9 @@
       if (featureId == Guid.Empty)
         return null;
 
-      var activatedFeature = m_web.Features.Add(featureId, force);
+      var forceValue = JurassicHelper.GetTypedArgumentValue(this.Engine, force, false);
+
+      var activatedFeature = m_web.Features.Add(featureId, forceValue);
       return new SPFeatureInstance(this.Engine.Object.InstancePrototype, activatedFeature);
     }
 
@@ -406,12 +412,16 @@
     }
 
     [JSFunction(Name = "deactivateFeature")]
-    public void DeactivateFeature(object feature, [DefaultParameterValue(false)] bool force)
+    public void DeactivateFeature(object feature)
     {
-      Guid featureId = Guid.Empty;
+      var featureId = Guid.Empty;
       if (feature is string)
       {
         featureId = new Guid(feature as string);
+      }
+      else if (feature is GuidInstance)
+      {
+        featureId = (feature as GuidInstance).Value;
       }
       else if (feature is SPFeatureInstance)
       {
