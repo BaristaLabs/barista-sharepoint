@@ -952,6 +952,7 @@
     <Content Include="Layouts\BaristaJS\select2.min.js" />
     <Content Include="Layouts\BaristaJS\select2.png" />
     <Content Include="Layouts\BaristaJS\select2x2.png" />
+    <Content Include="Layouts\BaristaJS\splitter.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.min.css" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.js" />
