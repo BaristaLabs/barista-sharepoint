@@ -319,6 +319,7 @@
       {
         if (m_disposed)
           return;
+
         if (m_indexWriter == null)
           return;
 
@@ -342,7 +343,11 @@
           return;
 
         if (m_indexWriter == null)
-          return;
+        {
+            CreateIndexWriter();
+            if (m_indexWriter == null)
+                throw new InvalidOperationException("Could not create IndexWriter.");
+        }
 
         try
         {
