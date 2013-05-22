@@ -81,6 +81,18 @@
     }
 
     /// <summary>
+    /// Returns a value that indicates if an index with the specified name exists.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <returns></returns>
+    public bool DoesIndexExist(string indexName)
+    {
+      var directory = GetLuceneDirectoryFromIndexName(indexName);
+
+      return directory != null;
+    }
+
+    /// <summary>
     /// Returns an explanation for a particular result in a search query.
     /// </summary>
     /// <param name="indexName"></param>

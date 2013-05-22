@@ -62,6 +62,11 @@
       Channel.DeleteAllDocuments(indexName);
     }
 
+    public bool DoesIndexExist(string indexName)
+    {
+      return Channel.DoesIndexExist(indexName);
+    }
+
     public Explanation Explain(string indexName, Query query, int documentId)
     {
       return Channel.Explain(indexName, query, documentId);

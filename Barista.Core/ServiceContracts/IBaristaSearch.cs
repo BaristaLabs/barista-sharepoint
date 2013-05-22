@@ -14,6 +14,9 @@
     void DeleteAllDocuments(string indexName);
 
     [OperationContract]
+    bool DoesIndexExist(string indexName);
+
+    [OperationContract]
     Explanation Explain(string indexName, Barista.Search.Query query, int documentId);
 
     [OperationContract]

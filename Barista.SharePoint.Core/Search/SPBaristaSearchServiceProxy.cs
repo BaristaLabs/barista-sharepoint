@@ -146,9 +146,19 @@
 
     public bool DoesIndexExist(string indexName)
     {
-      var directory = BaristaHelper.GetDirectoryFromIndexName(indexName);
-
-      return directory != null;
+      try
+      {
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.DoesIndexExist(indexName);
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
+      }
     }
 
     public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
