@@ -11,23 +11,23 @@
     {
       if (input == null || input.Length < length)
         return input;
-      int iNextSpace = input.LastIndexOf(" ", length, StringComparison.Ordinal);
+      var iNextSpace = input.LastIndexOf(" ", length, StringComparison.Ordinal);
       return string.Format("{0}...", input.Substring(0, (iNextSpace > 0) ? iNextSpace : length).Trim());
     }
 
     public static string ByteArrayToString(byte[] ba)
     {
-      StringBuilder hex = new StringBuilder(ba.Length * 2);
-      foreach (byte b in ba)
+      var hex = new StringBuilder(ba.Length * 2);
+      foreach (var b in ba)
         hex.AppendFormat("{0:x2}", b);
       return hex.ToString();
     }
 
     public static byte[] StringToByteArray(String hex)
     {
-      int numberChars = hex.Length;
-      byte[] bytes = new byte[numberChars / 2];
-      for (int i = 0; i < numberChars; i += 2)
+      var numberChars = hex.Length;
+      var bytes = new byte[numberChars / 2];
+      for (var i = 0; i < numberChars; i += 2)
         bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
       return bytes;
     }
@@ -42,12 +42,12 @@
       if (String.IsNullOrEmpty(fileName))
         return "";
 
-      string mime = "application/octet-stream";
+      var mime = "application/octet-stream";
       var extension = System.IO.Path.GetExtension(fileName);
       if (extension != null)
       {
-        string ext = extension.ToLower();
-        Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
+        var ext = extension.ToLower();
+        var rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
         if (rk != null && rk.GetValue("Content Type") != null)
           mime = rk.GetValue("Content Type").ToString();
       }
@@ -62,13 +62,13 @@
     public static string CreateMD5Hash(string input)
     {
       // Use input string to calculate MD5 hash
-      MD5 md5 = MD5.Create();
-      byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
-      byte[] hashBytes = md5.ComputeHash(inputBytes);
+      var md5 = MD5.Create();
+      var inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+      var hashBytes = md5.ComputeHash(inputBytes);
 
       // Convert the byte array to hexadecimal string
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < hashBytes.Length; i++)
+      var sb = new StringBuilder();
+      for (var i = 0; i < hashBytes.Length; i++)
       {
         sb.Append(hashBytes[i].ToString("X2"));
         // To force the hex string to lower-case letters instead of
