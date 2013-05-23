@@ -82,6 +82,11 @@
       return Channel.Search(indexName, arguments);
     }
 
+    public int SearchResultCount(string indexName, SearchArguments arguments)
+    {
+      return Channel.SearchResultCount(indexName, arguments);
+    }
+
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
       return Channel.FacetedSearch(indexName, arguments);

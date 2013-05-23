@@ -358,6 +358,47 @@
     }
 
     /// <summary>
+    /// Returns a value that indicates the number of documents that match the specified lucene query.
+    /// </summary>
+    /// <param name="indexName"></param>
+    /// <param name="arguments"></param>
+    /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    public int SearchResultCount(string indexName, SearchArguments arguments)
+    {
+      if (arguments == null)
+        arguments = new SearchArguments();
+
+      try
+      {
+        var index = GetOrAddIndex(indexName, true);
+        var searchParams = GetLuceneSearchParams(arguments);
+
+        IndexSearcher indexSearcher;
+        using (index.GetSearcher(out indexSearcher))
+        {
+          if (searchParams.Skip.HasValue == false)
+          {
+            var hits = indexSearcher.Search(searchParams.Query, searchParams.Filter, searchParams.MaxResults, searchParams.Sort);
+            return hits.ScoreDocs.Count();
+          }
+          else
+          {
+            var hits = indexSearcher.Search(searchParams.Query, searchParams.Filter, searchParams.MaxResults + searchParams.Skip.Value, searchParams.Sort);
+            return hits.ScoreDocs
+                       .Skip(searchParams.Skip.Value)
+                       .Take(searchParams.MaxResults)
+                       .Count();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        throw new FaultException(ex.Message);
+      }
+    }
+
+    /// <summary>
     /// Performs a faceted search with the specified search arguments using the specified index.
     /// </summary>
     /// <param name="indexName"></param>

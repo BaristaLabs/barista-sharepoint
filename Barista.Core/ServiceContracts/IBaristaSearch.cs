@@ -38,6 +38,9 @@
     IList<SearchResult> Search(string indexName, SearchArguments arguments);
 
     [OperationContract]
+    int SearchResultCount(string indexName, SearchArguments arguments);
+
+    [OperationContract]
     IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments);
 
     [OperationContract]

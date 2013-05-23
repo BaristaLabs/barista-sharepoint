@@ -124,12 +124,12 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Web.dll" />
     <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
@@ -138,7 +138,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Data.dll" />
     <Reference Include="System.Xml" />
     <Reference Include="wnvhtmlconvert, Version=7.0.0.0, Culture=neutral, PublicKeyToken=5b5f377bc08a4d32, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

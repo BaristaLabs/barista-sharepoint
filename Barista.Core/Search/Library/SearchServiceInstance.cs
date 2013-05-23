@@ -545,104 +545,26 @@
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      var args = new Barista.Search.SearchArguments();
-
-      if (query == null || query == Null.Value || query == Undefined.Value)
-      {
-        args.Query = new MatchAllDocsQuery();
-        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-      }
-      else if (TypeUtilities.IsString(query))
-      {
-        args.Query = new QueryParserQuery
-          {
-            Query = TypeConverter.ToString(query)
-          };
-
-        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-      }
-      else if (query is SearchArgumentsInstance)
-      {
-        var searchArgumentsInstance = query as SearchArgumentsInstance;
-        args = searchArgumentsInstance.GetSearchArguments();
-      }
-      else if (query is ObjectInstance)
-      {
-         var argumentsObj = query as ObjectInstance;
-
-        args = new SearchArguments();
-
-        //Duck Type for the win
-        if (argumentsObj.HasProperty("query"))
-        {
-          var queryObj = argumentsObj["query"];
-          var queryObjType = queryObj.GetType();
-
-          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
-            args.Query = queryProperty.GetValue(queryObj, null) as Query;
-        }
-        else
-        {
-          var queryObjType = query.GetType();
-
-          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
-            args.Query = queryProperty.GetValue(query, null) as Query;
-
-          if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-        }
-
-        if (argumentsObj.HasProperty("filter"))
-        {
-          var filterObj = argumentsObj["filter"];
-          var filterObjType = filterObj.GetType();
-
-          var filterProperty = filterObjType.GetProperty("Filter", BindingFlags.Instance | BindingFlags.Public);
-          if (filterProperty != null && typeof(Filter).IsAssignableFrom(filterProperty.PropertyType))
-            args.Filter = filterProperty.GetValue(filterObj, null) as Filter;
-        }
-
-        if (argumentsObj.HasProperty("groupByFields"))
-        {
-          var groupByFields = argumentsObj["groupByFields"] as ArrayInstance;
-          if (groupByFields != null)
-          {
-            args.GroupByFields = groupByFields.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
-          }
-        }
-
-        if (argumentsObj.HasProperty("sort") && argumentsObj["sort"] is SortInstance)
-        {
-          var sortValue = argumentsObj["sort"] as SortInstance;
-          args.Sort = sortValue.Sort;
-        }
-
-        if (argumentsObj.HasProperty("skip"))
-        {
-          var skipObj = argumentsObj["skip"];
-          args.Skip = TypeConverter.ToInteger(skipObj);
-        }
-
-        if (argumentsObj.HasProperty("take"))
-        {
-          var takeObj = argumentsObj["take"];
-          args.Take = TypeConverter.ToInteger(takeObj);
-        }
-      }
-      else
-      {
-        throw new JavaScriptException(this.Engine, "Error", "Unable to determine the search arguments.");
-      }
+      var args = CoerceSearchArguments(query, maxResults);
 
       var searchResults = m_baristaSearchServiceProxy.Search(this.IndexName, args);
 
       // ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine.Object.InstancePrototype, sr)).ToArray());
       // ReSharper restore CoVariantArrayConversion
+    }
+
+    [JSFunction(Name = "searchResultCount")]
+    public int SearchResultCount(object query, object maxResults)
+    {
+      if (this.IndexName.IsNullOrWhiteSpace())
+        throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+
+      var args = CoerceSearchArguments(query, maxResults);
+
+      var searchResultCount = m_baristaSearchServiceProxy.SearchResultCount(this.IndexName, args);
+
+      return searchResultCount;
     }
 
     [JSFunction(Name = "facetedSearch")]
@@ -746,6 +668,104 @@
       // ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(searchResults.Select(sr => new FacetedSearchResultInstance(this.Engine.Object.InstancePrototype, sr)).ToArray());
       // ReSharper restore CoVariantArrayConversion
+    }
+
+    private SearchArguments CoerceSearchArguments(object query, object maxResults)
+    {
+      var args = new Barista.Search.SearchArguments();
+
+      if (query == null || query == Null.Value || query == Undefined.Value)
+      {
+        args.Query = new MatchAllDocsQuery();
+        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
+          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+      }
+      else if (TypeUtilities.IsString(query))
+      {
+        args.Query = new QueryParserQuery
+        {
+          Query = TypeConverter.ToString(query)
+        };
+
+        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
+          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+      }
+      else if (query is SearchArgumentsInstance)
+      {
+        var searchArgumentsInstance = query as SearchArgumentsInstance;
+        args = searchArgumentsInstance.GetSearchArguments();
+      }
+      else if (query is ObjectInstance)
+      {
+        var argumentsObj = query as ObjectInstance;
+
+        args = new SearchArguments();
+
+        //Duck Type for the win
+        if (argumentsObj.HasProperty("query"))
+        {
+          var queryObj = argumentsObj["query"];
+          var queryObjType = queryObj.GetType();
+
+          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
+            args.Query = queryProperty.GetValue(queryObj, null) as Query;
+        }
+        else
+        {
+          var queryObjType = query.GetType();
+
+          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
+          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
+            args.Query = queryProperty.GetValue(query, null) as Query;
+
+          if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
+            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+        }
+
+        if (argumentsObj.HasProperty("filter"))
+        {
+          var filterObj = argumentsObj["filter"];
+          var filterObjType = filterObj.GetType();
+
+          var filterProperty = filterObjType.GetProperty("Filter", BindingFlags.Instance | BindingFlags.Public);
+          if (filterProperty != null && typeof(Filter).IsAssignableFrom(filterProperty.PropertyType))
+            args.Filter = filterProperty.GetValue(filterObj, null) as Filter;
+        }
+
+        if (argumentsObj.HasProperty("groupByFields"))
+        {
+          var groupByFields = argumentsObj["groupByFields"] as ArrayInstance;
+          if (groupByFields != null)
+          {
+            args.GroupByFields = groupByFields.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
+          }
+        }
+
+        if (argumentsObj.HasProperty("sort") && argumentsObj["sort"] is SortInstance)
+        {
+          var sortValue = argumentsObj["sort"] as SortInstance;
+          args.Sort = sortValue.Sort;
+        }
+
+        if (argumentsObj.HasProperty("skip"))
+        {
+          var skipObj = argumentsObj["skip"];
+          args.Skip = TypeConverter.ToInteger(skipObj);
+        }
+
+        if (argumentsObj.HasProperty("take"))
+        {
+          var takeObj = argumentsObj["take"];
+          args.Take = TypeConverter.ToInteger(takeObj);
+        }
+      }
+      else
+      {
+        throw new JavaScriptException(this.Engine, "Error", "Unable to determine the search arguments.");
+      }
+
+      return args;
     }
 
     //TODO: Think about re-implementing the following.

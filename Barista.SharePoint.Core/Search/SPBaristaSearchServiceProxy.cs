@@ -346,6 +346,24 @@
       }
     }
 
+    public int SearchResultCount(string indexName, SearchArguments arguments)
+    {
+      try
+      {
+        using (var searchClient = GetSearchClient())
+        {
+          return searchClient.SearchResultCount(indexName, arguments);
+
+        }
+      }
+      catch (CommunicationObjectFaultedException ex)
+      {
+        if (ex.InnerException != null)
+          throw ex.InnerException;
+        throw;
+      }
+    }
+
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
       try

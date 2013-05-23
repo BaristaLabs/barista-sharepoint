@@ -60,9 +60,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Data.dll" />
     <Reference Include="System.Data" />
-    <Reference Include="$(Windir)\Microsoft.NET\Framework64\v2.0.50727\System.Web.dll" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
