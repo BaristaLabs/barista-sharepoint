@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Text;
 
   /// <summary>
@@ -9,10 +10,10 @@
   /// </summary>
   internal sealed class JSONSerializer
   {
-    private ScriptEngine engine;
-    private Stack<ObjectInstance> objectStack;
-    private Stack<ArrayInstance> arrayStack;
-    private string separator;
+    private readonly ScriptEngine m_engine;
+    private Stack<ObjectInstance> m_objectStack;
+    private Stack<ArrayInstance> m_arrayStack;
+    private string m_separator;
 
     /// <summary>
     /// Creates a new JSONSerializer instance with the default options.
@@ -22,7 +23,7 @@
     {
       if (engine == null)
         throw new ArgumentNullException("engine");
-      this.engine = engine;
+      this.m_engine = engine;
     }
 
     /// <summary>
@@ -61,12 +62,12 @@
     public string Serialize(object value)
     {
       // Initialize private variables.
-      this.objectStack = new Stack<ObjectInstance>();
-      this.arrayStack = new Stack<ArrayInstance>();
-      this.separator = string.IsNullOrEmpty(this.Indentation) ? string.Empty : "\n";
+      this.m_objectStack = new Stack<ObjectInstance>();
+      this.m_arrayStack = new Stack<ArrayInstance>();
+      this.m_separator = string.IsNullOrEmpty(this.Indentation) ? string.Empty : "\n";
 
       // Create a temp object to hold the value.
-      var tempObject = this.engine.Object.Construct();
+      var tempObject = this.m_engine.Object.Construct();
       tempObject[string.Empty] = value;
 
       // Transform the value.
@@ -93,9 +94,9 @@
       // Transform the value by calling toJSON(), if the method exists on the object.
       if (value is ObjectInstance)
       {
-        object toJSONResult;
-        if (((ObjectInstance)value).TryCallMemberFunction(out toJSONResult, "toJSON", propertyName) == true)
-          value = toJSONResult;
+        object toJsonResult;
+        if (((ObjectInstance)value).TryCallMemberFunction(out toJsonResult, "toJSON", propertyName))
+          value = toJsonResult;
       }
 
       // Transform the value by calling the replacer function, if one was provided.
@@ -119,17 +120,17 @@
       // Transform the value by calling toJSON(), if the method exists on the object.
       if (value is ObjectInstance)
       {
-        propertyName = arrayIndex.ToString();
-        object toJSONResult;
-        if (((ObjectInstance)value).TryCallMemberFunction(out toJSONResult, "toJSON", propertyName) == true)
-          value = toJSONResult;
+        propertyName = arrayIndex.ToString(CultureInfo.InvariantCulture);
+        object toJsonResult;
+        if (((ObjectInstance)value).TryCallMemberFunction(out toJsonResult, "toJSON", propertyName))
+          value = toJsonResult;
       }
 
       // Transform the value by calling the replacer function, if one was provided.
       if (this.ReplacerFunction != null)
       {
         if (propertyName == null)
-          propertyName = arrayIndex.ToString();
+          propertyName = arrayIndex.ToString(CultureInfo.InvariantCulture);
         value = this.ReplacerFunction.CallFromNative("stringify", holder, propertyName, value);
       }
 
@@ -163,10 +164,9 @@
       // Serialize a boolean value.
       if (value is bool)
       {
-        if ((bool)value == false)
-          result.Append("false");
-        else
-          result.Append("true");
+        result.Append((bool) value == false
+          ? "false"
+          : "true");
         return;
       }
 
@@ -180,15 +180,22 @@
       // Serialize a numeric value.
       if (value is double)
       {
-        if (double.IsInfinity((double)value) == true || double.IsNaN((double)value))
+        if (double.IsInfinity((double)value) || double.IsNaN((double)value))
           result.Append("null");
         else
           result.Append(NumberFormatter.ToString((double)value, 10, NumberFormatter.Style.Regular, 0));
         return;
       }
+
       if (value is int)
       {
-        result.Append(((int)value).ToString());
+        result.Append(((int)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is uint)
+      {
+        result.Append(((uint)value).ToString(CultureInfo.InvariantCulture));
         return;
       }
 
@@ -290,13 +297,13 @@
     private void SerializeObject(ObjectInstance value, StringBuilder result)
     {
       // Add the spacer string to the current separator string.
-      string previousSeparator = this.separator;
-      this.separator += this.Indentation;
+      string previousSeparator = this.m_separator;
+      this.m_separator += this.Indentation;
 
       // Check for cyclical references.
-      if (this.objectStack.Contains(value) == true)
-        throw new JavaScriptException(this.engine, "TypeError", "The given object must not contain cyclical references");
-      this.objectStack.Push(value);
+      if (this.m_objectStack.Contains(value))
+        throw new JavaScriptException(this.m_engine, "TypeError", "The given object must not contain cyclical references");
+      this.m_objectStack.Push(value);
 
       // Create a list of property names to serialize.
       var propertiesToSerialize = this.SerializableProperties;
@@ -304,7 +311,7 @@
       {
         propertiesToSerialize = new List<string>();
         foreach (var property in value.Properties)
-          if (property.IsEnumerable == true)
+          if (property.IsEnumerable)
             propertiesToSerialize.Add(property.Name);
       }
 
@@ -322,7 +329,7 @@
         // Append the separator.
         if (serializedPropertyCount > 0)
           result.Append(',');
-        result.Append(this.separator);
+        result.Append(this.m_separator);
 
         // Append the property name and value to the result.
         QuoteString(propertyName, result);
@@ -339,10 +346,10 @@
       result.Append('}');
 
       // Remove this object from the stack.
-      this.objectStack.Pop();
+      this.m_objectStack.Pop();
 
       // Restore the separator to it's previous value.
-      this.separator = previousSeparator;
+      this.m_separator = previousSeparator;
     }
 
     /// <summary>
@@ -354,13 +361,13 @@
     private void SerializeArray(ArrayInstance value, StringBuilder result)
     {
       // Add the spacer string to the current separator string.
-      string previousSeparator = this.separator;
-      this.separator += this.Indentation;
+      string previousSeparator = this.m_separator;
+      this.m_separator += this.Indentation;
 
       // Check for cyclical references.
-      if (this.arrayStack.Contains(value) == true)
-        throw new JavaScriptException(this.engine, "TypeError", "The given object must not contain cyclical references");
-      this.arrayStack.Push(value);
+      if (this.m_arrayStack.Contains(value))
+        throw new JavaScriptException(this.m_engine, "TypeError", "The given object must not contain cyclical references");
+      this.m_arrayStack.Push(value);
 
       result.Append('[');
       for (uint i = 0; i < value.Length; i++)
@@ -368,7 +375,7 @@
         // Append the separator.
         if (i > 0)
           result.Append(',');
-        result.Append(this.separator);
+        result.Append(this.m_separator);
 
         // Transform the value using the replacer function or toJSON().
         object elementValue = TransformPropertyValue(value, i);
@@ -389,10 +396,10 @@
       result.Append(']');
 
       // Remove this object from the stack.
-      this.arrayStack.Pop();
+      this.m_arrayStack.Pop();
 
       // Restore the separator to it's previous value.
-      this.separator = previousSeparator;
+      this.m_separator = previousSeparator;
     }
   }
 
