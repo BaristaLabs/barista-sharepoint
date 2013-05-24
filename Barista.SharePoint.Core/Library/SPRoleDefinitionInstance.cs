@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPRoleDefinitionInstance Construct(string name)
     {
-      var roleDefinition = BaristaContext.Current.Web.RoleDefinitions
+      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions
                                          .OfType<SPRoleDefinition>().FirstOrDefault(rd => rd.Name == name);
 
       if (roleDefinition == null)

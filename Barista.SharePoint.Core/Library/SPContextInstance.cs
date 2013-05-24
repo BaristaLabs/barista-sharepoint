@@ -8,9 +8,9 @@
   [Serializable]
   public class SPContextInstance : ObjectInstance
   {
-    private readonly BaristaContext m_context;
+    private readonly SPBaristaContext m_context;
 
-    public SPContextInstance(ScriptEngine engine, BaristaContext context)
+    public SPContextInstance(ScriptEngine engine, SPBaristaContext context)
       : base(engine)
     {
       m_context = context;

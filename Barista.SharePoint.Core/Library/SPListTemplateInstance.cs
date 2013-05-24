@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPListTemplateInstance Construct(string listTemplateName)
     {
-      var template = BaristaContext.Current.Web.ListTemplates.OfType<SPListTemplate>()
+      var template = SPBaristaContext.Current.Web.ListTemplates.OfType<SPListTemplate>()
                                    .FirstOrDefault(wt => wt.Name == listTemplateName);
  
       if (template == null)

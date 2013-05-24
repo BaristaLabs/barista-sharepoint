@@ -17,8 +17,8 @@
     public SPContentTypeInstance Construct(string contentTypeId)
     {
       var spContentTypeId = new SPContentTypeId(contentTypeId);
-      var bestSPContentTypeMatch = BaristaContext.Current.Web.AvailableContentTypes.BestMatch(spContentTypeId);
-      var contentType = BaristaContext.Current.Web.AvailableContentTypes[bestSPContentTypeMatch];
+      var bestSPContentTypeMatch = SPBaristaContext.Current.Web.AvailableContentTypes.BestMatch(spContentTypeId);
+      var contentType = SPBaristaContext.Current.Web.AvailableContentTypes[bestSPContentTypeMatch];
 
       if (contentType == null)
         throw new JavaScriptException(this.Engine, "Error", "A match for the specified content type could not be found in the current web.");

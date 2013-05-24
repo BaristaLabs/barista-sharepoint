@@ -55,7 +55,7 @@
           {
             using (var web = properties.OpenWeb())
             {
-              var context = new BaristaContext(site, web);
+              var context = new SPBaristaContext(site, web);
               EntityDeleted(context, entityId);
               return;
             }
@@ -87,7 +87,7 @@
           {
             using (var web = properties.OpenWeb())
             {
-              var context = new BaristaContext(site, web);
+              var context = new SPBaristaContext(site, web);
               EntityPartDeleted(context, entityId, partName);
               return;
             }
@@ -109,7 +109,7 @@
         {
           using (var web = properties.OpenWeb())
           {
-            var context = new BaristaContext(site, web);
+            var context = new SPBaristaContext(site, web);
             EntityDeleted(context, entityId);
             return;
           }
@@ -136,7 +136,7 @@
         {
           using (var web = properties.OpenWeb())
           {
-            var context = new BaristaContext(site, web);
+            var context = new SPBaristaContext(site, web);
             AttachmentDeleted(context, attachmentEntityId, fileName);
 // ReSharper disable RedundantJumpStatement
             return;
@@ -189,7 +189,7 @@
                   var after = web.GetFolder(properties.AfterUrl);
                   var oldFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(before.ParentFolder);
                   var newFolder = SPDocumentStoreHelper.MapFolderFromSPFolder(after.ParentFolder);
-                  var context = new BaristaContext(site, web);
+                  var context = new SPBaristaContext(site, web);
                   EntityMoved(context, entity, oldFolder, newFolder);
                 }
                 
@@ -219,7 +219,7 @@
                 {
                   using (var web = properties.OpenWeb())
                   {
-                    var context = new BaristaContext(site, web);
+                    var context = new SPBaristaContext(site, web);
                     EntityAdded(context, entity);
                   }
                 }
@@ -236,7 +236,7 @@
                   {
                     using (var web = properties.OpenWeb())
                     {
-                      var context = new BaristaContext(site, web);
+                      var context = new SPBaristaContext(site, web);
                       EntityUpdated(context, entity);
                     }
                   }
@@ -256,7 +256,7 @@
               {
                 using (var web = properties.OpenWeb())
                 {
-                  var context = new BaristaContext(site, web);
+                  var context = new SPBaristaContext(site, web);
                   EntityPartAdded(context, entityPart);
                 }
               }
@@ -266,7 +266,7 @@
               {
                 using (var web = properties.OpenWeb())
                 {
-                  var context = new BaristaContext(site, web);
+                  var context = new SPBaristaContext(site, web);
                   EntityPartUpdated(context, entityPart);
                 }
               }
@@ -285,7 +285,7 @@
             {
               using (var web = properties.OpenWeb())
               {
-                var context = new BaristaContext(site, web);
+                var context = new SPBaristaContext(site, web);
                 AttachmentAdded(context, attachment);
               }
             }
@@ -295,7 +295,7 @@
             {
               using (var web = properties.OpenWeb())
               {
-                var context = new BaristaContext(site, web);
+                var context = new SPBaristaContext(site, web);
                 AttachmentUpdated(context, attachment);
               }
             }
@@ -317,7 +317,7 @@
             {
               using (var web = properties.OpenWeb())
               {
-                var context = new BaristaContext(site, web);
+                var context = new SPBaristaContext(site, web);
                 EntityAdded(context, entity);
               }
             }
@@ -335,7 +335,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="entity"></param>
-    protected virtual void EntityAdded(BaristaContext context, Entity entity)
+    protected virtual void EntityAdded(SPBaristaContext context, Entity entity)
     {
     }
 
@@ -344,7 +344,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="entityPart"></param>
-    protected virtual void EntityPartAdded(BaristaContext context, EntityPart entityPart)
+    protected virtual void EntityPartAdded(SPBaristaContext context, EntityPart entityPart)
     {
     }
 
@@ -353,7 +353,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="attachment"></param>
-    protected virtual void AttachmentAdded(BaristaContext context, Attachment attachment)
+    protected virtual void AttachmentAdded(SPBaristaContext context, Attachment attachment)
     {
     }
 
@@ -362,7 +362,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="entity"></param>
-    protected virtual void EntityUpdated(BaristaContext context, Entity entity)
+    protected virtual void EntityUpdated(SPBaristaContext context, Entity entity)
     {
     }
 
@@ -371,7 +371,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="entityPart"></param>
-    protected virtual void EntityPartUpdated(BaristaContext context, EntityPart entityPart)
+    protected virtual void EntityPartUpdated(SPBaristaContext context, EntityPart entityPart)
     {
     }
 
@@ -380,7 +380,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="attachment"></param>
-    protected virtual void AttachmentUpdated(BaristaContext context, Attachment attachment)
+    protected virtual void AttachmentUpdated(SPBaristaContext context, Attachment attachment)
     {
     }
 
@@ -389,7 +389,7 @@
     /// </summary>
     /// <param name="context"></param>
     /// <param name="entityId"></param>
-    protected virtual void EntityDeleted(BaristaContext context, Guid entityId)
+    protected virtual void EntityDeleted(SPBaristaContext context, Guid entityId)
     {
     }
 
@@ -399,7 +399,7 @@
     /// <param name="context"></param>
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
-    protected virtual void EntityPartDeleted(BaristaContext context, Guid entityId, string partName)
+    protected virtual void EntityPartDeleted(SPBaristaContext context, Guid entityId, string partName)
     {
     }
 
@@ -409,7 +409,7 @@
     /// <param name="context"></param>
     /// <param name="entityId"></param>
     /// <param name="fileName"></param>
-    protected virtual void AttachmentDeleted(BaristaContext context, Guid entityId, string fileName)
+    protected virtual void AttachmentDeleted(SPBaristaContext context, Guid entityId, string fileName)
     {
     }
 
@@ -420,7 +420,7 @@
     /// <param name="entity"></param>
     /// <param name="oldFolder"></param>
     /// <param name="newFolder"></param>
-    protected virtual void EntityMoved(BaristaContext context, Entity entity, Folder oldFolder, Folder newFolder)
+    protected virtual void EntityMoved(SPBaristaContext context, Entity entity, Folder oldFolder, Folder newFolder)
     {
     }
 

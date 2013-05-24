@@ -33,7 +33,7 @@
           includeQueryTag is bool)
         bIncludeQueryTag = (bool) includeQueryTag;
 
-      var queryParameters = BaristaContext.Current.Request.QueryString;
+      var queryParameters = SPBaristaContext.Current.Request.QueryString;
       return CreateCamlQueryFromOData(list.List, queryParameters, bIncludeQueryTag);
     }
 

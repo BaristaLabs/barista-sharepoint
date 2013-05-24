@@ -114,16 +114,16 @@
         ContentType = request.ContentType
       };
       
-      BaristaContext.Current = new BaristaContext(request, response);
+      SPBaristaContext.Current = new SPBaristaContext(request, response);
 
       Mutex syncRoot = null;
 
-      if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+      if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
       {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
       }
 
-      var webBundle = new WebBundle();
+      var webBundle = new SPWebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       if (syncRoot != null)
@@ -133,7 +133,9 @@
       {
         bool isNewScriptEngineInstance;
         bool errorInInitialization;
-        var engine = SPScriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+        var scriptEngineFactory = new SPBaristaScriptEngineFactory();
+        var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
 
         if (errorInInitialization)
           return response;
@@ -168,12 +170,12 @@
         catch (JavaScriptException ex)
         {
           BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-          SPScriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
         }
         catch (Exception ex)
         {
           BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occurred while evaluating script: ");
-          SPScriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
         {
@@ -182,10 +184,10 @@
           engine = null;
           // ReSharper restore RedundantAssignment
 
-          if (BaristaContext.Current != null)
-            BaristaContext.Current.Dispose();
+          if (SPBaristaContext.Current != null)
+            SPBaristaContext.Current.Dispose();
 
-          BaristaContext.Current = null;
+          SPBaristaContext.Current = null;
         }
       }
       finally
@@ -208,16 +210,16 @@
       };
 
       //Set the current context with information from the current request and response.
-      BaristaContext.Current = new BaristaContext(request, response);
+      SPBaristaContext.Current = new SPBaristaContext(request, response);
 
       //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
       Mutex syncRoot = null;
-      if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+      if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
       {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
+        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
       }
 
-      var webBundle = new WebBundle();
+      var webBundle = new SPWebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       if (syncRoot != null)
@@ -227,8 +229,10 @@
       {
         bool isNewScriptEngineInstance;
         bool errorInInitialization;
-        var engine = SPScriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
-                                                           out errorInInitialization);
+
+        var scriptEngineFactory = new SPBaristaScriptEngineFactory();
+        var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
+                                                         out errorInInitialization);
 
         if (errorInInitialization)
           return;
@@ -248,13 +252,13 @@
         {
           BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
                                                        "A JavaScript exception was thrown while evaluating script: ");
-          SPScriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
         }
         catch (Exception ex)
         {
           BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
                                                        "An internal error occured while executing script: ");
-          SPScriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
         {
@@ -263,10 +267,10 @@
           engine = null;
           // ReSharper restore RedundantAssignment
 
-          if (BaristaContext.Current != null)
-            BaristaContext.Current.Dispose();
+          if (SPBaristaContext.Current != null)
+            SPBaristaContext.Current.Dispose();
 
-          BaristaContext.Current = null;
+          SPBaristaContext.Current = null;
         }
       }
       finally

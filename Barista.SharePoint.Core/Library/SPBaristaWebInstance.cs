@@ -9,12 +9,12 @@
   /// <summary>
   /// Represents a SharePoint-specific implementation of a WebInstance.
   /// </summary>
-  public class WebInstance : WebInstanceBase
+  public class SPBaristaWebInstance : WebInstanceBase
   {
     private HttpRequestInstance m_httpRequest;
     private HttpResponseInstance m_httpResponse;
 
-    public WebInstance(ScriptEngine engine)
+    public SPBaristaWebInstance(ScriptEngine engine)
       : base(engine)
     {
       this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Public);
@@ -25,9 +25,9 @@
     {
       get
       {
-        if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, BaristaContext.Current.Request) == false))
+        if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, SPBaristaContext.Current.Request) == false))
         {
-          m_httpRequest = new HttpRequestInstance(this.Engine, BaristaContext.Current.Request);
+          m_httpRequest = new HttpRequestInstance(this.Engine, SPBaristaContext.Current.Request);
         }
 
         return m_httpRequest;
@@ -40,9 +40,9 @@
     {
       get
       {
-        if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, BaristaContext.Current.Response) == false))
+        if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, SPBaristaContext.Current.Response) == false))
         {
-          m_httpResponse = new HttpResponseInstance(this.Engine, BaristaContext.Current.Response);
+          m_httpResponse = new HttpResponseInstance(this.Engine, SPBaristaContext.Current.Response);
         }
 
         return m_httpResponse;

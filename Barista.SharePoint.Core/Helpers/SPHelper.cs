@@ -19,11 +19,11 @@
     {
       if (String.IsNullOrEmpty(loginName) || loginName == Undefined.Value.ToString())
       {
-        user = BaristaContext.Current.Web.CurrentUser;
+        user = SPBaristaContext.Current.Web.CurrentUser;
       }
       else
       {
-        user = BaristaContext.Current.Web.AllUsers[loginName] ?? BaristaContext.Current.Web.EnsureUser(loginName);
+        user = SPBaristaContext.Current.Web.AllUsers[loginName] ?? SPBaristaContext.Current.Web.EnsureUser(loginName);
       }
 
       return user != null;
@@ -37,7 +37,7 @@
     /// <returns></returns>
     public static bool TryGetSPGroupFromGroupName(string groupName, out SPGroup group)
     {
-      group = BaristaContext.Current.Web.SiteGroups[groupName];
+      group = SPBaristaContext.Current.Web.SiteGroups[groupName];
 
       if (group == null)
         return false;
@@ -67,7 +67,7 @@
         return true;
       }
 
-      if (BaristaContext.HasCurrentContext && Uri.TryCreate(new Uri(BaristaContext.Current.Web.Url), uriString, out finalUri))
+      if (SPBaristaContext.HasCurrentContext && Uri.TryCreate(new Uri(SPBaristaContext.Current.Web.Url), uriString, out finalUri))
       {
         uri = finalUri;
         return true;
@@ -410,8 +410,8 @@
 
       Uri referrer = null;
 
-      if (BaristaContext.HasCurrentContext && BaristaContext.Current.Request != null && BaristaContext.Current.Request.UrlReferrer != null)
-        referrer = BaristaContext.Current.Request.UrlReferrer;
+      if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.UrlReferrer != null)
+        referrer = SPBaristaContext.Current.Request.UrlReferrer;
       else if (HttpContext.Current != null)
         referrer = HttpContext.Current.Request.UrlReferrer;
 
@@ -476,23 +476,23 @@
     /// <returns></returns>
     public static string ReplaceTokens(string text)
     {
-      if (BaristaContext.Current == null)
+      if (SPBaristaContext.Current == null)
         return text;
 
       string result = text;
-      if (BaristaContext.Current.List != null)
-        result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(BaristaContext.Current.Web.Url, BaristaContext.Current.List.RootFolder.Url));
+      if (SPBaristaContext.Current.List != null)
+        result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, SPBaristaContext.Current.List.RootFolder.Url));
 
-      if (BaristaContext.Current.Web != null)
+      if (SPBaristaContext.Current.Web != null)
       {
-        result = result.Replace("{WebUrl}", BaristaContext.Current.Web.Url);
-        result = result.Replace("~site", BaristaContext.Current.Web.ServerRelativeUrl);
+        result = result.Replace("{WebUrl}", SPBaristaContext.Current.Web.Url);
+        result = result.Replace("~site", SPBaristaContext.Current.Web.ServerRelativeUrl);
       }
 
-      if (BaristaContext.Current.Site != null)
+      if (SPBaristaContext.Current.Site != null)
       {
-        result = result.Replace("{SiteUrl}", BaristaContext.Current.Site.Url);
-        result = result.Replace("~sitecollection", BaristaContext.Current.Site.ServerRelativeUrl);
+        result = result.Replace("{SiteUrl}", SPBaristaContext.Current.Site.Url);
+        result = result.Replace("~sitecollection", SPBaristaContext.Current.Site.ServerRelativeUrl);
       }
 
       return result;
@@ -567,7 +567,7 @@
                 break;
               case "User":
                 //TODO: Maybe get another web?
-                propertyValue = new SPFieldUserValue(BaristaContext.Current.Web, fieldValue.GetPropertyValue("fieldValue").ToString());
+                propertyValue = new SPFieldUserValue(SPBaristaContext.Current.Web, fieldValue.GetPropertyValue("fieldValue").ToString());
                 break;
               default:
                 propertyValue = fieldValue.ToString();

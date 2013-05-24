@@ -106,7 +106,7 @@
     /// <returns></returns>
     public static string LoadEncryptedString(string name)
     {
-      return LoadEncryptedString(name, BaristaContext.Current.Site.WebApplication);
+      return LoadEncryptedString(name, SPBaristaContext.Current.Site.WebApplication);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@
     /// <param name="value"></param>
     public static void StoreEncryptedString(string name, string value)
     {
-      StoreEncryptedString(name, value, BaristaContext.Current.Site.WebApplication);
+      StoreEncryptedString(name, value, SPBaristaContext.Current.Site.WebApplication);
     }
 
     /// <summary>

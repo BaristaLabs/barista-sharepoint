@@ -20,7 +20,7 @@
     {
       Guid featureGuid = new Guid(featureId);
 
-      var featureQueryResult = BaristaContext.Current.Site.QueryFeatures(featureGuid);
+      var featureQueryResult = SPBaristaContext.Current.Site.QueryFeatures(featureGuid);
       var feature = featureQueryResult.OrderByDescending(f => f.Version).FirstOrDefault();
       
       if (feature == null)

@@ -15,8 +15,8 @@
       var adInstance = (ActiveDirectoryInstance)base.InstallBundle(engine);
 
       //Set the current login name based on the current user associated with the context.
-      if (BaristaContext.Current.Web != null)
-        adInstance.CurrentUserLoginName = BaristaContext.Current.Web.CurrentUser.LoginName;
+      if (SPBaristaContext.Current.Web != null)
+        adInstance.CurrentUserLoginName = SPBaristaContext.Current.Web.CurrentUser.LoginName;
 
       return adInstance;
     }

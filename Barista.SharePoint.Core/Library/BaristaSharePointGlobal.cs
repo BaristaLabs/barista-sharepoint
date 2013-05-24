@@ -30,10 +30,10 @@
     {
       var result = false;
 
-      if (BaristaContext.Current.Request.InstanceMode == BaristaInstanceMode.PerCall)
+      if (SPBaristaContext.Current.Request.InstanceMode == BaristaInstanceMode.PerCall)
         return false;
 
-      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName) as ScriptEngine;
+      var cached = HttpRuntime.Cache.Get("Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName) as ScriptEngine;
       if (cached != null)
         result = true;
 
@@ -44,13 +44,13 @@
     public static bool ClearCurrentInstance()
     {
       bool result = true;
-      switch (BaristaContext.Current.Request.InstanceMode)
+      switch (SPBaristaContext.Current.Request.InstanceMode)
       {
         case BaristaInstanceMode.Single:
-          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
           break;
         case BaristaInstanceMode.PerSession:
-          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(BaristaContext.Current.Request.InstanceName);
+          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
           break;
       }
 
@@ -74,9 +74,9 @@
       isNewScriptEngineInstance = false;
 
       //If a instance initialization code path is defined, retrieve the etag.
-      if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCodePath) == false)
+      if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCodePath) == false)
       {
-        SPHelper.TryGetSPFileETag(BaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
+        SPHelper.TryGetSPFileETag(SPBaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
       }
 
       //If the eTag of the initialization script differs, recreate the instance.
@@ -97,11 +97,11 @@
         var absoluteExpiration = Cache.NoAbsoluteExpiration;
         var slidingExpiration = Cache.NoSlidingExpiration;
 
-        if (BaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
-          absoluteExpiration = BaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
+        if (SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
+          absoluteExpiration = SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
 
-        if (BaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
-          slidingExpiration = BaristaContext.Current.Request.InstanceSlidingExpiration.Value;
+        if (SPBaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
+          slidingExpiration = SPBaristaContext.Current.Request.InstanceSlidingExpiration.Value;
 
         engine = new ScriptEngine();
         isNewScriptEngineInstance = true;
@@ -140,9 +140,9 @@
       isNewScriptEngineInstance = false;
 
       //If a instance initialization code path is defined, retrieve the etag.
-      if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCodePath) == false)
+      if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCodePath) == false)
       {
-        SPHelper.TryGetSPFileETag(BaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
+        SPHelper.TryGetSPFileETag(SPBaristaContext.Current.Request.InstanceInitializationCodePath, out instanceInitializationCodeETag);
       }
 
       //If the eTag of the initialization script differs, recreate the instance.

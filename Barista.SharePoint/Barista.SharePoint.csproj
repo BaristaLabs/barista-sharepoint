@@ -220,7 +220,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\BaristaWcfService.cs" />
-    <Compile Include="SPScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ADMIN\SharePointProjectItem.spdata">

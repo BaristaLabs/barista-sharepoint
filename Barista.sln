@@ -110,9 +110,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Web", "Barista.Web\Barista.Web.csproj", "{83078881-2C80-47E3-9BED-A87FB429F347}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
+		SccNumberOfProjects = 11
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -152,6 +154,10 @@ Global
 		SccProjectTopLevelParentUniqueName9 = Barista.sln
 		SccProjectName9 = Barista.SharePoint.SearchService
 		SccLocalPath9 = Barista.SharePoint.SearchService
+		SccProjectUniqueName10 = Barista.Web\\Barista.Web.csproj
+		SccProjectTopLevelParentUniqueName10 = Barista.sln
+		SccProjectName10 = Barista.Web
+		SccLocalPath10 = Barista.Web
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -198,6 +204,10 @@ Global
 		{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83078881-2C80-47E3-9BED-A87FB429F347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83078881-2C80-47E3-9BED-A87FB429F347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83078881-2C80-47E3-9BED-A87FB429F347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83078881-2C80-47E3-9BED-A87FB429F347}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -205,6 +215,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
+		{83078881-2C80-47E3-9BED-A87FB429F347} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{17B92DC5-9402-44DF-B03C-4687E99FEF61} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}

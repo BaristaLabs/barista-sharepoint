@@ -55,7 +55,7 @@
         throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
 
       var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = BaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
 
       AddPrincipal(group, roleDefinition);
     }
@@ -82,7 +82,7 @@
         throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
 
       var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = BaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
 
       AddPrincipal(user, roleDefinition);
     }
@@ -99,7 +99,7 @@
     public void AddUser(SPUserInstance user, string roleType)
     {
       var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = BaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
 
       AddPrincipal(user.User, roleDefinition);
     }

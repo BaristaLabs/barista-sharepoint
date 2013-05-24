@@ -43,10 +43,10 @@
       m_originalCatchAccessDeniedValue = SPSecurity.CatchAccessDeniedException;
       SPSecurity.CatchAccessDeniedException = false;
 
-      if (BaristaContext.HasCurrentContext)
+      if (SPBaristaContext.HasCurrentContext)
       {
-        this.DocumentStoreUrl = SPUtility.ConcatUrls(BaristaContext.Current.Site.Url, BaristaContext.Current.Web.ServerRelativeUrl);
-        this.CurrentUserLoginName = BaristaContext.Current.Web.CurrentUser.LoginName;
+        this.DocumentStoreUrl = SPUtility.ConcatUrls(SPBaristaContext.Current.Site.Url, SPBaristaContext.Current.Web.ServerRelativeUrl);
+        this.CurrentUserLoginName = SPBaristaContext.Current.Web.CurrentUser.LoginName;
       }
       else if (SPContext.Current != null)
       {

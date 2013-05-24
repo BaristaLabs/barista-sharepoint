@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPDocTemplateInstance Construct(int type)
     {
-      var docTemplate = BaristaContext.Current.Web.DocTemplates
+      var docTemplate = SPBaristaContext.Current.Web.DocTemplates
                                       .OfType<SPDocTemplate>()
                                       .FirstOrDefault(dt => dt.Type == type);
 

@@ -10,7 +10,7 @@
   {
     public static bool SendEmail(string to, string cc, string bcc, string from, string subject, string messageBody, bool appendFooter)
     {
-      if (BaristaContext.Current == null)
+      if (SPBaristaContext.Current == null)
         throw new InvalidOperationException("No SharePoint Context.");
 
       //Todo: Replace tokens in message body with the specified text.
@@ -26,7 +26,7 @@
 
       messageBody = "<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html\"></HEAD><BODY>" + messageBody + "</BODY></HTML>";
 
-      return EmailHelper.SendMailInternal(BaristaContext.Current.Site, subject, messageBody, true, from, to, cc, bcc);
+      return EmailHelper.SendMailInternal(SPBaristaContext.Current.Site, subject, messageBody, true, from, to, cc, bcc);
     }
 
     private static bool SendMailInternal(SPSite site, string subject, string body, bool isBodyHtml, string @from, string to, string cc, string bcc)

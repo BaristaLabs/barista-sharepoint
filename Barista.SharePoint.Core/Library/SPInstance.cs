@@ -19,7 +19,7 @@
     private readonly SPFarmInstance m_farm;
     private readonly SPServerInstance m_server;
 
-    public SPInstance(ScriptEngine engine, BaristaContext context, SPFarm farmContext, SPServer serverContext)
+    public SPInstance(ScriptEngine engine, SPBaristaContext context, SPFarm farmContext, SPServer serverContext)
       : base(engine)
     {
       m_context = new SPContextInstance(this.Engine, context);
@@ -112,7 +112,7 @@
     [JSFunction(Name = "getCurrentUser")]
     public SPUserInstance GetCurrentSPUser()
     {
-      return new SPUserInstance(this.Engine.Object.InstancePrototype, BaristaContext.Current.Web.CurrentUser);
+      return new SPUserInstance(this.Engine.Object.InstancePrototype, SPBaristaContext.Current.Web.CurrentUser);
     }
 
     [JSDoc("Sends an email.")]

@@ -24,23 +24,48 @@
   [Serializable]
   public abstract class WebInstanceBase : ObjectInstance
   {
+    private HttpRequestInstance m_httpRequest;
+    private HttpResponseInstance m_httpResponse;
+
     protected WebInstanceBase (ScriptEngine engine)
       : base(engine)
     {
-      //this.PopulateFields();
-      //this.PopulateFunctions();
     }
 
-    public abstract HttpRequestInstance Request
+    /// <summary>
+    /// Gets or sets the HttpRequestInstance associated with the web instance and the current context.
+    /// </summary>
+    [JSProperty(Name = "request")]
+    public virtual HttpRequestInstance Request
     {
-      get;
-      set;
+      get
+      {
+        if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, BaristaContext.Current.Request) == false))
+        {
+          m_httpRequest = new HttpRequestInstance(this.Engine, BaristaContext.Current.Request);
+        }
+
+        return m_httpRequest;
+      }
+      set { m_httpRequest = value; }
     }
 
-    public abstract HttpResponseInstance Response
+    /// <summary>
+    /// Gets or sets the HttpRequestInstance associated with the web instance and the current context.
+    /// </summary>
+    [JSProperty(Name = "response")]
+    public virtual HttpResponseInstance Response
     {
-      get;
-      set;
+      get
+      {
+        if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, BaristaContext.Current.Response) == false))
+        {
+          m_httpResponse = new HttpResponseInstance(this.Engine, BaristaContext.Current.Response);
+        }
+
+        return m_httpResponse;
+      }
+      set { m_httpResponse = value; }
     }
 
     #region Ajax

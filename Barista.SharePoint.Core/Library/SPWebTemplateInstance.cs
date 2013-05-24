@@ -18,7 +18,7 @@
     [JSConstructorFunction]
     public SPWebTemplateInstance Construct(string templateName)
     {
-      var template = BaristaContext.Current.Site.GetWebTemplates((uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID)
+      var template = SPBaristaContext.Current.Site.GetWebTemplates((uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID)
                                    .OfType<SPWebTemplate>().FirstOrDefault(wt => wt.Title == templateName);
  
       if (template == null)

@@ -148,12 +148,15 @@
     <Compile Include="ArraySegmentEx.cs" />
     <Compile Include="ArraySegmentList.cs" />
     <Compile Include="AssemblyUtil.cs" />
+    <Compile Include="BaristaContext.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
+    <Compile Include="BaristaScriptEngineFactory.cs" />
     <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\BaristaWebBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
     <Compile Include="Bundles\LinqBundle.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="Bundles\SugarBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebAdministrationBundle.cs" />
+    <Compile Include="Bundles\WebBundleBase.cs" />
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />
@@ -965,8 +969,10 @@
     <Compile Include="Library\ADGroupInstance.cs" />
     <Compile Include="Library\ADUserInstance.cs" />
     <Compile Include="Library\ApplicationPoolInstance.cs" />
+    <Compile Include="Library\BaristaWebInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
     <Compile Include="PrincipalType.cs" />
+    <Compile Include="ScriptEngineFactory.cs" />
     <Compile Include="Search\BaristaSearchClient.cs" />
     <Compile Include="Search\Data Contracts\BooleanClause.cs" />
     <Compile Include="Search\Data Contracts\Explanation.cs" />
@@ -1270,8 +1276,10 @@
     <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Term.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
+    <Compile Include="ServiceContracts\IBaristaWebService.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
     <Compile Include="Search\BaristaSearchService.cs" />
+    <Compile Include="Services\BaristaWebService.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />

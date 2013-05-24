@@ -39,7 +39,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPSiteDataQuery", new SPSiteDataQueryConstructor(engine));
       engine.SetGlobalValue("SPUser", new SPUserConstructor(engine));
 
-      return new SPInstance(engine, BaristaContext.Current, SPFarm.Local, SPServer.Local);
+      return new SPInstance(engine, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
     }
   }
 }

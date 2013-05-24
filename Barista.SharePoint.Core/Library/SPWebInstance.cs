@@ -589,7 +589,7 @@
       {
         if (string.IsNullOrEmpty(serverRelativeUrl) || SPUrlUtility.IsUrlRelative(serverRelativeUrl))
         {
-          serverRelativeUrl = SPUtility.GetFullUrl(BaristaContext.Current.Site, serverRelativeUrl);
+          serverRelativeUrl = SPUtility.GetFullUrl(SPBaristaContext.Current.Site, serverRelativeUrl);
         }
 
         list = m_web.GetList(serverRelativeUrl);

@@ -7,9 +7,9 @@
   using System.Text;
 
   [Serializable]
-  public class BaristaConsoleOutput : IFirebugConsoleOutput
+  public class SPBaristaConsoleOutput : IFirebugConsoleOutput
   {
-    public BaristaConsoleOutput(ScriptEngine engine)
+    public SPBaristaConsoleOutput(ScriptEngine engine)
     {
       if (engine == null)
         throw new ArgumentNullException("engine");
@@ -25,12 +25,12 @@
 
     public void Log(FirebugConsoleMessageStyle style, object[] objects)
     {
-      BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
 
-      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.Console];
+      var cat = baristaLogService[BaristaDiagnosticCategory.Console];
 
-      StringBuilder output = new StringBuilder();
-      for (int i = 0; i < objects.Length; i++)
+      var output = new StringBuilder();
+      for (var i = 0; i < objects.Length; i++)
       {
         if (i > 0)
           output.AppendLine();
@@ -72,17 +72,17 @@
 
     public void StartGroup(string title, bool initiallyCollapsed)
     {
-      BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
 
-      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
+      var cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
       baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----Start Group - " + title, initiallyCollapsed);
     }
 
     public void EndGroup()
     {
-      BaristaDiagnosticsService baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
 
-      SPDiagnosticsCategory cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
+      var cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
       baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----End Group");
     }
   }
