@@ -112,9 +112,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Web", "Barista.Web\Barista.Web.csproj", "{83078881-2C80-47E3-9BED-A87FB429F347}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaWebHost", "BaristaWebHost\BaristaWebHost.csproj", "{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -158,6 +160,10 @@ Global
 		SccProjectTopLevelParentUniqueName10 = Barista.sln
 		SccProjectName10 = Barista.Web
 		SccLocalPath10 = Barista.Web
+		SccProjectUniqueName11 = BaristaWebHost\\BaristaWebHost.csproj
+		SccProjectTopLevelParentUniqueName11 = Barista.sln
+		SccProjectName11 = BaristaWebHost
+		SccLocalPath11 = BaristaWebHost
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,6 +214,10 @@ Global
 		{83078881-2C80-47E3-9BED-A87FB429F347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83078881-2C80-47E3-9BED-A87FB429F347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83078881-2C80-47E3-9BED-A87FB429F347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,5 +237,6 @@ Global
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
+		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA} = {7DB948B6-8410-4DB1-8C29-0310F6D2047F}
 	EndGlobalSection
 EndGlobal

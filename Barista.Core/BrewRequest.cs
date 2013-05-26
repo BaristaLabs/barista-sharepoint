@@ -1,5 +1,7 @@
 ﻿namespace Barista
 {
+  using System.IO;
+  using System.Reflection;
   using Barista.Extensions;
   using System;
   using System.Collections.Generic;
@@ -406,22 +408,35 @@
           UserHostAddress = request.UserHostAddress,
           UserHostName = request.UserHostName,
           UserLanguages = request.UserLanguages,
-          Body = request.InputStream.ToByteArray(),
         };
 
-      foreach (var fileName in request.Files.AllKeys)
-      {
-        var file = request.Files[fileName];
-        var content = file.InputStream.ToByteArray();
+      //Workaroud for a .net 4.5 bug. See http://connect.microsoft.com/VisualStudio/feedback/details/773331/aspnetcompatibilityrequirements-is-ignored-in-wcf-4-5
+      //var bufferlessInputStream = request.GetType()
+      //                                     .GetMethod("GetBufferlessInputStream",
+      //                                                BindingFlags.Instance | BindingFlags.Public, null, new Type[] {}, null);
+      //if (bufferlessInputStream != null)
+      //{
+      //  var stream = (Stream)bufferlessInputStream.Invoke(request, null);
+      //  result.Body = stream.ToByteArray();
+      //}
+      //else
+      //{
+        result.Body = request.InputStream.ToByteArray();
 
-        result.Files.Add(fileName, new PostedFile
+        foreach (var fileName in request.Files.AllKeys)
+        {
+          var file = request.Files[fileName];
+          var content = file.InputStream.ToByteArray();
+
+          result.Files.Add(fileName, new PostedFile
           {
-          Content = content,
-          ContentLength = file.ContentLength,
-          ContentType = file.ContentType,
-          FileName = file.FileName
-        });
-      }
+            Content = content,
+            ContentLength = file.ContentLength,
+            ContentType = file.ContentType,
+            FileName = file.FileName
+          });
+        }
+      //}
 
       //TODO: Make this more robust -- i.e. Support multiple cookies by name/domain key
       foreach (var cookieName in request.Cookies.AllKeys)
@@ -557,7 +572,6 @@
 
       return result;
     }
-
     #endregion
   }
 }

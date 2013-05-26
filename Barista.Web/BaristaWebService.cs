@@ -1,4 +1,4 @@
-﻿namespace Barista.Services
+﻿namespace Barista.Web
 {
   using System.Threading;
   using Barista.Bundles;
@@ -238,24 +238,36 @@
       scriptPath = String.Empty;
 
       //If the code looks like a path, attempt to retrieve a code file and use the contents of that file as the code.
-      var path = "API";
-      var configPathKey =
-        ConfigurationManager.AppSettings.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_scriptpath");
-      if (configPathKey != null)
+      
+      if (code.StartsWith("~"))
       {
-        var configPath = ConfigurationManager.AppSettings[configPathKey];
-        if (String.IsNullOrEmpty(configPath) == false)
+        var mappedPath = HttpContext.Current.Request.MapPath(code);
+        if (File.Exists(mappedPath))
         {
-          path = configPath;
+          scriptPath = mappedPath;
+          code = File.ReadAllText(mappedPath);
         }
       }
-      path = Path.Combine(path, code);
-      path = HttpContext.Current.Server.MapPath(path);
-
-      if (File.Exists(path))
+      else
       {
-        scriptPath = path;
-        code = File.ReadAllText(path);
+        var path = "API";
+        var configPathKey =
+          ConfigurationManager.AppSettings.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_scriptpath");
+        if (configPathKey != null)
+        {
+          var configPath = ConfigurationManager.AppSettings[configPathKey];
+          if (String.IsNullOrEmpty(configPath) == false)
+          {
+            path = configPath;
+          }
+        }
+
+        path = Path.Combine(path, code);
+        if (File.Exists(path))
+        {
+          scriptPath = path;
+          code = File.ReadAllText(path);
+        }
       }
 
       //Replace any tokens in the code.
@@ -358,7 +370,7 @@
 
         try
         {
-          object result = engine.Evaluate(source);
+          var result = engine.Evaluate(source);
 
           var isRaw = false;
 
