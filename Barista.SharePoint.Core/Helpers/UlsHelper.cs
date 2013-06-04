@@ -1,6 +1,6 @@
 ﻿namespace Barista.SharePoint.Helpers
 {
-  using Microsoft.SharePoint.Utilities;
+  using Microsoft.SharePoint.Administration;
   using System;
   using System.Collections.Generic;
   using System.Globalization;
@@ -14,8 +14,9 @@
   {
     public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook)
     {
-      var di = new DirectoryInfo(SPUtility.GetGenericSetupPath("LOGS"));
-
+      var config = SPDiagnosticsService.Local;
+      var di = new DirectoryInfo(config.LogLocation);
+      
       if (daysToLook < 1)
         daysToLook = 1;
 

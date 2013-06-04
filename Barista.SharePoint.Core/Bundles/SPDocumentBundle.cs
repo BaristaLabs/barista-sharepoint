@@ -1,11 +1,11 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
   using Barista.Library;
-  using Barista.SharePoint.Library;
   using System;
+  using Barista.SharePoint.Library;
 
   [Serializable]
-  public class DocumentBundle : IBundle
+  public class SPDocumentBundle : IBundle
   {
     public string BundleName
     {
@@ -19,7 +19,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      engine.SetGlobalValue("ExcelPackage", new ExcelPackageConstructor(engine));
+      engine.SetGlobalValue("ExcelDocument", new SPExcelDocumentConstructor(engine));
       engine.SetGlobalValue("ZipFile", new ZipFileConstructor(engine));
       engine.SetGlobalValue("PdfAttachment", new PdfAttachmentConstructor(engine));
 
