@@ -178,7 +178,7 @@
       }
       else
       {
-        for (var c = worksheet.Dimension.Start.Column; c < worksheet.Dimension.End.Column; c++)
+        for (var c = worksheet.Dimension.Start.Column; c <= worksheet.Dimension.End.Column; c++)
         {
           var iColumnNumber = c;
           var sCol = "";
@@ -192,11 +192,11 @@
         }
       }
 
-      for (var rowPos = startPos; rowPos < worksheet.Dimension.End.Row; rowPos++)
+      for (var rowPos = startPos; rowPos <= worksheet.Dimension.End.Row; rowPos++)
       {
         var rowObject = this.Engine.Object.Construct();
 
-        for (var c = worksheet.Dimension.Start.Column; c < worksheet.Dimension.End.Column; c++)
+        for (var c = worksheet.Dimension.Start.Column; c <= worksheet.Dimension.End.Column; c++)
         {
           var cell = worksheet.Cells[rowPos, c];
           rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
