@@ -128,11 +128,9 @@
       return result;
     }
 
-    [JSFunction(Name = "getWorksheetAsJson")]
-    public ArrayInstance GetWorksheetAsJson(object worksheetName, object hasHeader)
+    [JSFunction(Name = "getWorksheet")]
+    public ExcelWorksheetInstance GetWorksheet(object worksheetName)
     {
-      var bHasHeader = true;
-
       ExcelWorksheet worksheet;
       if (TypeUtilities.IsString(worksheetName))
       {
@@ -153,59 +151,18 @@
       else
       {
         throw new JavaScriptException(this.Engine, "Error",
-                                      "The first parameter must either be the name or index of a worksheet.");
+                                      "The first argument must either be the name or index of a worksheet.");
       }
 
-      if (hasHeader != Undefined.Value && hasHeader != null && TypeConverter.ToBoolean(hasHeader) == false)
-        bHasHeader = false;
+      var worksheetInstance = new ExcelWorksheetInstance(this.Engine.Object.Prototype, worksheet);
+      return worksheetInstance;
+    }
 
-      if (worksheet.Dimension == null)
-        return null;
-
-      //Start processing.
-      var result = this.Engine.Array.Construct();
-      var startPos = worksheet.Dimension.Start.Row;
-
-      var propertyNames = new List<string>();
-      if (bHasHeader)
-      {
-        for (var c = worksheet.Dimension.Start.Column; c < worksheet.Dimension.End.Column; c++)
-        {
-          propertyNames.Add(worksheet.Cells[startPos, c].GetValue<string>());
-        }
-
-        startPos = startPos + 1;
-      }
-      else
-      {
-        for (var c = worksheet.Dimension.Start.Column; c <= worksheet.Dimension.End.Column; c++)
-        {
-          var iColumnNumber = c;
-          var sCol = "";
-          do
-          {
-            sCol = ((char) ('A' + ((iColumnNumber - 1)%26))) + sCol;
-            iColumnNumber = (iColumnNumber - ((iColumnNumber - 1)%26))/26;
-          } while (iColumnNumber > 0);
-
-          propertyNames.Add(sCol);
-        }
-      }
-
-      for (var rowPos = startPos; rowPos <= worksheet.Dimension.End.Row; rowPos++)
-      {
-        var rowObject = this.Engine.Object.Construct();
-
-        for (var c = worksheet.Dimension.Start.Column; c <= worksheet.Dimension.End.Column; c++)
-        {
-          var cell = worksheet.Cells[rowPos, c];
-          rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
-        }
-
-        ArrayInstance.Push(result, rowObject);
-      }
-
-      return result;
+    [JSFunction(Name = "getWorksheetAsJson")]
+    public ArrayInstance GetWorksheetAsJson(object worksheetName, object hasHeader)
+    {
+      var worksheetInstance = GetWorksheet(worksheetName);
+      return worksheetInstance.ConvertToJson(hasHeader);
     }
 
     [JSFunction(Name = "load")]
