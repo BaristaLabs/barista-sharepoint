@@ -542,34 +542,6 @@ a:focus {
 .container-fluid:after {
   clear: both;
 }
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: url(../fonts/opensans-regular.eot);
-  src: local('Open Sans'), local('OpenSans'), url(opensans-regular.eot) format('embedded-opentype'), url(../fonts/opensans-regular.woff) format('woff');
-}
-@font-face {
-  font-family: 'Open Sans';
-  font-style: oblique;
-  font-weight: 400;
-  src: url(../fonts/opensans-light.eot);
-  src: local('Open Sans'), local('OpenSans'), url(opensans-light.eot) format('embedded-opentype'), url(../fonts/opensans-light.woff) format('woff');
-}
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  src: url(../fonts/opensans-semibold.eot);
-  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(../fonts/opensans-semibold.eot) format('embedded-opentype'), url(../fonts/opensans-semibold.woff) format('woff');
-}
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 700;
-  src: url(../fonts/opensans-semibold.eot);
-  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/opensans-semibold.eot) format('embedded-opentype'), url(../fonts/opensans-semibold.woff) format('woff');
-}
 p {
   margin: 0 0 10px;
 }
