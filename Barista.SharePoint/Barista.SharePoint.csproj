@@ -809,6 +809,7 @@
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\Scripts\q.min.js" />
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\TypeScript\breeze.d.ts" />
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\version.txt" />
+    <Content Include="Layouts\BaristaJS\jquery-1.10.1.min.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.css" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.min.css" />
