@@ -809,6 +809,9 @@
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\Scripts\q.min.js" />
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\TypeScript\breeze.d.ts" />
     <Content Include="Layouts\BaristaJS\breeze-1.2.7\version.txt" />
+    <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.css" />
+    <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.js" />
+    <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.min.css" />
     <Content Include="Layouts\BaristaJS\durandal-1.2.0\durandal\amd\almond-custom.js" />
     <Content Include="Layouts\BaristaJS\durandal-1.2.0\durandal\amd\r.js" />
     <Content Include="Layouts\BaristaJS\durandal-1.2.0\durandal\amd\require.js" />
@@ -1342,6 +1345,7 @@
     <Content Include="Layouts\BaristaJS\splitter.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.2.3\toastr.min.css" />
+    <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.min.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.gz.js" />
     <Content Include="Layouts\BaristaJS\TrafficCop-amd.min.js" />
