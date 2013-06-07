@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using System.Text;
@@ -62,6 +63,19 @@
         }
 
         return m_files;
+      }
+    }
+
+    [JSProperty(Name = "filenames")]
+    public ArrayInstance Filenames
+    {
+      get
+      {
+// ReSharper disable CoVariantArrayConversion
+        var result = this.Engine.Array.Construct(this.Request.Files.Select(f => f.Key).ToArray());
+// ReSharper restore CoVariantArrayConversion
+
+        return result;
       }
     }
 
