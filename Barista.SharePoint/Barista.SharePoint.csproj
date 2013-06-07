@@ -869,6 +869,7 @@
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\php\UploadHandler.php" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\test\index.html" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\test\test.js" />
+    <Content Include="Layouts\BaristaJS\sugar-1.3.9-custom.min.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.css" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.js" />
     <Content Include="Layouts\BaristaJS\toastr-1.3.1\toastr.min.css" />
