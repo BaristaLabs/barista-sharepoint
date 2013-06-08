@@ -276,8 +276,10 @@
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\gae-python\main.py" />
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\node\.gitignore" />
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\node\package.json" />
+    <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\node\public\files\.gitignore" />
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\node\public\files\thumbnail\.gitignore" />
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\node\tmp\.gitignore" />
+    <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\php\files\.gitignore" />
     <None Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\server\php\files\.htaccess" />
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.ttf" />
     <None Include="Layouts\BaristaJS\kendoui.complete.2012.3.1315\styles\images\KendoUI.woff" />
@@ -852,10 +854,12 @@
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\cors\jquery.postmessage-transport.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\cors\jquery.xdr-transport.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-angular.js" />
+    <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-audio.js" />
+    <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-image.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-process.js" />
-    <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-resize.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-ui.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-validate.js" />
+    <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload-video.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.fileupload.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\jquery.iframe-transport.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\js\main.js" />

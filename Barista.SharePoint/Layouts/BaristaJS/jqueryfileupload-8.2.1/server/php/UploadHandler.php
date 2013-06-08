@@ -1,6 +1,6 @@
 <?php
 /*
- * jQuery File Upload Plugin PHP Class 6.4.2
+ * jQuery File Upload Plugin PHP Class 6.6.2
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -62,7 +62,15 @@ class UploadHandler
                 'Content-Disposition'
             ),
             // Enable to provide file downloads via GET requests to the PHP script:
+            //     1. Set to 1 to download files via readfile method through PHP
+            //     2. Set to 2 to send a X-Sendfile header for lighttpd/Apache
+            //     3. Set to 3 to send a X-Accel-Redirect header for nginx
+            // If set to 2 or 3, adjust the upload_url option to the base path of
+            // the redirect parameter, e.g. '/files/'.
             'download_via_php' => false,
+            // Read files in chunks to avoid memory limits when download_via_php
+            // is enabled, set to 0 to disable chunked reading of files:
+            'readfile_chunk_size' => 10 * 1024 * 1024, // 10 MiB
             // Defines which files can be displayed inline when downloaded:
             'inline_file_types' => '/\.(gif|jpe?g|png)$/i',
             // Defines which files (based on their names) are accepted for upload:
@@ -176,8 +184,8 @@ class UploadHandler
         return strpos($url, '?') === false ? '?' : '&';
     }
 
-    protected function get_download_url($file_name, $version = null) {
-        if ($this->options['download_via_php']) {
+    protected function get_download_url($file_name, $version = null, $direct = false) {
+        if (!$direct && $this->options['download_via_php']) {
             $url = $this->options['script_url']
                 .$this->get_query_separator($this->options['script_url'])
                 .'file='.rawurlencode($file_name);
@@ -191,7 +199,7 @@ class UploadHandler
             .$version_path.rawurlencode($file_name);
     }
 
-    protected function set_file_delete_properties($file) {
+    protected function set_additional_file_properties($file) {
         $file->delete_url = $this->options['script_url']
             .$this->get_query_separator($this->options['script_url'])
             .'file='.rawurlencode($file->name);
@@ -247,7 +255,7 @@ class UploadHandler
                     }
                 }
             }
-            $this->set_file_delete_properties($file);
+            $this->set_additional_file_properties($file);
             return $file;
         }
         return null;
@@ -308,7 +316,7 @@ class UploadHandler
             $new_height = $img_height * $scale;
             $dst_x = 0;
             $dst_y = 0;
-            $new_img = @imagecreatetruecolor($new_width, $new_height);
+            $new_img = imagecreatetruecolor($new_width, $new_height);
         } else {
             if (($img_width / $img_height) >= ($max_width / $max_height)) {
                 $new_width = $img_width / ($img_height / $max_height);
@@ -319,35 +327,36 @@ class UploadHandler
             }
             $dst_x = 0 - ($new_width - $max_width) / 2;
             $dst_y = 0 - ($new_height - $max_height) / 2;
-            $new_img = @imagecreatetruecolor($max_width, $max_height);
+            $new_img = imagecreatetruecolor($max_width, $max_height);
         }
         switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
             case 'jpg':
             case 'jpeg':
-                $src_img = @imagecreatefromjpeg($file_path);
+                $src_img = imagecreatefromjpeg($file_path);
                 $write_image = 'imagejpeg';
                 $image_quality = isset($options['jpeg_quality']) ?
                     $options['jpeg_quality'] : 75;
                 break;
             case 'gif':
-                @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
-                $src_img = @imagecreatefromgif($file_path);
+                imagecolortransparent($new_img, imagecolorallocate($new_img, 0, 0, 0));
+                $src_img = imagecreatefromgif($file_path);
                 $write_image = 'imagegif';
                 $image_quality = null;
                 break;
             case 'png':
-                @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
-                @imagealphablending($new_img, false);
-                @imagesavealpha($new_img, true);
-                $src_img = @imagecreatefrompng($file_path);
+                imagecolortransparent($new_img, imagecolorallocate($new_img, 0, 0, 0));
+                imagealphablending($new_img, false);
+                imagesavealpha($new_img, true);
+                $src_img = imagecreatefrompng($file_path);
                 $write_image = 'imagepng';
                 $image_quality = isset($options['png_quality']) ?
                     $options['png_quality'] : 9;
                 break;
             default:
-                $src_img = null;
+                imagedestroy($new_img);
+                return false;
         }
-        $success = $src_img && @imagecopyresampled(
+        $success = imagecopyresampled(
             $new_img,
             $src_img,
             $dst_x,
@@ -360,8 +369,8 @@ class UploadHandler
             $img_height
         ) && $write_image($new_img, $new_file_path, $image_quality);
         // Free up memory (imagedestroy does not delete files):
-        @imagedestroy($src_img);
-        @imagedestroy($new_img);
+        imagedestroy($src_img);
+        imagedestroy($new_img);
         return $success;
     }
 
@@ -461,7 +470,8 @@ class UploadHandler
         );
     }
 
-    protected function get_unique_filename($name, $type, $index, $content_range) {
+    protected function get_unique_filename($name,
+            $type = null, $index = null, $content_range = null) {
         while(is_dir($this->get_upload_path($name))) {
             $name = $this->upcount_name($name);
         }
@@ -477,7 +487,8 @@ class UploadHandler
         return $name;
     }
 
-    protected function trim_file_name($name, $type, $index, $content_range) {
+    protected function trim_file_name($name,
+            $type = null, $index = null, $content_range = null) {
         // Remove path information and dots around the filename, to prevent uploading
         // into different directories or replacing hidden system files.
         // Also remove control characters and spaces (\x00..\x20) around the filename:
@@ -494,7 +505,8 @@ class UploadHandler
         return $name;
     }
 
-    protected function get_file_name($name, $type, $index, $content_range) {
+    protected function get_file_name($name,
+            $type = null, $index = null, $content_range = null) {
         return $this->get_unique_filename(
             $this->trim_file_name($name, $type, $index, $content_range),
             $type,
@@ -507,6 +519,50 @@ class UploadHandler
         // Handle form data, e.g. $_REQUEST['description'][$index]
     }
 
+    protected function imageflip($image, $mode) {
+        if (function_exists('imageflip')) {
+            return imageflip($image, $mode);
+        }
+        $new_width = $src_width = imagesx($image);
+        $new_height = $src_height = imagesy($image);
+        $new_img = imagecreatetruecolor($new_width, $new_height);
+        $src_x = 0;
+        $src_y = 0;
+        switch ($mode) {
+            case '1': // flip on the horizontal axis
+                $src_y = $new_height - 1;
+                $src_height = -$new_height;
+                break;
+            case '2': // flip on the vertical axis
+                $src_x  = $new_width - 1;
+                $src_width = -$new_width;
+                break;
+            case '3': // flip on both axes
+                $src_y = $new_height - 1;
+                $src_height = -$new_height;
+                $src_x  = $new_width - 1;
+                $src_width = -$new_width;
+                break;
+            default:
+                return $image;
+        }
+        imagecopyresampled(
+            $new_img,
+            $image,
+            0,
+            0,
+            $src_x,
+            $src_y,
+            $new_width,
+            $new_height,
+            $src_width,
+            $src_height
+        );
+        // Free up memory (imagedestroy does not delete files):
+        imagedestroy($image);
+        return $new_img;
+    }
+
     protected function orient_image($file_path) {
         if (!function_exists('exif_read_data')) {
             return false;
@@ -516,26 +572,52 @@ class UploadHandler
             return false;
         }
         $orientation = intval(@$exif['Orientation']);
-        if (!in_array($orientation, array(3, 6, 8))) {
+        if ($orientation < 2 || $orientation > 8) {
             return false;
         }
-        $image = @imagecreatefromjpeg($file_path);
+        $image = imagecreatefromjpeg($file_path);
         switch ($orientation) {
+            case 2:
+                $image = $this->imageflip(
+                    $image,
+                    defined('IMG_FLIP_VERTICAL') ? IMG_FLIP_VERTICAL : 2
+                );
+                break;
             case 3:
-                $image = @imagerotate($image, 180, 0);
+                $image = imagerotate($image, 180, 0);
+                break;
+            case 4:
+                $image = $this->imageflip(
+                    $image,
+                    defined('IMG_FLIP_HORIZONTAL') ? IMG_FLIP_HORIZONTAL : 1
+                );
+                break;
+            case 5:
+                $image = $this->imageflip(
+                    $image,
+                    defined('IMG_FLIP_HORIZONTAL') ? IMG_FLIP_HORIZONTAL : 1
+                );
+                $image = imagerotate($image, 270, 0);
                 break;
             case 6:
-                $image = @imagerotate($image, 270, 0);
+                $image = imagerotate($image, 270, 0);
+                break;
+            case 7:
+                $image = $this->imageflip(
+                    $image,
+                    defined('IMG_FLIP_VERTICAL') ? IMG_FLIP_VERTICAL : 2
+                );
+                $image = imagerotate($image, 270, 0);
                 break;
             case 8:
-                $image = @imagerotate($image, 90, 0);
+                $image = imagerotate($image, 90, 0);
                 break;
             default:
                 return false;
         }
         $success = imagejpeg($image, $file_path);
         // Free up memory (imagedestroy does not delete files):
-        @imagedestroy($image);
+        imagedestroy($image);
         return $success;
     }
 
@@ -609,7 +691,8 @@ class UploadHandler
             if ($file_size === $file->size) {
                 $file->url = $this->get_download_url($file->name);
                 list($img_width, $img_height) = @getimagesize($file_path);
-                if (is_int($img_width)) {
+                if (is_int($img_width) &&
+                        preg_match($this->options['inline_file_types'], $file->name)) {
                     $this->handle_image_file($file_path, $file);
                 }
             } else {
@@ -619,12 +702,24 @@ class UploadHandler
                     $file->error = 'abort';
                 }
             }
-            $this->set_file_delete_properties($file);
+            $this->set_additional_file_properties($file);
         }
         return $file;
     }
 
     protected function readfile($file_path) {
+        $file_size = $this->get_file_size($file_path);
+        $chunk_size = $this->options['readfile_chunk_size'];
+        if ($chunk_size && $file_size > $chunk_size) {
+            $handle = fopen($file_path, 'rb'); 
+            while (!feof($handle)) { 
+                echo fread($handle, $chunk_size); 
+                ob_flush(); 
+                flush(); 
+            } 
+            fclose($handle); 
+            return $file_size;
+        }
         return readfile($file_path);
     }
 
@@ -687,30 +782,47 @@ class UploadHandler
     }
 
     protected function download() {
-        if (!$this->options['download_via_php']) {
-            $this->header('HTTP/1.1 403 Forbidden');
-            return;
+        switch ($this->options['download_via_php']) {
+            case 1:
+                $redirect_header = null;
+                break;
+            case 2:
+                $redirect_header = 'X-Sendfile';
+                break;
+            case 3:
+                $redirect_header = 'X-Accel-Redirect';
+                break;
+            default:
+                return $this->header('HTTP/1.1 403 Forbidden');
         }
         $file_name = $this->get_file_name_param();
-        if ($this->is_valid_file_object($file_name)) {
-            $file_path = $this->get_upload_path($file_name, $this->get_version_param());
-            if (is_file($file_path)) {
-                if (!preg_match($this->options['inline_file_types'], $file_name)) {
-                    $this->header('Content-Description: File Transfer');
-                    $this->header('Content-Type: application/octet-stream');
-                    $this->header('Content-Disposition: attachment; filename="'.$file_name.'"');
-                    $this->header('Content-Transfer-Encoding: binary');
-                } else {
-                    // Prevent Internet Explorer from MIME-sniffing the content-type:
-                    $this->header('X-Content-Type-Options: nosniff');
-                    $this->header('Content-Type: '.$this->get_file_type($file_path));
-                    $this->header('Content-Disposition: inline; filename="'.$file_name.'"');
-                }
-                $this->header('Content-Length: '.$this->get_file_size($file_path));
-                $this->header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($file_path)));
-                $this->readfile($file_path);
-            }
+        if (!$this->is_valid_file_object($file_name)) {
+            return $this->header('HTTP/1.1 404 Not Found');
         }
+        if ($redirect_header) {
+            return $this->header(
+                $redirect_header.': '.$this->get_download_url(
+                    $file_name,
+                    $this->get_version_param(),
+                    true
+                )
+            );
+        }
+        $file_path = $this->get_upload_path($file_name, $this->get_version_param());
+        if (!preg_match($this->options['inline_file_types'], $file_name)) {
+            $this->header('Content-Description: File Transfer');
+            $this->header('Content-Type: application/octet-stream');
+            $this->header('Content-Disposition: attachment; filename="'.$file_name.'"');
+            $this->header('Content-Transfer-Encoding: binary');
+        } else {
+            // Prevent Internet Explorer from MIME-sniffing the content-type:
+            $this->header('X-Content-Type-Options: nosniff');
+            $this->header('Content-Type: '.$this->get_file_type($file_path));
+            $this->header('Content-Disposition: inline; filename="'.$file_name.'"');
+        }
+        $this->header('Content-Length: '.$this->get_file_size($file_path));
+        $this->header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($file_path)));
+        $this->readfile($file_path);
     }
 
     protected function send_content_type_header() {
