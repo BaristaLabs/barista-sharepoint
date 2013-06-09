@@ -1,32 +1,9 @@
-﻿/* Copyright (c) 2010-2012 Marcus Westin
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
-
-; (function () {
+﻿; (function (win) {
     var store = {},
-        win = window,
-        doc = win.document,
-        localStorageName = 'localStorage',
-        globalStorageName = 'globalStorage',
-        namespace = '__storejs__',
-        storage
+		doc = win.document,
+		localStorageName = 'localStorage',
+		namespace = '__storejs__',
+		storage
 
     store.disabled = false
     store.set = function (key, value) { }
@@ -50,7 +27,8 @@
     }
     store.deserialize = function (value) {
         if (typeof value != 'string') { return undefined }
-        return JSON.parse(value)
+        try { return JSON.parse(value) }
+        catch (e) { return value || undefined }
     }
 
     // Functions to encapsulate questionable FireFox 3.6.13 behavior
@@ -61,16 +39,12 @@
         catch (err) { return false }
     }
 
-    function isGlobalStorageNameSupported() {
-        try { return (globalStorageName in win && win[globalStorageName] && win[globalStorageName][win.location.hostname]) }
-        catch (err) { return false }
-    }
-
     if (isLocalStorageNameSupported()) {
         storage = win[localStorageName]
         store.set = function (key, val) {
             if (val === undefined) { return store.remove(key) }
             storage.setItem(key, store.serialize(val))
+            return val
         }
         store.get = function (key) { return store.deserialize(storage.getItem(key)) }
         store.remove = function (key) { storage.removeItem(key) }
@@ -83,27 +57,9 @@
             }
             return ret
         }
-    } else if (isGlobalStorageNameSupported()) {
-        storage = win[globalStorageName][win.location.hostname]
-        store.set = function (key, val) {
-            if (val === undefined) { return store.remove(key) }
-            storage[key] = store.serialize(val)
-        }
-        store.get = function (key) { return store.deserialize(storage[key] && storage[key].value) }
-        store.remove = function (key) { delete storage[key] }
-        store.clear = function () { for (var key in storage) { delete storage[key] } }
-        store.getAll = function () {
-            var ret = {}
-            for (var i = 0; i < storage.length; ++i) {
-                var key = storage.key(i)
-                ret[key] = store.get(key)
-            }
-            return ret
-        }
-
     } else if (doc.documentElement.addBehavior) {
         var storageOwner,
-            storageContainer
+			storageContainer
         // Since #userData storage applies only to specific paths, we need to
         // somehow link our data to a specific path.  We choose /favicon.ico
         // as a pretty safe option, since all browsers already make a request to
@@ -117,7 +73,7 @@
         try {
             storageContainer = new ActiveXObject('htmlfile')
             storageContainer.open()
-            storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></frame>')
+            storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
             storageContainer.close()
             storageOwner = storageContainer.w.frames[0].document
             storage = storageOwner.createElement('div')
@@ -152,6 +108,7 @@
             if (val === undefined) { return store.remove(key) }
             storage.setAttribute(key, store.serialize(val))
             storage.save(localStorageName)
+            return val
         })
         store.get = withIEStorage(function (storage, key) {
             key = ieKeyFix(key)
@@ -172,10 +129,10 @@
         })
         store.getAll = withIEStorage(function (storage) {
             var attributes = storage.XMLDocument.documentElement.attributes
-            storage.load(localStorageName)
             var ret = {}
             for (var i = 0, attr; attr = attributes[i]; ++i) {
-                ret[attr] = store.get(attr)
+                var key = ieKeyFix(attr.name)
+                ret[attr.name] = store.deserialize(storage.getAttribute(key))
             }
             return ret
         })
@@ -189,8 +146,7 @@
         store.disabled = true
     }
     store.enabled = !store.disabled
-
-    if (typeof module != 'undefined' && typeof module != 'function') { module.exports = store }
+    if (typeof module != 'undefined' && module.exports) { module.exports = store }
     else if (typeof define === 'function' && define.amd) { define(store) }
-    else { this.store = store }
-})();
+    else { win.store = store }
+})(this.window || global);
