@@ -121,7 +121,10 @@
 
         };
         function toDataSource(ds) {
-            if (ds instanceof kendo.data.DataSource) {
+            if (typeof ds === "undefined" || ds === null) {
+                return null;
+            }
+            else if (ds instanceof kendo.data.DataSource) {
                 return ds;
             } else if (angular.isArray(ds)) {
                 return new kendo.data.DataSource({
