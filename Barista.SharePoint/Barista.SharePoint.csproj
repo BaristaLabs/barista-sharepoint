@@ -243,6 +243,9 @@
       <SharePointProjectItemId>{0b4817fb-dfd3-401f-b84c-b925b2eb1f3e}</SharePointProjectItemId>
     </None>
     <None Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe.config" />
+    <None Include="Layouts\BaristaJS\angular\angular-kendo.min.js.map">
+      <DependentUpon>angular-kendo.js</DependentUpon>
+    </None>
     <None Include="Layouts\BaristaJS\angular\ng-upload.min.js.map" />
     <None Include="Layouts\BaristaJS\angular\ui-utils-ieshiv.min.js.map">
       <DependentUpon>ui-utils-ieshiv.js</DependentUpon>
