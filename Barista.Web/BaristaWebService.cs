@@ -122,7 +122,7 @@
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-        var codeKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c");
+        var codeKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "c");
         if (codeKey != null)
           code = requestQueryParameters[codeKey];
       }
@@ -131,7 +131,7 @@
       if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
       {
         var form = HttpContext.Current.Request.Form;
-        var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
+        var formKey = form.AllKeys.FirstOrDefault(k => k != null && (k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code"));
         if (formKey != null)
           code = form[formKey];
       }
@@ -198,7 +198,7 @@
       {
         var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-        var languageKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "lang");
+        var languageKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "lang");
         if (languageKey != null)
           language = requestQueryParameters[languageKey];
       }

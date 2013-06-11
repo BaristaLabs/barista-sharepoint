@@ -1,7 +1,5 @@
 ﻿namespace Barista
 {
-  using System.IO;
-  using System.Reflection;
   using Barista.Extensions;
   using System;
   using System.Collections.Generic;
@@ -439,7 +437,7 @@
       //}
 
       //TODO: Make this more robust -- i.e. Support multiple cookies by name/domain key
-      foreach (var cookieName in request.Cookies.AllKeys)
+      foreach (var cookieName in request.Cookies.AllKeys.Where(k => k != null))
       {
         if (result.Cookies.ContainsKey(cookieName) == false)
         {
@@ -449,31 +447,31 @@
         }
       }
 
-      foreach (var headerName in request.Headers.AllKeys)
+      foreach (var headerName in request.Headers.AllKeys.Where(k => k != null))
       {
         if (result.Headers.ContainsKey(headerName) == false)
           result.Headers.Add(headerName, request.Headers[headerName]);
       }
 
-      foreach (var formFieldName in request.Form.AllKeys)
+      foreach (var formFieldName in request.Form.AllKeys.Where(k => k != null))
       {
         if (result.Form.ContainsKey(formFieldName) == false)
           result.Form.Add(formFieldName, request.Form[formFieldName]);
       }
 
-      foreach (var paramName in request.Params.AllKeys)
+      foreach (var paramName in request.Params.AllKeys.Where(k => k != null))
       {
         if (result.Params.ContainsKey(paramName) == false)
           result.Params.Add(paramName, request.Form[paramName]);
       }
 
-      foreach (var queryStringName in request.QueryString.AllKeys)
+      foreach (var queryStringName in request.QueryString.AllKeys.Where(k => k != null))
       {
         if (result.QueryString.ContainsKey(queryStringName) == false)
           result.QueryString.Add(queryStringName, request.QueryString[queryStringName]);
       }
 
-      foreach (var serverVariableName in request.ServerVariables.AllKeys)
+      foreach (var serverVariableName in request.ServerVariables.AllKeys.Where(k => k != null))
       {
         if (result.ServerVariables.ContainsKey(serverVariableName) == false)
           result.ServerVariables.Add(serverVariableName, request.ServerVariables[serverVariableName]);
