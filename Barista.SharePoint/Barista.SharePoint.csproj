@@ -485,6 +485,8 @@
     <Content Include="Layouts\BaristaJS\angular\angular-ui-bootstrap-0.2.0.tpls.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-ieshiv.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-ieshiv.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-ui-router.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-ui-router.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui.css" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui.min.css" />
