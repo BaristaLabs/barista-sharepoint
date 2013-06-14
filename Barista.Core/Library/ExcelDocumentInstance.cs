@@ -217,7 +217,6 @@
         m_excelPackage.Save();
     }
 
-    //TODO: SaveAs that saves to a seperate doc -- implemented in the SPExcelDocumentInstance to save to a SPFile.
     [JSFunction(Name = "saveAs")]
     [JSDoc("Saves the Excel Document to a Base64EncodedByteArray. Closes the document once complete.")]
     public virtual void SaveAs(params object[] args)

@@ -124,6 +124,7 @@
     }
 
     [JSFunction(Name = "saveAs")]
+    [JSDoc("Saves the Excel Document to a url to a SPFile, an instance of a SPFile, or a Base64ByteArray. Closes the document once complete.")]
     public override void SaveAs(params object[] args)
     {
       var firstArg = args.FirstOrDefault();

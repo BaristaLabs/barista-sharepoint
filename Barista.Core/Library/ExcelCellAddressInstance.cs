@@ -47,24 +47,28 @@
     }
 
     [JSProperty(Name = "address")]
+    [JSDoc("Gets the address of the cell.")]
     public string Address
     {
       get { return m_excelCellAddress.Address; }
     }
 
     [JSProperty(Name = "column")]
+    [JSDoc("Gets the 1-based column index.")]
     public int Column
     {
       get { return m_excelCellAddress.Column; }
     }
 
     [JSProperty(Name = "row")]
+    [JSDoc("Gets the 1-based row index.")]
     public int Row
     {
       get { return m_excelCellAddress.Row; }
     }
 
     [JSProperty(Name = "isRef")]
+    [JSDoc("Gets a value that indicates if the address is an invalid reference. (#REF!)")]
     public bool IsRef
     {
       get { return m_excelCellAddress.IsRef; }

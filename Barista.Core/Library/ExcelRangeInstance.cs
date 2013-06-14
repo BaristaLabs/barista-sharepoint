@@ -67,12 +67,14 @@
     }
 
     [JSProperty(Name = "current")]
+    [JSDoc("Gets the current Address.")]
     public ExcelAddressInstance Current
     {
       get { return new ExcelAddressInstance(this.Engine.Object.Prototype, m_excelRange.Current); }
     }
 
     [JSProperty(Name = "end")]
+    [JSDoc("Gets the row and column of the bottom-right cell.")]
     public ExcelCellAddressInstance End
     {
       get { return new ExcelCellAddressInstance(this.Engine.Object.Prototype, m_excelRange.End); }
@@ -146,6 +148,7 @@
     }
 
     [JSProperty(Name = "start")]
+    [JSDoc("Gets the row and column of the top-left cell.")]
     public ExcelCellAddressInstance Start
     {
       get { return new ExcelCellAddressInstance(this.Engine.Object.Prototype, m_excelRange.Start); }
