@@ -1,12 +1,12 @@
 ﻿namespace Barista.Library
 {
+  using Barista.Jurassic;
+  using Barista.Jurassic.Library;
+  using OfficeOpenXml;
   using System;
   using System.IO;
   using System.Linq;
   using System.Reflection;
-  using Barista.Jurassic;
-  using Barista.Jurassic.Library;
-  using OfficeOpenXml;
 
   [Serializable]
   public class ExcelDocumentConstructor : ClrFunction
@@ -43,11 +43,6 @@
               documentInstance = new ExcelDocumentInstance(this.InstancePrototype, ms);
             }
           }
-        }
-        else if (TypeUtilities.IsString(firstArg))
-        {
-          //String parameter -- assume to be a url to an excel document.
-          throw new NotImplementedException();
         }
         else
         {
@@ -131,7 +126,7 @@
     #region Functions
 
     [JSFunction(Name = "getBytes")]
-    [JSDoc("Saves and returns the Excel file as a Base64EncodedByteArray. Note that the Document is closed.")]
+    [JSDoc("Saves and returns the Excel file as a Base64EncodedByteArray. Closes the document once complete.")]
     public Base64EncodedByteArrayInstance GetBytes()
     {
       var data = m_excelPackage.GetAsByteArray();
@@ -207,6 +202,47 @@
       else
       {
         throw new InvalidOperationException("The supplied parameter must be a Base64EncodedByteArray.");
+      }
+    }
+
+    [JSFunction(Name = "save")]
+    [JSDoc("Saves the Excel Document. Closes the document once complete.")]
+    public virtual void Save(params object[] args)
+    {
+      var firstArg = args.FirstOrDefault();
+
+      if (TypeUtilities.IsString(firstArg))
+        m_excelPackage.Save(TypeConverter.ToString(firstArg));
+      else
+        m_excelPackage.Save();
+    }
+
+    //TODO: SaveAs that saves to a seperate doc -- implemented in the SPExcelDocumentInstance to save to a SPFile.
+    [JSFunction(Name = "saveAs")]
+    [JSDoc("Saves the Excel Document to a Base64EncodedByteArray. Closes the document once complete.")]
+    public virtual void SaveAs(params object[] args)
+    {
+      var firstArg = args.FirstOrDefault();
+
+      if (firstArg is Base64EncodedByteArrayInstance)
+      {
+        var secondArg = args.ElementAtOrDefault(1);
+
+        //This seems odd, but rolling with it.
+        using (var ms = new MemoryStream())
+        {
+          if (TypeUtilities.IsString(secondArg))
+            m_excelPackage.SaveAs(ms, TypeConverter.ToString(secondArg));
+          else
+            m_excelPackage.SaveAs(ms);
+
+          ms.Seek(0, SeekOrigin.Begin);
+          (firstArg as Base64EncodedByteArrayInstance).Copy(ms.ToArray());
+        }
+      }
+      else
+      {
+        throw new JavaScriptException(this.Engine, "Error", "The supplied parameter must be a Base64EncodedByteArray.");
       }
     }
 

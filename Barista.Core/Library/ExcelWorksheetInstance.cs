@@ -52,6 +52,7 @@
     #region Properties
 
     [JSProperty(Name = "hidden")]
+    [JSDoc("Gets or sets a value that indicates if the worksheet is hidden in the workbook. Possible values are: Hidden, VeryHidden, Visible")]
     public string Hidden
     {
       get
@@ -77,13 +78,22 @@
       }
     }
 
+    [JSProperty(Name = "dimension")]
+    [JSDoc("Gets the dimension address for the worksheet. Top-left cell to bottom-right. If the worksheet has no cells, null is returned.")]
+    public ExcelAddressInstance Dimension
+    {
+      get { return new ExcelAddressInstance(this.Engine.Object.Prototype, m_excelWorksheet.Dimension); }
+    }
+
     [JSProperty(Name = "index")]
+    [JSDoc("Gets the index of the worksheet in the workbook.")]
     public int Index
     {
       get { return m_excelWorksheet.Index; }
     }
 
     [JSProperty(Name = "name")]
+    [JSDoc("Gets or sets the name of the worksheet.")]
     public string Name
     {
       get { return m_excelWorksheet.Name; }
@@ -93,6 +103,7 @@
 
     #region Functions
     [JSFunction(Name = "convertToJson")]
+    [JSDoc("Converts the contents of the worksheet to a Json Object.")]
     public ArrayInstance ConvertToJson(object hasHeader)
     {
       if (m_excelWorksheet.Dimension == null)
@@ -146,6 +157,7 @@
     }
 
     [JSFunction(Name = "loadFromJson")]
+    [JSDoc("Loads an array of json objects into the worksheet starting from the top left cell.")]
     public void LoadFromJson(object array, object hasHeader)
     {
       if (array == null || array == Null.Value || array == Undefined.Value || (array is ArrayInstance) == false ||

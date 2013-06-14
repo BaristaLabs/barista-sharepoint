@@ -58,6 +58,16 @@
       get { return m_data.ToArray(); }
     }
 
+    /// <summary>
+    /// Overwrites the data contained in the current byte array with data contained in the specified array.
+    /// </summary>
+    /// <param name="data"></param>
+    public void Copy(byte[] data)
+    {
+      this.m_data.Clear();
+      m_data.AddRange(data);
+    }
+
     [JSProperty(Name = "mimeType")]
     public string MimeType
     {

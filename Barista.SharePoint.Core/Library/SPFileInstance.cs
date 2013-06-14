@@ -328,6 +328,7 @@
       }
     }
     #endregion
+
     [JSFunction(Name = "approve")]
     [JSDoc("Approves the file submitted for content approval with the specified comment.")]
     public void Approve(string comment)
@@ -448,6 +449,13 @@
     public void Publish(string comment)
     {
       m_file.Publish(comment);
+    }
+
+    [JSFunction(Name = "saveBinary")]
+    [JSDoc("Updates the file with the contents of the specified argument.")]
+    public void SaveBinary(Base64EncodedByteArrayInstance data)
+    {
+      m_file.SaveBinary(data.Data);
     }
 
     [JSFunction(Name = "recycle")]

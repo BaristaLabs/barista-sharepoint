@@ -1,12 +1,12 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using System.Linq;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
   using System;
   using System.IO;
+  using System.Linq;
 
   [Serializable]
   public class SPExcelDocumentConstructor : ClrFunction
@@ -121,6 +121,74 @@
       }
 
       base.Load(args);
+    }
+
+    [JSFunction(Name = "saveAs")]
+    public override void SaveAs(params object[] args)
+    {
+      var firstArg = args.FirstOrDefault();
+
+      SPFile file = null;
+
+      if (TypeUtilities.IsString(firstArg))
+      {
+        var fileUrl = firstArg as string;
+        if (SPHelper.TryGetSPFile(fileUrl, out file) == false)
+        {
+          SPSite site = null;
+          SPWeb web = null;
+          SPFolder folder = null;
+
+          try
+          {
+            if (SPHelper.TryGetSPFolder(fileUrl, out site, out web, out folder))
+            {
+              byte[] bytes;
+
+              var secondArg = args.ElementAtOrDefault(1);
+
+              if (TypeUtilities.IsString(secondArg))
+                bytes = m_excelPackage.GetAsByteArray(TypeConverter.ToString(secondArg));
+              else
+                bytes = m_excelPackage.GetAsByteArray();
+
+              folder.Files.Add(fileUrl, bytes);
+              return;
+            }
+          }
+          finally
+          {
+            if (web != null)
+              web.Dispose();
+
+            if (site != null)
+              site.Dispose();
+          }
+         
+        }
+      }
+      else if (firstArg is SPFileInstance)
+      {
+        file = (firstArg as SPFileInstance).File;
+      }
+
+      if (file != null)
+      {
+        byte[] bytes;
+
+        var secondArg = args.ElementAtOrDefault(1);
+
+        if (TypeUtilities.IsString(secondArg))
+          bytes = m_excelPackage.GetAsByteArray(TypeConverter.ToString(secondArg));
+        else
+          bytes = m_excelPackage.GetAsByteArray();
+
+        file.SaveBinary(bytes);
+        return;
+      }
+
+      //Defer to base implementation for other argument types.
+      base.SaveAs(args);
     }
   }
 }
