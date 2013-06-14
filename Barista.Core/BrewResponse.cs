@@ -220,7 +220,8 @@ namespace Barista
       }
       else if (result is Base64EncodedByteArrayInstance)
       {
-        byteArray = (result as Base64EncodedByteArrayInstance).Data;
+        var arrayResult = result as Base64EncodedByteArrayInstance;
+        byteArray = arrayResult.Data;
       }
       else if (result is StringInstance || result is string)
       {
@@ -231,7 +232,7 @@ namespace Barista
       else
       {
         //Obtain the script result and stringify it -- e.g. convert it to a json object.
-        string stringResult = JSONObject.Stringify(engine, result, null, null);
+        var stringResult = JSONObject.Stringify(engine, result, null, null);
         if (String.IsNullOrEmpty(stringResult) || (String.IsNullOrEmpty(stringResult.Trim())))
         {
           byteArray = new byte[0];

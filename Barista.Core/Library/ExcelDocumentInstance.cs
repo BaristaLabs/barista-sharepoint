@@ -127,7 +127,7 @@
 
     [JSFunction(Name = "getBytes")]
     [JSDoc("Saves and returns the Excel file as a Base64EncodedByteArray. Closes the document once complete.")]
-    public Base64EncodedByteArrayInstance GetBytes()
+    public Base64EncodedByteArrayInstance GetBytes(object fileName)
     {
       var data = m_excelPackage.GetAsByteArray();
 
@@ -136,8 +136,8 @@
           MimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         };
 
-      //if (m_sourceFile != null)
-      //  result.FileName = m_sourceFile.Name;
+      if (fileName != null && fileName != Undefined.Value)
+        result.FileName = TypeConverter.ToString(fileName);
 
       return result;
     }

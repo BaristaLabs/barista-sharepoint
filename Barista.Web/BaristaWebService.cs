@@ -378,6 +378,12 @@
           if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
           {
             response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
+
+            var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
+            if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("content-disposition") == false)
+            {
+              response.Headers.Add("content-disposition", "inline; filename=" + arrayResult.FileName);
+            }
           }
 
           if (webBundle.WebInstance != null)
