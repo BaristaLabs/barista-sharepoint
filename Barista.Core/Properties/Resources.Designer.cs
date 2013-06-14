@@ -93,6 +93,30 @@ namespace Barista.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to //source: http://johnkalberer.com/2011/08/24/automapper-in-javascript/
+        ///var automapper = (function (app) {
+        ///    if (app.automapper) {
+        ///        return app.automapper;
+        ///    }
+        ///
+        ///    var dictionary = {};
+        ///
+        ///    app.automapper = {
+        ///        createMap: function (sourceKey, destinationKey) {
+        ///            var combinedKey = sourceKey + destinationKey, functions;
+        ///            dictionary[combinedKey] = {};
+        ///
+        ///            functions = {
+        ///                forMember: function (key, e) {
+        ///                    dictionary[comb [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string Automapper {
+            get {
+                return ResourceManager.GetString("Automapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to // Author: Michael Schøler, 2008
         ///// Dual licensed as MIT and LGPL, use as you like, don&apos;t hold me responsible for success or failure though
         ///Array.prototype.compareTo = function (compareAry) {

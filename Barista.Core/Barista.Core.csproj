@@ -175,6 +175,9 @@
     <Compile Include="DocumentStore\EntityMetadata.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Library\ExcelRangeInstance.cs" />
+    <Compile Include="Library\ExcelColumnInstance.cs" />
+    <Compile Include="Library\ExcelRowInstance.cs" />
     <Compile Include="Extensions\ConfigurationExtensions.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="DocumentStore\TypedRepository.cs" />
@@ -972,6 +975,7 @@
     <Compile Include="Library\ExcelDocumentInstance.cs" />
     <Compile Include="Library\ExcelWorkbookInstance.cs" />
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
+    <Compile Include="Library\ExcelWorksheetsInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
     <Compile Include="PrincipalType.cs" />
     <Compile Include="ScriptEngineFactory.cs" />
@@ -1371,6 +1375,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Imports\Jurassic\Compiler\Emit\Optimizations.txt" />
+    <Content Include="Resources\Automapper.js" />
     <Content Include="Resources\moment.min.js" />
     <None Include="Resources\sugar-1.3.9-custom.min.js" />
     <None Include="Resources\string.js" />

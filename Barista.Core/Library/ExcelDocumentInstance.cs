@@ -1,7 +1,6 @@
 ﻿namespace Barista.Library
 {
   using System;
-  using System.Collections.Generic;
   using System.IO;
   using System.Linq;
   using System.Reflection;
@@ -23,7 +22,7 @@
       var firstArg = parameters.FirstOrDefault();
       ExcelDocumentInstance documentInstance;
 
-      if (firstArg != null)
+      if (firstArg != null && firstArg != Undefined.Value)
       {
 
         if (firstArg is Base64EncodedByteArrayInstance)
@@ -58,7 +57,7 @@
       }
       else
       {
-        documentInstance = new ExcelDocumentInstance(this.Engine.Object.Prototype);
+        documentInstance = new ExcelDocumentInstance(this.Engine.Object.InstancePrototype);
       }
 
       return documentInstance;
@@ -68,6 +67,8 @@
   public class ExcelDocumentInstance : ObjectInstance, IDisposable
   {
     protected readonly ExcelPackage m_excelPackage;
+    protected readonly object SyncRoot = new object();
+    protected ExcelWorkbookInstance WorkbookInstance = null;
 
     public ExcelDocumentInstance(ObjectInstance prototype)
       : base(prototype)
@@ -104,15 +105,33 @@
     }
 
     [JSProperty(Name = "workbook")]
+    [JSDoc("Returns a reference to the workbook within the Excel document. All worksheets and cells can be accessed through the workbook.")]
     public ExcelWorkbookInstance Workbook
     {
-      get { return new ExcelWorkbookInstance(this.Engine.Object.Prototype, m_excelPackage.Workbook); }
+      get
+      {
+        if (WorkbookInstance == null)
+        {
+          lock (SyncRoot)
+          {
+            if (WorkbookInstance == null)
+            {
+// ReSharper disable PossibleMultipleWriteAccessInDoubleCheckLocking
+              WorkbookInstance = new ExcelWorkbookInstance(this.Engine.Object.InstancePrototype, m_excelPackage.Workbook);
+// ReSharper restore PossibleMultipleWriteAccessInDoubleCheckLocking
+            }
+          }
+        }
+
+        return WorkbookInstance;
+      }
     }
     #endregion
 
     #region Functions
 
     [JSFunction(Name = "getBytes")]
+    [JSDoc("Saves and returns the Excel file as a Base64EncodedByteArray. Note that the Document is closed.")]
     public Base64EncodedByteArrayInstance GetBytes()
     {
       var data = m_excelPackage.GetAsByteArray();
@@ -129,6 +148,7 @@
     }
 
     [JSFunction(Name = "getWorksheet")]
+    [JSDoc("Returns an instance of a Excel Worksheet from the Document with the specified name.")]
     public ExcelWorksheetInstance GetWorksheet(object worksheetName)
     {
       ExcelWorksheet worksheet;
@@ -154,11 +174,12 @@
                                       "The first argument must either be the name or index of a worksheet.");
       }
 
-      var worksheetInstance = new ExcelWorksheetInstance(this.Engine.Object.Prototype, worksheet);
+      var worksheetInstance = new ExcelWorksheetInstance(this.Engine.Object.InstancePrototype, worksheet);
       return worksheetInstance;
     }
 
     [JSFunction(Name = "getWorksheetAsJson")]
+    [JSDoc("Returns a Json representation of the specified worksheet.")]
     public ArrayInstance GetWorksheetAsJson(object worksheetName, object hasHeader)
     {
       var worksheetInstance = GetWorksheet(worksheetName);
@@ -166,6 +187,7 @@
     }
 
     [JSFunction(Name = "load")]
+    [JSDoc("Loads the current document with the specified argument. Argument can currently be a Base64EncodedByteArray.")]
     public virtual void Load(params object[] args)
     {
       var firstArg = args.FirstOrDefault();

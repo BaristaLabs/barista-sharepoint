@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System.Linq;
-  using System.Reflection;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -23,7 +22,11 @@
       var firstArg = parameters.FirstOrDefault();
 
       SPExcelDocumentInstance documentInstance;
-      if (firstArg is Base64EncodedByteArrayInstance)
+      if (firstArg == null || firstArg == Undefined.Value)
+      {
+        documentInstance = new SPExcelDocumentInstance(this.Engine.Object.Prototype);
+      }
+      else if (firstArg is Base64EncodedByteArrayInstance)
       {
         //Create the excel document instance from a byte array.
         var byteArray = firstArg as Base64EncodedByteArrayInstance;
@@ -34,11 +37,11 @@
           if (secondArg != null && TypeUtilities.IsString(secondArg))
           {
             var passParam = TypeConverter.ToString(parameters[1]);
-            documentInstance = new SPExcelDocumentInstance(this.InstancePrototype, ms, passParam);
+            documentInstance = new SPExcelDocumentInstance(this.Engine.Object.Prototype, ms, passParam);
           }
           else
           {
-            documentInstance = new SPExcelDocumentInstance(this.InstancePrototype, ms);
+            documentInstance = new SPExcelDocumentInstance(this.Engine.Object.Prototype, ms);
           }
         }
       }
@@ -49,12 +52,12 @@
         if (SPHelper.TryGetSPFile(fileUrl, out fileFromUrl) == false)
           throw new JavaScriptException(this.Engine, "Error", "A file with the specified url does not exist.");
 
-        documentInstance = new SPExcelDocumentInstance(this.InstancePrototype, fileFromUrl);
+        documentInstance = new SPExcelDocumentInstance(this.Engine.Object.Prototype, fileFromUrl);
       }
       else if (firstArg is SPFileInstance)
       {
         var fileFromArg = (firstArg as SPFileInstance).File;
-        documentInstance = new SPExcelDocumentInstance(this.InstancePrototype, fileFromArg);
+        documentInstance = new SPExcelDocumentInstance(this.Engine.Object.Prototype, fileFromArg);
       }
       else
       {
