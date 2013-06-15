@@ -1,15 +1,47 @@
 ﻿namespace Barista.Extensions
 {
+  using System.Linq;
   using Jurassic;
   using System;
   using System.Collections.Generic;
   using System.Text;
+  using YamlDotNet.RepresentationModel;
 
   /// <summary>
   /// String extension class
   /// </summary>
   public static class StringExtensions
   {
+    public static string ReplaceFirstOccurence(this string inputstring, string searchText, string replacementText)
+    {
+      int index = inputstring.IndexOf(searchText, System.StringComparison.Ordinal);
+      if (index == -1)
+        return inputstring;
+
+      return inputstring.Substring(0, index) + replacementText + inputstring.Substring(index + searchText.Length);
+    }
+
+    internal static List<Dictionary<string, string>> ConvertToDictionaryList(this YamlSequenceNode yamlNode)
+    {
+      return yamlNode.OfType<YamlMappingNode>().Select(item => ConvertToDictionary(item)).ToList();
+    }
+
+    internal static Dictionary<string, string> ConvertToDictionary(this YamlMappingNode yamlNode)
+    {
+      Dictionary<string, string> dic = new Dictionary<string, string>();
+      foreach (var key in yamlNode.Children.Keys)
+      {
+        dic[key.ToString()] = yamlNode.Children[key].ToString();
+      }
+      return dic;
+    }
+
+    public static void ThrowIfNull(this object obj, string exceptionMessage)
+    {
+      if (obj == null)
+        throw new ArgumentNullException(exceptionMessage);
+    }
+
     /// <summary>Indicates whether a specified string is null, empty, or consists only of white-space characters.</summary>
     /// <returns>true if the <paramref name="value" /> parameter is null or <see cref="F:System.String.Empty" />, or if <paramref name="value" /> consists exclusively of white-space characters. </returns>
     /// <param name="value">The string to test.</param>

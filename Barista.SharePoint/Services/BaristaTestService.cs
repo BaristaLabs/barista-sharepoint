@@ -39,10 +39,14 @@
 
       var result = client.Eval(request);
 
+      var setHeaders = true;
       if (WebOperationContext.Current != null)
+      {
         result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
+        setHeaders = false;
+      }
 
-      result.ModifyHttpResponse(HttpContext.Current.Response);
+      result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
 
       var resultStream = new MemoryStream(result.Content);
       return resultStream;

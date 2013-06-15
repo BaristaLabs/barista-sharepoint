@@ -72,7 +72,7 @@
       if (csv is Base64EncodedByteArrayInstance)
         csvString = (csv as Base64EncodedByteArrayInstance).ToUtf8String();
       else
-        csvString = csv.ToString();
+        csvString = TypeConverter.ToString(csv);
       
       var options = new CsvOptions(this.Engine.Object.InstancePrototype);
 
@@ -198,7 +198,7 @@
       if (xml is Base64EncodedByteArrayInstance)
         xmlString = (xml as Base64EncodedByteArrayInstance).ToUtf8String();
       else
-        xmlString = xml.ToString();
+        xmlString = TypeConverter.ToString(xml);
 
       var doc = XDocument.Parse(xmlString);
       var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
@@ -217,5 +217,40 @@
       var document = JsonConvert.DeserializeXmlNode(text);
       return document.OuterXml;
     }
+
+    //[JSFunction(Name = "yaml2Json")]
+    //public object Yaml2Json(object yaml)
+    //{
+    //  if (yaml == null || yaml == Null.Value || yaml == Undefined.Value)
+    //    return null;
+
+    //  string yamlString;
+    //  if (yaml is Base64EncodedByteArrayInstance)
+    //    yamlString = (yaml as Base64EncodedByteArrayInstance).ToUtf8String();
+    //  else
+    //    yamlString = TypeConverter.ToString(yaml);
+
+    //  var yamlDocument = new YamlDocument(yamlString);
+
+    //  var yamlConverter = new XmlConverter();
+    //  var doc = yamlConverter.ToXml(yamlDocument);
+    //  var jsonDocument = JsonConvert.SerializeXmlNode(doc.DocumentElement);
+    //  return JSONObject.Parse(this.Engine, jsonDocument, null);
+    //}
+
+    //[JSFunction(Name = "json2Yaml")]
+    //public object Json2Yaml(object jsonObject)
+    //{
+    //  string text;
+    //  if (jsonObject is ObjectInstance)
+    //    text = JSONObject.Stringify(this.Engine, jsonObject, null, null);
+    //  else
+    //    text = jsonObject as string;
+
+    //  var yamlConverter = new XmlConverter();
+    //  var xmlDocument = JsonConvert.DeserializeXmlNode(text);
+    //  var doc = yamlConverter.FromXml(xmlDocument);
+    //  return doc.ToString();
+    //}
   }
 }

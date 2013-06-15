@@ -13,7 +13,7 @@
 
     public string BundleDescription
     {
-      get { return "Document Bundle. Provides a mechanism to interact with various document formats: CSV, Excel, Zip."; }
+      get { return "Document Bundle. Provides a mechanism to interact with various document formats: CSV, Excel, Yaml, Pdf, Zip."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)

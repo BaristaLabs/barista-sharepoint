@@ -197,5 +197,15 @@ namespace Barista.Properties {
                 return ResourceManager.GetString("sugar_1_3_9_custom_min", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] uaregexes {
+            get {
+                object obj = ResourceManager.GetObject("uaregexes", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

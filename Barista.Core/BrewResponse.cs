@@ -163,7 +163,7 @@ namespace Barista
       }
     }
 
-    public void ModifyHttpResponse(HttpResponse response)
+    public void ModifyHttpResponse(HttpResponse response, bool setHeaders)
     {
       response.ContentEncoding = this.ContentEncoding;
       response.ContentType = this.ContentType;
@@ -182,12 +182,15 @@ namespace Barista
           response.Cookies.Add(new HttpCookie(cookieName, this.Cookies[cookieName]));
       }
 
-      foreach(var header in this.Headers.Keys)
+      if (setHeaders)
       {
-        if (response.Headers.AllKeys.Any(k => k == header))
-          response.Headers.Set(header, this.Headers[header]);
-        else
-          response.Headers.Add(header, this.Headers[header]);
+        foreach (var header in this.Headers.Keys)
+        {
+          if (response.Headers.AllKeys.Any(k => k == header))
+            response.Headers.Set(header, this.Headers[header]);
+          else
+            response.Headers.Add(header, this.Headers[header]);
+        }
       }
     }
 

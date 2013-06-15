@@ -136,6 +136,7 @@
     <Compile Include="Utils\TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>

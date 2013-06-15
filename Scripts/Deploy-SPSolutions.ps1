@@ -116,12 +116,14 @@ function global:Deploy-SPSolutions() {
                 "Enable" {
 					if ($url -ne $null) {
 						Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabling $identity" -PercentComplete -1
-						Enable-SPFeature –Identity $identity -Url $url -Confirm:$false
+						& powershell.exe @"Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue"
+						"Enable-SPFeature –Identity $identity -Url $url -Confirm:$false"@
 						Write-Progress -Activity "Enabling Feature $identity on $url" -Status "Enabled" -Completed
 					}
 					else {
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabling $identity" -PercentComplete -1
-						Enable-SPFeature –Identity $identity -Confirm:$false
+						& powershell.exe @"Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue"
+						"Enable-SPFeature –Identity $identity -Confirm:$false"@
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
 					}
                 }

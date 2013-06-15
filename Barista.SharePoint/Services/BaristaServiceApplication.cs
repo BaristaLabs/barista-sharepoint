@@ -1,6 +1,8 @@
 ﻿namespace Barista.SharePoint.Services
 {
+  using System.Web;
   using Barista.Extensions;
+  using Barista.Helpers;
   using Barista.SharePoint.Bundles;
   using Jurassic;
   using Microsoft.SharePoint.Administration;
@@ -161,9 +163,17 @@
             response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
 
             var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
-            if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("content-disposition") == false)
+            if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
             {
-              response.Headers.Add("content-disposition", "inline; filename=" + arrayResult.FileName);
+              var br = BrowserUserAgentParser.GetDefault();
+              var clientInfo = br.Parse(request.UserAgent);
+
+              if (clientInfo.UserAgent.Family == "MSIE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+                response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
+              else if (clientInfo.UserAgent.Family == "Safari")
+                response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
+              else
+                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
             }
           }
 
