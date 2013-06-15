@@ -114,7 +114,12 @@
     [JSDoc("Gets or sets the hyperlink property for the range.")]
     public string Hyperlink
     {
-      get { return m_excelRange.Hyperlink.ToString(); }
+      get
+      {
+        if (m_excelRange.Hyperlink != null)
+          return m_excelRange.Hyperlink.ToString();
+        return null;
+      }
       set { m_excelRange.Hyperlink = new Uri(value); }
     }
 
@@ -193,21 +198,24 @@
       var bHasHeader = !(hasHeader != Undefined.Value && hasHeader != null && TypeConverter.ToBoolean(hasHeader) == false);
 
       var result = this.Engine.Array.Construct();
-      var startPos = m_excelRange.Start.Row;
-
+      var startCol = m_excelRange.Start.Column;
+      var startRow = m_excelRange.Start.Row;
+      var endCol = m_excelRange.End.Column;
+      var endRow = m_excelRange.End.Row;
+      
       var propertyNames = new List<string>();
       if (bHasHeader)
       {
-        for (var c = m_excelRange.Start.Column; c <= m_excelRange.End.Column; c++)
+        for (var c = startCol; c <= endCol; c++)
         {
-          propertyNames.Add(m_excelRange[startPos, c].GetValue<string>());
+          propertyNames.Add(m_excelRange[startRow, c].GetValue<string>());
         }
 
-        startPos = startPos + 1;
+        startRow = startRow + 1;
       }
       else
       {
-        for (var c = m_excelRange.Start.Column; c <= m_excelRange.End.Column; c++)
+        for (var c = startCol; c <= endCol; c++)
         {
           var iColumnNumber = c;
           var sCol = "";
@@ -221,11 +229,11 @@
         }
       }
 
-      for (var rowPos = startPos; rowPos <= m_excelRange.End.Row; rowPos++)
+      for (var rowPos = startRow; rowPos <= endRow; rowPos++)
       {
         var rowObject = this.Engine.Object.Construct();
 
-        for (var c = m_excelRange.Start.Column; c <= m_excelRange.End.Column; c++)
+        for (var c = startCol; c <= endCol; c++)
         {
           var cell = m_excelRange[rowPos, c];
           rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
