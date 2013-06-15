@@ -320,12 +320,14 @@
 
       var result = Eval(request);
 
+      var setHeader = true;
       if (WebOperationContext.Current != null)
       {
         result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
+        setHeader = false;
       }
 
-      result.ModifyHttpResponse(HttpContext.Current.Response);
+      result.ModifyHttpResponse(HttpContext.Current.Response, setHeader);
 
       var resultStream = new MemoryStream(result.Content);
       return resultStream;
@@ -386,12 +388,12 @@
               var br = BrowserUserAgentParser.GetDefault();
               var clientInfo = br.Parse(request.UserAgent);
 
-              if (clientInfo.UserAgent.Family == "MSIE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+              if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
                 response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
               else if (clientInfo.UserAgent.Family == "Safari")
                 response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
               else
-                response.Headers.Add("Content-Disposition", "attachment; filename*=UTF-8''" + HttpUtility.UrlEncode(arrayResult.FileName));
+                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
             }
           }
 

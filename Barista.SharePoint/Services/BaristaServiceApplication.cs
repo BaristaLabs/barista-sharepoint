@@ -168,7 +168,7 @@
               var br = BrowserUserAgentParser.GetDefault();
               var clientInfo = br.Parse(request.UserAgent);
 
-              if (clientInfo.UserAgent.Family == "MSIE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+              if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
                 response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
               else if (clientInfo.UserAgent.Family == "Safari")
                 response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
