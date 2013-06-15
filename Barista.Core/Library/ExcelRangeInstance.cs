@@ -287,14 +287,14 @@
           var properties = value.Properties.ToList();
           for (var c = 1; c < properties.Count + 1; c++)
           {
-            var property = properties[c - 1];
-            var propertyValue = String.Empty;
-            if (property.Value != null)
+            var propertyValue = properties[c - 1];
+            if (TypeUtilities.IsPrimitive(propertyValue))
+              m_excelRange[currentRow, c].Value = propertyValue.Value;
+            else
             {
-              propertyValue = property.Value.ToString();
+              var strValue = JSONObject.Stringify(this.Engine, propertyValue.Value, null, null);
+              m_excelRange[currentRow, c].Value = strValue;
             }
-
-            m_excelRange[currentRow, c].Value = propertyValue;
           }
 
         }
@@ -303,11 +303,14 @@
           for (var c = 1; c < header.Count + 1; c++)
           {
             var key = header[c - 1];
-            var propertyValue = String.Empty;
-            if (value.HasProperty(key) && value[key] != null)
-              propertyValue = value[key].ToString();
-
-            m_excelRange[currentRow, c].Value = propertyValue;
+            var propertyValue = value[key];
+            if (TypeUtilities.IsPrimitive(propertyValue))
+              m_excelRange[currentRow, c].Value = propertyValue;
+            else
+            {
+              var strValue = JSONObject.Stringify(this.Engine, propertyValue, null, null);
+              m_excelRange[currentRow, c].Value = strValue;
+            }
           }
         }
 

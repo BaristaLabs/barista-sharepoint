@@ -193,14 +193,8 @@
           var properties = value.Properties.ToList();
           for (var c = 1; c < properties.Count + 1; c++)
           {
-            var property = properties[c - 1];
-            var propertyValue = String.Empty;
-            if (property.Value != null)
-            {
-              propertyValue = property.Value.ToString();
-            }
-
-            SetValue(currentRow, c, propertyValue);
+            var propertyValue = properties[c - 1];
+            SetValue(currentRow, c, propertyValue.Value);
           }
           
         }
@@ -209,10 +203,7 @@
           for (var c = 1; c < header.Count + 1; c++)
           {
             var key = header[c - 1];
-            var propertyValue = String.Empty;
-            if (value.HasProperty(key) && value[key] != null)
-              propertyValue = value[key].ToString();
-
+            var propertyValue = value[key];
             SetValue(currentRow, c, propertyValue);
           }
         }
