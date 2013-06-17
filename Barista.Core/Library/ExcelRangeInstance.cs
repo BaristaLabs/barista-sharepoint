@@ -236,7 +236,10 @@
         for (var c = startCol; c <= endCol; c++)
         {
           var cell = m_excelRange[rowPos, c];
-          rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
+          if (cell.Value is DateTime)
+            rowObject.SetPropertyValue(propertyNames[c - 1], JurassicHelper.ToDateInstance(this.Engine, (DateTime)cell.Value), false);
+          else
+            rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
         }
 
         ArrayInstance.Push(result, rowObject);

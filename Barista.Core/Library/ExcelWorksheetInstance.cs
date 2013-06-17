@@ -147,7 +147,10 @@
         for (var c = m_excelWorksheet.Dimension.Start.Column; c <= m_excelWorksheet.Dimension.End.Column; c++)
         {
           var cell = m_excelWorksheet.Cells[rowPos, c];
-          rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
+          if (cell.Value is DateTime)
+            rowObject.SetPropertyValue(propertyNames[c - 1], JurassicHelper.ToDateInstance(this.Engine, (DateTime)cell.Value), false);
+          else
+            rowObject.SetPropertyValue(propertyNames[c - 1], cell.Value, false);
         }
 
         ArrayInstance.Push(result, rowObject);
@@ -271,6 +274,9 @@
       if (value is int || value is string || value is double || value is bool)
         return value;
 
+      if (value is DateTime)
+        return JurassicHelper.ToDateInstance(this.Engine, (DateTime) value);
+
       return m_excelWorksheet.GetValue<string>(row, column);
     }
 
@@ -298,6 +304,8 @@
     {
       if (TypeUtilities.IsPrimitive(value))
         m_excelWorksheet.SetValue(address, value);
+      else if (value is DateInstance)
+        m_excelWorksheet.SetValue(address, DateTime.Parse((value as DateInstance).ToIsoString()));
       else
       {
         var strValue = JSONObject.Stringify(this.Engine, value, null, null);
