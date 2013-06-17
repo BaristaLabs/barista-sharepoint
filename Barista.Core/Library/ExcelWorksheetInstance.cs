@@ -119,7 +119,12 @@
       {
         for (var c = m_excelWorksheet.Dimension.Start.Column; c <= m_excelWorksheet.Dimension.End.Column; c++)
         {
-          propertyNames.Add(m_excelWorksheet.Cells[startPos, c].GetValue<string>());
+          var columnTitle = m_excelWorksheet.Cells[startPos, c].GetValue<string>();
+
+          if (String.IsNullOrEmpty(columnTitle))
+            propertyNames.Add("__" + c);
+          else
+            propertyNames.Add(columnTitle);
         }
 
         startPos = startPos + 1;

@@ -208,7 +208,12 @@
       {
         for (var c = startCol; c <= endCol; c++)
         {
-          propertyNames.Add(m_excelRange[startRow, c].GetValue<string>());
+          var columnTitle = m_excelRange[startRow, c].GetValue<string>();
+
+          if (String.IsNullOrEmpty(columnTitle))
+            propertyNames.Add("__" + c);
+          else
+            propertyNames.Add(columnTitle);
         }
 
         startRow = startRow + 1;
