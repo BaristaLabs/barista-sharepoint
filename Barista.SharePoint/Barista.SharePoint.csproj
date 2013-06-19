@@ -852,6 +852,9 @@
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.3\js\jquery-1.9.1.js" />
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.3\js\jquery-ui-1.10.3.custom.js" />
     <Content Include="Layouts\BaristaJS\jquery-ui-1.10.3\js\jquery-ui-1.10.3.custom.min.js" />
+    <Content Include="Layouts\BaristaJS\jquery.orgchart.css" />
+    <Content Include="Layouts\BaristaJS\jquery.orgchart.js" />
+    <Content Include="Layouts\BaristaJS\jquery.orgchart.min.js" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\angularjs.html" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\basic-plus.html" />
     <Content Include="Layouts\BaristaJS\jqueryfileupload-8.2.1\basic.html" />
