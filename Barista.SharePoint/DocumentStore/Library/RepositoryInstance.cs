@@ -481,6 +481,10 @@
       else
         id = new Guid(entityId.ToString());
 
+      var entityParts = m_repository.ListEntityParts(id);
+      if (entityParts == null)
+        return result;
+
       foreach (var entityPart in m_repository.ListEntityParts(id))
       {
         result.SetPropertyValue(entityPart.Name, new EntityPartInstance(this.Engine, entityPart), false);
