@@ -115,7 +115,8 @@
         };
 
       binding.ReliableSession.Enabled = true;
-      //binding.ReliableSession.Ordered = true;
+      binding.ReceiveTimeout = TimeSpan.FromDays(1);
+      binding.ReliableSession.Ordered = true;
 
       //FIXME: This should use message-based security, change it back to SecurityMode.None.
       binding.Security.Mode = SecurityMode.None;
