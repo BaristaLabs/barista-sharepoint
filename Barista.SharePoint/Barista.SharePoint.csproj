@@ -496,6 +496,8 @@
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-cookies.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-cookies.min.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-kendo-0.5.0.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-kendo-0.5.0.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-kendo.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-kendo.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-loader.js" />
