@@ -508,6 +508,7 @@
     <Content Include="Layouts\BaristaJS\angular\angular-sanitize.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-sanitize.min.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-scenario.js" />
+    <Content Include="Layouts\BaristaJS\angular\angular-table.css" />
     <Content Include="Layouts\BaristaJS\angular\angular-table.js" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-0.4.0.min.css" />
     <Content Include="Layouts\BaristaJS\angular\angular-ui-0.4.0.min.js" />
