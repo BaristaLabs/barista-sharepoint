@@ -353,7 +353,10 @@
         {
           m_waitReason = "Delete All";
           m_indexWriter.DeleteAll();
-          m_indexWriter.Commit();
+          m_indexWriter.Flush(true, true, true);
+          m_indexWriter.Dispose();
+
+          CreateIndexWriter();
 
           RecreateSearcher();
         }
