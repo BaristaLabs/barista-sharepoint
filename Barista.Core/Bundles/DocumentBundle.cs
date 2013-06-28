@@ -6,6 +6,11 @@
   [Serializable]
   public class DocumentBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "Document"; }

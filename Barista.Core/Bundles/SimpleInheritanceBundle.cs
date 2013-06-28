@@ -8,6 +8,131 @@
   {
 
     #region Constants
+
+    private const string ObjectPrototype = @"var class2type = {};
+
+""Boolean Number String Function Array Date RegExp Object Error"".split("" "").forEach(function(name) {
+	class2type[ ""[object "" + name + ""]"" ] = name.toLowerCase();
+});
+
+core_toString = class2type.toString;
+core_hasOwn = class2type.hasOwnProperty;
+
+Object.prototype.isFunction = function( obj ) {
+		return Object.type(obj) === ""function"";
+};
+
+Object.prototype.type = function( obj ) {
+    if ( obj == null ) {
+        return String( obj );
+    }
+    
+    return typeof obj === ""object"" || typeof obj === ""function"" ?
+        class2type[ core_toString.call(obj) ] || ""object"" :
+        typeof obj;
+};
+
+Object.prototype.isArray = function( obj ) {
+    return Array.isArray( obj );
+};
+
+Object.prototype.isNumeric = function( obj ) {
+    return !isNaN( parseFloat(obj) ) && isFinite( obj );
+};
+
+Object.prototype.isPlainObject = function( obj ) {
+
+    if ( Object.type( obj ) !== ""object"" || obj.nodeType ) {
+        return false;
+    }
+
+    try {
+        if ( obj.constructor &&
+            !core_hasOwn.call( obj.constructor.prototype, ""isPrototypeOf"" ) ) {
+            return false;
+        }
+    } catch ( e ) {
+        return false;
+    }
+
+    return true;
+};
+
+Object.prototype.isEmptyObject = function( obj ) {
+    var name;
+    for ( name in obj ) {
+        return false;
+    }
+    return true;
+};
+
+Object.prototype.error = function( msg ) {
+    throw new Error( msg );
+};
+
+Object.prototype.extend = function() {
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0] || {},
+		i = 1,
+		length = arguments.length,
+		deep = false;
+
+	// Handle a deep copy situation
+	if ( typeof target === ""boolean"" ) {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	}
+
+	// Handle case when target is a string or something (possible in deep copy)
+	if ( typeof target !== ""object"" && !Object.isFunction(target) ) {
+		target = {};
+	}
+
+	if ( length === i ) {
+		target = this;
+		--i;
+	}
+
+	for ( ; i < length; i++ ) {
+		// Only deal with non-null/undefined values
+		if ( (options = arguments[ i ]) != null ) {
+			// Extend the base object
+			for ( name in options ) {
+				src = target[ name ];
+				copy = options[ name ];
+
+				// Prevent never-ending loop
+				if ( target === copy ) {
+					continue;
+				}
+
+				// Recurse if we're merging plain objects or arrays
+				if ( deep && copy && ( Object.isPlainObject(copy) || (copyIsArray = Object.isArray(copy)) ) ) {
+					if ( copyIsArray ) {
+						copyIsArray = false;
+						clone = src && Object.isArray(src) ? src : [];
+
+					} else {
+						clone = src && Object.isPlainObject(src) ? src : {};
+					}
+
+					// Never move original objects, clone them
+					target[ name ] = Object.extend( deep, clone, copy );
+
+				// Don't bring in undefined values
+				} else if ( copy !== undefined ) {
+					target[ name ] = copy;
+				}
+			}
+		}
+	}
+
+	// Return the modified object
+    return target;
+};";
+
     private const string JRClass = @"/* Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
  * MIT Licensed.
@@ -345,6 +470,11 @@
 
     #endregion
 
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "Simple Inheritance"; }
@@ -357,6 +487,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      //engine.Execute(ObjectPrototype);
       engine.Execute(JRClass);
       engine.Execute(Fiber);
       return Null.Value;

@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
+  using Barista.SharePoint.Bundles;
   using Microsoft.SharePoint;
   using System;
 
@@ -71,6 +72,12 @@
 
       if (fileId != Guid.Empty)
         this.File = this.Web.GetFile(fileId);
+    }
+
+    public SPWebBundle WebBundle
+    {
+      get;
+      set;
     }
 
     public SPFile File

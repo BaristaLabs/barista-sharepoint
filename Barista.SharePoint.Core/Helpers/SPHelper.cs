@@ -2,6 +2,7 @@
 {
   using System;
   using System.Globalization;
+  using Barista.SharePoint.Library;
   using Microsoft.SharePoint;
   using System.IO;
   using System.Web;
@@ -295,9 +296,9 @@
 
       try
       {
-        using (SPSite site = new SPSite(listUri.ToString()))
+        using (var site = new SPSite(listUri.ToString()))
         {
-          using (SPWeb web = site.OpenWeb())
+          using (var web = site.OpenWeb())
           {
             view = web.GetViewFromUrl(listUri.ToString());
             return true;
@@ -391,11 +392,12 @@
         return false;
       }
       
+      //Attempt to retrieve the file from the specified SPSite.
       try
       {
-        using (SPSite sourceSite = new SPSite(fileUri.ToString()))
+        using (var sourceSite = new SPSite(fileUri.ToString()))
         {
-          using (SPWeb sourceWeb = sourceSite.OpenWeb())
+          using (var sourceWeb = sourceSite.OpenWeb())
           {
             if (sourceWeb == null)
               throw new InvalidOperationException("The specified script url is invalid.");
@@ -408,6 +410,7 @@
       }
       catch { /* Do Nothing... */ }
 
+      //Attempt to get the script from a relative path to the requesting url.
       Uri referrer = null;
 
       if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.UrlReferrer != null)

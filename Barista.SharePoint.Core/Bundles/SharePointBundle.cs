@@ -8,6 +8,11 @@ namespace Barista.SharePoint.Bundles
   [Serializable]
   public class SharePointBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "SharePoint"; }

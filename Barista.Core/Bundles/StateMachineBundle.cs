@@ -6,6 +6,11 @@
   [Serializable]
   public class StateMachineBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "State Machine"; }

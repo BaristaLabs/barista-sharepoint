@@ -6,6 +6,11 @@
   [Serializable]
   public class K2Bundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "K2"; }

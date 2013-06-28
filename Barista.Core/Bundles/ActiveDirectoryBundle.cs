@@ -9,6 +9,11 @@
   [Serializable]
   public class ActiveDirectoryBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "Active Directory"; }

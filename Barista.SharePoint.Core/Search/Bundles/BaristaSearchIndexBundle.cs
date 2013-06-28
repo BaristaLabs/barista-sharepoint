@@ -6,6 +6,11 @@
   [Serializable]
   public class BaristaSearchIndexBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "Barista Search Index"; }

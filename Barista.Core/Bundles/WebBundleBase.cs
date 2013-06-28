@@ -10,6 +10,11 @@
   [Serializable]
   public abstract class WebBundleBase : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return true; }
+
+    }
     public virtual string BundleName
     {
       get { return "Web"; }

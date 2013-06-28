@@ -8,6 +8,14 @@
   public interface IBundle
   {
     /// <summary>
+    /// Gets a value that indicates if the bundle is a system bundle.
+    /// </summary>
+    bool IsSystemBundle
+    {
+      get;
+    }
+
+    /// <summary>
     /// The name of the bundle. The name must be unique across all registered bundles.
     /// </summary>
     string BundleName

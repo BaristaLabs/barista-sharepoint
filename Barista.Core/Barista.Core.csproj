@@ -168,6 +168,7 @@
     <Compile Include="Bundles\LinqBundle.cs" />
     <Compile Include="Bundles\MomentBundle.cs" />
     <Compile Include="Bundles\MustacheBundle.cs" />
+    <Compile Include="Bundles\ScriptBundle.cs" />
     <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />

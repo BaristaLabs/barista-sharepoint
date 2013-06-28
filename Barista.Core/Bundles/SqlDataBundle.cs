@@ -8,6 +8,11 @@
   [Serializable]
   public class SqlDataBundle : IBundle
   {
+    public bool IsSystemBundle
+    {
+      get { return false; }
+    }
+
     public string BundleName
     {
       get { return "Sql Data"; }

@@ -8,6 +8,11 @@
   {
     private static readonly StringScriptSource LinqScriptSource = new StringScriptSource(Barista.Properties.Resources.linq);
 
+    public bool IsSystemBundle
+    {
+      get { return true; }
+    }
+
     public string BundleName
     {
       get { return "Linq"; }

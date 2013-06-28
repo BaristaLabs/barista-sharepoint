@@ -236,7 +236,7 @@
         syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
       }
 
-      var webBundle = new SPWebBundle();
+      SPBaristaContext.Current.WebBundle = new SPWebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
       if (syncRoot != null)
@@ -248,7 +248,7 @@
         bool errorInInitialization;
 
         var scriptEngineFactory = new SPBaristaScriptEngineFactory();
-        var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
+        var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
                                                          out errorInInitialization);
 
         if (errorInInitialization)
