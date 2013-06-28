@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Globalization;
   using Barista.Bundles;
   using Jurassic;
   using System;
@@ -63,7 +64,7 @@
     }
 
     [JSFunction(Name = "define")]
-    public void Define(object bundleName, object scriptReferences, object bundleDependencies, object bundleDescription)
+    public void Define(object bundleName, object scriptReferences, object bundleDependencies, object bundleDescription, object run)
     {
       var strBundleName = TypeConverter.ToString(bundleName);
 
@@ -78,18 +79,18 @@
 
         var type = Type.GetType(strTypeName, false, true);
         if (type == null)
-          throw new JavaScriptException(this.Engine, "Error", "The specified type could not be located." + strTypeName);
+          throw new JavaScriptException(this.Engine, "Error", String.Format("The specified type could not be located. {0}", strTypeName));
 
         var bundle = Activator.CreateInstance(type) as IBundle;
         if (bundle == null)
-          throw new JavaScriptException(this.Engine, "Error", "The specified type did not implement the IBundle interface." + strTypeName);
+          throw new JavaScriptException(this.Engine, "Error", String.Format("The specified type did not implement the IBundle interface. {0}", strTypeName));
 
         RegisterBundle(bundle);
         return;
       }
 
       if (m_registeredBundles.ContainsKey(strBundleName))
-        throw new JavaScriptException(this.Engine, "Error", "Unable to define bundle: A bundle with the speciied name has already been registered.");
+        throw new JavaScriptException(this.Engine, "Error", String.Format("Unable to define bundle: A bundle with the specified name has already been registered. {0}", strBundleName));
 
       var scriptBundle = new ScriptBundle
       {
@@ -103,14 +104,28 @@
       if (bundleDependencies is ArrayInstance)
       {
         var arrDependencies = bundleDependencies as ArrayInstance;
+        var i = 0;
         foreach (var dependency in arrDependencies.ElementValues)
         {
           var strDependency = TypeConverter.ToString(dependency);
           if (m_registeredBundles.ContainsKey(strDependency) == false)
             throw new JavaScriptException(this.Engine, "Error",
-                                          "The specified dependency does not exist: " + strDependency);
+                                          String.Format("The specified dependency does not exist: {0}", strDependency));
 
-          scriptBundle.AddDependency(strDependency);
+          scriptBundle.AddDependency(strDependency, i.ToString(CultureInfo.InvariantCulture));
+          i++;
+        }
+      }
+      else if (bundleDependencies is ObjectInstance)
+      {
+        var objDependencies = bundleDependencies as ObjectInstance;
+        foreach (var property in objDependencies.Properties)
+        {
+          if (m_registeredBundles.ContainsKey(property.Name) == false)
+            throw new JavaScriptException(this.Engine, "Error",
+                                          String.Format("The specified dependency does not exist: {0}", property.Name));
+
+          scriptBundle.AddDependency(property.Name, TypeConverter.ToString(property.Value));
         }
       }
       else if (bundleDependencies != Null.Value && bundleDependencies != Undefined.Value && bundleDependencies != null)
@@ -118,10 +133,10 @@
         var strDependency = TypeConverter.ToString(bundleDependencies);
         if (m_registeredBundles.ContainsKey(strDependency) == false)
           throw new JavaScriptException(this.Engine, "Error",
-                                        "The specified dependency does not exist: " + strDependency);
-        scriptBundle.AddDependency(strDependency);
+                                        String.Format("The specified dependency does not exist: {0}", strDependency));
+        scriptBundle.AddDependency(strDependency, "0");
       }
-      
+
       //No need to check existance -- an advanced scenario might be that a script creates another script and only includes it when the bundle is required.
       if (scriptReferences is ArrayInstance)
       {
@@ -130,7 +145,7 @@
         {
           var strScriptReference = TypeConverter.ToString(scriptReference);
           if (scriptReference == Null.Value || scriptReference == Undefined.Value || strScriptReference.IsNullOrWhiteSpace())
-            throw new JavaScriptException(this.Engine, "Error", "Script References must not contain empty strings.");
+            throw new JavaScriptException(this.Engine, "Error", String.Format("Script References must not contain empty strings. ({0})", strBundleName));
 
           scriptBundle.AddScriptReference(strScriptReference);
         }
@@ -144,7 +159,21 @@
         var strScriptReference = TypeConverter.ToString(scriptReferences);
         if (scriptReferences == Null.Value || scriptReferences == Undefined.Value || strScriptReference.IsNullOrWhiteSpace())
           throw new JavaScriptException(this.Engine, "Error",
-                                        "At least one script reference must be defined in order to define a bundle.");
+                                        String.Format("At least one script reference must be defined in order to define a bundle. ({0})", strBundleName));
+
+        if (run != null && run != Null.Value && run != Undefined.Value && TypeConverter.ToBoolean(run))
+        {
+          var result = this.Engine.Evaluate("include('" + strScriptReference + "');");
+          if (result is FunctionInstance)
+          {
+            scriptBundle.ScriptFunction = result as FunctionInstance;
+          }
+          else
+          {
+            throw new JavaScriptException(this.Engine, "Error",
+                                          String.Format("When specifying a to run the script immediately, the eval of the specified script reference should only return a function. ({0})", strBundleName));
+          }
+        }
 
         scriptBundle.AddScriptReference(strScriptReference);
       }

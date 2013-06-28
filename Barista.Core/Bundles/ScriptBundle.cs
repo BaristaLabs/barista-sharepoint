@@ -1,12 +1,14 @@
 ﻿namespace Barista.Bundles
 {
   using System.Collections.Generic;
+  using System.Linq;
   using Barista.Extensions;
+  using Barista.Jurassic;
   using Barista.Jurassic.Library;
 
   public class ScriptBundle : IBundle
   {
-    private readonly List<string> m_dependencies = new List<string>();
+    private readonly Dictionary<string, string> m_dependencies = new Dictionary<string, string>();
     private readonly List<string> m_scriptReferences = new List<string>();
     
     private string m_bundleDescription;
@@ -44,19 +46,28 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      var dependencyResultObj = engine.Object.Construct();
       var resultArray = engine.Array.Construct();
 
       //Require all dependencies..
       foreach (var dependency in m_dependencies)
       {
-        var result = engine.Evaluate("require('" + dependency + "');");
-        ArrayInstance.Push(resultArray, result);
+        var result = engine.Evaluate("require('" + dependency.Key + "');");
+        dependencyResultObj.SetPropertyValue(dependency.Value, result, false);
       }
 
       //If it's a function dependency, execute that.
       if (this.ScriptFunction != null)
       {
-        return this.ScriptFunction.Call(engine.Global, new object[0]);
+        var args = new List<object>();
+        if (this.ScriptFunction is UserDefinedFunction)
+        {
+          var udf = this.ScriptFunction as UserDefinedFunction;
+
+          args.AddRange(udf.ArgumentNames.Select(argumentName => dependencyResultObj.HasProperty(argumentName) ? dependencyResultObj.GetPropertyValue(argumentName) : Null.Value));
+        }
+
+        return this.ScriptFunction.Call(engine.Global, args.ToArray());
       }
 
       //Use the implemented "include" function to include the scripts.
@@ -72,9 +83,9 @@
         : resultArray;
     }
 
-    public void AddDependency(string dependency)
+    public void AddDependency(string dependencyName, string diName)
     {
-      m_dependencies.Add(dependency);
+      m_dependencies.Add(dependencyName, diName);
     }
 
     public void AddScriptReference(string reference)
