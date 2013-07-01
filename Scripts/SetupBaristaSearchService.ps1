@@ -34,6 +34,7 @@ write-host
 write-host "[[STEP]] Installing Search Service" -foregroundcolor Yellow
 write-host 
 
+& netsh http add urlacl url=http://+:8500/Barista user=$ManagedAccount
 & $serviceLocation install --sudo
 
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'"
