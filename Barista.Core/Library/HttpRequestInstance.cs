@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
   using System.Linq;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using System.Text;
@@ -172,6 +173,9 @@
     public object GetBodyObject()
     {
       var stringBody = Encoding.UTF8.GetString(this.Request.Body);
+      if (stringBody.IsNullOrWhiteSpace())
+        return Null.Value;
+
       return JSONObject.Parse(this.Engine, stringBody, null);
     }
 
