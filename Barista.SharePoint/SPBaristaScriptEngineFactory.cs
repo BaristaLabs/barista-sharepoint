@@ -123,7 +123,7 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
           catch (JavaScriptException ex)
           {
             BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-            UpdateResponseWithJavaScriptExceptionDetails(ex, SPBaristaContext.Current.Response);
+            UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
             errorInInitialization = true;
 
             switch (SPBaristaContext.Current.Request.InstanceMode)

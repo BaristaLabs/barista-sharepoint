@@ -329,6 +329,9 @@
 
       result.ModifyHttpResponse(HttpContext.Current.Response, setHeader);
 
+      if (result.Content == null)
+        return null;
+
       var resultStream = new MemoryStream(result.Content);
       return resultStream;
     }
@@ -407,7 +410,7 @@
         catch (JavaScriptException ex)
         {
           //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
         }
         catch (Exception ex)
         {
@@ -481,7 +484,7 @@
         {
           //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
           //                                             "A JavaScript exception was thrown while evaluating script: ");
-          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(ex, response);
+          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
         }
         catch (Exception ex)
         {

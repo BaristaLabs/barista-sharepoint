@@ -349,6 +349,9 @@
 
       result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
 
+      if (result.Content == null)
+        return null;
+
       var resultStream = new MemoryStream(result.Content);
       return resultStream;
     }

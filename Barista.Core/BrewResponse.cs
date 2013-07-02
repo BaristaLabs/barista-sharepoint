@@ -151,7 +151,7 @@ namespace Barista
       response.LastModified = this.LastModified;
       response.Location = this.RedirectLocation;
       response.StatusCode = this.StatusCode;
-      //response.StatusDescription = this.StatusDescription;
+      response.StatusDescription = this.StatusDescription;
       response.SuppressEntityBody = this.SuppressContent;
 
       foreach(var header in this.Headers.Keys)
@@ -170,7 +170,8 @@ namespace Barista
       response.Expires = this.Expires;
       response.RedirectLocation = this.RedirectLocation;
       response.StatusCode = (int)this.StatusCode;
-      //response.StatusDescription = this.StatusDescription;
+      if (setHeaders)
+        response.StatusDescription = this.StatusDescription;
       response.SuppressContent = this.SuppressContent;
 
       foreach (var cookieName in this.Cookies.Keys)
