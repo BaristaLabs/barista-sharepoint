@@ -34,13 +34,13 @@
 
     private void CreateEndpoints()
     {
-      Type contractType = ServiceUtility.GetContractType(ImplementedContracts);
+      var contractType = ServiceUtility.GetContractType(ImplementedContracts);
       AuthenticationSchemes oneAuthScheme;
       ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
-      foreach (Uri baseAddress in this.m_baseAddresses)
+      foreach (var baseAddress in this.m_baseAddresses)
       {
-        BasicHttpBinding binding = new BasicHttpBinding
+        var binding = new BasicHttpBinding
           {
           AllowCookies = true,
           ReceiveTimeout = TimeSpan.FromHours(1),

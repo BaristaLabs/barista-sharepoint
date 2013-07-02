@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Extensions
 {
+  using System.Text;
   using Microsoft.SharePoint;
   using Newtonsoft.Json;
   using System;
@@ -15,7 +16,11 @@
         return;
 
       if (SPContext.Current.Site != null)
+      {
         request.ExtendedProperties.Add("SPSiteId", SPContext.Current.Site.ID.ToString());
+        request.ExtendedProperties.Add("SPUrlZone", SPContext.Current.Site.Zone.ToString());
+        request.ExtendedProperties.Add("SPUserToken", Encoding.Unicode.GetString(SPContext.Current.Site.UserToken.BinaryToken));
+      }
 
       if (SPContext.Current.Web != null)
         request.ExtendedProperties.Add("SPWebId", SPContext.Current.Web.ID.ToString());

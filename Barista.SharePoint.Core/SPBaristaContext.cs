@@ -1,7 +1,10 @@
 ﻿namespace Barista.SharePoint
 {
+  using System.Text;
+  using Barista.Extensions;
   using Barista.SharePoint.Bundles;
   using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Administration;
   using System;
 
   [Serializable]
@@ -31,7 +34,25 @@
       var siteId = new Guid(request.ExtendedProperties["SPSiteId"]);
 
       if (siteId != Guid.Empty)
-        this.Site = new SPSite(siteId);
+      {
+        SPUrlZone siteUrlZone;
+
+        if (request.ExtendedProperties.ContainsKey("SPUrlZone") &&
+          request.ExtendedProperties["SPUrlZone"].TryParseEnum(true, SPUrlZone.Default, out siteUrlZone))
+
+        if (request.ExtendedProperties.ContainsKey("SPUserToken"))
+        {
+          var tokenBytes = Encoding.Unicode.GetBytes(request.ExtendedProperties["SPUserToken"]);
+          var userToken = new SPUserToken(tokenBytes);
+
+          //Don't use the usertoken, this results in unexpected behavior.
+          this.Site = new SPSite(siteId, siteUrlZone);
+        }
+        else
+        {
+          this.Site = new SPSite(siteId, siteUrlZone);
+        }
+      }
 
       if (!request.ExtendedProperties.ContainsKey("SPWebId"))
         return;
@@ -177,7 +198,7 @@
       var result = new SPBaristaContext();
 
       if (context.Site != null)
-        result.Site = new SPSite(context.Site.ID);
+        result.Site = new SPSite(context.Site.ID, context.Site.Zone, context.Site.UserToken);
 
       if (context.Web != null)
         result.Web = result.Site.OpenWeb(context.Web.ID);

@@ -144,6 +144,22 @@ namespace Barista.SharePoint.Library
       get { return m_site.Url; }
     }
 
+    [JSProperty(Name = "zone")]
+    public object Zone
+    {
+      get
+      {
+        var result = this.Engine.Array.Construct();
+
+        foreach (var zone in m_site.Zone.GetIndividualFlags())
+        {
+          ArrayInstance.Push(result, zone.ToString());
+        }
+
+        return result.Length == 1 ? result.ElementValues.First() : result;
+      }
+    }
+
     //TODO: Usage, UserCustomActions
     #endregion
 

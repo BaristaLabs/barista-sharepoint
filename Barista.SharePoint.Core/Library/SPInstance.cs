@@ -115,6 +115,18 @@
       return new SPUserInstance(this.Engine.Object.InstancePrototype, SPBaristaContext.Current.Web.CurrentUser);
     }
 
+    [JSDoc("Gets the url that corresponds to the incoming request for the current zone.")]
+    [JSFunction(Name = "getResponseUrl")]
+    public string GetResponseUrl()
+    {
+      var urlZone = SPBaristaContext.Current.Site.Zone;
+      var path = SPBaristaContext.Current.Web.ServerRelativeUrl;
+
+      var uri = SPBaristaContext.Current.Site.WebApplication.GetResponseUri(urlZone, path);
+
+      return uri.ToString();
+    }
+
     [JSDoc("Sends an email.")]
     [JSFunction(Name = "sendEmail")]
     public bool SendEmail(string to, string cc, string bcc, string from, string subject, string messageBody, bool appendFooter)

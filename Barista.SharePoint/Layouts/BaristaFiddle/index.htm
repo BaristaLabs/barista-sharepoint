@@ -569,7 +569,7 @@ asyncTest("[Your Unit Test Title]", function () {
             jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
-                url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.currentContext.web.url"),
+                url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.getResponseUrl()"),
                 cache: false,
                 success: function (data) {
                     currentWebUrl = data;
