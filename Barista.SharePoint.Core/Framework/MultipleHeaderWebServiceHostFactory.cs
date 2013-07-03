@@ -36,7 +36,7 @@
       AuthenticationSchemes oneAuthScheme;
       ClientRequestServiceBehaviorAttribute.GetAllAuthenticationSchemes(out oneAuthScheme);
 
-      foreach (Uri baseAddress in this.m_baseAddresses)
+      foreach (var baseAddress in this.m_baseAddresses)
       {
         var binding = new WebHttpBinding
           {

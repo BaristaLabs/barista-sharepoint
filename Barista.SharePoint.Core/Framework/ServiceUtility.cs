@@ -54,15 +54,14 @@
       if (results.Count == 0)
         return null;
 
-      if (results.First().Scheme == "https" && baseAddresses.Any(ba => ba.Scheme == "http"))
+      if (results.First().Scheme == Uri.UriSchemeHttps && baseAddresses.Any(ba => ba.Scheme == Uri.UriSchemeHttp))
       {
-        var ub = new UriBuilder(results.First()) {Scheme = "http", Port = 80};
-        results.Add(ub.Uri);
+        results.AddRange(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp));
       }
-      else if (results.First().Scheme == "http" && baseAddresses.Any(ba => ba.Scheme == "https"))
+      else if (results.First().Scheme == Uri.UriSchemeHttp && baseAddresses.Any(ba => ba.Scheme == Uri.UriSchemeHttps))
       {
-        var ub = new UriBuilder(results.First()) { Scheme = "https", Port = 443 };
-        results.Add(ub.Uri);
+        results.AddRange(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp));
+        results.AddRange(ServiceUtility.FilterBaseAddresses(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttps).ToArray()));
       }
 
       return results.ToArray();
