@@ -18,32 +18,54 @@
     /// <returns></returns>
     public static Uri[] FilterBaseAddresses(Uri[] baseAddresses)
     {
-      Uri result = null;
+      var results = new List<Uri>();
 
       //If there's only one base address, use that one.
       if (baseAddresses.Length == 1)
-        result = baseAddresses[0];
+        results.Add(baseAddresses[0]);
 
       //Attempt to find the non-fully qualified host name from the base addresses.
-      if (result == null)
+      if (results.Count == 0)
       {
         var currentHostName = HttpContext.Current.Request.Url.Host;
 
-        result = baseAddresses.FirstOrDefault(item => String.Compare(item.Host, currentHostName, StringComparison.OrdinalIgnoreCase) == 0);
+        var firstMatchingUrl =
+          baseAddresses.FirstOrDefault(
+            item => String.Compare(item.Host, currentHostName, StringComparison.OrdinalIgnoreCase) == 0);
+
+        if (firstMatchingUrl != null)
+          results.Add(firstMatchingUrl);
       }
 
       //Attempt to find the fully qualified host name
-      if (result == null)
+      if (results.Count == 0)
       {
         var fullyQualifiedHostName = System.Net.Dns.GetHostEntry("").HostName;
 
-        result = baseAddresses.FirstOrDefault(item => String.Compare(item.Host, fullyQualifiedHostName, StringComparison.OrdinalIgnoreCase) == 0);
+        var firstMatchingUrl =
+          baseAddresses.FirstOrDefault(
+            item => String.Compare(item.Host, fullyQualifiedHostName, StringComparison.OrdinalIgnoreCase) == 0);
+
+        if (firstMatchingUrl != null)
+          results.Add(firstMatchingUrl);
       }
 
-      if (result == null)
+      //If the scheme of the result is http(s) and there exists another baseAddress with http(s), return both schemes, otherwise just the one.
+      if (results.Count == 0)
         return null;
 
-      return new[] { result };
+      if (results.First().Scheme == "https" && baseAddresses.Any(ba => ba.Scheme == "http"))
+      {
+        var ub = new UriBuilder(results.First()) {Scheme = "http", Port = 80};
+        results.Add(ub.Uri);
+      }
+      else if (results.First().Scheme == "http" && baseAddresses.Any(ba => ba.Scheme == "https"))
+      {
+        var ub = new UriBuilder(results.First()) { Scheme = "https", Port = 443 };
+        results.Add(ub.Uri);
+      }
+
+      return results.ToArray();
     }
 
     public static void ConfigureServiceHost()
@@ -90,15 +112,10 @@
 
     public static void AddMexEndpoint(ServiceHostBase serviceHost, Uri baseAddress, AuthenticationSchemes schemes)
     {
-      HttpTransportBindingElement httpTransport;
-      if (baseAddress.Scheme == Uri.UriSchemeHttp)
-      {
-        httpTransport = new HttpTransportBindingElement();
-      }
-      else
-      {
-        httpTransport = new HttpsTransportBindingElement();
-      }
+      HttpTransportBindingElement httpTransport = baseAddress.Scheme == Uri.UriSchemeHttp
+                                                    ? new HttpTransportBindingElement()
+                                                    : new HttpsTransportBindingElement();
+
       httpTransport.AuthenticationScheme = schemes;
       Binding binding = new CustomBinding(new BindingElement[] { httpTransport });
       serviceHost.AddServiceEndpoint("IMetadataExchange", binding, baseAddress);
