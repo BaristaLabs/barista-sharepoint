@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Web;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -23,6 +24,16 @@
     {
       get;
       set;
+    }
+
+    [JSFunction(Name = "include")]
+    public void Include(string scriptPath)
+    {
+      var path = HttpContext.Current.Request.MapPath(scriptPath);
+
+      var source = new FileScriptSource(path, System.Text.Encoding.Unicode);
+
+      this.Engine.Execute(source);
     }
 
     /// <summary>

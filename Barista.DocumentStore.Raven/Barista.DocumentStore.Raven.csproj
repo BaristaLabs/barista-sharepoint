@@ -4,19 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{83078881-2C80-47E3-9BED-A87FB429F347}</ProjectGuid>
+    <ProjectGuid>{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Barista.Web</RootNamespace>
-    <AssemblyName>Barista.Web</AssemblyName>
+    <RootNamespace>Barista.DocumentStore.Raven</RootNamespace>
+    <AssemblyName>Barista.DocumentStore.Raven</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,12 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,29 +51,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaristaScriptEngineFactory.cs" />
-    <Compile Include="BaristaWebService.cs" />
-    <Compile Include="Bundles\BaristaWebBundle.cs" />
-    <Compile Include="Bundles\DocumentStoreBundle.cs" />
-    <Compile Include="Libraries\BaristaWebInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WcfReadEntityBodyModeModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Barista.DocumentStore.FileSystem\Barista.DocumentStore.FileSystem.csproj">
-      <Project>{27f98766-b157-46e3-9ea2-98d9e3e1fdc0}</Project>
-      <Name>Barista.DocumentStore.FileSystem</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

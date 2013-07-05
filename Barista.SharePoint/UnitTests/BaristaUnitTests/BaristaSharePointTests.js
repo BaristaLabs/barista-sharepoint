@@ -19,6 +19,33 @@ asyncTest("Retrieve webs in the current context.", function () {
     });
 });
 
+asyncTest("Assert correlation id matches header", function () {
+    expect(1);
+    var code = "var util = require('Utility');\
+    var correlationId = util.getCurrentCorrelationId();\
+    correlationId;\
+    ";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: Barista.getBaristaServiceUrl(),
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        var spRequestGuid = jqXHR.getResponseHeader("SPRequestGuid");
+        var items = spRequestGuid.split(",");
+        equal(data, items[0], "Correlation Ids Matched.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
 asyncTest("Retrieve lists in the current context.", function () {
     expect(2);
 

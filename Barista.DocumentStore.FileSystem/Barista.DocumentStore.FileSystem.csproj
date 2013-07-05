@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{83078881-2C80-47E3-9BED-A87FB429F347}</ProjectGuid>
+    <ProjectGuid>{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Barista.Web</RootNamespace>
-    <AssemblyName>Barista.Web</AssemblyName>
+    <RootNamespace>Barista.DocumentStore.FileSystem</RootNamespace>
+    <AssemblyName>Barista.DocumentStore.FileSystem</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -44,13 +44,15 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\packages\Windows7APICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\packages\Windows7APICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,26 +60,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaristaScriptEngineFactory.cs" />
-    <Compile Include="BaristaWebService.cs" />
-    <Compile Include="Bundles\BaristaWebBundle.cs" />
-    <Compile Include="Bundles\DocumentStoreBundle.cs" />
-    <Compile Include="Libraries\BaristaWebInstance.cs" />
+    <Compile Include="FSDocumentStore.cs" />
+    <Compile Include="FSDocumentStoreHelper.cs" />
+    <Compile Include="FSDocumentStore_Container.cs" />
+    <Compile Include="FSDocumentStore_Entity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WcfReadEntityBodyModeModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Barista.DocumentStore.FileSystem\Barista.DocumentStore.FileSystem.csproj">
-      <Project>{27f98766-b157-46e3-9ea2-98d9e3e1fdc0}</Project>
-      <Name>Barista.DocumentStore.FileSystem</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

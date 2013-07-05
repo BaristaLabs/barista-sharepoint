@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.DocumentStore.Library
+﻿namespace Barista.DocumentStore.Library
 {
   using Barista.DocumentStore;
   using Jurassic;
@@ -49,7 +49,9 @@
     {
       get
       {
+// ReSharper disable CoVariantArrayConversion
         var result = this.Engine.Array.Construct(m_role.BasePermissions.Select(bp => bp).ToArray());
+// ReSharper restore CoVariantArrayConversion
         return result;
       }
       set

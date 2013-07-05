@@ -149,32 +149,44 @@
       }
 
       //Otherwise, use the body of the post as code.
-      if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
+      if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST" && OperationContext.Current != null)
       {
-        var body = HttpContext.Current.Request.InputStream.ToByteArray();
+        var body = OperationContext.Current.RequestContext.RequestMessage.GetBody<byte[]>();
         var bodyString = Encoding.UTF8.GetString(body);
 
-        //Try using JSON encoding.
-        try
+        if (bodyString.IsNullOrWhiteSpace() == false)
         {
-          var jsonFormBody = JObject.Parse(bodyString);
-          var codeProperty = jsonFormBody.Properties().FirstOrDefault(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c");
-          if (codeProperty != null)
-            code = codeProperty.Value.ToObject<string>();
-        }
-        catch { /* Do Nothing */ }
-
-        //Try using form encoding
-        if (String.IsNullOrEmpty(code))
-        {
+          //Try using JSON encoding.
           try
           {
-            var form = HttpUtility.ParseQueryString(bodyString);
-            var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
-            if (formKey != null)
-              code = form[formKey];
+            var jsonFormBody = JObject.Parse(bodyString);
+            var codeProperty =
+              jsonFormBody.Properties()
+                          .FirstOrDefault(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c");
+            if (codeProperty != null)
+              code = codeProperty.Value.ToObject<string>();
           }
-          catch { /* Do Nothing */ }
+          catch
+          {
+            /* Do Nothing */
+          }
+
+          //Try using form encoding
+          if (String.IsNullOrEmpty(code))
+          {
+            try
+            {
+              var form = HttpUtility.ParseQueryString(bodyString);
+              var formKey =
+                form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
+              if (formKey != null)
+                code = form[formKey];
+            }
+            catch
+            {
+              /* Do Nothing */
+            }
+          }
         }
       }
 
@@ -239,7 +251,6 @@
       scriptPath = String.Empty;
 
       //If the code looks like a path, attempt to retrieve a code file and use the contents of that file as the code.
-      
       if (code.StartsWith("~"))
       {
         var mappedPath = HttpContext.Current.Request.MapPath(code);
@@ -263,16 +274,23 @@
           }
         }
 
-        path = Path.Combine(path, code);
-        if (File.Exists(path))
+        if (path.IsValidPath() && code.IsValidPath())
         {
-          scriptPath = path;
-          code = File.ReadAllText(path);
+          path = Path.Combine(path, code);
+          if (File.Exists(path))
+          {
+            scriptPath = path;
+            code = File.ReadAllText(path);
+          }
         }
       }
 
       //Replace any tokens in the code.
       //TODO: re-implement this if appropriate.
+      HttpRequest request = HttpContext.Current.Request;
+      var serverRelativeWebUrl = request.Url.AbsoluteUri.Replace(request.Url.AbsolutePath, String.Empty);
+      code = code.Replace("{WebUrl}", serverRelativeWebUrl);
+
       //code = SPHelper.ReplaceTokens(SPContext.Current, code);
 
       return code;

@@ -174,27 +174,39 @@
         var body = HttpContext.Current.Request.InputStream.ToByteArray();
         var bodyString = Encoding.UTF8.GetString(body);
 
-        //Try using JSON encoding.
-        try
+        if (bodyString.IsNullOrWhiteSpace() == false)
         {
-          var jsonFormBody = JObject.Parse(bodyString);
-          var codeProperty = jsonFormBody.Properties().FirstOrDefault(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c");
-          if (codeProperty != null)
-            code = codeProperty.Value.ToObject<string>();
-        }
-        catch { /* Do Nothing */ }
-
-        //Try using form encoding
-        if (String.IsNullOrEmpty(code))
-        {
+          //Try using JSON encoding.
           try
           {
-            var form = HttpUtility.ParseQueryString(bodyString);
-            var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
-            if (formKey != null)
-              code = form[formKey];
+            var jsonFormBody = JObject.Parse(bodyString);
+            var codeProperty =
+              jsonFormBody.Properties()
+                          .FirstOrDefault(p => p.Name.ToLowerInvariant() == "code" || p.Name.ToLowerInvariant() == "c");
+            if (codeProperty != null)
+              code = codeProperty.Value.ToObject<string>();
           }
-          catch { /* Do Nothing */ }
+          catch
+          {
+            /* Do Nothing */
+          }
+
+          //Try using form encoding
+          if (String.IsNullOrEmpty(code))
+          {
+            try
+            {
+              var form = HttpUtility.ParseQueryString(bodyString);
+              var formKey =
+                form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
+              if (formKey != null)
+                code = form[formKey];
+            }
+            catch
+            {
+              /* Do Nothing */
+            }
+          }
         }
       }
 

@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.DocumentStore.Library
+﻿namespace Barista.DocumentStore.Library
 {
   using Barista.DocumentStore;
   using Barista.Library;
@@ -7,9 +7,38 @@
   using System;
 
   [Serializable]
+  public class RepositoryConstructor : ClrFunction
+  {
+    public RepositoryConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "Repository", new RepositoryInstance(engine.Object.InstancePrototype))
+    {
+      this.PopulateFunctions();
+    }
+
+    [JSConstructorFunction]
+    public RepositoryInstance Construct()
+    {
+      return new RepositoryInstance(this.InstancePrototype);
+    }
+
+    [JSFunction(Name = "getRepository")]
+    public virtual RepositoryInstance GetRepository(string repositoryKind, params object[] args)
+    {
+      //TODO...
+      throw new NotImplementedException();
+      //Repository.GetRepository(
+    }
+  }
+
+  [Serializable]
   public class RepositoryInstance : ObjectInstance
   {
     readonly Repository m_repository;
+
+    internal RepositoryInstance(ObjectInstance prototype)
+      : base(prototype)
+    {
+    }
 
     public RepositoryInstance(ScriptEngine engine, Repository repository)
       : base(engine)

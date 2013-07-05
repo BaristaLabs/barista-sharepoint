@@ -189,18 +189,6 @@
       <DependentUpon>BaristaUnitTests.feature</DependentUpon>
     </Compile>
     <Compile Include="Layouts\BaristaJS\linqjs-2.2.0.2\sample\LinqJS.cs" />
-    <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
-    <Compile Include="DocumentStore\Library\CommentInstance.cs" />
-    <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
-    <Compile Include="DocumentStore\Library\EntityInstance.cs" />
-    <Compile Include="DocumentStore\Library\EntityPartInstance.cs" />
-    <Compile Include="DocumentStore\Library\EntitySetInstance.cs" />
-    <Compile Include="DocumentStore\Library\FolderInstance.cs" />
-    <Compile Include="DocumentStore\Library\PermissionsInfoInstance.cs" />
-    <Compile Include="DocumentStore\Library\PrincipalInstance.cs" />
-    <Compile Include="DocumentStore\Library\PrincipalRoleInfoInstance.cs" />
-    <Compile Include="DocumentStore\Library\RepositoryInstance.cs" />
-    <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="DocumentStore\HandleEventFiring.cs" />

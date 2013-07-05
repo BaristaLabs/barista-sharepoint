@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.DocumentStore.Library
+﻿namespace Barista.DocumentStore.Library
 {
   using Barista.DocumentStore;
   using Barista.Library;

@@ -5,6 +5,8 @@
   using Barista.Jurassic.Library;
   using Barista.Library;
   using System;
+  using Barista.Web.Bundles;
+  using LogLevel = Barista.Logging.LogLevel;
 
   public sealed class BaristaScriptEngineFactory : ScriptEngineFactory
   {
@@ -40,10 +42,10 @@
       if (isNewScriptEngineInstance)
       {
         //TODO: Add a console that uses NUnit
-        //var console = new FirebugConsole(engine)
-        //{
-        //  Output = new BaristaConsoleOutput(engine)
-        //};
+        var console = new FirebugConsole(engine)
+        {
+          Output = new BaristaConsoleOutput(engine)
+        };
 
         //Register Bundles.
         var instance = new BaristaGlobal(engine.Object.InstancePrototype);
@@ -59,7 +61,7 @@
         instance.Common.RegisterBundle(new DocumentBundle());
         //instance.Common.RegisterBundle(new K2Bundle());
         instance.Common.RegisterBundle(new UtilityBundle());
-        //instance.Common.RegisterBundle(new DocumentStoreBundle());
+        instance.Common.RegisterBundle(new DocumentStoreBundle());
         instance.Common.RegisterBundle(new SimpleInheritanceBundle());
         instance.Common.RegisterBundle(new SqlDataBundle());
         instance.Common.RegisterBundle(new StateMachineBundle());
@@ -71,20 +73,20 @@
         //Global Types
         engine.SetGlobalValue("Barista", instance);
 
-        //engine.SetGlobalValue("file", new FileSystemInstance(engine));
+        engine.SetGlobalValue("fs", new FileSystemInstance(engine));
 
         engine.SetGlobalValue("Guid", new GuidConstructor(engine));
         engine.SetGlobalValue("Uri", new UriConstructor(engine));
         engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
 
-        //engine.SetGlobalValue("console", console);
+        engine.SetGlobalValue("console", console);
 
         //Map Barista functions to global functions.
         engine.Execute(@"var help = function(obj) { return Barista.help(obj); };
 var require = function(name) { return Barista.common.require(name); };
 var listBundles = function() { return Barista.common.listBundles(); };
 var define = function() { return Barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4]); };
-var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl); };");
+var include = function(scriptUrl) { return Barista.include(scriptUrl); };");
 
         //Execute any instance initialization code.
         if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCode) == false)
@@ -97,7 +99,9 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
           }
           catch (JavaScriptException ex)
           {
-            //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+            var logger = Logging.LogManager.GetCurrentClassLogger();
+            logger.Log(LogLevel.Error, () => "A JavaScript exception was thrown wile evaluating Script.", ex);
+
             UpdateResponseWithJavaScriptExceptionDetails(engine, ex, BaristaContext.Current.Response);
             errorInInitialization = true;
 
@@ -113,7 +117,9 @@ var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl)
           }
           catch (Exception ex)
           {
-            //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occured while evaluating script: ");
+            var logger = Logging.LogManager.GetCurrentClassLogger();
+            logger.Log(LogLevel.Error, () => "An internal error occured while evaluating script: ", ex);
+
             errorInInitialization = true;
             //switch (BaristaContext.Current.Request.InstanceMode)
             //{

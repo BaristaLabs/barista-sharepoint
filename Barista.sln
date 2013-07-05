@@ -114,9 +114,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Web", "Barista.Web\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaWebHost", "BaristaWebHost\BaristaWebHost.csproj", "{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.DocumentStore.FileSystem", "Barista.DocumentStore.FileSystem\Barista.DocumentStore.FileSystem.csproj", "{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.DocumentStore.Raven", "Barista.DocumentStore.Raven\Barista.DocumentStore.Raven.csproj", "{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
+		SccNumberOfProjects = 14
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -164,6 +168,14 @@ Global
 		SccProjectTopLevelParentUniqueName11 = Barista.sln
 		SccProjectName11 = BaristaWebHost
 		SccLocalPath11 = BaristaWebHost
+		SccProjectUniqueName12 = Barista.DocumentStore.FileSystem\\Barista.DocumentStore.FileSystem.csproj
+		SccProjectTopLevelParentUniqueName12 = Barista.sln
+		SccProjectName12 = Barista.DocumentStore.FileSystem
+		SccLocalPath12 = Barista.DocumentStore.FileSystem
+		SccProjectUniqueName13 = Barista.DocumentStore.Raven\\Barista.DocumentStore.Raven.csproj
+		SccProjectTopLevelParentUniqueName13 = Barista.sln
+		SccProjectName13 = Barista.DocumentStore.Raven
+		SccLocalPath13 = Barista.DocumentStore.Raven
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -218,6 +230,14 @@ Global
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -226,6 +246,8 @@ Global
 		{DAA5C1C0-DE70-4578-B6DC-C37E2A93298B} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{83078881-2C80-47E3-9BED-A87FB429F347} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
+		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
+		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{17B92DC5-9402-44DF-B03C-4687E99FEF61} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}

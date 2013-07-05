@@ -155,6 +155,7 @@
     <Compile Include="ArraySegmentEx.cs" />
     <Compile Include="ArraySegmentList.cs" />
     <Compile Include="AssemblyUtil.cs" />
+    <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaContext.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
@@ -180,6 +181,18 @@
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />
+    <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
+    <Compile Include="DocumentStore\Library\CommentInstance.cs" />
+    <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityPartInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntitySetInstance.cs" />
+    <Compile Include="DocumentStore\Library\FolderInstance.cs" />
+    <Compile Include="DocumentStore\Library\PermissionsInfoInstance.cs" />
+    <Compile Include="DocumentStore\Library\PrincipalInstance.cs" />
+    <Compile Include="DocumentStore\Library\PrincipalRoleInfoInstance.cs" />
+    <Compile Include="DocumentStore\Library\RepositoryInstance.cs" />
+    <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
     <Compile Include="Helpers\ClientInfo.cs" />

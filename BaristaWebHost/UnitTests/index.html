@@ -1,0 +1,44 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Barista Unit Tests</title>
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.12.0.css" />
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/linq.js/2.2.0.2/linq.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/linq.js/2.2.0.2/jquery.linq.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/qunit/qunit-1.12.0.js"></script>
+        <script type="text/javascript">
+            //Returns the current root url.
+            var Barista = {};
+
+            Barista.getDomain = function() {
+                return location.protocol + "//" + location.hostname + ":" + location.port;
+            }
+
+            Barista.getBaristaServiceUrl = function() {
+                return Barista.getDomain() + "/Barista/v1/Barista.svc/eval";
+            }
+
+            Barista.getProxy  = function() {
+                if (location.hostname == "ofsdev" || location.hostname == "sp2010dev" || location.hostname == "localhost")
+                    return null;
+                else
+                    return { address: "http://proxy3.do.treas.gov:8080", useDefaultCredentials: true };
+            }
+
+            Barista.getContentPath  = function() {
+                    return "/Content/";
+            }
+        </script>
+        <script type="text/javascript" src="BaristaTests.js"></script>
+        <script type="text/javascript" src="BaristaActiveDirectoryTests.js"></script>
+        <script type="text/javascript" src="BaristaDocumentTests.js"></script>
+        <script type="text/javascript" src="BaristaDocumentStoreTests.js"></script>
+        <!--<script type="text/javascript" src="BaristaK2Tests.js"></script>-->
+    </body>
+</html>

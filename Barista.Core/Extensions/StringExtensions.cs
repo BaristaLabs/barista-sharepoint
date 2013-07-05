@@ -1,5 +1,6 @@
 ﻿namespace Barista.Extensions
 {
+  using System.IO;
   using System.Linq;
   using Jurassic;
   using System;
@@ -12,6 +13,18 @@
   /// </summary>
   public static class StringExtensions
   {
+    public static bool IsValidFileName(this string fileName)
+    {
+      return !fileName.IsNullOrWhiteSpace() &&
+              fileName.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
+    }
+
+    public static bool IsValidPath(this string path)
+    {
+      return !path.IsNullOrWhiteSpace() &&
+              path.IndexOfAny(Path.GetInvalidPathChars()) < 0;
+    }
+
     public static string ReplaceFirstOccurence(this string inputstring, string searchText, string replacementText)
     {
       int index = inputstring.IndexOf(searchText, System.StringComparison.Ordinal);

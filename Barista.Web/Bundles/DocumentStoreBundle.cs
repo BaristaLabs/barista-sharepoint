@@ -1,8 +1,9 @@
-﻿namespace Barista.SharePoint.Bundles
+﻿namespace Barista.Web.Bundles
 {
+  using System.IO;
+  using Barista.DocumentStore.FileSystem;
   using Barista.DocumentStore.Library;
   using Barista.DocumentStore;
-  using Barista.SharePoint.DocumentStore;
   using System;
 
   [Serializable]
@@ -20,13 +21,16 @@
 
     public string BundleDescription
     {
-      get { return "Document Store Bundle. Enables document database capabilities on top of SharePoint"; }
+      get { return "Document Store Bundle. Enables document database capabilities on top of FileSystem/RavenDB/Azure etc..."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       var factory = new BaristaRepositoryFactory();
-      var repository = Repository.GetRepository(factory, new SPDocumentStore());
+      var rootPath = Path.Combine(BaristaContext.Current.Request.FilePath, "DocumentStore");
+
+      engine.SetGlobalValue("Repository", new RepositoryConstructor(engine));
+      var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
       return new RepositoryInstance(engine, repository);
     }
 
@@ -35,7 +39,7 @@
     {
       public object CreateRepository()
       {
-        Repository repository = new Repository();
+        var repository = new Repository();
 
         //TODO: Allow Repository configuration (JSON Object passed to require as a param)
 
