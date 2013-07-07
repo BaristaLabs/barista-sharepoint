@@ -171,6 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
+    <Folder Include="UnitTests\API\ActiveDirectory\" />
+    <Folder Include="UnitTests\API\Core\" />
+    <Folder Include="UnitTests\API\Document\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

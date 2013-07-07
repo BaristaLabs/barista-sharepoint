@@ -32,19 +32,5 @@ asyncTest("Create Entity", function () {
 
     var scriptPath = "~/UnitTests/API/DocumentStore/createEntity.js";
 
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl() + "?c=" + encodeURIComponent(scriptPath)
-    });
-
-    request.done(function (data, textStatus, jqXHR) {
-        ok(1 == 1);
-        start();
-    });
-
-    request.fail(function (jqXHR, textStatus) {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
+    Barista.runTestScript(scriptPath);
 });
