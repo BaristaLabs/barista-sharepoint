@@ -81,7 +81,7 @@
     {
       if (IsDocumentStore<T>() == false)
       {
-        throw new NotImplementedException(String.Format("The current Document Store does not implement the specified operation. ({0})", typeof(T)));
+        throw new NotImplementedException(String.Format("The Document Store associated with the repository does not implement the specified operation. ({0})", typeof(T)));
       }
       return (T)this.DocumentStore;
     }

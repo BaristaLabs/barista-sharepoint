@@ -5,29 +5,58 @@
   using Jurassic;
   using Jurassic.Library;
   using System;
+  using System.Linq;
 
   [Serializable]
-  public class RepositoryConstructor : ClrFunction
+  public abstract class RepositoryConstructor : ClrFunction
   {
-    public RepositoryConstructor(ScriptEngine engine)
+    protected RepositoryConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "Repository", new RepositoryInstance(engine.Object.InstancePrototype))
     {
-      this.PopulateFunctions();
+      PopulateFunctions();
     }
 
-    [JSConstructorFunction]
-    public RepositoryInstance Construct()
-    {
-      return new RepositoryInstance(this.InstancePrototype);
-    }
+    //[JSConstructorFunction]
+    //public RepositoryInstance Construct()
+    //{
+    //  return new RepositoryInstance(this.InstancePrototype);
+    //}
 
     [JSFunction(Name = "getRepository")]
-    public virtual RepositoryInstance GetRepository(string repositoryKind, params object[] args)
+    public virtual RepositoryInstance GetRepository(object config)
     {
-      //TODO...
-      throw new NotImplementedException();
-      //Repository.GetRepository(
+      var configuration = new RepositoryConfiguration();
+
+      if (config is ObjectInstance)
+      {
+        var objConfig = config as ObjectInstance;
+        if (objConfig.HasProperty("containerName"))
+          configuration.ContainerName = TypeConverter.ToString(objConfig.GetPropertyValue("containerName"));
+
+        if (objConfig.HasProperty("repositoryKind"))
+          configuration.RepositoryKind = TypeConverter.ToString(objConfig.GetPropertyValue("repositoryKind"));
+
+        if (objConfig.HasProperty("options"))
+        {
+          var objOptions = objConfig.GetPropertyValue("options") as ObjectInstance;
+          if (objOptions != null)
+          {
+            foreach (var kvp in objOptions.Properties.Where(kvp => configuration.Options.ContainsKey(kvp.Name) == false))
+            {
+              configuration.Options.Add(kvp.Name, TypeConverter.ToString(kvp.Value));
+            }
+          }
+        }
+      }
+      else
+      {
+        configuration.ContainerName = TypeConverter.ToString(config);
+      }
+
+      return CreateRepository(configuration);
     }
+
+    protected abstract RepositoryInstance CreateRepository(RepositoryConfiguration configuration);
   }
 
   [Serializable]
@@ -153,12 +182,42 @@
     #endregion
 
     #region Entity
+
     [JSFunction(Name = "createEntity")]
-    public EntityInstance CreateEntity(object path, object title, object entityNamespace, object data)
+    [JSDoc("Creates a new entity.\nEx: createEntity([path], title, entityNamespace, data])")]
+    public EntityInstance CreateEntity(params object[] args)
     {
+      object path = null, title, entityNamespace, data;
+
+      switch (args.Length)
+      {
+        case 4:
+          path = args[0];
+          title = args[1];
+          entityNamespace = args[2];
+          data = args[3];
+          break;
+        case 3:
+          title = args[0];
+          entityNamespace = args[1];
+          data = args[2];
+          break;
+        case 1:
+          var obj = args[0] as ObjectInstance;
+          if (obj == null)
+            throw new JavaScriptException(this.Engine, "Error", "If a single argument is passed, it must be an object that contains path, title, namespace and data properties.");
+          path = obj.GetPropertyValue("path");
+          title = obj.GetPropertyValue("title");
+          entityNamespace = obj.GetPropertyValue("namespace");
+          data = obj.GetPropertyValue("data");
+          break;
+        default:
+          throw new JavaScriptException(this.Engine, "Error", "Invalid number of arguments.");
+      }
+
       string stringPath;
-      var stringTitle = "";
-      var stringEntityNamespace = "";
+      var stringTitle = String.Empty;
+      var stringEntityNamespace = String.Empty;
       string stringData;
 
       if (path is FolderInstance)
@@ -171,15 +230,19 @@
       if (title != Null.Value && title != Undefined.Value)
         stringTitle = title.ToString();
 
-      if (entityNamespace != Null.Value && entityNamespace != Undefined.Value)
+      if (entityNamespace == null)
+        stringEntityNamespace = String.Empty;
+      else if (entityNamespace != Null.Value && entityNamespace != Undefined.Value)
         stringEntityNamespace = entityNamespace.ToString();
 
       if (data is ObjectInstance)
-// ReSharper disable RedundantArgumentDefaultValue
+        // ReSharper disable RedundantArgumentDefaultValue
         stringData = JSONObject.Stringify(this.Engine, data, null, null);
-// ReSharper restore RedundantArgumentDefaultValue
+        // ReSharper restore RedundantArgumentDefaultValue
+      else if (data == null)
+        stringData = String.Empty;
       else
-        stringData = data.ToString();
+        stringData = TypeConverter.ToString(data);
 
       var result = m_repository.CreateEntity(stringPath, stringTitle, stringEntityNamespace, stringData);
       return new EntityInstance(this.Engine, result);

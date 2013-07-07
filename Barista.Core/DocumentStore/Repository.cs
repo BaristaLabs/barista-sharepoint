@@ -5,6 +5,7 @@
   using System.Configuration;
   using System.IO;
   using System.Linq;
+  using Barista.Extensions;
 
   /// <summary>
   /// Represents a class that abstracts retrieval of data from a document store.
@@ -145,8 +146,20 @@
       if (String.IsNullOrEmpty(entityNamespace) == false && Uri.TryCreate(entityNamespace, UriKind.Absolute, out entityNamespaceUri) == false)
         throw new ArgumentException("If specified, the Entity Namespace parameter must conform to a valid absolute Uri.");
 
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityNamespace, data);
+      //Ensure a container title has been specified.
+      EnsureValidConfiguration();
+
+      Entity result;
+      if (path.IsNullOrWhiteSpace())
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.CreateEntity(this.Configuration.ContainerTitle, title, entityNamespace, data);
+      }
+      else
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.CreateEntity(this.Configuration.ContainerTitle, path, title, entityNamespace, data);
+      }
 
       return result;
     }
@@ -672,6 +685,12 @@
       return s_repositoryFactory;
     }
     #endregion
+
+    protected void EnsureValidConfiguration()
+    {
+      if (this.Configuration.ContainerTitle.IsNullOrWhiteSpace())
+        throw new InvalidOperationException("A Container Title has not been specified. A Container Title must be provided immediately after initializing the repository.");
+    }
 
     #region IDisposable
     private bool m_disposed;

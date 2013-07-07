@@ -1,10 +1,12 @@
 ﻿namespace Barista.Web.Bundles
 {
-  using System.IO;
+  using Barista.DocumentStore;
   using Barista.DocumentStore.FileSystem;
   using Barista.DocumentStore.Library;
-  using Barista.DocumentStore;
+  using Barista.Web.DocumentStore;
   using System;
+  using System.IO;
+  using System.Web;
 
   [Serializable]
   public class DocumentStoreBundle : IBundle
@@ -27,9 +29,9 @@
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       var factory = new BaristaRepositoryFactory();
-      var rootPath = Path.Combine(BaristaContext.Current.Request.FilePath, "DocumentStore");
+      var rootPath = Path.Combine(HttpContext.Current.Request.MapPath("~"), "DocumentStore");
 
-      engine.SetGlobalValue("Repository", new RepositoryConstructor(engine));
+      engine.SetGlobalValue("Repository", new WebRepositoryConstructor(engine));
       var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
       return new RepositoryInstance(engine, repository);
     }
@@ -40,18 +42,12 @@
       public object CreateRepository()
       {
         var repository = new Repository();
-
-        //TODO: Allow Repository configuration (JSON Object passed to require as a param)
-
         return repository;
       }
 
       public object CreateRepository(IDocumentStore documentStore)
       {
         var repository = new Repository(documentStore);
-
-        //TODO: Allow Repository Configuration
-
         return repository;
       }
     }

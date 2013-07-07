@@ -25,6 +25,8 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      engine.SetGlobalValue("Repository", new SPRepositoryConstructor(engine));
+
       var factory = new BaristaRepositoryFactory();
       var repository = Repository.GetRepository(factory, new SPDocumentStore());
       return new RepositoryInstance(engine, repository);
@@ -35,19 +37,13 @@
     {
       public object CreateRepository()
       {
-        Repository repository = new Repository();
-
-        //TODO: Allow Repository configuration (JSON Object passed to require as a param)
-
+        var repository = new Repository();
         return repository;
       }
 
       public object CreateRepository(IDocumentStore documentStore)
       {
         var repository = new Repository(documentStore);
-
-        //TODO: Allow Repository Configuration
-
         return repository;
       }
     }

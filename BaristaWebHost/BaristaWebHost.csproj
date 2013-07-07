@@ -80,6 +80,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Windows7APICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Windows7APICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
@@ -103,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
+    <Content Include="Scripts\Vendor\chance.js" />
+    <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaDocumentTests.js" />
     <Content Include="UnitTests\BaristaFileUploadTest.html" />
@@ -145,6 +155,14 @@
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
       <Name>Barista.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.DocumentStore.FileSystem\Barista.DocumentStore.FileSystem.csproj">
+      <Project>{27f98766-b157-46e3-9ea2-98d9e3e1fdc0}</Project>
+      <Name>Barista.DocumentStore.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.DocumentStore.Raven\Barista.DocumentStore.Raven.csproj">
+      <Project>{e4fe692a-8f43-43cd-86df-00bb3db0c56a}</Project>
+      <Name>Barista.DocumentStore.Raven</Name>
     </ProjectReference>
     <ProjectReference Include="..\Barista.Web\Barista.Web.csproj">
       <Project>{83078881-2c80-47e3-9bed-a87fb429f347}</Project>

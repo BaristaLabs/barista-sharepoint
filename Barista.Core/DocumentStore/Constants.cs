@@ -1,6 +1,6 @@
 ﻿namespace Barista.DocumentStore
 {
-  internal static class Constants
+  public static class Constants
   {
     public const string ServiceV1Namespace = "http://Barista/DocumentStore/v1/";
 
@@ -13,5 +13,9 @@
 
     public const string ScriptV1Namespace = "http://Barista/DocumentStore/Script/v1/";
     public const string ScriptsFolderName = "__Scripts";
+
+    public const string MetadataV1Namespace = @"/barista/v1/metadata/";
+    public const string EntityPartV1Namespace = @"/barista/v1/entityparts/";
+    public const string AttachmentV1Namespace = @"/barista/v1/attachments/";
   }
 }

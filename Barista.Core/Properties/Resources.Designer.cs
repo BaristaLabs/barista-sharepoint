@@ -93,6 +93,34 @@ namespace Barista.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to assert = {};
+        ///
+        ///assert.not = {};
+        ///
+        ///// AssertionError constructor that is also callable as a function
+        ///assert.AssertionError = function (message, actual, expected) {
+        ///    if (this instanceof assert.AssertionError) {
+        ///        this.message = message;
+        ///        this.actual = actual;
+        ///        this.expected = expected;
+        ///    } else {
+        ///        return new assert.AssertionError(message, actual, expected);
+        ///    }
+        ///};
+        ///
+        ///assert.error = function (block, message) {
+        ///    try {
+        ///        block();
+        ///    } catch (e) {
+        ///        [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string assert {
+            get {
+                return ResourceManager.GetString("assert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to //source: http://johnkalberer.com/2011/08/24/automapper-in-javascript/
         ///var automapper = (function (app) {
         ///    if (app.automapper) {
@@ -113,6 +141,35 @@ namespace Barista.Properties {
         public static string Automapper {
             get {
                 return ResourceManager.GetString("Automapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to //  Chance.js 0.3.3
+        /////  http://chancejs.com
+        /////  (c) 2013 Victor Quinn
+        /////  Chance may be freely distributed or modified under the MIT license.
+        ///
+        ///(function (that) {
+        ///
+        ///    // Constructor
+        ///    var Chance = function (seed) {
+        ///        if (seed !== undefined) {
+        ///            this.seed = seed;
+        ///        }
+        ///        this.mt = this.mersenne_twister(seed);
+        ///    };
+        ///
+        ///    // Wrap the MersenneTwister
+        ///    Chance.prototype.random = function () {
+        ///        return this.mt.random(this.seed);
+        ///    };
+        ///
+        ///    // -- Basics --        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string chance {
+            get {
+                return ResourceManager.GetString("chance", resourceCulture);
             }
         }
         

@@ -2,74 +2,128 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
-  using Barista.Extensions;
-  using Microsoft.WindowsAPICodePack.Shell;
+  using Barista.Newtonsoft.Json;
 
   public partial class FSDocumentStore
   {
+    private readonly object m_syncRoot = new object();
+
     public Container CreateContainer(string containerTitle, string description)
     {
-      if (containerTitle.IsValidPath() == false)
-        throw new ArgumentException(@"The specified container has invalid characters: " + containerTitle, "containerTitle");
+      lock (m_syncRoot)
+      {
+        var containerInfos = GetContainerInfos().ToList();
 
+        if (containerInfos.Any(ci => ci.Title == containerTitle))
+          throw new InvalidOperationException("A container with the specified name already exists in the document store.");
 
-      if (m_root.GetDirectories().Any(di => di.Name == containerTitle))
-        throw new InvalidOperationException("A container with the specified title already exists.");
+        var containerInfo = new ContainerInfo
+          {
+            Id = Guid.NewGuid(),
+            Title = containerTitle,
+            Description = description,
+            CreatedBy = User.GetCurrentUser(),
+            ModifiedBy = User.GetCurrentUser()
+          };
+        var containerDirectoryInfo = m_root.CreateSubdirectory(containerInfo.Id.ToString());
+        containerInfo.Url = containerDirectoryInfo.FullName;
 
-      var containerInfo = m_root.CreateSubdirectory(containerTitle);
-
-      var container = ShellObject.FromParsingName(containerInfo.FullName);
-      var properties = container.Properties;
-      var descriptionProperty = properties.GetProperty<string>("Description");
-      descriptionProperty.Value = description;
-
-      var idProperty = properties.GetProperty<string>("Document ID");
-      idProperty.Value = Guid.NewGuid().ToString();
-
-      return FSDocumentStoreHelper.MapContainerFromFolder(containerInfo.FullName);
+        containerInfos.Add(containerInfo);
+        UpdateContainerInfos(containerInfos);
+        return FSDocumentStoreHelper.MapContainerFromContainerInfo(containerInfo);
+      }
     }
 
     public void DeleteContainer(string containerTitle)
     {
-      var containerInfo = m_root.EnumerateDirectories(containerTitle).SingleOrDefault();
+      lock (m_syncRoot)
+      {
+        var containerInfos = GetContainerInfos().ToList();
+        var containerInfo = containerInfos.FirstOrDefault(ci => ci.Title == containerTitle);
+        if (containerInfo == null)
+          return;
 
-      if (containerInfo == null)
-        return;
+        var di = new DirectoryInfo(containerInfo.Url);
+        di.Delete(true);
 
-      containerInfo.Delete(true);
+        containerInfos.Remove(containerInfo);
+        UpdateContainerInfos(containerInfos);
+      }
     }
 
     public Container GetContainer(string containerTitle)
     {
-      var containerInfo = m_root.EnumerateDirectories(containerTitle).SingleOrDefault();
+      var containerInfos = GetContainerInfos().ToList();
+      var containerInfo = containerInfos.FirstOrDefault(ci => ci.Title == containerTitle);
 
       if (containerInfo == null)
         return null;
 
-      return FSDocumentStoreHelper.MapContainerFromFolder(containerInfo.FullName);
+      return FSDocumentStoreHelper.MapContainerFromContainerInfo(containerInfo);
     }
 
     public IList<Container> ListContainers()
     {
-      return m_root.EnumerateDirectories()
-                   .Select(di => FSDocumentStoreHelper.MapContainerFromFolder(di.FullName))
+      var containerInfos = GetContainerInfos();
+      return containerInfos
+                   .Select(FSDocumentStoreHelper.MapContainerFromContainerInfo)
                    .ToList();
     }
 
     public bool UpdateContainer(Container container)
     {
-      var containerInfo = m_root.EnumerateDirectories(container.Title).SingleOrDefault();
+      lock (m_syncRoot)
+      {
+        var containerInfos = GetContainerInfos().ToList();
+        var containerInfo = containerInfos.FirstOrDefault(ci => ci.Title == container.Title);
+        if (containerInfo == null)
+          return false;
 
+        containerInfo.Title = container.Title;
+        containerInfo.Description = container.Description;
+        containerInfo.ModifiedBy = User.GetCurrentUser();
+
+        UpdateContainerInfos(containerInfos);
+        return true;
+      }
+    }
+
+    protected string GetContainerPath(string containerTitle)
+    {
+      var containerInfos = GetContainerInfos();
+      var containerInfo = containerInfos.SingleOrDefault(ci => ci.Title == containerTitle);
+      
       if (containerInfo == null)
-        return false;
+        throw new InvalidOperationException("A Container with the specified title does not exist: " + containerTitle);
 
-      var containerObj = ShellObject.FromParsingName(containerInfo.FullName);
-      var properties = containerObj.Properties;
-      var descriptionProperty = properties.GetProperty<string>("Description");
-      descriptionProperty.Value = container.Description;
+      return Path.Combine(m_root.FullName, containerInfo.Id.ToString());
+    }
 
-      return true;
+    protected IEnumerable<ContainerInfo> GetContainerInfos()
+    {
+      var containerInfoPath = Path.Combine(m_root.FullName, ".DS_Containers");
+
+      var containers = new List<ContainerInfo>();
+      if (File.Exists(containerInfoPath))
+      {
+        var text = File.ReadAllText(containerInfoPath);
+        containers = JsonConvert.DeserializeObject<List<ContainerInfo>>(text);
+      }
+
+      return containers;
+    }
+
+    protected void UpdateContainerInfos(IEnumerable<ContainerInfo> containerInfos)
+    {
+      if (containerInfos == null)
+        throw new ArgumentNullException("containerInfos", @"containerInfos cannot be null");
+
+      var containerInfoPath = Path.Combine(m_root.FullName, ".DS_Containers");
+
+      var text = JsonConvert.SerializeObject(containerInfos, Formatting.Indented);
+      File.WriteAllText(containerInfoPath, text);
     }
   }
 }

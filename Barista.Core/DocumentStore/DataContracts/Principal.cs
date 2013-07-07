@@ -31,6 +31,18 @@
       get;
       set;
     }
+
+    public static User GetCurrentUser()
+    {
+      var currentUser = ADHelper.GetADUser(null);
+      
+      return new User
+        {
+          Email = currentUser.Email,
+          LoginName = ADHelper.GetJoinedDomain() + "\\" + currentUser.PreWin2kLogonName,
+          Name = currentUser.DisplayName
+        };
+    }
   }
 
   [DataContract(Namespace = Constants.ServiceV1Namespace)]

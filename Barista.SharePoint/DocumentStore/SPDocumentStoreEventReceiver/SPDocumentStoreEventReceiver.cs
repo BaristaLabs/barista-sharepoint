@@ -4,6 +4,7 @@
   using Microsoft.Office.DocumentManagement.DocumentSets;
   using Microsoft.SharePoint;
   using System;
+  using Constants = Barista.SharePoint.DocumentStore.Constants;
 
   /// <summary>
   /// Raises events when Document Store Entity/EntityParts/Attachments are Added/Updated/Deleted.

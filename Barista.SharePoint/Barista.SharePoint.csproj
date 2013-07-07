@@ -159,6 +159,7 @@
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
     <Compile Include="DocumentStore\SPEntityMutexManager.cs" />
+    <Compile Include="DocumentStore\SPRepositoryConstructor.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
     <Compile Include="Features\Barista\Barista.EventReceiver.cs">
       <DependentUpon>Barista.feature</DependentUpon>

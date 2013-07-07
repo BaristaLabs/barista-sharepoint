@@ -44,8 +44,18 @@
 
     public static ADUser GetADUser(string loginName)
     {
-      if (String.IsNullOrEmpty(loginName))
+      if (loginName.IsNullOrWhiteSpace())
         loginName = System.Threading.Thread.CurrentPrincipal.Identity.Name;
+
+      if (loginName.IsNullOrWhiteSpace())
+      {
+        var currentUser = System.Security.Principal.WindowsIdentity.GetCurrent();
+        if (currentUser != null)
+          loginName = currentUser.Name;
+      }
+
+      if (loginName.IsNullOrWhiteSpace())
+        throw new ArgumentNullException("loginName", @"loginName name was null, and the current user could not be obtained.");
 
       ADUser result;
 
