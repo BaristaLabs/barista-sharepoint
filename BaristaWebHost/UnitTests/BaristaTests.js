@@ -1,116 +1,5 @@
 ﻿module("Barista Core");
 
-asyncTest("Test Creating an Uri", function () {
-    expect(2);
-    var code = "var uri = new Uri('http://www.google.com');\
-    uri;\
-    ";
-
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl(),
-        data: JSON.stringify({ code: code })
-    });
-
-    request.done(function (data, textStatus, jqXHR) {
-        ok(data != null, "A result was returned from the service.");
-        equal(data.authority, "www.google.com", "The authority of the Uri matches.");
-        start();
-    });
-
-    request.fail(function () {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
-});
-
-asyncTest("Test Including a file", function () {
-    expect(2);
-    var code = "include('~/UnitTests/API/Barista_Include.js');\
-    auBonPainCoffee;\
-    ";
-
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl(),
-        data: JSON.stringify({ code: code })
-    });
-
-    request.done(function (data, textStatus, jqXHR) {
-        ok(data != null, "A result was returned from the service.");
-        equal(data, "Crappy", "The result included data that was defined in the include file.");
-        start();
-    });
-
-    request.fail(function () {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
-});
-
-asyncTest("Test Writing to Console", function () {
-    expect(2);
-    var code = "\
-    console.error('A catastrophic error has occurred.');\
-    Number.prototype.padLeft = function(n,str){\
-        return Array(n-String(this).length+1).join(str||'0')+this;\
-    };\
-    var today = new Date();\
-    var logEntries = fs.loadAsByteArray('~\\\\logs\\\\' + today.getFullYear() + '-' + (today.getMonth() + 1).padLeft(2) + '-' + (today.getDate()).padLeft(2) + '.log');\
-    logEntries;\
-    ";
-
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl(),
-        data: JSON.stringify({ code: code })
-    });
-
-    request.done(function (data, textStatus, jqXHR) {
-        ok(data != null, "A result was returned from the service.");
-        var result = data.indexOf("A catastrophic error has occurred.") !== -1;
-        ok(result == true, "The console message was written to the Log.");
-        start();
-    });
-
-    request.fail(function () {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
-});
-
-asyncTest("Test retriving query string parameters", function () {
-    expect(4);
-    var code = "var web = require('Web');\
-    var queryString = web.request.queryString;\
-    var result = { foo: queryString['foo'], bar: queryString['bar'], baz: queryString.baz };\
-    result;\
-    ";
-
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl() + "?foo=hello&bar=world&baz=prizes",
-        data: JSON.stringify({ code: code })
-    });
-
-    request.done(function (data, textStatus, jqXHR) {
-        ok(data != null, "A result was returned from the service.");
-        equal("hello", data.foo, "Foo was correct.");
-        equal("world", data.bar, "Bar was correct.");
-        equal("prizes", data.baz, "baz was correct.");
-        start();
-    });
-
-    request.fail(function () {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
-});
-
 asyncTest("Execute Simple Expression", function () {
     expect(1);
     var request = jQuery.ajax(Barista.getBaristaServiceUrl() + "?c=42%2B1");
@@ -150,11 +39,32 @@ asyncTest("Execute Simple Expression via POST", function () {
     });
 });
 
+asyncTest("Execute POST with no body.", function () {
+    expect(1);
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        url: Barista.getBaristaServiceUrl()
+    });
+
+    request.done(function (data) {
+        ok(1 == 1, "Call executed.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
 asyncTest("Execute Simple Expression within script file", function () {
     expect(1);
 
     var request = jQuery.ajax({
-        url: Barista.getBaristaServiceUrl() + "?c=~/UnitTests/API/Barista_SimpleExpression.js"
+        url: Barista.getBaristaServiceUrl() + "?c=~/UnitTests/API/Core/Barista_SimpleExpression.js"
     });
 
     request.done(function (data) {
@@ -204,6 +114,94 @@ asyncTest("Execute Expression with JS Objects", function () {
         start();
     });
 });
+
+asyncTest("Test Creating an Uri", function () {
+    expect(2);
+    var code = "var uri = new Uri('http://www.google.com');\
+    uri;\
+    ";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: Barista.getBaristaServiceUrl(),
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        ok(data != null, "A result was returned from the service.");
+        equal(data.authority, "www.google.com", "The authority of the Uri matches.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
+asyncTest("Test Including a file", function () {
+    expect(2);
+    var code = "include('~/UnitTests/API/Core/Barista_Include.js');\
+    auBonPainCoffee;\
+    ";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: Barista.getBaristaServiceUrl(),
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        ok(data != null, "A result was returned from the service.");
+        equal(data, "Crappy", "The result included data that was defined in the include file.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
+asyncTest("Test Writing to Console", function () {
+    expect(1);
+    var scriptPath = "~/UnitTests/API/Core/writeToConsole.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("Test retriving query string parameters", function () {
+    expect(4);
+    var code = "var web = require('Web');\
+    var queryString = web.request.queryString;\
+    var result = { foo: queryString['foo'], bar: queryString['bar'], baz: queryString.baz };\
+    result;\
+    ";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: Barista.getBaristaServiceUrl() + "?foo=hello&bar=world&baz=prizes",
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        ok(data != null, "A result was returned from the service.");
+        equal("hello", data.foo, "Foo was correct.");
+        equal("world", data.bar, "Bar was correct.");
+        equal("prizes", data.baz, "baz was correct.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+
+
 
 asyncTest("Make Ajax call using no settings", function () {
     expect(1);
@@ -310,7 +308,7 @@ asyncTest("Execute long-running tasks via deferreds.", function () {
     expect(1);
 
     var request = jQuery.ajax({
-        url: Barista.getBaristaServiceUrl() + "?c=~/UnitTests/API/Barista_Deferred.js"
+        url: Barista.getBaristaServiceUrl() + "?c=~/UnitTests/API/Core/Barista_Deferred.js"
     });
 
     request.done(function (data) {

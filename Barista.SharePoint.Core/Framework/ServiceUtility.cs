@@ -56,12 +56,21 @@
 
       if (results.First().Scheme == Uri.UriSchemeHttps && baseAddresses.Any(ba => ba.Scheme == Uri.UriSchemeHttp))
       {
-        results.AddRange(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp));
+        var addressesToAdd = baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp).ToList();
+        foreach (var address in addressesToAdd.Where(address => results.Any(a => a == address) == false))
+        {
+          results.Add(address);
+        }
       }
       else if (results.First().Scheme == Uri.UriSchemeHttp && baseAddresses.Any(ba => ba.Scheme == Uri.UriSchemeHttps))
       {
-        results.AddRange(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp));
-        results.AddRange(ServiceUtility.FilterBaseAddresses(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttps).ToArray()));
+        var addressesToAdd = baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttp).ToList();
+        addressesToAdd.AddRange(ServiceUtility.FilterBaseAddresses(baseAddresses.Where(ba => ba.Scheme == Uri.UriSchemeHttps).ToArray()));
+
+        foreach (var address in addressesToAdd.Where(address => results.Any(a => a == address) == false))
+        {
+          results.Add(address);
+        }
       }
 
       return results.ToArray();

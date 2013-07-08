@@ -112,6 +112,7 @@
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
     <Content Include="Scripts\Vendor\chance.js" />
+    <Content Include="UnitTests\API\Core\writetoConsole.js" />
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaDocumentTests.js" />
@@ -119,15 +120,14 @@
     <Content Include="UnitTests\BaristaK2Tests.js" />
     <Content Include="UnitTests\BaristaKendoUIEditor.html" />
     <Content Include="UnitTests\BaristaTests.js" />
-    <Content Include="UnitTests\API\Barista_Deferred.js" />
-    <Content Include="UnitTests\API\Barista_DeleteUpload.js" />
+    <Content Include="UnitTests\API\Core\Barista_Deferred.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_DeleteUpload.js" />
     <Content Include="UnitTests\API\Barista_DSEventReceiverExample.js" />
-    <Content Include="UnitTests\API\Barista_GetUploads.js" />
-    <Content Include="UnitTests\API\Barista_Include.js" />
-    <Content Include="UnitTests\API\Barista_KendoUI_IB.js" />
-    <Content Include="UnitTests\API\Barista_ProcessUpload.js" />
-    <Content Include="UnitTests\API\Barista_RecursiveWebsRetrieval.js" />
-    <Content Include="UnitTests\API\Barista_SimpleExpression.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_GetUploads.js" />
+    <Content Include="UnitTests\API\Core\Barista_Include.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_KendoUI_IB.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_ProcessUpload.js" />
+    <Content Include="UnitTests\API\Core\Barista_SimpleExpression.js" />
     <Content Include="UnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaDocumentStoreTests.js" />
     <Content Include="UnitTests\index.html" />
@@ -172,7 +172,6 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="UnitTests\API\ActiveDirectory\" />
-    <Folder Include="UnitTests\API\Core\" />
     <Folder Include="UnitTests\API\Document\" />
   </ItemGroup>
   <PropertyGroup>
