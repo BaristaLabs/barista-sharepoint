@@ -103,6 +103,13 @@
       set { m_excelRow.Row = value; }
     }
 
+    [JSProperty(Name = "style")]
+    [JSDoc("Gets the row style.")]
+    public ExcelStyleInstance Style
+    {
+      get { return new ExcelStyleInstance(this.Engine.Object.InstancePrototype, m_excelRow.Style); }
+    }
+
     [JSProperty(Name = "styleName")]
     [JSDoc("Gets or sets the row style name.")]
     public string StyleName

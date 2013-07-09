@@ -210,7 +210,14 @@
     <Compile Include="Helpers\UserAgentPattern.cs" />
     <Compile Include="Helpers\YamlParsing.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />
+    <Compile Include="Library\ExcelBorderInstance.cs" />
+    <Compile Include="Library\ExcelBorderItemInstance.cs" />
     <Compile Include="Library\ExcelCellAddressInstance.cs" />
+    <Compile Include="Library\ExcelColorInstance.cs" />
+    <Compile Include="Library\ExcelFillInstance.cs" />
+    <Compile Include="Library\ExcelFontInstance.cs" />
+    <Compile Include="Library\ExcelGradientFillInstance.cs" />
+    <Compile Include="Library\ExcelNumberFormatInstance.cs" />
     <Compile Include="Library\ExcelRangeInstance.cs" />
     <Compile Include="Library\ExcelColumnInstance.cs" />
     <Compile Include="Library\ExcelRowInstance.cs" />
@@ -1009,6 +1016,7 @@
     <Compile Include="Library\ADUserInstance.cs" />
     <Compile Include="Library\ApplicationPoolInstance.cs" />
     <Compile Include="Library\ExcelDocumentInstance.cs" />
+    <Compile Include="Library\ExcelStyleInstance.cs" />
     <Compile Include="Library\ExcelWorkbookInstance.cs" />
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
     <Compile Include="Library\ExcelWorksheetsInstance.cs" />

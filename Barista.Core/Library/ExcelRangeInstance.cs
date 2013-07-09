@@ -159,6 +159,13 @@
       get { return new ExcelCellAddressInstance(this.Engine.Object.Prototype, m_excelRange.Start); }
     }
 
+    [JSProperty(Name = "style")]
+    [JSDoc("Gets the style that applies to the range.")]
+    public ExcelStyleInstance Style
+    {
+      get { return new ExcelStyleInstance(this.Engine.Object.InstancePrototype, m_excelRange.Style); }
+    }
+
     [JSProperty(Name = "styleId")]
     public int StyleId
     {

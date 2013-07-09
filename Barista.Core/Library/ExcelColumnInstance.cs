@@ -102,6 +102,13 @@
       set { m_excelColumn.PageBreak = value; }
     }
 
+    [JSProperty(Name = "style")]
+    [JSDoc("Gets the column style.")]
+    public ExcelStyleInstance Style
+    {
+      get { return new ExcelStyleInstance(this.Engine.Object.InstancePrototype, m_excelColumn.Style); }
+    }
+
     [JSProperty(Name = "styleName")]
     [JSDoc("Gets or sets the column style name.")]
     public string StyleName

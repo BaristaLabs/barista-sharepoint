@@ -138,9 +138,11 @@
           }
         }
       }
+      else
+        throw new SecurityAccessDeniedException("Unable to read Farm Property Bag Settings.");
 
       if (trusted == false)
-        throw new SecurityAccessDeniedException("Cannot execute Barista: The current location is not trusted. Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.");
+        throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));
     }
 
 // ReSharper disable ClassNeverInstantiated.Local
