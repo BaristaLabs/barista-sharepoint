@@ -287,7 +287,7 @@
       List<string> header = null;
 
       //If we have a header, populate the first row with header info.
-      var currentRow = 1;
+      var currentRow = m_excelRange.Start.Row;
       if (bHasHeader)
       {
         var firstRecord = jsonArray[0] as ObjectInstance;
@@ -298,8 +298,9 @@
           .Select(property => property.Name)
           .ToList();
 
-        for (int i = 1; i < header.Count + 1; i++)
+        for (var i = m_excelRange.Start.Column; i < header.Count + 1; i++)
           m_excelRange[currentRow, i].Value = header[i - 1];
+
         currentRow++;
       }
 

@@ -48,7 +48,7 @@
     }
 
     [JSProperty(Name = "style")]
-    [JSDoc("Gets or sets the style of the border.")]
+    [JSDoc("Gets or sets the style of the border. (None, Thick, Thin, Medium, Hair, MediumDashDot, MediumDotDot, MediumDashed)")]
     public string Style
     {
       get { return m_excelBorderItem.Style.ToString(); }

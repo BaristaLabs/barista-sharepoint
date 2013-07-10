@@ -1,9 +1,11 @@
 ﻿namespace Barista.Library
 {
+  using System.Drawing;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using System;
   using OfficeOpenXml.Style;
+  using Barista.Extensions;
 
   [Serializable]
   public class ExcelBorderConstructor : ClrFunction
@@ -95,6 +97,27 @@
     public ExcelBorderItemInstance Top
     {
       get { return new ExcelBorderItemInstance(this.Engine.Object.InstancePrototype, m_border.Top); }
+    }
+
+    [JSFunction(Name = "borderAround")]
+    [JSDoc("Set the border style around the range. (None, Thick, Thin, Medium, Hair, MediumDashDot, MediumDotDot, MediumDashed)")]
+    public void BorderAround(string style, object color)
+    {
+      ExcelBorderStyle objStyle;
+      if (style.TryParseEnum(true, out objStyle) == false)
+        throw new JavaScriptException(this.Engine, "Error", "Could not set style: " + style + " is not one of the style options.");
+
+      if (color != null && color != Null.Value && color != Undefined.Value)
+      {
+        var cc = new ColorConverter();
+        var colorObj = cc.ConvertFromString(TypeConverter.ToString(color));
+        if (colorObj is Color)
+           m_border.BorderAround(objStyle, (Color)colorObj);
+        else
+          m_border.BorderAround(objStyle);
+      }
+      else
+        m_border.BorderAround(objStyle);
     }
   }
 }

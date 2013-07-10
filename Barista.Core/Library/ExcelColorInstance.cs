@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Drawing;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Barista.Extensions;
@@ -91,6 +92,16 @@
     {
       var color = System.Drawing.Color.FromArgb(red, green, blue);
       m_excelColor.SetColor(color);
+    }
+
+    [JSFunction(Name = "setColorFromString")]
+    [JSDoc("Sets the value of the color from a hex string")]
+    public void SetColorFromString(string text)
+    {
+      var cc = new ColorConverter();
+      var color = cc.ConvertFromString(text);
+      if (color is Color)
+        m_excelColor.SetColor((Color)color);
     }
 
     [JSFunction(Name = "setColorFromKnownColor")]
