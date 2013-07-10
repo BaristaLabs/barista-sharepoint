@@ -1,7 +1,5 @@
 ﻿namespace Barista.SharePoint
 {
-  using System.Collections.Generic;
-  using System.ServiceModel.Security;
   using Barista.Extensions;
   using Barista.Newtonsoft.Json;
   using Barista.SharePoint.Search;
@@ -9,8 +7,10 @@
   using Microsoft.SharePoint.Administration;
   using Newtonsoft.Json.Linq;
   using System;
-  using System.Linq;
+  using System.Collections.Generic;
   using System.IO;
+  using System.Linq;
+  using System.ServiceModel.Security;
 
   /// <summary>
   /// Contains various helper methods involving barista configuration stored in SharePoint.
@@ -103,7 +103,7 @@
     /// </summary>
     public static void EnsureExecutionInTrustedLocation()
     {
-      var currentUri = new Uri(SPContext.Current.Web.Url);
+      var currentUri = new Uri(SPContext.Current.Web.Url.ToLowerInvariant().EnsureEndsWith("/"));
 
       //CA is always trusted.
       if (SPAdministrationWebApplication.Local.AlternateUrls.Any(u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
@@ -117,7 +117,7 @@
         var trustedLocationsCollection = JArray.Parse(trustedLocations);
         foreach (var trustedLocation in trustedLocationsCollection.OfType<JObject>())
         {
-          var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString(), UriKind.Absolute);
+          var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"), UriKind.Absolute);
           var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
 
           if (trustChildren)
@@ -139,7 +139,7 @@
         }
       }
       else
-        throw new SecurityAccessDeniedException("Unable to read Farm Property Bag Settings.");
+        throw new SecurityAccessDeniedException("Cannot execute Barista: Unable to read Farm Property Bag Settings to determine trusted location.");
 
       if (trusted == false)
         throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));

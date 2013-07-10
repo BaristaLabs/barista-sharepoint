@@ -13,6 +13,13 @@
   /// </summary>
   public static class StringExtensions
   {
+    public static string EnsureEndsWith(this string str, string value)
+    {
+      if (str.EndsWith(value))
+        return str;
+      return str + value;
+    }
+
     public static bool IsValidFileName(this string fileName)
     {
       return !fileName.IsNullOrWhiteSpace() &&

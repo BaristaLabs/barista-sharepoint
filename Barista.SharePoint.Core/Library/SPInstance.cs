@@ -8,6 +8,7 @@
   using System.Text;
   using Barista.Library;
   using Microsoft.SharePoint.Utilities;
+  using Barista.Extensions;
 
   /// <summary>
   /// SharePoint namespace. Contains functions to interact with SharePoint.
@@ -124,7 +125,7 @@
 
       var uri = SPBaristaContext.Current.Site.WebApplication.GetResponseUri(urlZone, path);
 
-      return uri.ToString();
+      return uri.ToString().EnsureEndsWith("/");
     }
 
     [JSDoc("Sends an email.")]
