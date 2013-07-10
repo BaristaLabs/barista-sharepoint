@@ -26,7 +26,8 @@
     public static string GetFarmKeyValue(string key)
     {
       string val = null;
-      SPFarm farm = SPFarm.Local;
+      var farm = SPFarm.Local;
+
       if (farm != null && farm.Properties.ContainsKey(key))
       {
         val = Convert.ToString(farm.Properties[key]);
@@ -41,16 +42,16 @@
     /// <param name="value"></param>
     public static void SetFarmKeyValue(string key, string value)
     {
-      SPFarm farm = SPFarm.Local;
-      if (farm != null)
-      {
-        if (farm.Properties.ContainsKey(key))
-          farm.Properties[key] = value;
-        else
-          farm.Properties.Add(key, value);
+      var farm = SPFarm.Local;
+      if (farm == null)
+        return;
 
-        farm.Update();
-      }
+      if (farm.Properties.ContainsKey(key))
+        farm.Properties[key] = value;
+      else
+        farm.Properties.Add(key, value);
+
+      farm.Update();
     }
 
     /// <summary>
@@ -108,11 +109,11 @@
 
     public static SPUser GetSPUser(SPListItem item, string key)
     {
-      SPFieldUser field = item.Fields[key] as SPFieldUser;
+      var field = item.Fields[key] as SPFieldUser;
 
       if (field != null && item[key] != null)
       {
-        SPFieldUserValue fieldValue = field.GetFieldValue(item[key].ToString()) as SPFieldUserValue;
+        var fieldValue = field.GetFieldValue(item[key].ToString()) as SPFieldUserValue;
         if (fieldValue != null)
         {
           return fieldValue.User;
@@ -189,7 +190,7 @@
     /// <returns></returns>
     public static string EncodeJsString(string s)
     {
-      StringBuilder sb = new StringBuilder();
+      var sb = new StringBuilder();
       sb.Append("\"");
       foreach (char c in s)
       {
@@ -247,7 +248,7 @@
       Collection<PSObject> results;
 
       // create Powershell runspace 
-      using (Runspace runspace = RunspaceFactory.CreateRunspace(iss))
+      using (var runspace = RunspaceFactory.CreateRunspace(iss))
       {
         // open it 
         runspace.Open();
@@ -255,7 +256,7 @@
         try
         {
           // create a pipeline and feed it the script text 
-          Pipeline pipeline = runspace.CreatePipeline();
+          var pipeline = runspace.CreatePipeline();
           pipeline.Commands.AddScript(scriptText);
           pipeline.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
 
@@ -295,18 +296,19 @@
 
     private static IEnumerable<Enum> GetFlags(Enum value, Enum[] values)
     {
-      ulong bits = Convert.ToUInt64(value);
-      List<Enum> results = new List<Enum>();
-      for (int i = values.Length - 1; i >= 0; i--)
+      var bits = Convert.ToUInt64(value);
+      var results = new List<Enum>();
+      for (var i = values.Length - 1; i >= 0; i--)
       {
-        ulong mask = Convert.ToUInt64(values[i]);
+        var mask = Convert.ToUInt64(values[i]);
         if (i == 0 && mask == 0L)
           break;
-        if ((bits & mask) == mask)
-        {
-          results.Add(values[i]);
-          bits -= mask;
-        }
+
+        if ((bits & mask) != mask)
+          continue;
+
+        results.Add(values[i]);
+        bits -= mask;
       }
       if (bits != 0L)
         return Enumerable.Empty<Enum>();
@@ -322,11 +324,13 @@
       ulong flag = 0x1;
       foreach (var value in Enum.GetValues(enumType).Cast<Enum>())
       {
-        ulong bits = Convert.ToUInt64(value);
+        var bits = Convert.ToUInt64(value);
         if (bits == 0L)
-          //yield return value;
-          continue; // skip the zero value
-        while (flag < bits) flag <<= 1;
+          yield return value;
+
+        while (flag < bits)
+          flag <<= 1;
+
         if (flag == bits)
           yield return value;
       }
