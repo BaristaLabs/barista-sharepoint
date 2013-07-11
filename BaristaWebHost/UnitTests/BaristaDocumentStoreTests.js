@@ -1,35 +1,30 @@
 ﻿module("Barista Document Store");
 
 asyncTest("Create Container", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/createContainer.js";
 
-    var name = chance.sentence({ words: 2 });
-    var description = chance.sentence({ words: 7 });
+    Barista.runTestScript(scriptPath);
+});
 
-    var code = "var ds = require('Document Store');\
-    ds.createContainer('" + name +"', '" + description + "');";
+asyncTest("List Containers", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/listContainers.js";
 
-    var request = jQuery.ajax({
-        type: 'POST',
-        contentType: "application/json; charset=utf-8",
-        url: Barista.getBaristaServiceUrl(),
-        data: JSON.stringify({ code: code })
-    });
+    Barista.runTestScript(scriptPath);
+});
 
-    request.done(function (data, textStatus, jqXHR) {
-        ok(data.title === name, "Created Container Title Did Not Match.");
-        ok(data.description === description, "Created Container Description Did Not Match.");
-        ok(data.entityCount === 0, "Created container should not have any entities..");
-        start();
-    });
+asyncTest("Delete Container", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/deleteContainer.js";
 
-    request.fail(function (jqXHR, textStatus) {
-        ok(1 == 0, "Call to service failed.");
-        start();
-    });
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("Get Container", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/getContainer.js";
+
+    Barista.runTestScript(scriptPath);
 });
 
 asyncTest("Create Entity", function () {
-
     var scriptPath = "~/UnitTests/API/DocumentStore/createEntity.js";
 
     Barista.runTestScript(scriptPath);

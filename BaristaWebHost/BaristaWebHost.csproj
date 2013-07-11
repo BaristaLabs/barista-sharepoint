@@ -113,6 +113,10 @@
     <Content Include="Barista\v1\Barista.svc" />
     <Content Include="Scripts\Vendor\chance.js" />
     <Content Include="UnitTests\API\Core\writetoConsole.js" />
+    <Content Include="UnitTests\API\DocumentStore\getContainer.js" />
+    <Content Include="UnitTests\API\DocumentStore\deleteContainer.js" />
+    <Content Include="UnitTests\API\DocumentStore\listContainers.js" />
+    <Content Include="UnitTests\API\DocumentStore\createContainer.js" />
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaDocumentTests.js" />

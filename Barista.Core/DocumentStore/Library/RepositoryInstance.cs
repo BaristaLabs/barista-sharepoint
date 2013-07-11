@@ -91,6 +91,13 @@
     #endregion
 
     #region Container
+    [JSFunction(Name = "getContainer")]
+    public ContainerInstance GetContainer(string containerTitle)
+    {
+      var container = m_repository.GetContainer(containerTitle);
+      return new ContainerInstance(this.Engine, container);
+    }
+
     [JSFunction(Name = "listContainers")]
     public ArrayInstance ListContainers()
     {

@@ -62,6 +62,16 @@
 
     #region Containers
     /// <summary>
+    /// Gets the container with the speicfied title from the document store.
+    /// </summary>
+    /// <returns></returns>
+    public Container GetContainer(string containerTitle)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+      return documentStore.GetContainer(containerTitle);
+    }
+
+    /// <summary>
     /// Lists all containers contained in the document store.
     /// </summary>
     /// <returns></returns>

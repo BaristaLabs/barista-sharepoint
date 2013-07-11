@@ -1,6 +1,7 @@
 ﻿namespace Barista.Bundles
 {
   using Barista.Jurassic;
+  using Barista.Library;
 
   public class UnitTestingBundle :IBundle
   {
@@ -22,7 +23,7 @@
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       engine.Execute(Properties.Resources.chance);
-      engine.Execute(Properties.Resources.assert);
+      engine.SetGlobalValue("assert", new AssertInstance(engine.Object.InstancePrototype));
 
       return Null.Value;
     }

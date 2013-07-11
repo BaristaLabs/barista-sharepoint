@@ -149,7 +149,10 @@
       }
 
       //Otherwise, use the body of the post as code.
-      if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST" && OperationContext.Current != null)
+      if (String.IsNullOrEmpty(code) &&
+        HttpContext.Current.Request.HttpMethod == "POST" &&
+        OperationContext.Current != null &&
+        OperationContext.Current.RequestContext.RequestMessage.IsEmpty == false)
       {
         var body = OperationContext.Current.RequestContext.RequestMessage.GetBody<byte[]>();
         var bodyString = Encoding.UTF8.GetString(body);

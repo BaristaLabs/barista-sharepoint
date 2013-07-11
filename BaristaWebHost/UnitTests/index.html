@@ -53,8 +53,8 @@
                     start();
                 });
 
-                request.fail(function (jqXHR, textStatus) {
-                    ok(1 == 0, "Call to service failed.");
+                request.fail(function (jqXHR, textStatus, errorThrown) {
+                    ok(1 == 0, errorThrown);
                     start();
                 });
             };
