@@ -23,7 +23,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      return new SPSearchInstance(engine.Object.InstancePrototype);
+      return new SearchServiceApplicationInstance(engine.Object.InstancePrototype);
     }
   }
 }

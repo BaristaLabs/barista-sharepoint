@@ -34,34 +34,42 @@
       return Guid.Parse(idString);
     }
 
-    public static Entity MapEntityFromPackage(string packagePath)
+    public static Entity MapEntityFromPackage(string packagePath, bool includeData)
     {
       var fi = new FileInfo(packagePath);
 
       if (fi.Exists == false)
         throw new InvalidOperationException("An entity package at the specified path does not exist.");
 
-      var result = new Entity();
-
       using (var package =
         Package.Open(packagePath, FileMode.Open))
       {
-        var metadataPart =
+        return MapEntityFromPackage(package, includeData);
+      }
+    }
+
+    public static Entity MapEntityFromPackage(Package package, bool includeData)
+    {
+      var result = new Entity();
+
+      var metadataPart =
           package.GetPart(new Uri(Barista.DocumentStore.Constants.MetadataV1Namespace + "entity.json", UriKind.Relative));
 
-        using (var fs = metadataPart.GetStream())
-        {
-          var bytes = fs.ReadToEnd();
-          var metadataJson = Encoding.UTF8.GetString(bytes);
-          var metadata = JsonConvert.DeserializeObject<EntityMetadata>(metadataJson);
-          result.Id = metadata.Id;
-          result.Title = metadata.Title;
-          result.Namespace = metadata.Namespace;
-        }
+      using (var fs = metadataPart.GetStream())
+      {
+        var bytes = fs.ReadToEnd();
+        var metadataJson = Encoding.UTF8.GetString(bytes);
+        var metadata = JsonConvert.DeserializeObject<EntityMetadata>(metadataJson);
+        result.Id = metadata.Id;
+        result.Title = metadata.Title;
+        result.Namespace = metadata.Namespace;
+      }
 
+      if (includeData)
+      {
         var defaultEntityPart =
-          package.GetPart(new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep", UriKind.Relative));
-
+          package.GetPart(new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep",
+                                  UriKind.Relative));
 
         using (var fs = defaultEntityPart.GetStream())
         {

@@ -18,11 +18,7 @@
     {
       var newId = Guid.NewGuid();
 
-      var packagePath = path;
-
-      packagePath = String.IsNullOrWhiteSpace(packagePath)
-        ? Path.Combine(GetContainerPath(containerTitle), newId + ".dse")
-        : Path.Combine(GetContainerPath(containerTitle), packagePath, newId + ".dse");
+      var packagePath = GetEntityPackagePath(containerTitle, path, newId);
 
       if (File.Exists(packagePath))
         throw new InvalidOperationException("An entity with the specified id already exists.");
@@ -31,13 +27,21 @@
         {
           Id = newId,
           Title = title,
-          Namespace = @namespace
+          Namespace = @namespace,
+          Created = DateTime.Now,
+          CreatedBy = User.GetCurrentUser(),
+          Modified = DateTime.Now,
+          ModifiedBy = User.GetCurrentUser()
         };
 
       using (var package =
         Package.Open(packagePath, FileMode.Create))
       {
         // Add the metadata part to the Package.
+        package.PackageProperties.ContentType = "application/barista-entity";
+        package.PackageProperties.Identifier = newId.ToString();
+        package.PackageProperties.Subject = @namespace;
+
         var metadataEntityPart =
             package.CreatePart(new Uri(Barista.DocumentStore.Constants.MetadataV1Namespace + "entity.json", UriKind.Relative),
                            "application/json");
@@ -65,19 +69,25 @@
         {
           fileStream.CopyTo(defaultEntityPart.GetStream());
         }
-      }
 
-      return FSDocumentStoreHelper.MapEntityFromPackage(packagePath);
+        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+      }
     }
 
     public bool DeleteEntity(string containerTitle, Guid entityId)
     {
-      throw new NotImplementedException();
+      return DeleteEntityInternal(containerTitle, null, entityId);
     }
 
-    protected bool DeleteEntityInternal()
+    protected bool DeleteEntityInternal(string containerTitle, string path, Guid entityId)
     {
-      throw new NotImplementedException();
+      using(var package = GetEntityPackage(containerTitle, path, entityId))
+      {
+        if (package == null)
+          return false;
+
+
+      }
     }
 
     public System.IO.Stream ExportEntity(string containerTitle, Guid entityId)
@@ -87,7 +97,17 @@
 
     public Entity GetEntity(string containerTitle, Guid entityId)
     {
-      throw new NotImplementedException();
+      return GetEntityInternal(containerTitle, null, entityId);
+    }
+
+    protected Entity GetEntityInternal(string containerTitle, string path, Guid entityId)
+    {
+      using (var package = GetEntityPackage(containerTitle, path, entityId))
+      {
+        return package == null
+          ? null
+          : FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+      }
     }
 
     public Entity GetEntityLight(string containerTitle, Guid entityId)
@@ -118,6 +138,38 @@
     public Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
     {
       throw new NotImplementedException();
+    }
+
+    protected string GetEntityPackagePath(string containerTitle, string path, Guid entityId)
+    {
+      var packagePath = path;
+
+      packagePath = String.IsNullOrWhiteSpace(packagePath)
+        ? Path.Combine(GetContainerPath(containerTitle), entityId + ".dse")
+        : Path.Combine(GetContainerPath(containerTitle), packagePath, entityId + ".dse");
+
+      return packagePath;
+    }
+
+    protected Package GetEntityPackage(string containerTitle, string path, Guid entityId)
+    {
+      var packagePath = GetEntityPackagePath(containerTitle, path, entityId);
+      if (File.Exists(packagePath))
+      {
+        return Package.Open(packagePath, FileMode.Open);
+      }
+
+      var packages = Directory.GetFiles(GetContainerPath(containerTitle), entityId + ".dse", SearchOption.AllDirectories);
+
+      if (packages.Length <= 0)
+        return null;
+
+      if (packages.Length > 1)
+        throw new InvalidOperationException(
+          String.Format("Multiple Entities with the same Id were found in the container: {0} {1}", containerTitle,
+                        entityId));
+
+      return Package.Open(packages[0], FileMode.Open);
     }
   }
 }

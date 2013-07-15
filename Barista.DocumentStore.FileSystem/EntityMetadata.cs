@@ -26,5 +26,33 @@
       set;
     }
 
+    [JsonProperty("createdBy")]
+    public User CreatedBy
+    {
+      get;
+      set;
+    }
+
+    [JsonProperty("created")]
+    public DateTime Created
+    {
+      get;
+      set;
+    }
+
+    [JsonProperty("modifiedBy")]
+    public User ModifiedBy
+    {
+      get;
+      set;
+    }
+
+    [JsonProperty("modified")]
+    public DateTime Modified
+    {
+      get;
+      set;
+    }
+
   }
 }
