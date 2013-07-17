@@ -6,15 +6,16 @@
   using System.IO.Packaging;
   using Barista.Framework;
   using Barista.Newtonsoft.Json;
+  using System.Linq;
 
   public partial class FSDocumentStore
   {
     public Entity CreateEntity(string containerTitle, string title, string @namespace, string data)
     {
-      return CreateEntityInternal(null, containerTitle, title, @namespace, data);
+      return CreateEntity(containerTitle, null, title, @namespace, data);
     }
 
-    protected Entity CreateEntityInternal(string path, string containerTitle, string title, string @namespace, string data)
+    protected Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
     {
       var newId = Guid.NewGuid();
 
@@ -76,18 +77,18 @@
 
     public bool DeleteEntity(string containerTitle, Guid entityId)
     {
-      return DeleteEntityInternal(containerTitle, null, entityId);
+      return DeleteEntity(containerTitle, null, entityId);
     }
 
-    protected bool DeleteEntityInternal(string containerTitle, string path, Guid entityId)
+    public bool DeleteEntity(string containerTitle, string path, Guid entityId)
     {
-      using(var package = GetEntityPackage(containerTitle, path, entityId))
-      {
-        if (package == null)
-          return false;
+      var packagePath = GetEntityPackagePath(containerTitle, path, entityId);
 
+      if (File.Exists(packagePath) == false)
+        return false;
 
-      }
+      File.Delete(packagePath);
+      return true;
     }
 
     public System.IO.Stream ExportEntity(string containerTitle, Guid entityId)
@@ -97,10 +98,10 @@
 
     public Entity GetEntity(string containerTitle, Guid entityId)
     {
-      return GetEntityInternal(containerTitle, null, entityId);
+      return GetEntity(containerTitle, null, entityId);
     }
 
-    protected Entity GetEntityInternal(string containerTitle, string path, Guid entityId)
+    public Entity GetEntity(string containerTitle, string path, Guid entityId)
     {
       using (var package = GetEntityPackage(containerTitle, path, entityId))
       {
@@ -112,7 +113,17 @@
 
     public Entity GetEntityLight(string containerTitle, Guid entityId)
     {
-      throw new NotImplementedException();
+      return GetEntityLight(containerTitle, null, entityId);
+    }
+
+    public Entity GetEntityLight(string containerTitle, string path, Guid entityId)
+    {
+      using (var package = GetEntityPackage(containerTitle, path, entityId))
+      {
+        return package == null
+          ? null
+          : FSDocumentStoreHelper.MapEntityFromPackage(package, false);
+      }
     }
 
     public Entity ImportEntity(string containerTitle, Guid entityId, string @namespace, byte[] archiveData)
@@ -120,14 +131,146 @@
       throw new NotImplementedException();
     }
 
-    public IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria)
+    public IList<Entity> ListEntities(string containerTitle,EntityFilterCriteria criteria)
     {
-      throw new NotImplementedException();
+      var targetPath = GetContainerPath(containerTitle);
+      if (String.IsNullOrWhiteSpace(criteria.Path) == false)
+      {
+        targetPath = Path.Combine(targetPath, criteria.Path);
+      }
+
+      var entities = new List<Entity>();
+      foreach (var entityFileName in Directory.GetFiles(targetPath, "*.dse", SearchOption.AllDirectories))
+      {
+        using (var package = GetEntityPackage(entityFileName))
+        {
+          if (package == null)
+            continue;
+
+          var entity = FSDocumentStoreHelper.MapEntityFromPackage(package, criteria.IncludeData);
+          entities.Add(entity);
+        }
+      }
+
+      IEnumerable<Entity> result = entities;
+
+      if (criteria.Top.HasValue)
+        result = result.Take((int)criteria.Top.Value);
+
+      if (criteria.Skip.HasValue)
+        result = result.Skip((int)criteria.Skip.Value);
+
+      return result.ToList();
+    }
+
+    /// <summary>
+    /// Filters the specified collection of Entity List Items according to the specified criteria.
+    /// </summary>
+    /// <param name="entities"></param>
+    /// <param name="criteria"></param>
+    /// <returns></returns>
+    protected IEnumerable<Entity> FilterListItemEntities(IEnumerable<Entity> entities, EntityFilterCriteria criteria)
+    {
+      if (criteria == null)
+        return entities;
+
+      if (String.IsNullOrEmpty(criteria.Namespace) == false)
+      {
+        switch (criteria.NamespaceMatchType)
+        {
+          case NamespaceMatchType.Equals:
+            entities = entities.Where(e => e.Namespace == criteria.Namespace);
+            break;
+          case NamespaceMatchType.StartsWith:
+            entities = entities.Where(e => e.Namespace.StartsWith(criteria.Namespace));
+            break;
+          case NamespaceMatchType.EndsWith:
+            entities = entities.Where(e => e.Namespace.EndsWith(criteria.Namespace));
+            break;
+          case NamespaceMatchType.Contains:
+            entities = entities.Where(e => e.Namespace.Contains(criteria.Namespace));
+            break;
+          case NamespaceMatchType.StartsWithMatchAllQueryPairs:
+            {
+              entities = entities.Where(e =>
+                {
+                  var ns = e.Namespace;
+                  Uri namespaceUri;
+                  if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                    return false;
+
+                  var qs = new QueryString(namespaceUri.Query);
+                  return
+                    criteria.QueryPairs.All(
+                      qp =>
+                      qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) &&
+                      String.Compare(qs[qp.Key], qp.Value, StringComparison.CurrentCultureIgnoreCase) == 0);
+                });
+            }
+            break;
+          case NamespaceMatchType.StartsWithMatchAllQueryPairsContainsValue:
+            {
+              entities = entities.Where(e =>
+                {
+                  var ns = e.Namespace;
+                  Uri namespaceUri;
+                  if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                    return false;
+
+                  var qs = new QueryString(namespaceUri.Query);
+                  return
+                    criteria.QueryPairs.All(
+                      qp =>
+                      qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) &&
+                      qs[qp.Key].ToLower().Contains(qp.Value.ToLower()));
+                });
+            }
+            break;
+          case NamespaceMatchType.StartsWithMatchAnyQueryPairs:
+            {
+              entities = entities.Where(e =>
+                {
+                  var ns = e.Namespace;
+                  Uri namespaceUri;
+                  if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri) == false)
+                    return false;
+
+                  var qs = new QueryString(namespaceUri.Query);
+                  return
+                    criteria.QueryPairs.Any(
+                      qp =>
+                      qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) &&
+                      String.Compare(qs[qp.Key], qp.Value, StringComparison.CurrentCultureIgnoreCase) == 0);
+                });
+            }
+            break;
+          case NamespaceMatchType.StartsWithMatchAnyQueryPairsContainsValue:
+            {
+              entities = entities.Where(e =>
+                {
+                  var ns = e.Namespace;
+                  Uri namespaceUri;
+                  if (Uri.TryCreate(ns, UriKind.Absolute, out namespaceUri))
+                    return false;
+
+                  var qs = new QueryString(namespaceUri.Query);
+                  return
+                    criteria.QueryPairs.Any(
+                      qp =>
+                      qs.AllKeys.Contains(qp.Key, StringComparer.CurrentCultureIgnoreCase) &&
+                      qs[qp.Key].ToLower().Contains(qp.Value.ToLower()));
+                });
+            }
+            break;
+        }
+      }
+
+      return entities;
     }
 
     public int CountEntities(string containerTitle, EntityFilterCriteria criteria)
     {
-      throw new NotImplementedException();
+      return ListEntities(containerTitle, criteria).Count;
     }
 
     public Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
@@ -170,6 +313,13 @@
                         entityId));
 
       return Package.Open(packages[0], FileMode.Open);
+    }
+
+    protected Package GetEntityPackage(string packagePath)
+    {
+      return File.Exists(packagePath)
+        ? Package.Open(packagePath, FileMode.Open)
+        : null;
     }
   }
 }
