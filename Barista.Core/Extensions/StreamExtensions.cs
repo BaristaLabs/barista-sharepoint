@@ -7,42 +7,22 @@
   {
     public static void CopyTo(this Stream input, Stream destination)
     {
-      if (destination != null)
-      {
-        if (input.CanRead || input.CanWrite)
-        {
-          if (destination.CanRead || destination.CanWrite)
-          {
-            if (input.CanRead)
-            {
-              if (destination.CanWrite)
-              {
-                StreamExtensions.InternalCopyTo(input, destination, 81920);
-              }
-              else
-              {
-                throw new NotSupportedException("Cannot copy: The destination is an unwritable stream");
-              }
-            }
-            else
-            {
-              throw new NotSupportedException("Cannot copy: The source is a unreadable Stream");
-            }
-          }
-          else
-          {
-            throw new ObjectDisposedException("destination", "The destination stream has been disposed");
-          }
-        }
-        else
-        {
-          throw new ObjectDisposedException(null, "The source streem has been disposed");
-        }
-      }
-      else
-      {
+      if (destination == null)
         throw new ArgumentNullException("destination");
-      }
+
+      if (!input.CanRead && !input.CanWrite)
+        throw new ObjectDisposedException(null, "The source streem has been disposed");
+
+      if (!destination.CanRead && !destination.CanWrite)
+        throw new ObjectDisposedException("destination", "The destination stream has been disposed");
+
+      if (!input.CanRead)
+        throw new NotSupportedException("Cannot copy: The source is a unreadable Stream");
+
+      if (!destination.CanWrite)
+        throw new NotSupportedException("Cannot copy: The destination is an unwritable stream");
+
+      StreamExtensions.InternalCopyTo(input, destination, 81920);
     }
 
     /// <summary>

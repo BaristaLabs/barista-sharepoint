@@ -175,6 +175,10 @@
       <Project>{e4fe692a-8f43-43cd-86df-00bb3db0c56a}</Project>
       <Name>Barista.DocumentStore.Raven</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Barista.Raven\Barista.Raven.csproj">
+      <Project>{fb0d0fb7-e81f-4e2f-b662-c3ad92ac65d8}</Project>
+      <Name>Barista.Raven</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Barista.Web\Barista.Web.csproj">
       <Project>{83078881-2c80-47e3-9bed-a87fb429f347}</Project>
       <Name>Barista.Web</Name>
@@ -183,6 +187,7 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="UnitTests\API\Document\" />
+    <Folder Include="UnitTests\API\Raven\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

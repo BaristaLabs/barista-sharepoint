@@ -57,11 +57,11 @@
         return instance as T;
 
       var objectInstance = instance as ObjectInstance;
-      string serializedObject = objectInstance != null
-                                  ? JSONObject.Stringify(engine, objectInstance, null, null)
-                                  : JsonConvert.SerializeObject(instance);
+      var serializedObject = objectInstance != null
+                               ? JSONObject.Stringify(engine, objectInstance, null, null)
+                               : JsonConvert.SerializeObject(instance);
 
-      T result = (T)Activator.CreateInstance(typeof(T), engine.Object.InstancePrototype);
+      var result = (T)Activator.CreateInstance(typeof(T), engine.Object.InstancePrototype);
       JsonConvert.PopulateObject(serializedObject, result);
 
       return result;

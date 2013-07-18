@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -45,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Bundles\FlickrBundle.cs" />
     <Compile Include="Bundles\TwitterBundle.cs" />
+    <Compile Include="Bundles\VineBundle.cs" />
     <Compile Include="DesktopPlatformAdapter.cs" />
     <Compile Include="Imports\Budgie\Entities\TwitterEntity.cs" />
     <Compile Include="Imports\Budgie\Entities\TwitterEntityCollection.cs" />

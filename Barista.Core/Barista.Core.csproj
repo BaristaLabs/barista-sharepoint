@@ -214,6 +214,7 @@
     <Compile Include="Helpers\YamlParsing.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
+    <Compile Include="Library\NetworkCredentialInstance.cs" />
     <Compile Include="Library\DeviceInstance.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />
     <Compile Include="Library\ExcelBorderInstance.cs" />
