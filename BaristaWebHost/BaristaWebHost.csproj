@@ -123,6 +123,7 @@
     <Content Include="UnitTests\API\DocumentStore\listContainers.js" />
     <Content Include="UnitTests\API\DocumentStore\createContainer.js" />
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
+    <Content Include="UnitTests\API\Web\getWebRequest.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaDocumentTests.js" />
     <Content Include="UnitTests\BaristaFileUploadTest.html" />
@@ -139,6 +140,7 @@
     <Content Include="UnitTests\API\Core\Barista_SimpleExpression.js" />
     <Content Include="UnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaDocumentStoreTests.js" />
+    <Content Include="UnitTests\BaristaWebTests.js" />
     <Content Include="UnitTests\index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
