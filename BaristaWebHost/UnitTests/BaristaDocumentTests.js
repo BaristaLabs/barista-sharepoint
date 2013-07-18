@@ -52,3 +52,30 @@ asyncTest("Generate ZIP file", function () {
         start();
     });
 });
+
+asyncTest("Generate Excel Document", function () {
+
+    var code = "var doc = require(\"Document\");\
+        var excelDocument = new ExcelDocument();\
+        var ws = excelDocument.workbook.worksheets.add('My New Worksheet');\
+        excelDocument.getBytes();";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'text',
+        url: Barista.getBaristaServiceUrl(),
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        ok(data.indexOf("PK") == 0, "Expression was run and a result that contained an excel header was returned.");
+        deepEqual(jqXHR.getResponseHeader("Content-Type"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Response content type was application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        start();
+    });
+
+    request.fail(function (jqXHR, textStatus) {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
