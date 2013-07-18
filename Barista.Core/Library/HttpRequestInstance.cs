@@ -2,6 +2,7 @@
 {
   using System.Linq;
   using Barista.Extensions;
+  using Barista.Helpers;
   using Jurassic;
   using Jurassic.Library;
   using System.Text;
@@ -167,6 +168,16 @@
       get { return this.Request.UserAgent; }
     }
 
+    [JSProperty(Name = "clientInfo")]
+    public ClientInfoInstance BrowserInfo
+    {
+      get
+      {
+        var br = BrowserUserAgentParser.GetDefault();
+        var clientInfo = br.Parse(this.Request.UserAgent);
+        return new ClientInfoInstance(this.Engine.Object.InstancePrototype, clientInfo);
+      }
+    }
     #endregion
 
     [JSFunction(Name = "getBodyObject")]

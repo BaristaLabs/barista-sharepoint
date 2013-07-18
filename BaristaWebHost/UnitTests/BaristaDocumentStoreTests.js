@@ -29,3 +29,27 @@ asyncTest("Create Entity", function () {
 
     Barista.runTestScript(scriptPath);
 });
+
+asyncTest("Get Entity", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/getEntity.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("Update Entity", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/updateEntity.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("Delete Entity", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/deleteEntity.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("List Entities", function () {
+    var scriptPath = "~/UnitTests/API/DocumentStore/listEntities.js";
+
+    Barista.runTestScript(scriptPath);
+});

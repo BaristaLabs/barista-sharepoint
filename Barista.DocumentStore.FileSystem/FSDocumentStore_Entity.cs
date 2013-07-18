@@ -1,11 +1,10 @@
 ﻿namespace Barista.DocumentStore.FileSystem
 {
+  using Barista.Framework;
   using System;
   using System.Collections.Generic;
   using System.IO;
   using System.IO.Packaging;
-  using Barista.Framework;
-  using Barista.Newtonsoft.Json;
   using System.Linq;
 
   public partial class FSDocumentStore
@@ -24,38 +23,18 @@
       if (File.Exists(packagePath))
         throw new InvalidOperationException("An entity with the specified id already exists.");
 
-      var metadata = new EntityMetadata
-        {
-          Id = newId,
-          Title = title,
-          Namespace = @namespace,
-          Created = DateTime.Now,
-          CreatedBy = User.GetCurrentUser(),
-          Modified = DateTime.Now,
-          ModifiedBy = User.GetCurrentUser()
-        };
-
       using (var package =
         Package.Open(packagePath, FileMode.Create))
       {
         // Add the metadata part to the Package.
-        package.PackageProperties.ContentType = "application/barista-entity";
         package.PackageProperties.Identifier = newId.ToString();
+        package.PackageProperties.ContentType = "application/barista-entity";
         package.PackageProperties.Subject = @namespace;
-
-        var metadataEntityPart =
-            package.CreatePart(new Uri(Barista.DocumentStore.Constants.MetadataV1Namespace + "entity.json", UriKind.Relative),
-                           "application/json");
-
-        if (metadataEntityPart == null)
-          throw new InvalidOperationException("The Metadata Part Document could not be created.");
-
-        //Copy the metadata to the package part 
-        var metadataJson = JsonConvert.SerializeObject(metadata, Formatting.Indented);
-        using (var fileStream = new StringStream(metadataJson))
-        {
-          fileStream.CopyTo(metadataEntityPart.GetStream());
-        }
+        package.PackageProperties.Title = title;
+        package.PackageProperties.Created = DateTime.Now;
+        package.PackageProperties.Creator = User.GetCurrentUser().LoginName;
+        package.PackageProperties.Modified = DateTime.Now;
+        package.PackageProperties.LastModifiedBy = User.GetCurrentUser().LoginName;
 
         // Add the default entity part to the Package.
         var defaultEntityPart =
@@ -275,12 +254,55 @@
 
     public Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
-      throw new NotImplementedException();
+      var packagePath = GetEntityPackagePath(containerTitle, null, entityId);
+
+      if (File.Exists(packagePath) == false)
+        return null;
+
+      using (var package =
+        Package.Open(packagePath, FileMode.Open))
+      {
+        // Update the metadata part in the Package.
+        package.PackageProperties.ContentType = "application/barista-entity";
+        package.PackageProperties.Subject = @namespace;
+        package.PackageProperties.Title = title;
+        package.PackageProperties.Description = description;
+        package.PackageProperties.Modified = DateTime.Now;
+        package.PackageProperties.LastModifiedBy = User.GetCurrentUser().LoginName;
+
+        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+      }
     }
 
     public Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
     {
-      throw new NotImplementedException();
+      return UpdateEntityData(containerTitle, null, entityId, eTag, data);
+    }
+
+    public Entity UpdateEntityData(string containerTitle, string path, Guid entityId, string eTag, string data)
+    {
+      using (var package = GetEntityPackage(containerTitle, path, entityId))
+      {
+        //TODO: Check to see if the eTag matches.
+
+        var defaultPartUri = new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep", UriKind.Relative);
+
+        if (package.PartExists(defaultPartUri) == false)
+          throw new InvalidOperationException("The default entity part for this package could not be located.");
+
+        // Get the default entity part from the Package.
+        var defaultEntityPart =
+          package.GetPart(defaultPartUri);
+
+
+        //Copy the data to the default entity part 
+        using (var fileStream = new StringStream(data))
+        {
+          fileStream.CopyTo(defaultEntityPart.GetStream());
+        }
+
+        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+      }
     }
 
     protected string GetEntityPackagePath(string containerTitle, string path, Guid entityId)

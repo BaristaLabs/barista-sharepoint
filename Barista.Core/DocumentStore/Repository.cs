@@ -221,9 +221,18 @@
     /// <returns></returns>
     public Entity GetEntity(Guid entityId, string path)
     {
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var entity = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId, path);
-      return entity;
+      Entity result;
+      if (path.IsNullOrWhiteSpace())
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId);
+      }
+      else
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.GetEntity(this.Configuration.ContainerTitle, entityId, path);
+      }
+      return result;
     }
 
     /// <summary>
@@ -234,9 +243,18 @@
     /// <returns></returns>
     public Entity GetEntityLight(Guid entityId, string path)
     {
-      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-      var entity = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId, path);
-      return entity;
+      Entity result;
+      if (path.IsNullOrWhiteSpace())
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId);
+      }
+      else
+      {
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.GetEntityLight(this.Configuration.ContainerTitle, entityId, path);
+      }
+      return result;
     }
 
     /// <summary>
@@ -247,13 +265,13 @@
       IList<Entity> result;
       if (filterCriteria.Path == null)
       {
-        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
+        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria);
       }
       else
       {
-        var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria);
+        var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
       }
 
       return result;

@@ -52,18 +52,23 @@
     {
       var result = new Entity();
 
-      var metadataPart =
-          package.GetPart(new Uri(Barista.DocumentStore.Constants.MetadataV1Namespace + "entity.json", UriKind.Relative));
+      result.Id = Guid.Parse(package.PackageProperties.Identifier);
+      result.Title = package.PackageProperties.Title;
+      result.Namespace = package.PackageProperties.Subject;
+      result.Description = package.PackageProperties.Description;
 
-      using (var fs = metadataPart.GetStream())
-      {
-        var bytes = fs.ReadToEnd();
-        var metadataJson = Encoding.UTF8.GetString(bytes);
-        var metadata = JsonConvert.DeserializeObject<EntityMetadata>(metadataJson);
-        result.Id = metadata.Id;
-        result.Title = metadata.Title;
-        result.Namespace = metadata.Namespace;
-      }
+      if (package.PackageProperties.Created.HasValue)
+        result.Created = package.PackageProperties.Created.Value;
+      result.CreatedBy = User.GetUser(package.PackageProperties.Creator);
+
+
+      if (package.PackageProperties.Modified.HasValue)
+        result.Modified = package.PackageProperties.Modified.Value;
+      result.CreatedBy = User.GetUser(package.PackageProperties.Creator);
+
+      if (package.PackageProperties.Modified.HasValue)
+        result.Modified = package.PackageProperties.Modified.Value;
+      result.ModifiedBy = User.GetUser(package.PackageProperties.LastModifiedBy);
 
       if (includeData)
       {

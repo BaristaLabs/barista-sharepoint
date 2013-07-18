@@ -185,7 +185,6 @@
     <Compile Include="Bundles\WebBundleBase.cs" />
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
-    <Compile Include="DocumentStore\EntityMetadata.cs" />
     <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
     <Compile Include="DocumentStore\Library\CommentInstance.cs" />
     <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
@@ -214,6 +213,8 @@
     <Compile Include="Helpers\UserAgentPattern.cs" />
     <Compile Include="Helpers\YamlParsing.cs" />
     <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\ClientInfoInstance.cs" />
+    <Compile Include="Library\DeviceInstance.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />
     <Compile Include="Library\ExcelBorderInstance.cs" />
     <Compile Include="Library\ExcelBorderItemInstance.cs" />
@@ -1025,6 +1026,8 @@
     <Compile Include="Library\ExcelWorkbookInstance.cs" />
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
     <Compile Include="Library\ExcelWorksheetsInstance.cs" />
+    <Compile Include="Library\OSInstance.cs" />
+    <Compile Include="Library\UserAgentInfoInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
     <Compile Include="PrincipalType.cs" />
     <Compile Include="ScriptEngineFactory.cs" />

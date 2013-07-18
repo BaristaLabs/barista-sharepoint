@@ -112,7 +112,12 @@
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
     <Content Include="Scripts\Vendor\chance.js" />
+    <Content Include="UnitTests\API\ActiveDirectory\getCurrentUser.js" />
     <Content Include="UnitTests\API\Core\writetoConsole.js" />
+    <Content Include="UnitTests\API\DocumentStore\listEntities.js" />
+    <Content Include="UnitTests\API\DocumentStore\deleteEntity.js" />
+    <Content Include="UnitTests\API\DocumentStore\updateEntity.js" />
+    <Content Include="UnitTests\API\DocumentStore\getEntity.js" />
     <Content Include="UnitTests\API\DocumentStore\getContainer.js" />
     <Content Include="UnitTests\API\DocumentStore\deleteContainer.js" />
     <Content Include="UnitTests\API\DocumentStore\listContainers.js" />
@@ -175,7 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
-    <Folder Include="UnitTests\API\ActiveDirectory\" />
     <Folder Include="UnitTests\API\Document\" />
   </ItemGroup>
   <PropertyGroup>

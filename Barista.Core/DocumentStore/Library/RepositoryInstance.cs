@@ -387,9 +387,15 @@
       if (data == Null.Value || data == Undefined.Value || data == null)
       {
         if (entityId is EntityInstance)
+        {
+          var entityArg = entityId as EntityInstance;
+          m_repository.UpdateEntity(entityArg.Entity.Id, entityArg.Entity.Title, entityArg.Entity.Description, entityArg.Entity.Namespace);
+
           stringData = (entityId as EntityInstance).Entity.Data;
+        }
         else
-          throw new InvalidOperationException("A data parameter must be specified if the first parameter is not an instance of an Entity object.");
+          throw new InvalidOperationException(
+            "A data parameter must be specified if the first parameter is not an instance of an Entity object.");
       }
       else if (data is ObjectInstance)
 // ReSharper disable RedundantArgumentDefaultValue

@@ -54,7 +54,10 @@
                 });
 
                 request.fail(function (jqXHR, textStatus, errorThrown) {
-                    ok(1 == 0, errorThrown);
+                    if (errorThrown.indexOf("Assert.Inconclusive failed.") == 0)
+                        ok(1 == 1, errorThrown);
+                    else
+                        ok(1 == 0, errorThrown);
                     start();
                 });
             };
