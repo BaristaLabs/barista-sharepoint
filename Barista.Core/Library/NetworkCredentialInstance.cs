@@ -24,7 +24,7 @@
   [Serializable]
   public class NetworkCredentialInstance : ObjectInstance
   {
-    private readonly NetworkCredential m_networkCredential;
+    private readonly NetworkCredential m_networkCredential = new NetworkCredential();
 
     public NetworkCredentialInstance(ObjectInstance prototype)
       : base(prototype)

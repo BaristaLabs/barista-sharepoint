@@ -8,6 +8,8 @@ namespace Barista.Raven.Library
   using Barista.Library;
   using System;
   using Barista.Newtonsoft.Json;
+  using global::Raven.Client.Document;
+  using Barista.Newtonsoft.Json.Linq;
 
   [Serializable]
   public class DocumentStoreConstructor : ClrFunction
@@ -18,18 +20,22 @@ namespace Barista.Raven.Library
     }
 
     [JSConstructorFunction]
-    public DocumentStoreInstance Construct()
+    public DocumentStoreInstance Construct(object creationInfo)
     {
-      var ds = new RavenDB.Document.DocumentStore();
-
-      return new DocumentStoreInstance(this.InstancePrototype, ds);
+      if (creationInfo != null && creationInfo != Null.Value && creationInfo != Undefined.Value &&
+          creationInfo is ObjectInstance)
+      {
+        return JurassicHelper.Coerce<DocumentStoreInstance>(this.Engine, creationInfo);
+      }
+      else
+        return new DocumentStoreInstance(this.InstancePrototype);
     }
   }
 
   [Serializable]
   public class DocumentStoreInstance : ObjectInstance
   {
-    private readonly RavenDB.Document.DocumentStore m_documentStore;
+    private readonly RavenDB.Document.DocumentStore m_documentStore = new DocumentStore();
 
     public DocumentStoreInstance(ObjectInstance prototype)
       : base(prototype)
@@ -77,16 +83,19 @@ namespace Barista.Raven.Library
         if (value == null || value == Null.Value || value == Undefined.Value)
           return;
 
+        if (value is JContainer)
+          value = JSONObject.Parse(this.Engine, (value as JContainer).ToString(), null);
+
         if (value is NetworkCredentialInstance)
           m_documentStore.Credentials = (value as NetworkCredentialInstance).NetworkCredential;
         else if (value is ObjectInstance)
           m_documentStore.Credentials = JurassicHelper.Coerce<NetworkCredentialInstance>(this.Engine, value).NetworkCredential;
-
       }
     }
 
     [JSProperty(Name = "databaseCommands")]
     [JSDoc("Gets the database commands")]
+    [JsonIgnore]
     public DatabaseCommandsInstance DatabaseCommands
     {
       get { return new DatabaseCommandsInstance(this.Engine.Object.InstancePrototype, m_documentStore.DatabaseCommands); }
@@ -118,9 +127,10 @@ namespace Barista.Raven.Library
 
     [JSFunction(Name = "initialize")]
     [JSDoc("Initializes the DocumentStore.")]
-    public void Initialize(object arg)
+    public DocumentStoreInstance Initialize()
     {
       m_documentStore.Initialize();
+      return this;
     }
 
     [JSFunction(Name = "openSession")]
