@@ -9,10 +9,7 @@
   /// Represents a single method that a binder can call.
   /// </summary>
   [Serializable]
-  internal class BinderMethod
-#if !SILVERLIGHT
- : System.Runtime.Serialization.ISerializable
-#endif
+  internal class BinderMethod : System.Runtime.Serialization.ISerializable
   {
     private bool m_initialized;
     private int m_requiredParameterCount;
@@ -73,8 +70,6 @@
     //     SERIALIZATION
     //_________________________________________________________________________________________
 
-#if !SILVERLIGHT
-
     /// <summary>
     /// Initializes a new instance of the FunctionBinderMethod class with serialized data.
     /// </summary>
@@ -87,6 +82,9 @@
       // Get the type which declared the method.
       var typeName = info.GetString("methodType");
       var type = Type.GetType(typeName, true, false);
+
+      if (type == null)
+        throw new InvalidOperationException("Unable to obtain type from the specified type name: " + typeName);
 
       // Get the method name.
       var methodName = info.GetString("methodName");
@@ -122,6 +120,9 @@
     /// the source or destination. </param>
     public virtual void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
+      if (this.Method.DeclaringType == null)
+        throw new InvalidOperationException("Method Declaraing Type is Null");
+
       // Save the object state.
       info.AddValue("methodType", this.Method.DeclaringType.AssemblyQualifiedName);
       info.AddValue("methodName", this.Method.Name);
@@ -132,10 +133,6 @@
         argumentTypeNames[i] = parameters[i].ParameterType.AssemblyQualifiedName;
       info.AddValue("methodArgumentTypes", argumentTypeNames);
     }
-
-#endif
-
-
 
     //     PROPERTIES
     //_________________________________________________________________________________________
@@ -377,7 +374,7 @@
     public void GenerateCall(ILGenerator generator)
     {
       if (this.Method is MethodInfo)
-        generator.Call((MethodInfo)this.Method);
+        generator.Call(this.Method);
       else if (this.Method is ConstructorInfo)
         generator.NewObject((ConstructorInfo)this.Method);
       else

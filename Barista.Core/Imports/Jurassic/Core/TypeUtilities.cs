@@ -78,7 +78,8 @@
       if (obj is double)
       {
         var numericResult = (double)obj;
-        if ((double)((int)numericResult) == numericResult)
+
+        if (Math.Abs(numericResult - (int)numericResult) < Double.Epsilon)
           return (int)numericResult;
       }
       else if (obj is uint)

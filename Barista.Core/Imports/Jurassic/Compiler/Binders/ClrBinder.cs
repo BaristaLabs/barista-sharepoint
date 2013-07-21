@@ -14,16 +14,16 @@
   [Serializable]
   internal class ClrBinder : MethodBinder
   {
-    private IEnumerable<BinderMethod> targetMethods;
+    private readonly IEnumerable<BinderMethod> m_targetMethods;
 
     /// <summary>
     /// Creates a new ClrBinder instance.
     /// </summary>
     /// <param name="targetMethod"> A method to bind to. </param>
     public ClrBinder(MethodBase targetMethod)
-      : this(new BinderMethod[] { new BinderMethod(targetMethod) })
+      : this(new[] { new BinderMethod(targetMethod) })
     {
-      this.targetMethods = new BinderMethod[] { new BinderMethod(targetMethod) };
+      this.m_targetMethods = new[] { new BinderMethod(targetMethod) };
     }
 
     /// <summary>
@@ -42,7 +42,7 @@
     public ClrBinder(IEnumerable<BinderMethod> targetMethods)
       : base(targetMethods)
     {
-      this.targetMethods = targetMethods;
+      this.m_targetMethods = targetMethods;
     }
 
     /// <summary>
@@ -55,12 +55,9 @@
     protected override void GenerateStub(ILGenerator generator, int argumentCount)
     {
       // Determine the methods that have the correct number of arguments.
-      var candidateMethods = new List<BinderMethod>();
-      foreach (var candidateMethod in this.targetMethods)
-      {
-        if (candidateMethod.IsArgumentCountCompatible(argumentCount) == true)
-          candidateMethods.Add(candidateMethod);
-      }
+      var candidateMethods = this.m_targetMethods
+        .Where(candidateMethod => candidateMethod.IsArgumentCountCompatible(argumentCount))
+        .ToList();
 
       // Zero candidates means no overload had the correct number of arguments.
       if (candidateMethods.Count == 0)
@@ -226,9 +223,9 @@
           generator.DefineLabelPosition(endOfUnwrapCheck);
 
           // Value types must be unboxed.
-          if (toType.IsValueType == true)
+          if (toType.IsValueType)
           {
-            if (convertToAddress == true)
+            if (convertToAddress)
               // Unbox.
               generator.Unbox(toType);
             else
@@ -351,7 +348,7 @@
           generator.StoreVariable(temp);
           generator.LoadArgument(0);
           generator.LoadVariable(temp);
-          if (fromType.IsValueType == true)
+          if (fromType.IsValueType)
             generator.Box(fromType);
           generator.ReleaseTemporaryVariable(temp);
           generator.NewObject(ReflectionHelpers.ClrInstanceWrapper_Constructor.Value);

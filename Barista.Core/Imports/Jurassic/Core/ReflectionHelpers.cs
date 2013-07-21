@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Reflection;
   using Jurassic.Compiler;
   using Jurassic.Library;
@@ -129,7 +130,7 @@
     internal static Lazy<FieldInfo> Null_Value = new Lazy<FieldInfo>(() => GetField(typeof(Null), "Value"));
 
     internal static Lazy<ConstructorInfo> LongJumpException_Constructor = new Lazy<ConstructorInfo>(() => GetConstructor(typeof(LongJumpException), typeof(int)));
-    internal static Lazy<MethodInfo> LongJumpException_RouteID = new Lazy<MethodInfo>(() => GetInstanceMethod(typeof(LongJumpException), "get_RouteID"));
+    internal static Lazy<MethodInfo> LongJumpException_RouteId = new Lazy<MethodInfo>(() => GetInstanceMethod(typeof(LongJumpException), "get_RouteId"));
 // ReSharper restore InconsistentNaming
 
     /// <summary>
@@ -191,7 +192,11 @@
     /// </summary>
     internal static void TestFunctionRetrieval()
     {
+// ReSharper disable RedundantAssignment
+#pragma warning disable 219
+// ReSharper disable JoinDeclarationAndInitializer
       object result;
+// ReSharper restore JoinDeclarationAndInitializer
       result = ReflectionHelpers.Arguments_Constructor.Value;
       result = ReflectionHelpers.Array_New;
       result = ReflectionHelpers.BinderUtilities_ResolveOverloads;
@@ -228,7 +233,7 @@
       result = ReflectionHelpers.JavaScriptException_Constructor_Object;
       result = ReflectionHelpers.JavaScriptException_ErrorObject;
       result = ReflectionHelpers.LongJumpException_Constructor;
-      result = ReflectionHelpers.LongJumpException_RouteID;
+      result = ReflectionHelpers.LongJumpException_RouteId;
       result = ReflectionHelpers.MethodBase_GetMethodFromHandle;
       result = ReflectionHelpers.Null_Value;
       result = ReflectionHelpers.ObjectInstance_DefineProperty;
@@ -290,6 +295,8 @@
       result = ReflectionHelpers.Type_GetTypeFromHandle;
       result = ReflectionHelpers.Undefined_Value;
       result = ReflectionHelpers.UserDefinedFunction_Constructor;
+#pragma warning restore 219
+// ReSharper restore RedundantAssignment
     }
 #endif
 
@@ -299,12 +306,16 @@
     /// <returns> An enumerable list of all the MemberInfos that are used by this DLL. </returns>
     internal static IEnumerable<ReflectionField> GetMembers()
     {
-      foreach (FieldInfo field in typeof(ReflectionHelpers).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
-      {
-        if (field.FieldType != typeof(MethodInfo) && field.FieldType != typeof(ConstructorInfo) && field.FieldType != typeof(FieldInfo))
-          continue;
-        yield return new ReflectionField { FieldName = field.Name, MemberInfo = (MemberInfo)field.GetValue(null) };
-      }
+      return typeof(ReflectionHelpers).GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+        .Where(field =>
+          field.FieldType == typeof(MethodInfo) ||
+          field.FieldType == typeof(ConstructorInfo) ||
+          field.FieldType == typeof(FieldInfo))
+        .Select(field => new ReflectionField
+          {
+            FieldName = field.Name,
+            MemberInfo = (MemberInfo)field.GetValue(null)
+          });
     }
 
     /// <summary>

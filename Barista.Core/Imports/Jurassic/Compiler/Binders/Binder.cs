@@ -113,30 +113,26 @@
       // Create a new dynamic method.
       System.Reflection.Emit.DynamicMethod dm;
       ILGenerator generator;
-#if !SILVERLIGHT
       if (ScriptEngine.LowPrivilegeEnvironment == false)
       {
         // Full trust only - skips visibility checks.
         dm = new System.Reflection.Emit.DynamicMethod(
             string.Format("binder_for_{0}", this.FullName),                                                 // Name of the generated method.
             typeof(object),                                                                                 // Return type of the generated method.
-            new Type[] { typeof(ScriptEngine), typeof(object), typeof(object[]) },                          // Parameter types of the generated method.
+            new[] { typeof(ScriptEngine), typeof(object), typeof(object[]) },                          // Parameter types of the generated method.
             typeof(JSBinder),                                                                               // Owner type.
             true);                                                                                          // Skips visibility checks.
         generator = new DynamicILGenerator(dm);
       }
       else
       {
-#endif
         // Partial trust / silverlight.
         dm = new System.Reflection.Emit.DynamicMethod(
             string.Format("binder_for_{0}", this.FullName),                                                 // Name of the generated method.
             typeof(object),                                                                                 // Return type of the generated method.
-            new Type[] { typeof(ScriptEngine), typeof(object), typeof(object[]) });                         // Parameter types of the generated method.
+            new[] { typeof(ScriptEngine), typeof(object), typeof(object[]) });                         // Parameter types of the generated method.
         generator = new ReflectionEmitILGenerator(dm.GetILGenerator());
-#if !SILVERLIGHT
       }
-#endif
 
       // Generate the body of the method.
       GenerateStub(generator, argumentCount);

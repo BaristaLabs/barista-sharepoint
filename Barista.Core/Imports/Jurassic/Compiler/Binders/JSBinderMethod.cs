@@ -29,22 +29,21 @@
     /// <summary>
     /// Creates a new FunctionBinderMethod instance.
     /// </summary>
-    /// <param name="method"> The method to call. </param>
     /// <param name="flags"> Flags that modify the binding process. </param>
     private void Init(JSFunctionFlags flags)
     {
       this.Flags = flags;
       this.HasEngineParameter = (flags & JSFunctionFlags.HasEngineParameter) != 0;
-      if (this.HasEngineParameter == true && this.Method.IsStatic == false)
+      if (this.HasEngineParameter && this.Method.IsStatic == false)
         throw new InvalidOperationException(string.Format("The {0} flag cannot be used on the instance method '{1}'.", JSFunctionFlags.HasEngineParameter, this.Name));
       this.HasExplicitThisParameter = (flags & JSFunctionFlags.HasThisObject) != 0;
-      if (this.HasExplicitThisParameter == true && this.Method.IsStatic == false)
+      if (this.HasExplicitThisParameter && this.Method.IsStatic == false)
         throw new InvalidOperationException(string.Format("The {0} flag cannot be used on the instance method '{1}'.", JSFunctionFlags.HasThisObject, this.Name));
 
       var parameters = this.Method.GetParameters();
 
       // If HasEngineParameter is specified, the first parameter must be of type ScriptEngine.
-      if (this.HasEngineParameter == true)
+      if (this.HasEngineParameter)
       {
         if (parameters.Length == 0)
           throw new InvalidOperationException(string.Format("The method '{0}' does not have enough parameters.", this.Name));
@@ -53,7 +52,7 @@
       }
 
       // If there is a "this" parameter, it must be of type ObjectInstance (or derived from it).
-      if (this.HasExplicitThisParameter == true)
+      if (this.HasExplicitThisParameter)
       {
         if (parameters.Length <= (this.HasEngineParameter ? 1 : 0))
           throw new InvalidOperationException(string.Format("The method '{0}' does not have enough parameters.", this.Name));
@@ -74,7 +73,7 @@
         Type type = parameters[i].ParameterType;
 
         // ParamArray types must be an array of a supported type.
-        if (this.HasParamArray == true && i == parameters.Length - 1)
+        if (this.HasParamArray && i == parameters.Length - 1)
         {
           if (type.IsArray == false)
             throw new NotImplementedException(string.Format("Unsupported varargs parameter type '{0}'.", type));
@@ -95,8 +94,6 @@
 
     //     SERIALIZATION
     //_________________________________________________________________________________________
-
-#if !SILVERLIGHT
 
     /// <summary>
     /// Initializes a new instance of the FunctionBinderMethod class with serialized data.
@@ -130,10 +127,6 @@
       // Save the object state.
       info.AddValue("flags", this.Flags);
     }
-
-#endif
-
-
 
     //     PROPERTIES
     //_________________________________________________________________________________________
@@ -227,11 +220,11 @@
     public override IEnumerable<BinderArgument> GetArguments(int argumentCount)
     {
       // If there is an engine parameter, return that first.
-      if (this.HasEngineParameter == true)
+      if (this.HasEngineParameter)
         yield return new BinderArgument(BinderArgumentSource.ScriptEngine, typeof(ScriptEngine), -1);
 
       // If there is an explicit this parameter, return that next.
-      if (this.HasExplicitThisParameter == true)
+      if (this.HasExplicitThisParameter)
         yield return new BinderArgument(BinderArgumentSource.ThisValue, this.ExplicitThisType, -1);
 
       // Delegate to the base class.

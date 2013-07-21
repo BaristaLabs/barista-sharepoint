@@ -6,10 +6,7 @@
   /// Represents the JavaScript "undefined" type and provides the one and only instance of that type.
   /// </summary>
   [Serializable]
-  public sealed class Undefined
-#if !SILVERLIGHT
- : System.Runtime.Serialization.ISerializable
-#endif
+  public sealed class Undefined : System.Runtime.Serialization.ISerializable
   {
     /// <summary>
     /// Creates a new Undefined instance.
@@ -27,8 +24,6 @@
 
     //     SERIALIZATION
     //_________________________________________________________________________________________
-
-#if !SILVERLIGHT
 
     [Serializable]
     private class SerializationHelper : System.Runtime.Serialization.IObjectReference
@@ -51,10 +46,6 @@
       // Save the object state.
       info.SetType(typeof(SerializationHelper));
     }
-
-#endif
-
-
 
     /// <summary>
     /// Returns a string representing the current object.

@@ -1,33 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Barista.Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
+  using System;
+
+  /// <summary>
+  /// Used internally to allow branching out of a finally block.
+  /// </summary>
+  /// <remarks> This class is only public for technical reasons.  It is not intended for use by
+  /// client code. </remarks>
+  public class LongJumpException : Exception
+  {
+    /// <summary>
+    /// Creates a new LongJumpException instance.
+    /// </summary>
+    /// <param name="routeId"> The route ID. </param>
+    public LongJumpException(int routeId)
+    {
+      this.RouteId = routeId;
+    }
 
     /// <summary>
-    /// Used internally to allow branching out of a finally block.
+    /// Gets the route ID.
     /// </summary>
-    /// <remarks> This class is only public for technical reasons.  It is not intended for use by
-    /// client code. </remarks>
-    public class LongJumpException : Exception
+    public int RouteId
     {
-        /// <summary>
-        /// Creates a new LongJumpException instance.
-        /// </summary>
-        /// <param name="routeID"> The route ID. </param>
-        public LongJumpException(int routeID)
-        {
-            this.RouteID = routeID;
-        }
-
-        /// <summary>
-        /// Gets the route ID.
-        /// </summary>
-        public int RouteID
-        {
-            get;
-            private set;
-        }
+      get;
+      private set;
     }
+  }
 
 }

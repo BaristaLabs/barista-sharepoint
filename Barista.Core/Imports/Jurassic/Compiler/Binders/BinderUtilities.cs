@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-
-namespace Barista.Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Reflection;
   using System.Linq;
 
   /// <summary>

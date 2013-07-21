@@ -124,9 +124,6 @@
 
     //     SERIALIZATION
     //_________________________________________________________________________________________
-
-#if !SILVERLIGHT
-
     /// <summary>
     /// Initializes a new instance of the ObjectInstance class with serialized data.
     /// </summary>
@@ -208,10 +205,6 @@
       info.AddValue("evalErrorConstructor", this.m_evalErrorConstructor);
       info.AddValue("referenceErrorConstructor", this.m_referenceErrorConstructor);
     }
-
-#endif
-
-
 
     //     PROPERTIES
     //_________________________________________________________________________________________

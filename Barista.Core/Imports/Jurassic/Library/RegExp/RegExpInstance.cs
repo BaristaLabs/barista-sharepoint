@@ -181,10 +181,7 @@
     public void Compile(string pattern, [DefaultParameterValue(null)] object flagsArg)
     {
       var flags = JurassicHelper.GetTypedArgumentValue<string>(this.Engine, flagsArg, null);
-
-#if !SILVERLIGHT
       this.m_value = new Regex(pattern, ParseFlags(flags) | RegexOptions.Compiled);
-#endif
 
       // Update the javascript properties.
       this.FastSetProperty("source", pattern, PropertyAttributes.Sealed, false);

@@ -1,45 +1,45 @@
-﻿using System;
-
-namespace Barista.Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
+  using System;
+
+  /// <summary>
+  /// Represents a line and column number in a source file.
+  /// </summary>
+  internal struct SourceCodePosition
+  {
     /// <summary>
-    /// Represents a line and column number in a source file.
+    /// Creates a new SourceCodePosition instance.
     /// </summary>
-    internal struct SourceCodePosition
+    /// <param name="line"> The line number. Must be greater than zero. </param>
+    /// <param name="column"> The column number. Must be greater than zero. </param>
+    public SourceCodePosition(int line, int column)
+      : this()
     {
-        /// <summary>
-        /// Creates a new SourceCodePosition instance.
-        /// </summary>
-        /// <param name="line"> The line number. Must be greater than zero. </param>
-        /// <param name="column"> The column number. Must be greater than zero. </param>
-        public SourceCodePosition(int line, int column)
-            : this()
-        {
-            if (line < 1)
-                throw new ArgumentOutOfRangeException("line");
-            if (column < 1)
-                throw new ArgumentOutOfRangeException("column");
+      if (line < 1)
+        throw new ArgumentOutOfRangeException("line");
+      if (column < 1)
+        throw new ArgumentOutOfRangeException("column");
 
-            this.Line = line;
-            this.Column = column;
-        }
-
-        /// <summary>
-        /// Gets the line number.
-        /// </summary>
-        public int Line
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the column number.
-        /// </summary>
-        public int Column
-        {
-            get;
-            private set;
-        }
+      this.Line = line;
+      this.Column = column;
     }
+
+    /// <summary>
+    /// Gets the line number.
+    /// </summary>
+    public int Line
+    {
+      get;
+      private set;
+    }
+
+    /// <summary>
+    /// Gets the column number.
+    /// </summary>
+    public int Column
+    {
+      get;
+      private set;
+    }
+  }
 }

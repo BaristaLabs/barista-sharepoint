@@ -9,20 +9,20 @@
   /// </summary>
   internal sealed class Parser
   {
-    private ScriptEngine engine;
-    private Lexer lexer;
-    private SourceCodePosition positionBeforeWhitespace, positionAfterWhitespace;
-    private Token nextToken;
-    private bool consumedLineTerminator;
-    private ParserExpressionState expressionState;
-    private Scope initialScope;
-    private Scope currentScope;
-    private MethodOptimizationHints methodOptimizationHints;
-    private List<string> labelsForCurrentStatement = new List<string>();
-    private Token endToken;
-    private CompilerOptions options;
-    private CodeContext context;
-    private bool strictMode;
+    private readonly ScriptEngine m_engine;
+    private readonly Lexer m_lexer;
+    private SourceCodePosition m_positionBeforeWhitespace, m_positionAfterWhitespace;
+    private Token m_nextToken;
+    private bool m_consumedLineTerminator;
+    private ParserExpressionState m_expressionState;
+    private Scope m_initialScope;
+    private Scope m_currentScope;
+    private MethodOptimizationHints m_methodOptimizationHints;
+    private readonly List<string> m_labelsForCurrentStatement = new List<string>();
+    private Token m_endToken;
+    private readonly CompilerOptions m_options;
+    private CodeContext m_context;
+    private bool m_strictMode;
 
 
 
@@ -45,13 +45,13 @@
         throw new ArgumentNullException("lexer");
       if (initialScope == null)
         throw new ArgumentNullException("initialScope");
-      this.engine = engine;
-      this.lexer = lexer;
-      this.lexer.ParserExpressionState = ParserExpressionState.Literal;
-      this.currentScope = this.initialScope = initialScope;
-      this.methodOptimizationHints = new MethodOptimizationHints();
-      this.options = options;
-      this.context = context;
+      this.m_engine = engine;
+      this.m_lexer = lexer;
+      this.m_lexer.ParserExpressionState = ParserExpressionState.Literal;
+      this.m_currentScope = this.m_initialScope = initialScope;
+      this.m_methodOptimizationHints = new MethodOptimizationHints();
+      this.m_options = options;
+      this.m_context = context;
       this.StrictMode = options.ForceStrictMode;
       this.Consume();
     }
@@ -65,10 +65,10 @@
     private static Parser CreateFunctionBodyParser(Parser parser, Scope scope)
     {
       var result = (Parser)parser.MemberwiseClone();
-      result.currentScope = result.initialScope = scope;
-      result.methodOptimizationHints = new MethodOptimizationHints();
-      result.context = CodeContext.Function;
-      result.endToken = PunctuatorToken.RightBrace;
+      result.m_currentScope = result.m_initialScope = scope;
+      result.m_methodOptimizationHints = new MethodOptimizationHints();
+      result.m_context = CodeContext.Function;
+      result.m_endToken = PunctuatorToken.RightBrace;
       result.DirectivePrologueProcessedCallback = null;
       return result;
     }
@@ -83,7 +83,7 @@
     /// </summary>
     public int LineNumber
     {
-      get { return this.positionAfterWhitespace.Line; }
+      get { return this.m_positionAfterWhitespace.Line; }
     }
 
     /// <summary>
@@ -91,7 +91,7 @@
     /// </summary>
     public SourceCodePosition PositionBeforeWhitespace
     {
-      get { return this.positionBeforeWhitespace; }
+      get { return this.m_positionBeforeWhitespace; }
     }
 
     /// <summary>
@@ -99,7 +99,7 @@
     /// </summary>
     public SourceCodePosition PositionAfterWhitespace
     {
-      get { return this.positionAfterWhitespace; }
+      get { return this.m_positionAfterWhitespace; }
     }
 
     /// <summary>
@@ -107,7 +107,7 @@
     /// </summary>
     public string SourcePath
     {
-      get { return this.lexer.Source.Path; }
+      get { return this.m_lexer.Source.Path; }
     }
 
     /// <summary>
@@ -115,8 +115,8 @@
     /// </summary>
     public Scope Scope
     {
-      get { return this.currentScope; }
-      set { this.currentScope = value; }
+      get { return this.m_currentScope; }
+      set { this.m_currentScope = value; }
     }
 
     /// <summary>
@@ -124,8 +124,8 @@
     /// </summary>
     public Scope InitialScope
     {
-      get { return this.initialScope; }
-      set { this.initialScope = value; }
+      get { return this.m_initialScope; }
+      set { this.m_initialScope = value; }
     }
 
     /// <summary>
@@ -133,11 +133,11 @@
     /// </summary>
     public bool StrictMode
     {
-      get { return this.strictMode; }
+      get { return this.m_strictMode; }
       set
       {
-        this.strictMode = value;
-        this.lexer.StrictMode = value;
+        this.m_strictMode = value;
+        this.m_lexer.StrictMode = value;
       }
     }
 
@@ -157,7 +157,7 @@
     /// </summary>
     public MethodOptimizationHints MethodOptimizationHints
     {
-      get { return this.methodOptimizationHints; }
+      get { return this.m_methodOptimizationHints; }
     }
 
 
@@ -172,11 +172,11 @@
     private void ValidateVariableName(string name)
     {
       // In strict mode, the variable name cannot be "eval" or "arguments".
-      if (this.StrictMode == true && (name == "eval" || name == "arguments"))
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The variable name cannot be '{0}' in strict mode.", name), this.LineNumber, this.SourcePath);
+      if (this.StrictMode && (name == "eval" || name == "arguments"))
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The variable name cannot be '{0}' in strict mode.", name), this.LineNumber, this.SourcePath);
 
       // Record each occurance of a variable name.
-      this.methodOptimizationHints.EncounteredVariable(name);
+      this.m_methodOptimizationHints.EncounteredVariable(name);
     }
 
 
@@ -196,19 +196,19 @@
     /// operator. </param>
     private void Consume(ParserExpressionState expressionState)
     {
-      this.expressionState = expressionState;
-      this.lexer.ParserExpressionState = expressionState;
-      this.consumedLineTerminator = false;
-      this.positionBeforeWhitespace = new SourceCodePosition(this.lexer.LineNumber, this.lexer.ColumnNumber);
-      this.positionAfterWhitespace = this.positionBeforeWhitespace;
+      this.m_expressionState = expressionState;
+      this.m_lexer.ParserExpressionState = expressionState;
+      this.m_consumedLineTerminator = false;
+      this.m_positionBeforeWhitespace = new SourceCodePosition(this.m_lexer.LineNumber, this.m_lexer.ColumnNumber);
+      this.m_positionAfterWhitespace = this.m_positionBeforeWhitespace;
       while (true)
       {
-        this.nextToken = this.lexer.NextToken();
-        if ((this.nextToken is WhiteSpaceToken) == false)
+        this.m_nextToken = this.m_lexer.NextToken();
+        if ((this.m_nextToken is WhiteSpaceToken) == false)
           break;
-        if (((WhiteSpaceToken)this.nextToken).LineTerminatorCount > 0)
-          this.consumedLineTerminator = true;
-        this.positionAfterWhitespace = new SourceCodePosition(this.lexer.LineNumber, this.lexer.ColumnNumber);
+        if (((WhiteSpaceToken)this.m_nextToken).LineTerminatorCount > 0)
+          this.m_consumedLineTerminator = true;
+        this.m_positionAfterWhitespace = new SourceCodePosition(this.m_lexer.LineNumber, this.m_lexer.ColumnNumber);
       }
     }
 
@@ -219,10 +219,10 @@
     /// <param name="token"> The expected token. </param>
     private void Expect(Token token)
     {
-      if (this.nextToken == token)
+      if (this.m_nextToken == token)
         Consume();
       else
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected '{0}' but found {1}", token.Text, Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected '{0}' but found {1}", token.Text, Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
     }
 
     /// <summary>
@@ -232,16 +232,15 @@
     /// <returns> The identifier name. </returns>
     private string ExpectIdentifier()
     {
-      var token = this.nextToken;
-      if (token is IdentifierToken)
+      var token = this.m_nextToken as IdentifierToken;
+
+      if (token != null)
       {
         Consume();
-        return ((IdentifierToken)token).Name;
+        return token.Name;
       }
-      else
-      {
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected identifier but found {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
-      }
+
+      throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected identifier but found {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
     }
 
     /// <summary>
@@ -254,10 +253,10 @@
     {
       // A statement can be terminator in four ways: by a semi-colon (;), by a right brace (}),
       // by the end of a line or by the end of the program.
-      return this.nextToken == PunctuatorToken.Semicolon ||
-          this.nextToken == PunctuatorToken.RightBrace ||
-          this.consumedLineTerminator == true ||
-          this.nextToken == null;
+      return this.m_nextToken == PunctuatorToken.Semicolon ||
+          this.m_nextToken == PunctuatorToken.RightBrace ||
+          this.m_consumedLineTerminator ||
+          this.m_nextToken == null;
     }
 
     /// <summary>
@@ -266,7 +265,7 @@
     /// </summary>
     private void ExpectEndOfStatement()
     {
-      if (this.nextToken == PunctuatorToken.Semicolon)
+      if (this.m_nextToken == PunctuatorToken.Semicolon)
         Consume();
       else
       {
@@ -275,17 +274,17 @@
         // the offending token if one or more of the following conditions is true: 
         // 1. The offending token is separated from the previous token by at least one LineTerminator.
         // 2. The offending token is '}'.
-        if (this.consumedLineTerminator == true || this.nextToken == PunctuatorToken.RightBrace)
+        if (this.m_consumedLineTerminator || this.m_nextToken == PunctuatorToken.RightBrace)
           return;
 
         // If the end of the input stream of tokens is encountered and the parser is unable
         // to parse the input token stream as a single complete ECMAScript Program, then a
         // semicolon is automatically inserted at the end of the input stream.
-        if (this.nextToken == null)
+        if (this.m_nextToken == null)
           return;
 
         // Otherwise, throw an error.
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected ';' but found {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected ';' but found {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
       }
     }
 
@@ -306,12 +305,12 @@
       while (true)
       {
         // Check if we should stop parsing.
-        if (this.nextToken == this.endToken)
+        if (this.m_nextToken == this.m_endToken)
           break;
 
         // A directive must start with a string literal token.  Record it now so that the
         // escape sequence and line continuation information is not lost.
-        var directiveToken = this.nextToken as StringLiteralToken;
+        var directiveToken = this.m_nextToken as StringLiteralToken;
         if (directiveToken == null)
           break;
 
@@ -324,8 +323,10 @@
         var expression = ParseExpression(PunctuatorToken.Semicolon);
 
         // The statement must be added to the AST so that eval("'test'") works.
-        var initialStatement = new ExpressionStatement(this.labelsForCurrentStatement, expression);
-        initialStatement.SourceSpan = new SourceCodeSpan(beforeInitialToken, this.PositionBeforeWhitespace);
+        var initialStatement = new ExpressionStatement(this.m_labelsForCurrentStatement, expression)
+          {
+            SourceSpan = new SourceCodeSpan(beforeInitialToken, this.PositionBeforeWhitespace)
+          };
         result.Statements.Add(initialStatement);
 
         // In order for the expression to be part of the directive prologue, it must
@@ -350,7 +351,7 @@
       while (true)
       {
         // Check if we should stop parsing.
-        if (this.nextToken == this.endToken)
+        if (this.m_nextToken == this.m_endToken)
           break;
 
         // Parse a single statement.
@@ -367,7 +368,7 @@
     private Statement ParseStatement()
     {
       // This is a new statement so clear any labels.
-      this.labelsForCurrentStatement.Clear();
+      this.m_labelsForCurrentStatement.Clear();
 
       // Parse the statement.
       Statement statement = ParseStatementNoNewContext();
@@ -382,40 +383,40 @@
     /// <returns> An expression that represents the statement. </returns>
     private Statement ParseStatementNoNewContext()
     {
-      if (this.nextToken == PunctuatorToken.LeftBrace)
+      if (this.m_nextToken == PunctuatorToken.LeftBrace)
         return ParseBlock();
-      if (this.nextToken == KeywordToken.Var)
+      if (this.m_nextToken == KeywordToken.Var)
         return ParseVar();
-      if (this.nextToken == PunctuatorToken.Semicolon)
+      if (this.m_nextToken == PunctuatorToken.Semicolon)
         return ParseEmpty();
-      if (this.nextToken == KeywordToken.If)
+      if (this.m_nextToken == KeywordToken.If)
         return ParseIf();
-      if (this.nextToken == KeywordToken.Do)
+      if (this.m_nextToken == KeywordToken.Do)
         return ParseDo();
-      if (this.nextToken == KeywordToken.While)
+      if (this.m_nextToken == KeywordToken.While)
         return ParseWhile();
-      if (this.nextToken == KeywordToken.For)
+      if (this.m_nextToken == KeywordToken.For)
         return ParseFor();
-      if (this.nextToken == KeywordToken.Continue)
+      if (this.m_nextToken == KeywordToken.Continue)
         return ParseContinue();
-      if (this.nextToken == KeywordToken.Break)
+      if (this.m_nextToken == KeywordToken.Break)
         return ParseBreak();
-      if (this.nextToken == KeywordToken.Return)
+      if (this.m_nextToken == KeywordToken.Return)
         return ParseReturn();
-      if (this.nextToken == KeywordToken.With)
+      if (this.m_nextToken == KeywordToken.With)
         return ParseWith();
-      if (this.nextToken == KeywordToken.Switch)
+      if (this.m_nextToken == KeywordToken.Switch)
         return ParseSwitch();
-      if (this.nextToken == KeywordToken.Throw)
+      if (this.m_nextToken == KeywordToken.Throw)
         return ParseThrow();
-      if (this.nextToken == KeywordToken.Try)
+      if (this.m_nextToken == KeywordToken.Try)
         return ParseTry();
-      if (this.nextToken == KeywordToken.Debugger)
+      if (this.m_nextToken == KeywordToken.Debugger)
         return ParseDebugger();
-      if (this.nextToken == KeywordToken.Function)
+      if (this.m_nextToken == KeywordToken.Function)
         return ParseFunctionDeclaration();
-      if (this.nextToken == null)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Unexpected end of input", this.LineNumber, this.SourcePath);
+      if (this.m_nextToken == null)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Unexpected end of input", this.LineNumber, this.SourcePath);
 
       // The statement is either a label or an expression.
       return ParseLabelOrExpressionStatement();
@@ -433,11 +434,11 @@
       this.Expect(PunctuatorToken.LeftBrace);
 
       // Read zero or more statements.
-      var result = new BlockStatement(this.labelsForCurrentStatement);
+      var result = new BlockStatement(this.m_labelsForCurrentStatement);
       while (true)
       {
         // Check for the end brace (}).
-        if (this.nextToken == PunctuatorToken.RightBrace)
+        if (this.m_nextToken == PunctuatorToken.RightBrace)
           break;
 
         // Parse a single statement.
@@ -455,7 +456,7 @@
     /// <returns> A var statement. </returns>
     private VarStatement ParseVar()
     {
-      var result = new VarStatement(this.labelsForCurrentStatement, this.currentScope);
+      var result = new VarStatement(this.m_labelsForCurrentStatement, this.m_currentScope);
 
       // Read past the var token.
       this.Expect(KeywordToken.Var);
@@ -466,19 +467,20 @@
       // There can be multiple declarations.
       while (true)
       {
-        var declaration = new VariableDeclaration();
+        var declaration = new VariableDeclaration {
+          VariableName = this.ExpectIdentifier()
+        };
 
         // The next token must be a variable name.
-        declaration.VariableName = this.ExpectIdentifier();
         ValidateVariableName(declaration.VariableName);
 
         // Add the variable to the current function's list of local variables.
-        this.currentScope.DeclareVariable(declaration.VariableName,
-            this.context == CodeContext.Function ? null : new LiteralExpression(Undefined.Value),
-            true, this.context == CodeContext.Eval);
+        this.m_currentScope.DeclareVariable(declaration.VariableName,
+            this.m_context == CodeContext.Function ? null : new LiteralExpression(Undefined.Value),
+            true, this.m_context == CodeContext.Eval);
 
         // The next token is either an equals sign (=), a semi-colon or a comma.
-        if (this.nextToken == PunctuatorToken.Assignment)
+        if (this.m_nextToken == PunctuatorToken.Assignment)
         {
           // Read past the equals token (=).
           this.Expect(PunctuatorToken.Assignment);
@@ -494,7 +496,7 @@
         result.Declarations.Add(declaration);
 
         // Check if we are at the end of the statement.
-        if (this.AtValidEndOfStatement() == true && this.nextToken != PunctuatorToken.Comma)
+        if (this.AtValidEndOfStatement() && this.m_nextToken != PunctuatorToken.Comma)
           break;
 
         // Read past the comma token.
@@ -516,7 +518,7 @@
     /// <returns> An empty statement. </returns>
     private Statement ParseEmpty()
     {
-      var result = new EmptyStatement(this.labelsForCurrentStatement);
+      var result = new EmptyStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -536,7 +538,7 @@
     /// <returns> An expression representing the if statement. </returns>
     private IfStatement ParseIf()
     {
-      var result = new IfStatement(this.labelsForCurrentStatement);
+      var result = new IfStatement(this.m_labelsForCurrentStatement);
 
       // Consume the if keyword.
       this.Expect(KeywordToken.If);
@@ -560,7 +562,7 @@
       result.IfClause = ParseStatement();
 
       // Optionally, read the else statement.
-      if (this.nextToken == KeywordToken.Else)
+      if (this.m_nextToken == KeywordToken.Else)
       {
         // Consume the else keyword.
         this.Consume();
@@ -578,7 +580,7 @@
     /// <returns> An expression representing the do statement. </returns>
     private DoWhileStatement ParseDo()
     {
-      var result = new DoWhileStatement(this.labelsForCurrentStatement);
+      var result = new DoWhileStatement(this.m_labelsForCurrentStatement);
 
       // Consume the do keyword.
       this.Expect(KeywordToken.Do);
@@ -593,12 +595,13 @@
       this.Expect(PunctuatorToken.LeftParenthesis);
 
       // Keep track of the start of the statement so that source debugging works correctly.
-      var start = this.PositionAfterWhitespace;
 
       // Parse the condition.
-      start = this.PositionAfterWhitespace;
-      result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis));
-      result.ConditionStatement.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+      SourceCodePosition start = this.PositionAfterWhitespace;
+      result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis))
+        {
+          SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+        };
 
       // Record the portion of the source document that will be highlighted when debugging.
       result.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
@@ -618,7 +621,7 @@
     /// <returns> A while statement. </returns>
     private WhileStatement ParseWhile()
     {
-      var result = new WhileStatement(this.labelsForCurrentStatement);
+      var result = new WhileStatement(this.m_labelsForCurrentStatement);
 
       // Consume the while keyword.
       this.Expect(KeywordToken.While);
@@ -628,8 +631,10 @@
 
       // Parse the condition.
       var start = this.PositionAfterWhitespace;
-      result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis));
-      result.ConditionStatement.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+      result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis))
+        {
+          SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+        };
 
       // Read the right parenthesis.
       this.Expect(PunctuatorToken.RightParenthesis);
@@ -661,13 +666,13 @@
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
 
-      if (this.nextToken == KeywordToken.Var)
+      if (this.m_nextToken == KeywordToken.Var)
       {
         // Read past the var token.
         this.Expect(KeywordToken.Var);
 
         // There can be multiple initializers (but not for for-in statements).
-        var varStatement = new VarStatement(this.labelsForCurrentStatement, this.currentScope);
+        var varStatement = new VarStatement(this.m_labelsForCurrentStatement, this.m_currentScope);
         initializationStatement = varStatement;
 
         // Only a simple variable name is allowed for for-in statements.
@@ -675,19 +680,20 @@
 
         while (true)
         {
-          var declaration = new VariableDeclaration();
+          var declaration = new VariableDeclaration {
+            VariableName = this.ExpectIdentifier()
+          };
 
           // The next token must be a variable name.
-          declaration.VariableName = this.ExpectIdentifier();
           ValidateVariableName(declaration.VariableName);
 
           // Add the variable to the current function's list of local variables.
-          this.currentScope.DeclareVariable(declaration.VariableName,
-              this.context == CodeContext.Function ? null : new LiteralExpression(Undefined.Value),
-              true, this.context == CodeContext.Eval);
+          this.m_currentScope.DeclareVariable(declaration.VariableName,
+              this.m_context == CodeContext.Function ? null : new LiteralExpression(Undefined.Value),
+              true, this.m_context == CodeContext.Eval);
 
           // The next token is either an equals sign (=), a semi-colon, a comma, or the "in" keyword.
-          if (this.nextToken == PunctuatorToken.Assignment)
+          if (this.m_nextToken == PunctuatorToken.Assignment)
           {
             // Read past the equals token (=).
             this.Expect(PunctuatorToken.Assignment);
@@ -705,19 +711,21 @@
           // Add the declaration to the initialization statement.
           varStatement.Declarations.Add(declaration);
 
-          if (this.nextToken == PunctuatorToken.Semicolon)
+          if (this.m_nextToken == PunctuatorToken.Semicolon)
           {
             // This is a regular for statement.
             break;
           }
-          else if (this.nextToken == KeywordToken.In && cannotBeForIn == false)
+
+          if (this.m_nextToken == KeywordToken.In && cannotBeForIn == false)
           {
             // This is a for-in statement.
-            forInReference = new NameExpression(this.currentScope, declaration.VariableName);
+            forInReference = new NameExpression(this.m_currentScope, declaration.VariableName);
             break;
           }
-          else if (this.nextToken != PunctuatorToken.Comma)
-            throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Unexpected token {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+          
+          if (this.m_nextToken != PunctuatorToken.Comma)
+            throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Unexpected token {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
 
           // Read past the comma token.
           this.Expect(PunctuatorToken.Comma);
@@ -736,20 +744,22 @@
       {
         // Not a var initializer - can be a simple variable name then "in" or any expression ending with a semi-colon.
         // The expression can be empty.
-        if (this.nextToken != PunctuatorToken.Semicolon)
+        if (this.m_nextToken != PunctuatorToken.Semicolon)
         {
           // Parse an expression.
           var initializationExpression = ParseExpression(PunctuatorToken.Semicolon, KeywordToken.In);
 
           // Record debug info for the expression.
-          initializationStatement = new ExpressionStatement(initializationExpression);
-          initializationStatement.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+          initializationStatement = new ExpressionStatement(initializationExpression)
+            {
+              SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+            };
 
-          if (this.nextToken == KeywordToken.In)
+          if (this.m_nextToken == KeywordToken.In)
           {
             // This is a for-in statement.
             if ((initializationExpression is IReferenceExpression) == false)
-              throw new JavaScriptException(this.engine, "ReferenceError", "Invalid left-hand side in for-in", this.LineNumber, this.SourcePath);
+              throw new JavaScriptException(this.m_engine, "ReferenceError", "Invalid left-hand side in for-in", this.LineNumber, this.SourcePath);
             forInReference = (IReferenceExpression)initializationExpression;
           }
         }
@@ -759,9 +769,11 @@
       {
         // for (x in y)
         // for (var x in y)
-        var result = new ForInStatement(this.labelsForCurrentStatement);
-        result.Variable = forInReference;
-        result.VariableSourceSpan = initializationStatement.SourceSpan;
+        var result = new ForInStatement(this.m_labelsForCurrentStatement)
+          {
+            Variable = forInReference,
+            VariableSourceSpan = initializationStatement.SourceSpan
+          };
 
         // Consume the "in".
         this.Expect(KeywordToken.In);
@@ -781,7 +793,7 @@
       }
       else
       {
-        var result = new ForStatement(this.labelsForCurrentStatement);
+        var result = new ForStatement(this.m_labelsForCurrentStatement);
 
         // Set the initialization statement.
         if (initializationStatement != null)
@@ -792,11 +804,13 @@
 
         // Parse the optional condition expression.
         // Note: if the condition is omitted then it is considered to always be true.
-        if (this.nextToken != PunctuatorToken.Semicolon)
+        if (this.m_nextToken != PunctuatorToken.Semicolon)
         {
           start = this.PositionAfterWhitespace;
-          result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.Semicolon));
-          result.ConditionStatement.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+          result.ConditionStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.Semicolon))
+            {
+              SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+            };
         }
 
         // Read the semicolon.
@@ -805,11 +819,13 @@
         this.Expect(PunctuatorToken.Semicolon);
 
         // Parse the optional increment expression.
-        if (this.nextToken != PunctuatorToken.RightParenthesis)
+        if (this.m_nextToken != PunctuatorToken.RightParenthesis)
         {
           start = this.PositionAfterWhitespace;
-          result.IncrementStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis));
-          result.IncrementStatement.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+          result.IncrementStatement = new ExpressionStatement(ParseExpression(PunctuatorToken.RightParenthesis))
+            {
+              SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+            };
         }
 
         // Read the right parenthesis.
@@ -828,7 +844,7 @@
     /// <returns> A continue statement. </returns>
     private ContinueStatement ParseContinue()
     {
-      var result = new ContinueStatement(this.labelsForCurrentStatement);
+      var result = new ContinueStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -860,7 +876,7 @@
     /// <returns> A break statement. </returns>
     private BreakStatement ParseBreak()
     {
-      var result = new BreakStatement(this.labelsForCurrentStatement);
+      var result = new BreakStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -892,10 +908,10 @@
     /// <returns> A return statement. </returns>
     private ReturnStatement ParseReturn()
     {
-      if (this.context != CodeContext.Function)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Return statements are only allowed inside functions", this.LineNumber, this.SourcePath);
+      if (this.m_context != CodeContext.Function)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Return statements are only allowed inside functions", this.LineNumber, this.SourcePath);
 
-      var result = new ReturnStatement(this.labelsForCurrentStatement);
+      var result = new ReturnStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -925,10 +941,10 @@
     private WithStatement ParseWith()
     {
       // This statement is not allowed in strict mode.
-      if (this.StrictMode == true)
-        throw new JavaScriptException(this.engine, "SyntaxError", "The with statement is not supported in strict mode", this.LineNumber, this.SourcePath);
+      if (this.StrictMode)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "The with statement is not supported in strict mode", this.LineNumber, this.SourcePath);
 
-      var result = new WithStatement(this.labelsForCurrentStatement);
+      var result = new WithStatement(this.m_labelsForCurrentStatement);
 
       // Read past the "with" token.
       this.Expect(KeywordToken.With);
@@ -949,14 +965,14 @@
       this.Expect(PunctuatorToken.RightParenthesis);
 
       // Create a new scope and assign variables within the with statement to the scope.
-      result.Scope = ObjectScope.CreateWithScope(this.currentScope, objectEnvironment);
-      this.currentScope = result.Scope;
+      result.Scope = ObjectScope.CreateWithScope(this.m_currentScope, objectEnvironment);
+      this.m_currentScope = result.Scope;
 
       // Read the body of the with statement.
       result.Body = ParseStatement();
 
       // Revert the scope.
-      this.currentScope = this.currentScope.ParentScope;
+      this.m_currentScope = this.m_currentScope.ParentScope;
 
       return result;
     }
@@ -967,7 +983,7 @@
     /// <returns> A switch statement. </returns>
     private SwitchStatement ParseSwitch()
     {
-      var result = new SwitchStatement(this.labelsForCurrentStatement);
+      var result = new SwitchStatement(this.m_labelsForCurrentStatement);
 
       // Consume the switch keyword.
       this.Expect(KeywordToken.Switch);
@@ -993,7 +1009,7 @@
       SwitchCase defaultClause = null;
       while (true)
       {
-        if (this.nextToken == KeywordToken.Case)
+        if (this.m_nextToken == KeywordToken.Case)
         {
           var caseClause = new SwitchCase();
 
@@ -1007,17 +1023,17 @@
           this.Expect(PunctuatorToken.Colon);
 
           // Zero or more statements can be added to the case statement.
-          while (this.nextToken != KeywordToken.Case && this.nextToken != KeywordToken.Default && this.nextToken != PunctuatorToken.RightBrace)
+          while (this.m_nextToken != KeywordToken.Case && this.m_nextToken != KeywordToken.Default && this.m_nextToken != PunctuatorToken.RightBrace)
             caseClause.BodyStatements.Add(ParseStatement());
 
           // Add the case clause to the switch statement.
           result.CaseClauses.Add(caseClause);
         }
-        else if (this.nextToken == KeywordToken.Default)
+        else if (this.m_nextToken == KeywordToken.Default)
         {
           // Make sure this is the only default clause.
           if (defaultClause != null)
-            throw new JavaScriptException(this.engine, "SyntaxError", "Only one default clause is allowed.", this.LineNumber, this.SourcePath);
+            throw new JavaScriptException(this.m_engine, "SyntaxError", "Only one default clause is allowed.", this.LineNumber, this.SourcePath);
 
           defaultClause = new SwitchCase();
 
@@ -1028,20 +1044,20 @@
           this.Expect(PunctuatorToken.Colon);
 
           // Zero or more statements can be added to the case statement.
-          while (this.nextToken != KeywordToken.Case && this.nextToken != KeywordToken.Default && this.nextToken != PunctuatorToken.RightBrace)
+          while (this.m_nextToken != KeywordToken.Case && this.m_nextToken != KeywordToken.Default && this.m_nextToken != PunctuatorToken.RightBrace)
             defaultClause.BodyStatements.Add(ParseStatement());
 
           // Add the default clause to the switch statement.
           result.CaseClauses.Add(defaultClause);
         }
-        else if (this.nextToken == PunctuatorToken.RightBrace)
+        else if (this.m_nextToken == PunctuatorToken.RightBrace)
         {
           break;
         }
         else
         {
           // Statements cannot be added directly after the switch.
-          throw new JavaScriptException(this.engine, "SyntaxError", "Expected 'case' or 'default'.", this.LineNumber, this.SourcePath);
+          throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected 'case' or 'default'.", this.LineNumber, this.SourcePath);
         }
       }
 
@@ -1057,7 +1073,7 @@
     /// <returns> A throw statement. </returns>
     private ThrowStatement ParseThrow()
     {
-      var result = new ThrowStatement(this.labelsForCurrentStatement);
+      var result = new ThrowStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -1066,8 +1082,8 @@
       this.Expect(KeywordToken.Throw);
 
       // A line terminator is not allowed here.
-      if (this.consumedLineTerminator == true)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Illegal newline after throw", this.LineNumber, this.SourcePath);
+      if (this.m_consumedLineTerminator)
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Illegal newline after throw", this.LineNumber, this.SourcePath);
 
       // Parse the expression to throw.
       result.Value = ParseExpression(PunctuatorToken.Semicolon);
@@ -1087,7 +1103,7 @@
     /// <returns> A try-catch-finally statement. </returns>
     private TryCatchFinallyStatement ParseTry()
     {
-      var result = new TryCatchFinallyStatement(this.labelsForCurrentStatement);
+      var result = new TryCatchFinallyStatement(this.m_labelsForCurrentStatement);
 
       // Consume the try keyword.
       this.Expect(KeywordToken.Try);
@@ -1096,7 +1112,7 @@
       result.TryBlock = ParseBlock();
 
       // The next token is either 'catch' or 'finally'.
-      if (this.nextToken == KeywordToken.Catch)
+      if (this.m_nextToken == KeywordToken.Catch)
       {
         // Consume the catch token.
         this.Expect(KeywordToken.Catch);
@@ -1112,16 +1128,16 @@
         this.Expect(PunctuatorToken.RightParenthesis);
 
         // Create a new scope for the catch variable.
-        this.currentScope = result.CatchScope = DeclarativeScope.CreateCatchScope(this.currentScope, result.CatchVariableName);
+        this.m_currentScope = result.CatchScope = DeclarativeScope.CreateCatchScope(this.m_currentScope, result.CatchVariableName);
 
         // Parse the statements inside the catch block.
         result.CatchBlock = ParseBlock();
 
         // Revert the scope.
-        this.currentScope = this.currentScope.ParentScope;
+        this.m_currentScope = this.m_currentScope.ParentScope;
       }
 
-      if (this.nextToken == KeywordToken.Finally)
+      if (this.m_nextToken == KeywordToken.Finally)
       {
         // Consume the finally token.
         this.Expect(KeywordToken.Finally);
@@ -1132,7 +1148,7 @@
 
       // There must be a catch or finally block.
       if (result.CatchBlock == null && result.FinallyBlock == null)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Missing catch or finally after try", this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Missing catch or finally after try", this.LineNumber, this.SourcePath);
 
       return result;
     }
@@ -1143,7 +1159,7 @@
     /// <returns> A debugger statement. </returns>
     private DebuggerStatement ParseDebugger()
     {
-      var result = new DebuggerStatement(this.labelsForCurrentStatement);
+      var result = new DebuggerStatement(this.m_labelsForCurrentStatement);
 
       // Keep track of the start of the statement so that source debugging works correctly.
       var start = this.PositionAfterWhitespace;
@@ -1167,14 +1183,14 @@
     private Statement ParseFunctionDeclaration()
     {
       // Parse the function declaration.
-      var expression = ParseFunction(FunctionType.Declaration, this.initialScope);
+      var expression = ParseFunction(FunctionType.Declaration, this.m_initialScope);
 
       // Add the function to the top-level scope.
-      this.initialScope.DeclareVariable(expression.FunctionName, expression, true, this.context == CodeContext.Eval);
+      this.m_initialScope.DeclareVariable(expression.FunctionName, expression, true, this.m_context == CodeContext.Eval);
 
       // Function declarations do nothing at the point of declaration - everything happens
       // at the top of the function/global code.
-      return new EmptyStatement(this.labelsForCurrentStatement);
+      return new EmptyStatement(this.m_labelsForCurrentStatement);
     }
 
     private enum FunctionType
@@ -1208,7 +1224,7 @@
       else if (functionType == FunctionType.Expression)
       {
         // The function name is optional for function expressions.
-        if (this.nextToken is IdentifierToken)
+        if (this.m_nextToken is IdentifierToken)
           functionName = this.ExpectIdentifier();
       }
       else if (functionType == FunctionType.Getter || functionType == FunctionType.Setter)
@@ -1228,7 +1244,7 @@
       var argumentNames = new List<string>();
 
       // Read the first argument name.
-      if (this.nextToken != PunctuatorToken.RightParenthesis)
+      if (this.m_nextToken != PunctuatorToken.RightParenthesis)
       {
         var argumentName = this.ExpectIdentifier();
         ValidateVariableName(argumentName);
@@ -1237,7 +1253,7 @@
 
       while (true)
       {
-        if (this.nextToken == PunctuatorToken.Comma)
+        if (this.m_nextToken == PunctuatorToken.Comma)
         {
           // Consume the comma.
           this.Consume();
@@ -1247,36 +1263,38 @@
           ValidateVariableName(argumentName);
           argumentNames.Add(argumentName);
         }
-        else if (this.nextToken == PunctuatorToken.RightParenthesis)
+        else if (this.m_nextToken == PunctuatorToken.RightParenthesis)
           break;
         else
-          throw new JavaScriptException(this.engine, "SyntaxError", "Expected ',' or ')'", this.LineNumber, this.SourcePath);
+          throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected ',' or ')'", this.LineNumber, this.SourcePath);
       }
 
       // Getters must have zero arguments.
       if (functionType == FunctionType.Getter && argumentNames.Count != 0)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Getters cannot have arguments", this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Getters cannot have arguments", this.LineNumber, this.SourcePath);
 
       // Setters must have one argument.
       if (functionType == FunctionType.Setter && argumentNames.Count != 1)
-        throw new JavaScriptException(this.engine, "SyntaxError", "Setters must have a single argument", this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", "Setters must have a single argument", this.LineNumber, this.SourcePath);
 
       // Read the right parenthesis.
       this.Expect(PunctuatorToken.RightParenthesis);
 
       // Record the start of the function body.
+// ReSharper disable UnusedVariable
       var startPosition = this.PositionBeforeWhitespace;
+// ReSharper restore UnusedVariable
 
       // Since the parser reads one token in advance, start capturing the function body here.
       var bodyTextBuilder = new System.Text.StringBuilder();
-      var originalBodyTextBuilder = this.lexer.InputCaptureStringBuilder;
-      this.lexer.InputCaptureStringBuilder = bodyTextBuilder;
+      var originalBodyTextBuilder = this.m_lexer.InputCaptureStringBuilder;
+      this.m_lexer.InputCaptureStringBuilder = bodyTextBuilder;
 
       // Read the start brace.
       this.Expect(PunctuatorToken.LeftBrace);
 
       // This context has a nested function.
-      this.methodOptimizationHints.HasNestedFunction = true;
+      this.m_methodOptimizationHints.HasNestedFunction = true;
 
       // Create a new scope and assign variables within the function body to the scope.
       var scope = DeclarativeScope.CreateFunctionScope(parentScope, functionName, argumentNames);
@@ -1286,21 +1304,25 @@
       var body = functionParser.Parse();
 
       // Transfer state back from the function parser.
-      this.nextToken = functionParser.nextToken;
-      this.lexer.StrictMode = this.StrictMode;
-      this.lexer.InputCaptureStringBuilder = originalBodyTextBuilder;
+      this.m_nextToken = functionParser.m_nextToken;
+      this.m_lexer.StrictMode = this.StrictMode;
+      this.m_lexer.InputCaptureStringBuilder = originalBodyTextBuilder;
       if (originalBodyTextBuilder != null)
         originalBodyTextBuilder.Append(bodyTextBuilder);
 
+// ReSharper disable NotAccessedVariable
       SourceCodePosition endPosition;
+// ReSharper restore NotAccessedVariable
       if (functionType == FunctionType.Expression)
       {
         // The end token '}' will be consumed by the parent function.
-        if (this.nextToken != PunctuatorToken.RightBrace)
-          throw new JavaScriptException(this.engine, "SyntaxError", "Expected '}'", this.LineNumber, this.SourcePath);
+        if (this.m_nextToken != PunctuatorToken.RightBrace)
+          throw new JavaScriptException(this.m_engine, "SyntaxError", "Expected '}'", this.LineNumber, this.SourcePath);
 
         // Record the end of the function body.
+// ReSharper disable RedundantAssignment
         endPosition = new SourceCodePosition(this.PositionAfterWhitespace.Line, this.PositionAfterWhitespace.Column + 1);
+// ReSharper restore RedundantAssignment
       }
       else
       {
@@ -1308,16 +1330,20 @@
         this.Expect(PunctuatorToken.RightBrace);
 
         // Record the end of the function body.
+// ReSharper disable RedundantAssignment
         endPosition = new SourceCodePosition(this.PositionAfterWhitespace.Line, this.PositionAfterWhitespace.Column + 1);
+// ReSharper restore RedundantAssignment
       }
 
       // Create a new function expression.
-      var options = this.options.Clone();
+      var options = this.m_options.Clone();
       options.ForceStrictMode = functionParser.StrictMode;
-      var context = new FunctionMethodGenerator(this.engine, scope, functionName, argumentNames,
+      var context = new FunctionMethodGenerator(this.m_engine, scope, functionName, argumentNames,
           bodyTextBuilder.ToString(0, bodyTextBuilder.Length - 1), body,
-          this.SourcePath, options);
-      context.MethodOptimizationHints = functionParser.methodOptimizationHints;
+          this.SourcePath, options)
+      {
+        MethodOptimizationHints = functionParser.m_methodOptimizationHints
+      };
       return new FunctionExpression(context);
     }
 
@@ -1334,13 +1360,13 @@
       // Parse the statement as though it was an expression - but stop if there is an unexpected colon.
       var expression = ParseExpression(PunctuatorToken.Semicolon, PunctuatorToken.Colon);
 
-      if (this.nextToken == PunctuatorToken.Colon && expression is NameExpression)
+      if (this.m_nextToken == PunctuatorToken.Colon && expression is NameExpression)
       {
         // The expression is actually a label.
 
         // Extract the label name.
         var labelName = ((NameExpression)expression).Name;
-        this.labelsForCurrentStatement.Add(labelName);
+        this.m_labelsForCurrentStatement.Add(labelName);
 
         // Read past the colon.
         this.Expect(PunctuatorToken.Colon);
@@ -1348,20 +1374,19 @@
         // Read the rest of the statement.
         return ParseStatementNoNewContext();
       }
-      else
-      {
 
-        // Consume the end of the statement.
-        this.ExpectEndOfStatement();
+      // Consume the end of the statement.
+      this.ExpectEndOfStatement();
 
-        // Create a new expression statement.
-        var result = new ExpressionStatement(this.labelsForCurrentStatement, expression);
+      // Create a new expression statement.
+      var result = new ExpressionStatement(this.m_labelsForCurrentStatement, expression)
+        {
+          SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace)
+        };
 
-        // Record the portion of the source document that will be highlighted when debugging.
-        result.SourceSpan = new SourceCodeSpan(start, this.PositionBeforeWhitespace);
+      // Record the portion of the source document that will be highlighted when debugging.
 
-        return result;
-      }
+      return result;
     }
 
 
@@ -1374,12 +1399,18 @@
     /// </summary>
     private struct OperatorKey
     {
-      public Token Token;
-      public bool PostfixOrInfix;
+      private readonly Token m_token;
+      private readonly bool m_postfixOrInfix;
+
+      public OperatorKey(Token token, bool postfixOrInfix)
+      {
+        this.m_token = token;
+        this.m_postfixOrInfix = postfixOrInfix;
+      }
 
       public override int GetHashCode()
       {
-        return Token.GetHashCode() ^ PostfixOrInfix.GetHashCode();
+        return m_token.GetHashCode() ^ m_postfixOrInfix.GetHashCode();
       }
     }
 
@@ -1387,7 +1418,7 @@
     /// Gets or sets a mapping from token -> operator.  There can be at most two operators per
     /// token (the prefix version and the infix/postfix version).
     /// </summary>
-    private static Dictionary<OperatorKey, Operator> operatorLookup;
+    private static Dictionary<OperatorKey, Operator> s_operatorLookup;
 
     /// <summary>
     /// Initializes the token -> operator mapping dictionary.
@@ -1398,13 +1429,13 @@
       var result = new Dictionary<OperatorKey, Operator>(55);
       foreach (var @operator in Operator.AllOperators)
       {
-        result.Add(new OperatorKey() { Token = @operator.Token, PostfixOrInfix = @operator.HasLHSOperand }, @operator);
+        result.Add(new OperatorKey(@operator.Token, @operator.HasLHSOperand), @operator);
         if (@operator.SecondaryToken != null)
         {
           // Note: the secondary token for the grouping operator and function call operator ')' is a duplicate.
-          result[new OperatorKey() { Token = @operator.SecondaryToken, PostfixOrInfix = @operator.HasRHSOperand }] = @operator;
-          if (@operator.InnerOperandIsOptional == true)
-            result[new OperatorKey() { Token = @operator.SecondaryToken, PostfixOrInfix = false }] = @operator;
+          result[new OperatorKey(@operator.SecondaryToken, @operator.HasRHSOperand)] = @operator;
+          if (@operator.InnerOperandIsOptional)
+            result[new OperatorKey(@operator.SecondaryToken, false)] = @operator;
         }
       }
       return result;
@@ -1421,14 +1452,14 @@
     private static Operator OperatorFromToken(Token token, bool postfixOrInfix)
     {
       Operator result;
-      if (operatorLookup == null)
+      if (s_operatorLookup == null)
       {
         // Initialize the operator lookup table.
         var temp = InitializeOperatorLookup();
         System.Threading.Thread.MemoryBarrier();
-        operatorLookup = temp;
+        s_operatorLookup = temp;
       }
-      if (operatorLookup.TryGetValue(new OperatorKey() { Token = token, PostfixOrInfix = postfixOrInfix }, out result) == false)
+      if (s_operatorLookup.TryGetValue(new OperatorKey(token, postfixOrInfix), out result) == false)
         return null;
       return result;
     }
@@ -1436,7 +1467,7 @@
     /// <summary>
     /// Parses a javascript expression.
     /// </summary>
-    /// <param name="endToken"> A token that indicates the end of the expression. </param>
+    /// <param name="endTokens"> A token that indicates the end of the expression. </param>
     /// <returns> An expression tree that represents the expression. </returns>
     private Expression ParseExpression(params Token[] endTokens)
     {
@@ -1446,65 +1477,65 @@
       // The active operator, i.e. the one last encountered.
       OperatorExpression unboundOperator = null;
 
-      while (this.nextToken != null)
+      while (this.m_nextToken != null)
       {
-        if (this.nextToken is LiteralToken ||
-            this.nextToken is IdentifierToken ||
-            this.nextToken == KeywordToken.Function ||
-            this.nextToken == KeywordToken.This ||
-            this.nextToken == PunctuatorToken.LeftBrace ||
-            (this.nextToken == PunctuatorToken.LeftBracket && this.expressionState == ParserExpressionState.Literal) ||
-            (this.nextToken is KeywordToken && unboundOperator != null && unboundOperator.OperatorType == OperatorType.MemberAccess && this.expressionState == ParserExpressionState.Literal))
+        if (this.m_nextToken is LiteralToken ||
+            this.m_nextToken is IdentifierToken ||
+            this.m_nextToken == KeywordToken.Function ||
+            this.m_nextToken == KeywordToken.This ||
+            this.m_nextToken == PunctuatorToken.LeftBrace ||
+            (this.m_nextToken == PunctuatorToken.LeftBracket && this.m_expressionState == ParserExpressionState.Literal) ||
+            (this.m_nextToken is KeywordToken && unboundOperator != null && unboundOperator.OperatorType == OperatorType.MemberAccess && this.m_expressionState == ParserExpressionState.Literal))
         {
           // If a literal was found where an operator was expected, insert a semi-colon
           // automatically (if this would fix the error and a line terminator was
           // encountered) or throw an error.
-          if (this.expressionState != ParserExpressionState.Literal)
+          if (this.m_expressionState != ParserExpressionState.Literal)
           {
             // Check for automatic semi-colon insertion.
-            if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.consumedLineTerminator == true)
+            if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.m_consumedLineTerminator)
               break;
-            throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected operator but found {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+            throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected operator but found {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
           }
 
           // New in ECMAScript 5 is the ability to use keywords as property names.
-          if ((this.nextToken is KeywordToken || (this.nextToken is LiteralToken && ((LiteralToken)this.nextToken).IsKeyword == true)) &&
+          if ((this.m_nextToken is KeywordToken || (this.m_nextToken is LiteralToken && ((LiteralToken)this.m_nextToken).IsKeyword)) &&
               unboundOperator != null &&
               unboundOperator.OperatorType == OperatorType.MemberAccess &&
-              this.expressionState == ParserExpressionState.Literal)
+              this.m_expressionState == ParserExpressionState.Literal)
           {
-            this.nextToken = new IdentifierToken(this.nextToken.Text);
+            this.m_nextToken = new IdentifierToken(this.m_nextToken.Text);
           }
 
           Expression terminal;
-          if (this.nextToken is LiteralToken)
+          if (this.m_nextToken is LiteralToken)
             // If the token is a literal, convert it to a literal expression.
-            terminal = new LiteralExpression(((LiteralToken)this.nextToken).Value);
-          else if (this.nextToken is IdentifierToken)
+            terminal = new LiteralExpression(((LiteralToken)this.m_nextToken).Value);
+          else if (this.m_nextToken is IdentifierToken)
           {
             // If the token is an identifier, convert it to a NameExpression.
-            var identifierName = ((IdentifierToken)this.nextToken).Name;
-            terminal = new NameExpression(this.currentScope, identifierName);
+            var identifierName = ((IdentifierToken)this.m_nextToken).Name;
+            terminal = new NameExpression(this.m_currentScope, identifierName);
 
             // Record each occurance of a variable name.
             if (unboundOperator == null || unboundOperator.OperatorType != OperatorType.MemberAccess)
-              this.methodOptimizationHints.EncounteredVariable(identifierName);
+              this.m_methodOptimizationHints.EncounteredVariable(identifierName);
           }
-          else if (this.nextToken == KeywordToken.This)
+          else if (this.m_nextToken == KeywordToken.This)
           {
             // Convert "this" to an expression.
             terminal = new ThisExpression();
 
             // Add method optimization info.
-            this.methodOptimizationHints.HasThis = true;
+            this.m_methodOptimizationHints.HasThis = true;
           }
-          else if (this.nextToken == PunctuatorToken.LeftBracket)
+          else if (this.m_nextToken == PunctuatorToken.LeftBracket)
             // Array literal.
             terminal = ParseArrayLiteral();
-          else if (this.nextToken == PunctuatorToken.LeftBrace)
+          else if (this.m_nextToken == PunctuatorToken.LeftBrace)
             // Object literal.
             terminal = ParseObjectLiteral();
-          else if (this.nextToken == KeywordToken.Function)
+          else if (this.m_nextToken == KeywordToken.Function)
             terminal = ParseFunctionExpression();
           else
             throw new InvalidOperationException("Unsupported literal type.");
@@ -1518,37 +1549,37 @@
           }
           else
           {
-            Debug.Assert(unboundOperator != null && unboundOperator.AcceptingOperands == true);
+            Debug.Assert(unboundOperator != null && unboundOperator.AcceptingOperands);
             unboundOperator.Push(terminal);
           }
         }
-        else if (this.nextToken is PunctuatorToken || this.nextToken is KeywordToken)
+        else if (this.m_nextToken is PunctuatorToken || this.m_nextToken is KeywordToken)
         {
           // The token is an operator (o1).
-          Operator newOperator = OperatorFromToken(this.nextToken, this.expressionState == ParserExpressionState.Operator);
+          Operator newOperator = OperatorFromToken(this.m_nextToken, this.m_expressionState == ParserExpressionState.Operator);
 
           // Make sure the token is actually an operator and not just a random keyword.
           if (newOperator == null)
           {
             // Check if the token is an end token, for example a semi-colon.
-            if (Array.IndexOf(endTokens, this.nextToken) >= 0)
+            if (Array.IndexOf(endTokens, this.m_nextToken) >= 0)
               break;
             // Check for automatic semi-colon insertion.
-            if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && (this.consumedLineTerminator == true || this.nextToken == PunctuatorToken.RightBrace))
+            if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && (this.m_consumedLineTerminator || this.m_nextToken == PunctuatorToken.RightBrace))
               break;
-            throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Unexpected token {0} in expression.", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+            throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Unexpected token {0} in expression.", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
           }
 
           // Post-fix increment and decrement cannot have a line terminator in between
           // the operator and the operand.
-          if (this.consumedLineTerminator == true && (newOperator == Operator.PostIncrement || newOperator == Operator.PostDecrement))
+          if (this.m_consumedLineTerminator && (newOperator == Operator.PostIncrement || newOperator == Operator.PostDecrement))
             break;
 
           // There are four possibilities:
           // 1. The token is the second of a two-part operator (for example, the ':' in a
           //    conditional operator.  In this case, we need to go up the tree until we find
           //    an instance of the operator and make that the active unbound operator.
-          if (this.nextToken == newOperator.SecondaryToken)
+          if (this.m_nextToken == newOperator.SecondaryToken)
           {
             // Traverse down the tree looking for the parent operator that corresponds to
             // this token.
@@ -1569,12 +1600,12 @@
             if (parentExpression == null)
             {
               // Check if the token is an end token, for example a right parenthesis.
-              if (Array.IndexOf(endTokens, this.nextToken) >= 0)
+              if (Array.IndexOf(endTokens, this.m_nextToken) >= 0)
                 break;
               // Check for automatic semi-colon insertion.
-              if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.consumedLineTerminator == true)
+              if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.m_consumedLineTerminator)
                 break;
-              throw new JavaScriptException(this.engine, "SyntaxError", "Mismatched closing token in expression.", this.LineNumber, this.SourcePath);
+              throw new JavaScriptException(this.m_engine, "SyntaxError", "Mismatched closing token in expression.", this.LineNumber, this.SourcePath);
             }
 
             // Mark that we have seen the closing token.
@@ -1585,7 +1616,7 @@
           {
             // Check if the token is an end token, for example the comma in a variable
             // declaration.
-            if (Array.IndexOf(endTokens, this.nextToken) >= 0)
+            if (Array.IndexOf(endTokens, this.m_nextToken) >= 0)
             {
               // But make sure the token isn't inside an operator.
               // For example, in the expression "var x = f(a, b)" the comma does not
@@ -1615,7 +1646,7 @@
               if (root == null)
                 // "!"
                 root = newExpression;
-              else if (unboundOperator != null && unboundOperator.AcceptingOperands == true)
+              else if (unboundOperator != null && unboundOperator.AcceptingOperands)
               {
                 // "5 + !"
                 unboundOperator.Push(newExpression);
@@ -1624,9 +1655,9 @@
               {
                 // "5 !" or "5 + 5 !"
                 // Check for automatic semi-colon insertion.
-                if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.consumedLineTerminator == true)
+                if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.m_consumedLineTerminator)
                   break;
-                throw new JavaScriptException(this.engine, "SyntaxError", "Invalid use of prefix operator.", this.LineNumber, this.SourcePath);
+                throw new JavaScriptException(this.m_engine, "SyntaxError", "Invalid use of prefix operator.", this.LineNumber, this.SourcePath);
               }
             }
             else
@@ -1673,9 +1704,9 @@
                 {
                   // "! ++"
                   // Check for automatic semi-colon insertion.
-                  if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.consumedLineTerminator == true)
+                  if (Array.IndexOf(endTokens, PunctuatorToken.Semicolon) >= 0 && this.m_consumedLineTerminator)
                     break;
-                  throw new JavaScriptException(this.engine, "SyntaxError", "Invalid use of prefix operator.", this.LineNumber, this.SourcePath);
+                  throw new JavaScriptException(this.m_engine, "SyntaxError", "Invalid use of prefix operator.", this.LineNumber, this.SourcePath);
                 }
                 newExpression.Push(lowPrecedenceOperator.Pop());
                 lowPrecedenceOperator.Push(newExpression);
@@ -1687,7 +1718,7 @@
         }
         else
         {
-          throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Unexpected token {0} in expression", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+          throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Unexpected token {0} in expression", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
         }
 
         // Read the next token.
@@ -1696,14 +1727,14 @@
 
       // Empty expressions are invalid.
       if (root == null)
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected an expression but found {0} instead", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected an expression but found {0} instead", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
 
       // Check the AST is valid.
-      CheckASTValidity(root);
+      CheckAstValidity(root);
 
       // A literal is the next valid expression token.
-      this.expressionState = ParserExpressionState.Literal;
-      this.lexer.ParserExpressionState = expressionState;
+      this.m_expressionState = ParserExpressionState.Literal;
+      this.m_lexer.ParserExpressionState = m_expressionState;
 
       // Resolve all the unbound operators into real operators.
       return root;
@@ -1713,7 +1744,7 @@
     /// Checks the given AST is valid.
     /// </summary>
     /// <param name="root"> The root of the AST. </param>
-    private void CheckASTValidity(Expression root)
+    private void CheckAstValidity(Expression root)
     {
       // Push the root expression onto a stack.
       Stack<Expression> stack = new Stack<Expression>();
@@ -1730,11 +1761,11 @@
 
         // Check the operator expression has the right number of operands.
         if (expression.Operator.IsValidNumberOfOperands(expression.OperandCount) == false)
-          throw new JavaScriptException(this.engine, "SyntaxError", "Wrong number of operands", this.LineNumber, this.SourcePath);
+          throw new JavaScriptException(this.m_engine, "SyntaxError", "Wrong number of operands", this.LineNumber, this.SourcePath);
 
         // Check the operator expression is closed.
         if (expression.Operator.SecondaryToken != null && expression.SecondTokenEncountered == false)
-          throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Missing closing token '{0}'", expression.Operator.SecondaryToken.Text), this.LineNumber, this.SourcePath);
+          throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Missing closing token '{0}'", expression.Operator.SecondaryToken.Text), this.LineNumber, this.SourcePath);
 
         // Check the child nodes.
         for (int i = 0; i < expression.OperandCount; i++)
@@ -1749,31 +1780,29 @@
     private LiteralExpression ParseArrayLiteral()
     {
       // Read past the initial '[' token.
-      Debug.Assert(this.nextToken == PunctuatorToken.LeftBracket);
+      Debug.Assert(this.m_nextToken == PunctuatorToken.LeftBracket);
       this.Consume();
 
       var items = new List<Expression>();
       while (true)
       {
         // If the next token is ']', then the array literal is complete.
-        if (this.nextToken == PunctuatorToken.RightBracket)
+        if (this.m_nextToken == PunctuatorToken.RightBracket)
           break;
 
         // If the next token is ',', then the array element is undefined.
-        if (this.nextToken == PunctuatorToken.Comma)
-          items.Add(null);
-        else
-          // Otherwise, read the next item in the array.
-          items.Add(ParseExpression(PunctuatorToken.Comma, PunctuatorToken.RightBracket));
+        items.Add(this.m_nextToken == PunctuatorToken.Comma
+                    ? null
+                    : ParseExpression(PunctuatorToken.Comma, PunctuatorToken.RightBracket));
 
         // Read past the comma.
-        Debug.Assert(this.nextToken == PunctuatorToken.Comma || this.nextToken == PunctuatorToken.RightBracket);
-        if (this.nextToken == PunctuatorToken.Comma)
+        Debug.Assert(this.m_nextToken == PunctuatorToken.Comma || this.m_nextToken == PunctuatorToken.RightBracket);
+        if (this.m_nextToken == PunctuatorToken.Comma)
           this.Consume();
       }
 
       // The end token ']' will be consumed by the parent function.
-      Debug.Assert(this.nextToken == PunctuatorToken.RightBracket);
+      Debug.Assert(this.m_nextToken == PunctuatorToken.RightBracket);
 
       return new LiteralExpression(items);
     }
@@ -1794,14 +1823,14 @@
     private LiteralExpression ParseObjectLiteral()
     {
       // Read past the initial '{' token.
-      Debug.Assert(this.nextToken == PunctuatorToken.LeftBrace);
+      Debug.Assert(this.m_nextToken == PunctuatorToken.LeftBrace);
       this.Consume();
 
       var properties = new Dictionary<string, object>();
       while (true)
       {
         // If the next token is '}', then the object literal is complete.
-        if (this.nextToken == PunctuatorToken.RightBrace)
+        if (this.m_nextToken == PunctuatorToken.RightBrace)
           break;
 
         // Read the next property name.
@@ -1809,11 +1838,10 @@
         string propertyName = ReadPropertyName(out mightBeGetOrSet);
 
         // Check if this is a getter or setter.
-        Expression propertyValue;
-        if (this.nextToken != PunctuatorToken.Colon && mightBeGetOrSet == true && (propertyName == "get" || propertyName == "set"))
+        if (this.m_nextToken != PunctuatorToken.Colon && mightBeGetOrSet && (propertyName == "get" || propertyName == "set"))
         {
           // Parse the function name and body.
-          var function = ParseFunction(propertyName == "get" ? FunctionType.Getter : FunctionType.Setter, this.currentScope);
+          var function = ParseFunction(propertyName == "get" ? FunctionType.Getter : FunctionType.Setter, this.m_currentScope);
 
           // Get the function name.
           var getOrSet = propertyName;
@@ -1825,15 +1853,15 @@
             object existingValue;
             if (properties.TryGetValue(propertyName, out existingValue) == false)
               // The property has not been seen before.
-              properties.Add(propertyName, new ObjectLiteralAccessor() { Getter = function });
+              properties.Add(propertyName, new ObjectLiteralAccessor { Getter = function });
             else
             {
               // Add to the existing property.
               var existingAccessor = existingValue as ObjectLiteralAccessor;
               if (existingAccessor == null)
-                throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a getter", propertyName), this.LineNumber, this.SourcePath);
+                throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a getter", propertyName), this.LineNumber, this.SourcePath);
               if (existingAccessor.Getter != null)
-                throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' cannot have multiple getters", propertyName), this.LineNumber, this.SourcePath);
+                throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' cannot have multiple getters", propertyName), this.LineNumber, this.SourcePath);
               existingAccessor.Getter = function;
             }
           }
@@ -1843,15 +1871,15 @@
             object existingValue;
             if (properties.TryGetValue(propertyName, out existingValue) == false)
               // The property has not been seen before.
-              properties.Add(propertyName, new ObjectLiteralAccessor() { Setter = function });
+              properties.Add(propertyName, new ObjectLiteralAccessor { Setter = function });
             else
             {
               // Add to the existing property.
               var existingAccessor = existingValue as ObjectLiteralAccessor;
               if (existingAccessor == null)
-                throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a setter", propertyName), this.LineNumber, this.SourcePath);
+                throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a setter", propertyName), this.LineNumber, this.SourcePath);
               if (existingAccessor.Setter != null)
-                throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' cannot have multiple setters", propertyName), this.LineNumber, this.SourcePath);
+                throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' cannot have multiple setters", propertyName), this.LineNumber, this.SourcePath);
               existingAccessor.Setter = function;
             }
           }
@@ -1864,16 +1892,16 @@
           this.Expect(PunctuatorToken.Colon);
 
           // Now read the property value.
-          propertyValue = ParseExpression(PunctuatorToken.Comma, PunctuatorToken.RightBrace);
+          Expression propertyValue = ParseExpression(PunctuatorToken.Comma, PunctuatorToken.RightBrace);
 
           // In strict mode, properties cannot be added twice.
           object existingValue;
-          if (properties.TryGetValue(propertyName, out existingValue) == true)
+          if (properties.TryGetValue(propertyName, out existingValue))
           {
             if (existingValue is ObjectLiteralAccessor)
-              throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a getter/setter", propertyName), this.LineNumber, this.SourcePath);
-            if (this.StrictMode == true)
-              throw new JavaScriptException(this.engine, "SyntaxError", string.Format("The property '{0}' already has a value", propertyName), this.LineNumber, this.SourcePath);
+              throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' cannot have both a data property and a getter/setter", propertyName), this.LineNumber, this.SourcePath);
+            if (this.StrictMode)
+              throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("The property '{0}' already has a value", propertyName), this.LineNumber, this.SourcePath);
           }
 
           // Add the property setter to the list.
@@ -1881,13 +1909,13 @@
         }
 
         // Read past the comma.
-        Debug.Assert(this.nextToken == PunctuatorToken.Comma || this.nextToken == PunctuatorToken.RightBrace);
-        if (this.nextToken == PunctuatorToken.Comma)
+        Debug.Assert(this.m_nextToken == PunctuatorToken.Comma || this.m_nextToken == PunctuatorToken.RightBrace);
+        if (this.m_nextToken == PunctuatorToken.Comma)
           this.Consume();
       }
 
       // The end token '}' will be consumed by the parent function.
-      Debug.Assert(this.nextToken == PunctuatorToken.RightBrace);
+      Debug.Assert(this.m_nextToken == PunctuatorToken.RightBrace);
 
       return new LiteralExpression(properties);
     }
@@ -1901,37 +1929,37 @@
     private string ReadPropertyName(out bool wasIdentifier)
     {
       string propertyName;
-      if (this.nextToken is LiteralToken)
+      if (this.m_nextToken is LiteralToken)
       {
         // The property name can be a string or a number or (in ES5) a keyword.
-        if (((LiteralToken)this.nextToken).IsKeyword == true)
+        if (((LiteralToken)this.m_nextToken).IsKeyword)
         {
           // false, true or null.
-          propertyName = this.nextToken.Text;
+          propertyName = this.m_nextToken.Text;
         }
         else
         {
-          object literalValue = ((LiteralToken)this.nextToken).Value;
+          var literalValue = ((LiteralToken)this.m_nextToken).Value;
           if ((literalValue is string || literalValue is double || literalValue is int) == false)
-            throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected property name but found {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
-          propertyName = ((LiteralToken)this.nextToken).Value.ToString();
+            throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected property name but found {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
+          propertyName = ((LiteralToken)this.m_nextToken).Value.ToString();
         }
         wasIdentifier = false;
       }
-      else if (this.nextToken is IdentifierToken)
+      else if (this.m_nextToken is IdentifierToken)
       {
         // An identifier is also okay.
-        propertyName = ((IdentifierToken)this.nextToken).Name;
+        propertyName = ((IdentifierToken)this.m_nextToken).Name;
         wasIdentifier = true;
       }
-      else if (this.nextToken is KeywordToken)
+      else if (this.m_nextToken is KeywordToken)
       {
         // In ES5 a keyword is also okay.
-        propertyName = ((KeywordToken)this.nextToken).Name;
+        propertyName = ((KeywordToken)this.m_nextToken).Name;
         wasIdentifier = false;
       }
       else
-        throw new JavaScriptException(this.engine, "SyntaxError", string.Format("Expected property name but found {0}", Token.ToText(this.nextToken)), this.LineNumber, this.SourcePath);
+        throw new JavaScriptException(this.m_engine, "SyntaxError", string.Format("Expected property name but found {0}", Token.ToText(this.m_nextToken)), this.LineNumber, this.SourcePath);
 
       // Consume the token.
       this.Consume();
@@ -1946,7 +1974,7 @@
     /// <returns> A function expression. </returns>
     private FunctionExpression ParseFunctionExpression()
     {
-      return ParseFunction(FunctionType.Expression, this.currentScope);
+      return ParseFunction(FunctionType.Expression, this.m_currentScope);
     }
   }
 

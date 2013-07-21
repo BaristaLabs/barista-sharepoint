@@ -9,7 +9,7 @@
   [Serializable]
   internal abstract class FieldBinder : Binder
   {
-    protected FieldInfo field;
+    protected FieldInfo Field;
 
     /// <summary>
     /// Creates a new FieldGetterBinder instance.
@@ -17,11 +17,8 @@
     /// <param name="field"> The field. </param>
     protected FieldBinder(FieldInfo field)
     {
-      this.field = field;
+      this.Field = field;
     }
-
-
-
 
     //     PROPERTIES
     //_________________________________________________________________________________________
@@ -31,7 +28,7 @@
     /// </summary>
     public override string Name
     {
-      get { return this.field.Name; }
+      get { return this.Field.Name; }
     }
 
     /// <summary>
@@ -39,7 +36,7 @@
     /// </summary>
     public override string FullName
     {
-      get { return string.Format("{0}.{1}", this.field.DeclaringType, this.field.Name); }
+      get { return string.Format("{0}.{1}", this.Field.DeclaringType, this.Field.Name); }
     }
   }
 
@@ -79,13 +76,13 @@
         return;
       }
 
-      if (this.field.IsStatic == false)
+      if (this.Field.IsStatic == false)
       {
         generator.LoadArgument(1);
-        ClrBinder.EmitConversionToType(generator, this.field.DeclaringType, true);
+        ClrBinder.EmitConversionToType(generator, this.Field.DeclaringType, true);
       }
-      generator.LoadField(this.field);
-      ClrBinder.EmitConversionToObject(generator, this.field.FieldType);
+      generator.LoadField(this.Field);
+      ClrBinder.EmitConversionToObject(generator, this.Field.FieldType);
       generator.Complete();
     }
 
@@ -123,16 +120,16 @@
         generator.Complete();
         return;
       }
-      if (this.field.IsStatic == false)
+      if (this.Field.IsStatic == false)
       {
         generator.LoadArgument(1);
-        ClrBinder.EmitConversionToType(generator, this.field.DeclaringType, true);
+        ClrBinder.EmitConversionToType(generator, this.Field.DeclaringType, true);
       }
       generator.LoadArgument(2);
       generator.LoadInt32(0);
       generator.LoadArrayElement(typeof(object));
-      ClrBinder.EmitConversionToType(generator, this.field.FieldType, false);
-      generator.StoreField(this.field);
+      ClrBinder.EmitConversionToType(generator, this.Field.FieldType, false);
+      generator.StoreField(this.Field);
       EmitHelpers.EmitUndefined(generator);
       generator.Complete();
     }

@@ -275,6 +275,7 @@ namespace Barista.UnitTests.Jurassic
             Assert.AreEqual(0, TestUtils.Evaluate("parseFloat('0x')"));
             Assert.AreEqual(0, TestUtils.Evaluate("parseFloat('0zff')"));
             Assert.AreEqual(double.NaN, TestUtils.Evaluate("parseFloat('infinity')"));
+            Assert.AreEqual(double.NaN, TestUtils.Evaluate("parseFloat('I')"));
             Assert.AreEqual(-1.1, TestUtils.Evaluate("parseFloat('\u205F -1.1')"));
 
             // Very large numbers.

@@ -8,16 +8,16 @@
   /// </summary>
   internal abstract class Statement : AstNode
   {
-    private List<string> labels;
+    private readonly List<string> m_labels;
 
     /// <summary>
     /// Creates a new Statement instance.
     /// </summary>
     /// <param name="labels"> The labels that are associated with this statement. </param>
-    public Statement(IList<string> labels)
+    protected Statement(IList<string> labels)
     {
       if (labels != null && labels.Count > 0)
-        this.labels = new List<string>(labels);
+        this.m_labels = new List<string>(labels);
     }
 
     /// <summary>
@@ -26,7 +26,7 @@
     /// </summary>
     public bool HasLabels
     {
-      get { return this.labels != null; }
+      get { return this.m_labels != null; }
     }
 
     /// <summary>
@@ -34,7 +34,7 @@
     /// </summary>
     public IList<string> Labels
     {
-      get { return this.labels; }
+      get { return this.m_labels; }
     }
 
     /// <summary>
@@ -95,7 +95,7 @@
         locals.OriginalStackSize = ((DynamicILGenerator)generator).StackSize;
 #endif
 
-      if (locals.NonDefaultBreakStatementBehavior == false && this.HasLabels == true)
+      if (locals.NonDefaultBreakStatementBehavior == false && this.HasLabels)
       {
         // Set up the information needed by the break statement.
         locals.EndOfStatement = generator.CreateLabel();
@@ -115,7 +115,7 @@
     /// <param name="locals"> Variables common to both GenerateStartOfStatement() and GenerateEndOfStatement(). </param>
     public void GenerateEndOfStatement(ILGenerator generator, OptimizationInfo optimizationInfo, StatementLocals locals)
     {
-      if (locals.NonDefaultBreakStatementBehavior == false && this.HasLabels == true)
+      if (locals.NonDefaultBreakStatementBehavior == false && this.HasLabels)
       {
         // Revert the information needed by the break statement.
         generator.DefineLabelPosition(locals.EndOfStatement);
@@ -132,7 +132,6 @@
     /// <summary>
     /// Converts the statement to a string.
     /// </summary>
-    /// <param name="indentLevel"> The number of tabs to include before the statement. </param>
     /// <returns> A string representing this statement. </returns>
     public override string ToString()
     {

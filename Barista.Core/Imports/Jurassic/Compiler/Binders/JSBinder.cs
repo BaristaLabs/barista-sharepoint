@@ -12,7 +12,7 @@
   [Serializable]
   internal class JSBinder : MethodBinder
   {
-    private JSBinderMethod[] buckets;
+    private readonly JSBinderMethod[] m_buckets;
 
     internal const int MaximumSupportedParameterCount = 8;
 
@@ -33,8 +33,8 @@
       : base(targetMethods.Select(m => (BinderMethod)m))
     {
       // Split the methods by the number of parameters they take.
-      this.buckets = new JSBinderMethod[MaximumSupportedParameterCount + 1];
-      for (int argumentCount = 0; argumentCount < this.buckets.Length; argumentCount++)
+      this.m_buckets = new JSBinderMethod[MaximumSupportedParameterCount + 1];
+      for (int argumentCount = 0; argumentCount < this.m_buckets.Length; argumentCount++)
       {
         // Find all the methods that have the right number of parameters.
         JSBinderMethod preferred = null;
@@ -47,36 +47,36 @@
             preferred = method;
           }
         }
-        this.buckets[argumentCount] = preferred;
+        this.m_buckets[argumentCount] = preferred;
       }
 
       // If a bucket has no methods, search all previous buckets, then all search forward.
-      for (int argumentCount = 0; argumentCount < this.buckets.Length; argumentCount++)
+      for (int argumentCount = 0; argumentCount < this.m_buckets.Length; argumentCount++)
       {
-        if (this.buckets[argumentCount] != null)
+        if (this.m_buckets[argumentCount] != null)
           continue;
 
         // Search previous buckets.
         for (int i = argumentCount - 1; i >= 0; i--)
-          if (this.buckets[i] != null)
+          if (this.m_buckets[i] != null)
           {
-            this.buckets[argumentCount] = this.buckets[i];
+            this.m_buckets[argumentCount] = this.m_buckets[i];
             break;
           }
 
         // If that didn't work, search forward.
-        if (this.buckets[argumentCount] == null)
+        if (this.m_buckets[argumentCount] == null)
         {
-          for (int i = argumentCount + 1; i < this.buckets.Length; i++)
-            if (this.buckets[i] != null)
+          for (int i = argumentCount + 1; i < this.m_buckets.Length; i++)
+            if (this.m_buckets[i] != null)
             {
-              this.buckets[argumentCount] = this.buckets[i];
+              this.m_buckets[argumentCount] = this.m_buckets[i];
               break;
             }
         }
 
         // If that still didn't work, then we have a problem.
-        if (this.buckets[argumentCount] == null)
+        if (this.m_buckets[argumentCount] == null)
           throw new InvalidOperationException("No preferred method could be found.");
       }
     }
@@ -106,12 +106,12 @@
       //}
 
       // Find the target method.
-      var binderMethod = this.buckets[Math.Min(argumentCount, this.buckets.Length - 1)];
+      var binderMethod = this.m_buckets[Math.Min(argumentCount, this.m_buckets.Length - 1)];
 
       // Constrain the number of apparent arguments to within the required bounds.
       int minArgumentCount = binderMethod.RequiredParameterCount;
       int maxArgumentCount = binderMethod.RequiredParameterCount + binderMethod.OptionalParameterCount;
-      if (binderMethod.HasParamArray == true)
+      if (binderMethod.HasParamArray)
         maxArgumentCount = int.MaxValue;
 
       foreach (var argument in binderMethod.GenerateArguments(generator, Math.Min(Math.Max(argumentCount, minArgumentCount), maxArgumentCount)))
@@ -128,7 +128,7 @@
             generator.LoadArgument(1);
 
             bool inheritsFromObjectInstance = typeof(ObjectInstance).IsAssignableFrom(argument.Type);
-            if (argument.Type.IsClass == true && inheritsFromObjectInstance == false &&
+            if (argument.Type.IsClass && inheritsFromObjectInstance == false &&
                 argument.Type != typeof(string) && argument.Type != typeof(object))
             {
               // If the "this" object is an unsupported class, pass it through unmodified.
@@ -153,7 +153,7 @@
               // Convert to the target type.
               EmitTypeConversion(generator, typeof(object), argument.Type);
 
-              if (argument.Type != typeof(ObjectInstance) && inheritsFromObjectInstance == true)
+              if (argument.Type != typeof(ObjectInstance) && inheritsFromObjectInstance)
               {
                 // EmitConversionToObjectInstance can emit null if the toType is derived from ObjectInstance.
                 // Therefore, if the value emitted is null it means that the "thisObject" is a type derived
@@ -245,7 +245,7 @@
     /// </summary>
     /// <param name="generator"> The IL generator. </param>
     /// <param name="fromType"> The type to convert from. </param>
-    /// <param name="targetParameter"> The type to convert to and the default value, if there is one. </param>
+    /// <param name="argument"> The type to convert to and the default value, if there is one. </param>
     private static void EmitTypeConversion(ILGenerator generator, Type fromType, BinderArgument argument)
     {
       // Emit either the default value if there is one, otherwise emit "undefined".
@@ -316,11 +316,11 @@
     /// Pushes the result of converting <c>undefined</c> to the given type onto the stack.
     /// </summary>
     /// <param name="il"> The IL generator. </param>
-    /// <param name="targetParameter"> The type to convert to, and optionally a default value. </param>
+    /// <param name="argument"> The type to convert to, and optionally a default value. </param>
     private static void EmitUndefined(ILGenerator il, BinderArgument argument)
     {
       // Emit either the default value if there is one, otherwise emit "undefined".
-      if (argument.HasDefaultValue == true)
+      if (argument.HasDefaultValue)
       {
         // Emit the default value.
         EmitHelpers.EmitValue(il, argument.DefaultValue);

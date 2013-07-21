@@ -1,26 +1,24 @@
-﻿using System;
-
-namespace Barista.Jurassic.Compiler
+﻿namespace Barista.Jurassic.Compiler
 {
+  /// <summary>
+  /// Represents a context that code can be run in.
+  /// </summary>
+  internal enum CodeContext
+  {
     /// <summary>
-    /// Represents a context that code can be run in.
+    /// The default context.
     /// </summary>
-    internal enum CodeContext
-    {
-        /// <summary>
-        /// The default context.
-        /// </summary>
-        Global,
+    Global,
 
-        /// <summary>
-        /// The context inside function bodies.
-        /// </summary>
-        Function,
+    /// <summary>
+    /// The context inside function bodies.
+    /// </summary>
+    Function,
 
-        /// <summary>
-        /// The context inside the eval() function.
-        /// </summary>
-        Eval,
-    }
+    /// <summary>
+    /// The context inside the eval() function.
+    /// </summary>
+    Eval,
+  }
 
 }

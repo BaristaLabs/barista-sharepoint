@@ -1,7 +1,7 @@
 ﻿namespace Barista.Jurassic.Library
 {
   using System;
-  using System.Collections.Generic;
+  using System.Linq;
   using Barista;
 
   /// <summary>
@@ -108,7 +108,7 @@
     public static ArrayInstance GetOwnPropertyNames([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj)
     {
       var result = obj.Engine.Array.New();
-      foreach (var property in ((ObjectInstance)obj).Properties)
+      foreach (var property in obj.Properties)
         result.Push(property.Name);
       return result;
     }
@@ -116,6 +116,7 @@
     /// <summary>
     /// Creates an object with the given prototype and, optionally, a set of properties.
     /// </summary>
+    /// <param name="engine">The script engine.</param>
     /// <param name="prototype"> A reference to the next object in the prototype chain for the
     /// created object. </param>
     /// <param name="propertiesArg"> An object containing one or more property descriptors. </param>
@@ -127,11 +128,10 @@
 
       if ((prototype is ObjectInstance) == false && prototype != Null.Value)
         throw new JavaScriptException(engine, "TypeError", "object prototype must be an object or null");
-      ObjectInstance result;
-      if (prototype == Null.Value)
-        result = ObjectInstance.CreateRootObject(engine);
-      else
-        result = ObjectInstance.CreateRawObject((ObjectInstance)prototype);
+      ObjectInstance result = prototype == Null.Value
+                                ? ObjectInstance.CreateRootObject(engine)
+                                : ObjectInstance.CreateRawObject((ObjectInstance)prototype);
+
       if (properties != null)
         DefineProperties(result, properties);
       return result;
@@ -164,7 +164,7 @@
     public static ObjectInstance DefineProperties([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj, ObjectInstance properties)
     {
       foreach (var property in properties.Properties)
-        if (property.IsEnumerable == true)
+        if (property.IsEnumerable)
         {
           var descriptor = property.Value;
           if ((descriptor is ObjectInstance) == false)
@@ -182,9 +182,7 @@
     [JSInternalFunction(Name = "seal")]
     public static ObjectInstance Seal([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj)
     {
-      var properties = new List<PropertyNameAndValue>();
-      foreach (var property in obj.Properties)
-        properties.Add(property);
+      var properties = obj.Properties.ToList();
       foreach (var property in properties)
       {
         obj.FastSetProperty(property.Name, property.Value,
@@ -202,9 +200,7 @@
     [JSInternalFunction(Name = "freeze")]
     public static ObjectInstance Freeze([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj)
     {
-      var properties = new List<PropertyNameAndValue>();
-      foreach (var property in obj.Properties)
-        properties.Add(property);
+      var properties = obj.Properties.ToList();
       foreach (var property in properties)
       {
         obj.FastSetProperty(property.Name, property.Value,
@@ -235,9 +231,10 @@
     [JSInternalFunction(Name = "isSealed")]
     public static bool IsSealed([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj)
     {
-      foreach (var property in obj.Properties)
-        if (property.IsConfigurable == true)
-          return false;
+      if (obj.Properties.Any(property => property.IsConfigurable))
+      {
+        return false;
+      }
       return obj.IsExtensible == false;
     }
 
@@ -251,9 +248,10 @@
     [JSInternalFunction(Name = "isFrozen")]
     public static bool IsFrozen([JSParameter(JSParameterFlags.DoNotConvert)] ObjectInstance obj)
     {
-      foreach (var property in obj.Properties)
-        if (property.IsConfigurable == true || property.IsWritable == true)
-          return false;
+      if (obj.Properties.Any(property => property.IsConfigurable || property.IsWritable))
+      {
+        return false;
+      }
       return obj.IsExtensible == false;
     }
 
@@ -278,7 +276,7 @@
     {
       var result = obj.Engine.Array.New();
       foreach (var property in obj.Properties)
-        if (property.IsEnumerable == true)
+        if (property.IsEnumerable)
           result.Push(property.Name);
       return result;
     }

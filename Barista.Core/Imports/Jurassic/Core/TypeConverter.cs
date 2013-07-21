@@ -72,7 +72,7 @@
       if (value is uint)
         return ((uint)value) != 0;
       if (value is double)
-        return ((double)value) != 0 && double.IsNaN((double)value) == false;
+        return Math.Abs(((double)value) - 0) > Double.Epsilon && double.IsNaN((double)value) == false;
       if (value is string)
         return ((string)value).Length > 0;
       if (value is ConcatenatedString)
@@ -140,7 +140,7 @@
         // Check if the value is in the cache.
         double doubleValue = (double)value;
         var cache = s_numberToStringCache;
-        if (doubleValue == cache.Value)
+        if (Math.Abs(doubleValue - cache.Value) < Double.Epsilon)
           return cache.Result;
 
         // Convert the number to a string.
@@ -228,14 +228,16 @@
       if (value == null || value is Undefined)
         return 0;
       var num = ToNumber(value);
-      if (num > 2147483647.0)
-        return 2147483647;
-#pragma warning disable 1718
-// ReSharper disable EqualExpressionComparison
-      if (num != num)
+
+      if (num > int.MaxValue)
+        return int.MaxValue;
+
+      if (num < int.MinValue)
+        return int.MinValue;
+
+      if (Double.IsNaN(num))
         return 0;
-// ReSharper restore EqualExpressionComparison
-#pragma warning restore 1718
+
       return (int)num;
     }
 

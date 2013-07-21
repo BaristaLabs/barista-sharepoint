@@ -47,7 +47,6 @@
     /// ObjectInstances. </param>
     public void Log(FirebugConsoleMessageStyle style, object[] objects)
     {
-#if !SILVERLIGHT
       var original = Console.ForegroundColor;
       switch (style)
       {
@@ -61,8 +60,6 @@
           Console.ForegroundColor = ConsoleColor.Red;
           break;
       }
-#endif
-
       // Convert the objects to a string.
       var message = new System.Text.StringBuilder();
       foreach (var t in objects)
@@ -74,11 +71,8 @@
       // Output the message to the console.
       Console.WriteLine(message.ToString());
 
-
-#if !SILVERLIGHT
       if (style != FirebugConsoleMessageStyle.Regular)
         Console.ForegroundColor = original;
-#endif
     }
 
     /// <summary>
@@ -86,9 +80,7 @@
     /// </summary>
     public void Clear()
     {
-#if !SILVERLIGHT
       Console.Clear();
-#endif
     }
 
     /// <summary>

@@ -338,7 +338,6 @@
     <Compile Include="Imports\Jurassic\Core\ScriptSource\FileScriptSource.cs" />
     <Compile Include="Imports\Jurassic\Core\ScriptSource\ScriptSource.cs" />
     <Compile Include="Imports\Jurassic\Core\ScriptSource\StringScriptSource.cs" />
-    <Compile Include="Imports\Jurassic\Core\Serialization.cs" />
     <Compile Include="Imports\Jurassic\Core\StringHelpers.cs" />
     <Compile Include="Imports\Jurassic\Core\TypeComparer.cs" />
     <Compile Include="Imports\Jurassic\Core\TypeConverter.cs" />
