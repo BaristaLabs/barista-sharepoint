@@ -17,12 +17,13 @@
 
     public string BundleDescription
     {
-      get { return "Provides access to RavenDB from Barista."; }
+      get { return "Provides access to RavenDB from Barista. Adds the top-level DocumentStore object."; }
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       engine.SetGlobalValue("IndexQuery", new IndexQueryConstructor(engine));
+      engine.SetGlobalValue("IndexDefinition", new IndexDefinitionConstructor(engine));
 
       engine.SetGlobalValue("DocumentStore", new DocumentStoreConstructor(engine));
 

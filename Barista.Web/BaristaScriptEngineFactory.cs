@@ -5,6 +5,7 @@
   using Barista.Jurassic.Library;
   using Barista.Library;
   using System;
+  using Barista.Raven.Bundles;
   using Barista.Web.Bundles;
   using LogLevel = Barista.Logging.LogLevel;
 
@@ -62,6 +63,7 @@
         //instance.Common.RegisterBundle(new K2Bundle());
         instance.Common.RegisterBundle(new UtilityBundle());
         instance.Common.RegisterBundle(new DocumentStoreBundle());
+        instance.Common.RegisterBundle(new RavenClientBundle());
         instance.Common.RegisterBundle(new SimpleInheritanceBundle());
         instance.Common.RegisterBundle(new SqlDataBundle());
         instance.Common.RegisterBundle(new StateMachineBundle());

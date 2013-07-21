@@ -4,9 +4,9 @@ namespace Barista.Raven.Library
 {
   using System.Net;
   using Barista.Jurassic;
-using Barista.Jurassic.Library;
-using Barista.Library;
-using System;
+  using Barista.Jurassic.Library;
+  using Barista.Library;
+  using System;
   using Barista.Newtonsoft.Json;
 
   [Serializable]
@@ -53,6 +53,7 @@ using System;
     }
 
     [JSProperty(Name = "apiKey")]
+    [JSDoc("Gets or sets the API key to use when authenticating against a RavenDB server that supports API Key Authentication.")]
     public string ApiKey
     {
       get { return m_documentStore.ApiKey; }
@@ -61,6 +62,7 @@ using System;
 
     [JSProperty(Name = "credentials")]
     [JsonProperty("credentials")]
+    [JSDoc("Gets or sets the credentials associated with the document store. Ex. ds.credentials = new NetworkCredential(...)")]
     public object Credentials
     {
       get
@@ -84,12 +86,14 @@ using System;
     }
 
     [JSProperty(Name = "databaseCommands")]
+    [JSDoc("Gets the database commands")]
     public DatabaseCommandsInstance DatabaseCommands
     {
       get { return new DatabaseCommandsInstance(this.Engine.Object.InstancePrototype, m_documentStore.DatabaseCommands); }
     }
 
     [JSProperty(Name = "defaultDatabase")]
+    [JSDoc("Gets or sets the default database name")]
     public string DefaultDatabase
     {
       get { return m_documentStore.DefaultDatabase; }
@@ -97,6 +101,7 @@ using System;
     }
 
     [JSProperty(Name = "maxNumberOfCachedRequests")]
+    [JSDoc("Gets or sets the max number of cached requests (Default: 2048)")]
     public int MaxNumberOfCachedRequests
     {
       get { return m_documentStore.MaxNumberOfCachedRequests; }
@@ -104,6 +109,7 @@ using System;
     }
 
     [JSProperty(Name = "url")]
+    [JSDoc("Gets or sets the base URL of the target RavenDB server instance.")]
     public string Url
     {
       get { return m_documentStore.Url; }
@@ -111,6 +117,7 @@ using System;
     }
 
     [JSFunction(Name = "openSession")]
+    [JSDoc("Opens a new session for a particular database")]
     public DocumentSessionInstance OpenSession(object arg)
     {
       RavenDB.IDocumentSession session;

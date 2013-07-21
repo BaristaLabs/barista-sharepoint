@@ -111,7 +111,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
+    <Content Include="favicon.ico" />
+    <Content Include="index.htm" />
+    <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\Controllers\mainctrl.js" />
+    <Content Include="Scripts\Vendor\beautify.js" />
     <Content Include="Scripts\Vendor\chance.js" />
+    <Content Include="Scripts\Vendor\codemirror\javascript.js" />
+    <Content Include="Scripts\Vendor\codemirror\ui-codemirror.js" />
+    <Content Include="Scripts\Vendor\jslint.js" />
+    <Content Include="Styles\app.css" />
+    <Content Include="Styles\codemirror-neat.css" />
     <Content Include="UnitTests\API\ActiveDirectory\getCurrentUser.js" />
     <Content Include="UnitTests\API\Core\writetoConsole.js" />
     <Content Include="UnitTests\API\DocumentStore\listEntities.js" />
@@ -141,6 +151,7 @@
     <Content Include="UnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaDocumentStoreTests.js" />
     <Content Include="UnitTests\BaristaWebTests.js" />
+    <Content Include="UnitTests\RavenBundleTests.js" />
     <Content Include="UnitTests\index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -186,6 +197,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
+    <Folder Include="Content\" />
+    <Folder Include="Scripts\Directives\" />
+    <Folder Include="Scripts\Filters\" />
+    <Folder Include="Scripts\Services\" />
     <Folder Include="UnitTests\API\Document\" />
     <Folder Include="UnitTests\API\Raven\" />
   </ItemGroup>

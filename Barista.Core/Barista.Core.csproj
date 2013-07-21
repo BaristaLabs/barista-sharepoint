@@ -27,7 +27,7 @@
     <DefineConstants>TRACE;DEBUG;NET35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -38,7 +38,7 @@
     <DefineConstants>TRACE;NET35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
@@ -179,6 +179,7 @@
     <Compile Include="Bundles\StateMachineBundle.cs" />
     <Compile Include="Bundles\StringBundle.cs" />
     <Compile Include="Bundles\SugarBundle.cs" />
+    <Compile Include="Bundles\TfsBundle.cs" />
     <Compile Include="Bundles\UnitTestingBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebAdministrationBundle.cs" />

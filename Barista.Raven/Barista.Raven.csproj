@@ -66,8 +66,10 @@
     <Compile Include="Library\DatabaseCommandsInstance.cs" />
     <Compile Include="Library\DocumentSessionInstance.cs" />
     <Compile Include="Library\DocumentStoreInstance.cs" />
+    <Compile Include="Library\IndexDefinitionInstance.cs" />
     <Compile Include="Library\IndexQueryInstance.cs" />
     <Compile Include="Library\JsonDocumentInstance.cs" />
+    <Compile Include="Library\JsonDocumentMetadataInstance.cs" />
     <Compile Include="Library\OpenSessionOptionsInstance.cs" />
     <Compile Include="Library\PutResultInstance.cs" />
     <Compile Include="Library\QueryResultInstance.cs" />

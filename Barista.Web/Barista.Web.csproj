@@ -76,6 +76,10 @@
       <Project>{27f98766-b157-46e3-9ea2-98d9e3e1fdc0}</Project>
       <Name>Barista.DocumentStore.FileSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Barista.Raven\Barista.Raven.csproj">
+      <Project>{fb0d0fb7-e81f-4e2f-b662-c3ad92ac65d8}</Project>
+      <Name>Barista.Raven</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />

@@ -180,7 +180,6 @@
     <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="K2\Bundles\K2Bundle.cs" />
     <Compile Include="Bundles\SharePointBundle.cs" />
-    <Compile Include="Bundles\TfsBundle.cs" />
     <Compile Include="Bundles\UlsLogBundle.cs" />
     <Compile Include="Caml\Library\CamlHump.cs" />
     <Compile Include="Caml\Library\SPCamlQueryBuilderInstance.cs" />
