@@ -116,6 +116,13 @@ namespace Barista.Raven.Library
       set { m_documentStore.Url = value; }
     }
 
+    [JSFunction(Name = "initialize")]
+    [JSDoc("Initializes the DocumentStore.")]
+    public void Initialize(object arg)
+    {
+      m_documentStore.Initialize();
+    }
+
     [JSFunction(Name = "openSession")]
     [JSDoc("Opens a new session for a particular database")]
     public DocumentSessionInstance OpenSession(object arg)

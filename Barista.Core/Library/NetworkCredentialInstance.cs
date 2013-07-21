@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public NetworkCredentialInstance Construct()
     {
-      return new NetworkCredentialInstance(this.InstancePrototype);
+      return new NetworkCredentialInstance(this.InstancePrototype, new NetworkCredential());
     }
   }
 

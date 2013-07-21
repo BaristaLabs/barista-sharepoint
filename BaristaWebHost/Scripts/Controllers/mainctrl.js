@@ -74,6 +74,7 @@
         }
 
         $scope.isScriptResultLoading = true;
+        $scope.hasScriptResult = false;
 
         $http({
                 method: 'POST',
@@ -106,7 +107,7 @@
                 if (contentType.indexOf("text/html") == 0) {
                     $scope.isHtmlScriptResult = true;
                     $scope.scriptResult = data
-                    $("#htmlResult").contents().find('html').html($scope.scriptResult);
+                    $("#htmlScriptResult").contents().find('html').html($scope.scriptResult);
                 } else {
                     $scope.isHtmlScriptResult = false;
                     $scope.scriptResult = $(jqXhr.responseText).children(".intro").text();
@@ -153,7 +154,7 @@
             var width = jQuery(window).width();
             $("#horizontalSplitter")
                 .css("height", height + "px")
-                .css("height", width + "px")
+                .css("width", width + "px")
                 .trigger("resize");
         }, false);
     };
