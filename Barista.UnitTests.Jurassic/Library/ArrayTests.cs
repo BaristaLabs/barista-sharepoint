@@ -162,6 +162,9 @@
 
       // length
       Assert.AreEqual(1, TestUtils.Evaluate("Array.isArray.length"));
+
+      // isArray is generic.
+      Assert.AreEqual(true, TestUtils.Evaluate("var $ = {}; $.isArray = Array.isArray; $.isArray([5])"));
     }
 
     [Ignore]
