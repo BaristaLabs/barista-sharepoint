@@ -87,6 +87,7 @@
 
         engine.SetGlobalValue("Guid", new GuidConstructor(engine));
         engine.SetGlobalValue("Uri", new UriConstructor(engine));
+        engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
         engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
 
         engine.SetGlobalValue("console", console);

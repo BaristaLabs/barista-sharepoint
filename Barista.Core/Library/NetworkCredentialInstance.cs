@@ -47,6 +47,15 @@
       get { return m_networkCredential; }
     }
 
+    /// <summary>
+    /// Gets or sets a value that indicates if the password value will be masked.
+    /// </summary>
+    public bool MaskPassword
+    {
+      get;
+      set;
+    }
+
     [JSProperty(Name = "domain")]
     [JsonProperty("domain")]
     public string Domain
@@ -59,7 +68,12 @@
     [JsonProperty("password")]
     public string Password
     {
-      get { return m_networkCredential.Password; }
+      get
+      {
+        return MaskPassword
+          ? new String('*', m_networkCredential.Password.Length)
+          : m_networkCredential.Password;
+      }
       set { m_networkCredential.Password = value; }
     }
 

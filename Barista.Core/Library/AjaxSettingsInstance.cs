@@ -1,5 +1,7 @@
 ﻿namespace Barista.Library
 {
+  using System.Net;
+  using Barista.Newtonsoft.Json.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Barista.Newtonsoft.Json;
@@ -23,6 +25,8 @@
   [Serializable]
   public class AjaxSettingsInstance : ObjectInstance
   {
+    private ICredentials m_credentials;
+
     public AjaxSettingsInstance(ObjectInstance prototype)
       : base(prototype)
     {
@@ -70,6 +74,33 @@
     {
       get;
       set;
+    }
+
+    [JSDoc("Gets or sets the credentials associated with the ajax request. Ex. { credentials: new NetworkCredential(...) }")]
+    [JSProperty(Name = "credentials")]
+    [JsonProperty("credentials")]
+    public object Credentials
+    {
+      get
+      {
+        if (m_credentials is NetworkCredential)
+          return new NetworkCredentialInstance(this.Engine.Object.InstancePrototype,
+                                               m_credentials as NetworkCredential);
+        return Null.Value;
+      }
+      set
+      {
+        if (value == null || value == Null.Value || value == Undefined.Value)
+          return;
+
+        if (value is JContainer)
+          value = JSONObject.Parse(this.Engine, (value as JContainer).ToString(), null);
+
+        if (value is NetworkCredentialInstance)
+          m_credentials = (value as NetworkCredentialInstance).NetworkCredential;
+        else if (value is ObjectInstance)
+          m_credentials = JurassicHelper.Coerce<NetworkCredentialInstance>(this.Engine, value).NetworkCredential;
+      }
     }
 
     [JSProperty(Name = "useDefaultCredentials")]

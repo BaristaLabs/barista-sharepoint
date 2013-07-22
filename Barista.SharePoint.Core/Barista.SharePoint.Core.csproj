@@ -168,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
+    <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="SharePointSearch\Library\QueryInstance.cs" />
     <Compile Include="SharePointSearch\Library\SearchServiceApplicationInstance.cs" />
     <Compile Include="SPBaristaConsoleOutput.cs" />

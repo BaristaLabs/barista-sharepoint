@@ -1,7 +1,10 @@
 ﻿namespace Barista.Library
 {
+  using System.Data.SqlClient;
   using System.Globalization;
+  using System.Net;
   using Barista.Extensions;
+  using Barista.Newtonsoft.Json.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Barista.Newtonsoft.Json;
@@ -51,7 +54,7 @@
     private readonly string m_connectionString;
     private readonly string m_providerName;
     private readonly DbProviderFactory m_factory;
-
+    private ICredentials m_credentials;
     private ArrayInstance m_schema;
     private string m_databaseName;
 
@@ -86,6 +89,33 @@
     public string ConnectionString
     {
       get { return m_connectionString; }
+    }
+
+    [JSDoc("Gets or sets the credentials associated with the ajax request. Ex. { credentials: new NetworkCredential(...) }")]
+    [JSProperty(Name = "credentials")]
+    [JsonProperty("credentials")]
+    public object Credentials
+    {
+      get
+      {
+        if (m_credentials is NetworkCredential)
+          return new NetworkCredentialInstance(this.Engine.Object.InstancePrototype,
+                                               m_credentials as NetworkCredential);
+        return Null.Value;
+      }
+      set
+      {
+        if (value == null || value == Null.Value || value == Undefined.Value)
+          return;
+
+        if (value is JContainer)
+          value = JSONObject.Parse(this.Engine, (value as JContainer).ToString(), null);
+
+        if (value is NetworkCredentialInstance)
+          m_credentials = (value as NetworkCredentialInstance).NetworkCredential;
+        else if (value is ObjectInstance)
+          m_credentials = JurassicHelper.Coerce<NetworkCredentialInstance>(this.Engine, value).NetworkCredential;
+      }
     }
 
     [JSProperty(Name = "databaseName")]
@@ -660,7 +690,23 @@
       if (result == null)
         throw new InvalidOperationException("The DbConnection returned by the DbProvider factory was null.");
 
-      result.ConnectionString = ConnectionString;
+      //If a credentials object was provided, update the connection string with the credentials provided.
+      if (m_credentials is NetworkCredential)
+      {
+        var networkCredential = m_credentials as NetworkCredential;
+
+        var sb = new SqlConnectionStringBuilder(this.ConnectionString)
+        {
+          UserID = networkCredential.UserName,
+          Password = networkCredential.Password,
+        };
+        result.ConnectionString = sb.ToString();
+      }
+      else
+      {
+        result.ConnectionString = ConnectionString;
+      }
+
       result.Open();
       return result;
     }

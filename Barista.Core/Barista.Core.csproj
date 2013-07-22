@@ -112,6 +112,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
@@ -186,6 +210,7 @@
     <Compile Include="Bundles\WebBundleBase.cs" />
     <Compile Include="ConfigurationElementBase.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
+    <Compile Include="DocumentStore\EntityMetadata.cs" />
     <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
     <Compile Include="DocumentStore\Library\CommentInstance.cs" />
     <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
@@ -1338,6 +1363,10 @@
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
     <Compile Include="Search\BaristaSearchService.cs" />
+    <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemStore.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />
@@ -1390,8 +1419,8 @@
     <Compile Include="DocumentStore\Repository.cs" />
     <Compile Include="DocumentStore\RepositoryConfiguration.cs" />
     <Compile Include="Extensions\TheadPoolExtensions.cs" />
-    <None Include="TeamFoundationServer\Libraries\TfsInstance.cs" />
-    <None Include="TfsCredentialsProvider.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsInstance.cs" />
+    <Compile Include="TeamFoundationServer\TfsCredentialsProvider.cs" />
     <Compile Include="Tuple.cs" />
     <Compile Include="ValidationAttributeStore.cs" />
     <Compile Include="ValidationContext.cs" />

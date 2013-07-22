@@ -121,8 +121,16 @@
         {
           if (ajaxSettings.UseDefaultCredentials == false)
           {
-            if (String.IsNullOrEmpty(ajaxSettings.Username) == false || String.IsNullOrEmpty(ajaxSettings.Password) == false || String.IsNullOrEmpty(ajaxSettings.Domain) == false)
-              request.Credentials = new NetworkCredential(ajaxSettings.Username, ajaxSettings.Password, ajaxSettings.Domain);
+            //if the "credentials" setting is set on the ajaxsettingsinstance, use those credentials instead.
+            if (ajaxSettings.Credentials != null && ajaxSettings.Credentials != Null.Value &&
+                ajaxSettings.Credentials != Undefined.Value && ajaxSettings.Credentials is NetworkCredentialInstance)
+              request.Credentials = (ajaxSettings.Credentials as NetworkCredentialInstance).NetworkCredential;
+            //Otherwise, use the username/password/domain if specified.
+            else if (String.IsNullOrEmpty(ajaxSettings.Username) == false ||
+                     String.IsNullOrEmpty(ajaxSettings.Password) == false ||
+                     String.IsNullOrEmpty(ajaxSettings.Domain) == false)
+              request.Credentials = new NetworkCredential(ajaxSettings.Username, ajaxSettings.Password,
+                ajaxSettings.Domain);
           }
           else
           {

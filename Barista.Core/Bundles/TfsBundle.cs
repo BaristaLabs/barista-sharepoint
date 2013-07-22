@@ -1,7 +1,7 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
-  using Barista.Library;
   using System;
+  using Barista.TeamFoundationServer.Library;
 
   [Serializable]
   public class TfsBundle : IBundle
@@ -13,7 +13,7 @@
 
     public string BundleName
     {
-      get { return "Tfs"; }
+      get { return "Team Foundation Server"; }
     }
 
     public string BundleDescription
@@ -23,7 +23,7 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      return new UtilInstance(engine);
+      return new TfsInstance(engine.Object.InstancePrototype);
     }
   }
 }

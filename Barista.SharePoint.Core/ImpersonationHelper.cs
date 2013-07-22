@@ -116,41 +116,40 @@
     [PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
     public void ImpersonateUser()
     {
-      IntPtr hPassword = IntPtr.Zero;
-      IntPtr hToken = IntPtr.Zero;
-      IntPtr hTokenDuplicate = IntPtr.Zero;
+      var hPassword = IntPtr.Zero;
+      var hToken = IntPtr.Zero;
+      var hTokenDuplicate = IntPtr.Zero;
 
       try
       {
-        UserCredentials creds = ReadUserCredentialsFromSecureStore(this.ProviderTypeName, this.ApplicationId);
+        var creds = ReadUserCredentialsFromSecureStore(this.ProviderTypeName, this.ApplicationId);
         if (creds == null)
           throw new InvalidOperationException("Could not read user credentials from the specified secure store.");
 
-        if (RevertToSelf() != 0)
+        if (RevertToSelf() == 0)
+          return;
+
+        var userName = GetString(creds.UserName);
+        var password = GetString(creds.Password);
+
+        if (LogonUser(userName, String.Empty, password, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, out hToken))
         {
-          string userName = GetString(creds.UserName);
-          string password = GetString(creds.Password);
-
-          if (LogonUser(userName, String.Empty, password, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, out hToken))
+          if (DuplicateToken(hToken, SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, ref hTokenDuplicate) != 0)
           {
-            if (DuplicateToken(hToken, SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, ref hTokenDuplicate) != 0)
-            {
-              m_impersonationContext = new WindowsIdentity(hTokenDuplicate).Impersonate();
+            m_impersonationContext = new WindowsIdentity(hTokenDuplicate).Impersonate();
 
-              if ((m_impersonationContext == null))
-                throw new ImpersonationException(userName);
-            }
+            if ((m_impersonationContext == null))
+              throw new ImpersonationException(userName);
           }
-          else
-          {
-            throw new ImpersonationException(userName);
-          }
+        }
+        else
+        {
+          throw new ImpersonationException(userName);
+        }
 
-          if (hPassword.Equals(IntPtr.Zero) == false)
-          {
-            Marshal.ZeroFreeGlobalAllocUnicode(hPassword);
-          }
-
+        if (hPassword.Equals(IntPtr.Zero) == false)
+        {
+          Marshal.ZeroFreeGlobalAllocUnicode(hPassword);
         }
       }
       finally
@@ -163,6 +162,20 @@
       }
     }
 
+    [PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
+    public ICredentials GetNetworkCredentials()
+    {
+      var creds = ReadUserCredentialsFromSecureStore(this.ProviderTypeName, this.ApplicationId);
+      if (creds == null)
+        throw new InvalidOperationException("Could not read user credentials from the specified secure store.");
+
+      var userName = GetString(creds.UserName);
+      var password = GetString(creds.Password);
+
+      var credentials = new NetworkCredential(userName, password);
+      return credentials;
+    }
+
     /// <summary>
     /// Undoes the impersonation of the user, if it is impersonated.
     /// </summary>
@@ -172,6 +185,37 @@
     {
       m_impersonationContext.Undo();
       m_impersonationContext = null;
+    }
+
+    /// <summary>
+    /// Returns an ICredentials object that represents the credentials stored in the secure store.
+    /// </summary>
+    /// <param name="applicationId"></param>
+    /// <returns></returns>
+    public static ICredentials GetCredentialsFromSecureStore(string applicationId)
+    {
+      return GetCredentialsFromSecureStore(ImpersonationHelper.DefaultSharePointSecureStoreProvider, applicationId);
+    }
+
+    /// <summary>
+    /// Returns an ICredentials object that represents the credentials stored in the secure store.
+    /// </summary>
+    /// <param name="providerTypeName"></param>
+    /// <param name="applicationId"></param>
+    /// <returns></returns>
+    public static ICredentials GetCredentialsFromSecureStore(string providerTypeName, string applicationId)
+    {
+      ICredentials credentials;
+      using (var impersonationContext = new ImpersonationHelper(providerTypeName, applicationId))
+      {
+        credentials = impersonationContext.GetNetworkCredentials();
+      }
+      return credentials;
+    }
+
+    public static void InvokeAsUser(string applicationId, Delegate methodToCall)
+    {
+      InvokeAsUser(ImpersonationHelper.DefaultSharePointSecureStoreProvider, applicationId, methodToCall);
     }
 
     public static void InvokeAsUser(string providerTypeName, string applicationId, Delegate methodToCall)
@@ -213,16 +257,16 @@
 
     private UserCredentials ReadUserCredentialsFromSecureStore(string providerTypeName, string applicationId)
     {
-      ISecureStoreProvider provider = GetSecureStoreProvider(providerTypeName);
+      var provider = GetSecureStoreProvider(providerTypeName);
 
       // get the credentials for the user on whose behalf the code
       // is executing
-      using (SecureStoreCredentialCollection credentials = provider.GetRestrictedCredentials(applicationId))
+      using (var credentials = provider.GetRestrictedCredentials(applicationId))
       {
-        UserCredentials creds = new UserCredentials();
+        var creds = new UserCredentials();
 
         // look for username and password in credentials
-        foreach (ISecureStoreCredential credential in credentials)
+        foreach (var credential in credentials)
         {
           switch (credential.CredentialType)
           {

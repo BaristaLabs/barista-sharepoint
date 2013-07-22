@@ -19,6 +19,7 @@
     private readonly SPContextInstance m_context;
     private readonly SPFarmInstance m_farm;
     private readonly SPServerInstance m_server;
+    private readonly SPSecureStoreInstance m_secureStore;
 
     public SPInstance(ScriptEngine engine, SPBaristaContext context, SPFarm farmContext, SPServer serverContext)
       : base(engine)
@@ -26,6 +27,7 @@
       m_context = new SPContextInstance(this.Engine, context);
       m_farm = new SPFarmInstance(this.Engine.Object.InstancePrototype, farmContext);
       m_server = new SPServerInstance(this.Engine.Object.InstancePrototype, serverContext);
+      m_secureStore = new SPSecureStoreInstance(this.Engine.Object.InstancePrototype);
       this.PopulateFields();
       this.PopulateFunctions();
     }
@@ -43,6 +45,13 @@
     public SPFarmInstance Farm
     {
       get { return m_farm; }
+    }
+
+    [JSDoc("Gets a reference to the secure store service.")]
+    [JSProperty(Name = "secureStore")]
+    public SPSecureStoreInstance SecureStore
+    {
+      get { return m_secureStore; }
     }
 
     [JSDoc("Gets the local server instance. Equivalent to SPFarm.Server in the server object model.")]
