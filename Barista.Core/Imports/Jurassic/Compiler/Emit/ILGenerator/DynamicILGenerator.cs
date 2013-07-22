@@ -794,18 +794,18 @@
 #else
             if (label2.EvaluationStackSize >= 0)
             {
-                if (this.stackIsIndeterminate == false)
+                if (this.m_stackIsIndeterminate == false)
                 {
                     // Check the number of items matches.
-                    if (label2.EvaluationStackSize != this.stackSize)
+                    if (label2.EvaluationStackSize != this.m_stackSize)
                         throw new InvalidOperationException(string.Format("Stack size mismatch from a previous branch.  Expected {0} items but found {1} items.",
-                            label2.EvaluationStackSize, this.stackSize));
+                            label2.EvaluationStackSize, this.m_stackSize));
                 }
                 else
                 {
                     // Replace the evaluation stack with the one from the label.
-                    this.stackSize = label2.EvaluationStackSize;
-                    this.stackIsIndeterminate = false;
+                    this.m_stackSize = label2.EvaluationStackSize;
+                    this.m_stackIsIndeterminate = false;
                 }
             }
 #endif
@@ -946,14 +946,14 @@
             if (label2.EvaluationStackSize < 0)
             {
                 // Record the number of items on the evaluation stack.
-                label2.EvaluationStackSize = this.stackSize;
+                label2.EvaluationStackSize = this.m_stackSize;
             }
             else
             {
                 // Check the number of items matches.
-                if (label2.EvaluationStackSize != this.stackSize)
+                if (label2.EvaluationStackSize != this.m_stackSize)
                     throw new InvalidOperationException(string.Format("Stack size mismatch from a previous branch.  Expected {0} items but was {1} items.",
-                        label2.EvaluationStackSize, this.stackSize));
+                        label2.EvaluationStackSize, this.m_stackSize));
             }
 #endif
     }
