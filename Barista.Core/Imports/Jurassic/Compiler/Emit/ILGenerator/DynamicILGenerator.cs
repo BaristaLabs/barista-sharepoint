@@ -59,6 +59,7 @@
       Filter,
       Fault,
     }
+
     private class ExceptionClause
     {
       public ExceptionClauseType Type;
@@ -67,6 +68,7 @@
       public int CatchToken;
       public int FilterHandlerStart;
     }
+
     private class ExceptionRegion
     {
       public int Start;
@@ -74,6 +76,7 @@
       public List<ExceptionClause> Clauses;
       public ILLabel EndLabel;
     }
+
     private Stack<ExceptionRegion> m_activeExceptionRegions;
     private List<ExceptionRegion> m_exceptionRegions;
 
@@ -445,13 +448,16 @@
     /// <returns> A metadata token. </returns>
     private int GetToken(System.Reflection.MethodBase method)
     {
-      if (method is System.Reflection.Emit.DynamicMethod)
-        return this.m_dynamicILInfo.GetTokenFor((System.Reflection.Emit.DynamicMethod)method);
+      var dynamicMethod = method as System.Reflection.Emit.DynamicMethod;
+      if (dynamicMethod != null)
+        return this.m_dynamicILInfo.GetTokenFor(dynamicMethod);
+
       if (method.DeclaringType == null)
         throw new ArgumentException("The provided method cannot be that of an RTDynamicMethod. Use the DynamicMethod instead.");
-      if (method.DeclaringType.IsGenericType == true)
-        return this.m_dynamicILInfo.GetTokenFor(method.MethodHandle, method.DeclaringType.TypeHandle);
-      return this.m_dynamicILInfo.GetTokenFor(method.MethodHandle);
+
+      return method.DeclaringType.IsGenericType
+        ? this.m_dynamicILInfo.GetTokenFor(method.MethodHandle, method.DeclaringType.TypeHandle)
+        : this.m_dynamicILInfo.GetTokenFor(method.MethodHandle);
     }
 
     /// <summary>
@@ -824,11 +830,13 @@
         var position = fix.Position;
         if (fix.Length != 4)
           throw new NotImplementedException("Short jumps are not supported.");
+
         this.m_bytes[position++] = (byte)jumpOffset;
         this.m_bytes[position++] = (byte)(jumpOffset >> 8);
         this.m_bytes[position++] = (byte)(jumpOffset >> 16);
         this.m_bytes[position++] = (byte)(jumpOffset >> 24);
       }
+
       this.m_fixups.Clear();
     }
 
@@ -1039,7 +1047,7 @@
     /// <param name="label"> The label to branch to. </param>
     public override void BranchIfGreaterThanOrEqualUnsigned(ILLabel label)
     {
-      BranchCore(label, 0x41, ComparisonOperator.GreaterThanOrEqual);
+      BranchCore(label, 0x41, ComparisonOperator.GreaterThanOrEqualUnsigned);
     }
 
     /// <summary>
@@ -1817,12 +1825,14 @@
         var declaringType = method.DeclaringType;
         operandTypes.Add(declaringType != null && declaringType.IsValueType ? VESType.ManagedPointer : VESType.Object);
       }
-      foreach (var parameterInfo in parameters)
-      {
-        operandTypes.Add(parameterInfo.ParameterType.IsByRef
-                           ? VESType.ManagedPointer
-                           : ToVESType(parameterInfo.ParameterType));
-      }
+
+      operandTypes.AddRange(parameters
+        .Select(parameterInfo => parameterInfo.ParameterType.IsByRef
+          ? VESType.ManagedPointer
+          : ToVESType(parameterInfo.ParameterType)
+          )
+        );
+
       PopStackOperands(operandTypes.ToArray());
       if (returnType != typeof(void))
         PushStackOperand(ToVESType(returnType));
@@ -1860,9 +1870,10 @@
         case TypeCode.Object:
           if (type == typeof(IntPtr))
             return VESType.NativeInt;
-          else if (type.IsValueType == true)
-            return VESType.ManagedPointer;
-          return VESType.Object;
+
+          return type.IsValueType
+            ? VESType.ManagedPointer
+            : VESType.Object;
         default:
           throw new NotImplementedException(string.Format("Unsupported type {0}", type));
       }
