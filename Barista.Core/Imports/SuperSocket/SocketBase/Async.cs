@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase.Logging;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Async extension class

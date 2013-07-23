@@ -5,14 +5,14 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Protocol;
-using SuperSocket.SocketBase.Provider;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Provider;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// The interface for AppServer

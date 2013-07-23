@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     abstract class ProtocolProcessorBase : IProtocolProcessor
     {

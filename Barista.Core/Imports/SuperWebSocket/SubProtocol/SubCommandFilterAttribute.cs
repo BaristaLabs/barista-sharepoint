@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase;
 
-namespace SuperWebSocket.SubProtocol
+namespace Barista.SuperWebSocket.SubProtocol
 {
     /// <summary>
     /// SubCommandFilter Attribute

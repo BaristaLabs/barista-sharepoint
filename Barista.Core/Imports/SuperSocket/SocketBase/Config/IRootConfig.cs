@@ -5,7 +5,7 @@ using System.Text;
 using System.Configuration;
 using System.Collections.Specialized;
 
-namespace SuperSocket.SocketBase.Config
+namespace Barista.SuperSocket.SocketBase.Config
 {
     /// <summary>
     /// The root configuration interface

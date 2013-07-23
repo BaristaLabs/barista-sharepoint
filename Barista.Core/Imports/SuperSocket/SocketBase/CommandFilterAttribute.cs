@@ -1,8 +1,8 @@
 using System;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Command filter attribute

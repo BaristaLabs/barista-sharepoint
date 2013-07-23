@@ -7,7 +7,7 @@ using System.Xml;
 using log4net;
 using log4net.Config;
 
-namespace SuperSocket.SocketBase.Logging
+namespace Barista.SuperSocket.SocketBase.Logging
 {
     /// <summary>
     /// Log4NetLogFactory

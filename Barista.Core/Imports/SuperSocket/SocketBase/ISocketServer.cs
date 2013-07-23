@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Security.Authentication;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// It is the basic interface of SocketServer,

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
-using SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Command;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Command Executing Context

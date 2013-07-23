@@ -4,10 +4,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-00
@@ -27,12 +27,17 @@ namespace SuperWebSocket.Protocol
             var secKey1 = session.Items.GetValue<string>(WebSocketConstant.SecWebSocketKey1, string.Empty);
             var secKey2 = session.Items.GetValue<string>(WebSocketConstant.SecWebSocketKey2, string.Empty);
 
+            dataFrameReader = null;
+
             if (string.IsNullOrEmpty(secKey1) && string.IsNullOrEmpty(secKey2) && NextProcessor != null)
             {
                 return NextProcessor.Handshake(session, previousFilter, out dataFrameReader);
             }
 
             session.ProtocolProcessor = this;
+
+            if (!session.AppServer.ValidateHandshake(session, session.Items.GetValue<string>(WebSocketConstant.Origin, string.Empty)))
+                return false;
 
             var secKey3 = session.Items.GetValue<byte[]>(WebSocketConstant.SecWebSocketKey3, m_ZeroKeyBytes);
 

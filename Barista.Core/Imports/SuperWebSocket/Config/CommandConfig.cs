@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 
-namespace SuperWebSocket.Config
+namespace Barista.SuperWebSocket.Config
 {
     /// <summary>
     /// Command configuration

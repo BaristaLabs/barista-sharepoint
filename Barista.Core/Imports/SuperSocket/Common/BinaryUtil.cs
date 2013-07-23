@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace SuperSocket.Common
+namespace Barista.SuperSocket.Common
 {
     /// <summary>
     /// Binary util class

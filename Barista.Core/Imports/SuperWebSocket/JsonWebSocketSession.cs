@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperWebSocket
+namespace Barista.SuperWebSocket
 {
     /// <summary>
     /// Json websocket session

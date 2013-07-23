@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// http://tools.ietf.org/html/rfc6455#section-4.4

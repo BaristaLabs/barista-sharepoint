@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperSocket.SocketBase.Logging
+namespace Barista.SuperSocket.SocketBase.Logging
 {
     /// <summary>
     /// Console log factory

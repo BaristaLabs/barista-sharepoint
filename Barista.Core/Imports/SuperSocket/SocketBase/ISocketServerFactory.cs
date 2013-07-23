@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// The interface for socket server factory

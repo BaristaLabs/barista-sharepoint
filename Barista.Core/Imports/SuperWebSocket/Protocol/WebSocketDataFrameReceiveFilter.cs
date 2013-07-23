@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Protocol;
-using SuperWebSocket.Protocol.FramePartReader;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperWebSocket.Protocol.FramePartReader;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     class WebSocketDataFrameReceiveFilter : IReceiveFilter<IWebSocketFragment>
     {

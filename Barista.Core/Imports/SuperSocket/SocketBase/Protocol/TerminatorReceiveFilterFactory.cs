@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace SuperSocket.SocketBase.Protocol
+namespace Barista.SuperSocket.SocketBase.Protocol
 {
     /// <summary>
     /// Terminator ReceiveFilter Factory

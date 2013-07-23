@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.SubProtocol
+namespace Barista.SuperWebSocket.SubProtocol
 {
     /// <summary>
     /// Json SubCommand base

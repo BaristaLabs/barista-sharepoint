@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 
-namespace SuperSocket.SocketBase.Protocol
+namespace Barista.SuperSocket.SocketBase.Protocol
 {
     /// <summary>
     /// Terminator Receive filter
@@ -141,6 +141,11 @@ namespace SuperSocket.SocketBase.Protocol
             {
                 if (this.BufferSegments != null && this.BufferSegments.Count > 0)
                 {
+                    if (m_ParsedLengthInBuffer > 0)
+                    {
+                        this.BufferSegments.AddSegment(readBuffer, offset, m_ParsedLengthInBuffer);
+                    }
+
                     requestInfo = ProcessMatchedRequest(BufferSegments, 0, BufferSegments.Count);
                 }
                 else

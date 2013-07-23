@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Provider;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Provider;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// An item can be started and stopped

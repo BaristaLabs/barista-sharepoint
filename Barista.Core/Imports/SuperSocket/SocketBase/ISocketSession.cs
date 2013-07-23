@@ -6,9 +6,9 @@ using System.IO;
 using System.Net;
 using System.Security.Authentication;
 using System.Net.Sockets;
-using SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Command;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// CloseReason enum

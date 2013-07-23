@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.SubProtocol
+namespace Barista.SuperWebSocket.SubProtocol
 {
     /// <summary>
     /// Basic sub command parser

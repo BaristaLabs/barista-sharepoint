@@ -5,7 +5,7 @@ using System.Text;
 using System.Net;
 using System.Security.Authentication;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Listener inforamtion

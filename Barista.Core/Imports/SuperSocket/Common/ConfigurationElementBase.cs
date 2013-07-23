@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using System.Xml;
 
-namespace SuperSocket.Common
+namespace Barista.SuperSocket.Common
 {
     /// <summary>
     /// ConfigurationElementBase

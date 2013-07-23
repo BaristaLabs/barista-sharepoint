@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// Close status code interface

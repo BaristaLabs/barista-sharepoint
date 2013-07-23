@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperSocket.SocketBase.Provider
+namespace Barista.SuperSocket.SocketBase.Provider
 {
     /// <summary>
     /// Export Factory

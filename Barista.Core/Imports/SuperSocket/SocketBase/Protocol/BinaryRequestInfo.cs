@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperSocket.SocketBase.Protocol
+namespace Barista.SuperSocket.SocketBase.Protocol
 {
     /// <summary>
     /// Binary type request information

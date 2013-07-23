@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Protocol;
-using SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Config;
 
-namespace SuperSocket.SocketBase.Command
+namespace Barista.SuperSocket.SocketBase.Command
 {
     /// <summary>
     /// Command loader's interface

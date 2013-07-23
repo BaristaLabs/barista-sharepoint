@@ -2,9 +2,9 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Net;
-using SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Config;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// The basic interface of connection filter

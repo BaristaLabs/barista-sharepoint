@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 
-namespace SuperSocket.SocketBase.Config
+namespace Barista.SuperSocket.SocketBase.Config
 {
     /// <summary>
     /// Type provider configuration

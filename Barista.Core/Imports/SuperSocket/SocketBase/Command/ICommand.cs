@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperSocket.SocketBase.Command
+namespace Barista.SuperSocket.SocketBase.Command
 {
     /// <summary>
     /// Command basic interface

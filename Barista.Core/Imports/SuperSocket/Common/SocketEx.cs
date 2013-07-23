@@ -1,7 +1,7 @@
 using System;
 using System.Net.Sockets;
 
-namespace SuperSocket.Common
+namespace Barista.SuperSocket.Common
 {
     /// <summary>
     /// Socket extension class

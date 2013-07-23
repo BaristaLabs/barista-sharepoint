@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// http://tools.ietf.org/html/rfc6455
@@ -14,6 +14,14 @@ namespace SuperWebSocket.Protocol
             : base(13, new CloseStatusCodeRfc6455())
         {
 
+        }
+
+        protected override string OriginKey
+        {
+            get
+            {
+                return WebSocketConstant.Origin;
+            }
         }
 
         public override bool IsValidCloseCode(int code)

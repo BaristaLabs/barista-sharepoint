@@ -4,14 +4,14 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Protocol;
-using SuperWebSocket.Protocol;
-using SuperWebSocket.SubProtocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperWebSocket.Protocol;
+using Barista.SuperWebSocket.SubProtocol;
 
-namespace SuperWebSocket
+namespace Barista.SuperWebSocket
 {
     /// <summary>
     /// WebSocketSession basic interface
@@ -152,7 +152,7 @@ namespace SuperWebSocket
         /// <summary>
         /// Gets the origin.
         /// </summary>
-        public string Origin { get { return this.Items.GetValue<string>(WebSocketConstant.Origin, string.Empty); } }
+        public string Origin { get; internal set; }
 
         /// <summary>
         /// Gets the upgrade.

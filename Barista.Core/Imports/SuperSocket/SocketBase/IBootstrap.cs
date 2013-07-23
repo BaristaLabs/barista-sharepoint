@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Logging;
 using System.Net;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// The bootstrap start result

@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 
-namespace SuperSocket.Common
+namespace Barista.SuperSocket.Common
 {
     /// <summary>
     /// GenericConfigurationElementCollectionBase

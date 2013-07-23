@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Logging;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Logger extension class

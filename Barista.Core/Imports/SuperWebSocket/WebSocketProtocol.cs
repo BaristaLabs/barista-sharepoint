@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Protocol;
-using SuperWebSocket.Protocol;
-using SuperWebSocket.SubProtocol;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperWebSocket.Protocol;
+using Barista.SuperWebSocket.SubProtocol;
 
-namespace SuperWebSocket
+namespace Barista.SuperWebSocket
 {
     /// <summary>
     /// WebSocket protocol

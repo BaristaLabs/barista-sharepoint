@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperSocket.SocketBase.Config
+namespace Barista.SuperSocket.SocketBase.Config
 {
     /// <summary>
     /// Certificate config model class

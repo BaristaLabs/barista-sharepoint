@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperWebSocket.Protocol.FramePartReader
+namespace Barista.SuperWebSocket.Protocol.FramePartReader
 {
     class FixPartReader : DataFramePartReader
     {

@@ -5,7 +5,7 @@ using System.Configuration;
 using System.Security.Authentication;
 using System.Collections.Specialized;
 
-namespace SuperSocket.SocketBase.Config
+namespace Barista.SuperSocket.SocketBase.Config
 {
     /// <summary>
     /// Server instance configuation interface

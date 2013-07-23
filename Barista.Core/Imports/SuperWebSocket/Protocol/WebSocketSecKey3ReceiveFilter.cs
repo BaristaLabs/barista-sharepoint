@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     class WebSocketSecKey3ReceiveFilter : WebSocketReceiveFilterBase
     {

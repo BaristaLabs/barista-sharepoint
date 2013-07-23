@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperSocket.SocketBase.Provider
+namespace Barista.SuperSocket.SocketBase.Provider
 {
     /// <summary>
     /// ProviderKey

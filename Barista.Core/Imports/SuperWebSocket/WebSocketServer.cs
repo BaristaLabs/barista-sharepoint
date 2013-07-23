@@ -11,17 +11,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Barista.Newtonsoft.Json;
-using SuperSocket.Common;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Protocol;
-using SuperWebSocket.Command;
-using SuperWebSocket.Config;
-using SuperWebSocket.Protocol;
-using SuperWebSocket.SubProtocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperWebSocket.Command;
+using Barista.SuperWebSocket.Config;
+using Barista.SuperWebSocket.Protocol;
+using Barista.SuperWebSocket.SubProtocol;
 
-namespace SuperWebSocket
+namespace Barista.SuperWebSocket
 {
     /// <summary>
     /// WebSocket server interface
@@ -32,6 +32,15 @@ namespace SuperWebSocket
         /// Gets the web socket protocol processor.
         /// </summary>
         IProtocolProcessor WebSocketProtocolProcessor { get; }
+
+
+        /// <summary>
+        /// Validates the handshake request.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="origin">The origin.</param>
+        /// <returns>the validation result</returns>
+        bool ValidateHandshake(IWebSocketSession session, string origin);
     }
 
     /// <summary>
@@ -194,6 +203,24 @@ namespace SuperWebSocket
             {
                 return (WebSocketProtocol)base.ReceiveFilterFactory;
             }
+        }
+
+        bool IWebSocketServer.ValidateHandshake(IWebSocketSession session, string origin)
+        {
+            var s = (TWebSocketSession)session;
+            s.Origin = origin;
+            return ValidateHandshake(s, origin);
+        }
+
+        /// <summary>
+        /// Validates the handshake request.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="origin">The origin in the handshake request.</param>
+        /// <returns></returns>
+        protected virtual bool ValidateHandshake(TWebSocketSession session, string origin)
+        {
+            return true;
         }
 
         bool RegisterSubProtocol(ISubProtocol<TWebSocketSession> subProtocol)

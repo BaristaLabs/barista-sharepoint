@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Server's state enum class

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 
-namespace SuperWebSocket.Config
+namespace Barista.SuperWebSocket.Config
 {
     /// <summary>
     /// SubProtocol configuation collection

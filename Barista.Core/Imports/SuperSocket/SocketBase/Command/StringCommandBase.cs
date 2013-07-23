@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperSocket.SocketBase.Command
+namespace Barista.SuperSocket.SocketBase.Command
 {
     /// <summary>
     /// A command type for whose request info type is StringRequestInfo

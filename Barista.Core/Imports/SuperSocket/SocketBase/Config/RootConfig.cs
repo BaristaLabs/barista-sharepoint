@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 using System.Collections.Specialized;
 using System.Configuration;
 
-namespace SuperSocket.SocketBase.Config
+namespace Barista.SuperSocket.SocketBase.Config
 {
     /// <summary>
     /// Root configuration model

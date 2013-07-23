@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace SuperSocket.SocketBase.Protocol
+namespace Barista.SuperSocket.SocketBase.Protocol
 {
     /// <summary>
     /// Receive filter factory interface

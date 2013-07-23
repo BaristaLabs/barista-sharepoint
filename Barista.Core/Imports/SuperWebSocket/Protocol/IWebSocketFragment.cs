@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// WebSocketFragment request info

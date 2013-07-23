@@ -6,13 +6,13 @@ using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase.Protocol;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// AppSession base class

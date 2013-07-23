@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Protocol;
-using SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperSocket.SocketBase;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// Protocol processor interface

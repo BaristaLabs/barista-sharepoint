@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase.Command;
-using SuperWebSocket.Protocol;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperWebSocket.Protocol;
 
-namespace SuperWebSocket.Command
+namespace Barista.SuperWebSocket.Command
 {
     /// <summary>
     /// The command handling continuation fragment

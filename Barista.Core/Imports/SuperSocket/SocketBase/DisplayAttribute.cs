@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace SuperSocket.SocketBase
+namespace Barista.SuperSocket.SocketBase
 {
     /// <summary>
     /// Display attribute

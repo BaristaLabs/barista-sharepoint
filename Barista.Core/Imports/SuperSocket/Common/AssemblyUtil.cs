@@ -10,7 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
-namespace SuperSocket.Common
+namespace Barista.SuperSocket.Common
 {
     /// <summary>
     /// Assembly Util Class

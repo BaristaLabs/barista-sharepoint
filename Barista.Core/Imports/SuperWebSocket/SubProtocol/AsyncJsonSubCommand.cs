@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SuperWebSocket.SubProtocol
+namespace Barista.SuperWebSocket.SubProtocol
 {
     /// <summary>
     /// Async json sub command

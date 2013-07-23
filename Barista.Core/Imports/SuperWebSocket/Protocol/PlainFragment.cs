@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
-using SuperWebSocket.Protocol;
+using Barista.SuperSocket.Common;
+using Barista.SuperWebSocket.Protocol;
 
-namespace SuperWebSocket.Protocol
+namespace Barista.SuperWebSocket.Protocol
 {
     /// <summary>
     /// Plain text fragment

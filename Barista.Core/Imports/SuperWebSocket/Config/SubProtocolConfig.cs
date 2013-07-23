@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 using System.Configuration;
 
-namespace SuperWebSocket.Config
+namespace Barista.SuperWebSocket.Config
 {
     /// <summary>
     /// SubProtocol configuration

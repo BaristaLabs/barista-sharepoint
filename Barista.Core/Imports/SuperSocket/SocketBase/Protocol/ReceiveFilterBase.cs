@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.Common;
+using Barista.SuperSocket.Common;
 
-namespace SuperSocket.SocketBase.Protocol
+namespace Barista.SuperSocket.SocketBase.Protocol
 {
     /// <summary>
     /// Receive filter base class

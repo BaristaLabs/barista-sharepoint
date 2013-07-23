@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SuperSocket.SocketBase;
-using SuperSocket.SocketBase.Command;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketBase.Logging;
-using SuperSocket.SocketBase.Protocol;
-using SuperWebSocket.Config;
+using Barista.SuperSocket.SocketBase;
+using Barista.SuperSocket.SocketBase.Command;
+using Barista.SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.SocketBase.Logging;
+using Barista.SuperSocket.SocketBase.Protocol;
+using Barista.SuperWebSocket.Config;
 
-namespace SuperWebSocket.SubProtocol
+namespace Barista.SuperWebSocket.SubProtocol
 {
     /// <summary>
     /// SubProtocol basis

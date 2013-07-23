@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using SuperSocket.Common;
-using SuperSocket.SocketBase.Config;
+using Barista.SuperSocket.Common;
+using Barista.SuperSocket.SocketBase.Config;
 
-namespace SuperSocket.SocketBase.Security
+namespace Barista.SuperSocket.SocketBase.Security
 {
     static class CertificateManager
     {
