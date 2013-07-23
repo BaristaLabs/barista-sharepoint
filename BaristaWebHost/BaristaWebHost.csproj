@@ -121,6 +121,8 @@
     <Content Include="Scripts\Vendor\codemirror\javascript.js" />
     <Content Include="Scripts\Vendor\codemirror\ui-codemirror.js" />
     <Content Include="Scripts\Vendor\jslint.js" />
+    <Content Include="Scripts\Vendor\kendoui\angular-kendo.js" />
+    <Content Include="Scripts\Vendor\kendoui\angular-kendo.min.js" />
     <Content Include="Styles\app.css" />
     <Content Include="Styles\codemirror-neat.css" />
     <Content Include="UnitTests\API\ActiveDirectory\getCurrentUser.js" />
