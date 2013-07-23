@@ -43,7 +43,7 @@ namespace Barista.Newtonsoft.Json.Serialization
 
       int IEqualityComparer<object>.GetHashCode(object obj)
       {
-#if !(NETFX_CORE || PORTABLE)
+#if !(NETFX_CORE)
         // put objects in a bucket based on their reference
         return RuntimeHelpers.GetHashCode(obj);
 #else
@@ -132,7 +132,7 @@ namespace Barista.Newtonsoft.Json.Serialization
         contract.InvokeOnError(currentObject, Serializer.Context, errorContext);
 
       if (!errorContext.Handled)
-        Serializer.OnError(new ErrorEventArgs(currentObject, errorContext));
+        Serializer.OnError(new Barista.Newtonsoft.Json.Serialization.ErrorEventArgs(currentObject, errorContext));
 
       return errorContext.Handled;
     }

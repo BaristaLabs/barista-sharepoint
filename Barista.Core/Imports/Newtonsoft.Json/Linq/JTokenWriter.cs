@@ -25,6 +25,9 @@
 
 using System;
 using System.Globalization;
+#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE40 || PORTABLE)
+using System.Numerics;
+#endif
 using Barista.Newtonsoft.Json.Utilities;
 
 namespace Barista.Newtonsoft.Json.Linq
@@ -173,11 +176,31 @@ namespace Barista.Newtonsoft.Json.Linq
       }
       else
       {
-        _value = value;
+        _value = value ?? new JValue((object)null);
       }
     }
 
     #region WriteValue methods
+    /// <summary>
+    /// Writes a <see cref="Object"/> value.
+    /// An error will raised if the value cannot be written as a single JSON token.
+    /// </summary>
+    /// <param name="value">The <see cref="Object"/> value to write.</param>
+    public override void WriteValue(object value)
+    {
+#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE || PORTABLE40)
+      if (value is BigInteger)
+      {
+        InternalWriteValue(JsonToken.Integer);
+        AddValue(value, JsonToken.Integer);
+      }
+      else
+#endif
+      {
+        base.WriteValue(value);
+      }
+    }
+
     /// <summary>
     /// Writes a null value.
     /// </summary>
@@ -240,6 +263,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
+    //[CLSCompliant(false)]
     public override void WriteValue(uint value)
     {
       base.WriteValue(value);
@@ -260,6 +284,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
+    //[CLSCompliant(false)]
     public override void WriteValue(ulong value)
     {
       base.WriteValue(value);
@@ -310,6 +335,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
+    //[CLSCompliant(false)]
     public override void WriteValue(ushort value)
     {
       base.WriteValue(value);
@@ -324,7 +350,7 @@ namespace Barista.Newtonsoft.Json.Linq
     {
       base.WriteValue(value);
       string s = null;
-#if !(NETFX_CORE || PORTABLE)
+#if !(NETFX_CORE || PORTABLE40 || PORTABLE)
       s = value.ToString(CultureInfo.InvariantCulture);
 #else
       s = value.ToString();
@@ -346,6 +372,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
+    //[CLSCompliant(false)]
     public override void WriteValue(sbyte value)
     {
       base.WriteValue(value);
@@ -369,11 +396,11 @@ namespace Barista.Newtonsoft.Json.Linq
     public override void WriteValue(DateTime value)
     {
       base.WriteValue(value);
-      value = JsonConvert.EnsureDateTime(value, DateTimeZoneHandling);
+      value = DateTimeUtils.EnsureDateTime(value, DateTimeZoneHandling);
       AddValue(value, JsonToken.Date);
     }
 
-#if !PocketPC && !NET20
+#if !NET20
     /// <summary>
     /// Writes a <see cref="DateTimeOffset"/> value.
     /// </summary>

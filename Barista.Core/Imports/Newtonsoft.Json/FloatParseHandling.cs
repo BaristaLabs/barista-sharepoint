@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,29 +23,20 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using Barista.Newtonsoft.Json.Utilities;
-
-namespace Barista.Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
-  /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.
+  /// Specifies how floating point numbers, e.g. 1.0 and 9.9, are parsed when reading JSON text.
   /// </summary>
-  public class JsonPrimitiveContract : JsonContract
+  public enum FloatParseHandling
   {
-    internal PrimitiveTypeCode TypeCode { get; set; }
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="JsonPrimitiveContract"/> class.
+    /// Floating point numbers are parsed to <see cref="Double"/>.
     /// </summary>
-    /// <param name="underlyingType">The underlying type for the contract.</param>
-    public JsonPrimitiveContract(Type underlyingType)
-      : base(underlyingType)
-    {
-      ContractType = JsonContractType.Primitive;
-
-      TypeCode = ConvertUtils.GetTypeCode(underlyingType);
-      IsReadOnlyOrFixedSize = true;
-    }
+    Double,
+    /// <summary>
+    /// Floating point numbers are parsed to <see cref="Decimal"/>.
+    /// </summary>
+    Decimal
   }
 }

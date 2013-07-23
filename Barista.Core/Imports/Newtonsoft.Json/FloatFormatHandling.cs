@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,29 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using Barista.Newtonsoft.Json.Utilities;
-
-namespace Barista.Newtonsoft.Json.Serialization
+namespace Barista.Newtonsoft.Json
 {
   /// <summary>
-  /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.
+  /// Specifies float format handling options when writing special floating point numbers, e.g. <see cref="F:System.Double.NaN"/>,
+  /// <see cref="F:System.Double.PositiveInfinity"/> and <see cref="F:System.Double.NegativeInfinity"/> with <see cref="JsonWriter"/>.
   /// </summary>
-  public class JsonPrimitiveContract : JsonContract
+  public enum FloatFormatHandling
   {
-    internal PrimitiveTypeCode TypeCode { get; set; }
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="JsonPrimitiveContract"/> class.
+    /// Write special floating point values as strings in JSON, e.g. "NaN", "Infinity", "-Infinity".
     /// </summary>
-    /// <param name="underlyingType">The underlying type for the contract.</param>
-    public JsonPrimitiveContract(Type underlyingType)
-      : base(underlyingType)
-    {
-      ContractType = JsonContractType.Primitive;
-
-      TypeCode = ConvertUtils.GetTypeCode(underlyingType);
-      IsReadOnlyOrFixedSize = true;
-    }
+    String,
+    /// <summary>
+    /// Write special floating point values as symbols in JSON, e.g. NaN, Infinity, -Infinity.
+    /// Note that this will produce non-valid JSON.
+    /// </summary>
+    Symbol,
+    /// <summary>
+    /// Write special floating point values as the property's default value in JSON, e.g. 0.0 for a <see cref="System.Double"/> property, null for a <see cref="System.Nullable{Double}"/> property.
+    /// </summary>
+    DefaultValue
   }
 }

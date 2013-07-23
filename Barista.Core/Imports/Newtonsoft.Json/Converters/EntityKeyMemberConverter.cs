@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE40 || PORTABLE)
 using System;
 using Barista.Newtonsoft.Json.Serialization;
 using System.Globalization;

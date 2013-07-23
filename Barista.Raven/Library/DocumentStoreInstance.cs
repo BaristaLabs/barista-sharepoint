@@ -25,23 +25,27 @@ namespace Barista.Raven.Library
       if (creationInfo != null && creationInfo != Null.Value && creationInfo != Undefined.Value &&
           creationInfo is ObjectInstance)
       {
-        return JurassicHelper.Coerce<DocumentStoreInstance>(this.Engine, creationInfo);
+        var result = JurassicHelper.Coerce<DocumentStoreInstance>(this.Engine, creationInfo);
+        return result;
       }
-      else
-        return new DocumentStoreInstance(this.InstancePrototype);
+      return new DocumentStoreInstance(this.InstancePrototype);
     }
   }
 
   [Serializable]
   public class DocumentStoreInstance : ObjectInstance
   {
-    private readonly RavenDB.Document.DocumentStore m_documentStore = new DocumentStore();
+    private readonly RavenDB.Document.DocumentStore m_documentStore;
 
     public DocumentStoreInstance(ObjectInstance prototype)
       : base(prototype)
     {
       this.PopulateFields();
       this.PopulateFunctions();
+
+      m_documentStore = new DocumentStore {
+        Credentials = null
+      };
     }
 
     public DocumentStoreInstance(ObjectInstance prototype, RavenDB.Document.DocumentStore documentStore)
@@ -76,7 +80,7 @@ namespace Barista.Raven.Library
         if (m_documentStore.Credentials is NetworkCredential)
           return new NetworkCredentialInstance(this.Engine.Object.InstancePrototype,
                                                m_documentStore.Credentials as NetworkCredential);
-        return Null.Value;
+        return null;
       }
       set
       {

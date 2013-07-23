@@ -50,6 +50,7 @@
     /// <summary>
     /// Gets or sets a value that indicates if the password value will be masked.
     /// </summary>
+    [JsonIgnore]
     public bool MaskPassword
     {
       get;
