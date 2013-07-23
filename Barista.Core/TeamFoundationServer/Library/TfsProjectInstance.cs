@@ -7,33 +7,33 @@
   using System;
 
   [Serializable]
-  public class ProjectConstructor : ClrFunction
+  public class TfsProjectConstructor : ClrFunction
   {
-    public ProjectConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "Project", new ProjectInstance(engine.Object.InstancePrototype))
+    public TfsProjectConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "Project", new TfsProjectInstance(engine.Object.InstancePrototype))
     {
     }
 
     [JSConstructorFunction]
-    public ProjectInstance Construct()
+    public TfsProjectInstance Construct()
     {
-      return new ProjectInstance(this.InstancePrototype);
+      return new TfsProjectInstance(this.InstancePrototype);
     }
   }
 
   [Serializable]
-  public class ProjectInstance : ObjectInstance
+  public class TfsProjectInstance : ObjectInstance
   {
     private readonly Project m_project;
 
-    public ProjectInstance(ObjectInstance prototype)
+    public TfsProjectInstance(ObjectInstance prototype)
       : base(prototype)
     {
       this.PopulateFields();
       this.PopulateFunctions();
     }
 
-    public ProjectInstance(ObjectInstance prototype, Project project)
+    public TfsProjectInstance(ObjectInstance prototype, Project project)
       : this(prototype)
     {
       if (project == null)
@@ -63,6 +63,54 @@
     public UriInstance Uri
     {
       get { return new UriInstance(this.Engine.Object.InstancePrototype, m_project.Uri); }
+    }
+
+    [JSFunction(Name = "getAllIterations")]
+    public ArrayInstance GetAllIterations()
+    {
+      var result = this.Engine.Array.Construct();
+
+      foreach (Node node in m_project.IterationRootNodes)
+      {
+        ArrayInstance.Push(result, node.Name);
+        GetAllIterationsRecursive(node, result);
+      }
+
+      return result;
+    }
+
+    [JSFunction(Name = "getWorkItemTypes")]
+    public ArrayInstance GetWorkItemTypes()
+    {
+      var result = this.Engine.Array.Construct();
+      foreach (WorkItemType workItemType in m_project.WorkItemTypes)
+      {
+        ArrayInstance.Push(result, new TfsWorkItemTypeInstance(this.Engine.Object.InstancePrototype, workItemType));
+      }
+      return result;
+    }
+
+    [JSFunction(Name = "queryWorkItems")]
+    public ArrayInstance QueryWorkItems(object query)
+    {
+      var result = this.Engine.Array.Construct();
+
+      var wiql = TypeConverter.ToString(query);
+      var wiQuery = new Query(m_project.Store, wiql);
+      foreach (WorkItem workItem in wiQuery.RunQuery())
+      {
+        ArrayInstance.Push(result, new TfsWorkItemInstance(this.Engine.Object.InstancePrototype, workItem));
+      }
+      return result;
+    }
+
+    private void GetAllIterationsRecursive(Node node, ArrayInstance array)
+    {
+      foreach (Node item in node.ChildNodes)
+      {
+        ArrayInstance.Push(array, node.Name);
+        GetAllIterationsRecursive(item, array);
+      }
     }
   }
 }

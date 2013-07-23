@@ -62,13 +62,17 @@
 
     #endregion
 
-    [JSFunction(Name = "listTeamProjectCollections")]
-    public ArrayInstance ListTeamProjectCollections()
+    [JSFunction(Name = "allowUntrustedCertificates")]
+    public void AllowUntrusedCertificates()
     {
       //Trust all certificates
       System.Net.ServicePointManager.ServerCertificateValidationCallback =
           ((sender, certificate, chain, sslPolicyErrors) => true);
+    }
 
+    [JSFunction(Name = "listTeamProjectCollections")]
+    public ArrayInstance ListTeamProjectCollections()
+    {
       var configurationServer = TfsConfigurationServerFactory.GetConfigurationServer(m_tfsUri);
       configurationServer.Credentials = m_credentialsProvider.Credential;
 
@@ -91,9 +95,20 @@
       return result;
     }
 
+    [JSDoc("Returns the Team Project Collection with the specified display name. If no name is specified, gets the default project collection for the specified url.")]
     [JSFunction(Name="getTeamProjectCollection")]
-    public object GetTeamProjectCollection(string name)
+    public object GetTeamProjectCollection(object name)
     {
+      if (name == null || name == Null.Value || name == Undefined.Value)
+      {
+        var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(m_tfsUri);
+        tfs.Credentials = m_credentialsProvider.Credential;
+
+        tfs.EnsureAuthenticated();
+        return new TfsTeamProjectCollectionInstance(this.Engine.Object, tfs);
+      }
+
+      var strName = TypeConverter.ToString(name);
       var configurationServer = TfsConfigurationServerFactory.GetConfigurationServer(m_tfsUri);
       configurationServer.Credentials = m_credentialsProvider.Credential;
 
@@ -105,7 +120,7 @@
         new[] { CatalogResourceTypes.ProjectCollection },
         false, CatalogQueryOptions.None);
 
-      var teamProjectCollection = tpcNodes.FirstOrDefault(p => p.Resource.DisplayName == name);
+      var teamProjectCollection = tpcNodes.FirstOrDefault(p => p.Resource.DisplayName == strName);
 
       if (teamProjectCollection == null)
         return Null.Value;

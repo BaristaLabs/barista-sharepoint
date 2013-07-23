@@ -1366,7 +1366,10 @@
     <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsWorkItemStore.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemFieldInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemStoreInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemTypeInstance.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />

@@ -1,11 +1,11 @@
 ﻿namespace Barista.TeamFoundationServer.Library
 {
+  using System.Linq;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Barista.Library;
   using Microsoft.TeamFoundation.Client;
   using System;
-  using Microsoft.TeamFoundation.Framework.Common;
   using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
   [Serializable]
@@ -61,16 +61,39 @@
       get { return new UriInstance(this.Engine.Object.InstancePrototype, m_tfsTeamProjectCollection.Uri); }
     }
 
+    [JSFunction(Name = "listProjects")]
+    public ArrayInstance ListProjects()
+    {
+      //Not sure if just getting the workitemstore and iterating it's projects is preferable to the following:
+
+      //var catalogNode = m_tfsTeamProjectCollection.CatalogNode;
+
+      //var teamProjects = catalogNode.QueryChildren(
+      //  new[] { CatalogResourceTypes.TeamProject },
+      //  false, CatalogQueryOptions.None);
+
+
+      var workItemStore = m_tfsTeamProjectCollection.GetService<WorkItemStore>();
+
+      var result = this.Engine.Array.Construct();
+      foreach (var project in workItemStore.Projects.OfType<Project>())
+      {
+        ArrayInstance.Push(result, new TfsProjectInstance(this.Engine.Object.InstancePrototype, project));
+      }
+
+      return result;
+    }
+
     [JSFunction(Name = "getProject")]
     public object GetProject(string projectName)
     {
-      var catalogNode = m_tfsTeamProjectCollection.CatalogNode;
+      var workItemStore = m_tfsTeamProjectCollection.GetService<WorkItemStore>();
+      var project = workItemStore.Projects.OfType<Project>().FirstOrDefault(p => p.Name == projectName);
 
-      var allTheThings = catalogNode.QueryChildren(
-        new[] { CatalogResourceTypes.TeamProject },
-        false, CatalogQueryOptions.None);
+      if (project == null)
+        return Null.Value;
 
-      return allTheThings.Count;
+      return new TfsProjectInstance(this.Engine.Object.InstancePrototype, project);
     }
 
     [JSFunction(Name = "getWorkItemStore")]

@@ -152,6 +152,7 @@ namespace Barista
       response.Location = this.RedirectLocation;
       response.StatusCode = this.StatusCode;
       response.StatusDescription = this.StatusDescription;
+      response.StatusDescription = response.StatusDescription.Replace("\r\n", "").Replace("\r", "");  
       response.SuppressEntityBody = this.SuppressContent;
 
       foreach(var header in this.Headers.Keys)
