@@ -25,7 +25,7 @@
     <customAssembly location="YamlDotNet.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\YamlDotNet.Core.2.0.1\lib\net35\YamlDotNet.Core.dll" />
     <customAssembly location="YamlDotNet.RepresentationModel.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\YamlDotNet.RepresentationModel.2.0.1\lib\net35\YamlDotNet.RepresentationModel.dll" />
     <customAssembly location="Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
-    <customAssembly location="Microsoft.TeamFoundation.Client.dll" deploymentTarget="WebApplication" sourcePath="..\Lib\Microsoft.TeamFoundation.Client.dll" />
+    <customAssembly location="Microsoft.TeamFoundation.Client.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.TeamFoundation.Client.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />
