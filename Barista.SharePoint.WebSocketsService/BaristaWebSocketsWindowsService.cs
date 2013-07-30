@@ -24,11 +24,11 @@
       if (localServer == null)
         throw new InvalidOperationException("Unable to locate a SharePoint farm. Ensure that the current machine is joined to a SharePoint farm and the farm is online.");
 
-      m_serviceHost = new ServiceHost(typeof(SPBaristaWebSocketsService));
+      //m_serviceHost = new ServiceHost(typeof(SPBaristaWebSocketsService));
       //m_serviceHost.AddServiceEndpoint(typeof (IBaristaSearch),
       //                                 new WSHttpBinding(SecurityMode.TransportWithMessageCredential,
       //                                                   true), localServer.Address);
-      m_serviceHost.Open();
+      //m_serviceHost.Open();
     }
 
     public void Stop()
