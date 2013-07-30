@@ -1,11 +1,11 @@
 ﻿namespace Barista.WebSockets
 {
+  using SuperWebSocket;
   using System;
   using System.Collections.Concurrent;
   using System.Linq;
   using System.Net.NetworkInformation;
   using System.ServiceModel;
-  using SuperWebSocket;
 
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
   public class BaristaWebSocketsService : IBaristaWebSockets
@@ -15,6 +15,7 @@
     public bool SetupWebSocketServer(int port, WebSocketServerOptions options)
     {
       var appServer = new WebSocketServer();
+      appServer.NewMessageReceived += appServer_MessageReceived;
       return appServer.Setup(port) && Servers.TryAdd(port, appServer);
     }
 
@@ -46,9 +47,14 @@
       return Servers.TryGetValue(port, out appServer) && appServer.Start();
     }
 
-    public void SendMessage(int port, string message)
+    public void SendMessage(int port, string sessionId, string message)
     {
-      throw new NotImplementedException("Blah");
+      WebSocketServer appServer;
+      if (Servers.TryGetValue(port, out appServer) == false)
+        throw new InvalidOperationException("Unable to send message -- an app server does not exist on the specified port.");
+
+      var session = appServer.GetAppSessionByID(sessionId);
+      session.Send(message);
     }
 
     public void StopWebSocketServer(int port)
@@ -64,6 +70,13 @@
     {
       WebSocketServer appServer;
       Servers.TryRemove(port, out appServer);
+    }
+
+    private static void appServer_MessageReceived(WebSocketSession session, string message)
+    {
+      //TODO: Obtain a script engine, and execute the onmessagedreceived script form configuration.
+      //Send the received message back
+      session.Send("Server: " + message);
     }
   }
 }

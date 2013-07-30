@@ -357,18 +357,27 @@
     }
 
     [JSFunction(Name = "deleteDocuments")]
-    public void DeleteDocuments(ArrayInstance documentIds)
+    public void DeleteDocuments(object documentIds)
     {
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      var documentIdValues = documentIds.ElementValues
-                                        .Select(documentId => TypeConverter.ConvertTo<string>(this.Engine, documentId))
-                                        .Where(
-                                          documentIdValue =>
-                                          documentIdValue.IsNullOrWhiteSpace() == false &&
-                                          documentIdValue != "undefined")
-                                        .ToList();
+      IEnumerable<string> documentIdValues;
+      if (documentIds is ArrayInstance)
+      {
+        var arrDocumentIds = documentIds as ArrayInstance;
+        documentIdValues = arrDocumentIds.ElementValues
+          .Select(documentId => TypeConverter.ConvertTo<string>(this.Engine, documentId))
+          .Where(
+            documentIdValue =>
+              documentIdValue.IsNullOrWhiteSpace() == false &&
+              documentIdValue != "undefined")
+          .ToList();
+      }
+      else
+      {
+        documentIdValues = new List<string> {TypeConverter.ToString(documentIds)};
+      }
 
       m_baristaSearchServiceProxy.DeleteDocuments(this.IndexName, documentIdValues);
     }
@@ -536,7 +545,9 @@
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
       var result = m_baristaSearchServiceProxy.Retrieve(this.IndexName, documentId);
-      return new JsonDocumentInstance(this.Engine.Object.InstancePrototype, result);
+      return result == null
+        ? null
+        : new JsonDocumentInstance(this.Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "search")]

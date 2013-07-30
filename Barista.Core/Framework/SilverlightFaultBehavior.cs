@@ -40,10 +40,12 @@
       {
         if (reply != null && reply.IsFault)
         {
-          HttpResponseMessageProperty property = new HttpResponseMessageProperty();
+          var property = new HttpResponseMessageProperty {
+            StatusCode = System.Net.HttpStatusCode.OK,
+            StatusDescription = reply.ToString()
+          };
 
           // Here the response code is changed to 200.
-          property.StatusCode = System.Net.HttpStatusCode.OK;
 
           reply.Properties[HttpResponseMessageProperty.Name] = property;
         }

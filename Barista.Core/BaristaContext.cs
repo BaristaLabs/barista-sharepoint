@@ -83,7 +83,7 @@
       {
         if (s_currentContext == null && HttpContext.Current != null)
         {
-          s_currentContext = BaristaContext.CreateContextFromSPContext(HttpContext.Current);
+          s_currentContext = BaristaContext.CreateContextFromHttpContext(HttpContext.Current);
         }
         return s_currentContext;
       }
@@ -99,11 +99,11 @@
     }
 
     /// <summary>
-    /// Using the specified SPContext, returns a new Barista Context.
+    /// Using the specified HttpContext, returns a new Barista Context.
     /// </summary>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static BaristaContext CreateContextFromSPContext(HttpContext context)
+    public static BaristaContext CreateContextFromHttpContext(HttpContext context)
     {
       var result = new BaristaContext();
 

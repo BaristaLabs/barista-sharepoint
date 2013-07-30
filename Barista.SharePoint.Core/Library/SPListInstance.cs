@@ -700,6 +700,31 @@
       return result;
     }
 
+    [JSFunction(Name = "getContentTypeById")]
+    public SPContentTypeInstance GetContentTypeById(object contentType)
+    {
+      var bestMatch = SPContentTypeId.Empty;
+
+      if (contentType is string)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch(new SPContentTypeId(contentType as string));
+      }
+      else if (contentType is SPContentTypeIdInstance)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
+      }
+      else if (contentType is SPContentTypeInstance)
+      {
+        bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+      }
+
+      if (bestMatch == SPContentTypeId.Empty)
+        return null;
+
+      var bestMatchContentType = m_list.ContentTypes[bestMatch];
+      return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, bestMatchContentType);
+    }
+
     [JSFunction(Name = "getEventReceivers")]
     public ArrayInstance GetEventReceivers()
     {
@@ -733,7 +758,7 @@
     [JSFunction(Name = "removeContentType")]
     public void RemoveContentType(object contentType)
     {
-      SPContentTypeId bestMatch = SPContentTypeId.Empty;
+      var bestMatch = SPContentTypeId.Empty;
 
       if (contentType is string)
       {

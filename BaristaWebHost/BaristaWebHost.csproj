@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
+    <Content Include="Barista\v1\Search.svc" />
     <Content Include="favicon.ico" />
     <Content Include="index.htm" />
     <Content Include="readme.txt" />
@@ -138,6 +139,7 @@
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\API\Raven\initializeDocumentStoreWithConfigurationObject.js" />
     <Content Include="UnitTests\API\Raven\createDocument.js" />
+    <Content Include="UnitTests\API\SearchIndex\storeAndRetrieve.js" />
     <Content Include="UnitTests\API\Web\getWebRequest.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaDocumentTests.js" />
@@ -156,6 +158,7 @@
     <Content Include="UnitTests\Content\DemoTemplate.htm" />
     <Content Include="UnitTests\BaristaDocumentStoreTests.js" />
     <Content Include="UnitTests\BaristaWebTests.js" />
+    <Content Include="UnitTests\BaristaSearchIndexTests.js" />
     <Content Include="UnitTests\RavenBundleTests.js" />
     <Content Include="UnitTests\index.html" />
     <Content Include="Web.config" />

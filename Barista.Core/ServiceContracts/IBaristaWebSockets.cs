@@ -19,7 +19,7 @@
     bool StartWebSocketServer(int port);
 
     [OperationContract]
-    void SendMessage(int port, string message);
+    void SendMessage(int port, string sessionId, string message);
 
     [OperationContract]
     void StopWebSocketServer(int port);

@@ -1,5 +1,6 @@
 ﻿namespace Barista.Search
 {
+  using System.ServiceModel.Web;
   using Barista.Extensions;
   using Barista.Logging;
   using Barista.Newtonsoft.Json;
@@ -28,36 +29,12 @@
     private static readonly ILog StartupLog = LogManager.GetLogger(typeof(BaristaSearchService).FullName + ".Startup");
 
     /// <summary>
-    /// Deletes all documents from the specified index.
-    /// </summary>
-    /// <param name="indexName"></param>
-    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    public void DeleteAllDocuments(string indexName)
-    {
-      try
-      {
-        var index = GetOrAddIndex(indexName, true);
-        try
-        {
-          index.DeleteAll();
-        }
-        catch (OutOfMemoryException)
-        {
-          CloseIndexWriter(indexName, false);
-        }
-      }
-      catch (Exception ex)
-      {
-        throw new FaultException(ex.Message);
-      }
-    }
-
-    /// <summary>
     /// Deletes the documents that have the specified document ids
     /// </summary>
     /// <param name="indexName"></param>
     /// <param name="keys"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
     public void DeleteDocuments(string indexName, IEnumerable<string> keys)
     {
       try
@@ -81,10 +58,38 @@
     }
 
     /// <summary>
+    /// Deletes all documents from the specified index.
+    /// </summary>
+    /// <param name="indexName"></param>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+    public void DeleteAllDocuments(string indexName)
+    {
+      try
+      {
+        var index = GetOrAddIndex(indexName, true);
+        try
+        {
+          index.DeleteAll();
+        }
+        catch (OutOfMemoryException)
+        {
+          CloseIndexWriter(indexName, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        throw new FaultException(ex.Message);
+      }
+    }
+
+    /// <summary>
     /// Returns a value that indicates if an index with the specified name exists.
     /// </summary>
     /// <param name="indexName"></param>
     /// <returns></returns>
+    [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public bool DoesIndexExist(string indexName)
     {
       var directory = GetLuceneDirectoryFromIndexName(indexName);
@@ -100,6 +105,7 @@
     /// <param name="docId"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public Explanation Explain(string indexName, Barista.Search.Query query, int docId)
     {
        var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
@@ -126,6 +132,7 @@
     /// <param name="fragCharSize"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public string Highlight(string indexName, Barista.Search.Query query, int docId, string fieldName, int fragCharSize)
     {
       var highlighter = GetFastVectorHighlighter();
@@ -154,6 +161,7 @@
     /// <param name="documentId"></param>
     /// <param name="document"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
       try
@@ -198,6 +206,7 @@
     /// <param name="indexName"></param>
     /// <param name="document"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
     public void IndexJsonDocument(string indexName, JsonDocumentDto document)
     {
       try
@@ -222,6 +231,7 @@
     /// <param name="indexName"></param>
     /// <param name="documents"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
     public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
     {
       try
@@ -286,8 +296,12 @@
     /// <param name="documentId"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebGet(ResponseFormat = WebMessageFormat.Json)]
     public JsonDocumentDto Retrieve(string indexName, string documentId)
     {
+      if (documentId.IsNullOrWhiteSpace())
+        throw new ArgumentNullException("documentId", @"A document Id must be specified.");
+
       try
       {
         var index = GetOrAddIndex(indexName, true);
@@ -323,6 +337,7 @@
     /// <param name="arguments"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
       if (arguments == null)
@@ -364,6 +379,7 @@
     /// <param name="arguments"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public int SearchResultCount(string indexName, SearchArguments arguments)
     {
       if (arguments == null)
@@ -405,6 +421,7 @@
     /// <param name="arguments"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
       if (arguments == null)
@@ -445,6 +462,7 @@
     /// <param name="indexName"></param>
     /// <param name="fieldOptions"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
     public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
     {
       try

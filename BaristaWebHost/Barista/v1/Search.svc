@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Debug="true" Language="C#" Service="Barista.Web.BaristaWebSearchService, Barista.Web, Version=1.0.0.0, Culture=neutral" Factory="System.ServiceModel.Activation.WebServiceHostFactory"%>

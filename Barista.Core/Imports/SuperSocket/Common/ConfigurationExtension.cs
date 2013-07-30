@@ -122,7 +122,7 @@ namespace Barista.SuperSocket.Common
             if (configProperty == null)
                 return string.Empty;
 
-            var configuration = (Configuration)configProperty.GetValue(config, new object[0]);
+            var configuration = (System.Configuration.Configuration)configProperty.GetValue(config, new object[0]);
             return configuration.FilePath;
         }
     }

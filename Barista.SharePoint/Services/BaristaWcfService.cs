@@ -18,7 +18,6 @@
   /// <summary>
   /// Represents the Barista WCF service endpoint that responds to WCF based requests.
   /// </summary>
-  [SilverlightFaultBehavior]
   [BasicHttpBindingServiceMetadataExchangeEndpoint]
   [ServiceContract(Namespace = Barista.Constants.ServiceNamespace)]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

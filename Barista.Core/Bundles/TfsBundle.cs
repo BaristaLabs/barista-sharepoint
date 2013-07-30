@@ -1,4 +1,4 @@
-﻿namespace Barista.SharePoint.Bundles
+﻿namespace Barista.Bundles
 {
   using System;
   using Barista.TeamFoundationServer.Library;

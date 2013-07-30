@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
+  using Barista.Configuration;
   using Barista.Extensions;
   using Barista.Newtonsoft.Json;
   using Barista.SharePoint.Search;
@@ -34,7 +35,7 @@
       var indexDefinitionCollection = JsonConvert.DeserializeObject<IList<IndexDefinition>>(indexDefinitions);
       var indexDefinitionToUse =
         indexDefinitionCollection.FirstOrDefault(
-          id => id.Name.IsNullOrWhiteSpace() == false && id.Name.ToLowerInvariant() == indexName.ToLowerInvariant());
+          id => id.IndexName.IsNullOrWhiteSpace() == false && id.IndexName.ToLowerInvariant() == indexName.ToLowerInvariant());
 
       if (indexDefinitionToUse == null)
         return null;
@@ -144,41 +145,5 @@
       if (trusted == false)
         throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));
     }
-
-// ReSharper disable ClassNeverInstantiated.Local
-// ReSharper disable UnusedAutoPropertyAccessor.Local
-    private class IndexDefinition
-    {
-      [JsonProperty("name")]
-      public string Name
-      {
-        get;
-
-        set;
-      }
-
-      [JsonProperty("description")]
-      public string Description
-      {
-        get;
-        set;
-      }
-
-      [JsonProperty("typeName")]
-      public string TypeName
-      {
-        get;
-        set;
-      }
-
-      [JsonProperty("indexStoragePath")]
-      public string IndexStoragePath
-      {
-        get;
-        set;
-      }
-    }
-// ReSharper restore UnusedAutoPropertyAccessor.Local
-// ReSharper restore ClassNeverInstantiated.Local
   }
 }
