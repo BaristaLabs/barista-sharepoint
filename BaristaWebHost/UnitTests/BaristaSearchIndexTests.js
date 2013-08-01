@@ -65,3 +65,15 @@ asyncTest("Assert that faceted searches have the expected results.", function ()
 
     Barista.runTestScript(scriptPath);
 });
+
+asyncTest("Assert that counts are returned via search result count.", function () {
+    var scriptPath = "~/UnitTests/API/SearchIndex/searchResultCount.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
+asyncTest("Assert that field options can be set and the corresponding behavior is correct.", function () {
+    var scriptPath = "~/UnitTests/API/SearchIndex/setFieldOptions.js";
+
+    Barista.runTestScript(scriptPath);
+});

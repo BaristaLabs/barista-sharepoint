@@ -12,6 +12,8 @@
   using Barista.Search;
   using Barista.Newtonsoft.Json.Linq;
   using Lucene.Net.Documents;
+  using Lucene.Net.Index;
+  using Term = Barista.Search.Term;
 
   [Serializable]
   public class SearchServiceConstructor : ClrFunction
@@ -612,6 +614,87 @@
       // ReSharper disable CoVariantArrayConversion
       return this.Engine.Array.Construct(searchResults.Select(sr => new FacetedSearchResultInstance(this.Engine.Object.InstancePrototype, sr)).ToArray());
       // ReSharper restore CoVariantArrayConversion
+    }
+
+    [JSFunction(Name = "setFieldOptions")]
+    public void SetFieldOptions(object fieldOptions)
+    {
+      if (fieldOptions == null || fieldOptions == Null.Value || fieldOptions == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error",
+          "The first argument must be an object, or an array of objects, that defines the field options for the index.");
+
+      var args = new List<FieldOptions>();
+      if (fieldOptions is ArrayInstance)
+      {
+        var fieldOptionsArray = fieldOptions as ArrayInstance;
+        args.AddRange(fieldOptionsArray.ElementValues.OfType<ObjectInstance>().Select(o => CoerceFieldOptions(o)));
+      }
+      else if (fieldOptions is ObjectInstance)
+      {
+        args.Add(CoerceFieldOptions(fieldOptions as ObjectInstance));
+      }
+
+      m_baristaSearchServiceProxy.SetFieldOptions(this.IndexName, args);
+    }
+
+    private FieldOptions CoerceFieldOptions(ObjectInstance fieldOptions)
+    {
+      if (fieldOptions == null)
+        throw new JavaScriptException(this.Engine, "Error", "Cannot convert a null field options object.");
+
+      var result = new FieldOptions();
+
+      if (fieldOptions.HasProperty("fieldName"))
+        result.FieldName = TypeConverter.ToString(fieldOptions.GetPropertyValue("fieldName"));
+      else
+        throw new JavaScriptException(this.Engine, "Error", "All field options objects must contain a field name.");
+
+      if (fieldOptions.HasProperty("index"))
+      {
+        var propertyValue = fieldOptions.GetPropertyValue("index");
+        if (propertyValue != null && propertyValue != Null.Value && propertyValue != Undefined.Value)
+        {
+          FieldIndexType fieldIndexType;
+          if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldIndexType) ==
+              false)
+            throw new JavaScriptException(this.Engine, "Error",
+              "If the index property is defined on the field options, it must be one of these values: Analyzed, AnalyzedNoNorms, NotAnalyzed, NotAnalyzedNoNorms, NotIndexed");
+
+          result.Index = fieldIndexType;
+        }
+      }
+
+      if (fieldOptions.HasProperty("storage"))
+      {
+        var propertyValue = fieldOptions.GetPropertyValue("storage");
+        if (propertyValue != null && propertyValue != Null.Value && propertyValue != Undefined.Value)
+        {
+          FieldStorageType fieldStorageType;
+          if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldStorageType) ==
+              false)
+            throw new JavaScriptException(this.Engine, "Error",
+              "If the storage property is defined on the field options, it must be one of these values: Stored, NotStored");
+
+          result.Storage = fieldStorageType;
+        }
+      }
+
+      if (fieldOptions.HasProperty("termVectorType"))
+      {
+        var propertyValue = fieldOptions.GetPropertyValue("termVectorType");
+        if (propertyValue != null && propertyValue != Null.Value && propertyValue != Undefined.Value)
+        {
+          FieldTermVectorType fieldTermVectorType;
+          if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldTermVectorType) ==
+              false)
+            throw new JavaScriptException(this.Engine, "Error",
+              "If the termVectorType property is defined on the field options, it must be one of these values: No, WithOffsets, WithPositions, WithPositionsOffsets, Yes");
+
+          result.TermVectorType = fieldTermVectorType;
+        }
+      }
+
+      return result;
     }
 
     private SearchArguments CoerceSearchArguments(object query, object maxResults)

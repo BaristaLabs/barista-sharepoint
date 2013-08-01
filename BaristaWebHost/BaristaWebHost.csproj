@@ -139,6 +139,8 @@
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\API\Raven\initializeDocumentStoreWithConfigurationObject.js" />
     <Content Include="UnitTests\API\Raven\createDocument.js" />
+    <Content Include="UnitTests\API\SearchIndex\setFieldOptions.js" />
+    <Content Include="UnitTests\API\SearchIndex\searchResultCount.js" />
     <Content Include="UnitTests\API\SearchIndex\facetedSearch.js" />
     <Content Include="UnitTests\API\SearchIndex\search.js" />
     <Content Include="UnitTests\API\SearchIndex\retrieve.js" />

@@ -1,4 +1,5 @@
 ﻿require("Unit Testing");
+require("Linq");
 var index = require("Barista Search Index");
 
 index.indexName = "Test";
@@ -20,17 +21,33 @@ for (var i = 0; i < numberOfItems; i++) {
     items.push(newItem);
 }
 
-//Index a bunch of items at a wack.
+//Add a new, known item.
+items.push({
+    "@id": chance.guid(),
+    "@metadata": {
+        "tag": "This stuff is bananas"
+    },
+    hello: "Hawaii"
+});
+
+//Index the items at a wack.
 index.index(items);
 
 //Search for a single term.
-var toRetrieveIndex = chance.natural({ min: 0, max: numberOfItems - 1 });
+var toRetrieveIndex = chance.natural({ min: 0, max: items.length - 1 });
 var itemToRetrieve = items[toRetrieveIndex];
 
-var termQuery = index.createTermQuery("hello", itemToRetrieve.hello);
-var results = index.search(termQuery);
+var results = index.facetedSearch("hello: h*", null, ["hello"]);
 
-assert.isNotNull(results, "The specified item was not retrieved from the index.");
-assert.isTrue(results.length > 0, "The specified item was not retrieved as part of the search results.");
+assert.isNotNull(results, "Faceted Search did not return any items.");
+assert.isTrue(results.length > 0, "Faceted search should return a collection of all terms for the hello field.");
+var hawaiiResult = Enumerable.From(results)
+.Where(function (r) { return r.facetName == "hawaii"; })
+.FirstOrDefault();
 
-results;
+assert.isTrue(hawaiiResult != null, "Hawaii should be contained within the results.");
+assert.isTrue(hawaiiResult.hitCount == 1, "The facet Hawaii should have exactly one hit.");
+assert.isTrue(hawaiiResult.documents[0].document.metadata.tag == "This stuff is bananas", "The facet document should contain the inserted document with metadata.");
+
+
+hawaiiResult;

@@ -188,7 +188,7 @@
 
     public int SearchResultCount(string indexName, SearchArguments arguments)
     {
-      var response = ExecuteRestRequest<int>("Search", Method.POST, request => request.AddBody(new
+      var response = ExecuteRestRequest<int>("SearchResultCount", Method.POST, request => request.AddBody(new
       {
         indexName,
         arguments
