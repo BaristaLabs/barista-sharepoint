@@ -2,11 +2,9 @@
 {
   using System.IO;
   using System.IO.Packaging;
-  using System.Linq;
   using System;
-  using Microsoft.WindowsAPICodePack.Shell;
+  using System.Linq;
   using System.Text;
-  using Barista.Newtonsoft.Json;
 
   public static class FSDocumentStoreHelper
   {
@@ -19,7 +17,7 @@
         Created = di.CreationTime,
         CreatedBy = containerInfo.CreatedBy,
         Description = containerInfo.Description,
-        EntityCount = di.EnumerateFiles("*.dse", SearchOption.AllDirectories).Count(),
+        EntityCount = di.GetFiles("*.dse", SearchOption.AllDirectories).Count(),
         Id = containerInfo.Id,
         Modified = di.LastWriteTime,
         ModifiedBy = containerInfo.ModifiedBy,
@@ -31,7 +29,7 @@
     private static Guid GetEntityIdFromPackageFileName(string packageFileName)
     {
       var idString = packageFileName.Substring(0, packageFileName.LastIndexOf('.'));
-      return Guid.Parse(idString);
+      return new Guid(idString);
     }
 
     public static Entity MapEntityFromPackage(string packagePath, bool includeData)
@@ -50,12 +48,13 @@
 
     public static Entity MapEntityFromPackage(Package package, bool includeData)
     {
-      var result = new Entity();
-
-      result.Id = Guid.Parse(package.PackageProperties.Identifier);
-      result.Title = package.PackageProperties.Title;
-      result.Namespace = package.PackageProperties.Subject;
-      result.Description = package.PackageProperties.Description;
+      var result = new Entity
+      {
+        Id = new Guid(package.PackageProperties.Identifier),
+        Title = package.PackageProperties.Title,
+        Namespace = package.PackageProperties.Subject,
+        Description = package.PackageProperties.Description
+      };
 
       if (package.PackageProperties.Created.HasValue)
         result.Created = package.PackageProperties.Created.Value;

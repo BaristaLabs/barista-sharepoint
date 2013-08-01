@@ -1,11 +1,8 @@
 ﻿namespace Barista.DocumentStore.FileSystem
 {
+  using Barista.Extensions;
   using System;
   using System.IO;
-  using System.Collections.Generic;
-  using System.Linq;
-  using Barista.Extensions;
-  using Microsoft.WindowsAPICodePack.Shell;
 
   /// <summary>
   /// Represents a Document Store implementation that uses the file system as the persistance mechanism.

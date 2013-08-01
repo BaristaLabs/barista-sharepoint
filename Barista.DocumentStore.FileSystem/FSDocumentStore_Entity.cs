@@ -1,5 +1,6 @@
 ﻿namespace Barista.DocumentStore.FileSystem
 {
+  using Barista.Extensions;
   using Barista.Framework;
   using System;
   using System.Collections.Generic;
@@ -40,9 +41,6 @@
         var defaultEntityPart =
             package.CreatePart(new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep", UriKind.Relative), 
                            "application/json");
-
-        if (defaultEntityPart == null)
-          throw new InvalidOperationException("The Default Entity Part Document could not be created.");
 
         //Copy the data to the default entity part 
         using (var fileStream = new StringStream(data))
@@ -113,7 +111,7 @@
     public IList<Entity> ListEntities(string containerTitle,EntityFilterCriteria criteria)
     {
       var targetPath = GetContainerPath(containerTitle);
-      if (String.IsNullOrWhiteSpace(criteria.Path) == false)
+      if (criteria.Path.IsNullOrWhiteSpace() == false)
       {
         targetPath = Path.Combine(targetPath, criteria.Path);
       }
@@ -309,9 +307,9 @@
     {
       var packagePath = path;
 
-      packagePath = String.IsNullOrWhiteSpace(packagePath)
+      packagePath = packagePath.IsNullOrWhiteSpace()
         ? Path.Combine(GetContainerPath(containerTitle), entityId + ".dse")
-        : Path.Combine(GetContainerPath(containerTitle), packagePath, entityId + ".dse");
+        : Path.Combine(Path.Combine(GetContainerPath(containerTitle), packagePath), entityId + ".dse");
 
       return packagePath;
     }
