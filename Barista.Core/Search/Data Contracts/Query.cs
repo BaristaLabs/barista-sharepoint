@@ -196,6 +196,9 @@
       {
         var queryParserQuery = query as QueryParserQuery;
 
+        //if (queryParserQuery.DefaultField == null)
+        //  throw new InvalidOperationException("With a QueryParserQuery, the DefaultField property cannot be null.");
+        
         var queryParser = new Lucene.Net.QueryParsers.QueryParser(Version.LUCENE_30,
                                                                   queryParserQuery.DefaultField,
                                                                   new StandardAnalyzer(Version.LUCENE_30))

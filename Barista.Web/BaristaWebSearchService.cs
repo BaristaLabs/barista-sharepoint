@@ -3,7 +3,6 @@
   using System.IO;
   using System.Linq;
   using Barista.Configuration;
-  using Barista.Framework;
   using Barista.Search;
   using System;
   using System.Configuration;

@@ -8,6 +8,12 @@
   using System.ServiceModel.Description;
   using System.ServiceModel.Dispatcher;
 
+  /// <summary>
+  /// Represents a Fault Behavior that sets the response code to 200 on fault so that the exception details can be read by the Silverlight Client.
+  /// </summary>
+  /// <remarks>
+  /// See http://msdn.microsoft.com/en-us/library/ee844556(v=vs.95).aspx
+  /// </remarks>
   public class SilverlightFaultBehaviorAttribute : Attribute, IServiceBehavior
   {
     public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)

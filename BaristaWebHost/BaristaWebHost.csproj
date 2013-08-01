@@ -139,6 +139,16 @@
     <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
     <Content Include="UnitTests\API\Raven\initializeDocumentStoreWithConfigurationObject.js" />
     <Content Include="UnitTests\API\Raven\createDocument.js" />
+    <Content Include="UnitTests\API\SearchIndex\facetedSearch.js" />
+    <Content Include="UnitTests\API\SearchIndex\search.js" />
+    <Content Include="UnitTests\API\SearchIndex\retrieve.js" />
+    <Content Include="UnitTests\API\SearchIndex\indexMultiple.js" />
+    <Content Include="UnitTests\API\SearchIndex\index.js" />
+    <Content Include="UnitTests\API\SearchIndex\highlight.js" />
+    <Content Include="UnitTests\API\SearchIndex\doesIndexExist.js" />
+    <Content Include="UnitTests\API\SearchIndex\deleteAllDocuments.js" />
+    <Content Include="UnitTests\API\SearchIndex\explanation.js" />
+    <Content Include="UnitTests\API\SearchIndex\storeAndDelete.js" />
     <Content Include="UnitTests\API\SearchIndex\storeAndRetrieve.js" />
     <Content Include="UnitTests\API\Web\getWebRequest.js" />
     <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
@@ -161,7 +171,9 @@
     <Content Include="UnitTests\BaristaSearchIndexTests.js" />
     <Content Include="UnitTests\RavenBundleTests.js" />
     <Content Include="UnitTests\index.html" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

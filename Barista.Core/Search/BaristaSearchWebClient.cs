@@ -1,12 +1,12 @@
 ﻿namespace Barista.Search
 {
-  using System.Net;
   using Barista.Framework;
   using Barista.Newtonsoft.Json;
   using RestSharp;
   using RestSharp.Serializers;
   using System;
   using System.Collections.Generic;
+  using System.Net;
 
   public class BaristaSearchWebClient : IBaristaSearch
   {
@@ -30,7 +30,9 @@
       {
         var js = new Barista.Newtonsoft.Json.JsonSerializer
         {
-          DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
+          //DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+          TypeNameHandling = TypeNameHandling.Auto,
+          //TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full
         };
 
         var s = new JsonNetSerializer(js);
@@ -38,283 +40,181 @@
       }
     }
 
-    public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
+    protected IRestResponse ExecuteRestRequest(string operation, Method method, Action<RestRequest> configRequest)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("DeleteDocuments", Method.POST)
+      var restRequest = new RestRequest(operation, method)
       {
         JsonSerializer = this.JsonNetSerializer,
         RequestFormat = DataFormat.Json
       };
 
-      request.AddBody(new {
-        indexName = indexName,
-        documentIds = documentIds
-      });
+      configRequest(restRequest);
 
-      // execute the request
-      var response = client.Execute(request);
+      var client = new RestClient(this.Url);
+      client.AddHandler("application/json", new JsonNetDeserializer());
+
+      var response = client.Execute(restRequest);
 
       if (response.StatusCode != HttpStatusCode.OK)
         throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
 
       if (response.ErrorException != null)
         throw response.ErrorException;
+
+      return response;
+    }
+
+    protected IRestResponse<T> ExecuteRestRequest<T>(string operation, Method method, Action<RestRequest> configRequest)
+      where T : new()
+    {
+      var restRequest =  new RestRequest(operation, method)
+      {
+        JsonSerializer = this.JsonNetSerializer,
+        RequestFormat = DataFormat.Json
+      };
+
+      configRequest(restRequest);
+
+      var client = new RestClient(this.Url);
+      client.AddHandler("application/json", new JsonNetDeserializer());
+
+      var response = client.Execute<T>(restRequest);
+
+      if (response.StatusCode != HttpStatusCode.OK)
+        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
+
+      if (response.ErrorException != null)
+        throw response.ErrorException;
+
+      return response;
+    }
+
+    public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
+    {
+      ExecuteRestRequest("DeleteDocuments", Method.POST, request => request.AddBody(new
+      {
+        indexName,
+        documentIds
+      }));
     }
 
     public void DeleteAllDocuments(string indexName)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("DeleteAllDocuments", Method.POST)
-      {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName
-      });
-
-      // execute the request
-      var response = client.Execute(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+      ExecuteRestRequest("DeleteAllDocuments", Method.POST, request => request.AddParameter("indexName", indexName));
     }
 
     public bool DoesIndexExist(string indexName)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("DoesIndexExist", Method.POST)
-      {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddParameter("indexName", indexName);
-
-      // execute the request
-      var response = client.Execute<bool>(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+      var response = ExecuteRestRequest<bool>("DoesIndexExist", Method.POST,
+        request => request.AddParameter("indexName", indexName));
 
       return response.Data;
     }
 
     public Explanation Explain(string indexName, Query query, int documentId)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("Explain", Method.POST)
+      var response = ExecuteRestRequest<Explanation>("Explain", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName,
-        query = query,
-        documentId = documentId
-      });
-
-      // execute the request
-      var response = client.Execute<Explanation>(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        query,
+        documentId
+      }));
 
       return response.Data;
     }
 
     public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("Highlight", Method.POST)
+      var response = ExecuteRestRequest("Highlight", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName,
-        query = query,
-        documentId = documentId,
-        fieldName = fieldName,
-        fragCharSize = fragCharSize
-      });
-
-      // execute the request
-      var response = client.Execute(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        query,
+        documentId,
+        fieldName,
+        fragCharSize
+      }));
 
       return response.Content;
     }
 
     public void IndexDocument(string indexName, string documentId, DocumentDto document)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("IndexDocument", Method.POST)
+      ExecuteRestRequest("IndexDocument", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName,
-        document = document
-      });
-
-      // execute the request
-      var response = client.Execute(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        document
+      }));
     }
 
     public void IndexJsonDocument(string indexName, JsonDocumentDto document)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("IndexJsonDocument", Method.POST)
+      ExecuteRestRequest("IndexJsonDocument", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new {
-        indexName = indexName,
-        document = document
-      });
-
-      // execute the request
-      var response = client.Execute(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        document
+      }));
     }
 
     public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("IndexJsonDocuments", Method.POST)
+      ExecuteRestRequest("IndexJsonDocuments", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName,
-        documents = documents
-      });
-
-      // execute the request
-      var response = client.Execute(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        documents
+      }));
     }
 
     public JsonDocumentDto Retrieve(string indexName, string documentId)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("Retrieve", Method.GET)
+      var response = ExecuteRestRequest <JsonDocumentDto>("Retrieve", Method.GET, request =>
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddParameter("indexName", indexName);
-      request.AddParameter("documentId", documentId);
-
-      // execute the request
-      var response = client.Execute<JsonDocumentDto>(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        request.AddParameter("indexName", indexName);
+        request.AddParameter("documentId", documentId);
+      });
 
       return response.Data;
     }
 
     public IList<SearchResult> Search(string indexName, SearchArguments arguments)
     {
-      var client = new RestClient(this.Url);
-
-      var request = new RestRequest("Search", Method.POST)
+      var response = ExecuteRestRequest<List<SearchResult>>("Search", Method.POST, request => request.AddBody(new
       {
-        JsonSerializer = this.JsonNetSerializer,
-        RequestFormat = DataFormat.Json
-      };
-
-      request.AddBody(new
-      {
-        indexName = indexName,
-        arguments = arguments
-      });
-
-      // execute the request
-      var response = client.Execute<List<SearchResult>>(request);
-
-      if (response.StatusCode != HttpStatusCode.OK)
-        throw new InvalidOperationException("Error Calling Service: " + response.StatusDescription);
-
-      if (response.ErrorException != null)
-        throw response.ErrorException;
+        indexName,
+        arguments
+      }));
 
       return response.Data;
     }
 
     public int SearchResultCount(string indexName, SearchArguments arguments)
     {
-      throw new System.NotImplementedException();
+      var response = ExecuteRestRequest<int>("Search", Method.POST, request => request.AddBody(new
+      {
+        indexName,
+        arguments
+      }));
+
+      return response.Data;
     }
 
     public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
     {
-      throw new System.NotImplementedException();
+      var response = ExecuteRestRequest<List<FacetedSearchResult>>("FacetedSearch", Method.POST, request => request.AddBody(new
+      {
+        indexName,
+        arguments
+      }));
+
+      return response.Data;
     }
 
     public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
     {
-      throw new System.NotImplementedException();
+      ExecuteRestRequest("SetFieldOptions", Method.POST, request => request.AddBody(new
+      {
+        indexName,
+        fieldOptions
+      }));
     }
   }
 }

@@ -17,10 +17,10 @@
       {
         // We need two formatters, since we don't know what type we will need until runtime
         webGetAttribute.ResponseFormat = WebMessageFormat.Json;
-        IDispatchMessageFormatter jsonDispatchMessageFormatter =
+        var jsonDispatchMessageFormatter =
             base.GetReplyDispatchFormatter(operationDescription, endpoint);
         webGetAttribute.ResponseFormat = WebMessageFormat.Xml;
-        IDispatchMessageFormatter xmlDispatchMessageFormatter =
+        var xmlDispatchMessageFormatter =
             base.GetReplyDispatchFormatter(operationDescription, endpoint);
         return new DynamicFormatter
           {

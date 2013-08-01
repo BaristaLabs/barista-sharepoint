@@ -62,9 +62,12 @@
     /// </summary>
     /// <param name="indexName"></param>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+    [WebInvoke(Method = "POST")]
     public void DeleteAllDocuments(string indexName)
     {
+      if (String.IsNullOrEmpty(indexName))
+        throw new ArgumentNullException("indexName");
+
       try
       {
         var index = GetOrAddIndex(indexName, true);
@@ -89,7 +92,7 @@
     /// <param name="indexName"></param>
     /// <returns></returns>
     [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-    [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
+    [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json)]
     public bool DoesIndexExist(string indexName)
     {
       var directory = GetLuceneDirectoryFromIndexName(indexName);

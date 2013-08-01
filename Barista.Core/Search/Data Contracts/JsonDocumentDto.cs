@@ -2,11 +2,18 @@
 {
   using System.Collections.Generic;
   using System.Runtime.Serialization;
+  using Barista.Newtonsoft.Json;
 
   [DataContract(Namespace = Barista.Constants.ServiceNamespace)]
   public class JsonDocumentDto
   {
+    public JsonDocumentDto()
+    {
+      this.FieldOptions = new List<FieldOptions>();
+    }
+
     [DataMember]
+    [JsonProperty("documentId")]
     public string DocumentId
     {
       get;
@@ -14,6 +21,7 @@
     }
 
     [DataMember]
+    [JsonProperty("fieldOptions")]
     public IEnumerable<FieldOptions> FieldOptions
     {
       get;
@@ -21,6 +29,7 @@
     }
 
     [DataMember]
+    [JsonProperty("metadataAsJson")]
     public string MetadataAsJson
     {
       get;
@@ -28,6 +37,7 @@
     }
 
     [DataMember]
+    [JsonProperty("dataAsJson")]
     public string DataAsJson
     {
       get;

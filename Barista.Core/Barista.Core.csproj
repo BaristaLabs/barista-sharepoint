@@ -237,6 +237,12 @@
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
+    <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
+    <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />
+    <Compile Include="Framework\NewtonsoftJsonDispatchFormatter.cs" />
+    <Compile Include="Framework\NewtonsoftJsonSettings.cs" />
+    <Compile Include="Framework\RawBodyWriter.cs" />
     <Compile Include="Helpers\ClientInfo.cs" />
     <Compile Include="Helpers\Device.cs" />
     <Compile Include="Helpers\DeviceParser.cs" />

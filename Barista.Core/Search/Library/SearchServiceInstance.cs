@@ -11,6 +11,7 @@
   using Barista.Newtonsoft.Json;
   using Barista.Search;
   using Barista.Newtonsoft.Json.Linq;
+  using Lucene.Net.Documents;
 
   [Serializable]
   public class SearchServiceConstructor : ClrFunction
@@ -382,6 +383,12 @@
       m_baristaSearchServiceProxy.DeleteDocuments(this.IndexName, documentIdValues);
     }
 
+    [JSFunction(Name = "doesIndexExist")]
+    public bool DoesIndexExist()
+    {
+      return m_baristaSearchServiceProxy.DoesIndexExist(this.IndexName);
+    }
+
     [JSFunction(Name = "explain")]
     public ExplanationInstance Explain(object query, object docId)
     {
@@ -444,98 +451,24 @@
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      //TODO: Recognize DocumentInstance, recognize StringInstance, recognize SPListItemInstance.
-      //And convert/create a JsonDocumentInstance appropriately.
+      if (documentObject == null || documentObject == Null.Value || documentObject == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error",
+          "A document object to be indexed must be supplied as the first parameter.");
 
-      JsonDocumentDto documentToIndex = null;
-      if (documentObject is JsonDocumentInstance)
+      if (documentObject is ArrayInstance)
       {
-        documentToIndex = (documentObject as JsonDocumentInstance).JsonDocument;
+        var documentObjects = documentObject as ArrayInstance;
+        var documentsToIndex = documentObjects.ElementValues
+          .Select(documentToIndex => ConvertObjectToJsonDocumentDto(documentToIndex))
+          .ToList();
+
+        m_baristaSearchServiceProxy.IndexJsonDocuments(this.IndexName, documentsToIndex);
       }
-      else if (documentObject is ObjectInstance)
+      else
       {
-        var obj = documentObject as ObjectInstance;
-        if (obj.HasProperty("@id") == false)
-          throw new JavaScriptException(this.Engine, "Error",
-                                        "When adding a POJO to the index, a property named @id must be specified on the object that indicates the document id.");
-
-        var metadata = String.Empty;
-        if (obj.HasProperty("@metadata"))
-          metadata = JSONObject.Stringify(this.Engine, obj.GetPropertyValue("@metadata"), null, null);
-
-        //Clone the object and remove the @id and @metadata
-        var json = JSONObject.Stringify(this.Engine, obj, null, null);
-        var jObject = JObject.Parse(json);
-        jObject.Remove("@id");
-        jObject.Remove("@metadata");
-
-        //Obtain any field options, add them to the field options collection and remove them from the cloned object.
-        var fieldOptions = new Dictionary<string, FieldOptions>();
-        foreach (var property in jObject.Properties().ToList())
-        {
-          var fieldOption = new FieldOptions();
-         
-          var foundMatch = false;
-
-          if (FieldIndexDeclarative.IsMatch(property.Name))
-          {
-            fieldOption.FieldName = FieldIndexDeclarative.Match(property.Name).Groups["FieldName"].Value;
-            FieldIndexType indexType;
-            if (property.Value.ToString().TryParseEnum(true, FieldIndexType.Analyzed, out indexType))
-            {
-              fieldOption.Index = indexType;
-              foundMatch = true;
-            }
-          }
-          else if (FieldStoreDeclarative.IsMatch(property.Name))
-          {
-            fieldOption.FieldName = FieldStoreDeclarative.Match(property.Name).Groups["FieldName"].Value;
-            FieldStorageType storageType;
-            if (property.Value.ToString().TryParseEnum(true, FieldStorageType.Stored, out storageType))
-            {
-              fieldOption.Storage = storageType;
-              foundMatch = true;
-            }
-          }
-          else if (FieldTermVectorDeclarative.IsMatch(property.Name))
-          {
-            fieldOption.FieldName = FieldTermVectorDeclarative.Match(property.Name).Groups["FieldName"].Value;
-            FieldTermVectorType termVectorType;
-            if (property.Value.ToString().TryParseEnum(true, FieldTermVectorType.Yes, out termVectorType))
-            {
-              fieldOption.TermVectorType = termVectorType;
-              foundMatch = true;
-            }
-          }
-
-          if (foundMatch)
-          {
-            if (fieldOptions.ContainsKey(fieldOption.FieldName))
-            {
-              var efo = fieldOptions[fieldOption.FieldName];
-              efo.Index = fieldOption.Index ?? efo.Index;
-              efo.Storage = fieldOption.Storage ?? efo.Storage;
-              efo.TermVectorType = fieldOption.TermVectorType ?? efo.TermVectorType;
-            }
-            else
-            {
-              fieldOptions.Add(fieldOption.FieldName, fieldOption);
-            }
-
-            jObject.Remove(property.Name);
-          }
-        }
-
-        documentToIndex = new JsonDocumentDto
-          {
-            DocumentId = obj.GetPropertyValue("@id").ToString(),
-            FieldOptions = fieldOptions.Values,
-            MetadataAsJson = metadata,
-            DataAsJson = jObject.ToString(Formatting.None)
-          };
+        var documentToIndex = ConvertObjectToJsonDocumentDto(documentObject);
+        m_baristaSearchServiceProxy.IndexJsonDocument(this.IndexName, documentToIndex);
       }
-
-      m_baristaSearchServiceProxy.IndexJsonDocument(this.IndexName, documentToIndex);
     }
 
     [JSFunction(Name = "retrieve")]
@@ -777,6 +710,102 @@
       }
 
       return args;
+    }
+
+    protected virtual JsonDocumentDto ConvertObjectToJsonDocumentDto(object documentObject)
+    {
+      //TODO: Recognize DocumentInstance, recognize StringInstance, recognize SPListItemInstance.
+      //And convert/create a JsonDocumentInstance appropriately.
+
+      JsonDocumentDto documentToIndex = null;
+      if (documentObject is JsonDocumentInstance)
+      {
+        documentToIndex = (documentObject as JsonDocumentInstance).JsonDocument;
+      }
+      else if (documentObject is ObjectInstance)
+      {
+        var obj = documentObject as ObjectInstance;
+        if (obj.HasProperty("@id") == false)
+          throw new JavaScriptException(this.Engine, "Error",
+                                        "When adding a POJO to the index, a property named @id must be specified on the object that indicates the document id.");
+
+        var metadata = String.Empty;
+        if (obj.HasProperty("@metadata"))
+          metadata = JSONObject.Stringify(this.Engine, obj.GetPropertyValue("@metadata"), null, null);
+
+        //Clone the object and remove the @id and @metadata
+        var json = JSONObject.Stringify(this.Engine, obj, null, null);
+        var jObject = JObject.Parse(json);
+        jObject.Remove("@id");
+        jObject.Remove("@metadata");
+
+        //Obtain any field options, add them to the field options collection and remove them from the cloned object.
+        var fieldOptions = new Dictionary<string, FieldOptions>();
+        foreach (var property in jObject.Properties().ToList())
+        {
+          var fieldOption = new FieldOptions();
+
+          var foundMatch = false;
+
+          if (FieldIndexDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldIndexDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldIndexType indexType;
+            if (property.Value.ToString().TryParseEnum(true, FieldIndexType.Analyzed, out indexType))
+            {
+              fieldOption.Index = indexType;
+              foundMatch = true;
+            }
+          }
+          else if (FieldStoreDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldStoreDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldStorageType storageType;
+            if (property.Value.ToString().TryParseEnum(true, FieldStorageType.Stored, out storageType))
+            {
+              fieldOption.Storage = storageType;
+              foundMatch = true;
+            }
+          }
+          else if (FieldTermVectorDeclarative.IsMatch(property.Name))
+          {
+            fieldOption.FieldName = FieldTermVectorDeclarative.Match(property.Name).Groups["FieldName"].Value;
+            FieldTermVectorType termVectorType;
+            if (property.Value.ToString().TryParseEnum(true, FieldTermVectorType.Yes, out termVectorType))
+            {
+              fieldOption.TermVectorType = termVectorType;
+              foundMatch = true;
+            }
+          }
+
+          if (foundMatch)
+          {
+            if (fieldOptions.ContainsKey(fieldOption.FieldName))
+            {
+              var efo = fieldOptions[fieldOption.FieldName];
+              efo.Index = fieldOption.Index ?? efo.Index;
+              efo.Storage = fieldOption.Storage ?? efo.Storage;
+              efo.TermVectorType = fieldOption.TermVectorType ?? efo.TermVectorType;
+            }
+            else
+            {
+              fieldOptions.Add(fieldOption.FieldName, fieldOption);
+            }
+
+            jObject.Remove(property.Name);
+          }
+        }
+
+        documentToIndex = new JsonDocumentDto
+        {
+          DocumentId = obj.GetPropertyValue("@id").ToString(),
+          FieldOptions = fieldOptions.Values,
+          MetadataAsJson = metadata,
+          DataAsJson = jObject.ToString(Formatting.None)
+        };
+      }
+
+      return documentToIndex;
     }
 
     //TODO: Think about re-implementing the following.

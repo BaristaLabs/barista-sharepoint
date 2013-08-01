@@ -24,7 +24,7 @@
         NullValueHandling = NullValueHandling.Include,
         DefaultValueHandling = DefaultValueHandling.Include,
         
-        DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+        DateFormatHandling = DateFormatHandling.IsoDateFormat,
       };
     }
 
