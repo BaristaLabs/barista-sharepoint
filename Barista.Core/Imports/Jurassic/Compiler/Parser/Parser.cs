@@ -1297,7 +1297,8 @@
       this.m_methodOptimizationHints.HasNestedFunction = true;
 
       // Create a new scope and assign variables within the function body to the scope.
-      var scope = DeclarativeScope.CreateFunctionScope(parentScope, functionName, argumentNames);
+      var includeNameInScope = functionType != FunctionType.Getter && functionType != FunctionType.Setter;
+      var scope = DeclarativeScope.CreateFunctionScope(parentScope, includeNameInScope ? functionName : string.Empty, argumentNames);
 
       // Read the function body.
       var functionParser = Parser.CreateFunctionBodyParser(this, scope);
@@ -1338,7 +1339,8 @@
       // Create a new function expression.
       var options = this.m_options.Clone();
       options.ForceStrictMode = functionParser.StrictMode;
-      var context = new FunctionMethodGenerator(this.m_engine, scope, functionName, argumentNames,
+      var context = new FunctionMethodGenerator(this.m_engine, scope, functionName,
+          includeNameInScope, argumentNames,
           bodyTextBuilder.ToString(0, bodyTextBuilder.Length - 1), body,
           this.SourcePath, options)
       {
