@@ -4,20 +4,28 @@
   using System.Runtime.Serialization;
   using Barista.Newtonsoft.Json;
 
-  [DataContract(Namespace=Barista.Constants.ServiceNamespace)]
-  public class WebSocketServerOptions
+  [DataContract(Namespace = Constants.ServiceNamespace)]
+  public sealed class WebSocketServerDetails
   {
     [DataMember]
-    [JsonProperty("startPortRange")]
-    public int StartPortRange
+    [JsonProperty("name")]
+    public string Name
     {
       get;
       set;
     }
 
     [DataMember]
-    [JsonProperty("endPortRange")]
-    public int EndPortRange
+    [JsonProperty("state")]
+    public WebSocketServerState State
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    [JsonProperty("activePort")]
+    public int Port
     {
       get;
       set;

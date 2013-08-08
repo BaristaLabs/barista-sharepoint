@@ -237,6 +237,7 @@
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Etag.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
     <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />
@@ -776,6 +777,7 @@
     <Compile Include="Library\UserAgentInfoInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
     <Compile Include="PrincipalType.cs" />
+    <Compile Include="Scheduler\Schedule.cs" />
     <Compile Include="ScriptEngineFactory.cs" />
     <Compile Include="Search\BaristaSearchClient.cs" />
     <Compile Include="Search\BaristaSearchWebClient.cs" />
@@ -1080,6 +1082,7 @@
     <Compile Include="Search\Data Contracts\SearchResult.cs" />
     <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Term.cs" />
+    <Compile Include="ServiceContracts\IBaristaScheduler.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
@@ -1092,6 +1095,7 @@
     <Compile Include="TeamFoundationServer\Library\TfsWorkItemStoreInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsWorkItemTypeInstance.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
+    <Compile Include="UuidType.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
@@ -1151,8 +1155,12 @@
     <Compile Include="ValidationResult.cs" />
     <Compile Include="Validator.cs" />
     <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
+    <Compile Include="WebSockets\WebSocketEventScript.cs" />
+    <Compile Include="WebSockets\BaristaWebSocketsServiceConfiguration.cs" />
+    <Compile Include="WebSockets\WebSocketServerDetails.cs" />
     <Compile Include="WebSockets\WebSocketServerInstance.cs" />
     <Compile Include="WebSockets\WebSocketServerOptions.cs" />
+    <Compile Include="WebSockets\WebSocketServerState.cs" />
     <Compile Include="_Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -1161,10 +1169,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DocumentStore\FileSystem\" />
     <Folder Include="DocumentStore\Framework\" />
     <Folder Include="DocumentStore\Helpers\" />
     <Folder Include="DocumentStore\SharpKit\" />
-    <Folder Include="Scheduler\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\jsonDataHandler.js" />

@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Barista\v1\Barista.svc" />
+    <Content Include="Barista\v1\WebSockets.svc" />
     <Content Include="Barista\v1\Search.svc" />
     <Content Include="favicon.ico" />
     <Content Include="index.htm" />

@@ -55,7 +55,9 @@
         //Register Bundles.
         var instance = new BaristaGlobal(engine.Object.InstancePrototype);
 
-        instance.Common.RegisterBundle(webBundle);
+        if (webBundle != null)
+          instance.Common.RegisterBundle(webBundle);
+
         instance.Common.RegisterBundle(new StringBundle());
         instance.Common.RegisterBundle(new SugarBundle());
         instance.Common.RegisterBundle(new MomentBundle());

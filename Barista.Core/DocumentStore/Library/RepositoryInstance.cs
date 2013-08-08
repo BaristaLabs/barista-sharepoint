@@ -92,6 +92,7 @@
 
     #region Container
     [JSFunction(Name = "getContainer")]
+    [JSDoc("Returns the container from the repository with the specified title.")]
     public ContainerInstance GetContainer(string containerTitle)
     {
       var container = m_repository.GetContainer(containerTitle);
@@ -99,6 +100,7 @@
     }
 
     [JSFunction(Name = "listContainers")]
+    [JSDoc("Lists all containers contained within the repository.")]
     public ArrayInstance ListContainers()
     {
       var result = this.Engine.Array.Construct();
@@ -111,6 +113,7 @@
     }
 
     [JSFunction(Name = "createContainer")]
+    [JSDoc("Creates a new container in the repository with the specified title and description.")]
     public ContainerInstance CreateContainer(string containerTitle, string description)
     {
       var container = m_repository.CreateContainer(containerTitle, description);
@@ -118,6 +121,7 @@
     }
 
     [JSFunction(Name = "deleteContainer")]
+    [JSDoc("Deletes the specified container.")]
     public void DeleteContainer(string containerTitle)
     {
       m_repository.DeleteContainer(containerTitle);

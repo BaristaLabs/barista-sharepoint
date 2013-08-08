@@ -1,11 +1,9 @@
 ﻿namespace Barista.DocumentStore.FileSystem
 {
   using Barista.Extensions;
-  using Barista.Framework;
   using System;
   using System.Collections.Generic;
   using System.IO;
-  using System.IO.Packaging;
   using System.Linq;
 
   public partial class FSDocumentStore
@@ -13,43 +11,6 @@
     public Entity CreateEntity(string containerTitle, string title, string @namespace, string data)
     {
       return CreateEntity(containerTitle, null, title, @namespace, data);
-    }
-
-    protected Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
-    {
-      var newId = Guid.NewGuid();
-
-      var packagePath = GetEntityPackagePath(containerTitle, path, newId);
-
-      if (File.Exists(packagePath))
-        throw new InvalidOperationException("An entity with the specified id already exists.");
-
-      using (var package =
-        Package.Open(packagePath, FileMode.Create))
-      {
-        // Add the metadata part to the Package.
-        package.PackageProperties.Identifier = newId.ToString();
-        package.PackageProperties.ContentType = "application/barista-entity";
-        package.PackageProperties.Subject = @namespace;
-        package.PackageProperties.Title = title;
-        package.PackageProperties.Created = DateTime.Now;
-        package.PackageProperties.Creator = User.GetCurrentUser().LoginName;
-        package.PackageProperties.Modified = DateTime.Now;
-        package.PackageProperties.LastModifiedBy = User.GetCurrentUser().LoginName;
-
-        // Add the default entity part to the Package.
-        var defaultEntityPart =
-            package.CreatePart(new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep", UriKind.Relative), 
-                           "application/json");
-
-        //Copy the data to the default entity part 
-        using (var fileStream = new StringStream(data))
-        {
-          fileStream.CopyTo(defaultEntityPart.GetStream());
-        }
-
-        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
-      }
     }
 
     public bool DeleteEntity(string containerTitle, Guid entityId)
@@ -68,39 +29,25 @@
       return true;
     }
 
-    public System.IO.Stream ExportEntity(string containerTitle, Guid entityId)
+    /// <summary>
+    /// Exports the entity. In this implementation, returns the entity package as a stream.
+    /// </summary>
+    /// <param name="containerTitle"></param>
+    /// <param name="entityId"></param>
+    /// <returns></returns>
+    public Stream ExportEntity(string containerTitle, Guid entityId)
     {
       throw new NotImplementedException();
     }
 
     public Entity GetEntity(string containerTitle, Guid entityId)
     {
-      return GetEntity(containerTitle, null, entityId);
-    }
-
-    public Entity GetEntity(string containerTitle, string path, Guid entityId)
-    {
-      using (var package = GetEntityPackage(containerTitle, path, entityId))
-      {
-        return package == null
-          ? null
-          : FSDocumentStoreHelper.MapEntityFromPackage(package, true);
-      }
+      return GetEntity(containerTitle, entityId, null);
     }
 
     public Entity GetEntityLight(string containerTitle, Guid entityId)
     {
-      return GetEntityLight(containerTitle, null, entityId);
-    }
-
-    public Entity GetEntityLight(string containerTitle, string path, Guid entityId)
-    {
-      using (var package = GetEntityPackage(containerTitle, path, entityId))
-      {
-        return package == null
-          ? null
-          : FSDocumentStoreHelper.MapEntityFromPackage(package, false);
-      }
+      return GetEntityLight(containerTitle, entityId, null);
     }
 
     public Entity ImportEntity(string containerTitle, Guid entityId, string @namespace, byte[] archiveData)
@@ -119,12 +66,12 @@
       var entities = new List<Entity>();
       foreach (var entityFileName in Directory.GetFiles(targetPath, "*.dse", SearchOption.AllDirectories))
       {
-        using (var package = GetEntityPackage(entityFileName))
+        using (var package = EntityPackage.Open(entityFileName))
         {
           if (package == null)
             continue;
 
-          var entity = FSDocumentStoreHelper.MapEntityFromPackage(package, criteria.IncludeData);
+          var entity = package.MapEntityFromPackage(criteria.IncludeData);
           entities.Add(entity);
         }
       }
@@ -254,21 +201,11 @@
     {
       var packagePath = GetEntityPackagePath(containerTitle, null, entityId);
 
-      if (File.Exists(packagePath) == false)
-        return null;
-
-      using (var package =
-        Package.Open(packagePath, FileMode.Open))
+      using (var package = EntityPackage.Open(packagePath))
       {
-        // Update the metadata part in the Package.
-        package.PackageProperties.ContentType = "application/barista-entity";
-        package.PackageProperties.Subject = @namespace;
-        package.PackageProperties.Title = title;
-        package.PackageProperties.Description = description;
-        package.PackageProperties.Modified = DateTime.Now;
-        package.PackageProperties.LastModifiedBy = User.GetCurrentUser().LoginName;
-
-        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+        package.UpdateDefaultEntityPart(title, description, @namespace);
+        
+        return package.MapEntityFromPackage(true);
       }
     }
 
@@ -279,27 +216,11 @@
 
     public Entity UpdateEntityData(string containerTitle, string path, Guid entityId, string eTag, string data)
     {
-      using (var package = GetEntityPackage(containerTitle, path, entityId))
+      var packagePath = GetEntityPackagePath(containerTitle, null, entityId);
+
+      using (var package = EntityPackage.Open(packagePath))
       {
-        //TODO: Check to see if the eTag matches.
-
-        var defaultPartUri = new Uri(Barista.DocumentStore.Constants.EntityPartV1Namespace + "default.dsep", UriKind.Relative);
-
-        if (package.PartExists(defaultPartUri) == false)
-          throw new InvalidOperationException("The default entity part for this package could not be located.");
-
-        // Get the default entity part from the Package.
-        var defaultEntityPart =
-          package.GetPart(defaultPartUri);
-
-
-        //Copy the data to the default entity part 
-        using (var fileStream = new StringStream(data))
-        {
-          fileStream.CopyTo(defaultEntityPart.GetStream());
-        }
-
-        return FSDocumentStoreHelper.MapEntityFromPackage(package, true);
+        return package.UpdateDefaultEntityPartData(eTag, data);
       }
     }
 
@@ -312,34 +233,6 @@
         : Path.Combine(Path.Combine(GetContainerPath(containerTitle), packagePath), entityId + ".dse");
 
       return packagePath;
-    }
-
-    protected Package GetEntityPackage(string containerTitle, string path, Guid entityId)
-    {
-      var packagePath = GetEntityPackagePath(containerTitle, path, entityId);
-      if (File.Exists(packagePath))
-      {
-        return Package.Open(packagePath, FileMode.Open);
-      }
-
-      var packages = Directory.GetFiles(GetContainerPath(containerTitle), entityId + ".dse", SearchOption.AllDirectories);
-
-      if (packages.Length <= 0)
-        return null;
-
-      if (packages.Length > 1)
-        throw new InvalidOperationException(
-          String.Format("Multiple Entities with the same Id were found in the container: {0} {1}", containerTitle,
-                        entityId));
-
-      return Package.Open(packages[0], FileMode.Open);
-    }
-
-    protected Package GetEntityPackage(string packagePath)
-    {
-      return File.Exists(packagePath)
-        ? Package.Open(packagePath, FileMode.Open)
-        : null;
     }
   }
 }

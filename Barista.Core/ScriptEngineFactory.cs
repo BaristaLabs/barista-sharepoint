@@ -9,6 +9,9 @@
   using Jurassic.Library;
   using System;
 
+  /// <summary>
+  /// Represents a class that initializes a new ScriptEngine instance.
+  /// </summary>
   public abstract class ScriptEngineFactory
   {
     protected const string JavaScriptExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -96,7 +99,10 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
     /// <summary>
     /// Returns a new instance of a script engine object with all runtime objects available.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="webBundle">The web bundle. (Optional)</param>
+    /// <param name="isNewScriptEngineInstance">if set to <c>true</c> [is new script engine instance].</param>
+    /// <param name="errorInInitialization">if set to <c>true</c> [error in initialization].</param>
+    /// <returns>ScriptEngine.</returns>
     public abstract ScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
                                                  out bool errorInInitialization);
 

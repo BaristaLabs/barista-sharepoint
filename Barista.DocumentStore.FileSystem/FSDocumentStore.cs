@@ -10,7 +10,12 @@
   /// <remarks>
   /// See http://technet.microsoft.com/en-us/library/ee176615.aspx for list of extended file properties..
   /// </remarks>
-  public partial class FSDocumentStore : IDocumentStore
+  public partial class FSDocumentStore :
+    IDocumentStore,
+    IFolderCapableDocumentStore,
+    IEntityPartCapableDocumentStore,
+    IEntityPartFolderCapableDocumentStore,
+    IAttachmentCapableDocumentStore
   {
     private readonly DirectoryInfo m_root;
 

@@ -167,8 +167,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundles\SharePointMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
+    <Compile Include="Migration\Library\SPExportInstance.cs" />
+    <Compile Include="Migration\Library\SPExportSettingsInstance.cs" />
+    <Compile Include="Migration\Library\SPMigrationInstance.cs" />
     <Compile Include="SharePointSearch\Library\QueryInstance.cs" />
     <Compile Include="SharePointSearch\Library\SearchServiceApplicationInstance.cs" />
     <Compile Include="SPBaristaConsoleOutput.cs" />
