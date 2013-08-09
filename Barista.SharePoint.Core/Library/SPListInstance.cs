@@ -196,11 +196,16 @@
       set { m_list.EnableVersioning = value; }
     }
 
-    //[JSProperty(Name = "fields")]
-    //public ArrayInstance Fields
-    //{
-    //  get { return m_list.Fields; }
-    //}
+    [JSProperty(Name = "fields")]
+    public SPFieldCollectionInstance Fields
+    {
+      get
+      {
+        return m_list.Fields == null
+          ? null
+          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_list.Fields);
+      }
+    }
 
     [JSProperty(Name = "forceCheckout")]
     public bool ForceCheckout

@@ -169,6 +169,11 @@
   <ItemGroup>
     <Compile Include="Bundles\SharePointMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
+    <Compile Include="Library\SPContentDatabaseInstance.cs" />
+    <Compile Include="Library\SPDatabaseSnapshotInstance.cs" />
+    <Compile Include="Library\SPDatabaseSnapshotCollectionInstance.cs" />
+    <Compile Include="Library\SPFieldCollectionInstance.cs" />
+    <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />
     <Compile Include="Migration\Library\SPExportSettingsInstance.cs" />

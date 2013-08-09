@@ -115,7 +115,18 @@
       get { return m_contentType.FeatureId.ToString(); }
     }
 
-    //TODO: FieldLinks, Fields
+    //TODO: FieldLinks
+
+    [JSProperty(Name = "fields")]
+    public SPFieldCollectionInstance Fields
+    {
+      get
+      {
+        return m_contentType.Fields == null
+          ? null
+          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_contentType.Fields);
+      }
+    }
 
     [JSProperty(Name = "group")]
     public string Group

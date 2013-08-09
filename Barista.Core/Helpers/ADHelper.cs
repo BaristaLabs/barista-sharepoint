@@ -42,8 +42,28 @@
     } // NETSETUP_JOIN_STATUS
     #endregion
 
+    public static string LdapPath
+    {
+      get
+      {
+        var ldapPath = GetJoinedDomain();
+        if (ldapPath.IsNullOrWhiteSpace())
+          throw new InvalidOperationException("The current machine is not joined to a domain.");
+
+        return "LDAP://" + ldapPath;
+      }
+    }
+
     public static ADUser GetADUser(string loginName)
     {
+      return GetADUser(loginName, null);
+    }
+
+    public static ADUser GetADUser(string loginName, string ldapPath)
+    {
+      if (ldapPath.IsNullOrWhiteSpace())
+        ldapPath = ADHelper.LdapPath;
+
       if (loginName.IsNullOrWhiteSpace())
         loginName = System.Threading.Thread.CurrentPrincipal.Identity.Name;
 
@@ -59,11 +79,7 @@
 
       ADUser result;
 
-      var ldapPath = GetJoinedDomain();
-      if (ldapPath.IsNullOrWhiteSpace())
-        throw new InvalidOperationException("The current machine is not joined to a domain.");
-
-      var ldapRoot = new DirectoryEntry("LDAP://" + ldapPath);
+      var ldapRoot = new DirectoryEntry(ldapPath);
       using (var ctx = new ADContext(ldapRoot))
       {
         var domainName = ldapRoot.Path.Replace("LDAP://", "");
@@ -82,25 +98,27 @@
     public static string GetUserUpn(string loginName)
     {
       var user = GetADUser(loginName);
-      if (user == null)
-        return null;
-
-      return user.UserLogonName;
+      return user == null
+        ? null
+        : user.UserLogonName;
     }
 
     public static ADGroup GetADGroup(string groupName)
     {
+      return GetADGroup(groupName, null);
+    }
+
+    public static ADGroup GetADGroup(string groupName, string ldapPath)
+    {
+      if (ldapPath.IsNullOrWhiteSpace())
+        ldapPath = ADHelper.LdapPath;
+
       if (String.IsNullOrEmpty(groupName))
         return null;
 
       ADGroup result;
 
-      var ldapPath = GetJoinedDomain();
-      if (ldapPath.IsNullOrWhiteSpace())
-        throw new InvalidOperationException("The current machine is not joined to a domain.");
-
       var ldapRoot = new DirectoryEntry(ldapPath);
-
       using (var ctx = new ADContext(ldapRoot))
       {
         ctx.Groups.Searcher.SizeLimit = 1;
@@ -115,15 +133,20 @@
 
     public static IEnumerable<DirectoryEntity> SearchAllDirectoryEntities(string searchText, int maxResults, PrincipalType principalType)
     {
+      return SearchAllDirectoryEntities(searchText, maxResults, principalType, null);
+    }
+
+    public static IEnumerable<DirectoryEntity> SearchAllDirectoryEntities(string searchText, int maxResults,
+      PrincipalType principalType, string ldapPath)
+    {
+      if (ldapPath.IsNullOrWhiteSpace())
+        ldapPath = ADHelper.LdapPath;
+
       var result = new List<DirectoryEntity>();
 
       searchText = searchText.Trim();
 
-      var ldapPath = GetJoinedDomain();
-      if (ldapPath.IsNullOrWhiteSpace())
-        throw new InvalidOperationException("The current machine is not joined to a domain.");
-
-      var ldapRoot = new DirectoryEntry("LDAP://" + ldapPath);
+      var ldapRoot = new DirectoryEntry(ldapPath);
 
       using (var ctx = new ADContext(ldapRoot))
       {
@@ -145,8 +168,8 @@
         else if ((principalType & PrincipalType.SecurityGroup) == PrincipalType.SecurityGroup)
         {
           var groups = from grp in ctx.Groups
-                        where grp.Name == "*" + searchText + "*"
-                        select grp;
+                       where grp.Name == "*" + searchText + "*"
+                       select grp;
 
           result.AddRange(Enumerable.Cast<DirectoryEntity>(groups));
         }
@@ -164,9 +187,19 @@
       return SearchAllDirectoryEntities(searchText, maxResults, PrincipalType.User).OfType<ADUser>().ToList();
     }
 
+    public static IEnumerable<ADUser> SearchAllUsers(string searchText, int maxResults, string ldapPath)
+    {
+      return SearchAllDirectoryEntities(searchText, maxResults, PrincipalType.User, ldapPath).OfType<ADUser>().ToList();
+    }
+
     public static IEnumerable<ADGroup> SearchAllGroups(string searchText, int maxResults)
     {
       return SearchAllDirectoryEntities(searchText, maxResults, PrincipalType.SecurityGroup).OfType<ADGroup>().ToList();
+    }
+
+    public static IEnumerable<ADGroup> SearchAllGroups(string searchText, int maxResults, string ldapPath)
+    {
+      return SearchAllDirectoryEntities(searchText, maxResults, PrincipalType.SecurityGroup, ldapPath).OfType<ADGroup>().ToList();
     }
 
     // Returns the domain name the computer is joined to, or "" if not joined.

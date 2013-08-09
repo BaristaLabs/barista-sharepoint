@@ -10,6 +10,8 @@
   [Serializable]
   public class ActiveDirectoryInstance : ObjectInstance
   {
+    private string m_ldapPathOverride;
+
     public ActiveDirectoryInstance(ScriptEngine engine)
       : base(engine)
     {
@@ -30,6 +32,28 @@
       set;
     }
 
+    [JSProperty(Name = "ldapPath")]
+    [JSDoc("Gets or sets the current ldap path that will be used.")]
+    public string LdapPath
+    {
+      get
+      {
+        if (m_ldapPathOverride.IsNullOrWhiteSpace())
+          return ADHelper.LdapPath;
+        return m_ldapPathOverride;
+      }
+      set
+      {
+        if (value.IsNullOrWhiteSpace())
+        {
+          m_ldapPathOverride = null;
+          return;
+        }
+
+        m_ldapPathOverride = TypeConverter.ToString(value);
+      }
+    }
+
     [JSProperty(Name = "currentDomain")]
     [JSDoc("Gets the current domain, if the current machine is not joined to a domain, null is returned.")]
     public string CurrentDomain
@@ -39,25 +63,27 @@
 
     [JSFunction(Name = "getADUser")]
     [JSDoc("Returns an object representating the specified user. If no login name is specified, returns the current user.")]
-    public ADUserInstance GetADUser(object loginName)
+    public object GetADUser(object loginName)
     {
       ADUser user;
-      if (loginName == null || loginName == Undefined.Value || loginName == Null.Value || TypeConverter.ToString(loginName).IsNullOrWhiteSpace())
-        user = ADHelper.GetADUser(CurrentUserLoginName);
+      if (loginName == null || loginName == Undefined.Value || loginName == Null.Value ||
+          TypeConverter.ToString(loginName).IsNullOrWhiteSpace())
+      {
+        user = ADHelper.GetADUser(CurrentUserLoginName, this.LdapPath);
+      }
       else
-        user = ADHelper.GetADUser(TypeConverter.ToString(loginName));
+        user = ADHelper.GetADUser(TypeConverter.ToString(loginName), this.LdapPath);
 
-      if (user == null)
-        throw new InvalidOperationException("The current user is not an AD user: " + CurrentUserLoginName);
-
-      return new ADUserInstance(this.Engine.Object.InstancePrototype, user);
+      return user == null
+        ? null
+        : new ADUserInstance(this.Engine.Object.InstancePrototype, user);
     }
 
     [JSFunction(Name = "getADGroup")]
     [JSDoc("Returns an object representating the specified group.")]
     public ADGroupInstance GetADGroup(string groupName)
     {
-      var group = ADHelper.GetADGroup(groupName);
+      var group = ADHelper.GetADGroup(groupName, this.LdapPath);
 
       return new ADGroupInstance(this.Engine.Object.InstancePrototype, group);
     }
@@ -70,7 +96,7 @@
       if (String.IsNullOrEmpty(principalType) == false)
         principalTypeEnum = (PrincipalType)Enum.Parse(typeof(PrincipalType), principalType);
 
-      var entities = ADHelper.SearchAllDirectoryEntities(searchText, maxResults, principalTypeEnum);
+      var entities = ADHelper.SearchAllDirectoryEntities(searchText, maxResults, principalTypeEnum, this.LdapPath);
 
       var result = this.Engine.Array.Construct();
 
@@ -93,7 +119,7 @@
     [JSDoc("Searches all groups for the specified search text, optionally indicating a maximium number of results.")]
     public ArrayInstance SearchAllGroups(string searchText, int maxResults)
     {
-      var groups = ADHelper.SearchAllGroups(searchText, maxResults);
+      var groups = ADHelper.SearchAllGroups(searchText, maxResults, this.LdapPath);
 
       var result = this.Engine.Array.Construct();
       foreach (var group in groups)
@@ -107,7 +133,7 @@
     [JSDoc("Searches all users for the specified search text, optionally indicating a maximium number of results.")]
     public ArrayInstance SearchAllUsers(string searchText, int maxResults)
     {
-      var users = ADHelper.SearchAllUsers(searchText, maxResults);
+      var users = ADHelper.SearchAllUsers(searchText, maxResults, this.LdapPath);
 
       var result = this.Engine.Array.Construct();
       foreach (var user in users)

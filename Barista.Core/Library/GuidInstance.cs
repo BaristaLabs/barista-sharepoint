@@ -94,7 +94,7 @@
       if (guid is GuidInstance)
         id = (guid as GuidInstance).Value;
       else
-        id = new Guid(guid.ToString());
+        id = new Guid(TypeConverter.ToString(guid));
 
       return id;
     }

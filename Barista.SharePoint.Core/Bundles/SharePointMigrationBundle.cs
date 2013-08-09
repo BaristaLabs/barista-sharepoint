@@ -2,6 +2,7 @@
 namespace Barista.SharePoint.Bundles
 {
   using Barista.SharePoint.Library;
+  using Barista.SharePoint.Migration.Library;
   using Microsoft.SharePoint.Administration;
   using System;
 
@@ -26,7 +27,7 @@ namespace Barista.SharePoint.Bundles
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       
-      //return new SPInstance(engine, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
+      return new SPMigrationInstance(engine.Object.InstancePrototype, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
     }
   }
 }

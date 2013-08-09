@@ -61,7 +61,7 @@
     [JSFunction(Name = "getTermSets")]
     public ArrayInstance GetTermSets(ArrayInstance termLabels)
     {
-      List<String> termLabelsList = new List<string>();
+      var termLabelsList = new List<string>();
       for(int i = 0; i < termLabels.Length; i++)
       {
         var label = termLabels[i] as string;

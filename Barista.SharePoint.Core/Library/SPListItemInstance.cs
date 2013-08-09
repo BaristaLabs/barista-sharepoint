@@ -59,6 +59,14 @@
     {
     }
 
+    public SPListItem ListItem
+    {
+      get
+      {
+        return m_listItem;
+      }
+    }
+
     #region Properties
 
     [JSProperty(Name = "contentTypeId")]

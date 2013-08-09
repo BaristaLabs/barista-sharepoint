@@ -119,8 +119,30 @@
         return result;
       }
     }
+
+    [JSProperty(Name = "availableFields")]
+    public SPFieldCollectionInstance AvailableFields
+    {
+      get
+      {
+        return m_web.AvailableFields == null
+          ? null
+          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.AvailableFields);
+      }
+    }
     
-    //TODO: Group properties, fields
+    //TODO: Group properties
+
+    [JSProperty(Name = "fields")]
+    public SPFieldCollectionInstance Fields
+    {
+      get
+      {
+        return m_web.Fields == null
+          ? null
+          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Fields);
+      }
+    }
 
     [JSProperty(Name = "created")]
     public DateInstance Created
@@ -158,7 +180,7 @@
       }
     }
 
-    //TODO: Effective base permissions, fields,
+    //TODO: Effective base permissions
 
     [JSProperty(Name = "id")]
     public string Id

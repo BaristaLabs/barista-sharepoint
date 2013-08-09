@@ -2,6 +2,7 @@
 
 namespace Barista.SharePoint.Library
 {
+  using Barista.Library;
   using Barista.SharePoint.Taxonomy.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -164,6 +165,37 @@ namespace Barista.SharePoint.Library
     #endregion
 
     #region Functions
+
+    [JSFunction(Name = "activateFeature")]
+    public SPFeatureInstance ActivateFeature(object feature, object force)
+    {
+      var featureId = Guid.Empty;
+      if (feature is string)
+      {
+        featureId = new Guid(feature as string);
+      }
+      else if (feature is GuidInstance)
+      {
+        featureId = (feature as GuidInstance).Value;
+      }
+      else if (feature is SPFeatureInstance)
+      {
+        featureId = (feature as SPFeatureInstance).Feature.DefinitionId;
+      }
+      else if (feature is SPFeatureDefinitionInstance)
+      {
+        featureId = (feature as SPFeatureDefinitionInstance).FeatureDefinition.Id;
+      }
+
+      if (featureId == Guid.Empty)
+        return null;
+
+      var forceValue = JurassicHelper.GetTypedArgumentValue(this.Engine, force, false);
+
+      var activatedFeature = m_site.Features.Add(featureId, forceValue);
+      return new SPFeatureInstance(this.Engine.Object.InstancePrototype, activatedFeature);
+    }
+
     //TODO: GetCatalog, GetChanges, GetCustomListTemplates
     [JSFunction(Name = "createWeb")]
     public SPWebInstance CreateWeb(object webCreationInfo)
@@ -196,6 +228,33 @@ namespace Barista.SharePoint.Library
       return new SPWebInstance(this.Engine.Object.InstancePrototype, createdWeb);
     }
 
+    [JSFunction(Name = "deactivateFeature")]
+    public void DeactivateFeature(object feature)
+    {
+      var featureId = Guid.Empty;
+      if (feature is string)
+      {
+        featureId = new Guid(feature as string);
+      }
+      else if (feature is GuidInstance)
+      {
+        featureId = (feature as GuidInstance).Value;
+      }
+      else if (feature is SPFeatureInstance)
+      {
+        featureId = (feature as SPFeatureInstance).Feature.DefinitionId;
+      }
+      else if (feature is SPFeatureDefinitionInstance)
+      {
+        featureId = (feature as SPFeatureDefinitionInstance).FeatureDefinition.Id;
+      }
+
+      if (featureId == Guid.Empty)
+        return;
+
+      m_site.Features.Remove(featureId);
+    }
+
     [JSFunction(Name = "getAllWebs")]
     public ArrayInstance GetAllWebs()
     {
@@ -211,6 +270,12 @@ namespace Barista.SharePoint.Library
         ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, web));
       }
       return result;
+    }
+
+    [JSFunction(Name = "getContentDatabase")]
+    public SPContentDatabaseInstance GetContentDatabase()
+    {
+      return new SPContentDatabaseInstance(this.Engine.Object.InstancePrototype, m_site.ContentDatabase);
     }
 
     [JSFunction(Name = "getFeatureDefinitions")]
