@@ -517,6 +517,9 @@
           generator.StoreVariable(temp);
           EmitHelpers.LoadScriptEngine(generator);
           generator.LoadVariable(temp);
+          generator.LoadInt32(line);
+          generator.LoadStringOrNull(path);
+          generator.LoadStringOrNull(function);
           generator.ReleaseTemporaryVariable(temp);
           generator.Call(ReflectionHelpers.TypeConverter_ToObject.Value);
           break;

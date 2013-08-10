@@ -269,7 +269,7 @@
       {
         foreach (var labelName in labelNames
           .Where(labelName => this.m_breakOrContinueStack.Any(info => info.LabelNames != null && info.LabelNames.Contains(labelName))))
-          throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("Label '{0}' has already been declared", labelName));
+          throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("Label '{0}' has already been declared", labelName), this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
       }
 
       // Push the info to the stack.
@@ -306,7 +306,7 @@
           if (info.LabelledOnly == false)
             return info.BreakTarget;
         }
-        throw new JavaScriptException(this.Engine, "SyntaxError", "Illegal break statement");
+        throw new JavaScriptException(this.Engine, "SyntaxError", "Illegal break statement", this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
       }
 
       foreach (var info in this.m_breakOrContinueStack)
@@ -314,7 +314,7 @@
         if (info.LabelNames != null && info.LabelNames.Contains(labelName))
           return info.BreakTarget;
       }
-      throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("Undefined label '{0}'", labelName));
+      throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("Undefined label '{0}'", labelName), this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
     }
 
     /// <summary>
@@ -333,7 +333,7 @@
           if (info.ContinueTarget != null && info.LabelledOnly == false)
             return info.ContinueTarget;
         }
-        throw new JavaScriptException(this.Engine, "SyntaxError", "Illegal continue statement");
+        throw new JavaScriptException(this.Engine, "SyntaxError", "Illegal continue statement", this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
       }
 
       foreach (var info in this.m_breakOrContinueStack)
@@ -341,11 +341,11 @@
         if (info.LabelNames != null && info.LabelNames.Contains(labelName))
         {
           if (info.ContinueTarget == null)
-            throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("The statement with label '{0}' is not a loop", labelName));
+            throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("The statement with label '{0}' is not a loop", labelName), this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
           return info.ContinueTarget;
         }
       }
-      throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("Undefined label '{0}'", labelName));
+      throw new JavaScriptException(this.Engine, "SyntaxError", string.Format("The statement with label '{0}' is not a loop", labelName), this.SourceSpan.StartLine, this.Source.Path, this.FunctionName);
     }
 
     /// <summary>

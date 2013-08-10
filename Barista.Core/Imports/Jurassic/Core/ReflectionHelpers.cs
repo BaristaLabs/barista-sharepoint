@@ -17,7 +17,7 @@
     internal static Lazy<MethodInfo> TypeConverter_ToConcatenatedString = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToConcatenatedString", typeof(object)));
     internal static Lazy<MethodInfo> TypeConverter_ToNumber = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToNumber", typeof(object)));
     internal static Lazy<MethodInfo> TypeConverter_ToBoolean = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToBoolean", typeof(object)));
-    internal static Lazy<MethodInfo> TypeConverter_ToObject = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToObject", typeof(ScriptEngine), typeof(object)));
+    internal static Lazy<MethodInfo> TypeConverter_ToObject = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToObject", typeof(ScriptEngine), typeof(object), typeof(int), typeof(string), typeof(string)));
     internal static Lazy<MethodInfo> TypeConverter_ToInteger = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToInteger", typeof(object)));
     internal static Lazy<MethodInfo> TypeConverter_ToInt32 = new Lazy<MethodInfo>(() =>  GetStaticMethod(typeof(TypeConverter), "ToInt32", typeof(object)));
     internal static Lazy<MethodInfo> TypeConverter_ToUint32 = new Lazy<MethodInfo>(() => GetStaticMethod(typeof(TypeConverter), "ToUint32", typeof(object)));
