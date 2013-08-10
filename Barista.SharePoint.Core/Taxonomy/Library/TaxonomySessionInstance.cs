@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Taxonomy.Library
 {
   using System;
+  using Barista.Library;
   using Jurassic.Library;
   using Microsoft.SharePoint.Taxonomy;
   using System.Collections.Generic;
@@ -38,9 +39,9 @@
     }
 
     [JSFunction(Name = "getTerm")]
-    public TermInstance GetTerm(string termId)
+    public TermInstance GetTerm(object termId)
     {
-      Guid termGuid = new Guid(termId);
+      var termGuid = GuidInstance.ConvertFromJsObjectToGuid(termId);
       var term = m_taxonomySession.GetTerm(termGuid);
       return new TermInstance(this.Engine.Object.InstancePrototype, term);
     }

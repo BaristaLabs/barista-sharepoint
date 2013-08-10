@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Taxonomy.Library
 {
+  using Barista.Library;
   using Barista.SharePoint.Library;
   using Jurassic.Library;
   using Microsoft.SharePoint.Taxonomy;
@@ -115,9 +116,9 @@
     }
 
     [JSFunction(Name = "getGroup")]
-    public TermGroupInstance GetGroup(string id)
+    public TermGroupInstance GetGroup(object id)
     {
-      Guid guid = new Guid(id);
+      var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
       var group = m_termStore.GetGroup(guid);
       return new TermGroupInstance(this.Engine.Object.InstancePrototype, group);
     }

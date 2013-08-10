@@ -144,6 +144,17 @@
       }
     }
 
+    [JSProperty(Name = "failoverServer")]
+    public SPServerInstance FailoverServer
+    {
+      get
+      {
+        if (m_contentDatabase.FailoverServer == null)
+          return null;
+        return new SPServerInstance(this.Engine.Object.InstancePrototype, m_contentDatabase.FailoverServer);
+      }
+    }
+
     [JSProperty(Name = "id")]
     public object Id
     {
@@ -172,6 +183,21 @@
       get
       {
         return m_contentDatabase.IsAttachedToFarm;
+      }
+    }
+
+    [JSProperty(Name = "isBackwardsCompatible")]
+    public object IsBackwardsCompatible
+    {
+      get
+      {
+        if (m_contentDatabase.IsBackwardsCompatible == TriState.True)
+          return true;
+        
+        if (m_contentDatabase.IsBackwardsCompatible == TriState.False)
+          return false;
+
+        return null;
       }
     }
 
@@ -250,6 +276,37 @@
       }
     }
 
+    [JSProperty(Name = "password")]
+    public string Password
+    {
+      get
+      {
+        return m_contentDatabase.Password;
+      }
+      set
+      {
+        m_contentDatabase.Password = value;
+      }
+    }
+
+    [JSProperty(Name = "schemaVersionXml")]
+    public string SchemaVersionXml
+    {
+      get
+      {
+        return m_contentDatabase.SchemaVersionXml;
+      }
+    }
+
+    [JSProperty(Name = "server")]
+    public string Server
+    {
+      get
+      {
+        return m_contentDatabase.Server;
+      }
+    }
+
     [JSProperty(Name = "snapshots")]
     public object Snapshots
     {
@@ -272,6 +329,28 @@
       }
     }
 
+    [JSProperty(Name = "typeName")]
+    public string TypeName
+    {
+      get
+      {
+        return m_contentDatabase.TypeName;
+      }
+    }
+
+    [JSProperty(Name = "userName")]
+    public string UserName
+    {
+      get
+      {
+        return m_contentDatabase.Username;
+      }
+      set
+      {
+        m_contentDatabase.Username = value;
+      }
+    }
+
     [JSProperty(Name = "warningSiteCount")]
     public int WarningSiteCount
     {
@@ -287,11 +366,37 @@
     #endregion
 
     #region Functions
-
     [JSFunction(Name = "delete")]
     public void Delete()
     {
       m_contentDatabase.Delete();
+    }
+
+    [JSFunction(Name = "getFarm")]
+    public SPFarmInstance GetFarm()
+    {
+      var farm = m_contentDatabase.Farm;
+      return farm == null
+        ? null
+        : new SPFarmInstance(this.Engine.Object.InstancePrototype, m_contentDatabase.Farm);
+    }
+
+    [JSFunction(Name = "getSites")]
+    public SPSiteCollectionInstance GetSites()
+    {
+      var sites = m_contentDatabase.Sites;
+      return sites == null
+        ? null
+        : new SPSiteCollectionInstance(this.Engine.Object.InstancePrototype, sites);
+    }
+
+    [JSFunction(Name = "getWebApplication")]
+    public SPWebApplicationInstance GetWebApplication()
+    {
+      var wa = m_contentDatabase.WebApplication;
+      return wa == null
+        ? null
+        : new SPWebApplicationInstance(this.Engine.Object.InstancePrototype, m_contentDatabase.WebApplication);
     }
 
     [JSFunction(Name = "invalidate")]

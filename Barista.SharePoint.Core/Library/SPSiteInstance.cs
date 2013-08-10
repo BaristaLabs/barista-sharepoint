@@ -80,6 +80,19 @@ namespace Barista.SharePoint.Library
       set { m_site.AllowMasterPageEditing = value; }
     }
 
+    [JSProperty(Name = "allowRevertFromTemplate")]
+    public bool AllowRevertFromTemplate
+    {
+      get { return m_site.AllowRevertFromTemplate; }
+      set { m_site.AllowRevertFromTemplate = value; }
+    }
+
+    [JSProperty(Name = "allowRssFeeds")]
+    public bool AllowRssFeeds
+    {
+      get { return m_site.AllowRssFeeds; }
+    }
+
     [JSProperty(Name = "allowUnsafeUpdates")]
     public bool AllowUnsafeUpdates
     {
@@ -102,15 +115,85 @@ namespace Barista.SharePoint.Library
     }
 
     [JSProperty(Name = "id")]
-    public string Id
+    public GuidInstance Id
     {
-      get { return m_site.ID.ToString(); }
+      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_site.ID); }
     }
 
     [JSProperty(Name = "maxItemsPerThrottledOperation")]
     public string MaxItemsPerThrottledOperation
     {
       get { return m_site.WebApplication.MaxItemsPerThrottledOperation.ToString(CultureInfo.InvariantCulture); }
+    }
+
+    [JSProperty(Name = "port")]
+    public int Port
+    {
+      get
+      {
+        return m_site.Port;
+      }
+    }
+
+    [JSProperty(Name = "portalName")]
+    public string PortalName
+    {
+      get
+      {
+        return m_site.PortalName;
+      }
+      set
+      {
+        m_site.PortalName = value;
+      }
+    }
+
+    [JSProperty(Name = "portalUrl")]
+    public string PortalUrl
+    {
+      get
+      {
+        return m_site.PortalUrl;
+      }
+      set
+      {
+        m_site.PortalUrl = value;
+      }
+    }
+
+    [JSProperty(Name = "protocol")]
+    public string Protocol
+    {
+      get
+      {
+        return m_site.Protocol;
+      }
+    }
+
+    [JSProperty(Name = "ReadLocked")]
+    public bool ReadLocked
+    {
+      get
+      {
+        return m_site.ReadLocked;
+      }
+      set
+      {
+        m_site.ReadLocked = value;
+      }
+    }
+
+    [JSProperty(Name = "ReadOnly")]
+    public bool ReadOnly
+    {
+      get
+      {
+        return m_site.ReadOnly;
+      }
+      set
+      {
+        m_site.ReadOnly = value;
+      }
     }
 
     [JSProperty(Name = "rootWeb")]
@@ -143,6 +226,19 @@ namespace Barista.SharePoint.Library
     public string Url
     {
       get { return m_site.Url; }
+    }
+
+    [JSProperty(Name = "writeLocked")]
+    public bool WriteLocked
+    {
+      get
+      {
+        return m_site.WriteLocked;
+      }
+      set
+      {
+        m_site.WriteLocked = value;
+      }
     }
 
     [JSProperty(Name = "zone")]
@@ -258,7 +354,7 @@ namespace Barista.SharePoint.Library
     [JSFunction(Name = "getAllWebs")]
     public ArrayInstance GetAllWebs()
     {
-      List<SPWeb> webs = new List<SPWeb>();
+      var webs = new List<SPWeb>();
 
       ContentIterator ci = new ContentIterator();
       ci.ProcessSite(m_site, true, webs.Add,
@@ -284,7 +380,7 @@ namespace Barista.SharePoint.Library
       //SPSite.FeatureDefinitions always returns null... nice, SharePoint, nice...
 
       var result = this.Engine.Array.Construct();
-      foreach (SPFeatureDefinition featureDefinition in SPFarm.Local.FeatureDefinitions)
+      foreach (var featureDefinition in SPFarm.Local.FeatureDefinitions)
       {
         if (featureDefinition.Scope == SPFeatureScope.Site)
        {
@@ -316,7 +412,7 @@ namespace Barista.SharePoint.Library
     [JSFunction(Name = "getWebTemplates")]
     public ArrayInstance GetWebTemplates(object language)
     {
-      uint lcid = (uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
+      var lcid = (uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
 
 // ReSharper disable PossibleInvalidCastException
       if (language is int)
@@ -345,9 +441,9 @@ namespace Barista.SharePoint.Library
     }
 
     [JSFunction(Name = "openWebById")]
-    public SPWebInstance OpenWebById(string id)
+    public SPWebInstance OpenWebById(object guid)
     {
-      Guid webId = new Guid(id);
+      var webId = GuidInstance.ConvertFromJsObjectToGuid(guid);
 
       return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.OpenWeb(webId));
     }

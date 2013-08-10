@@ -167,10 +167,9 @@
     public SPFieldInstance GetFieldByIndex(int index)
     {
       var field = m_fieldCollection[index];
-      if (field == null)
-        return null;
-
-      return new SPFieldInstance(this.Engine.Object.InstancePrototype, field);
+      return field == null
+        ? null
+        : new SPFieldInstance(this.Engine.Object.InstancePrototype, field);
     }
 
     [JSFunction(Name = "getFieldByDisplayName")]

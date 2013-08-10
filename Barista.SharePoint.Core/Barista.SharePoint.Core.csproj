@@ -175,6 +175,7 @@
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
+    <Compile Include="Library\SPWebApplicationInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />
     <Compile Include="Migration\Library\SPExportSettingsInstance.cs" />
     <Compile Include="Migration\Library\SPMigrationInstance.cs" />
@@ -295,6 +296,7 @@
     <Compile Include="ServiceManagement\BaristaWebSocketsService.cs" />
     <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPFileScriptSource.cs" />
+    <Compile Include="SPSiteCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />
     <Compile Include="Taxonomy\Library\TermInstance.cs" />

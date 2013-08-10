@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Taxonomy.Library
 {
   using System;
+  using Barista.Library;
   using Jurassic.Library;
   using Microsoft.SharePoint.Taxonomy;
 
@@ -78,10 +79,10 @@
       m_termGroup.AddGroupManager(principalName);
     }
 
-    [JSFunction(Name = "addGroupManager")]
-    public void AddSiteCollectionAccess(string siteCollectionId)
+    [JSFunction(Name = "addSiteCollectionAccess")]
+    public void AddSiteCollectionAccess(object siteCollectionId)
     {
-      Guid id = new Guid(siteCollectionId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(siteCollectionId);
       m_termGroup.AddSiteCollectionAccess(id);
     }
 
@@ -92,9 +93,9 @@
       return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
     }
 
-    public TermSetInstance CreateTermSet(string name, string newTermSetId)
+    public TermSetInstance CreateTermSet(string name, object newTermSetId)
     {
-      Guid newId = new Guid(newTermSetId);
+      var newId = GuidInstance.ConvertFromJsObjectToGuid(newTermSetId);
       var newTermSet = m_termGroup.CreateTermSet(name, newId);
       return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
     }
@@ -105,9 +106,9 @@
       return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
     }
 
-    public TermSetInstance CreateTermSet(string name, string newTermSetId, int lcid)
+    public TermSetInstance CreateTermSet(string name, object newTermSetId, int lcid)
     {
-      Guid newId = new Guid(newTermSetId);
+      var newId = GuidInstance.ConvertFromJsObjectToGuid(newTermSetId);
       var newTermSet = m_termGroup.CreateTermSet(name, newId, lcid);
       return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
     }
@@ -131,9 +132,9 @@
     }
 
     [JSFunction(Name = "deleteSiteCollectionAccess")]
-    public void DeleteSiteCollectionAccess(string siteCollectionId)
+    public void DeleteSiteCollectionAccess(object siteCollectionId)
     {
-      Guid id = new Guid(siteCollectionId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(siteCollectionId);
       m_termGroup.DeleteSiteCollectionAccess(id);
     }
 

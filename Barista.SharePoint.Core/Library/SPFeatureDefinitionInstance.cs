@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -16,9 +17,9 @@
     }
 
     [JSConstructorFunction]
-    public SPFeatureDefinitionInstance Construct(string featureId)
+    public SPFeatureDefinitionInstance Construct(object featureId)
     {
-      Guid featureGuid = new Guid(featureId);
+      var featureGuid = GuidInstance.ConvertFromJsObjectToGuid(featureId);
       var featureDefinition = SPFarm.Local.FeatureDefinitions.FirstOrDefault(fd => fd.Id == featureGuid);
       
       if (featureDefinition == null)

@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -16,9 +17,9 @@
     }
 
     [JSConstructorFunction]
-    public SPFeatureInstance Construct(string featureId)
+    public SPFeatureInstance Construct(object featureId)
     {
-      Guid featureGuid = new Guid(featureId);
+      var featureGuid = GuidInstance.ConvertFromJsObjectToGuid(featureId);
 
       var featureQueryResult = SPBaristaContext.Current.Site.QueryFeatures(featureGuid);
       var feature = featureQueryResult.OrderByDescending(f => f.Version).FirstOrDefault();

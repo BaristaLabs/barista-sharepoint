@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -71,9 +72,9 @@
     }
 
     [JSFunction(Name = "getItemById")]
-    public SPRecycleBinItemInstance GetItemById(string id)
+    public SPRecycleBinItemInstance GetItemById(object id)
     {
-      Guid guid = new Guid(id);
+      var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
       return new SPRecycleBinItemInstance(this.Engine.Object.InstancePrototype, m_recycleBinItemCollection.GetItemById(guid));
     }
 

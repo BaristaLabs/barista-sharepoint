@@ -585,10 +585,8 @@
       Guid id;
       if (entityId is EntityInstance)
         id = (entityId as EntityInstance).Entity.Id;
-      else if (entityId is GuidInstance)
-        id = (entityId as GuidInstance).Value;
       else
-        id = new Guid(entityId.ToString());
+        id = GuidInstance.ConvertFromJsObjectToGuid(entityId);
 
       var entityParts = m_repository.ListEntityParts(id);
       if (entityParts == null)
@@ -707,9 +705,9 @@
 
     #region Permissions
     [JSFunction(Name = "addPrincipalRoleToEntity")]
-    public PrincipalRoleInfoInstance AddPrincipalRoleToEntity(string entityId, string principalName, string principalType, string roleName)
+    public PrincipalRoleInfoInstance AddPrincipalRoleToEntity(object entityId, string principalName, string principalType, string roleName)
     {
-      var id = new Guid(entityId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(entityId);
 
       var result = m_repository.AddPrincipalRoleToEntity(id, principalName, principalType, roleName);
 
@@ -717,9 +715,9 @@
     }
 
     [JSFunction(Name = "getEntityPermissions")]
-    public PermissionsInfoInstance GetEntityPermissions(string entityId)
+    public PermissionsInfoInstance GetEntityPermissions(object entityId)
     {
-      var id = new Guid(entityId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(entityId);
 
       var result = m_repository.GetEntityPermissions(id);
 
@@ -727,17 +725,17 @@
     }
 
     [JSFunction(Name = "removePrincipalRoleFromEntity")]
-    public bool RemovePrincipalRoleFromEntity(string entityId, string principalName, string principalType, string roleName)
+    public bool RemovePrincipalRoleFromEntity(object entityId, string principalName, string principalType, string roleName)
     {
-      var id = new Guid(entityId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(entityId);
 
       return m_repository.RemovePrincipalRoleFromEntity(id, principalName, principalType, roleName);
     }
 
     [JSFunction(Name = "resetEntityPermissions")]
-    public PermissionsInfoInstance ResetEntityPermissions(string entityId)
+    public PermissionsInfoInstance ResetEntityPermissions(object entityId)
     {
-      var id = new Guid(entityId);
+      var id = GuidInstance.ConvertFromJsObjectToGuid(entityId);
 
       return new PermissionsInfoInstance(this.Engine, m_repository.ResetEntityPermissions(id));
     }

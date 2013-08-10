@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using Barista.Library;
   using Barista.SharePoint.Helpers;
   using Jurassic;
   using Jurassic.Library;
@@ -16,10 +17,10 @@
     }
 
     [JSFunction(Name = "getLocalLogEntries")]
-    public ArrayInstance GetLocalLogEntries(string guid, [DefaultParameterValue(1)] int daysToLook)
+    public ArrayInstance GetLocalLogEntries(object guid, [DefaultParameterValue(1)] int daysToLook)
     {
       var result = this.Engine.Array.Construct();
-      Guid correlationId = new Guid(guid);
+      var correlationId = GuidInstance.ConvertFromJsObjectToGuid(guid);
 
       foreach (var logEntry in UlsHelper.GetLogsEntriesByCorrelationId(correlationId, daysToLook))
       {
