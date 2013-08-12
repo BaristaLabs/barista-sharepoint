@@ -1192,6 +1192,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Imports\Jurassic\Compiler\Emit\Optimizations.txt" />
+    <Content Include="Imports\Newtonsoft.Json\readme.txt" />
     <Content Include="Imports\SuperSocket\readme.txt" />
     <Content Include="Imports\SuperWebSocket\readme.txt" />
     <Content Include="Resources\Automapper.js" />

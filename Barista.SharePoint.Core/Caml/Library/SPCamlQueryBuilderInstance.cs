@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System.Linq;
+  using Barista.Imports.CamlexNET;
   using Barista.Imports.Linq2Rest;
   using Jurassic;
   using Jurassic.Library;
@@ -34,7 +35,7 @@
         bIncludeQueryTag = (bool) includeQueryTag;
 
       var queryParameters = SPBaristaContext.Current.Request.QueryString;
-      return CreateCamlQueryFromOData(list.List, queryParameters, bIncludeQueryTag);
+      return CreateCamlQueryFromOData(queryParameters, bIncludeQueryTag);
     }
 
     [JSFunction(Name = "createCamlQueryFromOData")]
@@ -48,10 +49,10 @@
       var queryParameters = oData.Properties
         .ToDictionary(property => property.Name, property => oData.GetPropertyValue(property.Name).ToString());
 
-      return CreateCamlQueryFromOData(list.List, queryParameters, bIncludeQueryTag);
+      return CreateCamlQueryFromOData(queryParameters, bIncludeQueryTag);
     }
 
-    private static string CreateCamlQueryFromOData(SPList list, IDictionary<string, string> queryParameters, bool includeQueryTag)
+    private static string CreateCamlQueryFromOData(IDictionary<string, string> queryParameters, bool includeQueryTag)
     {
       //TODO Make this return a CamlQueryInstance instead.
       
@@ -80,7 +81,7 @@
       var sortDescriptions = parser.SortExpressionFactory.Create<SPListItem>(orderByField);
 
       //TODO: Sort Descriptions.
-      var result = CamlexNET.Camlex.Query()
+      var result = Camlex.Query()
         .Where(filterExpression)
         .ToString(includeQueryTag);
 

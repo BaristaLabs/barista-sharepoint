@@ -26,7 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -44,10 +44,6 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Camlex.NET, Version=3.4.0.0, Culture=neutral, PublicKeyToken=831792d54d5285b7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Camlex.NET.dll.3.4.0.0\lib\net20\Camlex.NET.dll</HintPath>
-    </Reference>
     <Reference Include="EPPlus, Version=3.1.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
@@ -169,6 +165,126 @@
   <ItemGroup>
     <Compile Include="Bundles\SharePointMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
+    <Compile Include="Imports\Camlex.NET\Attributes.cs" />
+    <Compile Include="Imports\Camlex.NET\Camlex.cs" />
+    <Compile Include="Imports\Camlex.NET\DataTypes.cs" />
+    <Compile Include="Imports\Camlex.NET\ErrorMessages.cs" />
+    <Compile Include="Imports\Camlex.NET\Exceptions.cs" />
+    <Compile Include="Imports\Camlex.NET\ExtensionMethods.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\BaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\BinaryExpressionBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\BinaryOperationBase.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\CompositeExpressionBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\CompositeOperationBase.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Factories\AnalyzerFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Factories\OperandBuilder.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Factories\OperationResultBuilder.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Factories\TranslatorFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\GenericTranslator.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Helpers\ExpressionsHelper.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\NullabilityBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\BooleanValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\DateTimeValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\FieldRefOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\FieldRefOperandWithOrdering.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\GenericStringBasedValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\GuidValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\IntegerValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\LookupIdValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\LookupValueValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\NullValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\NumberValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\TextValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\UserIdConstValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\UserIdValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\ValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operands\ValuesValueOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\OperationBase.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\AndAlso\AndAlsoAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\AndAlso\AndAlsoOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Array\ArrayAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Array\ArrayOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\BeginsWith\BeginsWithAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\BeginsWith\BeginsWithOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Contains\ContainsAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Contains\ContainsOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\DateRangesOverlap\DateRangesOverlapAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\DateRangesOverlap\DateRangesOverlapOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Eq\EqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Eq\EqOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Geq\GeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Geq\GeqOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Gt\GtAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Gt\GtOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\In\InAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\In\InOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\IsNotNull\IsNotNullAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\IsNotNull\IsNotNullOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\IsNull\IsNullAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\IsNull\IsNullOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Leq\LeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Leq\LeqOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Lt\LtAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Lt\LtOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Neq\NeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Neq\NeqOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\OrElse\OrElseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\OrElse\OrElseOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Results\ExpressionOperationResult.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Results\XElementArrayOperationResult.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Operations\Results\XElementOperationResult.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\Query.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReAndAlsoAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReArrayAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReBeginsWithAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReContainsAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReDateRangesOverlapAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReEqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReGeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReGtAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReInAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReIsNotNullAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReIsNullAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReLeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReLtAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReNeqAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Analyzers\ReOrElseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Factories\ReAnalyzerFromCamlFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Factories\ReLinkerFromCamlFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Factories\ReOperandBuilderFromCaml.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\Factories\ReTranslatorFromCamlFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\ReLinkerFromCaml.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\Caml\ReTranslatorFromCaml.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReBinaryExpressionBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReComparisonBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReCompositeExpressionBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReNullabilityBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\ReverseEngeneering\ReQuery.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\UnaryExpressionBaseAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Impl\UnaryOperationBase.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IAnalyzerFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IOperand.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IOperandBuilder.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IOperation.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IOperationResult.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IOperationResultBuilder.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IQuery.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\IQueryEx.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ITranslator.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ITranslatorFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReAnalyzer.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReAnalyzerFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReLinker.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReLinkerFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReOperandBuilder.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReOperationResult.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReQuery.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReTranslator.cs" />
+    <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReTranslatorFactory.cs" />
+    <Compile Include="Imports\Camlex.NET\ReflectionHelper.cs" />
+    <Compile Include="Imports\Camlex.NET\Tags.cs" />
     <Compile Include="Library\SPContentDatabaseInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotCollectionInstance.cs" />
@@ -400,7 +516,9 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Imports\Camlex.NET\readme.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

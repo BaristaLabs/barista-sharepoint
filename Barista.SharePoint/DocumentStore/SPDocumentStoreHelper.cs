@@ -1,7 +1,7 @@
 ﻿namespace Barista.SharePoint.DocumentStore
 {
   using Barista.DocumentStore;
-  using CamlexNET;
+  using Barista.Imports.CamlexNET;
   using Microsoft.Office.DocumentManagement.DocumentSets;
   using Microsoft.Office.Server.Utilities;
   using Microsoft.SharePoint;

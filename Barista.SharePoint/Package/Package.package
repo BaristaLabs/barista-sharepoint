@@ -8,7 +8,6 @@
     <customAssembly location="HtmlAgilityPack.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll" />
     <customAssembly location="System.Threading.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll" />
     <customAssembly location="Barista.Interop.ActiveDs.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Barista.Interop.ActiveDs.dll" />
-    <customAssembly location="Camlex.NET.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Camlex.NET.dll.3.4.0.0\lib\net20\Camlex.NET.dll" />
     <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.3.0.3\lib\NET35\Lucene.Net.dll" />
     <customAssembly location="Lucene.Net.Contrib.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Core.dll" />
     <customAssembly location="Lucene.Net.Contrib.Highlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Highlighter.dll" />
