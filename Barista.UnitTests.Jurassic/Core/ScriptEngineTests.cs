@@ -245,7 +245,11 @@ namespace Barista.UnitTests.Jurassic
 
         private class TestInstance2
         {
-            public int value;
+// ReSharper disable InconsistentNaming
+#pragma warning disable 169
+            public int value = 0;
+#pragma warning restore 169
+// ReSharper restore InconsistentNaming
         }
 
         [TestMethod]
