@@ -471,24 +471,24 @@
     {
       throw new JavaScriptException(this.Engine, "Error", "Not Yet Implemented");
 
-      var currentApprovedVersion = m_file.Item.Versions[0];
+    //  var currentApprovedVersion = m_file.Item.Versions[0];
 
-      var lastApprovedVersion = m_file.Versions
-                                      .OfType<SPFileVersion>()
-                                      .OrderByDescending(v => v.ID)
-                                      .FirstOrDefault(
-                                        v => v.Level == SPFileLevel.Published &&
-                                             v.IsCurrentVersion == false);
+    //  var lastApprovedVersion = m_file.Versions
+    //                                  .OfType<SPFileVersion>()
+    //                                  .OrderByDescending(v => v.ID)
+    //                                  .FirstOrDefault(
+    //                                    v => v.Level == SPFileLevel.Published &&
+    //                                         v.IsCurrentVersion == false);
 
-      if (lastApprovedVersion == null)
-        return "";
+    //  if (lastApprovedVersion == null)
+    //    return "";
 
-      m_file.Versions.RestoreByID(lastApprovedVersion.ID);
-      m_file.Publish("Reverting to Last Approved Verison");
-      m_file.Approve("Approving Last Approved Version.");
+    //  m_file.Versions.RestoreByID(lastApprovedVersion.ID);
+    //  m_file.Publish("Reverting to Last Approved Verison");
+    //  m_file.Approve("Approving Last Approved Version.");
 
-      m_file.Versions.RestoreByLabel(currentApprovedVersion.VersionLabel);
-      return lastApprovedVersion.VersionLabel;
+    //  m_file.Versions.RestoreByLabel(currentApprovedVersion.VersionLabel);
+    //  return lastApprovedVersion.VersionLabel;
     }
 
     [JSFunction(Name = "undoCheckOut")]
