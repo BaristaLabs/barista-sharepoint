@@ -1,13 +1,11 @@
-﻿
-namespace Barista.SharePoint.Bundles
+﻿namespace Barista.SharePoint.Bundles
 {
-  using Barista.SharePoint.Library;
   using Barista.SharePoint.Migration.Library;
   using Microsoft.SharePoint.Administration;
   using System;
 
   [Serializable]
-  public class SharePointMigrationBundle : IBundle
+  public class SharePointContentMigrationBundle : IBundle
   {
     public bool IsSystemBundle
     {
@@ -16,17 +14,20 @@ namespace Barista.SharePoint.Bundles
 
     public string BundleName
     {
-      get { return "SharePoint"; }
+      get { return "SharePoint Content Migration"; }
     }
 
     public string BundleDescription
     {
-      get { return "SharePoint Migration Bundle. Provides functionality to migrate data between Farms."; } 
+      get { return "SharePoint Content Migration Bundle. Provides functionality to perform selective content migration."; } 
     }
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      
+      //Add the Various types required.
+      engine.SetGlobalValue("SPExportSettings", new SPExportSettingsConstructor(engine));
+      engine.SetGlobalValue("SPExportObject", new SPExportObjectConstructor(engine));
+
       return new SPMigrationInstance(engine.Object.InstancePrototype, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
     }
   }

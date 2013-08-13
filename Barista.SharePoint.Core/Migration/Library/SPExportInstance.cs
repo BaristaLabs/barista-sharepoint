@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.SharePoint.Migration.Library
+﻿namespace Barista.SharePoint.Migration.Library
 {
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -56,10 +51,18 @@ namespace Barista.SharePoint.Migration.Library
     {
       get
       {
-        return new SPExportSettingsInstance(this.Engine.Object.InstancePrototype, m_export.Settings);
+        return m_export.Settings == null
+          ? null
+          : new SPExportSettingsInstance(this.Engine.Object.InstancePrototype, m_export.Settings);
       }
       set
       {
+        if (value is SPExportSettingsInstance)
+          m_export.Settings = (value as SPExportSettingsInstance).SPExportSettings;
+        else if (value is ObjectInstance)
+        {
+          JurassicHelper.Coerce<SPExportSettingsInstance>(this.Engine, value as ObjectInstance);
+        }
       }
     }
 

@@ -66,6 +66,7 @@
         instance.Common.RegisterBundle(new JsonDataBundle());
         instance.Common.RegisterBundle(new SharePointBundle());
         //instance.Common.RegisterBundle(new SharePointSearchBundle());
+        instance.Common.RegisterBundle(new SharePointContentMigrationBundle());
         instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
         instance.Common.RegisterBundle(new SPDocumentBundle());
         instance.Common.RegisterBundle(new K2Bundle());

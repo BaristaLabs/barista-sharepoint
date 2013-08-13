@@ -72,8 +72,6 @@
     [JSFunction(Name = "ajax")]
     public object Ajax(string url, object settings)
     {
-      var ajaxSettings = JurassicHelper.Coerce<AjaxSettingsInstance>(this.Engine, settings);
-
       //If we're running under Claims authentication, impersonate the thread user
       //by calling the Claims to Windows Token Service and call the remote site using
       //the impersonated credentials. NOTE: The Claims to Windows Token Service must be running.
@@ -104,9 +102,11 @@
         var request = (HttpWebRequest)WebRequest.Create(targetUri);
         request.CachePolicy = noCachePolicy; //TODO: Make this configurable.
 
+        //Get the proxy from the concrete instance.
         var proxyAddress = ObtainDefaultProxyAddress();
 
-        request.Proxy = String.IsNullOrEmpty(proxyAddress) == false
+        //If the proxy address is defined, create a new proxy with the address, otherwise, use the system proxy.
+        request.Proxy = proxyAddress.IsNullOrWhiteSpace() == false
           ? new WebProxy(proxyAddress, true, null, CredentialCache.DefaultNetworkCredentials)
           : WebRequest.GetSystemWebProxy();
 
@@ -117,6 +117,7 @@
 
         var dataType = AjaxDataType.Unknown;
 
+        var ajaxSettings = JurassicHelper.Coerce<AjaxSettingsInstance>(this.Engine, settings);
         if (ajaxSettings != null)
         {
           if (ajaxSettings.UseDefaultCredentials == false)
@@ -141,22 +142,28 @@
           if (String.IsNullOrEmpty(ajaxSettings.Accept))
             request.Accept = ajaxSettings.Accept;
 
-          if (ajaxSettings.Proxy != null)
+          if (ajaxSettings.Proxy != null && ajaxSettings.Proxy != Undefined.Value && ajaxSettings.Proxy != Null.Value)
           {
             var proxySettings = JurassicHelper.Coerce<ProxySettingsInstance>(this.Engine, ajaxSettings.Proxy);
 
-            if (String.IsNullOrEmpty(proxySettings.Address) == false)
+            if (proxySettings != null)
             {
-              try
+              if (String.IsNullOrEmpty(proxySettings.Address) == false)
               {
-                var proxy = new WebProxy(proxySettings.Address, true);
-                request.Proxy = proxy;
+                try
+                {
+                  var proxy = new WebProxy(proxySettings.Address, true);
+                  request.Proxy = proxy;
+                }
+                catch
+                {
+                  /* do nothing */
+                }
               }
-              catch { /* do nothing */ }
-            }
 
-            if (proxySettings.UseDefaultCredentials)
-              request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+              if (proxySettings.UseDefaultCredentials)
+                request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            }
           }
 
           if (String.IsNullOrEmpty(ajaxSettings.DataType) == false)
@@ -210,7 +217,6 @@
         object result;
         try
         {
-
           var syncResponse = (HttpWebResponse)request.GetResponse();
           result = GetResultFromResponse(syncResponse, dataType);
         }

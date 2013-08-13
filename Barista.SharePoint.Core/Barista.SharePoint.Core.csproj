@@ -166,7 +166,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bundles\SharePointMigrationBundle.cs" />
+    <Compile Include="Bundles\SharePointContentMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
     <Compile Include="Imports\Camlex.NET\Attributes.cs" />
     <Compile Include="Imports\Camlex.NET\Camlex.cs" />
@@ -296,6 +296,7 @@
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPWebApplicationInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />
+    <Compile Include="Migration\Library\SPExportObjectInstance.cs" />
     <Compile Include="Migration\Library\SPExportSettingsInstance.cs" />
     <Compile Include="Migration\Library\SPMigrationInstance.cs" />
     <Compile Include="SharePointSearch\Library\QueryInstance.cs" />

@@ -431,7 +431,6 @@
   <ItemGroup>
     <Folder Include="ADMIN\BaristaService\Scripts\Services\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Imports\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">

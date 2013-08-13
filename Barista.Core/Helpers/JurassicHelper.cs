@@ -47,10 +47,7 @@
     public static T Coerce<T>(ScriptEngine engine, object instance)
       where T : ObjectInstance
     {
-      if (instance == null)
-        return null;
-
-      if (instance == Null.Value || instance == Undefined.Value)
+      if (instance == null || instance == Null.Value || instance == Undefined.Value)
         return null;
 
       if (instance is T)
@@ -61,10 +58,25 @@
                                ? JSONObject.Stringify(engine, objectInstance, null, null)
                                : JsonConvert.SerializeObject(instance);
 
-      var result = (T)Activator.CreateInstance(typeof(T), engine.Object.InstancePrototype);
-      JsonConvert.PopulateObject(serializedObject, result);
+      var type = typeof (T);
 
-      return result;
+      //If the target type contains a constructor that accepts an ObjectInstance as the parameter, create a new instance of the target type and 
+      //supply the instance prototype. Otherwise, create an instance using the default constructor.
+      var objectInstanceConstructor = type.GetConstructor(new [] {typeof (ObjectInstance) });
+      if (objectInstanceConstructor != null)
+      {
+        var result = (T) Activator.CreateInstance(typeof (T), engine.Object.InstancePrototype);
+        JsonConvert.PopulateObject(serializedObject, result);
+
+        return result;
+      }
+      else
+      {
+        var result = (T)Activator.CreateInstance(typeof(T));
+        JsonConvert.PopulateObject(serializedObject, result);
+
+        return result;
+      }
     }
 
     public static string JavaScriptStringEncode(string value)
