@@ -127,11 +127,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaAutomationClient", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.SchedulerService", "Barista.SharePoint.SchedulerService\Barista.SharePoint.SchedulerService.csproj", "{76859B84-236A-4E5D-B47B-4F94118C342D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.CamlexNET", "Barista.UnitTests.CamlexNET\Barista.UnitTests.CamlexNET.csproj", "{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 20
+		SccNumberOfProjects = 19
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -207,10 +205,6 @@ Global
 		SccProjectTopLevelParentUniqueName18 = Barista.sln
 		SccProjectName18 = Barista.SharePoint.SchedulerService
 		SccLocalPath18 = Barista.SharePoint.SchedulerService
-		SccProjectUniqueName19 = Barista.UnitTests.CamlexNET\\Barista.UnitTests.CamlexNET.csproj
-		SccProjectTopLevelParentUniqueName19 = Barista.sln
-		SccProjectName19 = Barista.UnitTests.CamlexNET
-		SccLocalPath19 = Barista.UnitTests.CamlexNET
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -293,10 +287,6 @@ Global
 		{76859B84-236A-4E5D-B47B-4F94118C342D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76859B84-236A-4E5D-B47B-4F94118C342D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76859B84-236A-4E5D-B47B-4F94118C342D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -321,7 +311,6 @@ Global
 		{E2F2E77D-5F2F-4B96-88C0-A42845185B92} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
-		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA} = {7DB948B6-8410-4DB1-8C29-0310F6D2047F}
 		{4A18440E-D225-4FB4-B781-950598372798} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
