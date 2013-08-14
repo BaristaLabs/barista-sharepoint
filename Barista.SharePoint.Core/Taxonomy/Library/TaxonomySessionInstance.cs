@@ -1,10 +1,64 @@
 ﻿namespace Barista.SharePoint.Taxonomy.Library
 {
-  using System;
+  using Barista.Jurassic;
   using Barista.Library;
+  using Barista.SharePoint.Library;
   using Jurassic.Library;
+  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Taxonomy;
+  using System;
   using System.Collections.Generic;
+  using System.Linq;
+
+  [Serializable]
+  public class TaxonomySessionConstructor : ClrFunction
+  {
+    public TaxonomySessionConstructor(ScriptEngine engine)
+      : base(engine.Function.InstancePrototype, "TaxonomySession", new TermCollectionInstance(engine.Object.InstancePrototype))
+    {
+      this.PopulateFunctions();
+    }
+
+    [JSConstructorFunction]
+    public TaxonomySessionInstance Construct(object site)
+    {
+      TaxonomySession session;
+      if (site is SPSiteInstance)
+        session = new TaxonomySession((site as SPSiteInstance).Site);
+      else if (site is GuidInstance)
+      {
+        var id = (site as GuidInstance).Value;
+
+        var spSite = new SPSite(id);
+        session = new TaxonomySession(spSite);
+      }
+      else if (site is UriInstance)
+      {
+        var uri = (site as UriInstance).Uri;
+
+        var spSite = new SPSite(uri.ToString());
+        session = new TaxonomySession(spSite);
+      }
+      else
+      {
+        var url = TypeConverter.ToString(site);
+
+        var spSite = new SPSite(url);
+        session = new TaxonomySession(spSite);
+      }
+
+      return new TaxonomySessionInstance(this.Engine.Object.InstancePrototype, session);
+    }
+
+    [JSFunction(Name = "syncHiddenList")]
+    public void SyncHiddenList(SPSiteInstance site)
+    {
+      if (site == null)
+        throw new JavaScriptException(this.Engine, "Error", "A SPSite must be specified as the first argument.");
+
+      TaxonomySession.SyncHiddenList(site.Site);
+    }
+  }
 
   [Serializable]
   public class TaxonomySessionInstance : ObjectInstance
@@ -24,6 +78,28 @@
       this.m_taxonomySession = taxonomySession;
     }
 
+    [JSProperty(Name = "offlineTermStoreNames")]
+    public ArrayInstance OfflineTermStoreNames
+    {
+      get
+      {
+// ReSharper disable CoVariantArrayConversion
+        return this.Engine.Array.Construct(m_taxonomySession.OfflineTermStoreNames.OfType<string>().ToArray());
+// ReSharper restore CoVariantArrayConversion
+      }
+    }
+
+    [JSProperty(Name = "termStores")]
+    public TermStoreCollectionInstance TermStores
+    {
+      get
+      {
+        return m_taxonomySession.TermStores == null
+          ? null
+          : new TermStoreCollectionInstance(this.Engine.Object.InstancePrototype, m_taxonomySession.TermStores);
+      }
+    }
+
     [JSFunction(Name = "getDefaultKeywordsTermStore")]
     public TermStoreInstance GetDefaultKeywordsTermStore()
     {
@@ -39,6 +115,9 @@
     }
 
     [JSFunction(Name = "getTerm")]
+    [JSDoc(
+      "Gets a Term object that is based on Term IDs. If the current Term belongs to multiple TermSet objects, it will arbitrarily return the Term from one of the TermSet objects."
+      )]
     public TermInstance GetTerm(object termId)
     {
       var termGuid = GuidInstance.ConvertFromJsObjectToGuid(termId);
@@ -47,92 +126,134 @@
     }
 
     [JSFunction(Name = "getTerms")]
-    public ArrayInstance GetTerms(string termLabel, bool trimUnavailable)
+    [JSDoc("Gets Term objects for the current TaxonomySession object.")]
+    public TermCollectionInstance GetTerms(string termLabel, object arg2, object arg3)
     {
-      var result = this.Engine.Array.Construct();
-      foreach (var term in m_taxonomySession.GetTerms(termLabel, trimUnavailable))
-      {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
-      }
-      return result;
+      TermCollection result;
+      if (arg3 == Undefined.Value || arg3 == Null.Value || arg3 == null)
+        result = m_taxonomySession.GetTerms(termLabel, TypeConverter.ToBoolean(arg2));
+      else
+        result = m_taxonomySession.GetTerms(termLabel, TypeConverter.ToInteger(arg2), TypeConverter.ToBoolean(arg3));
+
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    //TODO: All the getterm overloads.
+    [JSFunction(Name = "getTermsFromIds")]
+    public TermCollectionInstance GetTermsFromIds(ArrayInstance ids)
+    {
+      var guids = ids.ElementValues.Select(GuidInstance.ConvertFromJsObjectToGuid).ToArray();
 
-    [JSFunction(Name = "getTermSets")]
-    public ArrayInstance GetTermSets(ArrayInstance termLabels)
+      var result = m_taxonomySession.GetTerms(guids);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
+    }
+
+    [JSFunction(Name = "getTermSetsFromLabels")]
+    public TermSetCollectionInstance GetTermSets(ArrayInstance termLabels, object lcid)
     {
       var termLabelsList = new List<string>();
-      for(int i = 0; i < termLabels.Length; i++)
+      for (var i = 0; i < termLabels.Length; i++)
       {
         var label = termLabels[i] as string;
         if (label != null)
           termLabelsList.Add(label);
       }
 
-      var result = this.Engine.Array.Construct();
+      TermSetCollectionInstance result = null;
 
-      foreach (var termSet in m_taxonomySession.GetTermSets(termLabelsList.ToArray()))
+      if (lcid == null || lcid == Null.Value || lcid == Undefined.Value)
       {
-        ArrayInstance.Push(result, new TermSetInstance(this.Engine.Object.InstancePrototype, termSet));
+        var termSets = m_taxonomySession.GetTermSets(termLabelsList.ToArray());
+        if (termSets != null)
+          result = new TermSetCollectionInstance(this.Engine.Object.InstancePrototype, termSets);
       }
+      else
+      {
+        var termSets = m_taxonomySession.GetTermSets(termLabelsList.ToArray(), TypeConverter.ToInteger(lcid));
+
+        if (termSets != null)
+          result = new TermSetCollectionInstance(this.Engine.Object.InstancePrototype, termSets);
+      }
+
       return result;
     }
 
-    public ArrayInstance GetTermSets(string termSetName, int lcid)
+    [JSFunction(Name = "getTermSets")]
+    public TermSetCollectionInstance GetTermSets(string termSetName, int lcid)
     {
-      var result = this.Engine.Array.Construct();
+      var termSets = m_taxonomySession.GetTermSets(termSetName, lcid);
 
-      foreach (var termSet in m_taxonomySession.GetTermSets(termSetName, lcid))
-      {
-        ArrayInstance.Push(result, new TermSetInstance(this.Engine.Object.InstancePrototype, termSet));
-      }
-      return result;
+      return termSets == null
+        ? null
+        : new TermSetCollectionInstance(this.Engine.Object.InstancePrototype, termSets);
     }
 
-    public ArrayInstance GetTermSets(ArrayInstance termLabels, int lcid)
+    [JSFunction(Name = "getTermsEx")]
+    public TermCollectionInstance GetTermsEx(string termLabel, bool defaultLabelOnly, string stringMatchOption,
+      int resultCollectionSize, bool trimUnavailable)
     {
-      List<String> termLabelsList = new List<string>();
-      for (int i = 0; i < termLabels.Length; i++)
-      {
-        var label = termLabels[i] as string;
-        if (label != null)
-          termLabelsList.Add(label);
-      }
+      var stringMatchOptionEnum = (StringMatchOption) Enum.Parse(typeof (StringMatchOption), stringMatchOption);
 
-      var result = this.Engine.Array.Construct();
+      var result = m_taxonomySession.GetTerms(termLabel, defaultLabelOnly, stringMatchOptionEnum,
+        resultCollectionSize, trimUnavailable);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
+    }
 
-      foreach (var termSet in m_taxonomySession.GetTermSets(termLabelsList.ToArray(), lcid))
-      {
-        ArrayInstance.Push(result, new TermSetInstance(this.Engine.Object.InstancePrototype, termSet));
-      }
-      return result;
+    [JSFunction(Name = "getTermsEx2")]
+    public TermCollectionInstance GetTermsEx2(string termLabel, int lcid, bool defaultLabelOnly,
+      string stringMatchOption, int resultCollectionSize, bool trimUnavailable, bool trimDeprecated)
+    {
+      var stringMatchOptionEnum = (StringMatchOption) Enum.Parse(typeof (StringMatchOption), stringMatchOption);
+
+      var result = m_taxonomySession.GetTerms(termLabel, lcid, defaultLabelOnly, stringMatchOptionEnum,
+        resultCollectionSize, trimUnavailable, trimDeprecated);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getTermsInDefaultLanguage")]
-    public ArrayInstance GetTermsInDefaultLanguage(string termLabel, bool defaultLabelOnly, string stringMatchOption, int resultCollectionSize, bool trimUnavailable, bool trimDeprecated)
+    public TermCollectionInstance GetTermsInDefaultLanguage(string termLabel, bool defaultLabelOnly,
+      string stringMatchOption, int resultCollectionSize, bool trimUnavailable, bool trimDeprecated)
     {
-      var stringMatchOptionEnum = (StringMatchOption)Enum.Parse(typeof(StringMatchOption), stringMatchOption);
-      var result = this.Engine.Array.Construct();
-      foreach (var term in m_taxonomySession.GetTermsInDefaultLanguage(termLabel, defaultLabelOnly, stringMatchOptionEnum, resultCollectionSize, trimUnavailable, trimDeprecated))
-      {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
-      }
-      return result;
+      var stringMatchOptionEnum = (StringMatchOption) Enum.Parse(typeof (StringMatchOption), stringMatchOption);
+
+      var result = m_taxonomySession.GetTermsInDefaultLanguage(termLabel, defaultLabelOnly, stringMatchOptionEnum,
+        resultCollectionSize, trimUnavailable, trimDeprecated);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getTermsInWorkingLocale")]
-    public ArrayInstance GetTermsInWorkingLocale(string termLabel, bool defaultLabelOnly, string stringMatchOption, int resultCollectionSize, bool trimUnavailable, bool trimDeprecated)
+    public TermCollectionInstance GetTermsInWorkingLocale(string termLabel, bool defaultLabelOnly,
+      string stringMatchOption, int resultCollectionSize, bool trimUnavailable, bool trimDeprecated)
     {
-      var stringMatchOptionEnum = (StringMatchOption)Enum.Parse(typeof(StringMatchOption), stringMatchOption);
-      var result = this.Engine.Array.Construct();
-      foreach (var term in m_taxonomySession.GetTermsInWorkingLocale(termLabel, defaultLabelOnly, stringMatchOptionEnum, resultCollectionSize, trimUnavailable, trimDeprecated))
-      {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
-      }
-      return result;
+      var stringMatchOptionEnum = (StringMatchOption) Enum.Parse(typeof (StringMatchOption), stringMatchOption);
+
+      var result = m_taxonomySession.GetTermsInWorkingLocale(termLabel, defaultLabelOnly, stringMatchOptionEnum,
+        resultCollectionSize, trimUnavailable, trimDeprecated);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    //TODO: a few more GetTerm overloads.
+    [JSFunction(Name = "getTermsWithCustomProperty")]
+    public TermCollectionInstance GetTermsWithCustomProperty(string customPropertyName, string customPropertyValue,
+      string stringMatchOption, int resultCollectionSize, bool trimUnavailable)
+    {
+      var stringMatchOptionEnum = (StringMatchOption)Enum.Parse(typeof(StringMatchOption), stringMatchOption);
+
+      var result = m_taxonomySession.GetTermsWithCustomProperty(customPropertyName, customPropertyValue, stringMatchOptionEnum,
+        resultCollectionSize, trimUnavailable);
+      return result == null
+        ? null
+        : new TermCollectionInstance(this.Engine.Object.InstancePrototype, result);
+    }
   }
 }

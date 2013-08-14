@@ -166,6 +166,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundles\SharePointTaxonomyBundle.cs" />
     <Compile Include="Bundles\SharePointContentMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
     <Compile Include="Imports\Camlex.NET\Attributes.cs" />
@@ -418,11 +419,14 @@
     <Compile Include="SPFileScriptSource.cs" />
     <Compile Include="SPSiteCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermCollection.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />
     <Compile Include="Taxonomy\Library\TermInstance.cs" />
-    <Compile Include="Taxonomy\Library\TermLabel.cs" />
+    <Compile Include="Taxonomy\Library\TermLabelInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermSetCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermSetInstance.cs" />
     <Compile Include="Taxonomy\Library\TermStoreInstance.cs" />
+    <Compile Include="Taxonomy\Library\TermStoreCollectionInstance.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>
