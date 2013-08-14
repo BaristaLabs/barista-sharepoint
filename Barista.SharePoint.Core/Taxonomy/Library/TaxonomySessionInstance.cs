@@ -51,12 +51,34 @@
     }
 
     [JSFunction(Name = "syncHiddenList")]
-    public void SyncHiddenList(SPSiteInstance site)
+    public void SyncHiddenList(object site)
     {
       if (site == null)
         throw new JavaScriptException(this.Engine, "Error", "A SPSite must be specified as the first argument.");
 
-      TaxonomySession.SyncHiddenList(site.Site);
+      SPSite spSite;
+      if (site is SPSiteInstance)
+        spSite = (site as SPSiteInstance).Site;
+      else if (site is GuidInstance)
+      {
+        var id = (site as GuidInstance).Value;
+
+        spSite = new SPSite(id);
+      }
+      else if (site is UriInstance)
+      {
+        var uri = (site as UriInstance).Uri;
+
+        spSite = new SPSite(uri.ToString());
+      }
+      else
+      {
+        var url = TypeConverter.ToString(site);
+
+        spSite = new SPSite(url);
+      }
+
+      TaxonomySession.SyncHiddenList(spSite);
     }
   }
 
