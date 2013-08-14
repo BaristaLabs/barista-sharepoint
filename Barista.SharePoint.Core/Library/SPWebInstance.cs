@@ -120,6 +120,17 @@
       }
     }
 
+    [JSProperty(Name = "availableContentTypes")]
+    public SPContentTypeCollectionInstance AvailableContentTypes
+    {
+      get
+      {
+        return m_web.AvailableContentTypes == null
+          ? null
+          : new SPContentTypeCollectionInstance(this.Engine.Object.InstancePrototype, m_web.AvailableContentTypes);
+      }
+    }
+
     [JSProperty(Name = "availableFields")]
     public SPFieldCollectionInstance AvailableFields
     {
@@ -141,6 +152,17 @@
         return m_web.Fields == null
           ? null
           : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Fields);
+      }
+    }
+
+    [JSProperty(Name = "contentTypes")]
+    public SPContentTypeCollectionInstance ContentTypes
+    {
+      get
+      {
+        return m_web.ContentTypes == null
+          ? null
+          : new SPContentTypeCollectionInstance(this.Engine.Object.InstancePrototype, m_web.ContentTypes);
       }
     }
 

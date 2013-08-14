@@ -107,6 +107,17 @@
     //  get { return m_list.BaseType; }
     //}
 
+    [JSProperty(Name = "contentTypes")]
+    public SPContentTypeCollectionInstance ContentTypes
+    {
+      get
+      {
+        return m_list.ContentTypes == null
+          ? null
+          : new SPContentTypeCollectionInstance(this.Engine.Object.InstancePrototype, m_list.ContentTypes);
+      }
+    }
+
     [JSProperty(Name = "contentTypesEnabled")]
     public bool ContentTypesEnabled
     {

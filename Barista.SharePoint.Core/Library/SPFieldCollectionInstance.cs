@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using System.Collections.Specialized;
   using System.Linq;
   using Barista.Extensions;
   using Barista.Jurassic;
@@ -83,6 +84,39 @@
         throw new JavaScriptException(this.Engine, "Error", "A field must be specified as the first argument.");
 
       return m_fieldCollection.Add(field.SPField);
+    }
+
+    [JSFunction(Name = "addNewField")]
+    public string AddNewField(string displayName, string fieldType, bool required)
+    {
+      SPFieldType ft;
+      if (fieldType.TryParseEnum(true, out ft) == false)
+      {
+        SPFieldInstance.ThrowUnknownFieldTypeException(this.Engine);
+      }
+
+      return m_fieldCollection.Add(displayName, ft, required);
+    }
+
+    [JSFunction(Name = "addNewFieldEx")]
+    public string AddNewField(string displayName, string fieldType, bool required, bool compactName, ArrayInstance choices)
+    {
+      if (choices == null)
+        throw new JavaScriptException(this.Engine, "Error", "The choices argument must be specified.");
+
+      SPFieldType ft;
+      if (fieldType.TryParseEnum(true, out ft) == false)
+      {
+        SPFieldInstance.ThrowUnknownFieldTypeException(this.Engine);
+      }
+
+      var strChoices = new StringCollection();
+      foreach (var c in choices.ElementValues)
+      {
+        strChoices.Add(TypeConverter.ToString(c));
+      }
+
+      return m_fieldCollection.Add(displayName, ft, required, compactName, strChoices);
     }
 
     [JSFunction(Name = "addFieldAsXml")]
@@ -176,20 +210,18 @@
     public SPFieldInstance GetFieldByGuid(string displayName)
     {
       var field = m_fieldCollection[displayName];
-      if (field == null)
-        return null;
-
-      return new SPFieldInstance(this.Engine.Object.InstancePrototype, field);
+      return field == null
+        ? null
+        : new SPFieldInstance(this.Engine.Object.InstancePrototype, field);
     }
 
     [JSFunction(Name = "getFieldByInternalName")]
     public SPFieldInstance GetFieldByInternalName(string name)
     {
       var field = m_fieldCollection.GetFieldByInternalName(name);
-      if (field == null)
-        return null;
-
-      return new SPFieldInstance(this.Engine.Object.InstancePrototype, null);
+      return field == null
+        ? null
+        : new SPFieldInstance(this.Engine.Object.InstancePrototype, null);
     }
 
     [JSFunction(Name = "getList")]

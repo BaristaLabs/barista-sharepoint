@@ -14,11 +14,26 @@
     }
 
     [JSConstructorFunction]
-    public SPContentTypeInstance Construct(string contentTypeId)
+    public SPContentTypeInstance Construct(object contentTypeId)
     {
-      var spContentTypeId = new SPContentTypeId(contentTypeId);
-      var bestSPContentTypeMatch = SPBaristaContext.Current.Web.AvailableContentTypes.BestMatch(spContentTypeId);
-      var contentType = SPBaristaContext.Current.Web.AvailableContentTypes[bestSPContentTypeMatch];
+      if (contentTypeId == null || contentTypeId == Null.Value || contentTypeId == Undefined.Value)
+        throw new JavaScriptException(this.Engine, "Error", "When creating a new instance of a SPContentType, a content type id must be specified which is either a string or an instance of a SPContentTypeId.");
+
+      SPContentType contentType;
+
+      if (contentTypeId is SPContentTypeIdInstance)
+      {
+        var spContentTypeId = (contentTypeId as SPContentTypeIdInstance).ContentTypeId;
+        var bestSPContentTypeMatch = SPBaristaContext.Current.Web.AvailableContentTypes.BestMatch(spContentTypeId);
+        contentType = SPBaristaContext.Current.Web.AvailableContentTypes[bestSPContentTypeMatch];
+      }
+      else
+      {
+        var strContentTypeId = TypeConverter.ToString(contentTypeId);
+        var spContentTypeId = new SPContentTypeId(strContentTypeId);
+        var bestSPContentTypeMatch = SPBaristaContext.Current.Web.AvailableContentTypes.BestMatch(spContentTypeId);
+        contentType = SPBaristaContext.Current.Web.AvailableContentTypes[bestSPContentTypeMatch];
+      }
 
       if (contentType == null)
         throw new JavaScriptException(this.Engine, "Error", "A match for the specified content type could not be found in the current web.");
@@ -115,8 +130,6 @@
       get { return m_contentType.FeatureId.ToString(); }
     }
 
-    //TODO: FieldLinks
-
     [JSProperty(Name = "fields")]
     public SPFieldCollectionInstance Fields
     {
@@ -125,6 +138,17 @@
         return m_contentType.Fields == null
           ? null
           : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_contentType.Fields);
+      }
+    }
+
+    [JSProperty(Name = "fieldLinks")]
+    public SPFieldLinkCollectionInstance FieldLinks
+    {
+      get
+      {
+        return m_contentType.FieldLinks == null
+          ? null
+          : new SPFieldLinkCollectionInstance(this.Engine.Object.InstancePrototype, m_contentType.FieldLinks);
       }
     }
 
@@ -264,13 +288,6 @@
       return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_contentType.ResourceFolder);
     }
 
-    [JSFunction(Name = "update")]
-    public void Update([DefaultParameterValue(true)] bool updateChildren, [DefaultParameterValue(true)] bool throwOnSealedOrReadOnly)
-    {
-      m_contentType.Update(updateChildren, throwOnSealedOrReadOnly);
-    }
-    #endregion
-
     [JSFunction(Name = "getSchemaXml")]
     public string GetSchemaXml()
     {
@@ -288,5 +305,12 @@
     {
       m_contentType.SchemaXmlWithResourceTokens = xml;
     }
+
+    [JSFunction(Name = "update")]
+    public void Update([DefaultParameterValue(true)] bool updateChildren, [DefaultParameterValue(true)] bool throwOnSealedOrReadOnly)
+    {
+      m_contentType.Update(updateChildren, throwOnSealedOrReadOnly);
+    }
+    #endregion
   }
 }

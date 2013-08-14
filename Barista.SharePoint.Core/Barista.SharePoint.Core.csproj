@@ -290,10 +290,13 @@
     <Compile Include="Imports\Camlex.NET\ReflectionHelper.cs" />
     <Compile Include="Imports\Camlex.NET\Tags.cs" />
     <Compile Include="Library\SPContentDatabaseInstance.cs" />
+    <Compile Include="Library\SPContentTypeCollectionInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotCollectionInstance.cs" />
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
     <Compile Include="Library\SPFieldInstance.cs" />
+    <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
+    <Compile Include="Library\SPFieldLinkInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPWebApplicationInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />

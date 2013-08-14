@@ -15,9 +15,16 @@
     }
 
     [JSConstructorFunction]
-    public SPFieldInstance Construct()
+    public SPFieldInstance Construct(SPFieldCollectionInstance fieldCollection, string arg1, object arg2)
     {
-      return new SPFieldInstance(this.InstancePrototype);
+      if (fieldCollection == null)
+        throw new JavaScriptException(this.Engine, "Error", "A field collection must be specified to create a new instance of an SPField.");
+
+      var newField = arg2 == Undefined.Value
+        ? new SPField(fieldCollection.SPFieldCollection, arg1)
+        : new SPField(fieldCollection.SPFieldCollection, arg1, TypeConverter.ToString(arg2));
+      
+      return new SPFieldInstance(this.Engine.Object.InstancePrototype, newField);
     }
   }
 
@@ -212,17 +219,25 @@
       }
     }
 
-    [JSProperty(Name = "FieldReferences")]
+    [JSProperty(Name = "fieldReferences")]
     public ArrayInstance FieldReferences
     {
       get
       {
-        if (m_field.FieldReferences == null)
-          return null;
+        try
+        {
+          if (m_field.FieldReferences == null)
+            return null;
 
-// ReSharper disable CoVariantArrayConversion
-        return this.Engine.Array.Construct(m_field.FieldReferences);
-// ReSharper restore CoVariantArrayConversion
+          // ReSharper disable CoVariantArrayConversion
+          return this.Engine.Array.Construct(m_field.FieldReferences);
+          // ReSharper restore CoVariantArrayConversion
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+          //Do nothing...
+          return null;
+        }
       }
     }
 
@@ -894,5 +909,41 @@
 
     #endregion
 
+    public static void ThrowUnknownFieldTypeException(ScriptEngine engine)
+    {
+      throw new JavaScriptException(engine, "Error", "Unknown or unsupported value for the FieldType parameter. Supported Field Types are:" +
+                                                    "AllDayEvent," +
+                                                    "Attachments," +
+                                                    "Boolean," +
+                                                    "Calculated," +
+                                                    "Choice," +
+                                                    "Computed," +
+                                                    "ContentTypeId," +
+                                                    "Counter," +
+                                                    "CrossProjectLink," +
+                                                    "Currency," +
+                                                    "DateTime," +
+                                                    "Error," +
+                                                    "File," +
+                                                    "GridChoice," +
+                                                    "Guid," +
+                                                    "Integer," +
+                                                    "Invalid," +
+                                                    "Lookup," +
+                                                    "MaxItems," +
+                                                    "ModStat," +
+                                                    "MultiChoice," +
+                                                    "Note," +
+                                                    "Number," +
+                                                    "PageSeperator," +
+                                                    "Recurrence," +
+                                                    "Text," +
+                                                    "ThreadIndex," +
+                                                    "Threading," +
+                                                    "URL," +
+                                                    "User," +
+                                                    "WorkflowEventType," +
+                                                    "WorkflowStatus");
+    }
   }
 }

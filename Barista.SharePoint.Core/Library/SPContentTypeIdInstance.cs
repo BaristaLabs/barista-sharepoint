@@ -90,5 +90,11 @@
       return m_contentTypeId.ToString();
     }
     #endregion
+
+    [JSFunction(Name = "toJSON", Flags = JSFunctionFlags.HasThisObject)]
+    public static object ToJson(ObjectInstance thisObject, string key)
+    {
+      return thisObject.ToString();
+    }
   }
 }
