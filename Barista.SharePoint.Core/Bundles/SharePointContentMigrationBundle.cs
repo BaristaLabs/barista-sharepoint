@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Bundles
 {
   using Barista.SharePoint.Migration.Library;
-  using Microsoft.SharePoint.Administration;
   using System;
 
   [Serializable]
@@ -27,8 +26,9 @@
       //Add the Various types required.
       engine.SetGlobalValue("SPExportSettings", new SPExportSettingsConstructor(engine));
       engine.SetGlobalValue("SPExportObject", new SPExportObjectConstructor(engine));
+      engine.SetGlobalValue("SPExportObjectCollection", new SPExportObjectCollectionConstructor(engine));
 
-      return new SPMigrationInstance(engine.Object.InstancePrototype, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
+      return new SPMigrationInstance(engine.Object.InstancePrototype);
     }
   }
 }

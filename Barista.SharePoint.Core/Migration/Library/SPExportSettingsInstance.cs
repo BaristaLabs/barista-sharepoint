@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Migration.Library
 {
-  using System.Linq;
   using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -108,6 +107,8 @@
       }
     }
 
+    //TODO: DataFiles??
+
     [JSProperty(Name = "excludeDependencies")]
     [JsonProperty("excludeDependencies")]
     [JSDoc("Specifies whether to exclude dependencies from the export package when exporting objects of type SPFile or SPListItem.")]
@@ -172,37 +173,11 @@
 
     [JSProperty(Name = "exportObjects")]
     [JSDoc("Gets the collection of objects to export.")]
-    public ArrayInstance ExportObjects
+    public SPExportObjectCollectionInstance ExportObjects
     {
       get
       {
-        object[] values =
-          m_exportSettings.ExportObjects
-          .OfType<SPExportObject>()
-          .Select(
-            eo => new SPExportObjectInstance(this.Engine.Object.InstancePrototype, eo))
-            .ToArray();
-
-        return this.Engine.Array.Construct(values);
-      }
-      set
-      {
-        m_exportSettings.ExportObjects.Clear();
-
-        foreach (var exportObject in value.ElementValues)
-        {
-          if (exportObject is SPExportObjectInstance)
-          {
-            var eo = (exportObject as SPExportObjectInstance);
-            m_exportSettings.ExportObjects.Add(eo.SPExportObject);
-          }
-          else if (exportObject is ObjectInstance)
-          {
-            var eo = JurassicHelper.Coerce<SPExportObjectInstance>(this.Engine, exportObject as ObjectInstance);
-            m_exportSettings.ExportObjects.Add(eo.SPExportObject);
-          }
-          
-        }
+        return new SPExportObjectCollectionInstance(this.Engine.Object.InstancePrototype, m_exportSettings.ExportObjects);
       }
     }
 
@@ -233,6 +208,16 @@
       set
       {
         m_exportSettings.FileCompression = value;
+      }
+    }
+
+    [JSProperty(Name = "fileExtension")]
+    [JsonIgnore]
+    public string FileExtension
+    {
+      get
+      {
+        return Microsoft.SharePoint.Deployment.SPDeploymentSettings.FileExtension;
       }
     }
 
@@ -416,6 +401,12 @@
           ? null
           : value.SPContentDatabase;
       }
+    }
+
+    [JSFunction(Name = "validate")]
+    public void Validate()
+    {
+      m_exportSettings.Validate();
     }
   }
 }
