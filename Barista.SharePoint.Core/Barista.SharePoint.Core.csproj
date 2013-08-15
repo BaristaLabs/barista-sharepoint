@@ -303,6 +303,8 @@
     <Compile Include="Migration\Library\SPExportObjectCollectionInstance.cs" />
     <Compile Include="Migration\Library\SPExportObjectInstance.cs" />
     <Compile Include="Migration\Library\SPExportSettingsInstance.cs" />
+    <Compile Include="Migration\Library\SPImportInstance.cs" />
+    <Compile Include="Migration\Library\SPImportSettingsInstance.cs" />
     <Compile Include="Migration\Library\SPMigrationInstance.cs" />
     <Compile Include="SharePointSearch\Library\QueryInstance.cs" />
     <Compile Include="SharePointSearch\Library\SearchServiceApplicationInstance.cs" />
