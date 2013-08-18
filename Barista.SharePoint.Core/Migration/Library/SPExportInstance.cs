@@ -1,7 +1,11 @@
 ﻿namespace Barista.SharePoint.Migration.Library
 {
+  using System.IO;
+  using System.Linq;
+  using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
+  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Deployment;
   using System;
 
@@ -16,7 +20,7 @@
     [JSConstructorFunction]
     public SPExportInstance Construct()
     {
-      return new SPExportInstance(this.InstancePrototype);
+      return new SPExportInstance(this.InstancePrototype, new SPExport());
     }
   }
 
@@ -24,6 +28,7 @@
   public class SPExportInstance : ObjectInstance
   {
     private readonly SPExport m_export;
+    private string m_dropLocation;
 
     public SPExportInstance(ObjectInstance prototype)
       : base(prototype)
@@ -66,6 +71,19 @@
       }
     }
 
+    [JSProperty(Name = "dropLocation")]
+    public string DropLocation
+    {
+      get
+      {
+        return m_dropLocation;
+      }
+      set
+      {
+        m_dropLocation = value;
+      }
+    }
+
     [JSFunction(Name = "cancel")]
     public void Cancel()
     {
@@ -88,6 +106,44 @@
     public void Run()
     {
       m_export.Run();
+      SPExportInstance.CopyFilesToDropLocation(m_export, m_dropLocation);
+    }
+
+    public static void CopyFilesToDropLocation(SPExport export, string dropLocation)
+    {
+      //If a drop location is specified, copy the files to the target location.
+      if (dropLocation.IsNullOrWhiteSpace())
+        return;
+
+      var filesToCopy = export.Settings.DataFiles.OfType<string>()
+        .Select(dataFile => new Tuple<string, string>(Path.Combine(export.Settings.FileLocation, dataFile), dataFile))
+        .ToList();
+
+      SPSite dropSite;
+      SPWeb dropWeb;
+      SPFolder dropFolder;
+
+      if (!SPHelper.TryGetSPFolder(dropLocation, out dropSite, out dropWeb, out dropFolder))
+        return;
+
+      try
+      {
+        foreach (var fileToCopy in filesToCopy)
+        {
+          using (var fs = File.Open(fileToCopy.Item1, FileMode.Open, FileAccess.Read))
+          {
+            dropFolder.Files.Add(fileToCopy.Item2, fs, true, "", false);
+          }
+        }
+      }
+      finally
+      {
+        if (dropSite != null)
+          dropSite.Dispose();
+
+        if (dropWeb != null)
+          dropWeb.Dispose();
+      }
     }
   }
 }

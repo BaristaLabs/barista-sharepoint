@@ -63,6 +63,11 @@
       this.m_web = web;
     }
 
+    public SPWeb Web
+    {
+      get { return m_web; }
+    }
+
     #region Properties
     [JSDoc("Gets a Boolean value that specifies whether the current user is allowed to use the designer for this website. The default value is false.")]
     [JSProperty(Name = "allowDesignerForCurrentUser")]

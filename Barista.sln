@@ -87,10 +87,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2E77D-5F2F-4B96-88C0-A42845185B92}"
 	ProjectSection(SolutionItems) = preProject
+		AddECMTrustedLocations.ps1 = AddECMTrustedLocations.ps1
 		Scripts\Deploy-PostSolutionDeployment.ps1 = Scripts\Deploy-PostSolutionDeployment.ps1
 		Scripts\Deploy-SPSolutions.ps1 = Scripts\Deploy-SPSolutions.ps1
 		Scripts\Deploy.bat = Scripts\Deploy.bat
 		Scripts\Deploy.ps1 = Scripts\Deploy.ps1
+		DeployLatestNightlyBuild.ps1 = DeployLatestNightlyBuild.ps1
 		Scripts\SetupBaristaSearchService.ps1 = Scripts\SetupBaristaSearchService.ps1
 		Scripts\SetupBaristaServiceApplication.ps1 = Scripts\SetupBaristaServiceApplication.ps1
 		Scripts\SetupBaristaServiceApplicationProxy.ps1 = Scripts\SetupBaristaServiceApplicationProxy.ps1

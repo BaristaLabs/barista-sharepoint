@@ -2,7 +2,7 @@
 {
   using System;
   using System.Globalization;
-  using Barista.SharePoint.Library;
+  using System.Runtime.InteropServices.ComTypes;
   using Microsoft.SharePoint;
   using System.IO;
   using System.Web;
@@ -91,22 +91,25 @@
     /// <returns></returns>
     public static bool TryGetSPSite(string siteUrl, out SPSite site)
     {
+      site = null;
+
       Uri siteUri;
       if (TryCreateWebAbsoluteUri(siteUrl, out siteUri) == false)
-      {
-        site = null;
         return false;
-      }
 
       try
       {
-        using (SPSite innerSite = new SPSite(siteUri.ToString()))
+        using (var innerSite = new SPSite(siteUri.ToString()))
         {
           site = innerSite;
           return true;
         }
       }
-      catch { /* Do Nothing... */ }
+      catch
+      {
+        if (site != null)
+          site.Dispose();
+      }
 
       site = null;
       return false;
@@ -120,25 +123,27 @@
     /// <returns></returns>
     public static bool TryGetSPWeb(string webUrl, out SPWeb web)
     {
+      web = null;
       Uri webUri;
       if (TryCreateWebAbsoluteUri(webUrl, out webUri) == false)
-      {
-        web = null;
         return false;
-      }
 
       try
       {
-        using (SPSite site = new SPSite(webUri.ToString()))
+        using (var site = new SPSite(webUri.ToString()))
         {
-          using (SPWeb innerWeb = site.OpenWeb())
+          using (var innerWeb = site.OpenWeb())
           {
             web = innerWeb;
             return web.Exists;
           }
         }
       }
-      catch { /* Do Nothing... */ }
+      catch
+      {
+        if (web != null)
+          web.Dispose();
+      }
 
       web = null;
       return false;
@@ -161,9 +166,9 @@
 
       try
       {
-        using (SPSite site = new SPSite(fileUri.ToString()))
+        using (var site = new SPSite(fileUri.ToString()))
         {
-          using (SPWeb web = site.OpenWeb())
+          using (var web = site.OpenWeb())
           {
             file = web.GetFile(fileUri.ToString());
             return file.Exists;
@@ -194,9 +199,9 @@
 
       try
       {
-        using (SPSite site = new SPSite(fileUri.ToString()))
+        using (var site = new SPSite(fileUri.ToString()))
         {
-          using (SPWeb web = site.OpenWeb())
+          using (var web = site.OpenWeb())
           {
             var file = web.GetFile(fileUri.ToString());
             if (file.Exists)
@@ -220,23 +225,35 @@
     /// <returns></returns>
     public static bool TryGetSPFolder(string folderUrl, out SPSite site, out SPWeb web, out SPFolder folder)
     {
+      site = null;
+      web = null;
+      folder = null;
+
       Uri folderUri;
       if (TryCreateWebAbsoluteUri(folderUrl, out folderUri) == false)
-      {
-        site = null;
-        web = null;
-        folder = null;
         return false;
-      }
 
       try
       {
         site = new SPSite(folderUri.ToString());
         web = site.OpenWeb();
         folder = web.GetFolder(folderUri.ToString());
-        return true;
+        if (folder != null && folder.Exists)
+          return true;
+
+        web.Dispose();
+        site.Dispose();
+        return false;
       }
-      catch { /* Do Nothing... */ }
+      catch
+      {
+        //Clean up.
+        if (site != null)
+          site.Dispose();
+
+        if (web != null)
+          web.Dispose();
+      }
 
       site = null;
       web = null;
@@ -255,14 +272,13 @@
     /// <returns></returns>
     public static bool TryGetSPList(string listUrl, out SPSite site, out SPWeb web, out SPList list)
     {
+      site = null;
+      web = null;
+      list = null;
+
       Uri listUri;
       if (TryCreateWebAbsoluteUri(listUrl, out listUri) == false)
-      {
-        site = null;
-        web = null;
-        list = null;
         return false;
-      }
 
       try
       {
@@ -271,7 +287,14 @@
         list = web.GetList(listUri.ToString());
         return true;
       }
-      catch { /* Do Nothing... */ }
+      catch
+      {
+        if (site != null)
+          site.Dispose();
+
+        if (web != null)
+          web.Dispose();
+      }
 
       site = null;
       web = null;
@@ -328,9 +351,9 @@
 
       try
       {
-        using (SPSite site = new SPSite(listItemUri.ToString()))
+        using (var site = new SPSite(listItemUri.ToString()))
         {
-          using (SPWeb web = site.OpenWeb())
+          using (var web = site.OpenWeb())
           {
             listItem = web.GetListItem(listItemUri.ToString());
             return true;
@@ -444,11 +467,11 @@
       //Attempt to get the file relative to the sharepoint hive.
       try
       {
-        string hiveFileContents = String.Empty;
-        bool hiveFileResult = false;
+        var hiveFileContents = String.Empty;
+        var hiveFileResult = false;
         if (HttpContext.Current != null)
         {
-          string path = HttpContext.Current.Request.MapPath(fileUrl);
+          var path = HttpContext.Current.Request.MapPath(fileUrl);
           if (File.Exists(path))
           {
             hiveFileContents = File.ReadAllText(path);
@@ -482,7 +505,7 @@
       if (SPBaristaContext.Current == null)
         return text;
 
-      string result = text;
+      var result = text;
       if (SPBaristaContext.Current.List != null)
         result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, SPBaristaContext.Current.List.RootFolder.Url));
 
@@ -512,7 +535,7 @@
       if (context == null)
         return text;
 
-      string result = text;
+      var result = text;
       if (context.List != null)
         result = result.Replace("{ListUrl}", SPUtility.ConcatUrls(context.Web.Url, context.List.RootFolder.Url));
 

@@ -24,9 +24,14 @@
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
       //Add the Various types required.
-      engine.SetGlobalValue("SPExportSettings", new SPExportSettingsConstructor(engine));
       engine.SetGlobalValue("SPExportObject", new SPExportObjectConstructor(engine));
       engine.SetGlobalValue("SPExportObjectCollection", new SPExportObjectCollectionConstructor(engine));
+
+      engine.SetGlobalValue("SPExportSettings", new SPExportSettingsConstructor(engine));
+      engine.SetGlobalValue("SPExport", new SPExportConstructor(engine));
+
+      engine.SetGlobalValue("SPImportSettings", new SPImportSettingsConstructor(engine));
+      engine.SetGlobalValue("SPImport", new SPImportConstructor(engine));
 
       return new SPMigrationInstance(engine.Object.InstancePrototype);
     }
