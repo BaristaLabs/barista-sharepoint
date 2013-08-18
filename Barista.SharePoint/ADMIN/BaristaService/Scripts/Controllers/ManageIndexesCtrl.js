@@ -49,7 +49,7 @@ function ManageIndexesCtrl($scope, $window, $http, $dialog, $templateCache) {
         msgbox.open().then(function (result) {
             if (result === 'yes') {
                 toastr.info('Removing Index...');
-                $http.post(indexServiceBasePostUrl + '/_admin/BaristaService/WebServices/DeleteSearchIndex.js', index)
+                $http.post(indexServiceBasePostUrl + '/_admin/BaristaService/API/DeleteSearchIndex.js', index)
                     .success(function (index) {
                         toastr.success("Removed Index!");
                         $scope.getIndexes();
@@ -73,7 +73,7 @@ function ManageIndexesCtrl($scope, $window, $http, $dialog, $templateCache) {
         };
 
         toastr.info('Loading Indexes...');
-        $http.get(indexServiceBaseUrl + '/_admin/BaristaService/WebServices/GetSearchIndexes.js')
+        $http.get(indexServiceBaseUrl + '/_admin/BaristaService/API/GetSearchIndexes.js')
             .success(function (indexes) {
 
                 toastr.success("Loaded!");
@@ -114,7 +114,7 @@ function AddEditIndexCtrl($scope, $http, dialog, index, isNew) {
             toastr.info('Adding Index...');
         else
             toastr.info('Updating Index...');
-        $http.post(indexServiceBasePostUrl + '/_admin/BaristaService/WebServices/AddOrUpdateSearchIndex.js', $scope.index)
+        $http.post(indexServiceBasePostUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js', $scope.index)
             .success(function (index) {
                 if ($scope.isNew)
                     toastr.success('Added Index!');

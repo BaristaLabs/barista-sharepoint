@@ -113,34 +113,24 @@
       var trusted = false;
       var trustedLocations = Utilities.GetFarmKeyValue("BaristaTrustedLocations");
 
-      if (String.IsNullOrEmpty(trustedLocations) == false)
-      {
-        var trustedLocationsCollection = JArray.Parse(trustedLocations);
-        foreach (var trustedLocation in trustedLocationsCollection.OfType<JObject>())
-        {
-          var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"), UriKind.Absolute);
-          var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
+      if (String.IsNullOrEmpty(trustedLocations))
+        throw new SecurityAccessDeniedException(
+          "Cannot execute Barista: Unable to read Farm Property Bag Settings to determine trusted location.");
 
-          if (trustChildren)
-          {
-            if (trustedLocationUrl.IsBaseOf(currentUri))
-            {
-              trusted = true;
-              break;
-            }
-          }
-          else
-          {
-            if (trustedLocationUrl == currentUri)
-            {
-              trusted = true;
-              break;
-            }
-          }
-        }
+      var trustedLocationsCollection = JArray.Parse(trustedLocations);
+      foreach (var trustedLocation in trustedLocationsCollection.OfType<JObject>())
+      {
+        var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"),
+          UriKind.Absolute);
+
+        var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
+
+        if ((trustChildren && !trustedLocationUrl.IsBaseOf(currentUri)) || trustedLocationUrl != currentUri)
+          continue;
+
+        trusted = true;
+        break;
       }
-      else
-        throw new SecurityAccessDeniedException("Cannot execute Barista: Unable to read Farm Property Bag Settings to determine trusted location.");
 
       if (trusted == false)
         throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));

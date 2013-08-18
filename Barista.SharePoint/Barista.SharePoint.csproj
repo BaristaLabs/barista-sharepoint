@@ -430,6 +430,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ADMIN\BaristaService\Scripts\Services\" />
+    <Folder Include="ADMIN\BaristaService\WebServices\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
@@ -456,13 +457,13 @@
     <Content Include="ADMIN\BaristaService\Views\indexes.html" />
     <Content Include="ADMIN\BaristaService\Views\main.html" />
     <Content Include="ADMIN\BaristaService\Views\addedittrustedlocationdialog.html" />
-    <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateTrustedLocation.js" />
-    <Content Include="ADMIN\BaristaService\WebServices\AddOrUpdateSearchIndex.js" />
-    <Content Include="ADMIN\BaristaService\WebServices\DeleteSearchIndex.js" />
-    <Content Include="ADMIN\BaristaService\WebServices\GetSearchIndexes.js" />
-    <Content Include="ADMIN\BaristaService\WebServices\DeleteTrustedLocation.js" />
+    <Content Include="ADMIN\BaristaService\API\AddOrUpdateTrustedLocation.js" />
+    <Content Include="ADMIN\BaristaService\API\AddOrUpdateSearchIndex.js" />
+    <Content Include="ADMIN\BaristaService\API\DeleteSearchIndex.js" />
+    <Content Include="ADMIN\BaristaService\API\GetSearchIndexes.js" />
+    <Content Include="ADMIN\BaristaService\API\DeleteTrustedLocation.js" />
     <Content Include="ADMIN\BaristaService\Create.aspx" />
-    <Content Include="ADMIN\BaristaService\WebServices\GetTrustedLocations.js" />
+    <Content Include="ADMIN\BaristaService\API\GetTrustedLocations.js" />
     <Content Include="ADMIN\BaristaService\Manage.aspx" />
     <Content Include="BaristaDataDocument\Elements.xml">
       <SubType>Designer</SubType>

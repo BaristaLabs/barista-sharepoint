@@ -82,7 +82,7 @@ function ManageMainCtrl($scope, $window, $http, $dialog, $templateCache) {
         msgbox.open().then(function (result) {
             if (result === 'yes') {
                 toastr.info('Removing Trusted Location...');
-                $http.post(trustedLocationsServiceBasePostUrl + '/_admin/BaristaService/WebServices/DeleteTrustedLocation.js', trustedLocation)
+                $http.post(trustedLocationsServiceBasePostUrl + '/_admin/BaristaService/API/DeleteTrustedLocation.js', trustedLocation)
                     .success(function(trustedLocations) {
                         toastr.success("Removed Trusted Location!");
                         $scope.getTrustedLocations();
@@ -106,7 +106,7 @@ function ManageMainCtrl($scope, $window, $http, $dialog, $templateCache) {
         };
 
         toastr.info('Loading Trusted Locations...');
-        $http.get(trustedLocationsServiceBaseUrl + '/_admin/BaristaService/WebServices/GetTrustedLocations.js')
+        $http.get(trustedLocationsServiceBaseUrl + '/_admin/BaristaService/API/GetTrustedLocations.js')
             .success(function(trustedLocations) {
 
                 toastr.success("Loaded!");
@@ -151,7 +151,7 @@ function AddEditTrustedLocationCtrl($scope, $http, dialog, trustedLocation, isNe
             toastr.info('Adding Trusted Location...');
         else
             toastr.info('Updating Trusted Location...');
-        $http.post(trustedLocationsServiceBasePostUrl + '/_admin/BaristaService/WebServices/AddOrUpdateTrustedLocation.js', $scope.trustedLocation)
+        $http.post(trustedLocationsServiceBasePostUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js', $scope.trustedLocation)
             .success(function (trustedLocations) {
                 if ($scope.isNew)
                     toastr.success('Added Trusted Location!');
