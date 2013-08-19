@@ -209,22 +209,28 @@
       var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
       var createdByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, createdByUserValue);
 
-      entity.CreatedBy = new User
+      if (createdByUser.User != null)
       {
-        Email = createdByUser.User.Email,
-        LoginName = createdByUser.User.LoginName,
-        Name = createdByUser.User.Name,
-      };
+        entity.CreatedBy = new User
+        {
+          Email = createdByUser.User.Email,
+          LoginName = createdByUser.User.LoginName,
+          Name = createdByUser.User.Name,
+        };
+      }
 
       var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
       var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
 
-      entity.ModifiedBy = new User
+      if (modifiedByUser.User != null)
       {
-        Email = modifiedByUser.User.Email,
-        LoginName = modifiedByUser.User.LoginName,
-        Name = modifiedByUser.User.Name,
-      };
+        entity.ModifiedBy = new User
+        {
+          Email = modifiedByUser.User.Email,
+          LoginName = modifiedByUser.User.LoginName,
+          Name = modifiedByUser.User.Name,
+        };
+      }
 
       return entity;
     }
