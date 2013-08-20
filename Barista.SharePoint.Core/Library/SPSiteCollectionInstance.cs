@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using System.IO;
   using System.Linq;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -126,9 +127,17 @@
     public ArrayInstance GetAllSites()
     {
       var result = this.Engine.Array.Construct();
-      foreach (var site in m_siteCollection.OfType<SPSite>())
+      foreach (SPSite site in m_siteCollection)
       {
-        ArrayInstance.Push(result, new SPSiteInstance(this.Engine.Object.InstancePrototype, site));
+        try
+        {
+          //Test to see if the site is "good";
+          var allow = site.AllowDesigner;
+          ArrayInstance.Push(result, new SPSiteInstance(this.Engine.Object.InstancePrototype, site));
+        }
+        catch (DirectoryNotFoundException)
+        {
+        }
       }
       return result;
     }
