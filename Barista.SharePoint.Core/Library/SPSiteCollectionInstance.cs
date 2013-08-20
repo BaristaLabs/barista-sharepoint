@@ -1,8 +1,9 @@
-﻿namespace Barista.SharePoint
+﻿namespace Barista.SharePoint.Library
 {
+  using System.Linq;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
-  using Barista.SharePoint.Library;
+  using Microsoft.SharePoint;
   using Microsoft.SharePoint.Administration;
   using System;
 
@@ -119,6 +120,17 @@
       return site == null
         ? null
         : new SPSiteInstance(this.Engine.Object, site);
+    }
+
+    [JSFunction(Name = "getAllSites")]
+    public ArrayInstance GetAllSites()
+    {
+      var result = this.Engine.Array.Construct();
+      foreach (var site in m_siteCollection.OfType<SPSite>())
+      {
+        ArrayInstance.Push(result, new SPSiteInstance(this.Engine.Object.InstancePrototype, site));
+      }
+      return result;
     }
 
     [JSFunction(Name = "getWebApplication")]

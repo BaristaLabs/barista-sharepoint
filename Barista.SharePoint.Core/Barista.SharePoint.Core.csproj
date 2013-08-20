@@ -289,10 +289,17 @@
     <Compile Include="Imports\Camlex.NET\Interfaces\ReverseEngeneering\IReTranslatorFactory.cs" />
     <Compile Include="Imports\Camlex.NET\ReflectionHelper.cs" />
     <Compile Include="Imports\Camlex.NET\Tags.cs" />
+    <Compile Include="Library\SPAlternateUrlCollectionInstance.cs" />
+    <Compile Include="Library\SPAlternateUrlInstance.cs" />
+    <Compile Include="Library\SPApplicationPoolInstance.cs" />
+    <Compile Include="Library\SPContentDatabaseCollectionInstance.cs" />
     <Compile Include="Library\SPContentDatabaseInstance.cs" />
     <Compile Include="Library\SPContentTypeCollectionInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotCollectionInstance.cs" />
+    <Compile Include="Library\SPDeletedSiteCollectionInstance.cs" />
+    <Compile Include="Library\SPDeletedSiteInstance.cs" />
+    <Compile Include="Library\SPFeatureCollectionInstance.cs" />
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
@@ -423,7 +430,7 @@
     <Compile Include="ServiceManagement\BaristaWebSocketsService.cs" />
     <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPFileScriptSource.cs" />
-    <Compile Include="SPSiteCollectionInstance.cs" />
+    <Compile Include="Library\SPSiteCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermCollection.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />

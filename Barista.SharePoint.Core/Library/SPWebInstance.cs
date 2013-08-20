@@ -191,20 +191,9 @@
     }
 
     [JSProperty(Name = "features")]
-    public ArrayInstance Features
+    public SPFeatureCollectionInstance Features
     {
-      get
-      {
-        var result = this.Engine.Array.Construct();
-        foreach (var feature in m_web.Features)
-        {
-          if (feature == null)
-            continue;
-
-          ArrayInstance.Push(result, new SPFeatureInstance(this.Engine.Object.InstancePrototype, feature));
-        }
-        return result;
-      }
+      get { return new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Features); }
     }
 
     //TODO: Effective base permissions

@@ -101,17 +101,9 @@ namespace Barista.SharePoint.Library
     }
 
     [JSProperty(Name = "features")]
-    public ArrayInstance Features
+    public SPFeatureCollectionInstance Features
     {
-      get
-      {
-        var result = this.Engine.Array.Construct();
-        foreach (var feature in m_site.Features)
-        {
-          ArrayInstance.Push(result, new SPFeatureInstance(this.Engine.Object.InstancePrototype, feature));
-        }
-        return result;
-      }
+      get { return new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_site.Features); }
     }
 
     [JSProperty(Name = "id")]
@@ -322,6 +314,12 @@ namespace Barista.SharePoint.Library
       }
       
       return new SPWebInstance(this.Engine.Object.InstancePrototype, createdWeb);
+    }
+
+    [JSFunction(Name = "getWebApplication")]
+    public SPWebApplicationInstance GetWebApplication()
+    {
+      return new SPWebApplicationInstance(this.Engine.Object.InstancePrototype, m_site.WebApplication);
     }
 
     [JSFunction(Name = "deactivateFeature")]

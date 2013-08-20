@@ -41,7 +41,7 @@
           this.View = new SPViewInstance(this.Engine.Object.InstancePrototype, m_context.View);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
-
+      
       this.PopulateFields();
       this.PopulateFunctions();
     }

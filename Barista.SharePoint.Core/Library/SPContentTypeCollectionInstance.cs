@@ -4,6 +4,7 @@
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using System;
+  using Barista.Library;
   using Microsoft.SharePoint;
 
   [Serializable]
@@ -118,6 +119,8 @@
       SPContentTypeId spContentTypeId;
       if (contentTypeId is SPContentTypeIdInstance)
         spContentTypeId = (contentTypeId as SPContentTypeIdInstance).ContentTypeId;
+      else if (contentTypeId is GuidInstance)
+        spContentTypeId = new SPContentTypeId((contentTypeId as GuidInstance).Value.ToString());
       else
         spContentTypeId = new SPContentTypeId(TypeConverter.ToString(contentTypeId));
 
