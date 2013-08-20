@@ -34,6 +34,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPField", new SPFieldConstructor(engine));
       engine.SetGlobalValue("SPFieldLink", new SPFieldLinkConstructor(engine));
 
+      engine.SetGlobalValue("SPWebApplication", new SPWebApplicationConstructor(engine));
       engine.SetGlobalValue("SPSite", new SPSiteConstructor(engine));
       engine.SetGlobalValue("SPWeb", new SPWebConstructor(engine));
       engine.SetGlobalValue("SPFile", new SPFileConstructor(engine));

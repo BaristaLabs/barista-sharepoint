@@ -16,9 +16,25 @@
     }
 
     [JSConstructorFunction]
-    public SPWebApplicationInstance Construct()
+    public SPWebApplicationInstance Construct(object uri)
     {
-      return new SPWebApplicationInstance(this.InstancePrototype);
+      if (uri == Undefined.Value || uri == Null.Value || uri == null)
+        throw new ArgumentNullException("uri", @"The Uri of the web application must be specified as the first argument.");
+
+      Uri webApplicationUri;
+
+      if (uri is UriInstance)
+      {
+        webApplicationUri = (uri as UriInstance).Uri;
+      }
+      else
+      {
+        webApplicationUri = new Uri(TypeConverter.ToString(uri), UriKind.Absolute);
+      }
+
+      var webApplication = SPWebApplication.Lookup(webApplicationUri);
+
+      return new SPWebApplicationInstance(this.InstancePrototype, webApplication);
     }
   }
 
