@@ -93,8 +93,8 @@
         : new TermInstance(this.Engine.Object.InstancePrototype, term);
     }
 
-    [JSFunction(Name = "getAllTerms")]
-    public ArrayInstance GetAllTerms()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var term in m_termCollection)

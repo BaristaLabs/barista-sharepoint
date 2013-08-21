@@ -139,8 +139,8 @@
         : new SPContentTypeInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    [JSFunction(Name = "getAllContentTypes")]
-    public ArrayInstance GetAllContentTypes()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var contentType in m_contentTypeCollection.OfType<SPContentType>())

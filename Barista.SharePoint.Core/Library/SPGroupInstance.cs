@@ -169,34 +169,34 @@
     }
 
     [JSProperty(Name = "users")]
-    public ArrayInstance Users
+    public SPUserCollectionInstance Users
     {
       get
       {
-        var result = this.Engine.Array.Construct();
-        foreach (var user in m_group.Users.OfType<SPUser>())
-        {
-          ArrayInstance.Push(result, new SPUserInstance(this.Engine.Object.InstancePrototype, user));
-        }
-        return result;
+        return m_group.Users == null
+          ? null
+          : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_group.Users);
       }
     }
     #endregion
 
     #region Functions
     [JSFunction(Name = "addUser")]
-    public void AddUser(string loginName)
+    public void AddUser(object user)
     {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
-
-      m_group.AddUser(user);
-    }
-
-    public void AddUser(SPUserInstance user)
-    {
-      m_group.AddUser(user.User);
+      if (user is SPUserInstance)
+      {
+        var spUser = user as SPUserInstance;
+        m_group.AddUser(spUser.User);
+      }
+      else
+      {
+        var loginName = TypeConverter.ToString(user);
+        SPUser spUser;
+        if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+        m_group.AddUser(spUser);
+      }
     }
 
     [JSFunction(Name = "clearDistributionGroupErrorMessage")]
@@ -252,20 +252,42 @@
       return result;
     }
 
-    [JSFunction(Name = "removeUser")]
-    public void RemoveUser(string loginName)
+    [JSFunction(Name = "isUserMemberOfGroup")]
+    public bool IsUserMemberOfGroup(object user)
     {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+      SPUser spUser;
+      if (user is SPUserInstance)
+      {
+        var ui = user as SPUserInstance;
+        spUser = ui.User;
+      }
+      else
+      {
+        var loginName = TypeConverter.ToString(user);
+        if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+      }
 
-      m_group.RemoveUser(user);
+      return spUser.Groups.OfType<SPGroup>()
+          .Any(g => g.ID == m_group.ID);
     }
 
     [JSFunction(Name = "removeUser")]
-    public void RemoveUser(SPUserInstance user)
+    public void RemoveUser(object user)
     {
-      m_group.RemoveUser(user.User);
+      if (user is SPUserInstance)
+      {
+        var spUser = user as SPUserInstance;
+        m_group.RemoveUser(spUser.User);
+      }
+      else
+      {
+        SPUser spUser;
+        var loginName = TypeConverter.ToString(user);
+        if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+        m_group.RemoveUser(spUser);
+      }
     }
 
     [JSFunction(Name = "renameDistributionGroup")]

@@ -100,8 +100,8 @@
       return new ExcelWorksheetInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    [JSFunction(Name = "getAllWorksheets")]
-    public ArrayInstance GetAllWorksheets()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var sheet in this.m_excelWorksheets)

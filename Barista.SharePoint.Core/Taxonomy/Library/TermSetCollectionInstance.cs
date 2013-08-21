@@ -84,8 +84,8 @@
         : new TermSetInstance(this.Engine.Object.InstancePrototype, termSet);
     }
 
-    [JSFunction(Name = "getAllTermSets")]
-    public ArrayInstance GetAllTermSets()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var termSet in m_termSetCollection)

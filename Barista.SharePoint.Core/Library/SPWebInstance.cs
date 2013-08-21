@@ -125,6 +125,17 @@
       }
     }
 
+    [JSProperty(Name = "allUsers")]
+    public SPUserCollectionInstance AllUsers
+    {
+      get
+      {
+        return m_web.AllUsers == null
+          ? null
+          : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_web.AllUsers);
+      }
+    }
+
     [JSProperty(Name = "availableContentTypes")]
     public SPContentTypeCollectionInstance AvailableContentTypes
     {
@@ -196,6 +207,18 @@
       get { return new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Features); }
     }
 
+    [JSProperty(Name = "groups")]
+    public SPGroupCollectionInstance Groups
+    {
+      get
+      {
+        var result = m_web.Groups;
+        return result == null
+          ? null
+          : new SPGroupCollectionInstance(this.Engine.Object.InstancePrototype, result);
+      }
+    }
+
     //TODO: Effective base permissions
 
     [JSProperty(Name = "id")]
@@ -263,6 +286,29 @@
       get { return m_web.ShowUrlStructureForCurrentUser; }
     }
 
+    [JSProperty(Name = "siteGroups")]
+    public SPGroupCollectionInstance SiteGroups
+    {
+      get
+      {
+        var result = m_web.SiteGroups;
+        return result == null
+          ? null
+          : new SPGroupCollectionInstance(this.Engine.Object.InstancePrototype, result);
+      }
+    }
+
+    [JSProperty(Name = "siteUsers")]
+    public SPUserCollectionInstance SiteUsers
+    {
+      get
+      {
+        return m_web.SiteUsers == null
+          ? null
+          : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_web.SiteUsers);
+      }
+    }
+
     [JSProperty(Name = "syndicationEnabled")]
     public bool SyndicationEnabled
     {
@@ -303,6 +349,17 @@
     public string Url
     {
       get { return m_web.Url; }
+    }
+
+    [JSProperty(Name = "users")]
+    public SPUserCollectionInstance Users
+    {
+      get
+      {
+        return m_web.Users == null
+          ? null
+          : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Users);
+      }
     }
 
     [JSProperty(Name = "webTemplate")]
@@ -692,17 +749,6 @@
       var result = m_web.GetSiteData(query.SiteDataQuery);
       var jsonResult = JsonConvert.SerializeObject(result);
       return JSONObject.Parse(this.Engine, jsonResult, null);
-    }
-
-    [JSFunction(Name = "getSiteGroups")]
-    public ArrayInstance GetSiteGroups()
-    {
-      var result = this.Engine.Array.Construct();
-      foreach (var group in m_web.SiteGroups.OfType<SPGroup>())
-      {
-        ArrayInstance.Push(result, new SPGroupInstance(this.Engine.Object.InstancePrototype, group));
-      }
-      return result;
     }
 
     [JSFunction(Name = "getSiteUserInfoList")]

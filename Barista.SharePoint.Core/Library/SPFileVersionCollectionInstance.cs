@@ -74,8 +74,8 @@
       m_fileVersionCollection.DeleteByLabel(label);
     }
 
-    [JSFunction(Name = "getAllVersions")]
-    public ArrayInstance GetAllVersions()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var version in m_fileVersionCollection.OfType<SPFileVersion>())

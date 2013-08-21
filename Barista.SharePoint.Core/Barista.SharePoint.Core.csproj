@@ -304,7 +304,9 @@
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
     <Compile Include="Library\SPFieldLinkInstance.cs" />
+    <Compile Include="Library\SPGroupCollectionInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
+    <Compile Include="Library\SPUserCollectionInstance.cs" />
     <Compile Include="Library\SPWebApplicationInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />
     <Compile Include="Migration\Library\SPExportObjectCollectionInstance.cs" />

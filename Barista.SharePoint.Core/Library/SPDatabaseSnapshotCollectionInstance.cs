@@ -163,8 +163,8 @@
         : new SPDatabaseSnapshotInstance(this.Engine.Object.InstancePrototype, snapshot);
     }
 
-    [JSFunction(Name = "getAllSnapshots")]
-    public ArrayInstance GetAllSnapshots()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       object[] snapshotInstances = this.m_databaseSnapshotCollection
         .Select(ss => new SPDatabaseSnapshotInstance(this.Engine.Object.InstancePrototype, ss))

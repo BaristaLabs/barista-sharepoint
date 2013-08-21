@@ -84,8 +84,8 @@
         : new TermStoreInstance(this.Engine.Object.InstancePrototype, termStore);
     }
 
-    [JSFunction(Name = "getAllTermStores")]
-    public ArrayInstance GetAllTermStores()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var termStore in m_termStoreCollection)

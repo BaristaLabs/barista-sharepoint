@@ -123,8 +123,8 @@
         : new SPSiteInstance(this.Engine.Object, site);
     }
 
-    [JSFunction(Name = "getAllSites")]
-    public ArrayInstance GetAllSites()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (SPSite site in m_siteCollection)

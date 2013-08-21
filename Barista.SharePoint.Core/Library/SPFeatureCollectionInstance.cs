@@ -117,8 +117,8 @@
         : new SPFeatureInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    [JSFunction(Name = "getAllFeatures")]
-    public ArrayInstance GetAllContentTypes()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var feature in m_featureCollection)

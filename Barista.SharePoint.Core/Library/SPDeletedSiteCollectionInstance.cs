@@ -74,8 +74,8 @@
         : new SPDeletedSiteInstance(this.Engine.Object, deletedSite);
     }
 
-    [JSFunction(Name = "getAllDeletedSites")]
-    public ArrayInstance GetAllItems()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var deletedSite in m_deletedSiteCollection.OfType<SPDeletedSite>())

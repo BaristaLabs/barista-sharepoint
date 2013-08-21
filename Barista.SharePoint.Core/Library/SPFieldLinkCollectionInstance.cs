@@ -121,8 +121,8 @@
       return new SPFieldLinkInstance(this.Engine.Object.InstancePrototype, m_fieldLinkCollection[index]);
     }
 
-    [JSFunction(Name = "getAllFieldLinks")]
-    public ArrayInstance GetAllFieldLinks()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var contentType in m_fieldLinkCollection.OfType<SPFieldLink>())

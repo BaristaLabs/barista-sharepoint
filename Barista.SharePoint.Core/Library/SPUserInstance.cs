@@ -63,6 +63,17 @@
       get { return m_user.Email; }
     }
 
+    [JSProperty(Name = "groups")]
+    public SPGroupCollectionInstance Groups
+    {
+      get
+      {
+        return m_user.Groups == null
+          ? null
+          : new SPGroupCollectionInstance(this.Engine.Object.InstancePrototype, m_user.Groups);
+      }
+    }
+
     [JSProperty(Name="id")]
     public int Id
     {

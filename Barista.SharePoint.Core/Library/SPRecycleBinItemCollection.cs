@@ -78,8 +78,8 @@
       return new SPRecycleBinItemInstance(this.Engine.Object.InstancePrototype, m_recycleBinItemCollection.GetItemById(guid));
     }
 
-    [JSFunction(Name = "getAllItems")]
-    public ArrayInstance GetAllItems()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
       foreach (var item in m_recycleBinItemCollection.OfType<SPRecycleBinItem>())

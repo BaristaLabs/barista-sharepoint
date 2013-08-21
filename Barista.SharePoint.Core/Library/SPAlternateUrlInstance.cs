@@ -51,7 +51,13 @@
     [JSProperty(Name = "contextUri")]
     public UriInstance ContextUri
     {
-      get { return new UriInstance(this.Engine.Object.InstancePrototype, SPAlternateUrl.ContextUri); }
+      get
+      {
+        if (SPAlternateUrl.ContextUri == null)
+          return null;
+
+        return new UriInstance(this.Engine.Object.InstancePrototype, SPAlternateUrl.ContextUri);
+      }
     }
 
     [JSProperty(Name = "incomingUrl")]
@@ -63,13 +69,22 @@
     [JSProperty(Name = "uri")]
     public UriInstance Uri
     {
-      get { return new UriInstance(this.Engine.Object.InstancePrototype, m_alternateUrl.Uri); }
+      get
+      {
+        if (m_alternateUrl.Uri == null)
+          return null;
+
+        return new UriInstance(this.Engine.Object.InstancePrototype, m_alternateUrl.Uri);
+      }
     }
 
     [JSProperty(Name = "urlZone")]
     public string UrlZone
     {
-      get { return m_alternateUrl.UrlZone.ToString(); }
+      get
+      {
+        return m_alternateUrl.UrlZone.ToString();
+      }
     }
   }
 }

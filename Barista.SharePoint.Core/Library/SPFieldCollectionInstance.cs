@@ -162,8 +162,8 @@
       m_fieldCollection.Delete(name);
     }
 
-    [JSFunction(Name = "getAllFields")]
-    public ArrayInstance GetAllFields()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var fields = m_fieldCollection
         .OfType<SPField>()

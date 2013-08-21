@@ -49,6 +49,14 @@
     }
 
     //TODO: Add the other properties/functions. There's alot for a collection object.
+    [JSProperty(Name = "count")]
+    public int Count
+    {
+      get
+      {
+        return m_alternateUrlCollection.Count;
+      }
+    }
 
     [JSFunction(Name = "getAlternateUrlByUrl")]
     public SPAlternateUrlInstance GetAlternateUrlByUrl(object url)
@@ -83,11 +91,11 @@
         : new SPAlternateUrlInstance(this.Engine.Object, alternateUrl);
     }
 
-    [JSFunction(Name = "getAllAlternateUrls")]
-    public ArrayInstance GetAllAlternateUrls()
+    [JSFunction(Name = "toArray")]
+    public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();
-      foreach (var alternateUrl in m_alternateUrlCollection.OfType<SPAlternateUrl>())
+      foreach (var alternateUrl in m_alternateUrlCollection)
       {
         ArrayInstance.Push(result, new SPAlternateUrlInstance(this.Engine.Object.InstancePrototype, alternateUrl));
       }
