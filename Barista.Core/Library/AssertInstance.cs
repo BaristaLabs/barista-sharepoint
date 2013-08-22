@@ -66,6 +66,26 @@
       }
     }
 
+    [JSFunction(Name = "areDeepEqual")]
+    public void AreDeepEqual(object expected, object actual, object message)
+    {
+      var bat = this.Engine.GetGlobalValue("BaristaUnitTesting") as ObjectInstance;
+      if (bat == null)
+        throw new InvalidOperationException("Unable to locate BaristaUnitTesting object.");
+
+      var result = TypeConverter.ToBoolean(bat.CallMemberFunction("equiv", expected, actual));
+      var strMessage = TypeConverter.ToString(message);
+
+      try
+      {
+        Assert.IsTrue(result, strMessage);
+      }
+      catch (AssertFailedException ex)
+      {
+        HandleAssertFailedException(ex);
+      }
+    }
+
     [JSFunction(Name = "areNotEqual")]
     public void AreNotEqual(object expected, object actual, object message)
     {
@@ -97,6 +117,26 @@
         {
           HandleAssertFailedException(ex);
         }
+      }
+    }
+
+    [JSFunction(Name = "areNotDeepEqual")]
+    public void AreNotDeepEqual(object expected, object actual, object message)
+    {
+      var bat = this.Engine.GetGlobalValue("BaristaUnitTesting") as ObjectInstance;
+      if (bat == null)
+        throw new InvalidOperationException("Unable to locate BaristaUnitTesting object.");
+
+      var result = TypeConverter.ToBoolean(bat.CallMemberFunction("equiv", expected, actual));
+      var strMessage = TypeConverter.ToString(message);
+
+      try
+      {
+        Assert.IsTrue(!result, strMessage);
+      }
+      catch (AssertFailedException ex)
+      {
+        HandleAssertFailedException(ex);
       }
     }
 

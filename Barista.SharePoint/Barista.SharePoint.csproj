@@ -430,7 +430,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ADMIN\BaristaService\Scripts\Services\" />
-    <Folder Include="ADMIN\BaristaService\WebServices\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>

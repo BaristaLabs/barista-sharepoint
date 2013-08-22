@@ -208,6 +208,7 @@
     <Compile Include="Bundles\SqlDataBundle.cs" />
     <Compile Include="Bundles\StateMachineBundle.cs" />
     <Compile Include="Bundles\StringBundle.cs" />
+    <Compile Include="Bundles\SucraloseBundle.cs" />
     <Compile Include="Bundles\SugarBundle.cs" />
     <Compile Include="Bundles\TfsBundle.cs" />
     <Compile Include="Bundles\UnitTestingBundle.cs" />
@@ -774,6 +775,7 @@
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
     <Compile Include="Library\ExcelWorksheetsInstance.cs" />
     <Compile Include="Library\OSInstance.cs" />
+    <Compile Include="Library\Sucralose.cs" />
     <Compile Include="Library\UserAgentInfoInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
     <Compile Include="PrincipalType.cs" />

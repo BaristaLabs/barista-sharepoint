@@ -8,6 +8,20 @@
 
   public static class JurassicHelper
   {
+
+    public static bool IsRegexp(object obj)
+    {
+      return (obj is RegExpInstance);
+    }
+
+    public static bool IsObjectType(object obj)
+    {
+      if (obj == null || obj == Null.Value || obj == Undefined.Value)
+        return false;
+
+      return (TypeUtilities.TypeOf(obj) == "object" || IsRegexp(obj));
+    }
+
     public static double ToJsDate(DateTime dateTime)
     {
       return dateTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
