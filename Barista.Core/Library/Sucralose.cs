@@ -1,12 +1,51 @@
 ﻿namespace Barista.Library
 {
   using System;
+  using System.Linq;
+  using Barista.DocumentStore;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Microsoft.TeamFoundation.Client;
 
   public static class Sucralose
   {
+    #region Array
+    [Serializable]
+    public sealed class ArrayLastFunctionInstance : FunctionInstance
+    {
+      public ArrayLastFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        int num;
+        var rawValue = false;
+
+        var arr = (thisObject as ArrayInstance);
+
+        if (arr == null)
+          return thisObject;
+
+        //No number specified, use 1
+        if (argumentValues.Length == 0 || argumentValues[0] == Undefined.Value || argumentValues[0] == Null.Value ||
+            argumentValues[0] == null)
+        {
+          num = arr.Length == 0 ? 0 : 1;
+          rawValue = true;
+        }
+        else
+          num = TypeConverter.ToInteger(argumentValues[0]);
+
+        return rawValue
+          ? arr.ElementValues.Skip(Math.Max(0, arr.ElementValues.Count() - num)).First()
+          : this.Engine.Array.Construct(arr.ElementValues.Skip(Math.Max(0, arr.ElementValues.Count() - num)).Take(num).ToArray());
+      }
+    }
+    #endregion
+
+    #region Number
     [Serializable]
     public sealed class RoundFunctionInstance : FunctionInstance
     {
@@ -87,7 +126,9 @@
         return MathObject.Floor(number * multiplier) / multiplier;
       }
     }
+    #endregion
 
+    #region Object
     [Serializable]
     public sealed class MergeFunctionInstance : FunctionInstance
     {
@@ -173,5 +214,54 @@
         return target;
       }
     }
+    #endregion
+
+    #region String
+
+    [Serializable]
+    public sealed class StringFormatFunctionInstance : FunctionInstance
+    {
+      public StringFormatFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var args = argumentValues
+          .Skip(1)
+          .Take(argumentValues.Length - 1)
+          .Select(arg =>
+          {
+            if (arg is DateInstance)
+              return (arg as DateInstance).Value;
+            return arg;
+          })
+          .ToArray();
+        return String.Format(TypeConverter.ToString(argumentValues[0]), args);
+      }
+    }
+
+    [Serializable]
+    public sealed class StringLastFunctionInstance : FunctionInstance
+    {
+      public StringLastFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var str = TypeConverter.ToString(thisObject);
+        var num = str.Length == 0 ? 0 : 1;
+
+        var numArg = argumentValues.ElementAtOrDefault(0);
+        if (numArg != null && numArg != Undefined.Value && numArg != Null.Value)
+          num = TypeConverter.ToInteger(argumentValues[0]);
+
+        return new String(str.Skip(Math.Max(0, str.Count() - num)).Take(num).ToArray());
+      }
+    }
+    #endregion
   }
 }
