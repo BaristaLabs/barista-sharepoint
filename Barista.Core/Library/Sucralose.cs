@@ -7,7 +7,89 @@
 
   public static class Sucralose
   {
-    public class MergeFunctionInstance : FunctionInstance
+    [Serializable]
+    public sealed class RoundFunctionInstance : FunctionInstance
+    {
+      public RoundFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var number = TypeConverter.ToNumber(thisObject);
+
+        //No precision specified
+        if (argumentValues.Length == 0 || argumentValues[0] == Undefined.Value || argumentValues[0] == Null.Value || argumentValues[0] == null)
+        {
+          return MathObject.Round(number);
+        }
+
+        var precision = TypeConverter.ToNumber(argumentValues[0]);
+
+        var multiplier = Math.Pow(10, Math.Abs(precision));
+        if (precision < 0)
+          multiplier = 1 / multiplier;
+        return MathObject.Round(number * multiplier) / multiplier;
+      }
+    }
+
+    [Serializable]
+    public sealed class CeilFunctionInstance : FunctionInstance
+    {
+      public CeilFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var number = TypeConverter.ToNumber(thisObject);
+
+        //No precision specified
+        if (argumentValues.Length == 0 || argumentValues[0] == Undefined.Value || argumentValues[0] == Null.Value || argumentValues[0] == null)
+        {
+          return MathObject.Ceil(number);
+        }
+
+        var precision = TypeConverter.ToNumber(argumentValues[0]);
+
+        var multiplier = Math.Pow(10, Math.Abs(precision));
+        if (precision < 0)
+          multiplier = 1 / multiplier;
+        return MathObject.Ceil(number * multiplier) / multiplier;
+      }
+    }
+
+    [Serializable]
+    public sealed class FloorFunctionInstance : FunctionInstance
+    {
+      public FloorFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var number = TypeConverter.ToNumber(thisObject);
+
+        //No precision specified
+        if (argumentValues.Length == 0 || argumentValues[0] == Undefined.Value || argumentValues[0] == Null.Value || argumentValues[0] == null)
+        {
+          return MathObject.Floor(number);
+        }
+
+        var precision = TypeConverter.ToNumber(argumentValues[0]);
+
+        var multiplier = Math.Pow(10, Math.Abs(precision));
+        if (precision < 0)
+          multiplier = 1 / multiplier;
+        return MathObject.Floor(number * multiplier) / multiplier;
+      }
+    }
+
+    [Serializable]
+    public sealed class MergeFunctionInstance : FunctionInstance
     {
       public MergeFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
         : base(engine, prototype)
