@@ -211,12 +211,6 @@
       scope.SPMonitoredScope.Dispose();
       return scope.ElapsedTime;
     }
-
-    public void FlushPublishingCache()
-    {
-      Microsoft.SharePoint.Publishing.PublishingCache.FlushBlobCache($webApp)
-    }
-
     #endregion
 
     #region Nested Classes
