@@ -126,6 +126,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Powershell.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.Publishing, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Publishing.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Taxonomy.dll</HintPath>
@@ -166,6 +170,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundles\SharePointPublishingBundle.cs" />
     <Compile Include="Bundles\SharePointTaxonomyBundle.cs" />
     <Compile Include="Bundles\SharePointContentMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
@@ -305,6 +310,7 @@
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
     <Compile Include="Library\SPFieldLinkInstance.cs" />
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
+    <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPUserCollectionInstance.cs" />
     <Compile Include="Library\SPWebApplicationInstance.cs" />
@@ -315,6 +321,7 @@
     <Compile Include="Migration\Library\SPImportInstance.cs" />
     <Compile Include="Migration\Library\SPImportSettingsInstance.cs" />
     <Compile Include="Migration\Library\SPMigrationInstance.cs" />
+    <Compile Include="Publishing\Library\PublishingWebInstance.cs" />
     <Compile Include="SharePointSearch\Library\QueryInstance.cs" />
     <Compile Include="SharePointSearch\Library\SearchServiceApplicationInstance.cs" />
     <Compile Include="SPBaristaConsoleOutput.cs" />
