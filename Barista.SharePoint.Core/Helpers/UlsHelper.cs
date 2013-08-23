@@ -15,7 +15,8 @@
     public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook)
     {
       var config = SPDiagnosticsService.Local;
-      var di = new DirectoryInfo(config.LogLocation);
+      var logLocation = Environment.ExpandEnvironmentVariables(config.LogLocation);
+      var di = new DirectoryInfo(logLocation);
       
       if (daysToLook < 1)
         daysToLook = 1;
