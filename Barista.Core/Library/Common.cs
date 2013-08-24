@@ -72,8 +72,9 @@
         throw new JavaScriptException(this.Engine, "Error", "A unique bundle name or type name must be specified as the first argument.");
 
 
-      if (scriptReferences == Undefined.Value && bundleDependencies == Undefined.Value &&
-          bundleDescription == Undefined.Value)
+      if ((scriptReferences == Undefined.Value || scriptReferences == null) &&
+          (bundleDependencies == Undefined.Value || bundleDependencies == null) &&
+          (bundleDescription == Undefined.Value || bundleDescription == null))
       {
         var strTypeName = TypeConverter.ToString(bundleName);
 
