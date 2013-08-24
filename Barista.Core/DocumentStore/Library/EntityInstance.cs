@@ -2,6 +2,7 @@
 {
   using Barista.DocumentStore;
   using Barista.Library;
+  using Barista.Newtonsoft.Json;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -102,7 +103,9 @@
         try
         {
 // ReSharper disable RedundantArgumentDefaultValue
-          var result = JSONObject.Parse(this.Engine, m_entity.Data, null);
+          var obj = JsonConvert.DeserializeObject(m_entity.Data);
+          var value2 = JsonConvert.SerializeObject(obj, Formatting.None);
+          var result = JSONObject.Parse(this.Engine, value2, null);
 // ReSharper restore RedundantArgumentDefaultValue
           return result;
         }

@@ -5,6 +5,8 @@
   using Barista.DocumentStore;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
+  using Barista.Newtonsoft.Json;
+  using Barista.SuperSocket.Common;
   using Microsoft.TeamFoundation.Client;
 
   public static class Sucralose
@@ -260,6 +262,82 @@
           num = TypeConverter.ToInteger(argumentValues[0]);
 
         return new String(str.Skip(Math.Max(0, str.Count() - num)).Take(num).ToArray());
+      }
+    }
+    #endregion
+
+    #region JSON
+    [Serializable]
+    public sealed class Parse2FunctionInstance : FunctionInstance
+    {
+      public Parse2FunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var arg = argumentValues.ElementAtOrDefault(0);
+        if (arg == null)
+          return null;
+
+        var reviver = argumentValues.ElementAtOrDefault(1);
+        var settings = argumentValues.ElementAtOrDefault(2);
+
+        var jsonSerializerSettings = new JsonSerializerSettings();
+        if (settings != null)
+        {
+          var settingsJson = JSONObject.Stringify(this.Engine, settings, null, null);
+          JsonConvert.PopulateObject(settingsJson, jsonSerializerSettings);
+        }
+
+        var value = TypeConverter.ToString(arg);
+
+
+        var obj = JsonConvert.DeserializeObject(value, jsonSerializerSettings);
+        var value2 = JsonConvert.SerializeObject(obj, Formatting.None, jsonSerializerSettings);
+        return JSONObject.Parse(this.Engine, value2, reviver);
+      }
+    }
+
+    [Serializable]
+    public sealed class Stringify2FunctionInstance : FunctionInstance
+    {
+      public Stringify2FunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var arg = argumentValues.ElementAtOrDefault(0);
+        if (arg == null)
+          return null;
+
+        var replacer = argumentValues.ElementAtOrDefault(1);
+        var spacer = argumentValues.ElementAtOrDefault(2);
+        var formatting = argumentValues.ElementAtOrDefault(3);
+        var settings = argumentValues.ElementAtOrDefault(4);
+
+        var jsonSerializerFormatting = Formatting.Indented;
+        if (formatting != null)
+        {
+          var formattingText = TypeConverter.ToString(formatting);
+          Formatting form;
+          if (formattingText.TryParseEnum(true, out form))
+            jsonSerializerFormatting = form;
+        }
+
+        var jsonSerializerSettings = new JsonSerializerSettings();
+        if (settings != null)
+        {
+          var settingsJson = JSONObject.Stringify(this.Engine, settings, null, null);
+          JsonConvert.PopulateObject(settingsJson, jsonSerializerSettings);
+        }
+
+        var text = JSONObject.Stringify(this.Engine, arg, replacer, spacer);
+        var obj = JsonConvert.DeserializeObject(text);
+        return JsonConvert.SerializeObject(obj, jsonSerializerFormatting, jsonSerializerSettings);
       }
     }
     #endregion

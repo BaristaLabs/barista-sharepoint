@@ -1,6 +1,8 @@
 ﻿namespace Barista.Bundles
 {
+  using Barista.Extensions;
   using Barista.Jurassic;
+  using Barista.Jurassic.Library;
   using Barista.Library;
 
   public class SucraloseBundle : IBundle
@@ -33,6 +35,13 @@
 
       engine.String.SetPropertyValue("format", new Sucralose.StringFormatFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.String.InstancePrototype.SetPropertyValue("last", new Sucralose.StringLastFunctionInstance(engine, engine.Object.InstancePrototype), false);
+
+      var json = engine.GetGlobalValue("JSON") as ObjectInstance;
+      if (json == null)
+        throw new JavaScriptException(engine, "Error", "Unable to locate the JSON Object.");
+
+      json.SetPropertyValue("parse2", new Sucralose.Parse2FunctionInstance(engine, engine.Object.InstancePrototype), false);
+      json.SetPropertyValue("stringify2", new Sucralose.Stringify2FunctionInstance(engine, engine.Object.InstancePrototype), false);
 
       return Null.Value;
     }
