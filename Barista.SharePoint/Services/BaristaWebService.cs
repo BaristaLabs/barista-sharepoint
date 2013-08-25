@@ -21,7 +21,7 @@
   [BasicHttpBindingServiceMetadataExchangeEndpoint]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   [ServiceBehavior(IncludeExceptionDetailInFaults = true,
-    InstanceContextMode = InstanceContextMode.PerSession,
+    InstanceContextMode = InstanceContextMode.PerCall,
     ConcurrencyMode = ConcurrencyMode.Multiple)]
   [RawJsonRequestBehavior]
   public class BaristaWebService : IBaristaWebService

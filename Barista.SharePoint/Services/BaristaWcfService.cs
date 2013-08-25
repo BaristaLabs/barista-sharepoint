@@ -2,7 +2,6 @@
 {
   using System.Linq;
   using Barista.Extensions;
-  using Barista.Framework;
   using Barista.SharePoint.Extensions;
   using Microsoft.SharePoint;
   using Microsoft.SharePoint.Client.Services;
@@ -22,7 +21,7 @@
   [ServiceContract(Namespace = Barista.Constants.ServiceNamespace)]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   [ServiceBehavior(IncludeExceptionDetailInFaults = true,
-    InstanceContextMode = InstanceContextMode.PerSession,
+    InstanceContextMode = InstanceContextMode.PerCall,
     ConcurrencyMode = ConcurrencyMode.Multiple)]
   public class BaristaWcfService
   {
