@@ -10,3 +10,4 @@ assert.areDeepEqual(['a', 'b', 'c'].last(-1), [], 'Array#last | -1', { prototype
 assert.areDeepEqual(['a', 'b', 'c'].last(-2), [], 'Array#last | -2', { prototype: 'c' });
 assert.areDeepEqual(['a', 'b', 'c'].last(-3), [], 'Array#last | -3', { prototype: 'c' });
 assert.areDeepEqual(['a', 'b', 'c'].last(-4), [], 'Array#last | -4', { prototype: 'c' });
+"";

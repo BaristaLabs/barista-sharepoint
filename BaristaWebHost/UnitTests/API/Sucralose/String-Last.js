@@ -10,3 +10,4 @@ assert.areDeepEqual('quack'.last(-1), '', 'String#last | last -1 characters');
 assert.areDeepEqual('quack'.last(-5), '', 'String#last | last -5 characters');
 assert.areDeepEqual('quack'.last(-10), '', 'String#last | last -10 characters');
 assert.areDeepEqual('fa'.last(3), 'fa', 'String#last | last 3 characters');
+"";

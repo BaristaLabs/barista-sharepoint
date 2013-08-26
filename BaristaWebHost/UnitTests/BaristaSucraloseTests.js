@@ -17,3 +17,9 @@ asyncTest("Object - Merge", function () {
 
     Barista.runTestScript(scriptPath);
 });
+
+asyncTest("Object - Has", function () {
+    var scriptPath = "~/UnitTests/API/Sucralose/object-has.js";
+
+    Barista.runTestScript(scriptPath);
+});

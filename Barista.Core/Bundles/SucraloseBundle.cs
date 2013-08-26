@@ -1,6 +1,5 @@
 ﻿namespace Barista.Bundles
 {
-  using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Barista.Library;
@@ -30,7 +29,7 @@
       engine.Number.InstancePrototype.SetPropertyValue("ceil", new Sucralose.CeilFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.Number.InstancePrototype.SetPropertyValue("floor", new Sucralose.FloorFunctionInstance(engine, engine.Object.InstancePrototype), false);
 
-
+      engine.Object.SetPropertyValue("has", new Sucralose.HasFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.Object.SetPropertyValue("merge", new Sucralose.MergeFunctionInstance(engine, engine.Object.InstancePrototype), false);
 
       engine.String.SetPropertyValue("format", new Sucralose.StringFormatFunctionInstance(engine, engine.Object.InstancePrototype), false);
@@ -45,7 +44,5 @@
 
       return Null.Value;
     }
-
-    
   }
 }

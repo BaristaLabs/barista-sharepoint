@@ -216,6 +216,33 @@
         return target;
       }
     }
+
+    [Serializable]
+    public sealed class HasFunctionInstance : FunctionInstance
+    {
+      public HasFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        var objectArg = argumentValues.ElementAtOrDefault(0);
+
+        if (objectArg == null || objectArg == Undefined.Value || objectArg == Null.Value)
+          return false;
+
+
+        var nameArg = argumentValues.ElementAtOrDefault(1);
+
+        if (nameArg == null || nameArg == Undefined.Value || nameArg == Null.Value)
+          return false;
+
+
+        var propertyName = TypeConverter.ToString(nameArg);
+        return ObjectInstance.HasOwnProperty(this.Engine, objectArg, propertyName);
+      }
+    }
     #endregion
 
     #region String
