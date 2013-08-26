@@ -12,6 +12,12 @@ asyncTest("Number - Round, Ceil, Floor", function () {
     Barista.runTestScript(scriptPath);
 });
 
+asyncTest("Number - ToNumber", function () {
+    var scriptPath = "~/UnitTests/API/Sucralose/number-tonumber.js";
+
+    Barista.runTestScript(scriptPath);
+});
+
 asyncTest("Object - Merge", function () {
     var scriptPath = "~/UnitTests/API/Sucralose/object-merge.js";
 

@@ -154,6 +154,7 @@
     <Content Include="UnitTests\API\SearchIndex\storeAndDelete.js" />
     <Content Include="UnitTests\API\SearchIndex\storeAndRetrieve.js" />
     <Content Include="UnitTests\API\Sucralose\Array-Last.js" />
+    <Content Include="UnitTests\API\Sucralose\Number-ToNumber.js" />
     <Content Include="UnitTests\API\Sucralose\Object-Has.js" />
     <Content Include="UnitTests\API\Sucralose\String-Last.js" />
     <Content Include="UnitTests\API\Sucralose\Number-RoundCeilFloor.js" />

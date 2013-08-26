@@ -28,6 +28,7 @@
       engine.Number.InstancePrototype.SetPropertyValue("round", new Sucralose.RoundFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.Number.InstancePrototype.SetPropertyValue("ceil", new Sucralose.CeilFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.Number.InstancePrototype.SetPropertyValue("floor", new Sucralose.FloorFunctionInstance(engine, engine.Object.InstancePrototype), false);
+      engine.Number.InstancePrototype.SetPropertyValue("toNumber", new Sucralose.NumberToNumberFunctionInstance(engine, engine.Object.InstancePrototype), false);
 
       engine.Object.SetPropertyValue("has", new Sucralose.HasFunctionInstance(engine, engine.Object.InstancePrototype), false);
       engine.Object.SetPropertyValue("merge", new Sucralose.MergeFunctionInstance(engine, engine.Object.InstancePrototype), false);

@@ -2,12 +2,10 @@
 {
   using System;
   using System.Linq;
-  using Barista.DocumentStore;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Barista.Newtonsoft.Json;
   using Barista.SuperSocket.Common;
-  using Microsoft.TeamFoundation.Client;
 
   public static class Sucralose
   {
@@ -126,6 +124,20 @@
         if (precision < 0)
           multiplier = 1 / multiplier;
         return MathObject.Floor(number * multiplier) / multiplier;
+      }
+    }
+
+    [Serializable]
+    public sealed class NumberToNumberFunctionInstance : FunctionInstance
+    {
+      public NumberToNumberFunctionInstance(ScriptEngine engine, ObjectInstance prototype)
+        : base(engine, prototype)
+      {
+      }
+
+      public override object CallLateBound(object thisObject, params object[] argumentValues)
+      {
+        return TypeConverter.ToNumber(thisObject);
       }
     }
     #endregion
