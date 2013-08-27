@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Taxonomy.Library
 {
+  using System.Reflection;
   using Barista.Jurassic;
   using Barista.Library;
   using Barista.SharePoint.Library;
@@ -79,6 +80,53 @@
       }
 
       TaxonomySession.SyncHiddenList(spSite);
+    }
+
+    [JSFunction(Name = "addTaxonomyGuidToWss")]
+    [JSDoc("Adds the specified term to the hidden taxonomy list on the specified list and returns the list id of the term.")]
+    public int AddTaxonomyGuidToWss(object site, TermInstance term, bool isKeywordField)
+    {
+      if (site == null || site == Undefined.Value || site == Null.Value)
+        throw new JavaScriptException(this.Engine, "Error", "A Site instance or url must be supplied as the first argument.");
+
+      if (term == null)
+        throw new JavaScriptException(this.Engine, "Error", "A term instance must be supplied as the second argument.");
+
+      SPSite spSite;
+      var dispose = false;
+
+      if (site is SPSiteInstance)
+      {
+        spSite = (site as SPSiteInstance).Site;
+      }
+      else
+      {
+        spSite = new SPSite(TypeConverter.ToString(site));
+        dispose = true;
+      }
+
+      try
+      {
+        var result = -1;
+        var taxonomyFieldType = typeof(TaxonomyField);
+        var miAddTaxonomyGuidToWss = taxonomyFieldType.GetMethod("AddTaxonomyGuidToWss",
+          BindingFlags.NonPublic | BindingFlags.Static, null,
+          new[] { typeof(SPSite), typeof(Term), typeof(bool) },
+          null
+          );
+
+        if (miAddTaxonomyGuidToWss != null)
+          result = (int)miAddTaxonomyGuidToWss.Invoke(null, new object[] { spSite, term.Term, isKeywordField });
+
+        return result;
+      }
+      finally
+      {
+        if (dispose)
+        {
+          spSite.Dispose();
+        }
+      }
     }
   }
 
