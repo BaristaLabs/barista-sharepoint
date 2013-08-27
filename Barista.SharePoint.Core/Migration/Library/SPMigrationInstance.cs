@@ -430,7 +430,7 @@
       {
         var bIsDropFileLocation = TypeConverter.ToBoolean(isDropFileLocation);
         if (bIsDropFileLocation)
-          SPImportInstance.CopyFilesFromDropLocationToTempLocation(import, importSettings.FileLocation);
+          SPImportInstance.CopyFilesFromDropLocationToTempLocation(import, importSettings.FileLocation, importSettings.BaseFileName);
       }
 
       import.Run();

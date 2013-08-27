@@ -83,7 +83,7 @@
       m_import.Run();
     }
 
-    public static void CopyFilesFromDropLocationToTempLocation(SPImport import, string dropLocation)
+    public static void CopyFilesFromDropLocationToTempLocation(SPImport import, string dropLocation, string baseFileName)
     {
       //If a drop location is specified, copy the files to the target location.
       if (dropLocation.IsNullOrWhiteSpace())
@@ -100,11 +100,15 @@
 
       try
       {
-        foreach (var fileToCopy in dropFolder.Files.OfType<SPFile>())
+        foreach (var fileToCopy in dropFolder.Files.OfType<SPFile>().Where(fn => fn.Name.StartsWith(baseFileName)))
         {
           using (var fs = File.Create(Path.Combine(tempPath, fileToCopy.Name)))
           {
-            fileToCopy.SaveBinary(fs);
+            using (var str = fileToCopy.OpenBinaryStream(SPOpenBinaryOptions.None))
+            {
+              str.CopyTo(fs);
+            }
+            fs.Flush();
           }
         }
         import.Settings.FileLocation = tempPath;
