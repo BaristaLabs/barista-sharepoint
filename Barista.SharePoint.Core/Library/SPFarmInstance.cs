@@ -1,12 +1,11 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using System;
-  using System.Collections.ObjectModel;
-  using System.Linq;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint.Administration;
+  using System;
+  using System.Linq;
 
   [Serializable]
   public class SPFarmInstance : ObjectInstance
@@ -27,27 +26,26 @@
       this.m_farm = farm;
     }
 
-    [JSFunction(Name = "getFarmServers")]
-    public ArrayInstance GetServersInFarm()
+    [JSProperty(Name = "servers")]
+    public SPServerCollectionInstance Servers
     {
-      return this.Engine.Array.Construct(
-// ReSharper disable CoVariantArrayConversion
-        m_farm.Servers.Select(s => new SPServerInstance(this.Engine.Object.Prototype, s)).ToArray());
-// ReSharper restore CoVariantArrayConversion
+      get { return new SPServerCollectionInstance(this.Engine.Object.InstancePrototype, m_farm.Servers); }
     }
 
-    [JSFunction(Name = "getFarmServices")]
-    public ArrayInstance GetServicesInFarm()
+    [JSProperty(Name = "services")]
+    public SPServiceCollectionInstance Services
     {
-      return this.Engine.Array.Construct(
-        // ReSharper disable CoVariantArrayConversion
-        m_farm.Services.Select(s =>
-          {
-            if (s is SPWindowsService)
-              return new SPWindowsServiceInstance(this.Engine.Object.InstancePrototype, s as SPWindowsService);
-            return new SPServiceInstance(this.Engine.Object.InstancePrototype, s);
-          }).ToArray());
-      // ReSharper restore CoVariantArrayConversion
+      get { return new SPServiceCollectionInstance(this.Engine.Object.InstancePrototype, m_farm.Services); }
+    }
+
+    [JSProperty(Name = "farmManagedAccounts")]
+    public SPFarmManagedAccountCollectionInstance FarmManagedAccounts
+    {
+      get
+      {
+        return new SPFarmManagedAccountCollectionInstance(this.Engine.Object.InstancePrototype,
+          new SPFarmManagedAccountCollection(SPFarm.Local));
+      }
     }
 
     [JSFunction(Name = "getServiceApplicationById")]
@@ -62,23 +60,6 @@
       }
 
       return Null.Value;
-    }
-
-    [JSFunction(Name = "getFarmManagedAccounts")]
-    public ArrayInstance GetFarmManagedAccounts()
-    {
-      var managedAccounts = new Collection<SPManagedAccountInstance>();
-
-      var local = SPFarm.Local;
-      var farmManagedAccountCollection = new SPFarmManagedAccountCollection(local);
-      foreach (var farmManagedAccount in farmManagedAccountCollection)
-      {
-        managedAccounts.Add(new SPManagedAccountInstance(this.Engine.Object.InstancePrototype, farmManagedAccount));
-      }
-
-// ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(managedAccounts.ToArray());
-// ReSharper restore CoVariantArrayConversion
     }
 
     [JSFunction(Name = "getFarmKeyValue")]

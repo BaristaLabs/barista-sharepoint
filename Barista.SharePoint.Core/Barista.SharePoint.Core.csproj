@@ -304,12 +304,19 @@
     <Compile Include="Library\SPDatabaseSnapshotCollectionInstance.cs" />
     <Compile Include="Library\SPDeletedSiteCollectionInstance.cs" />
     <Compile Include="Library\SPDeletedSiteInstance.cs" />
+    <Compile Include="Library\SPFarmManagedAccountCollectionInstance.cs" />
     <Compile Include="Library\SPFeatureCollectionInstance.cs" />
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
     <Compile Include="Library\SPFieldLinkInstance.cs" />
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
+    <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
+    <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
+    <Compile Include="Library\SPProcessAccountInstance.cs" />
+    <Compile Include="Library\SPServerCollectionInstance.cs" />
+    <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
+    <Compile Include="Library\SPServiceCollectionInstance.cs" />
     <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPUserCollectionInstance.cs" />
@@ -440,6 +447,7 @@
     <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPFileScriptSource.cs" />
     <Compile Include="Library\SPSiteCollectionInstance.cs" />
+    <Compile Include="SPServiceInstanceDependencyCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermCollection.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />

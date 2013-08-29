@@ -33,13 +33,13 @@
       this.PopulateFunctions();
     }
 
-    public SPServiceApplicationInstance(ObjectInstance prototype, SPServiceApplication sPServiceApplication)
+    public SPServiceApplicationInstance(ObjectInstance prototype, SPServiceApplication serviceApplication)
       : this(prototype)
     {
-      if (sPServiceApplication == null)
-        throw new ArgumentNullException("sPServiceApplication");
+      if (serviceApplication == null)
+        throw new ArgumentNullException("serviceApplication");
 
-      m_serviceApplication = sPServiceApplication;
+      m_serviceApplication = serviceApplication;
     }
 
     public SPServiceApplication SPServiceApplication

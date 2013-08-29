@@ -24,7 +24,10 @@
   [Guid("B7D45781-D64D-4B23-ABA3-33398DB1249B")]
   public class BaristaDiagnosticsService : SPDiagnosticsServiceBase
   {
-    private const string DiagnosticsAreaName = "Barista";
+    public const string DiagnosticsAreaName = "Barista";
+
+    private static BaristaDiagnosticsService s_local;
+    private static readonly object SyncRoot = new object();
 
     public BaristaDiagnosticsService()
     {
@@ -38,10 +41,10 @@
 
     protected override IEnumerable<SPDiagnosticsArea> ProvideAreas()
     {
-      List<SPDiagnosticsCategory> categories = new List<SPDiagnosticsCategory>();
-      foreach (string catName in Enum.GetNames(typeof(BaristaDiagnosticCategory)))
+      var categories = new List<SPDiagnosticsCategory>();
+      foreach (var catName in Enum.GetNames(typeof(BaristaDiagnosticCategory)))
       {
-        uint catId = (uint)(int)Enum.Parse(typeof(BaristaDiagnosticCategory), catName);
+        var catId = (uint)(int)Enum.Parse(typeof(BaristaDiagnosticCategory), catName);
         categories.Add(new SPDiagnosticsCategory(catName, TraceSeverity.Verbose, EventSeverity.Error, 0, catId));
       }
 
@@ -52,7 +55,18 @@
     {
       get
       {
-        return SPDiagnosticsServiceBase.GetLocal<BaristaDiagnosticsService>();
+        if (s_local == null)
+        {
+          lock (SyncRoot)
+          {
+            if (s_local == null)
+            {
+              s_local = new BaristaDiagnosticsService(BaristaDiagnosticsService.DiagnosticsAreaName, SPFarm.Local);
+            }
+          }
+        }
+
+        return s_local;
       }
     }
 
@@ -67,11 +81,11 @@
     public void LogMessage(ushort id, BaristaDiagnosticCategory category,
                                TraceSeverity traceSeverity, string message, params object[] data)
     {
-      if (traceSeverity != TraceSeverity.None)
-      {
-        SPDiagnosticsCategory cat = this[category];
-        Local.WriteTrace(id, cat, traceSeverity, message, data);
-      }
+      if (traceSeverity == TraceSeverity.None)
+        return;
+
+      var cat = this[category];
+      Local.WriteTrace(id, cat, traceSeverity, message, data);
     }
 
     public void LogException(Exception ex, BaristaDiagnosticCategory category, string messagePrefix)
@@ -82,7 +96,7 @@
       if (messagePrefix != String.Empty)
         messagePrefix = messagePrefix.TrimEnd() + " ";
 
-      SPDiagnosticsCategory cat = this[category];
+      var cat = this[category];
       Local.WriteTrace(1, cat, TraceSeverity.Unexpected, messagePrefix + ex.Message, ex.Data);
     }
   }

@@ -4,7 +4,6 @@
   using Barista.Jurassic.Library;
   using Barista.Library;
   using Microsoft.SharePoint.Administration;
-  using System.Linq;
   using System;
 
   [Serializable]
@@ -48,6 +47,24 @@
       get { return m_service; }
     }
 
+    [JSProperty(Name = "applications")]
+    public SPServiceApplicationCollectionInstance Applications
+    {
+      get
+      {
+        return new SPServiceApplicationCollectionInstance(this.Engine.Object.InstancePrototype, m_service.Applications);
+      }
+    }
+
+    [JSProperty(Name = "instances")]
+    public SPServiceInstanceDependencyCollectionInstance Instances
+    {
+      get
+      {
+        return new SPServiceInstanceDependencyCollectionInstance(this.Engine.Object.InstancePrototype, m_service.Instances);
+      }
+    }
+
     [JSProperty(Name = "name")]
     public string Name
     {
@@ -76,28 +93,6 @@
     public string TypeName
     {
       get { return m_service.TypeName; }
-    }
-
-    [JSFunction(Name = "getApplications")]
-    public ArrayInstance GetApplications()
-    {
-      return
-        this.Engine.Array.Construct(
-// ReSharper disable CoVariantArrayConversion
-          m_service.Applications.Select(s => new SPServiceApplicationInstance(this.Engine.Object.Prototype, s))
-                   .ToArray());
-// ReSharper restore CoVariantArrayConversion
-    }
-
-    [JSFunction(Name = "getInstances")]
-    public ArrayInstance GetInstances()
-    {
-      return
-       this.Engine.Array.Construct(
-        // ReSharper disable CoVariantArrayConversion
-         m_service.Instances.Select(instance => new SPServiceInstanceInstance(this.Engine.Object.Prototype, instance))
-                  .ToArray());
-      // ReSharper restore CoVariantArrayConversion
     }
   }
 }

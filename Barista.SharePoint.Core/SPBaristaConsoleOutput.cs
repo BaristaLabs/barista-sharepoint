@@ -25,7 +25,7 @@
 
     public void Log(FirebugConsoleMessageStyle style, object[] objects)
     {
-      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService(BaristaDiagnosticsService.DiagnosticsAreaName, SPFarm.Local);
 
       var cat = baristaLogService[BaristaDiagnosticCategory.Console];
 
@@ -72,7 +72,7 @@
 
     public void StartGroup(string title, bool initiallyCollapsed)
     {
-      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService(BaristaDiagnosticsService.DiagnosticsAreaName, SPFarm.Local);
 
       var cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
       baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----Start Group - " + title, initiallyCollapsed);
@@ -80,7 +80,7 @@
 
     public void EndGroup()
     {
-      var baristaLogService = new BaristaDiagnosticsService("Barista", SPFarm.Local);
+      var baristaLogService = new BaristaDiagnosticsService(BaristaDiagnosticsService.DiagnosticsAreaName, SPFarm.Local);
 
       var cat = baristaLogService[BaristaDiagnosticCategory.StartGroup];
       baristaLogService.WriteTrace(1, cat, TraceSeverity.Verbose, "-----End Group");

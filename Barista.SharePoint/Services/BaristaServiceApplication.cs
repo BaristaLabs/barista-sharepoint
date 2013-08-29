@@ -186,12 +186,29 @@
         }
         catch (JavaScriptException ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
+          try
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+              "A JavaScript exception was thrown while evaluating script: ");
+          }
+          catch
+          {
+            //Do Nothing...
+          }
+
           scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
         }
         catch (Exception ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occurred while evaluating script: ");
+          try
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+              "An internal error occurred while evaluating script: ");
+          }
+          catch
+          {
+            //Do Nothing...
+          }
           scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
@@ -267,14 +284,29 @@
         }
         catch (JavaScriptException ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-                                                       "A JavaScript exception was thrown while evaluating script: ");
+          try
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+              "A JavaScript exception was thrown while evaluating script: ");
+          }
+          catch
+          {
+            //Do Nothing...
+          }
           scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
         }
         catch (Exception ex)
         {
-          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-                                                       "An internal error occured while executing script: ");
+          try
+          {
+            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+              "An internal error occured while executing script: ");
+          }
+          catch
+          {
+            //Do Nothing...
+          }
+
           scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
         }
         finally
