@@ -278,12 +278,16 @@
     public string ServerRelativeUrl
     {
       get { return m_web.ServerRelativeUrl; }
+      set { m_web.ServerRelativeUrl = value; }
     }
 
     [JSProperty(Name = "showUrlStructureForCurrentUser")]
     public bool ShowUrlStructureForCurrentUser
     {
-      get { return m_web.ShowUrlStructureForCurrentUser; }
+      get
+      {
+        return m_web.ShowUrlStructureForCurrentUser;
+      }
     }
 
     [JSProperty(Name = "siteGroups")]
