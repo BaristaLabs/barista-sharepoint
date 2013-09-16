@@ -366,6 +366,12 @@
       }
     }
 
+    [JSProperty(Name = "webs")]
+    public SPWebCollectionInstance Webs
+    {
+      get { return new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Webs); }
+    }
+
     [JSProperty(Name = "webTemplate")]
     public string WebTemplate
     {
@@ -582,14 +588,21 @@
     }
 
     [JSFunction(Name = "doesUserHavePermissions")]
-    public bool DoesUserHavePermissions(string loginName, string permissions)
+    public bool DoesUserHavePermissions(object loginName, object permissions)
     {
+      string strLoginName;
+      if (loginName is SPUserInstance)
+        strLoginName = (loginName as SPUserInstance).User.LoginName;
+      else
+        strLoginName = TypeConverter.ToString(loginName);
+
+      var strPermissions = "Open";
+
+      if (permissions != null && permissions != Undefined.Value && permissions != Null.Value)
+        strPermissions = TypeConverter.ToString(permissions);
+
       SPBasePermissions basePermissions;
-      if (permissions.TryParseEnum(true, out basePermissions))
-      {
-        this.m_web.DoesUserHavePermissions(loginName, basePermissions);
-      }
-      return false;
+      return strPermissions.TryParseEnum(true, out basePermissions) && this.m_web.DoesUserHavePermissions(strLoginName, basePermissions);
     }
 
     [JSFunction(Name = "ensureUser")]
@@ -637,10 +650,9 @@
     public SPFileInstance GetFileFromServerRelativeUrl(string serverRelativeUrl)
     {
       var file = m_web.GetFile(serverRelativeUrl);
-      if (file == null)
-        return null;
-
-      return new SPFileInstance(this.Engine.Object.InstancePrototype, file);
+      return file == null
+        ? null
+        : new SPFileInstance(this.Engine.Object.InstancePrototype, file);
     }
 
     [JSFunction(Name = "getFiles")]

@@ -157,6 +157,7 @@
     #endregion
 
     #region Functions
+
     [JSFunction(Name = "delete")]
     public void Delete()
     {
@@ -254,6 +255,12 @@
     public string Recycle()
     {
       return m_listItem.Recycle().ToString();
+    }
+
+    [JSFunction(Name = "unlinkFromCopySource")]
+    public void UnlinkFromCopySource()
+    {
+      m_listItem.UnlinkFromCopySource();
     }
 
     [JSFunction(Name = "update")]

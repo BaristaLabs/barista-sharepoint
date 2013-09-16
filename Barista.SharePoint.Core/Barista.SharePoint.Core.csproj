@@ -317,6 +317,7 @@
     <Compile Include="Library\SPServerCollectionInstance.cs" />
     <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
     <Compile Include="Library\SPServiceCollectionInstance.cs" />
+    <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPUserCollectionInstance.cs" />

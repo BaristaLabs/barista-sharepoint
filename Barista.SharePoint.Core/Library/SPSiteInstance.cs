@@ -66,6 +66,13 @@ namespace Barista.SharePoint.Library
     }
 
     #region Properties
+
+    [JSProperty(Name = "allWebs")]
+    public SPWebCollectionInstance AllWebs
+    {
+      get { return new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_site.AllWebs); }
+    }
+
     [JSProperty(Name = "allowDesigner")]
     public bool AllowDesigner
     {
@@ -162,7 +169,7 @@ namespace Barista.SharePoint.Library
       }
     }
 
-    [JSProperty(Name = "ReadLocked")]
+    [JSProperty(Name = "readLocked")]
     public bool ReadLocked
     {
       get
@@ -175,7 +182,7 @@ namespace Barista.SharePoint.Library
       }
     }
 
-    [JSProperty(Name = "ReadOnly")]
+    [JSProperty(Name = "readOnly")]
     public bool ReadOnly
     {
       get
