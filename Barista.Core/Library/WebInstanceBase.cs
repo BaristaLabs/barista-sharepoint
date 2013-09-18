@@ -223,8 +223,11 @@
         catch (WebException e)
         {
           //The request failed -- usually a 400
-          var httpResponse = (HttpWebResponse)e.Response;
-          result = new HttpWebResponseInstance(this.Engine.Object.InstancePrototype, httpResponse);
+          var httpResponse = e.Response as HttpWebResponse;
+
+          result = httpResponse == null
+            ? null
+            : new HttpWebResponseInstance(this.Engine.Object.InstancePrototype, httpResponse);
         }
         catch (Exception ex)
         {
