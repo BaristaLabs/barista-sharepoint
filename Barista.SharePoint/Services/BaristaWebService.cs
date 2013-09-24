@@ -112,7 +112,7 @@
     /// </summary>
     private static void TakeOrder()
     {
-      if (SPContext.Current.Web == null)
+      if (SPContext.Current == null || SPContext.Current.Web == null)
         throw new InvalidOperationException("Cannot execute Barista: Barista must execute within the context of a SharePoint Web.");
 
       if (SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.Open) == false)
