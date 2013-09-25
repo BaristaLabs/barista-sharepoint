@@ -57,6 +57,20 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.Automation\Barista.Automation.csproj">
+      <Project>{962e4c28-198f-4e99-a8c0-4a8c1c61d0b4}</Project>
+      <Name>Barista.Automation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.Raven\Barista.Raven.csproj">
+      <Project>{fb0d0fb7-e81f-4e2f-b662-c3ad92ac65d8}</Project>
+      <Name>Barista.Raven</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.Social\Barista.Social.csproj">
+      <Project>{1cf79b59-cdd6-4920-8edb-4ef36e332ee0}</Project>
+      <Name>Barista.Social</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

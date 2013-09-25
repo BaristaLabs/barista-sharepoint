@@ -775,6 +775,8 @@
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
     <Compile Include="Library\ExcelWorksheetsInstance.cs" />
     <Compile Include="Library\OSInstance.cs" />
+    <Compile Include="Library\PointInstance.cs" />
+    <Compile Include="Library\SizeInstance.cs" />
     <Compile Include="Library\Sucralose.cs" />
     <Compile Include="Library\UserAgentInfoInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />

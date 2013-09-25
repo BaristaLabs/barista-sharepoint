@@ -132,9 +132,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.Schedule
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.CamlexNET", "Barista.UnitTests.CamlexNET\Barista.UnitTests.CamlexNET.csproj", "{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaConsoleClient", "BaristaConsoleClient\BaristaConsoleClient.csproj", "{04D32EAA-9039-46EE-B571-2A2F482B15DC}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 20
+		SccNumberOfProjects = 21
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -214,6 +216,10 @@ Global
 		SccProjectTopLevelParentUniqueName19 = Barista.sln
 		SccProjectName19 = Barista.UnitTests.CamlexNET
 		SccLocalPath19 = Barista.UnitTests.CamlexNET
+		SccProjectUniqueName20 = BaristaConsoleClient\\BaristaConsoleClient.csproj
+		SccProjectTopLevelParentUniqueName20 = Barista.sln
+		SccProjectName20 = BaristaConsoleClient
+		SccLocalPath20 = BaristaConsoleClient
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -300,6 +306,10 @@ Global
 		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04D32EAA-9039-46EE-B571-2A2F482B15DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04D32EAA-9039-46EE-B571-2A2F482B15DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04D32EAA-9039-46EE-B571-2A2F482B15DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04D32EAA-9039-46EE-B571-2A2F482B15DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -328,5 +338,6 @@ Global
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA} = {7DB948B6-8410-4DB1-8C29-0310F6D2047F}
 		{4A18440E-D225-4FB4-B781-950598372798} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
+		{04D32EAA-9039-46EE-B571-2A2F482B15DC} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
 	EndGlobalSection
 EndGlobal

@@ -264,12 +264,7 @@
       return new UriInstance(this.Engine.Object.InstancePrototype, result);
     }
 
-    [JSFunction(Name = "ToString")]
-    public string ToStringJS()
-    {
-      return this.ToString();
-    }
-
+    [JSFunction(Name = "toString")]
     public override string ToString()
     {
       return m_uri.ToString();

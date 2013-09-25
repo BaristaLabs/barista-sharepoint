@@ -1,5 +1,6 @@
 ﻿namespace Barista
 {
+  using Barista.Automation.Bundles;
   using Barista.Bundles;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -42,7 +43,6 @@
 
       if (isNewScriptEngineInstance)
       {
-        //TODO: Add a console that uses NUnit
         var console = new FirebugConsole(engine)
         {
           Output = new BaristaConsoleOutput(engine)
@@ -75,6 +75,7 @@
         instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
         instance.Common.RegisterBundle(new WebAdministrationBundle());
         instance.Common.RegisterBundle(new UnitTestingBundle());
+        instance.Common.RegisterBundle(new SeleniumBundle());
 
         //Global Types
         engine.SetGlobalValue("Barista", instance);
@@ -83,6 +84,8 @@
 
         engine.SetGlobalValue("Guid", new GuidConstructor(engine));
         engine.SetGlobalValue("Uri", new UriConstructor(engine));
+        engine.SetGlobalValue("Size", new SizeConstructor(engine));
+        engine.SetGlobalValue("Point", new PointConstructor(engine));
         engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
         engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
 

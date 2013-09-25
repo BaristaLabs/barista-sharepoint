@@ -1,7 +1,6 @@
 ﻿namespace Barista.Web.Bundles
 {
   using System;
-  using System.ServiceModel.Web;
   using Barista.Search;
   using Barista.Search.Library;
 
