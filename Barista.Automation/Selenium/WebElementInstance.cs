@@ -1,6 +1,5 @@
 ﻿namespace Barista.Automation.Selenium
 {
-  using System.Drawing;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using Barista.Library;
@@ -81,7 +80,7 @@
         }
         catch (InvalidElementStateException)
         {
-          return Null.Value;
+          return Undefined.Value;
         }
       }
     }
