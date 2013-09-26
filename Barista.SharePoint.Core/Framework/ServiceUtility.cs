@@ -112,7 +112,7 @@
         else
         {
           metadataBehavior.HttpsGetEnabled = enableHttpGet;
-          metadataBehavior.HttpGetUrl = address;
+          metadataBehavior.HttpsGetUrl = address;
         }
       }
       AddMexEndpoint(serviceHost, address, schemes);
