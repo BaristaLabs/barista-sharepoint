@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class RegexQueryInstance : QueryInstance<RegexQuery>
+  public class RegexQueryInstance : QueryInstance<RegexQuery>, IQuery<RegexQuery>
   {
     private readonly RegexQuery m_regexQuery;
 

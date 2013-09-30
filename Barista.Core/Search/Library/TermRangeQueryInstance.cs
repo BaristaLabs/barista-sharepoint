@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class TermRangeQueryInstance : QueryInstance<TermRangeQuery>
+  public class TermRangeQueryInstance : QueryInstance<TermRangeQuery>, IQuery<TermRangeQuery>
   {
     private readonly TermRangeQuery m_termRangeQuery;
 

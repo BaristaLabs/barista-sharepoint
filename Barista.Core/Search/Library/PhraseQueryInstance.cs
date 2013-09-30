@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class PhraseQueryInstance : QueryInstance<PhraseQuery>
+  public class PhraseQueryInstance : QueryInstance<PhraseQuery>, IQuery<PhraseQuery>
   {
     private readonly PhraseQuery m_phraseQuery;
 

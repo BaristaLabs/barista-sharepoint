@@ -11,8 +11,7 @@
   using Barista.Newtonsoft.Json;
   using Barista.Search;
   using Barista.Newtonsoft.Json.Linq;
-  using Lucene.Net.Documents;
-  using Lucene.Net.Index;
+  using Query = Barista.Search.Query;
   using Term = Barista.Search.Term;
 
   [Serializable]
@@ -491,7 +490,7 @@
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      var args = CoerceSearchArguments(query, maxResults);
+      var args = CoerceSearchArguments(query, maxResults, null);
 
       var searchResults = m_baristaSearchServiceProxy.Search(this.IndexName, args);
 
@@ -506,7 +505,7 @@
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      var args = CoerceSearchArguments(query, maxResults);
+      var args = CoerceSearchArguments(query, maxResults, null);
 
       var searchResultCount = m_baristaSearchServiceProxy.SearchResultCount(this.IndexName, args);
 
@@ -519,95 +518,7 @@
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-      var args = new Barista.Search.SearchArguments();
-
-      if (query == null || query == Null.Value || query == Undefined.Value)
-      {
-        args.Query = new MatchAllDocsQuery();
-        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-      }
-      else if (TypeUtilities.IsString(query))
-      {
-        args.Query = new QueryParserQuery
-        {
-          Query = TypeConverter.ToString(query)
-        };
-
-        if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-
-        if (groupByFields != Undefined.Value && groupByFields != Null.Value && groupByFields is ArrayInstance)
-          args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
-      }
-      else if (query is SearchArgumentsInstance)
-      {
-        var searchArgumentsInstance = query as SearchArgumentsInstance;
-        args = searchArgumentsInstance.GetSearchArguments();
-      }
-      else if (query is ObjectInstance)
-      {
-        var argumentsObj = query as ObjectInstance;
-
-        args = new SearchArguments();
-
-        //Duck Type for the win
-        if (argumentsObj.HasProperty("query"))
-        {
-          var queryObj = argumentsObj["query"];
-          var queryObjType = queryObj.GetType();
-
-          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
-            args.Query = queryProperty.GetValue(queryObj, null) as Query;
-        }
-        else
-        {
-          var queryObjType = query.GetType();
-
-          var queryProperty = queryObjType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
-          if (queryProperty != null && typeof(Query).IsAssignableFrom(queryProperty.PropertyType))
-            args.Query = queryProperty.GetValue(query, null) as Query;
-
-          if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
-        }
-
-        if (argumentsObj.HasProperty("filter"))
-        {
-          var filterObj = argumentsObj["filter"];
-          var filterObjType = filterObj.GetType();
-
-          var filterProperty = filterObjType.GetProperty("Filter", BindingFlags.Instance | BindingFlags.Public);
-          if (filterProperty != null && typeof(Filter).IsAssignableFrom(filterProperty.PropertyType))
-            args.Filter = filterProperty.GetValue(filterObj, null) as Filter;
-        }
-
-        if (argumentsObj.HasProperty("groupByFields"))
-        {
-          var groupByFieldsValue = argumentsObj["groupByFields"] as ArrayInstance;
-          if (groupByFieldsValue != null)
-          {
-            args.GroupByFields = groupByFieldsValue.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
-          }
-        }
-
-        if (argumentsObj.HasProperty("skip"))
-        {
-          var skipObj = argumentsObj["skip"];
-          args.Skip = TypeConverter.ToInteger(skipObj);
-        }
-
-        if (argumentsObj.HasProperty("take"))
-        {
-          var takeObj = argumentsObj["take"];
-          args.Take = TypeConverter.ToInteger(takeObj);
-        }
-      }
-      else
-      {
-        throw new JavaScriptException(this.Engine, "Error", "Unable to determine the search arguments.");
-      }
+      var args = CoerceSearchArguments(query, maxResults, groupByFields);
 
       var searchResults = m_baristaSearchServiceProxy.FacetedSearch(this.IndexName, args);
 
@@ -697,7 +608,7 @@
       return result;
     }
 
-    private SearchArguments CoerceSearchArguments(object query, object maxResults)
+    private SearchArguments CoerceSearchArguments(object query, object maxResults, object groupByFields)
     {
       var args = new Barista.Search.SearchArguments();
 
@@ -716,11 +627,21 @@
 
         if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
           args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+
+        if (groupByFields != null && groupByFields != Undefined.Value && groupByFields != Null.Value && groupByFields is ArrayInstance)
+          args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
       }
       else if (query is SearchArgumentsInstance)
       {
         var searchArgumentsInstance = query as SearchArgumentsInstance;
         args = searchArgumentsInstance.GetSearchArguments();
+      }
+      else if (query.GetType().IsAssignableFrom(typeof(IQuery<>)))
+      {
+        args = new SearchArguments();
+
+        var pi = typeof (IQuery<>).GetProperty("Query");
+        args.Query = (Query)pi.GetValue(query, null);
       }
       else if (query is ObjectInstance)
       {
@@ -762,10 +683,10 @@
 
         if (argumentsObj.HasProperty("groupByFields"))
         {
-          var groupByFields = argumentsObj["groupByFields"] as ArrayInstance;
-          if (groupByFields != null)
+          var groupByFieldsValue = argumentsObj["groupByFields"] as ArrayInstance;
+          if (groupByFieldsValue != null)
           {
-            args.GroupByFields = groupByFields.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
+            args.GroupByFields = groupByFieldsValue.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
           }
         }
 

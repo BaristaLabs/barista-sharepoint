@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class FuzzyQueryInstance : QueryInstance<FuzzyQuery>
+  public class FuzzyQueryInstance : QueryInstance<FuzzyQuery>, IQuery<FuzzyQuery>
   {
     private readonly FuzzyQuery m_fuzzyQuery;
 

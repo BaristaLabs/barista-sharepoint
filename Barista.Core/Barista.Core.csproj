@@ -793,6 +793,7 @@
     <Compile Include="Search\Data Contracts\Occur.cs" />
     <Compile Include="Search\Data Contracts\SearchArguments.cs" />
     <Compile Include="Search\Data Contracts\Sort.cs" />
+    <Compile Include="Search\IQuery.cs" />
     <Compile Include="Search\Library\FacetedSearchResultInstance.cs" />
     <Compile Include="Search\Library\JsonDocumentInstance.cs" />
     <Compile Include="Search\Library\ODataQueryInstance.cs" />

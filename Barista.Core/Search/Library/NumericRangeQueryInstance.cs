@@ -21,7 +21,7 @@
   }
 
   [Serializable]
-  public class NumericRangeQueryInstance<T> : ObjectInstance
+  public class NumericRangeQueryInstance<T> : ObjectInstance, IQuery<NumericRangeQueryBase<T>>
     where T : struct, IComparable<T>
   {
     private readonly NumericRangeQueryBase<T> m_numericRangeQuery;

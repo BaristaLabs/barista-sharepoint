@@ -22,7 +22,7 @@
   }
 
   [Serializable]
-  public class BooleanQueryInstance : QueryInstance<BooleanQuery>
+  public class BooleanQueryInstance : QueryInstance<BooleanQuery>, IQuery<BooleanQuery>
   {
     private readonly BooleanQuery m_booleanQuery;
 

@@ -25,7 +25,7 @@ namespace Barista.Search.Library
   }
 
   [Serializable]
-  public class ODataQueryInstance : ObjectInstance
+  public class ODataQueryInstance : ObjectInstance, IQuery<ODataQuery>
   {
     private readonly ODataQuery m_oDataQuery;
 
@@ -45,7 +45,7 @@ namespace Barista.Search.Library
       m_oDataQuery = oDataQuery;
     }
 
-    public ODataQuery ODataQuery
+    public ODataQuery Query
     {
       get { return m_oDataQuery; }
     }

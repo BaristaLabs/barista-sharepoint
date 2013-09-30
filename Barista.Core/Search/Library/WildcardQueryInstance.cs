@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class WildcardQueryInstance : QueryInstance<WildcardQuery>
+  public class WildcardQueryInstance : QueryInstance<WildcardQuery>, IQuery<WildcardQuery>
   {
     private readonly WildcardQuery m_wildcardQuery;
 

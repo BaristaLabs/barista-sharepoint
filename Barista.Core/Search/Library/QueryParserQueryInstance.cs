@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class QueryParserQueryInstance : ObjectInstance
+  public class QueryParserQueryInstance : ObjectInstance, IQuery<QueryParserQuery>
   {
     private readonly QueryParserQuery m_queryParserQuery;
 
@@ -40,7 +40,7 @@
       m_queryParserQuery = queryParserQuery;
     }
 
-    public QueryParserQuery QueryParserQuery
+    public QueryParserQuery Query
     {
       get { return m_queryParserQuery; }
     }

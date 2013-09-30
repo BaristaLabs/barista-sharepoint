@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class TermQueryInstance : QueryInstance<TermQuery>
+  public class TermQueryInstance : QueryInstance<TermQuery>, IQuery<TermQuery>
   {
     private readonly TermQuery m_termQuery;
 

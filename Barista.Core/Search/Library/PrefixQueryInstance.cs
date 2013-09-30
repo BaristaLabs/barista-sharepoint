@@ -20,7 +20,7 @@
   }
 
   [Serializable]
-  public class PrefixQueryInstance : QueryInstance<PrefixQuery>
+  public class PrefixQueryInstance : QueryInstance<PrefixQuery>, IQuery<PrefixQuery>
   {
     private readonly PrefixQuery m_prefixQuery;
 
