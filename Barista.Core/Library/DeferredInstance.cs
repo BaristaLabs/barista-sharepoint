@@ -113,28 +113,36 @@
 
     #region Functions
     [JSFunction(Name = "always")]
-    public void Always(object alwaysCallbacks)
+    public DeferredInstance Always(object alwaysCallbacks)
     {
       AddFunctionToCollection(TaskContinuationOptions.None, alwaysCallbacks);
+
+      return this;
     }
 
     [JSFunction(Name = "done")]
-    public void Done(object doneCallbacks)
+    public DeferredInstance Done(object doneCallbacks)
     {
       AddFunctionToCollection(TaskContinuationOptions.OnlyOnRanToCompletion, doneCallbacks);
+
+      return this;
     }
 
     [JSFunction(Name = "fail")]
-    public void Fail(object failCallbacks)
+    public DeferredInstance Fail(object failCallbacks)
     {
       AddFunctionToCollection(TaskContinuationOptions.OnlyOnFaulted, failCallbacks);
+
+      return this;
     }
 
     [JSFunction(Name = "then")]
-    public void Then(object doneCallbacks, object failCallbacks)
+    public DeferredInstance Then(object doneCallbacks, object failCallbacks)
     {
       Done(doneCallbacks);
       Fail(failCallbacks);
+
+      return this;
     }
 
     private void AddFunctionToCollection(TaskContinuationOptions options, object callback)

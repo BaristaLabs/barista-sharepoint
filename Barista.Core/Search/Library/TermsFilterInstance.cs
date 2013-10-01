@@ -46,10 +46,12 @@
     }
 
     [JSFunction(Name = "addTerm")]
-    public void AddTerm(string fieldName, string text)
+    public TermsFilterInstance AddTerm(string fieldName, string text)
     {
       var term = new Term {FieldName = fieldName, Value = text};
       m_termsFilter.Terms.Add(term);
+
+      return this;
     }
   }
 }

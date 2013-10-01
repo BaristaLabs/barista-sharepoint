@@ -31,7 +31,7 @@
     }
 
     [JSFunction(Name = "areEqual")]
-    public void AreEqual(object expected, object actual, object message)
+    public AssertInstance AreEqual(object expected, object actual, object message)
     {
       if (TypeUtilities.IsString(expected))
         expected = TypeConverter.ToString(expected);
@@ -64,10 +64,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "areDeepEqual")]
-    public void AreDeepEqual(object expected, object actual, object message)
+    public AssertInstance AreDeepEqual(object expected, object actual, object message)
     {
       var bat = this.Engine.GetGlobalValue("BaristaUnitTesting") as ObjectInstance;
       if (bat == null)
@@ -84,10 +86,12 @@
       {
         HandleAssertFailedException(ex);
       }
+
+      return this;
     }
 
     [JSFunction(Name = "areNotEqual")]
-    public void AreNotEqual(object expected, object actual, object message)
+    public AssertInstance AreNotEqual(object expected, object actual, object message)
     {
       if (TypeUtilities.IsString(expected))
         expected = TypeConverter.ToString(expected);
@@ -118,10 +122,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "areNotDeepEqual")]
-    public void AreNotDeepEqual(object expected, object actual, object message)
+    public AssertInstance AreNotDeepEqual(object expected, object actual, object message)
     {
       var bat = this.Engine.GetGlobalValue("BaristaUnitTesting") as ObjectInstance;
       if (bat == null)
@@ -138,10 +144,12 @@
       {
         HandleAssertFailedException(ex);
       }
+
+      return this;
     }
 
     [JSFunction(Name = "areSame")]
-    public void AreSame(object expected, object actual, object message)
+    public AssertInstance AreSame(object expected, object actual, object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -166,10 +174,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "areNotSame")]
-    public void AreNotSame(object expected, object actual, object message)
+    public AssertInstance AreNotSame(object expected, object actual, object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -194,10 +204,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "fail")]
-    public void Fail(object message)
+    public AssertInstance Fail(object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -222,10 +234,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "inconclusive")]
-    public void Inconclusive(object message)
+    public AssertInstance Inconclusive(object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -250,10 +264,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isFalse")]
-    public void IsFalse(object condition, object message)
+    public AssertInstance IsFalse(object condition, object message)
     {
       var bCondition = TypeConverter.ToBoolean(condition);
 
@@ -280,10 +296,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isTrue")]
-    public void IsTrue(object condition, object message)
+    public AssertInstance IsTrue(object condition, object message)
     {
       var bCondition = TypeConverter.ToBoolean(condition);
 
@@ -310,10 +328,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isNull")]
-    public void IsNull(object value, object message)
+    public AssertInstance IsNull(object value, object message)
     {
       if (value == Null.Value || value == Undefined.Value)
         value = null;
@@ -341,10 +361,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isNotNull")]
-    public void IsNotNull(object value, object message)
+    public AssertInstance IsNotNull(object value, object message)
     {
       if (value == Null.Value || value == Undefined.Value)
         value = null;
@@ -372,10 +394,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isUndefined")]
-    public void IsUndefined(object value, object message)
+    public AssertInstance IsUndefined(object value, object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -400,10 +424,12 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     [JSFunction(Name = "isNotUndefined")]
-    public void IsNotUndefined(object value, object message)
+    public AssertInstance IsNotUndefined(object value, object message)
     {
       if (message != null && message != Null.Value && message != Undefined.Value)
       {
@@ -428,6 +454,8 @@
           HandleAssertFailedException(ex);
         }
       }
+
+      return this;
     }
 
     private void HandleAssertFailedException(AssertFailedException ex)

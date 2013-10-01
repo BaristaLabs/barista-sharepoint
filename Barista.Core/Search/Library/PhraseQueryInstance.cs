@@ -65,9 +65,11 @@
     }
 
     [JSFunction(Name = "add")]
-    public void Add(string fieldName, string text)
+    public PhraseQueryInstance Add(string fieldName, string text)
     {
       m_phraseQuery.Terms.Add(new Term { FieldName = fieldName, Value = text });
+
+      return this;
     }
   }
 }

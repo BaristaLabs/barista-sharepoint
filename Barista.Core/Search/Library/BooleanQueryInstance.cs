@@ -69,7 +69,7 @@
     }
 
     [JSFunction(Name = "add")]
-    public void Add(object searchQuery, object occur)
+    public BooleanQueryInstance Add(object searchQuery, object occur)
     {
       Occur lOccur;
       if (occur == Null.Value || occur == Undefined.Value || occur == null || (occur is string) == false)
@@ -91,6 +91,8 @@
       var queryValue = queryProperty.GetValue(searchQuery, null) as Query;
 
       m_booleanQuery.Clauses.Add(new BooleanClause {Query = queryValue, Occur = lOccur});
+
+      return this;
     }
   }
 }

@@ -49,7 +49,7 @@
 
     [JSFunction(Name = "addSortField")]
     [JSDoc("Adds a sort field to the sort object")]
-    public void AddSortField(
+    public SortInstance AddSortField(
       [JSDoc("(string) Name of the field to sort by")]
       string fieldName,
       [JSDoc("(bool) (Optional) Indicates whether or not to reverse the sort (false is ascending, true is descending). Default is false.")]
@@ -73,6 +73,8 @@
         Reverse = reverseValue,
         Type = fieldTypeEnum,
       });
+
+      return this;
     }
   }
 }

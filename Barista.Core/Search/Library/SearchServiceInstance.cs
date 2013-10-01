@@ -52,6 +52,7 @@
         throw new ArgumentNullException("baristaSearch");
 
       m_baristaSearchServiceProxy = baristaSearch;
+      this.DefaultMaxResults = 10000;
     }
 
     public IBaristaSearch BaristaSearch
@@ -63,12 +64,20 @@
     /// Gets or sets the name of the index the current instance is associated with.
     /// </summary>
     [JSProperty(Name = "indexName")]
+    [JSDoc("Gets or sets the name of index.")]
     public string IndexName
     {
       get;
       set;
     }
 
+    [JSProperty(Name = "defaultMaxResults")]
+    [JSDoc("Gets or sets the maximum number of results to return. Initial value is 10000.")]
+    public int DefaultMaxResults
+    {
+      get;
+      set;
+    }
 
     #region Query Creation
     [JSFunction(Name = "createTermQuery")]
@@ -447,7 +456,7 @@
     }
 
     [JSFunction(Name = "index")]
-    public void Index(object documentObject)
+    public SearchServiceInstance Index(object documentObject)
     {
       if (this.IndexName.IsNullOrWhiteSpace())
         throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
@@ -470,6 +479,8 @@
         var documentToIndex = ConvertObjectToJsonDocumentDto(documentObject);
         m_baristaSearchServiceProxy.IndexJsonDocument(this.IndexName, documentToIndex);
       }
+
+      return this;
     }
 
     [JSFunction(Name = "retrieve")]
@@ -528,7 +539,7 @@
     }
 
     [JSFunction(Name = "setFieldOptions")]
-    public void SetFieldOptions(object fieldOptions)
+    public SearchServiceInstance SetFieldOptions(object fieldOptions)
     {
       if (fieldOptions == null || fieldOptions == Null.Value || fieldOptions == Undefined.Value)
         throw new JavaScriptException(this.Engine, "Error",
@@ -546,6 +557,8 @@
       }
 
       m_baristaSearchServiceProxy.SetFieldOptions(this.IndexName, args);
+
+      return this;
     }
 
     private FieldOptions CoerceFieldOptions(ObjectInstance fieldOptions)
@@ -616,7 +629,7 @@
       {
         args.Query = new MatchAllDocsQuery();
         if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
       }
       else if (TypeUtilities.IsString(query))
       {
@@ -626,7 +639,7 @@
         };
 
         if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+          args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
 
         if (groupByFields != null && groupByFields != Undefined.Value && groupByFields != Null.Value && groupByFields is ArrayInstance)
           args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
@@ -668,7 +681,7 @@
             args.Query = queryProperty.GetValue(query, null) as Query;
 
           if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, 1000);
+            args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
         }
 
         if (argumentsObj.HasProperty("filter"))
