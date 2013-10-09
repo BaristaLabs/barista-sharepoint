@@ -29,10 +29,13 @@
 
       var mergedEntries = new List<UlsLogEntry>();
 
-      foreach (var file in ulsFiles)
+      foreach (var file in ulsFiles.Where(f => f.Exists))
       {
         var entries = RetrieveLogEntriesFromFile(file.FullName);
-        mergedEntries.AddRange(entries);
+        if (entries != null)
+        {
+          mergedEntries.AddRange(entries);
+        }
       }
 
       mergedEntries = mergedEntries.Where(le => le.CorrelationId == correlationId.ToString()).ToList();
@@ -46,7 +49,7 @@
         // Generate the table columns
         var entries = new List<UlsLogEntry>();
 
-        var logFile = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        var logFile = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
         using (var reader = new StreamReader(logFile))
         {
           var line = reader.ReadLine();
@@ -58,8 +61,8 @@
               if (readLine == null)
                 continue;
 
-              string[] fields = readLine.Split(new[] { '\t' });
-              UlsLogEntry entry = new UlsLogEntry
+              var fields = readLine.Split(new[] { '\t' });
+              var entry = new UlsLogEntry
                 {
                   Process = fields[1].Trim(),
                   TID = fields[2].Trim(),

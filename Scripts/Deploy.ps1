@@ -26,6 +26,7 @@ if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyC
 
 [xml]$ConfigXml = Get-Content $Config
 
+& .\RestartSharePointServices.ps1
 & .\UninstallBaristaSearchService.ps1
 & .\UninstallBaristaServiceApplication.ps1
 & .\Deploy-SPSolutions.ps1 

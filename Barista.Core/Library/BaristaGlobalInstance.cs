@@ -14,6 +14,7 @@
       : base(prototype)
     {
       this.Common = new Common(prototype);
+      this.Environment = new EnvironmentInstance(prototype);
 
       this.PopulateFields();
       this.PopulateFunctions();
@@ -21,6 +22,13 @@
 
     [JSProperty(Name = "common")]
     public Common Common
+    {
+      get;
+      set;
+    }
+
+    [JSProperty(Name = "environment")]
+    public EnvironmentInstance Environment
     {
       get;
       set;

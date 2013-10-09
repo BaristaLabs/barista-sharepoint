@@ -7,7 +7,12 @@ write-host
 $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGenericSetupPath("ISAPI")) "BaristaServices\Search\SPBaristaSearchService.exe"
 
 # deactivate in SharePoint
+try {
 Remove-BaristaSearchService -ErrorAction SilentlyContinue
+}
+catch [System.Management.Automation.CommandNotFoundException] {
+  write-host 'Search Service Not Installed.' -foregroundcolor Yellow
+}
 
 write-host 
 write-host "[[STEP]] Removing existing Search Service" -foregroundcolor Yellow

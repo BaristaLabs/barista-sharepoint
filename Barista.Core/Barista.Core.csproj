@@ -592,6 +592,7 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
+    <Compile Include="Library\EnvironmentInstance.cs" />
     <Compile Include="Library\NetworkCredentialInstance.cs" />
     <Compile Include="Library\DeviceInstance.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />
@@ -774,6 +775,7 @@
     <Compile Include="Library\ExcelWorkbookInstance.cs" />
     <Compile Include="Library\ExcelWorksheetInstance.cs" />
     <Compile Include="Library\ExcelWorksheetsInstance.cs" />
+    <Compile Include="Library\OperatingSystemInstance.cs" />
     <Compile Include="Library\OSInstance.cs" />
     <Compile Include="Library\PointInstance.cs" />
     <Compile Include="Library\SizeInstance.cs" />

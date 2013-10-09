@@ -224,7 +224,7 @@
           var node = info.Node;
           if (info.Depth < this.m_depth)
           {
-            for (var i = NodeSize - 1; i >= 0; i--)
+            for (uint i = NodeSize - 1; i != uint.MaxValue; i--)
               if (node.Array[i] != null)
                 stack.Push(new NodeInfo { Depth = info.Depth + 1, Index = (uint)(info.Index * NodeSize + i), Node = (Node)node.Array[i] });
           }
@@ -311,16 +311,17 @@
     /// <param name="start"> The zero-based index at which copying begins. </param>
     public void CopyTo(SparseArray source, uint start)
     {
+      var originalStart = start;
       foreach (var sourceRange in source.Ranges)
       {
-        int sourceOffset = 0;
-        uint destIndex = start + sourceRange.StartIndex;
+        var sourceOffset = 0;
+        start = originalStart + sourceRange.StartIndex;
 
         do
         {
           // Get a reference to the array to copy to.
           object[] dest = FindOrCreateArray(start, true);
-          int destOffset = (int)(destIndex & NodeMask);
+          int destOffset = (int)(start & NodeMask);
 
           // Copy as much as possible.
           int copyLength = Math.Min(sourceRange.Length - sourceOffset, dest.Length - destOffset);
