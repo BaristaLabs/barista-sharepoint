@@ -90,11 +90,11 @@ baristaFiddle.controller("MainCtrl", function ($scope, $window, $timeout, $http,
                     cm.focus();
                 });
             },
-            "Ctrl-C": function (cm) {
+            "Shift-Ctrl-C": function (cm) {
                 //Comment the current selection
                 cm.lineComment(cm.getCursor("start"), cm.getCursor("end"));
             },
-            "Ctrl-U": function (cm) {
+            "Shift-Ctrl-U": function (cm) {
                 //Uncomment the current selection
                 cm.uncomment(cm.getCursor("start"), cm.getCursor("end"));
             },
@@ -243,7 +243,7 @@ baristaFiddle.controller("MainCtrl", function ($scope, $window, $timeout, $http,
                 $scope.isScriptResultLoading = false;
 
                 $scope.response = {
-                    contentType: header()['content-type'].toLowerCase(),
+                    contentType: typeof(header()['content-type']) === "undefined" ? "" : header()['content-type'].toLowerCase(),
                     status: status,
                     localStatus: "error",
                     header: header,

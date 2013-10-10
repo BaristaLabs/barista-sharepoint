@@ -151,11 +151,17 @@ namespace Barista
       response.LastModified = this.LastModified;
       response.Location = this.RedirectLocation;
       response.StatusCode = this.StatusCode;
-      response.StatusDescription = this.StatusDescription;
-      response.StatusDescription = response.StatusDescription.Replace("\r\n", "").Replace("\r", "");  
+
+      //Setting the status description on the outgoing web response context in certain situations causes the request to terminate unexpectedly.
+      //I've tried removing new-line characters and truncating to 512 characters but both don't seem to work.
+      //Since the description is being set in the httpresponse anyway, and that seems to work, I'm commenting this out.
+      //response.StatusDescription = this.StatusDescription;
+      //response.StatusDescription = response.StatusDescription.Substring(0,
+      //  response.StatusDescription.Length > 512 ? 512 : response.StatusDescription.Length);
+
       response.SuppressEntityBody = this.SuppressContent;
 
-      foreach(var header in this.Headers.Keys)
+      foreach (var header in this.Headers.Keys)
       {
         if (response.Headers.AllKeys.Any(k => k == header))
           response.Headers.Set(header, this.Headers[header]);
