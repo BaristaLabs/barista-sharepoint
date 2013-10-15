@@ -293,7 +293,6 @@
               if (listItem.TryGetSPFieldValue(field.Id, out value))
               {
                 result.SetPropertyValue(field.InternalName, value, false);
-                //ArrayInstance.Push(result, Engine.Array.Construct(field.Title, value));
               }
             }
             break;
@@ -334,6 +333,40 @@
                 result.SetPropertyValue(field.InternalName, userInstance, false);
               }
             }
+            break;
+          case SPFieldType.Lookup:
+          {
+            string fieldValue;
+            var fieldType = field as SPFieldLookup;
+            if (fieldType != null && listItem.TryGetSPFieldValue(field.Id, out fieldValue))
+            {
+              if (fieldType.AllowMultipleValues)
+              {
+                var array = engine.Array.Construct();
+
+                var lookupValueCollection = new SPFieldLookupValueCollection(fieldValue);
+                foreach (var lookupValue in lookupValueCollection)
+                {
+                  var item = engine.Object.Construct();
+                  item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
+                  item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
+
+                  ArrayInstance.Push(array, item);
+                }
+              }
+              else
+              {
+                var item = engine.Object.Construct();
+                var lookupValue = new SPFieldLookupValue(fieldValue);
+                item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
+                item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
+
+                result.SetPropertyValue(field.InternalName, item, false);
+              }
+
+              
+            }
+          }
             break;
           default:
             {

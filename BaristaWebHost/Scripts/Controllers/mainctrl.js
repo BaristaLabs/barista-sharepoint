@@ -242,6 +242,9 @@ baristaFiddle.controller("MainCtrl", function ($scope, $window, $timeout, $http,
             .error(function(data, status, header) {
                 $scope.isScriptResultLoading = false;
 
+                console.log(header());
+                console.log(data);
+
                 $scope.response = {
                     contentType: typeof(header()['content-type']) === "undefined" ? "" : header()['content-type'].toLowerCase(),
                     status: status,
@@ -321,7 +324,8 @@ baristaFiddle.controller("MainCtrl", function ($scope, $window, $timeout, $http,
         $scope.$apply();
     };
 
-    $scope.$watch('response', function(newResponse, oldResponse) {
+    $scope.$watch('response', function (newResponse, oldResponse) {
+
         if (newResponse.localStatus == "success") {
             if (newResponse.contentType != null && newResponse.contentType.indexOf("text/html") == 0) {
                 newResponse.formattedData = newResponse.data;
