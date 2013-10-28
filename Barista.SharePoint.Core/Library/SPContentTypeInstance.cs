@@ -273,13 +273,13 @@
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_contentType.ParentList);
+      return new SPListInstance(this.Engine, null, null, m_contentType.ParentList);
     }
 
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance ParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_contentType.ParentWeb);
+      return new SPWebInstance(this.Engine, m_contentType.ParentWeb);
     }
 
     [JSFunction(Name = "getResourceFolder")]

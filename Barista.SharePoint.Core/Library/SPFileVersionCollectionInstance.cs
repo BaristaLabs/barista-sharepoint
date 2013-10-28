@@ -114,7 +114,7 @@
     [JSFunction(Name = "getWeb")]
     public SPWebInstance GetWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_fileVersionCollection.Web);
+      return new SPWebInstance(this.Engine, m_fileVersionCollection.Web);
     }
 
     [JSFunction(Name = "recycleAll")]

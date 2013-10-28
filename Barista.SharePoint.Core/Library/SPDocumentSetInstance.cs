@@ -75,7 +75,7 @@
     [JSProperty(Name = "item")]
     public SPListItemInstance Item
     {
-      get { return new SPListItemInstance(this.Engine.Object.InstancePrototype, m_documentSet.Item); }
+      get { return new SPListItemInstance(this.Engine, m_documentSet.Item); }
     }
 
     [JSProperty(Name = "welcomePageUrl")]
@@ -108,7 +108,7 @@
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_documentSet.ParentList);
+      return new SPListInstance(this.Engine, null, null, m_documentSet.ParentList);
     }
 
     public void Dispose()

@@ -1101,6 +1101,7 @@
     <Compile Include="TeamFoundationServer\Library\TfsWorkItemFieldInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsWorkItemStoreInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsWorkItemTypeInstance.cs" />
+    <None Include="PrototypicalInheritanceExample.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="UuidType.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsService.cs" />

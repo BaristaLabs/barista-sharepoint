@@ -1,26 +1,25 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using Barista.Library;
+  using Jurassic;
+  using Jurassic.Library;
+  using Microsoft.Office.Server.Utilities;
+  using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Utilities;
+  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
   using System.Globalization;
-  using System.Linq;
-  using System.Text;
-  using Barista.Extensions;
-  using Jurassic;
-  using Jurassic.Library;
-  using Microsoft.SharePoint;
-  using Newtonsoft.Json;
-  using Microsoft.SharePoint.Utilities;
-  using Microsoft.SharePoint.Administration;
-  using Microsoft.Office.Server.Utilities;
   using System.IO;
-  using Barista.Library;
+  using System.Linq;
+  using System.Reflection;
+  using System.Text;
 
   [Serializable]
   public class SPWebConstructor : ClrFunction
   {
     public SPWebConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "SPWeb", new SPWebInstance(engine.Object.InstancePrototype))
+      : base(engine.Function.InstancePrototype, "SPWeb", new SPWebInstance(engine, null))
     {
     }
 
@@ -32,7 +31,7 @@
       if (SPHelper.TryGetSPWeb(webUrl, out web) == false)
         throw new JavaScriptException(this.Engine, "Error", "A web is not available at the specified url.");
 
-      return new SPWebInstance(this.InstancePrototype, web);
+      return new SPWebInstance(this.Engine, web);
     }
 
     public SPWebInstance Construct(SPWeb web)
@@ -40,27 +39,23 @@
       if (web == null)
         throw new ArgumentNullException("web");
 
-      return new SPWebInstance(this.InstancePrototype, web);
+      return new SPWebInstance(this.Engine, web);
     }
   }
 
   [JSDoc("Represents a SharePoint website.")]
   [Serializable]
-  public class SPWebInstance : ObjectInstance, IDisposable
+  public class SPWebInstance : SPSecurableObjectInstance, IDisposable
   {
     private readonly SPWeb m_web;
 
-    public SPWebInstance(ObjectInstance prototype)
-      : base(prototype)
-    {
-      this.PopulateFields();
-      this.PopulateFunctions();
-    }
-
-    public SPWebInstance(ObjectInstance prototype, SPWeb web)
-      : this(prototype)
+    public SPWebInstance(ScriptEngine engine, SPWeb web)
+      : base(new SPSecurableObjectInstance(engine))
     {
       this.m_web = web;
+      SecurableObject = this.m_web;
+
+      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
     }
 
     public SPWeb Web
@@ -136,6 +131,96 @@
       }
     }
 
+    [JSProperty(Name = "allWebTemplatesAllowed")]
+    public bool AllWebTemplatesAllowed
+    {
+      get
+      {
+        return m_web.AllWebTemplatesAllowed;
+      }
+    }
+
+    [JSProperty(Name = "alternateCssUrl")]
+    public string AlternateCssUrl
+    {
+      get
+      {
+        return m_web.AlternateCssUrl;
+      }
+      set
+      {
+        m_web.AlternateCssUrl = value;
+      }
+    }
+
+    [JSProperty(Name = "alternateHeader")]
+    public string AlternateHeader
+    {
+      get
+      {
+        return m_web.AlternateHeader;
+      }
+      set
+      {
+        m_web.AlternateHeader = value;
+      }
+    }
+
+    [JSProperty(Name = "associatedGroups")]
+    public ArrayInstance AssociatedGroups
+    {
+      get
+      {
+        if (m_web.AssociatedGroups == null)
+          return null;
+
+        var result = this.Engine.Array.Construct();
+
+        foreach (var group in m_web.AssociatedGroups)
+        {
+          ArrayInstance.Push(result, new SPGroupInstance(this.Engine.Object.InstancePrototype, group));
+        }
+
+        return result;
+      }
+    }
+
+    [JSProperty(Name = "associatedMemberGroup")]
+    public SPGroupInstance AssociatedMemberGroup
+    {
+      get
+      {
+        if (m_web.AssociatedMemberGroup == null)
+          return null;
+
+        return new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedMemberGroup);
+      }
+    }
+
+    [JSProperty(Name = "associatedOwnerGroup")]
+    public SPGroupInstance AssociatedOwnerGroup
+    {
+      get
+      {
+        if (m_web.AssociatedMemberGroup == null)
+          return null;
+
+        return new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedOwnerGroup);
+      }
+    }
+
+    [JSProperty(Name = "associatedVisitorGroup")]
+    public SPGroupInstance AssociatedVisitorGroup
+    {
+      get
+      {
+        if (m_web.AssociatedMemberGroup == null)
+          return null;
+
+        return new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedVisitorGroup);
+      }
+    }
+
     [JSProperty(Name = "availableContentTypes")]
     public SPContentTypeCollectionInstance AvailableContentTypes
     {
@@ -155,19 +240,6 @@
         return m_web.AvailableFields == null
           ? null
           : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.AvailableFields);
-      }
-    }
-    
-    //TODO: Group properties
-
-    [JSProperty(Name = "fields")]
-    public SPFieldCollectionInstance Fields
-    {
-      get
-      {
-        return m_web.Fields == null
-          ? null
-          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Fields);
       }
     }
 
@@ -204,7 +276,24 @@
     [JSProperty(Name = "features")]
     public SPFeatureCollectionInstance Features
     {
-      get { return new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Features); }
+      get
+      {
+
+        return m_web.Features == null
+          ? null
+          : new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Features);
+      }
+    }
+
+    [JSProperty(Name = "fields")]
+    public SPFieldCollectionInstance Fields
+    {
+      get
+      {
+        return m_web.Fields == null
+          ? null
+          : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Fields);
+      }
     }
 
     [JSProperty(Name = "groups")]
@@ -239,7 +328,79 @@
       get { return JurassicHelper.ToDateInstance(this.Engine, m_web.LastItemModifiedDate); }
     }
 
+    [JSProperty(Name = "listTemplates")]
+    public SPListTemplateCollectionInstance ListTemplates
+    {
+      get
+      {
+        if (m_web.ListTemplates == null)
+          return null;
+
+        return new SPListTemplateCollectionInstance(this.Engine.Object.InstancePrototype, m_web.ListTemplates);
+      }
+    }
+
+    [JSProperty(Name = "lists")]
+    public SPListCollectionInstance Lists
+    {
+      get
+      {
+        if (m_web.Lists == null)
+          return null;
+        
+        return new SPListCollectionInstance(this.Engine.Object.InstancePrototype, m_web.Lists);
+      }
+    }
+
+    [JSProperty(Name = "masterPageReferenceEnabled")]
+    public bool MasterPageReferenceEnabled
+    {
+      get
+      {
+        return m_web.MasterPageReferenceEnabled;
+      }
+    }
+
+    [JSProperty(Name = "masterUrl")]
+    public string MasterUrl
+    {
+      get
+      {
+        return m_web.MasterUrl;
+      }
+      set
+      {
+        m_web.MasterUrl = value;
+      }
+    }
+
+    [JSProperty(Name = "name")]
+    public string Name
+    {
+      get
+      {
+        return m_web.Name;
+      }
+      set
+      {
+        m_web.Name = value;
+      }
+    }
+
     //TODO: Navigation
+
+    [JSProperty(Name = "noCrawl")]
+    public bool NoCrawl
+    {
+      get
+      {
+        return m_web.NoCrawl;
+      }
+      set
+      {
+        m_web.NoCrawl = value;
+      }
+    }
 
     [JSProperty(Name = "quickLaunchEnabled")]
     public bool QuickLaunchEnabled
@@ -255,18 +416,18 @@
     }
 
     [JSProperty(Name = "roleDefinitions")]
-    public ArrayInstance RoleDefinitions
+    public SPRoleDefinitionCollectionInstance RoleDefinitions
     {
       get
       {
-        var result = this.Engine.Array.Construct();
-        foreach (var roleDefinition in m_web.RoleDefinitions.OfType<SPRoleDefinition>())
-        {
-          ArrayInstance.Push(result, new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, roleDefinition));
-        }
-        return result;
+        if (m_web.RoleDefinitions == null)
+          return null;
+
+        return new SPRoleDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_web.RoleDefinitions);
       }
     }
+
+    //Roles property is Deprecated
 
     [JSProperty(Name = "rootFolder")]
     public SPFolderInstance RootFolder
@@ -302,6 +463,44 @@
       }
     }
 
+    [JSProperty(Name = "siteLogoDescription")]
+    public string SiteLogoDescription
+    {
+      get
+      {
+        return m_web.SiteLogoDescription;
+      }
+      set
+      {
+        m_web.SiteLogoDescription = value;
+      }
+    }
+
+    [JSProperty(Name = "siteLogoUrl")]
+    public string SiteLogoUrl
+    {
+      get
+      {
+        return m_web.SiteLogoUrl;
+      }
+      set
+      {
+        m_web.SiteLogoUrl = value;
+      }
+    }
+
+    [JSProperty(Name = "siteUserInfoList")]
+    public SPListInstance SiteUserInfoList
+    {
+      get
+      {
+        if (m_web.SiteUserInfoList == null)
+          return null;
+
+        return new SPListInstance(this.Engine, null, null, m_web.SiteUserInfoList);
+      }
+    }
+
     [JSProperty(Name = "siteUsers")]
     public SPUserCollectionInstance SiteUsers
     {
@@ -318,6 +517,28 @@
     {
       get { return m_web.SyndicationEnabled; }
       set { m_web.SyndicationEnabled = value; }
+    }
+
+    [JSProperty(Name = "theme")]
+    public string Theme
+    {
+      get { return m_web.Theme; }
+    }
+
+    [JSProperty(Name = "themeCssUrl")]
+    public string ThemeCssUrl
+    {
+      get { return m_web.ThemeCssUrl; }
+    }
+
+    [JSProperty(Name = "themeCssFolderUrl")]
+    public string ThemeCssFolderUrl
+    {
+      get { return m_web.ThemedCssFolderUrl; }
+      set
+      {
+        m_web.ThemedCssFolderUrl = value;
+      }
     }
 
     [JSProperty(Name = "title")]
@@ -353,6 +574,18 @@
     public string Url
     {
       get { return m_web.Url; }
+    }
+
+    [JSProperty(Name = "userIsSiteAdmin")]
+    public bool UserIsSiteAdmin
+    {
+      get { return m_web.UserIsSiteAdmin; }
+    }
+
+    [JSProperty(Name = "userIsWebAdmin")]
+    public bool UserIsWebAdmin
+    {
+      get { return m_web.UserIsWebAdmin; }
     }
 
     [JSProperty(Name = "users")]
@@ -437,83 +670,25 @@
       return new SPFeatureInstance(this.Engine.Object.InstancePrototype, activatedFeature);
     }
 
+    [JSFunction(Name = "applyTheme")]
+    public void ApplyTheme(string newTheme)
+    {
+      m_web.ApplyTheme(newTheme);
+    }
+
+    [JSFunction(Name = "applyWebTemplate")]
+    public void ApplyWebTemplate(object webTemplate)
+    {
+      if (webTemplate is SPWebTemplateInstance)
+        m_web.ApplyWebTemplate((webTemplate as SPWebTemplateInstance).WebTemplate);
+      else
+        m_web.ApplyWebTemplate(TypeConverter.ToString(webTemplate));
+    }
+
     [JSFunction(Name = "createList")]
     public SPListInstance CreateList(object listCreationInfo)
     {
-      Guid createdListId;
-
-      var listCreationInstance = listCreationInfo as ObjectInstance;
-      var creationInfo = JurassicHelper.Coerce<SPListCreationInformation>(this.Engine, listCreationInfo);
-      SPListTemplate.QuickLaunchOptions quickLaunchOptions = (SPListTemplate.QuickLaunchOptions)Enum.Parse(typeof(SPListTemplate.QuickLaunchOptions), creationInfo.QuickLaunchOption);
-
-      //If dataSourceProperties property has a value, create the list instance as a BCS list.
-      if (listCreationInstance != null && listCreationInstance.HasProperty("dataSourceProperties"))
-      {
-        var dataSourceInstance = listCreationInstance.GetPropertyValue("dataSourceProperties") as ObjectInstance;
-
-        if (dataSourceInstance == null)
-          return null;
-
-        var dataSource = new SPListDataSource();
-        foreach(var property in dataSourceInstance.Properties)
-        {
-          dataSource.SetProperty(property.Name, property.Value.ToString());
-        }
-        
-        createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, dataSource);
-      }
-      //If listTemplate property has a value, create the list instance using the strongly-typed SPListTemplate, optionally using the docTemplate value.
-      else if (listCreationInstance != null && listCreationInstance.HasProperty("listTemplate"))
-      {
-        var listTemplateValue = listCreationInstance.GetPropertyValue("listTemplate");
-        
-        SPListTemplate listTemplate = null;
-        if (listTemplateValue is int)
-        {
-          listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().FirstOrDefault(dt => (int)dt.Type == (int)listTemplateValue);
-        }
-        else
-        {
-          var s = listTemplateValue as string;
-
-          if (s != null)
-          {
-            listTemplate = m_web.ListTemplates.OfType<SPListTemplate>().FirstOrDefault(dt => dt.Type.ToString() == s);
-          }
-          else if (listTemplateValue is ObjectInstance)
-          {
-            listTemplate = JurassicHelper.Coerce<SPListTemplateInstance>(this.Engine, listTemplateValue).ListTemplate;
-          }
-        }
-
-        if (listTemplate == null)
-          return null;
-
-        if (listCreationInstance.HasProperty("docTemplate"))
-        {
-          var docTemplate = JurassicHelper.Coerce<SPDocTemplateInstance>(this.Engine, listCreationInstance.GetPropertyValue("docTemplate"));
-          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, docTemplate.DocTemplate.Type.ToString(CultureInfo.InvariantCulture), quickLaunchOptions);
-        }
-        else
-        {
-          createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, listTemplate.FeatureId.ToString(), listTemplate.Type_Client, String.Empty, quickLaunchOptions);
-        }
-      }
-      //Otherwise attempt to create the list using all properties set on the creation info object.
-      else
-      {
-        SPFeatureDefinition listInstanceFeatureDefinition = null;
-        if (listCreationInstance != null && listCreationInstance.HasProperty("listInstanceFeatureDefinition"))
-        {
-          var featureDefinitionInstance = JurassicHelper.Coerce<SPFeatureDefinitionInstance>(this.Engine, listCreationInstance.GetPropertyValue("listInstanceFeatureDefinition"));
-          listInstanceFeatureDefinition = featureDefinitionInstance.FeatureDefinition;
-        }
-
-        createdListId = m_web.Lists.Add(creationInfo.Title, creationInfo.Description, creationInfo.Url, creationInfo.TemplateFeatureId, creationInfo.TemplateType, creationInfo.DocumentTemplateType, creationInfo.CustomSchemaXml, listInstanceFeatureDefinition, quickLaunchOptions);
-      }
-      
-      var createdList = m_web.Lists[createdListId];
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, createdList);
+      return SPListCollectionInstance.CreateList(this.Engine, m_web.Lists, m_web.ListTemplates, listCreationInfo);
     }
 
     [JSFunction(Name = "deactivateFeature")]
@@ -585,24 +760,6 @@
         }
       }
       return false;
-    }
-
-    [JSFunction(Name = "doesUserHavePermissions")]
-    public bool DoesUserHavePermissions(object loginName, object permissions)
-    {
-      string strLoginName;
-      if (loginName is SPUserInstance)
-        strLoginName = (loginName as SPUserInstance).User.LoginName;
-      else
-        strLoginName = TypeConverter.ToString(loginName);
-
-      var strPermissions = "Open";
-
-      if (permissions != null && permissions != Undefined.Value && permissions != Null.Value)
-        strPermissions = TypeConverter.ToString(permissions);
-
-      SPBasePermissions basePermissions;
-      return strPermissions.TryParseEnum(true, out basePermissions) && this.m_web.DoesUserHavePermissions(strLoginName, basePermissions);
     }
 
     [JSFunction(Name = "ensureUser")]
@@ -713,7 +870,7 @@
       if (list == null)
         return Null.Value;
 
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
+      return new SPListInstance(this.Engine, null, null, list);
     }
 
     [JSFunction(Name = "getLists")]
@@ -727,7 +884,7 @@
 
       foreach (var list in lists)
       {
-        ArrayInstance.Push(instance, new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list));
+        ArrayInstance.Push(instance, new SPListInstance(this.Engine, null, null, list));
       }
 
       return instance;
@@ -750,13 +907,7 @@
     {
       var list = m_web.Lists.TryGetList(listTitle);
       
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list);
-    }
-
-    [JSFunction(Name = "getPermissions")]
-    public SPSecurableObjectInstance GetPermissions()
-    {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_web);
+      return new SPListInstance(this.Engine, null, null, list);
     }
 
     [JSFunction(Name = "getSiteData")]
@@ -770,7 +921,7 @@
     [JSFunction(Name = "getSiteUserInfoList")]
     public SPListInstance GetSiteUserInfoList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_web.SiteUserInfoList);
+      return new SPListInstance(this.Engine, null, null, m_web.SiteUserInfoList);
     }
 
     [JSFunction(Name = "getUser")]
@@ -788,7 +939,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var web in m_web.Webs)
       {
-        ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, (SPWeb)web));
+        ArrayInstance.Push(result, new SPWebInstance(this.Engine, (SPWeb)web));
       }
 
       return result;
@@ -801,6 +952,12 @@
         return SPUtility.MapToIcon(m_web, fileName, progId);
 
       return SPUtility.MapToIcon(m_web, fileName, progId, (IconSize)Enum.Parse(typeof(IconSize), iconSize));
+    }
+
+    [JSFunction(Name = "recycle")]
+    public void Recycle()
+    {
+      m_web.Recycle();
     }
 
     [JSFunction(Name = "update")]

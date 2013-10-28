@@ -14,78 +14,104 @@
   {
     public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook)
     {
+      return GetLogsEntriesByCorrelationId(correlationId, daysToLook, false);
+    }
+
+    public static IList<UlsHelper.UlsLogEntry> GetLogsEntriesByCorrelationId(Guid correlationId, int daysToLook, bool onlyRecent)
+    {
+      if (daysToLook < 1)
+        daysToLook = 1;
+
       var config = SPDiagnosticsService.Local;
 
       var logLocation = Environment.ExpandEnvironmentVariables(config.LogLocation);
+
       var di = new DirectoryInfo(logLocation);
-      
-      if (daysToLook < 1)
-        daysToLook = 1;
 
       if (!di.Exists)
         throw new ArgumentException("The system was unable to locate folder '" + di.FullName + "'");
 
-      var ulsFiles = di.GetFiles("*.log").Where(f => f.Name.StartsWith("PSCDiagnostics") == false && f.LastWriteTime > DateTime.Now.AddDays(daysToLook * -1));
+      var ulsFiles = di.GetFiles("*.log")
+        .Where(
+          f => f.Name.StartsWith("PSCDiagnostics") == false && f.LastWriteTime > DateTime.Now.AddDays(daysToLook*-1));
+
+      //If onlyrecent, look only at the last two log files.
+      if (onlyRecent)
+      {
+        ulsFiles = ulsFiles.OrderByDescending(f => f.LastWriteTime)
+          .Take(2);
+      }
 
       var mergedEntries = new List<UlsLogEntry>();
 
-      foreach (var file in ulsFiles.Where(f => f.Exists))
+      var strCorrelationId = correlationId.ToString().ToLowerInvariant();
+
+      foreach (var entries in ulsFiles
+        .Where(f => f.Exists)
+        .Select(file => RetrieveLogEntriesFromFile(file.FullName, le => le.CorrelationId == strCorrelationId))
+        .Where(entries => entries != null))
       {
-        var entries = RetrieveLogEntriesFromFile(file.FullName);
-        if (entries != null)
-        {
-          mergedEntries.AddRange(entries);
-        }
+        mergedEntries.AddRange(entries);
       }
 
-      mergedEntries = mergedEntries.Where(le => le.CorrelationId == correlationId.ToString()).ToList();
       return mergedEntries;
     }
 
     public static IList<UlsLogEntry> RetrieveLogEntriesFromFile(string fileName)
+    {
+      return RetrieveLogEntriesFromFile(fileName, e => true);
+    }
+
+    public static IList<UlsLogEntry> RetrieveLogEntriesFromFile(string fileName, Predicate<UlsLogEntry> predicate)
     {
       try
       {
         // Generate the table columns
         var entries = new List<UlsLogEntry>();
 
-        var logFile = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var logFile = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using (var reader = new StreamReader(logFile))
         {
           var line = reader.ReadLine();
-          if (!string.IsNullOrEmpty(line))
+          if (String.IsNullOrEmpty(line))
+            return entries;
+
+          while (!reader.EndOfStream)
           {
-            while (!reader.EndOfStream)
+            var readLine = reader.ReadLine();
+            if (readLine == null)
+              continue;
+
+            var fields = readLine.Split(new[] { '\t' });
+            var entry = new UlsLogEntry
             {
-              var readLine = reader.ReadLine();
-              if (readLine == null)
-                continue;
+              Process = fields[1].Trim(),
+              TID = fields[2].Trim(),
+              Area = fields[3].Trim(),
+              Category = fields[4].Trim(),
+              EventID = fields[5].Trim(),
+              Level = fields[6].Trim(),
+              Message = fields[7].Trim(),
+              CorrelationId = fields[8].Trim()
+            };
 
-              var fields = readLine.Split(new[] { '\t' });
-              var entry = new UlsLogEntry
-                {
-                  Process = fields[1].Trim(),
-                  TID = fields[2].Trim(),
-                  Area = fields[3].Trim(),
-                  Category = fields[4].Trim(),
-                  EventID = fields[5].Trim(),
-                  Level = fields[6].Trim(),
-                  Message = fields[7].Trim(),
-                  CorrelationId = fields[8].Trim()
-                };
+            DateTime timeStamp;
+            if (DateTime.TryParse(fields[0].Trim(), out timeStamp))
+              entry.Timestamp = timeStamp;
 
-              DateTime timeStamp;
-              if (DateTime.TryParse(fields[0].Trim(), out timeStamp))
-                entry.Timestamp = timeStamp;
+            if (!predicate(entry))
+              continue;
 
-              entries.Add(entry);
+            entries.Add(entry);
 
-              if (fields[0].EndsWith("*"))
-              {
-                entries[entries.Count - 2].Message = entries[entries.Count - 2].Message.ToString(CultureInfo.InvariantCulture).TrimEnd('.') + entry.Message.ToString(CultureInfo.InvariantCulture).Substring(3);
-                entries.Remove(entry);
-              }
-            }
+            if (!fields[0].EndsWith("*"))
+              continue;
+
+            entries[entries.Count - 2].Message =
+              entries[entries.Count - 2].Message.ToString(CultureInfo.InvariantCulture).TrimEnd('.') +
+              entry.Message.ToString(CultureInfo.InvariantCulture).Substring(3);
+
+            entries.Remove(entry);
           }
         }
         return entries;

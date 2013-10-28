@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Barista.SharePoint.Library
+﻿namespace Barista.SharePoint.Library
 {
   using Barista.Library;
   using Barista.SharePoint.Taxonomy.Library;
@@ -12,6 +10,7 @@ namespace Barista.SharePoint.Library
   using Microsoft.SharePoint.Taxonomy;
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Linq;
 
   [Serializable]
@@ -198,7 +197,7 @@ namespace Barista.SharePoint.Library
     [JSProperty(Name = "rootWeb")]
     public SPWebInstance RootWeb
     {
-      get { return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.RootWeb); }
+      get { return new SPWebInstance(this.Engine, m_site.RootWeb); }
     }
 
     [JSProperty(Name = "serverRelativeUrl")]
@@ -320,7 +319,7 @@ namespace Barista.SharePoint.Library
         }
       }
       
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, createdWeb);
+      return new SPWebInstance(this.Engine, createdWeb);
     }
 
     [JSFunction(Name = "getWebApplication")]
@@ -368,7 +367,7 @@ namespace Barista.SharePoint.Library
       var result = this.Engine.Array.Construct();
       foreach (var web in webs)
       {
-        ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, web));
+        ArrayInstance.Push(result, new SPWebInstance(this.Engine, web));
       }
       return result;
     }
@@ -398,7 +397,10 @@ namespace Barista.SharePoint.Library
     [JSFunction(Name = "getPermissions")]
     public SPSecurableObjectInstance GetPermissions()
     {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_site.RootWeb);
+      return new SPSecurableObjectInstance(this.Engine)
+      {
+        SecurableObject = m_site.RootWeb
+      };
     }
 
     [JSFunction(Name = "getRecycleBin")]
@@ -442,7 +444,7 @@ namespace Barista.SharePoint.Library
     [JSFunction(Name = "openWeb")]
     public SPWebInstance OpenWeb(string url)
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.OpenWeb(url, false));
+      return new SPWebInstance(this.Engine, m_site.OpenWeb(url, false));
     }
 
     [JSFunction(Name = "openWebById")]
@@ -450,7 +452,7 @@ namespace Barista.SharePoint.Library
     {
       var webId = GuidInstance.ConvertFromJsObjectToGuid(guid);
 
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_site.OpenWeb(webId));
+      return new SPWebInstance(this.Engine, m_site.OpenWeb(webId));
     }
 
     [JSFunction(Name = "dispose")]

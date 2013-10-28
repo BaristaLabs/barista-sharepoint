@@ -78,7 +78,7 @@
 
       return result == null
         ? null
-        : new SPWebInstance(this.Engine.Object.Prototype, result);
+        : new SPWebInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "getWebByName")]
@@ -87,7 +87,7 @@
       var result = m_webCollection[name];
       return result == null
         ? null
-        : new SPWebInstance(this.Engine.Object.Prototype, result);
+        : new SPWebInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "getWebByIndex")]
@@ -96,7 +96,7 @@
       var result = m_webCollection[index];
       return result == null
         ? null
-        : new SPWebInstance(this.Engine.Object.Prototype, result);
+        : new SPWebInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "toArray")]
@@ -105,7 +105,7 @@
       var result = this.Engine.Array.Construct();
       foreach (SPWeb web in m_webCollection)
       {
-        ArrayInstance.Push(result, new SPWebInstance(this.Engine.Object.InstancePrototype, web));
+        ArrayInstance.Push(result, new SPWebInstance(this.Engine, web));
       }
       return result;
     }

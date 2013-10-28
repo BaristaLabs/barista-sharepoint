@@ -19,19 +19,19 @@
         this.Site = new SPSiteInstance(this.Engine.Object.InstancePrototype, m_context.Site);
 
       if (m_context.Web != null)
-        this.Web = new SPWebInstance(this.Engine.Object.InstancePrototype, m_context.Web);
+        this.Web = new SPWebInstance(this.Engine, m_context.Web);
 
       try
       {
         if (m_context.List != null)
-          this.List = new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_context.List);
+          this.List = new SPListInstance(this.Engine, null, null, m_context.List);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
 
       try
       {
         if (m_context.ListItem != null)
-          this.ListItem = new SPListItemInstance(this.Engine.Object.InstancePrototype, m_context.ListItem);
+          this.ListItem = new SPListItemInstance(this.Engine, m_context.ListItem);
       }
       catch (NullReferenceException) { /* Do Nothing */ }
 
@@ -44,6 +44,14 @@
       
       this.PopulateFields();
       this.PopulateFunctions();
+    }
+
+    public SPBaristaContext Context
+    {
+      get
+      {
+        return m_context;
+      }
     }
 
     [JSProperty(Name = "serverVersion")]

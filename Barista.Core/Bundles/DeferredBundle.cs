@@ -26,8 +26,8 @@
     {
       engine.SetGlobalValue("Deferred", new DeferredConstructor(engine));
 
-      engine.SetGlobalFunction("delay", new Action<int>((millisecondsTimeout) => { System.Threading.Thread.Sleep(millisecondsTimeout); }));
-      engine.SetGlobalFunction("waitAll", new Action<object, object>((deferreds, timeout) => { DeferredInstance.WaitAll(deferreds, timeout); }));
+      engine.SetGlobalFunction("delay", new Action<int>(System.Threading.Thread.Sleep));
+      engine.SetGlobalFunction("waitAll", new Action<object, object>(DeferredInstance.WaitAll));
 
       return Null.Value;
     }

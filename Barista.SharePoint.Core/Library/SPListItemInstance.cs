@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using System.Reflection;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -13,7 +14,7 @@
   public class SPListItemConstructor : ClrFunction
   {
     public SPListItemConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "SPList", new SPListItemInstance(engine.Object.InstancePrototype))
+      : base(engine.Function.InstancePrototype, "SPList", new SPListItemInstance(engine, null))
     {
     }
 
@@ -22,7 +23,7 @@
     {
       SPListItem listItem;
       if (SPHelper.TryGetSPListItem(listItemUrl, out listItem))
-        return new SPListItemInstance(this.InstancePrototype, listItem);
+        return new SPListItemInstance(this.Engine, listItem);
 
       throw new JavaScriptException(this.Engine, "Error", "A list at the specified url was not found.");
     }
@@ -32,31 +33,22 @@
       if (listItem == null)
         throw new ArgumentNullException("listItem");
 
-      return new SPListItemInstance(this.InstancePrototype, listItem);
+      return new SPListItemInstance(this.Engine, listItem);
     }
   }
 
   [Serializable]
-  public class SPListItemInstance : ObjectInstance
+  public class SPListItemInstance : SPSecurableObjectInstance
   {
     private readonly SPListItem m_listItem;
 
-    public SPListItemInstance(ObjectInstance prototype)
-      : base(prototype)
-    {
-      this.PopulateFields();
-      this.PopulateFunctions();
-    }
-
-    public SPListItemInstance(ObjectInstance prototype, SPListItem listItem)
-      : this(prototype)
+    public SPListItemInstance(ScriptEngine engine, SPListItem listItem)
+      : base(new SPSecurableObjectInstance(engine))
     {
       this.m_listItem = listItem;
-    }
+      SecurableObject = this.m_listItem;
 
-    public SPListItemInstance(ScriptEngine engine, SPListItem listItem)
-      : this(engine.Object.InstancePrototype, listItem)
-    {
+      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
     }
 
     public SPListItem ListItem
@@ -196,13 +188,7 @@
     [JSFunction(Name = "getParentList")]
     public SPListInstance GetParentList()
     {
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_listItem.ParentList);
-    }
-
-    [JSFunction(Name = "getPermissions")]
-    public SPSecurableObjectInstance GetPermissions()
-    {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, m_listItem);
+      return new SPListInstance(this.Engine, null, null, m_listItem.ParentList);
     }
 
     [JSFunction(Name = "parseAndSetValue")]

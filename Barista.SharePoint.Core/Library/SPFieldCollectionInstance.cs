@@ -56,12 +56,6 @@
     {
       get { return m_fieldCollection.Count; }
     }
-
-    [JSProperty(Name = "schemaXml")]
-    public string SchemaXml
-    {
-      get { return m_fieldCollection.SchemaXml; }
-    }
     #endregion
 
     #region Functions
@@ -227,7 +221,7 @@
     [JSFunction(Name = "getList")]
     public SPListInstance GetList()
     {
-      return new SPListInstance(this.Engine, m_fieldCollection.List);
+      return new SPListInstance(this.Engine, null, null, m_fieldCollection.List);
     }
 
     [JSFunction(Name = "tryGetFieldByStaticName")]
@@ -238,6 +232,12 @@
         return Null.Value;
 
       return new SPFieldInstance(this.Engine.Object.InstancePrototype, field);
+    }
+
+    [JSFunction(Name = "getSchemaXml")]
+    public string GetSchemaXml()
+    {
+      return m_fieldCollection.SchemaXml;
     }
     #endregion
   }

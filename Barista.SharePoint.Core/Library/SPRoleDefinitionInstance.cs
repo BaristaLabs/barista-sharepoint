@@ -15,21 +15,25 @@
     }
 
     [JSConstructorFunction]
-    public SPRoleDefinitionInstance Construct(string name)
+    public SPRoleDefinitionInstance Construct(object arg1)
     {
+
+      if (arg1 == Null.Value || arg1 == Undefined.Value || arg1 == null)
+        return new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, new SPRoleDefinition());
+      
+      if (arg1 is SPRoleDefinitionInstance)
+      {
+        return new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype,
+          (arg1 as SPRoleDefinitionInstance).RoleDefinition);
+      }
+
+      var name = TypeConverter.ToString(arg1);
       var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions
-                                         .OfType<SPRoleDefinition>().FirstOrDefault(rd => rd.Name == name);
+          .OfType<SPRoleDefinition>().FirstOrDefault(rd => rd.Name == name);
 
       if (roleDefinition == null)
-        throw new JavaScriptException(this.Engine, "Error", "A role definition with the specified name does not exist on the current web.");
-
-      return new SPRoleDefinitionInstance(this.InstancePrototype, roleDefinition);
-    }
-
-    public SPRoleDefinitionInstance Construct(SPRoleDefinition roleDefinition)
-    {
-      if (roleDefinition == null)
-        throw new ArgumentNullException("roleDefinition");
+        throw new JavaScriptException(this.Engine, "Error",
+          "A role definition with the specified name does not exist on the current web.");
 
       return new SPRoleDefinitionInstance(this.InstancePrototype, roleDefinition);
     }
@@ -57,6 +61,7 @@
     {
       get { return m_roleDefinition; }
     }
+
     #region Properties
     [JSProperty(Name="basePermissions")]
     public string BasePermissions
@@ -111,7 +116,7 @@
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance GetParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_roleDefinition.ParentWeb);
+      return new SPWebInstance(this.Engine, m_roleDefinition.ParentWeb);
     }
 
     [JSFunction(Name = "update")]

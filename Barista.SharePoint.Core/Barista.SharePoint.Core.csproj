@@ -313,7 +313,14 @@
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
+    <Compile Include="Library\SPListCollectionInstance.cs" />
+    <Compile Include="Library\SPListTemplateCollectionInstance.cs" />
+    <Compile Include="Library\SPPrincipalInstance.cs" />
     <Compile Include="Library\SPProcessAccountInstance.cs" />
+    <Compile Include="Library\SPRoleAssignmentCollectionInstance.cs" />
+    <Compile Include="Library\SPRoleAssignmentInstance.cs" />
+    <Compile Include="Library\SPRoleDefinitionBindingCollectionInstance.cs" />
+    <Compile Include="Library\SPRoleDefinitionCollectionInstance.cs" />
     <Compile Include="Library\SPServerCollectionInstance.cs" />
     <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
     <Compile Include="Library\SPServiceCollectionInstance.cs" />

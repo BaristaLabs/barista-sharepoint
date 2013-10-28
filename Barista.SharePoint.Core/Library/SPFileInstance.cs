@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Barista.Extensions;
   using Barista.Newtonsoft.Json;
   using Jurassic;
@@ -382,13 +381,13 @@
     {
       if (m_file.InDocumentLibrary == false)
         return null;
-      return new SPListInstance(this.Engine.Object.InstancePrototype, null, null, m_file.DocumentLibrary);
+      return new SPListInstance(this.Engine, null, null, m_file.DocumentLibrary);
     }
 
     [JSFunction(Name = "getListItemAllFields")]
     public SPListItemInstance GetListItemAllFields()
     {
-      return new SPListItemInstance(this.Engine.Object.InstancePrototype, m_file.ListItemAllFields);
+      return new SPListItemInstance(this.Engine, m_file.ListItemAllFields);
     }
 
     [JSFunction(Name = "getParentFolder")]
@@ -400,13 +399,16 @@
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance GetParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_file.Web);
+      return new SPWebInstance(this.Engine, m_file.Web);
     }
 
     [JSFunction(Name = "getPermissions")]
     public SPSecurableObjectInstance GetPermissions()
     {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, m_file.Item);
+      return new SPSecurableObjectInstance(this.Engine)
+      {
+        SecurableObject = m_file.Item
+      };
     }
 
     [JSFunction(Name = "getVersionHistory")]

@@ -22,7 +22,7 @@
       var result = this.Engine.Array.Construct();
       var correlationId = GuidInstance.ConvertFromJsObjectToGuid(guid);
 
-      foreach (var logEntry in UlsHelper.GetLogsEntriesByCorrelationId(correlationId, daysToLook))
+      foreach (var logEntry in UlsHelper.GetLogsEntriesByCorrelationId(correlationId, daysToLook, true))
       {
         ArrayInstance.Push(result, new UlsLogEntry(this.Engine, logEntry));
       }

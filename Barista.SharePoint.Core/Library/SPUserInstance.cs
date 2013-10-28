@@ -14,21 +14,20 @@
     }
 
     [JSConstructorFunction]
-    public SPUserInstance Construct(string loginName)
+    public SPUserInstance Construct(object arg1)
     {
+      if (arg1 is SPUserInstance)
+      {
+        return new SPUserInstance(this.Engine.Object.InstancePrototype, (arg1 as SPUserInstance).User);
+      }
+
+      var loginName = TypeConverter.ToString(arg1);
+
       SPUser user;
       if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
       {
         throw new JavaScriptException(this.Engine, "Error", "No user with the specified name exists in the current context.");
       }
-
-      return new SPUserInstance(this.InstancePrototype, user);
-    }
-
-    public SPUserInstance Construct(SPUser user)
-    {
-      if (user == null)
-        throw new ArgumentNullException("user");
 
       return new SPUserInstance(this.InstancePrototype, user);
     }

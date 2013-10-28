@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using System.Reflection;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -14,7 +15,7 @@
   public class SPListConstructor : ClrFunction
   {
     public SPListConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "SPList", new SPListInstance(engine.Object.InstancePrototype))
+      : base(engine.Function.InstancePrototype, "SPList", new SPListInstance(engine, null, null, null))
     {
     }
 
@@ -26,7 +27,7 @@
       SPList list;
       if (SPHelper.TryGetSPList(listUrl, out site, out web, out list))
       {
-        var result = new SPListInstance(this.InstancePrototype, site, web, list);
+        var result = new SPListInstance(this.Engine, site, web, list);
 
         return result;
       }
@@ -39,36 +40,28 @@
       if (list == null)
         throw new ArgumentNullException("list");
 
-      return new SPListInstance(this.InstancePrototype, null, null, list);
+      return new SPListInstance(this.Engine, null, null, list);
     }
   }
 
   [Serializable]
-  public class SPListInstance : ObjectInstance, IDisposable
+  public class SPListInstance : SPSecurableObjectInstance, IDisposable
   {
     private SPSite m_site;
     private SPWeb m_web;
 
     private readonly SPList m_list;
 
-    public SPListInstance(ObjectInstance prototype)
-      : base(prototype)
-    {
-      this.PopulateFields();
-      this.PopulateFunctions();
-    }
-
-    public SPListInstance(ObjectInstance prototype, SPSite site, SPWeb web, SPList list)
-      : this(prototype)
+    public SPListInstance(ScriptEngine engine, SPSite site, SPWeb web, SPList list)
+      : base(new SPSecurableObjectInstance(engine))
     {
       this.m_site = site;
       this.m_web = web;
       this.m_list = list;
-    }
 
-    public SPListInstance(ScriptEngine engine, SPList list)
-      : this(engine.Object.InstancePrototype, null, null, list)
-    {
+      this.SecurableObject = m_list;
+
+      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
     }
 
     public SPList List
@@ -443,7 +436,7 @@
     public SPListItemInstance AddItem()
     {
       var listItem = m_list.Items.Add();
-      return new SPListItemInstance(this.Engine.Object.InstancePrototype, listItem);
+      return new SPListItemInstance(this.Engine, listItem);
     }
 
     [JSFunction(Name = "addFile")]
@@ -483,7 +476,7 @@
     public SPListItemInstance AddItem(string folderUrl)
     {
       var listItem = m_list.Items.Add(folderUrl, SPFileSystemObjectType.File);
-      return new SPListItemInstance(this.Engine.Object.InstancePrototype, listItem);
+      return new SPListItemInstance(this.Engine, listItem);
     }
 
     [JSFunction(Name = "addContentType")]
@@ -561,7 +554,7 @@
     {
       var item = m_list.GetItemById(id);
 
-      SPListItemInstance instance = new SPListItemInstance(this.Engine, item);
+      var instance = new SPListItemInstance(this.Engine, item);
       return instance;
     }
 
@@ -696,13 +689,7 @@
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance GetParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_list.ParentWeb);
-    }
-
-    [JSFunction(Name = "getPermissions")]
-    public SPSecurableObjectInstance GetPermissions()
-    {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_list);
+      return new SPWebInstance(this.Engine, m_list.ParentWeb);
     }
 
     [JSFunction(Name = "getContentTypes")]

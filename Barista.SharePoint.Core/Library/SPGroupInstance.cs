@@ -15,23 +15,22 @@
     }
 
     [JSConstructorFunction]
-    public SPUserInstance Construct(string loginName)
+    public SPGroupInstance Construct(object arg1)
     {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
+      if (arg1 is SPGroupInstance)
       {
-        throw new JavaScriptException(this.Engine, "Error", "No user with the specified name exists in the current context.");
+        return new SPGroupInstance(this.Engine.Object.InstancePrototype, (arg1 as SPGroupInstance).Group);
       }
 
-      return new SPUserInstance(this.InstancePrototype, user);
-    }
+      var groupName = TypeConverter.ToString(arg1);
 
-    public SPUserInstance Construct(SPUser user)
-    {
-      if (user == null)
-        throw new ArgumentNullException("user");
+      SPGroup group;
+      if (SPHelper.TryGetSPGroupFromGroupName(groupName, out group) == false)
+      {
+        throw new JavaScriptException(this.Engine, "Error", "No group with the specified name exists in the current context.");
+      }
 
-      return new SPUserInstance(this.InstancePrototype, user);
+      return new SPGroupInstance(this.InstancePrototype, group);
     }
   }
 
@@ -223,7 +222,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var list in m_group.GetDistributionGroupArchives(null))
       {
-        ArrayInstance.Push(result, new SPListInstance(this.Engine.Object.InstancePrototype, null, null, list));
+        ArrayInstance.Push(result, new SPListInstance(this.Engine, null, null, list));
       }
       return result;
     }
@@ -231,7 +230,7 @@
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance GetParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_group.ParentWeb);
+      return new SPWebInstance(this.Engine, m_group.ParentWeb);
     }
 
     [JSFunction(Name = "getOwner")]

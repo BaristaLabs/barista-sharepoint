@@ -88,7 +88,6 @@
         engine.SetGlobalValue("Point", new PointConstructor(engine));
         engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
         engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
-
         engine.SetGlobalValue("console", console);
 
         //Map Barista functions to global functions.

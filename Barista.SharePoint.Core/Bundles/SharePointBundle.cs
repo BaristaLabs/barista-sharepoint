@@ -25,15 +25,13 @@ namespace Barista.SharePoint.Bundles
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      //Template Related
       engine.SetGlobalValue("SPWebTemplate", new SPWebTemplateConstructor(engine));
       engine.SetGlobalValue("SPDocTemplate", new SPDocTemplateConstructor(engine));
       engine.SetGlobalValue("SPFeatureDefinition", new SPFeatureDefinitionConstructor(engine));
       engine.SetGlobalValue("SPFeature", new SPFeatureConstructor(engine));
-      engine.SetGlobalValue("SPContentType", new SPContentTypeConstructor(engine));
-      engine.SetGlobalValue("SPContentTypeId", new SPContentTypeIdConstructor(engine));
-      engine.SetGlobalValue("SPField", new SPFieldConstructor(engine));
-      engine.SetGlobalValue("SPFieldLink", new SPFieldLinkConstructor(engine));
 
+      //Data Related
       engine.SetGlobalValue("SPWebApplication", new SPWebApplicationConstructor(engine));
       engine.SetGlobalValue("SPSite", new SPSiteConstructor(engine));
       engine.SetGlobalValue("SPWeb", new SPWebConstructor(engine));
@@ -45,7 +43,16 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPCamlQuery", new SPCamlQueryConstructor(engine));
       engine.SetGlobalValue("SPCamlQueryBuilder", new SPCamlQueryBuilderConstructor(engine));
       engine.SetGlobalValue("SPSiteDataQuery", new SPSiteDataQueryConstructor(engine));
+      engine.SetGlobalValue("SPContentType", new SPContentTypeConstructor(engine));
+      engine.SetGlobalValue("SPContentTypeId", new SPContentTypeIdConstructor(engine));
+      engine.SetGlobalValue("SPField", new SPFieldConstructor(engine));
+      engine.SetGlobalValue("SPFieldLink", new SPFieldLinkConstructor(engine));
+
+      //Security Related
+      engine.SetGlobalValue("SPRoleDefinition", new SPRoleDefinitionConstructor(engine));
+      engine.SetGlobalValue("SPRoleAssignment", new SPRoleAssignmentConstructor(engine));
       engine.SetGlobalValue("SPUser", new SPUserConstructor(engine));
+      engine.SetGlobalValue("SPGroup", new SPGroupConstructor(engine));
 
       return new SPInstance(engine, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
     }

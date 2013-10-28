@@ -38,6 +38,7 @@
     /// method must be provided.  Every method must have the same name and declaring type. </param>
     protected MethodBinder(IEnumerable<BinderMethod> targetMethods)
     {
+// ReSharper disable DoNotCallOverridableMethodsInConstructor
       if (targetMethods == null)
         throw new ArgumentNullException("targetMethods");
 
@@ -54,14 +55,18 @@
         {
           if (this.Name != method.Name)
             throw new ArgumentException(@"Every method must have the same name.", "targetMethods");
+
           if (this.m_declaringType != method.DeclaringType)
             throw new ArgumentException(@"Every method must have the same declaring type.", "targetMethods");
         }
+
         this.m_functionLength = Math.Max(this.FunctionLength, method.RequiredParameterCount +
             method.OptionalParameterCount + (method.HasParamArray ? 1 : 0));
       }
+
       if (this.Name == null)
         throw new ArgumentException(@"At least one method must be provided.", "targetMethods");
+// ReSharper restore DoNotCallOverridableMethodsInConstructor
     }
 
     //     PROPERTIES

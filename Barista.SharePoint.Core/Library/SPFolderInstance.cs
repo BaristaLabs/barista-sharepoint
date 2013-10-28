@@ -280,14 +280,17 @@
     [JSFunction(Name = "getParentWeb")]
     public SPWebInstance GetParentWeb()
     {
-      return new SPWebInstance(this.Engine.Object.InstancePrototype, m_folder.ParentWeb);
+      return new SPWebInstance(this.Engine, m_folder.ParentWeb);
     }
 
 
     [JSFunction(Name = "getPermissions")]
     public SPSecurableObjectInstance GetPermissions()
     {
-      return new SPSecurableObjectInstance(this.Engine.Object.InstancePrototype, this.m_folder.Item);
+      return new SPSecurableObjectInstance(this.Engine)
+      {
+        SecurableObject = this.m_folder.Item
+      };
     }
 
     [JSFunction(Name = "getPropertyBagValue")]

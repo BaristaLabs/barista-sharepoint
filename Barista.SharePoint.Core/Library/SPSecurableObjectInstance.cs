@@ -1,7 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System;
-  using System.Linq;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -9,158 +8,229 @@
   [Serializable]
   public class SPSecurableObjectInstance : ObjectInstance
   {
-    private readonly SPSecurableObject m_securableObject;
-
-    public SPSecurableObjectInstance(ObjectInstance prototype)
-      : base(prototype)
+    public SPSecurableObjectInstance(ScriptEngine engine)
+      : base(engine)
     {
-      this.PopulateFields();
       this.PopulateFunctions();
     }
 
-    public SPSecurableObjectInstance(ObjectInstance prototype, SPSecurableObject securableObject)
-      : this(prototype)
+    protected SPSecurableObjectInstance(ObjectInstance prototype)
+      : base(prototype)
     {
-      m_securableObject = securableObject;
+    }
+
+    public SPSecurableObject SecurableObject
+    {
+      get;
+      set;
     }
 
     #region Properties
     [JSProperty(Name = "allRolesForCurrentUser")]
-    public ArrayInstance AllRolesForCurrentUser
+    public SPRoleDefinitionBindingCollectionInstance AllRolesForCurrentUser
     {
       get
       {
-        var result = this.Engine.Array.Construct();
-        foreach (var role in m_securableObject.AllRolesForCurrentUser.OfType<SPRoleDefinition>())
-        {
-          ArrayInstance.Push(result, new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, role));
-        }
-        return result;
+        if (SecurableObject.AllRolesForCurrentUser == null)
+          return null;
+
+        return new SPRoleDefinitionBindingCollectionInstance(this.Engine.Object.InstancePrototype,
+          SecurableObject.AllRolesForCurrentUser);
+      }
+    }
+
+    [JSProperty(Name = "roleAssignments")]
+    public SPRoleAssignmentCollectionInstance RoleAssignments
+    {
+      get
+      {
+        if (SecurableObject.RoleAssignments == null)
+          return null;
+
+        return new SPRoleAssignmentCollectionInstance(this.Engine.Object.InstancePrototype,
+          SecurableObject.RoleAssignments);
       }
     }
 
     [JSProperty(Name="hasUniqueRoleAssignments")]
     public bool HasUniqueRoleAssignments
     {
-      get { return m_securableObject.HasUniqueRoleAssignments; }
+      get { return SecurableObject.HasUniqueRoleAssignments; }
     }
     #endregion
 
     #region Functions to Add/Remove Users/Groups
     [JSFunction(Name = "addGroup")]
-    public void AddGroup(string groupName, string roleType)
+    public void AddGroup(object group, object role)
     {
-      SPGroup group;
-      if (SPHelper.TryGetSPGroupFromGroupName(groupName, out group) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
+      if (group == Undefined.Value || group == Null.Value || group == null)
+        throw new JavaScriptException(this.Engine, "Error", "First argument contain either a group instance or a group name.");
 
-      var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+      if (role == Undefined.Value || role == Null.Value || role == null)
+        throw new JavaScriptException(this.Engine, "Error", "Second argument contain either a role definnition instance or a role type.");
 
-      AddPrincipal(group, roleDefinition);
-    }
+      SPGroup groupToAdd;
+      SPRoleDefinition roleToAdd;
 
-    public void AddGroup(string groupName, SPRoleDefinitionInstance roleDefinition)
-    {
-      SPGroup group;
-      if (SPHelper.TryGetSPGroupFromGroupName(groupName, out group) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
+      if (group is SPGroupInstance)
+      {
+        var spGroup = group as SPGroupInstance;
+        groupToAdd = spGroup.Group;
+      }
+      else
+      {
+        var groupName = TypeConverter.ToString(group);
+        SPGroup spGroup;
+        if (SPHelper.TryGetSPGroupFromGroupName(groupName, out spGroup) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
 
-      AddPrincipal(group, roleDefinition.RoleDefinition);
-    }
+        groupToAdd = spGroup;
+      }
 
-    public void AddGroup(SPGroupInstance group, SPRoleDefinitionInstance roleDefinition)
-    {
-      AddPrincipal(group.Group, roleDefinition.RoleDefinition);
+      if (role is SPRoleDefinitionInstance)
+      {
+        var spRoleDefinition = role as SPRoleDefinitionInstance;
+
+        roleToAdd = spRoleDefinition.RoleDefinition;
+      }
+      else
+      {
+        var roleType = TypeConverter.ToString(role);
+
+        var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
+        var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+
+        roleToAdd = roleDefinition;
+      }
+
+      AddPrincipal(groupToAdd, roleToAdd);
     }
 
     [JSFunction(Name = "addUser")]
-    public void AddUser(string loginName, string roleType)
+    public void AddUser(object user, object role)
     {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+      if (user == Undefined.Value || user == Null.Value || user == null)
+        throw new JavaScriptException(this.Engine, "Error", "First argument must be either a user instance or a login name.");
 
-      var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+      if (role == Undefined.Value || role == Null.Value || role == null)
+        throw new JavaScriptException(this.Engine, "Error", "SEcond argument contain either a role definnition instance or a role type.");
 
-      AddPrincipal(user, roleDefinition);
-    }
+      SPUser userToAdd;
+      SPRoleDefinition roleToAdd;
 
-    public void AddUser(string loginName, SPRoleDefinitionInstance roleDefinition)
-    {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+      if (user is SPUserInstance)
+      {
+        var spUser = user as SPUserInstance;
+        userToAdd = spUser.User;
+      }
+      else
+      {
+        var loginName = TypeConverter.ToString(user);
 
-      AddPrincipal(user, roleDefinition.RoleDefinition);
-    }
+        SPUser spUser;
+        if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
 
-    public void AddUser(SPUserInstance user, string roleType)
-    {
-      var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
-      var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+        userToAdd = spUser;
+      }
 
-      AddPrincipal(user.User, roleDefinition);
-    }
+      if (role is SPRoleDefinitionInstance)
+      {
+        var spRoleDefinition = role as SPRoleDefinitionInstance;
 
-    public void AddUser(SPUserInstance user, SPRoleDefinitionInstance roleDefinition)
-    {
-      AddPrincipal(user.User, roleDefinition.RoleDefinition);
+        roleToAdd = spRoleDefinition.RoleDefinition;
+      }
+      else
+      {
+        var roleType = TypeConverter.ToString(role);
+
+        var roleTypeValue = (SPRoleType)Enum.Parse(typeof(SPRoleType), roleType);
+        var roleDefinition = SPBaristaContext.Current.Web.RoleDefinitions.GetByType(roleTypeValue);
+
+        roleToAdd = roleDefinition;
+      }
+
+      AddPrincipal(userToAdd, roleToAdd);
     }
 
     private void AddPrincipal(SPPrincipal principal, SPRoleDefinition roleDefinition)
     {
-      SPRoleAssignment roleAssignment = new SPRoleAssignment(principal);
+      var roleAssignment = new SPRoleAssignment(principal);
       roleAssignment.RoleDefinitionBindings.Add(roleDefinition);
 
-      if (!m_securableObject.HasUniqueRoleAssignments)
-          m_securableObject.BreakRoleInheritance(true, false);
+      if (!SecurableObject.HasUniqueRoleAssignments)
+        SecurableObject.BreakRoleInheritance(true, false);
 
-      m_securableObject.RoleAssignments.Add(roleAssignment);
+      SecurableObject.RoleAssignments.Add(roleAssignment);
     }
 
     [JSFunction(Name = "removeGroup")]
-    public void RemoveGroup(string groupName)
+    public void RemoveGroup(object group)
     {
-      SPGroup group;
-      if (SPHelper.TryGetSPGroupFromGroupName(groupName, out group) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
+      if (group == Undefined.Value || group == Null.Value || group == null)
+        throw new JavaScriptException(this.Engine, "Error", "First argument contain either a group instance or a group name.");
 
-      RemovePrincipal(group);
-    }
+      SPGroup groupToRemove;
 
-    public void RemoveGroup(SPGroupInstance group)
-    {
-      RemovePrincipal(group.Group);
+      if (group is SPGroupInstance)
+      {
+        var spGroup = group as SPGroupInstance;
+        groupToRemove = spGroup.Group;
+      }
+      else
+      {
+        var groupName = TypeConverter.ToString(group);
+
+        SPGroup spGroup;
+        if (SPHelper.TryGetSPGroupFromGroupName(groupName, out spGroup) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A group with the specified name does not exist.");
+
+        groupToRemove = spGroup;
+      }
+      
+      RemovePrincipal(groupToRemove);
     }
 
     [JSFunction(Name = "removeUser")]
-    public void RemoveUser(string loginName)
+    public void RemoveUser(object user)
     {
-      SPUser user;
-      if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+      if (user == Undefined.Value || user == Null.Value || user == null)
+        throw new JavaScriptException(this.Engine, "Error", "First argument must be either a user instance or a login name.");
 
-      RemovePrincipal(user);
-    }
+      SPUser userToRemove;
 
-    public void RemoveUser(SPUserInstance user)
-    {
-      RemovePrincipal(user.User);
+      if (user is SPUserInstance)
+      {
+        var spUser = user as SPUserInstance;
+        userToRemove = spUser.User;
+      }
+      else
+      {
+        var loginName = TypeConverter.ToString(user);
+        SPUser spUser;
+        if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
+          throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+
+        userToRemove = spUser;
+      }
+
+      RemovePrincipal(userToRemove);
     }
 
     private void RemovePrincipal(SPPrincipal principal)
     {
-      m_securableObject.RoleAssignments.Remove(principal);
+      SecurableObject.RoleAssignments.Remove(principal);
     }
     #endregion
 
     #region Functions
     [JSFunction(Name = "breakRoleInheritance")]
-    public void BreakRoleInheritance([DefaultParameterValue(true)]bool copyRoleAssignments, [DefaultParameterValue(true)]bool clearSubscopes)
+    public void BreakRoleInheritance(bool copyRoleAssignments, object clearSubscopes)
     {
-      m_securableObject.BreakRoleInheritance(copyRoleAssignments, clearSubscopes);
+      if (clearSubscopes == Undefined.Value || clearSubscopes == Null.Value || clearSubscopes == null)
+        SecurableObject.BreakRoleInheritance(copyRoleAssignments);
+      else
+        SecurableObject.BreakRoleInheritance(copyRoleAssignments, TypeConverter.ToBoolean(clearSubscopes));
     }
 
     [JSFunction(Name = "doesUserHavePermissions")]
@@ -168,7 +238,7 @@
     {
       var mask = (SPBasePermissions)Enum.Parse(typeof(SPBasePermissions), permissions);
 
-      return m_securableObject.DoesUserHavePermissions(mask);
+      return SecurableObject.DoesUserHavePermissions(mask);
     }
 
     public bool DoesUserHavePermissions(ArrayInstance permissions)
@@ -184,13 +254,13 @@
         }
       }
 
-      return m_securableObject.DoesUserHavePermissions(mask);
+      return SecurableObject.DoesUserHavePermissions(mask);
     }
 
     [JSFunction(Name = "resetRoleInheritance")]
     public void ResetRoleInheritance()
     {
-      m_securableObject.ResetRoleInheritance();
+      SecurableObject.ResetRoleInheritance();
     }
     #endregion
   }
