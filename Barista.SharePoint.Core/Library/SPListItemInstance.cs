@@ -89,6 +89,15 @@
       }
     }
 
+    [JSProperty(Name = "fields")]
+    public SPFieldCollectionInstance Fields
+    {
+      get
+      {
+        return new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Fields);
+      }
+    }
+
     [JSProperty(Name = "fieldValues")]
     public ObjectInstance FieldValues
     {
