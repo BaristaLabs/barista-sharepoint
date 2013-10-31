@@ -3,6 +3,8 @@
   using System;
   using System.Linq;
   using System.Reflection;
+  using System.Text.RegularExpressions;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -40,6 +42,8 @@
   [Serializable]
   public class SPListItemInstance : SPSecurableObjectInstance
   {
+    private static readonly Regex DigitRegex = new Regex(@"^\d+;#.*$", RegexOptions.Compiled);
+
     private readonly SPListItem m_listItem;
 
     public SPListItemInstance(ScriptEngine engine, SPListItem listItem)
@@ -309,6 +313,19 @@
               }
             }
             break;
+          case SPFieldType.URL:
+          {
+            SPFieldUrlValue urlValue;
+            if (listItem.TryGetSPFieldValue(field.Id, out urlValue))
+            {
+              var item = engine.Object.Construct();
+              item.SetPropertyValue("description", urlValue.Description, false);
+              item.SetPropertyValue("url", urlValue.Url, false);
+
+              result.SetPropertyValue(field.InternalName, item, false);
+            }
+          }
+            break;
           case SPFieldType.User:
             {
               string userToken;
@@ -322,16 +339,19 @@
             break;
           case SPFieldType.Lookup:
           {
-            string fieldValue;
             var fieldType = field as SPFieldLookup;
-            if (fieldType != null && listItem.TryGetSPFieldValue(field.Id, out fieldValue))
-            {
-              if (fieldType.AllowMultipleValues)
-              {
-                var array = engine.Array.Construct();
+            if (fieldType == null)
+              continue;
 
-                var lookupValueCollection = new SPFieldLookupValueCollection(fieldValue);
-                foreach (var lookupValue in lookupValueCollection)
+            if (fieldType.AllowMultipleValues)
+            {
+              var fieldValue = listItem[field.Id] as SPFieldLookupValueCollection;
+
+              var array = engine.Array.Construct();
+
+              if (fieldValue != null)
+              {
+                foreach (var lookupValue in fieldValue)
                 {
                   var item = engine.Object.Construct();
                   item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
@@ -340,17 +360,67 @@
                   ArrayInstance.Push(array, item);
                 }
               }
-              else
+
+              result.SetPropertyValue(field.InternalName, array, false);
+            }
+            else
+            {
+              var fieldValue = listItem[field.Id];
+
+              if (fieldValue is SPFieldUrlValue)
               {
+                var urlValue = fieldValue as SPFieldUrlValue;
                 var item = engine.Object.Construct();
-                var lookupValue = new SPFieldLookupValue(fieldValue);
-                item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
-                item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
+                item.SetPropertyValue("description", urlValue.Description, false);
+                item.SetPropertyValue("url", urlValue.Url, false);
 
                 result.SetPropertyValue(field.InternalName, item, false);
               }
+              else if (fieldValue is DateTime)
+              {
+                var value = (DateTime)fieldValue;
+                result.SetPropertyValue(field.InternalName, JurassicHelper.ToDateInstance(engine, new DateTime(value.Ticks, DateTimeKind.Local)), false);
+              }
+              else if (fieldValue is SPFieldUserValue)
+              {
+                var fieldUserValue = (SPFieldUserValue)fieldValue;
+                var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
+                result.SetPropertyValue(field.InternalName, userInstance, false);
+              }
+              else if (fieldValue is Guid)
+              {
+                var guidValue = (Guid) fieldValue;
+                var guidInstance = new GuidInstance(engine.Object.InstancePrototype, guidValue);
+                result.SetPropertyValue(field.InternalName, guidInstance, false);
+              }
+              else if (fieldValue is string)
+              {
+                //Attempt to create a new SPFieldLookupValue from the string
+                if (DigitRegex.IsMatch((string)fieldValue, 0))
+                {
+                  try
+                  {
+                    var lookupValue = new SPFieldLookupValue((string) fieldValue);
 
-              
+                    var item = engine.Object.Construct();
+                    item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
+                    item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
+                    result.SetPropertyValue(field.InternalName, item, false);
+                  }
+                  catch (ArgumentException)
+                  {
+                    result.SetPropertyValue(field.InternalName, fieldValue, false);
+                  }
+                }
+                else
+                {
+                  result.SetPropertyValue(field.InternalName, fieldValue, false);
+                }
+              }
+              else
+              {
+                result.SetPropertyValue(field.InternalName, fieldValue, false);
+              }
             }
           }
             break;
@@ -380,11 +450,71 @@
 
       foreach (var field in fields.OfType<SPField>())
       {
-        object value;
-        if (listItem.TryGetSPFieldValue(field.Id, out value))
+        switch (field.Type)
         {
-          var stringValue = field.GetFieldValueAsHtml(value);
-          result.SetPropertyValue(field.InternalName, stringValue, false);
+          case SPFieldType.Lookup:
+            var fieldType = field as SPFieldLookup;
+
+            if (fieldType == null)
+              break;
+
+            if (fieldType.AllowMultipleValues)
+            {
+              var fieldValue = listItem[field.Id] as SPFieldLookupValueCollection;
+
+              var array = engine.Array.Construct();
+
+              if (fieldValue != null)
+              {
+                foreach (var lookupValue in fieldValue)
+                {
+                  ArrayInstance.Push(array, lookupValue.LookupValue);
+                }
+              }
+
+              result.SetPropertyValue(field.InternalName, array, false);
+            }
+            else
+            {
+              var fieldValue = listItem[field.Id];
+
+              if (fieldValue == null)
+                result.SetPropertyValue(field.InternalName, Null.Value, false);
+              else
+              {
+                if (fieldValue is string)
+                {
+                  //Attempt to create a new SPFieldLookupValue from the string
+                  if (DigitRegex.IsMatch((string) fieldValue, 0))
+                  {
+                    try
+                    {
+                      var lookupValue = new SPFieldLookupValue((string) fieldValue);
+                      result.SetPropertyValue(field.InternalName, lookupValue.LookupValue, false);
+                    }
+                    catch (ArgumentException)
+                    {
+                      result.SetPropertyValue(field.InternalName, fieldValue.ToString(), false);
+                    }
+                  }
+                  else
+                  {
+                    result.SetPropertyValue(field.InternalName, fieldValue.ToString(), false);
+                  }
+                }
+              }
+            }
+            break;
+          default:
+          {
+            object value;
+            if (listItem.TryGetSPFieldValue(field.Id, out value))
+            {
+              var stringValue = field.GetFieldValueAsHtml(value);
+              result.SetPropertyValue(field.InternalName, stringValue, false);
+            }
+            break;
+          }
         }
       }
 
