@@ -356,7 +356,11 @@
 
             if (fieldType.AllowMultipleValues)
             {
-              var fieldValue = listItem[field.Id] as SPFieldLookupValueCollection;
+              object fv;
+              if (!listItem.TryGetSPFieldValue(field.Id, out fv))
+                continue;
+
+              var fieldValue = fv as SPFieldLookupValueCollection;
 
               var array = engine.Array.Construct();
 
@@ -376,7 +380,9 @@
             }
             else
             {
-              var fieldValue = listItem[field.Id];
+              object fieldValue;
+              if (!listItem.TryGetSPFieldValue(field.Id, out fieldValue))
+                continue;
 
               if (fieldValue is SPFieldUrlValue)
               {
@@ -471,7 +477,11 @@
 
             if (fieldType.AllowMultipleValues)
             {
-              var fieldValue = listItem[field.Id] as SPFieldLookupValueCollection;
+              object fv;
+              if (!listItem.TryGetSPFieldValue(field.Id, out fv))
+                continue;
+
+              var fieldValue = fv as SPFieldLookupValueCollection;
 
               var array = engine.Array.Construct();
 
@@ -487,7 +497,9 @@
             }
             else
             {
-              var fieldValue = listItem[field.Id];
+              object fieldValue;
+              if (!listItem.TryGetSPFieldValue(field.Id, out fieldValue))
+                continue;
 
               if (fieldValue == null)
                 result.SetPropertyValue(field.InternalName, Null.Value, false);
