@@ -324,9 +324,11 @@
             break;
           case SPFieldType.URL:
           {
-            SPFieldUrlValue urlValue;
-            if (listItem.TryGetSPFieldValue(field.Id, out urlValue))
+            string urlFieldValue;
+            if (listItem.TryGetSPFieldValue(field.Id, out urlFieldValue))
             {
+              var urlValue = new SPFieldUrlValue(urlFieldValue);
+
               var item = engine.Object.Construct();
               item.SetPropertyValue("description", urlValue.Description, false);
               item.SetPropertyValue("url", urlValue.Url, false);
