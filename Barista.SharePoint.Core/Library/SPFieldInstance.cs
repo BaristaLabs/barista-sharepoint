@@ -242,9 +242,26 @@
     }
 
     //Field Rendering Control
-    //Field Rendering Mobile Contrl
-    //Field Type Definition
-    //Field Value Type
+    //Field Rendering Mobile Control
+
+    [JSProperty(Name = "fieldTypeDefinition")]
+    public string FieldTypeDefinition
+    {
+      get
+      {
+        return m_field.FieldTypeDefinition.ToString();
+      }
+    }
+
+    [JSProperty(Name = "fieldValueType")]
+    public string FieldValueType
+    {
+      get
+      {
+        //TODO: do we want to wrap System.Type?
+        return m_field.FieldValueType.ToString();
+      }
+    }
 
     [JSProperty(Name = "filterable")]
     public bool Filterable
