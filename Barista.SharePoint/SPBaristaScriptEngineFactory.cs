@@ -114,11 +114,11 @@
         }
 
         //Map Barista functions to global functions.
-        engine.Execute(@"var help = function(obj) { return Barista.help(obj); };
-var require = function(name) { return Barista.common.require(name); };
-var listBundles = function() { return Barista.common.listBundles(); };
-var define = function() { return Barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3]); };
-var include = function(scriptUrl) { return Barista.SharePoint.include(scriptUrl); };");
+        engine.Execute(@"var help = function(obj) { return barista.help(obj); };
+var require = function(name) { return barista.common.require(name); };
+var listBundles = function() { return barista.common.listBundles(); };
+var define = function() { return barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3]); };
+var include = function(scriptUrl) { return barista.SharePoint.include(scriptUrl); };");
 
         //Execute any instance initialization code.
         if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCode) == false)
