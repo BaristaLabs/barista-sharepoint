@@ -324,6 +324,13 @@
       request.SetExtendedPropertiesFromCurrentSPContext();
       
       client.Exec(request);
+
+      //abandon the session and set the ASP.net session cookie to nothing.
+      if (HttpContext.Current != null && HttpContext.Current.Session != null)
+      {
+        HttpContext.Current.Session.Abandon();
+        HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+      }
     }
 
     /// <summary>
@@ -362,6 +369,13 @@
 
       if (result.Content == null)
         return null;
+
+      //abandon the session and set the ASP.net session cookie to nothing.
+      if (HttpContext.Current != null && HttpContext.Current.Session != null)
+      {
+        HttpContext.Current.Session.Abandon();
+        HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+      }
 
       var resultStream = new MemoryStream(result.Content);
       return resultStream;

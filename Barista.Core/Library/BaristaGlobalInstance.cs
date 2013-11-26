@@ -34,14 +34,10 @@
       set;
     }
 
-    [JSFunction(Name = "include")]
-    public void Include(string scriptPath)
+    [JSFunction(Name = "equals")]
+    public bool JSEquals(object o1, object o2)
     {
-      var path = HttpContext.Current.Request.MapPath(scriptPath);
-
-      var source = new FileScriptSource(path, System.Text.Encoding.Unicode);
-
-      this.Engine.Execute(source);
+      return TypeComparer.Equals(o1, o2);
     }
 
     /// <summary>
@@ -66,6 +62,93 @@
         var oi = obj as ObjectInstance;
         result = GetObjectInfo(this.Engine, oi);
       }
+
+      return result;
+    }
+
+    [JSFunction(Name = "include")]
+    public void Include(string scriptPath)
+    {
+      var path = HttpContext.Current.Request.MapPath(scriptPath);
+
+      var source = new FileScriptSource(path, System.Text.Encoding.Unicode);
+
+      this.Engine.Execute(source);
+    }
+
+    [JSFunction(Name = "isArray")]
+    public bool IsArray(object value)
+    {
+      return TypeUtilities.IsArray(value);
+    }
+
+    [JSFunction(Name = "isDate")]
+    public bool IsDate(object value)
+    {
+      return TypeUtilities.IsDate(value);
+    }
+
+    [JSFunction(Name = "isDefined")]
+    public bool IsDefined(object value)
+    {
+      return !TypeUtilities.IsUndefined(value);
+    }
+
+    [JSFunction(Name = "isFunction")]
+    public bool IsFunction(object value)
+    {
+      return TypeUtilities.IsFunction(value);
+    }
+
+    [JSFunction(Name = "isNumber")]
+    public bool IsNumber(object value)
+    {
+      return TypeUtilities.IsNumeric(value);
+    }
+
+    [JSFunction(Name = "isObject")]
+    public bool IsObject(object value)
+    {
+      return TypeUtilities.IsObject(value);
+    }
+
+    [JSFunction(Name = "isString")]
+    public bool IsString(object value)
+    {
+      return TypeUtilities.IsString(value);
+    }
+
+    [JSFunction(Name = "isUndefined")]
+    public bool IsUndefined(object value)
+    {
+      return TypeUtilities.IsUndefined(value);
+    }
+
+    [JSFunction(Name = "lowercase")]
+    public string Lowercase(object value)
+    {
+      return TypeConverter.ToString(value).ToLowerInvariant();
+    }
+
+    [JSFunction(Name = "uppercase")]
+    public string Uppercase(object value)
+    {
+      return TypeConverter.ToString(value).ToUpperInvariant();
+    }
+
+    [JSFunction(Name = "version")]
+    public ObjectInstance Version()
+    {
+      var assembly = Assembly.GetExecutingAssembly();
+      var version = assembly.GetName().Version;
+      var codeName = "rascally-rabbit"; //TODO: Pull this from a custom assembly attribute.
+
+      var result = this.Engine.Object.Construct();
+      result.SetPropertyValue("full", version + " " + codeName, true);
+      result.SetPropertyValue("major", version.Major, true);
+      result.SetPropertyValue("minor", version.Minor, true);
+      result.SetPropertyValue("dot", version.Revision, true);
+      result.SetPropertyValue("codeName", codeName, true);
 
       return result;
     }

@@ -86,7 +86,7 @@
         instance.Common.RegisterBundle(new UnitTestingBundle());
 
         //Global Types
-        engine.SetGlobalValue("Barista", instance);
+        engine.SetGlobalValue("barista", instance);
         instance.SetPropertyValue("SharePoint", new BaristaSharePointGlobal(engine.Object.InstancePrototype), true);
 
         //engine.SetGlobalValue("file", new FileSystemInstance(engine));

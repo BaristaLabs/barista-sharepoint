@@ -78,7 +78,7 @@
         instance.Common.RegisterBundle(new SeleniumBundle());
 
         //Global Types
-        engine.SetGlobalValue("Barista", instance);
+        engine.SetGlobalValue("barista", instance);
 
         engine.SetGlobalValue("fs", new FileSystemInstance(engine));
 

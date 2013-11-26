@@ -593,6 +593,7 @@
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
     <Compile Include="Library\EnvironmentInstance.cs" />
+    <Compile Include="Library\HttpUtilityInstance.cs" />
     <Compile Include="Library\NetworkCredentialInstance.cs" />
     <Compile Include="Library\DeviceInstance.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />

@@ -37,6 +37,8 @@
       engine.SetGlobalValue("ProxySettings", new ProxySettingsConstructor(engine));
       engine.SetGlobalValue("Cookie", new CookieConstructor(engine));
 
+      engine.SetGlobalValue("HttpUtility", new HttpUtilityConstructor(engine));
+      
       return CreateWebInstance(engine);
     }
 

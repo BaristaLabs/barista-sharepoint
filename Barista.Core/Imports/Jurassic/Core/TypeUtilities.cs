@@ -44,6 +44,16 @@
     }
 
     /// <summary>
+    /// Returns <c>true</c> if the given is an array.
+    /// </summary>
+    /// <param name="obj"> The object to check. </param>
+    /// <returns> <c>true</c> if the given value is undefined; <c>false</c> otherwise. </returns>
+    public static bool IsArray(object obj)
+    {
+      return obj is ArrayInstance;
+    }
+
+    /// <summary>
     /// Returns <c>true</c> if the given value is a supported numeric type.
     /// </summary>
     /// <param name="obj"> The object to check. </param>
@@ -55,6 +65,17 @@
     }
 
     /// <summary>
+    /// Returns <c>true</c> if the given value is a function.
+    /// </summary>
+    /// <param name="obj"> The object to check. </param>
+    /// <returns> <c>true</c> if the given value is a function; <c>false</c>
+    /// otherwise. </returns>
+    public static bool IsFunction(object obj)
+    {
+      return obj is FunctionInstance;
+    }
+
+    /// <summary>
     /// Returns <c>true</c> if the given value is a supported string type.
     /// </summary>
     /// <param name="obj"> The object to check. </param>
@@ -63,6 +84,28 @@
     public static bool IsString(object obj)
     {
       return obj is string || obj is ConcatenatedString;
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> if the given value is a supported date type.
+    /// </summary>
+    /// <param name="obj"> The object to check. </param>
+    /// <returns> <c>true</c> if the given value is a supported date type; <c>false</c>
+    /// otherwise. </returns>
+    public static bool IsDate(object obj)
+    {
+      return obj is DateTime || obj is DateInstance;
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> if the given value is an object.
+    /// </summary>
+    /// <param name="obj"> The object to check. </param>
+    /// <returns> <c>true</c> if the given value is an object; <c>false</c>
+    /// otherwise. </returns>
+    public static bool IsObject(object obj)
+    {
+      return obj is ObjectInstance;
     }
 
     /// <summary>
