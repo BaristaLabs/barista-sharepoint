@@ -42,8 +42,8 @@
           MimeType = StringHelper.GetMimeTypeFromFileName(file.Name),
           Size = file.Length,
           Url = SPUtility.ConcatUrls(file.Web.Url, file.Url),
-          Created = (DateTime) file.Item[SPBuiltInFieldId.Created],
-          Modified = (DateTime) file.Item[SPBuiltInFieldId.Modified]
+          Created = ((DateTime) file.Item[SPBuiltInFieldId.Created]).ToLocalTime(),
+          Modified = ((DateTime) file.Item[SPBuiltInFieldId.Modified]).ToLocalTime()
         };
 
       var createdByUser = file.Item[SPBuiltInFieldId.Created_x0020_By] as SPFieldUserValue;
@@ -89,7 +89,7 @@
         {
           Id = listItemVersion.VersionId,
           CommentText = listItemVersion["Comments"] as string,
-          Created = listItemVersion.Created,
+          Created = listItemVersion.Created.ToLocalTime(),
           CreatedBy = new User
             {
               Email = listItemVersion.CreatedBy.User.Email,
@@ -118,7 +118,7 @@
           Description = list.Description,
           EntityCount = list.ItemCount,
           Url = list.RootFolder.Url.Substring(list.RootFolder.Url.IndexOf('/') + 1),
-          Created = list.Created,
+          Created = list.Created.ToLocalTime(),
           CreatedBy = new User
             {
               Email = list.Author.Email,
@@ -179,8 +179,8 @@
 
       entity.Title = documentSet.Item.Title;
       entity.Description = documentSet.Item["DocumentSetDescription"] as string;
-      entity.Created = (DateTime)documentSet.Item[SPBuiltInFieldId.Created];
-      entity.Modified = (DateTime)documentSet.Item[SPBuiltInFieldId.Modified];
+      entity.Created = ((DateTime)documentSet.Item[SPBuiltInFieldId.Created]).ToLocalTime();
+      entity.Modified = ((DateTime)documentSet.Item[SPBuiltInFieldId.Modified]).ToLocalTime();
 
       entity.ContentsETag = documentSet.Item["DocumentEntityContentsHash"] as string;
 
@@ -259,8 +259,8 @@
 
       result.Title = version[version.ListItem.Fields[SPBuiltInFieldId.Title].Title] as string;
       result.Description = version["DocumentSetDescription"] as string;
-      result.Created = (DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Created].Title];
-      result.Modified = (DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Modified].Title];
+      result.Created = ((DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Created].Title]).ToLocalTime();
+      result.Modified = ((DateTime) version[version.ListItem.Fields[SPBuiltInFieldId.Modified].Title]).ToLocalTime();
 
       result.Path = version.ListItem.File.ParentFolder.Url.Substring(version.ListItem.ParentList.RootFolder.Url.Length);
       result.Path = result.Path.TrimStart('/');
@@ -333,8 +333,8 @@
       entityPart.Category = file.Item["Category"] as string;
       entityPart.ETag = file.ETag;
       entityPart.Name = file.Name.Substring(0, file.Name.Length - Constants.DocumentSetEntityPartExtension.Length);
-      entityPart.Created = (DateTime) file.Item[SPBuiltInFieldId.Created];
-      entityPart.Modified = (DateTime) file.Item[SPBuiltInFieldId.Modified];
+      entityPart.Created = ((DateTime) file.Item[SPBuiltInFieldId.Created]).ToLocalTime();
+      entityPart.Modified = ((DateTime) file.Item[SPBuiltInFieldId.Modified]).ToLocalTime();
 
       entityPart.Data = data ?? Encoding.UTF8.GetString(file.OpenBinary());
 
@@ -383,7 +383,7 @@
       {
         var list = folder.DocumentLibrary;
         result.FullPath = "";
-        result.Created = list.Created;
+        result.Created = list.Created.ToLocalTime();
         result.Modified = list.LastItemModifiedDate;
 
         var createdByUser = list.Author;
@@ -412,8 +412,8 @@
       else
       {
         result.FullPath = folder.Url.Substring(rootFolderUrl.Length + 1);
-        result.Created = (DateTime) folderListItem[SPBuiltInFieldId.Created];
-        result.Modified = (DateTime) folderListItem[SPBuiltInFieldId.Modified];
+        result.Created = ((DateTime) folderListItem[SPBuiltInFieldId.Created]).ToLocalTime();
+        result.Modified = ((DateTime) folderListItem[SPBuiltInFieldId.Modified]).ToLocalTime();
 
         var createdByUserValue = folderListItem[SPBuiltInFieldId.Author] as String;
         var createdByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
@@ -741,7 +741,9 @@
 
               //Just bump the current context.
 #pragma warning disable 168
+// ReSharper disable UnusedVariable
               var threadLocalContext = SPContext.Current;
+// ReSharper restore UnusedVariable
 #pragma warning restore 168
             }
             action();

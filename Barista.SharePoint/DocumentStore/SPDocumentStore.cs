@@ -1762,7 +1762,7 @@
           result.AddRange(defaultEntityPart.Item.Versions.OfType<SPListItemVersion>().Select(ver => new EntityVersion
             {
               Comment = ver.ListItem.File.CheckInComment,
-              Created = ver.Created,
+              Created = ver.Created.ToLocalTime(),
               CreatedByLoginName = ver.CreatedBy.User.LoginName,
               Entity = SPDocumentStoreHelper.MapEntityFromSPListItemVersion(ver),
               IsCurrentVersion = ver.IsCurrentVersion,
@@ -1807,7 +1807,7 @@
           var entityVersion = new EntityVersion
             {
             Comment = ver.ListItem.File.CheckInComment,
-            Created = ver.Created,
+            Created = ver.Created.ToLocalTime(),
             CreatedByLoginName = ver.CreatedBy.User.LoginName,
             Entity = SPDocumentStoreHelper.MapEntityFromSPListItemVersion(ver),
             IsCurrentVersion = ver.IsCurrentVersion,
