@@ -9,6 +9,7 @@
   /// Represents an instance of the JavaScript Array object.
   /// </summary>
   [Serializable]
+  [Barista.Newtonsoft.Json.JsonArray]
   public class ArrayInstance : ObjectInstance
   {
     // The array, if it is dense.

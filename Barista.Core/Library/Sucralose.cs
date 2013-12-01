@@ -172,6 +172,7 @@
               continue;
 
             var val = kvp.Value;
+
             var goDeep = deep && JurassicHelper.IsObjectType(val);
 
             //Conflict!
@@ -179,6 +180,12 @@
             {
               //Do not merge.
               if (TypeConverter.ToBoolean(resolve) == false && !goDeep)
+                continue;
+
+              //if the source value is null, and the target is null, don't set the value
+              //if this isn't here string properties will get set to string 'null'
+              var targetValue = targetObj[kvp.Name];
+              if ((targetValue == null || targetValue == Null.Value) && (val == null || val == Null.Value))
                 continue;
 
                // Use the result of the callback as the result.
