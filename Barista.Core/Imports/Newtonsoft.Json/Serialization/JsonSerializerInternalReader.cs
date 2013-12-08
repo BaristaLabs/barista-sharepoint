@@ -413,20 +413,30 @@ namespace Barista.Newtonsoft.Json.Serialization
               bool createdFromNonDefaultConstructor;
               IDictionary dictionary = CreateNewDictionary(reader, dictionaryContract, out createdFromNonDefaultConstructor);
 
-              if (id != null && createdFromNonDefaultConstructor)
-                throw JsonSerializationException.Create(reader, "Cannot preserve reference to readonly dictionary, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+              if (createdFromNonDefaultConstructor)
+              {
+                if (id != null)
+                  throw JsonSerializationException.Create(reader, "Cannot preserve reference to readonly dictionary, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
 
-              if (contract.OnSerializingCallbacks.Count > 0 && createdFromNonDefaultConstructor)
-                throw JsonSerializationException.Create(reader, "Cannot call OnSerializing on readonly dictionary, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+                if (contract.OnSerializingCallbacks.Count > 0)
+                  throw JsonSerializationException.Create(reader, "Cannot call OnSerializing on readonly dictionary, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
 
-              if (contract.OnErrorCallbacks.Count > 0 && createdFromNonDefaultConstructor)
-                throw JsonSerializationException.Create(reader, "Cannot call OnError on readonly list, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+                if (contract.OnErrorCallbacks.Count > 0)
+                  throw JsonSerializationException.Create(reader, "Cannot call OnError on readonly list, or dictionary created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+
+                if (dictionaryContract.ParametrizedConstructor == null)
+                  throw JsonSerializationException.Create(reader, "Cannot deserialize readonly or fixed size dictionary: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+              }
 
               PopulateDictionary(dictionary, reader, dictionaryContract, member, id);
 
               if (createdFromNonDefaultConstructor)
               {
-                return dictionaryContract.ParametrizedConstructor.Invoke(new object[] {dictionary});
+                ConstructorInfo constructor = dictionaryContract.ParametrizedConstructor as ConstructorInfo;
+                if (constructor != null)
+                  return constructor.Invoke(new object[] { dictionary });
+
+                return dictionaryContract.ParametrizedConstructor.Invoke(null, new object[] { dictionary });
               }
               else if (dictionary is IWrappedDictionary)
               {
@@ -615,14 +625,20 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
         bool createdFromNonDefaultConstructor;
         IList list = CreateNewList(reader, arrayContract, out createdFromNonDefaultConstructor);
 
-        if (id != null && createdFromNonDefaultConstructor)
-          throw JsonSerializationException.Create(reader, "Cannot preserve reference to array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+        if (createdFromNonDefaultConstructor)
+        {
+          if (id != null)
+            throw JsonSerializationException.Create(reader, "Cannot preserve reference to array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
 
-        if (contract.OnSerializingCallbacks.Count > 0 && createdFromNonDefaultConstructor)
-          throw JsonSerializationException.Create(reader, "Cannot call OnSerializing on an array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+          if (contract.OnSerializingCallbacks.Count > 0)
+            throw JsonSerializationException.Create(reader, "Cannot call OnSerializing on an array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
 
-        if (contract.OnErrorCallbacks.Count > 0 && createdFromNonDefaultConstructor)
-          throw JsonSerializationException.Create(reader, "Cannot call OnError on an array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+          if (contract.OnErrorCallbacks.Count > 0)
+            throw JsonSerializationException.Create(reader, "Cannot call OnError on an array or readonly list, or list created from a non-default constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+
+          if (arrayContract.ParametrizedConstructor == null && !arrayContract.IsArray)
+            throw JsonSerializationException.Create(reader, "Cannot deserialize readonly or fixed size list: {0}.".FormatWith(CultureInfo.InvariantCulture, contract.UnderlyingType));
+        }
 
         if (!arrayContract.IsMultidimensionalArray)
           PopulateList(list, reader, arrayContract, member, id);
@@ -635,7 +651,7 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
           {
             list = CollectionUtils.ToMultidimensionalArray(list, arrayContract.CollectionItemType, contract.CreatedType.GetArrayRank());
           }
-          else if (contract.CreatedType.IsArray)
+          else if (arrayContract.IsArray)
           {
             Array a = Array.CreateInstance(arrayContract.CollectionItemType, list.Count);
             list.CopyTo(a, 0);
@@ -644,7 +660,11 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
           else
           {
             // call constructor that takes IEnumerable<T>
-            return arrayContract.ParametrizedConstructor.Invoke(new object[] { list });
+            ConstructorInfo constructor = arrayContract.ParametrizedConstructor as ConstructorInfo;
+            if (constructor != null)
+              return constructor.Invoke(new object[] { list });
+
+            return arrayContract.ParametrizedConstructor.Invoke(null, new object[] { list });
           }
         }
         else if (list is IWrappedCollection)
@@ -1194,8 +1214,10 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
 
       int initialDepth = reader.Depth;
 
-      JsonContract collectionItemContract = GetContractSafe(contract.CollectionItemType);
-      JsonConverter collectionItemConverter = GetConverter(collectionItemContract, null, contract, containerProperty);
+      if (contract.ItemContract == null)
+        contract.ItemContract = GetContractSafe(contract.CollectionItemType);
+
+      JsonConverter collectionItemConverter = GetConverter(contract.ItemContract, null, contract, containerProperty);
 
       int? previousErrorIndex = null;
 
@@ -1204,7 +1226,7 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
       {
         try
         {
-          if (ReadForType(reader, collectionItemContract, collectionItemConverter != null))
+          if (ReadForType(reader, contract.ItemContract, collectionItemConverter != null))
           {
             switch (reader.TokenType)
             {
@@ -1219,7 +1241,7 @@ To fix this error either change the JSON to a {1} or change the deserialized typ
                 if (collectionItemConverter != null && collectionItemConverter.CanRead)
                   value = DeserializeConvertable(collectionItemConverter, reader, contract.CollectionItemType, null);
                 else
-                  value = CreateValueInternal(reader, contract.CollectionItemType, collectionItemContract, null, contract, containerProperty, null);
+                  value = CreateValueInternal(reader, contract.CollectionItemType, contract.ItemContract, null, contract, containerProperty, null);
 
                 list.Add(value);
                 break;
@@ -1422,6 +1444,11 @@ To fix this error either change the environment to be fully trusted, change the 
     {
       ValidationUtils.ArgumentNotNull(constructorInfo, "constructorInfo");
 
+      // only need to keep a track of properies presence if they are required or a value should be defaulted if missing
+      Dictionary<JsonProperty, PropertyPresence> propertiesPresence = (contract.HasRequiredOrDefaultValueProperties || HasFlag(Serializer._defaultValueHandling, DefaultValueHandling.Populate))
+        ? contract.Properties.ToDictionary(m => m, m => PropertyPresence.None)
+        : null;
+
       Type objectType = contract.UnderlyingType;
 
       if (TraceWriter != null && TraceWriter.LevelFilter >= TraceLevel.Info)
@@ -1439,6 +1466,14 @@ To fix this error either change the environment to be fully trusted, change the 
           constructorParameters[matchingConstructorParameter] = propertyValue.Value;
         else
           remainingPropertyValues.Add(propertyValue);
+
+        if (propertiesPresence != null)
+        {
+          // map from constructor property to normal property
+          var property = propertiesPresence.Keys.FirstOrDefault(p => p.PropertyName == propertyValue.Key.PropertyName);
+          if (property != null)
+            propertiesPresence[property] = (propertyValue.Value == null) ? PropertyPresence.Null : PropertyPresence.Value;
+        }
       }
 
       object createdObject = constructorInfo.Invoke(constructorParameters.Values.ToArray());
@@ -1497,6 +1532,8 @@ To fix this error either change the environment to be fully trusted, change the 
           }
         }
       }
+
+      EndObject(createdObject, reader, contract, reader.Depth, propertiesPresence);
 
       OnDeserialized(reader, contract, createdObject);
       return createdObject;
@@ -1711,7 +1748,7 @@ To fix this error either change the environment to be fully trusted, change the 
                   if (!reader.Read())
                     break;
 
-                  SetExtensionData(contract, reader, memberName, newObject);
+                  SetExtensionData(contract, member, reader, memberName, newObject);
                   continue;
                 }
 
@@ -1727,7 +1764,7 @@ To fix this error either change the environment to be fully trusted, change the 
 
                 // set extension data if property is ignored or readonly
                 if (!SetPropertyValue(property, propertyConverter, contract, member, reader, newObject))
-                  SetExtensionData(contract, reader, memberName, newObject);
+                  SetExtensionData(contract, member, reader, memberName, newObject);
               }
               catch (Exception ex)
               {
@@ -1758,15 +1795,15 @@ To fix this error either change the environment to be fully trusted, change the 
       return newObject;
     }
 
-    private void SetExtensionData(JsonObjectContract contract, JsonReader reader, string memberName, object o)
+    private void SetExtensionData(JsonObjectContract contract, JsonProperty member, JsonReader reader, string memberName, object o)
     {
       if (contract.ExtensionDataSetter != null)
       {
         try
         {
-          JToken extensionDataValue = JToken.ReadFrom(reader);
+          object value = CreateValueInternal(reader, null, null, null, contract, member, null);
 
-          contract.ExtensionDataSetter(o, memberName, extensionDataValue);
+          contract.ExtensionDataSetter(o, memberName, value);
         }
         catch (Exception ex)
         {

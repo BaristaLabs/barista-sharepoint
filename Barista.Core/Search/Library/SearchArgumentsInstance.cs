@@ -7,7 +7,7 @@
   using Jurassic;
   using Jurassic.Library;
   using System;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
 
   [Serializable]
   public class SearchArgumentsConstructor : ClrFunction

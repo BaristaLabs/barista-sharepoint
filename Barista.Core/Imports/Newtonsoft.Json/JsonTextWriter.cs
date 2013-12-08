@@ -214,7 +214,7 @@ namespace Barista.Newtonsoft.Json
     {
       InternalWritePropertyName(name);
 
-      WriteEscapedString(name);
+      WriteEscapedString(name, _quoteName);
 
       _writer.Write(':');
     }
@@ -230,7 +230,7 @@ namespace Barista.Newtonsoft.Json
 
       if (escape)
       {
-        WriteEscapedString(name);
+        WriteEscapedString(name, _quoteName);
       }
       else
       {
@@ -364,13 +364,13 @@ namespace Barista.Newtonsoft.Json
       if (value == null)
         WriteValueInternal(JsonConvert.Null, JsonToken.Null);
       else
-        WriteEscapedString(value);
+        WriteEscapedString(value, true);
     }
 
-    private void WriteEscapedString(string value)
+    private void WriteEscapedString(string value, bool quote)
     {
       EnsureWriteBuffer();
-      JavaScriptUtils.WriteEscapedJavaScriptString(_writer, value, _quoteChar, true, _charEscapeFlags, StringEscapeHandling, ref _writeBuffer);
+      JavaScriptUtils.WriteEscapedJavaScriptString(_writer, value, _quoteChar, quote, _charEscapeFlags, StringEscapeHandling, ref _writeBuffer);
     }
 
     /// <summary>
@@ -387,7 +387,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public override void WriteValue(uint value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -408,7 +408,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public override void WriteValue(ulong value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -493,7 +493,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public override void WriteValue(ushort value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -524,7 +524,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public override void WriteValue(sbyte value)
     {
       InternalWriteValue(JsonToken.Integer);

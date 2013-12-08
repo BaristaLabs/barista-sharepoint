@@ -825,7 +825,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(uint value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -844,7 +844,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(ulong value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -890,7 +890,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(ushort value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -918,7 +918,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(sbyte value)
     {
       InternalWriteValue(JsonToken.Integer);
@@ -987,7 +987,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="Nullable{UInt32}"/> value.
     /// </summary>
     /// <param name="value">The <see cref="Nullable{UInt32}"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(uint? value)
     {
       if (value == null)
@@ -1012,7 +1012,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="Nullable{UInt64}"/> value.
     /// </summary>
     /// <param name="value">The <see cref="Nullable{UInt64}"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(ulong? value)
     {
       if (value == null)
@@ -1073,7 +1073,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="Nullable{UInt16}"/> value.
     /// </summary>
     /// <param name="value">The <see cref="Nullable{UInt16}"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(ushort? value)
     {
       if (value == null)
@@ -1110,7 +1110,7 @@ namespace Barista.Newtonsoft.Json
     /// Writes a <see cref="Nullable{SByte}"/> value.
     /// </summary>
     /// <param name="value">The <see cref="Nullable{SByte}"/> value to write.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public virtual void WriteValue(sbyte? value)
     {
       if (value == null)
@@ -1398,17 +1398,23 @@ namespace Barista.Newtonsoft.Json
             // the value is a non-standard IConvertible
             // convert to the underlying value and retry
             IConvertible convertable = (IConvertible)value;
-            TypeInformation typeInformation = ConvertUtils.GetTypeInformation(convertable);
-            object convertedValue = convertable.ToType(typeInformation.Type, CultureInfo.InvariantCulture);
 
-            WriteValue(writer, typeInformation.TypeCode, convertedValue);
+            TypeInformation typeInformation = ConvertUtils.GetTypeInformation(convertable);
+
+            // if convertable has an underlying typecode of Object then attempt to convert it to a string
+            PrimitiveTypeCode resolvedTypeCode = (typeInformation.TypeCode == PrimitiveTypeCode.Object) ? PrimitiveTypeCode.String : typeInformation.TypeCode;
+            Type resolvedType = (typeInformation.TypeCode == PrimitiveTypeCode.Object) ? typeof(string) : typeInformation.Type;
+
+            object convertedValue = convertable.ToType(resolvedType, CultureInfo.InvariantCulture);
+
+            WriteValue(writer, resolvedTypeCode, convertedValue);
+            break;
           }
           else
 #endif
           {
             throw CreateUnsupportedTypeException(writer, value);
           }
-          break;
       }
     }
 

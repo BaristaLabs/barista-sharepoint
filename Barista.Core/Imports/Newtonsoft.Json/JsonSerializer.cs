@@ -703,12 +703,12 @@ namespace Barista.Newtonsoft.Json
         reader.MaxDepth = _maxDepth;
       }
 
-      var traceJsonReader = (TraceWriter != null && TraceWriter.LevelFilter >= TraceLevel.Verbose)
+      TraceJsonReader traceJsonReader = (TraceWriter != null && TraceWriter.LevelFilter >= TraceLevel.Verbose)
                                           ? new TraceJsonReader(reader)
                                           : null;
 
-      var serializerReader = new JsonSerializerInternalReader(this);
-      var value = serializerReader.Deserialize(traceJsonReader ?? reader, objectType, CheckAdditionalContent);
+      JsonSerializerInternalReader serializerReader = new JsonSerializerInternalReader(this);
+      object value = serializerReader.Deserialize(traceJsonReader ?? reader, objectType, CheckAdditionalContent);
 
       if (traceJsonReader != null)
         TraceWriter.Trace(TraceLevel.Verbose, "Deserialized JSON: " + Environment.NewLine + traceJsonReader.GetJson(), null);

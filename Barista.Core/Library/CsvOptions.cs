@@ -1,7 +1,7 @@
 ﻿namespace Barista.Library
 {
   using Jurassic.Library;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
 
   public class CsvOptions : ObjectInstance
   {

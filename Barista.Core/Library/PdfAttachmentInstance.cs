@@ -3,7 +3,7 @@
   using System;
   using Barista.Jurassic;
   using Jurassic.Library;
-  using Newtonsoft.Json;
+  using Barista.Newtonsoft.Json;
 
   [Serializable]
   public class PdfAttachmentConstructor : ClrFunction

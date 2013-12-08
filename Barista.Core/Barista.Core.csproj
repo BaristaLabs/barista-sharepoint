@@ -396,7 +396,6 @@
     <Compile Include="Imports\Newtonsoft.Json\Serialization\ReflectionValueProvider.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Serialization\TraceJsonReader.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Serialization\TraceJsonWriter.cs" />
-    <Compile Include="Imports\Newtonsoft.Json\StreamingContext.cs" />
     <Compile Include="Imports\Newtonsoft.Json\StringEscapeHandling.cs" />
     <Compile Include="Imports\Newtonsoft.Json\TraceLevel.cs" />
     <Compile Include="Imports\Newtonsoft.Json\TypeNameHandling.cs" />
@@ -418,6 +417,7 @@
     <Compile Include="Imports\Newtonsoft.Json\Utilities\EnumValues.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\ExpressionReflectionDelegateFactory.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\ILGeneratorExtensions.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ImmutableCollectionsUtils.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\JavaScriptUtils.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\LateBoundReflectionDelegateFactory.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\LinqBridge.cs" />

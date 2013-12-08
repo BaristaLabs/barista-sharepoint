@@ -133,7 +133,7 @@ namespace Barista.Newtonsoft.Json.Linq
     public abstract JTokenType Type { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this token has childen tokens.
+    /// Gets a value indicating whether this token has child tokens.
     /// </summary>
     /// <value>
     /// 	<c>true</c> if this token has child values; otherwise, <c>false</c>.
@@ -680,7 +680,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator ushort(JToken value)
     {
       JValue v = EnsureValue(value);
@@ -700,7 +700,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator char(JToken value)
     {
       JValue v = EnsureValue(value);
@@ -732,6 +732,26 @@ namespace Barista.Newtonsoft.Json.Linq
 #endif
 
       return Convert.ToByte(v.Value, CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Performs an explicit conversion from <see cref="Newtonsoft.Json.Linq.JToken"/> to <see cref="System.SByte"/>.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The result of the conversion.</returns>
+    [CLSCompliant(false)]
+    public static explicit operator sbyte(JToken value)
+    {
+      JValue v = EnsureValue(value);
+      if (v == null || !ValidateToken(v, NumberTypes, false))
+        throw new ArgumentException("Can not convert {0} to SByte.".FormatWith(CultureInfo.InvariantCulture, GetType(value)));
+
+#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE40 || PORTABLE)
+      if (v.Value is BigInteger)
+        return (sbyte)(BigInteger)v.Value;
+#endif
+
+      return Convert.ToSByte(v.Value, CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -783,7 +803,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator ushort?(JToken value)
     {
       if (value == null)
@@ -821,6 +841,29 @@ namespace Barista.Newtonsoft.Json.Linq
 #endif
 
       return (v.Value != null) ? (byte?)Convert.ToByte(v.Value, CultureInfo.InvariantCulture) : null;
+    }
+
+    /// <summary>
+    /// Performs an explicit conversion from <see cref="Newtonsoft.Json.Linq.JToken"/> to <see cref="Nullable{SByte}"/>.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The result of the conversion.</returns>
+    [CLSCompliant(false)]
+    public static explicit operator sbyte?(JToken value)
+    {
+      if (value == null)
+        return null;
+
+      JValue v = EnsureValue(value);
+      if (v == null || !ValidateToken(v, NumberTypes, true))
+        throw new ArgumentException("Can not convert {0} to SByte.".FormatWith(CultureInfo.InvariantCulture, GetType(value)));
+
+#if !(NET20 || NET35 || SILVERLIGHT || PORTABLE40 || PORTABLE)
+      if (v.Value is BigInteger)
+        return (sbyte?)(BigInteger)v.Value;
+#endif
+
+      return (v.Value != null) ? (sbyte?)Convert.ToByte(v.Value, CultureInfo.InvariantCulture) : null;
     }
 
     /// <summary>
@@ -910,7 +953,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator uint?(JToken value)
     {
       if (value == null)
@@ -933,7 +976,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator ulong?(JToken value)
     {
       if (value == null)
@@ -1020,7 +1063,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator uint(JToken value)
     {
       JValue v = EnsureValue(value);
@@ -1040,7 +1083,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static explicit operator ulong(JToken value)
     {
       JValue v = EnsureValue(value);
@@ -1224,6 +1267,48 @@ namespace Barista.Newtonsoft.Json.Linq
 #endif
 
     /// <summary>
+    /// Performs an implicit conversion from <see cref="Byte"/> to <see cref="JToken"/>.
+    /// </summary>
+    /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
+    /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
+    public static implicit operator JToken(byte value)
+    {
+      return new JValue(value);
+    }
+
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="Nullable{Byte}"/> to <see cref="JToken"/>.
+    /// </summary>
+    /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
+    /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
+    public static implicit operator JToken(byte? value)
+    {
+      return new JValue(value);
+    }
+
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="SByte"/> to <see cref="JToken"/>.
+    /// </summary>
+    /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
+    /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
+    [CLSCompliant(false)]
+    public static implicit operator JToken(sbyte value)
+    {
+      return new JValue(value);
+    }
+
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="Nullable{SByte}"/> to <see cref="JToken"/>.
+    /// </summary>
+    /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
+    /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
+    [CLSCompliant(false)]
+    public static implicit operator JToken(sbyte? value)
+    {
+      return new JValue(value);
+    }
+
+    /// <summary>
     /// Performs an implicit conversion from <see cref="Nullable{Boolean}"/> to <see cref="JToken"/>.
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
@@ -1290,7 +1375,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(short value)
     {
       return new JValue(value);
@@ -1301,7 +1386,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(ushort value)
     {
       return new JValue(value);
@@ -1372,7 +1457,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(short? value)
     {
       return new JValue(value);
@@ -1383,7 +1468,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(ushort? value)
     {
       return new JValue(value);
@@ -1394,7 +1479,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(uint? value)
     {
       return new JValue(value);
@@ -1405,7 +1490,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(ulong? value)
     {
       return new JValue(value);
@@ -1446,7 +1531,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(uint value)
     {
       return new JValue(value);
@@ -1457,7 +1542,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static implicit operator JToken(ulong value)
     {
       return new JValue(value);

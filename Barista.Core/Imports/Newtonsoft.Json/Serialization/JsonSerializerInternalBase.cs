@@ -128,11 +128,12 @@ namespace Barista.Newtonsoft.Json.Serialization
         TraceWriter.Trace(TraceLevel.Error, message, ex);
       }
 
-      if (contract != null)
+      // attribute method is non-static so don't invoke if no object
+      if (contract != null && currentObject != null)
         contract.InvokeOnError(currentObject, Serializer.Context, errorContext);
 
       if (!errorContext.Handled)
-        Serializer.OnError(new Barista.Newtonsoft.Json.Serialization.ErrorEventArgs(currentObject, errorContext));
+        Serializer.OnError(new ErrorEventArgs(currentObject, errorContext));
 
       return errorContext.Handled;
     }

@@ -85,7 +85,7 @@ namespace Barista.Newtonsoft.Json.Linq
     /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
     /// </summary>
     /// <param name="value">The value.</param>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public JValue(ulong value)
       : this(value, JTokenType.Integer)
     {
@@ -184,7 +184,7 @@ namespace Barista.Newtonsoft.Json.Linq
     }
 
     /// <summary>
-    /// Gets a value indicating whether this token has childen tokens.
+    /// Gets a value indicating whether this token has child tokens.
     /// </summary>
     /// <value>
     /// 	<c>true</c> if this token has child values; otherwise, <c>false</c>.

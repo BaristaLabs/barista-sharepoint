@@ -210,7 +210,7 @@ namespace Barista.Newtonsoft.Json
     /// </summary>
     /// <param name="value">The value to convert.</param>
     /// <returns>A JSON string representation of the <see cref="UInt16"/>.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static string ToString(ushort value)
     {
       return value.ToString(null, CultureInfo.InvariantCulture);
@@ -221,7 +221,7 @@ namespace Barista.Newtonsoft.Json
     /// </summary>
     /// <param name="value">The value to convert.</param>
     /// <returns>A JSON string representation of the <see cref="UInt32"/>.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static string ToString(uint value)
     {
       return value.ToString(null, CultureInfo.InvariantCulture);
@@ -249,7 +249,7 @@ namespace Barista.Newtonsoft.Json
     /// </summary>
     /// <param name="value">The value to convert.</param>
     /// <returns>A JSON string representation of the <see cref="UInt64"/>.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static string ToString(ulong value)
     {
       return value.ToString(null, CultureInfo.InvariantCulture);
@@ -327,7 +327,7 @@ namespace Barista.Newtonsoft.Json
     /// </summary>
     /// <param name="value">The value to convert.</param>
     /// <returns>A JSON string representation of the <see cref="SByte"/>.</returns>
-    //[CLSCompliant(false)]
+    [CLSCompliant(false)]
     public static string ToString(sbyte value)
     {
       return value.ToString(null, CultureInfo.InvariantCulture);
@@ -940,10 +940,7 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Serializes the XML node to a JSON string using formatting and omits the root object if <see>
-    ///   <cref>omitRootObject</cref>
-    /// </see>
-    ///   is <c>true</c>.
+    /// Serializes the XML node to a JSON string using formatting and omits the root object if <paramref name="omitRootObject"/> is <c>true</c>.
     /// </summary>
     /// <param name="node">The node to serialize.</param>
     /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -967,10 +964,7 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <see>
-    ///   <cref>deserializeRootElementName</cref>
-    /// </see>
-    ///   .
+    /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>.
     /// </summary>
     /// <param name="value">The JSON string.</param>
     /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
@@ -981,10 +975,8 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <see>
-    ///   <cref>deserializeRootElementName</cref>
-    /// </see>
-    ///   and writes a .NET array attribute for collections.
+    /// Deserializes the XmlNode from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>
+    /// and writes a .NET array attribute for collections.
     /// </summary>
     /// <param name="value">The JSON string.</param>
     /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
@@ -1026,10 +1018,7 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Serializes the <see cref="XNode"/> to a JSON string using formatting and omits the root object if <see>
-    ///   <cref>omitRootObject</cref>
-    /// </see>
-    ///   is <c>true</c>.
+    /// Serializes the <see cref="XNode"/> to a JSON string using formatting and omits the root object if <paramref name="omitRootObject"/> is <c>true</c>.
     /// </summary>
     /// <param name="node">The node to serialize.</param>
     /// <param name="formatting">Indicates how the output is formatted.</param>
@@ -1053,10 +1042,7 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <see>
-    ///   <cref>deserializeRootElementName</cref>
-    /// </see>
-    ///   .
+    /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>.
     /// </summary>
     /// <param name="value">The JSON string.</param>
     /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
@@ -1067,10 +1053,8 @@ namespace Barista.Newtonsoft.Json
     }
 
     /// <summary>
-    /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <see>
-    ///   <cref>deserializeRootElementName</cref>
-    /// </see>
-    ///   and writes a .NET array attribute for collections.
+    /// Deserializes the <see cref="XNode"/> from a JSON string nested in a root elment specified by <paramref name="deserializeRootElementName"/>
+    /// and writes a .NET array attribute for collections.
     /// </summary>
     /// <param name="value">The JSON string.</param>
     /// <param name="deserializeRootElementName">The name of the root element to append when deserializing.</param>
