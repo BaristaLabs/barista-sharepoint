@@ -783,6 +783,7 @@
     <Compile Include="Library\Sucralose.cs" />
     <Compile Include="Library\UserAgentInfoInstance.cs" />
     <Compile Include="Library\WebAdministrationInstance.cs" />
+    <Compile Include="ObjectInstanceConverter.cs" />
     <Compile Include="PrincipalType.cs" />
     <Compile Include="Scheduler\Schedule.cs" />
     <Compile Include="ScriptEngineFactory.cs" />

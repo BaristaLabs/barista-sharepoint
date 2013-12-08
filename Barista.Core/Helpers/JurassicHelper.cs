@@ -80,14 +80,20 @@
       if (objectInstanceConstructor != null)
       {
         var result = (T) Activator.CreateInstance(typeof (T), engine.Object.InstancePrototype);
-        JsonConvert.PopulateObject(serializedObject, result);
+        JsonConvert.PopulateObject(serializedObject, result, new JsonSerializerSettings
+        {
+          Converters = { new ObjectInstanceConverter(engine) }
+        });
 
         return result;
       }
       else
       {
         var result = (T)Activator.CreateInstance(typeof(T));
-        JsonConvert.PopulateObject(serializedObject, result);
+        JsonConvert.PopulateObject(serializedObject, result, new JsonSerializerSettings
+        {
+          Converters = { new ObjectInstanceConverter(engine) }
+        });
 
         return result;
       }
@@ -169,24 +175,6 @@
         sb.Append('"');
 
       return sb.ToString();
-    }
-
-    private class ArrayInstanceConverter : JsonConverter
-    {
-      public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-      {
-        throw new NotImplementedException();
-      }
-
-      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-      {
-        throw new NotImplementedException();
-      }
-
-      public override bool CanConvert(Type objectType)
-      {
-        return typeof (ArrayInstance).IsAssignableFrom(objectType);
-      }
     }
   }
 }
