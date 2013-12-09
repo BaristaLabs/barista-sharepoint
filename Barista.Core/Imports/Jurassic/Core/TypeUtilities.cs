@@ -22,7 +22,7 @@
         return "object";
       if (obj is bool)
         return "boolean";
-      if (obj is double || obj is int || obj is uint)
+      if (obj is double || obj is SByte || obj is Int16 || obj is Int32 || obj is Int64 || obj is byte || obj is UInt16 || obj is UInt32 || obj is UInt64)
         return "number";
       if (obj is string || obj is ConcatenatedString)
         return "string";
@@ -61,7 +61,7 @@
     /// otherwise. </returns>
     public static bool IsNumeric(object obj)
     {
-      return obj is double || obj is int || obj is uint;
+      return obj is double || obj is SByte || obj is Int16 || obj is Int32 || obj is Int64 || obj is byte || obj is UInt16 || obj is UInt32 || obj is UInt64;
     }
 
     /// <summary>

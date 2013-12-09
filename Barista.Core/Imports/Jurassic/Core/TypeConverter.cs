@@ -91,10 +91,22 @@
     {
       if (value is double)
         return (double)value;
-      if (value is int)
-        return (int)value;
-      if (value is uint)
-        return (uint)value;
+      if (value is SByte)
+        return (SByte) value;
+      if (value is Int16)
+        return (Int16) value;
+      if (value is Int32)
+        return (Int32)value;
+      if (value is Int64)
+        return (Int64) value;
+      if (value is Byte)
+        return (Byte) value;
+      if (value is UInt16)
+        return (UInt16) value;
+      if (value is UInt32)
+        return (UInt32)value;
+      if (value is UInt64)
+        return (UInt64)value;
       if (value == null || value == Undefined.Value)
         return double.NaN;
       if (value == Null.Value)
@@ -262,8 +274,9 @@
     /// <returns> A 32-bit integer value. </returns>
     public static int ToInt32(object value)
     {
-      if (value is int)
-        return (int)value;
+      if (value is SByte || value is Int16 || value is Int32 || value is Int64 || value is byte || value is UInt16 ||
+          value is UInt32 || value is UInt64)
+        return System.Convert.ToInt32(value);
       return (int)(uint)ToNumber(value);
     }
 

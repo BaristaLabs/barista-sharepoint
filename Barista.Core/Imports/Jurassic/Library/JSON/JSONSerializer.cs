@@ -187,15 +187,51 @@
         return;
       }
 
-      if (value is int)
+      if (value is SByte)
       {
-        result.Append(((int)value).ToString(CultureInfo.InvariantCulture));
+        result.Append(((SByte)value).ToString(CultureInfo.InvariantCulture));
         return;
       }
 
-      if (value is uint)
+      if (value is Int16)
       {
-        result.Append(((uint)value).ToString(CultureInfo.InvariantCulture));
+        result.Append(((Int16)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is Int32)
+      {
+        result.Append(((Int32)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if ((value is Int64))
+      {
+        result.Append(((Int64)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is Byte)
+      {
+        result.Append(((Byte)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is UInt16)
+      {
+        result.Append(((UInt16)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is UInt32)
+      {
+        result.Append(((UInt32)value).ToString(CultureInfo.InvariantCulture));
+        return;
+      }
+
+      if (value is UInt64)
+      {
+        result.Append(((UInt64)value).ToString(CultureInfo.InvariantCulture));
         return;
       }
 

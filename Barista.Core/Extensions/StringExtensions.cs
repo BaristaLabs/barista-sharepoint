@@ -363,10 +363,59 @@
         return true;
       }
 
-      if (value is int)
+      if (value is SByte)
       {
-        var intValue = (int) value;
-        enumValue = (T)System.Enum.ToObject(typeof (T), intValue);
+        var val = (SByte) value;
+        enumValue = (T)System.Enum.ToObject(typeof (T), val);
+        return true;
+      }
+
+      if (value is Int16)
+      {
+        var val = (Int16)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is Int32)
+      {
+        var val = (Int32)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is Int64)
+      {
+        var val = (Int64)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is Byte)
+      {
+        var val = (Byte)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is UInt16)
+      {
+        var val = (UInt16)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is UInt32)
+      {
+        var val = (UInt32)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
+        return true;
+      }
+
+      if (value is UInt64)
+      {
+        var val = (UInt64)value;
+        enumValue = (T)System.Enum.ToObject(typeof(T), val);
         return true;
       }
 
