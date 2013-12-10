@@ -1,6 +1,7 @@
 ﻿namespace Barista.Jurassic
 {
   using System;
+  using System.Runtime.Serialization;
 
   /// <summary>
   /// Represents the JavaScript "undefined" type and provides the one and only instance of that type.
@@ -12,6 +13,15 @@
     /// Creates a new Undefined instance.
     /// </summary>
     private Undefined()
+    {
+    }
+
+    /// <summary>
+    /// Creates a new Undefined instance -- used for serialization.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="context"></param>
+    private Undefined(SerializationInfo info, StreamingContext context)
     {
     }
 

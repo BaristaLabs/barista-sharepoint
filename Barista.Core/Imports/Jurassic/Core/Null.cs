@@ -1,6 +1,7 @@
 ﻿namespace Barista.Jurassic
 {
   using System;
+  using System.Runtime.Serialization;
 
   /// <summary>
   /// Represents the JavaScript "null" type and provides the one and only instance of that type.
@@ -12,6 +13,15 @@
     /// Creates a new Null instance.
     /// </summary>
     private Null()
+    {
+    }
+
+    /// <summary>
+    /// Creates a new Null instance -- used for Serialization.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="context"></param>
+    private Null(SerializationInfo info, StreamingContext context)
     {
     }
 
