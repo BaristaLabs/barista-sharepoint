@@ -22,7 +22,7 @@ foreach($server in $servers)
                 try
                 {
                     $restartServiceOutput="";
-                    Restart-Service -InputObject $serviceInstance;
+					Restart-Service -InputObject $serviceInstance -erroraction 'silentlycontinue'
                     Write-Host " Done!" -ForegroundColor Green;
                 }
                 catch
