@@ -5,6 +5,7 @@
   using System.Linq;
   using Barista.Extensions;
   using Barista.Jurassic;
+  using Barista.Jurassic.Compiler;
   using Barista.Jurassic.Library;
   using Barista.Library;
 
@@ -92,6 +93,9 @@
           engine.SetGlobalValue(property.Name, TypeConverter.ToObject(engine, property.Value));
         }
 
+        //Think about creating a new scope and extending evaluate to execute the script in the new scope.
+        //var scope = DeclarativeScope.CreateRuntimeScope(null, null);
+       
         engine.Evaluate("include('" + scriptReference + "');");
         //baristaInstance.Include(engine, scriptReference); // TODO: Include needs to be fixed to get the web-context url.
 
