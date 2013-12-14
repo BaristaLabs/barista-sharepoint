@@ -1,10 +1,12 @@
 ﻿namespace Barista.Bundles
 {
+  using System;
   using System.Collections.Generic;
   using System.Linq;
   using Barista.Extensions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
+  using Barista.Library;
 
   public class ScriptBundle : IBundle
   {
@@ -46,13 +48,16 @@
 
     public object InstallBundle(Jurassic.ScriptEngine engine)
     {
+      var baristaInstance = engine.GetGlobalValue("barista") as BaristaGlobal;
+      if (baristaInstance == null)
+        throw new InvalidOperationException("Barista Global bundle could not be obtained.");
+
       var dependencyResultObj = engine.Object.Construct();
-      var resultArray = engine.Array.Construct();
 
       //Require all dependencies..
       foreach (var dependency in m_dependencies)
       {
-        var result = engine.Evaluate("require('" + dependency.Key + "');");
+        var result = baristaInstance.Common.Require(dependency.Key);
         dependencyResultObj.SetPropertyValue(dependency.Value, result, false);
       }
 
@@ -74,13 +79,35 @@
       //this promotes loose coupling between the script bundle and the include.
       foreach (var scriptReference in m_scriptReferences)
       {
-        var result = engine.Evaluate("include('" + scriptReference + "');");
-        ArrayInstance.Push(resultArray, result);
+        //Inject dependencies as globals, first capturing current state.
+        var tempVals = new Dictionary<string, object>();
+        foreach (var property in dependencyResultObj.Properties)
+        {
+          if (property.Value == Undefined.Value || property.Value == Null.Value || property.Value == null)
+            continue;
+
+          if (engine.HasGlobalValue(property.Name))
+            tempVals.Add(property.Name, engine.GetGlobalValue(property.Name));
+          
+          engine.SetGlobalValue(property.Name, TypeConverter.ToObject(engine, property.Value));
+        }
+
+        engine.Evaluate("include('" + scriptReference + "');");
+        //baristaInstance.Include(engine, scriptReference); // TODO: Include needs to be fixed to get the web-context url.
+
+        foreach (var property in dependencyResultObj.Properties)
+        {
+          if (property.Value == Undefined.Value || property.Value == Null.Value || property.Value == null)
+            continue;
+
+          if (tempVals.ContainsKey(property.Name))
+            engine.SetGlobalValue(property.Name, TypeConverter.ToObject(engine, tempVals[property.Name]));
+          else
+            engine.Global.Delete(property.Name, false);
+        }
       }
 
-      return resultArray.Length == 1
-        ? resultArray[0]
-        : resultArray;
+      return null;
     }
 
     public void AddDependency(string dependencyName, string diName)

@@ -69,9 +69,39 @@
     [JSFunction(Name = "include")]
     public void Include(string scriptPath)
     {
+      //TODO: Um.. It's wierd accessing httpcontext here.. but BaristaContext.current will be null if sharepoint...
       var path = HttpContext.Current.Request.MapPath(scriptPath);
-
       var source = new FileScriptSource(path, System.Text.Encoding.Unicode);
+
+      this.Engine.Execute(source);
+    }
+
+    /// <summary>
+    /// Override of include intended to be used from .net
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="scriptPath"></param>
+    public void Include(ScriptEngine engine, string scriptPath)
+    {
+      if (this.Common.RegisteredBundles.ContainsKey("Web"))
+      {
+        var bundle = this.Common.RegisteredBundles["Web"];
+        WebInstanceBase webInstance;
+
+        if (this.Common.InstalledBundles.ContainsKey(bundle))
+          webInstance = this.Common.InstalledBundles[bundle] as WebInstanceBase;
+        else
+          webInstance = bundle.InstallBundle(engine) as WebInstanceBase;
+
+        if (webInstance != null)
+        {
+          //Hmm.. this works too well, it gets the file path.
+          var req = new HttpRequest(null, webInstance.Request.Request.Url.ToString(), null);
+          scriptPath = req.MapPath(scriptPath);
+        }
+      }
+
+      var source = new FileScriptSource(scriptPath, System.Text.Encoding.Unicode);
 
       this.Engine.Execute(source);
     }
@@ -163,7 +193,7 @@
       var jsDocAttributes = type.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
       foreach (var attribute in jsDocAttributes)
       {
-        string tag = "Summary";
+        string tag = "summary";
         if (String.IsNullOrEmpty(attribute.Tag) == false)
           tag = attribute.Tag;
 
@@ -230,7 +260,7 @@
       var doc = engine.Object.Construct();
       foreach (var attribute in jsDocAttributes)
       {
-        var tag = "Summary";
+        var tag = "summary";
         if (String.IsNullOrEmpty(attribute.Tag) == false)
           tag = attribute.Tag;
 
@@ -250,7 +280,7 @@
 
           foreach (var attribute in propertyJSDocAttributes)
           {
-            var tag = "Param";
+            var tag = "param";
             if (String.IsNullOrEmpty(attribute.Tag) == false)
               tag = attribute.Tag;
 
@@ -284,7 +314,7 @@
 
     public static string GetTypeString(Type type)
     {
-      string result = type.ToString();
+      var result = type.ToString();
       switch (result)
       {
         case "Jurassic.Library.DateInstance":

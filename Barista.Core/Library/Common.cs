@@ -25,6 +25,22 @@
       this.PopulateFunctions();
     }
 
+    public IDictionary<string, IBundle> RegisteredBundles
+    {
+      get
+      {
+        return m_registeredBundles;
+      }
+    }
+
+    public IDictionary<IBundle, object> InstalledBundles
+    {
+      get
+      {
+        return m_installedBundles;
+      }
+    }
+
     /// <summary>
     /// Installs the current bundle within the script engine, optionally returning a result.
     /// </summary>
