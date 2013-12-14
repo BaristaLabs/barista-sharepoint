@@ -169,8 +169,15 @@
       if (String.IsNullOrEmpty(stringPath))
         throw new JavaScriptException(this.Engine, "Error", "The path to create must be specified.");
 
-      var folder = m_repository.CreateFolder(stringPath);
-      return new FolderInstance(this.Engine, folder);
+      try
+      {
+        var folder = m_repository.CreateFolder(stringPath);
+        return new FolderInstance(this.Engine, folder);
+      }
+      catch (Exception ex)
+      {
+        throw new JavaScriptException(this.Engine, "Error", ex.Message);
+      }
     }
 
     [JSFunction(Name="deleteFolder")]
@@ -255,8 +262,15 @@
       else
         stringData = TypeConverter.ToString(data);
 
-      var result = m_repository.CreateEntity(stringPath, stringTitle, stringEntityNamespace, stringData);
-      return new EntityInstance(this.Engine, result);
+      try
+      {
+        var result = m_repository.CreateEntity(stringPath, stringTitle, stringEntityNamespace, stringData);
+        return new EntityInstance(this.Engine, result);
+      }
+      catch (EntityExistsException)
+      {
+        throw new JavaScriptException(this.Engine, "Error", "An entity with the specified title already exists.");
+      }
     }
 
     [JSFunction(Name = "cloneEntity")]
@@ -500,7 +514,15 @@
 
       var id = ConvertFromJsObjectToGuid(entityId);
 
-      return new EntityPartInstance(this.Engine, m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData));
+      try
+      {
+        var result = m_repository.CreateEntityPart(id, stringPartName, stringCategory, stringData);
+        return new EntityPartInstance(this.Engine, result);
+      }
+      catch (EntityPartExistsException)
+      {
+        throw new JavaScriptException(this.Engine, "Error", "An entity part with the specified name already exists.");
+      }
     }
 
     [JSFunction(Name = "createOrUpdateEntityPart")]
@@ -548,14 +570,20 @@
     }
 
     [JSFunction(Name = "getEntityPart")]
-    public object GetEntityPart(object entityId, string partName)
+    [JSDoc("Gets the entity part with the specified partName. Path argument is optional.")]
+    public object GetEntityPart(object entityId, string path, object partName)
     {
       if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
         throw new JavaScriptException(this.Engine, "Error", "Either an entity id or an entity must be specified.");
 
       var id = ConvertFromJsObjectToGuid(entityId);
 
-      var result = m_repository.GetEntityPart(id, partName);
+      EntityPart result;
+      if (partName == Undefined.Value || partName == Null.Value || partName == null)
+        //Use the path argument as the part name.
+        result = m_repository.GetEntityPart(id, path);
+      else
+        result = m_repository.GetEntityPart(id, path, TypeConverter.ToString(partName));
 
       if (result == null)
         return Null.Value;

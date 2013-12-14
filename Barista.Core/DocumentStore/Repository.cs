@@ -444,6 +444,19 @@
       return documentStore.GetEntityPart(this.Configuration.ContainerTitle, entityId, partName);
     }
 
+    /// <summary>
+    /// Returns the entity part associated with the specified entity in the specified path.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="partName"></param>
+    /// <returns></returns>
+    public EntityPart GetEntityPart(Guid entityId, string path, string partName)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IEntityPartFolderCapableDocumentStore>();
+
+      return documentStore.GetEntityPart(this.Configuration.ContainerTitle, path, entityId, partName);
+    }
+
 
     public EntityPart UpdateEntityPart(Guid entityId, string partName, string category)
     {

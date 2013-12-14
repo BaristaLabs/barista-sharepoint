@@ -4,13 +4,12 @@
   using System.Security.AccessControl;
   using System.Security.Principal;
   using System.Threading;
-  using Microsoft.SharePoint;
 
   public static class SPEntityMutexManager
   {
     public static Mutex GrabMutex(string documentStoreUrl, Guid entityId)
     {
-      var mutexName = "BaristaEntityMutex_" + documentStoreUrl + entityId.ToString();
+      var mutexName = "BaristaEntityMutex_" + documentStoreUrl + entityId;
       try
       {
         return Mutex.OpenExisting(mutexName);

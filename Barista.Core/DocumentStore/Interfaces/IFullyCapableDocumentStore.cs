@@ -9,6 +9,7 @@
     ICommentCapableDocumentStore,
     IFolderCapableDocumentStore, 
     IEntityPartCapableDocumentStore, 
+    IEntityPartFolderCapableDocumentStore,
     IMetadataCapableDocumentStore,
     IPermissionsCapableDocumentStore,
     IVersionHistoryCapableDocumentStore,

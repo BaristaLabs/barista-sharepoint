@@ -47,14 +47,23 @@
       }
     }
 
-    public bool UpdateEntityPart(string containerTitle, string path, Guid entityId, EntityPart entityPart)
+    public EntityPart UpdateEntityPart(string containerTitle, string path, Guid entityId, string partName, string category)
     {
       var packagePath = GetEntityPackagePath(containerTitle, path, entityId);
 
       using (var entityPackage = EntityPackage.Open(packagePath))
       {
-        entityPackage.UpdateEntityPart(entityPart);
-        return true;
+        return entityPackage.UpdateEntityPart(partName, category);
+      }
+    }
+
+    public EntityPart UpdateEntityPartData(string containerTitle, string path, Guid entityId, string partName, string eTag, string data)
+    {
+      var packagePath = GetEntityPackagePath(containerTitle, path, entityId);
+
+      using (var entityPackage = EntityPackage.Open(packagePath))
+      {
+        return entityPackage.UpdateEntityPartData(partName, eTag, data);
       }
     }
 

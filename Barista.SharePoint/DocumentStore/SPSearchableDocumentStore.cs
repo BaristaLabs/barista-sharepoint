@@ -40,24 +40,24 @@
       return base.UpdateEntityData(containerTitle, entityId, eTag, data);
     }
 
-    public override Barista.DocumentStore.EntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string category, string data)
+    public override Barista.DocumentStore.EntityPart CreateEntityPart(string containerTitle, string path, Guid entityId, string partName, string category, string data)
     {
-      return base.CreateEntityPart(containerTitle, entityId, partName, category, data);
+      return base.CreateEntityPart(containerTitle, path, entityId, partName, category, data);
     }
 
-    public override Barista.DocumentStore.EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
+    public override Barista.DocumentStore.EntityPart UpdateEntityPart(string containerTitle, string path, Guid entityId, string partName, string category)
     {
-      return base.UpdateEntityPart(containerTitle, entityId, partName, category);
+      return base.UpdateEntityPart(containerTitle, path, entityId, partName, category);
     }
 
-    public override Barista.DocumentStore.EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
+    public override Barista.DocumentStore.EntityPart UpdateEntityPartData(string containerTitle, string path, Guid entityId, string partName, string eTag, string data)
     {
-      return base.UpdateEntityPartData(containerTitle, entityId, partName, eTag, data);
+      return base.UpdateEntityPartData(containerTitle, path, entityId, partName, eTag, data);
     }
 
-    public override bool DeleteEntityPart(string containerTitle, Guid entityId, string partName)
+    public override bool DeleteEntityPart(string containerTitle, string path, Guid entityId, string partName)
     {
-      return base.DeleteEntityPart(containerTitle, entityId, partName);
+      return base.DeleteEntityPart(containerTitle, path, entityId, partName);
     }
   }
 }

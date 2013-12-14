@@ -124,28 +124,21 @@
     /// <summary>
     /// Updates the entity part with the specified name.
     /// </summary>
-    /// <param name="entityPart"></param>
+    /// <param name="partName"></param>
+    /// <param name="category"></param>
     /// <returns></returns>
-    public EntityPart UpdateEntityPart(EntityPart entityPart)
+    public EntityPart UpdateEntityPart(string partName, string category)
     {
-      var entityPartPackagePart = GetEntityPartPackagePart(entityPart.Name);
-
-      //Copy the data to the entity part 
-      using (var fileStream = new StringStream(entityPart.Data))
-      {
-        fileStream.CopyTo(entityPartPackagePart.GetStream());
-      }
-
       //Update the metadata part.
-      var entityPartMetadata = GetEntityPartMetadata(entityPart.Name);
+      var entityPartMetadata = GetEntityPartMetadata(partName);
 
-      entityPartMetadata.Category = entityPart.Category;
+      entityPartMetadata.Category = category;
 
       entityPartMetadata.Modified = DateTime.Now;
       entityPartMetadata.ModifiedBy = User.GetCurrentUser().LoginName;
       entityPartMetadata.Etag.IncrementBy(1);
 
-      var entityPartMetadataPart = GetEntityPartMetadataPackagePart(entityPart.Name);
+      var entityPartMetadataPart = GetEntityPartMetadataPackagePart(partName);
       var metadata = JsonConvert.SerializeObject(entityPartMetadata, new EtagJsonConverter());
 
       //Copy the metadata to the entity part metadata part.
@@ -154,7 +147,38 @@
         fileStream.CopyTo(entityPartMetadataPart.GetStream());
       }
 
-      return GetEntityPart(entityPart.Name, true);
+      return GetEntityPart(partName, true);
+    }
+
+    public EntityPart UpdateEntityPartData(string partName, string eTag, string newData)
+    {
+      //TODO: Check e-tag
+
+      var entityPart = GetEntityPartPackagePart(partName);
+
+      //Copy the data to the entity part 
+      using (var fileStream = new StringStream(newData))
+      {
+        fileStream.CopyTo(entityPart.GetStream());
+      }
+
+      //Update the metadata part.
+      var entityPartMetadata = GetEntityPartMetadata(partName);
+
+      entityPartMetadata.Modified = DateTime.Now;
+      entityPartMetadata.ModifiedBy = User.GetCurrentUser().LoginName;
+      entityPartMetadata.Etag.IncrementBy(1);
+
+      var entityPartMetadataPart = GetEntityPartMetadataPackagePart(partName);
+      var metadata = JsonConvert.SerializeObject(entityPartMetadata, new EtagJsonConverter());
+
+      //Copy the metadata to the entity part metadata part.
+      using (var fileStream = new StringStream(metadata))
+      {
+        fileStream.CopyTo(entityPartMetadataPart.GetStream());
+      }
+
+      return GetEntityPart(partName, true);
     }
 
     #region Private Methods

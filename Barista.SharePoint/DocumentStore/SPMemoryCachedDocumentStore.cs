@@ -127,7 +127,7 @@
       }
     }
 
-    public override IList<EntityPart> ListEntityParts(string containerTitle, Guid entityId)
+    public override IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (SPSite site = new SPSite(this.DocumentStoreUrl))
@@ -138,7 +138,7 @@
 
           //If the contents hash is not set, fall back on just retrieving the entity.
           if (String.IsNullOrEmpty(contentsHash))
-            return base.ListEntityParts(containerTitle, entityId);
+            return base.ListEntityParts(containerTitle, path, entityId);
 
           //If we found it in the cache, return the entity value.
           var cachedValue = HttpRuntime.Cache[EntityContentsCachePrefix + "_" + entityId + "_" + contentsHash];

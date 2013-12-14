@@ -38,6 +38,15 @@
     EntityPart GetEntityPart(string containerTitle, string path, Guid entityId, string partName);
 
     /// <summary>
+    /// Lists the entity parts associated with the specified entity in the specified container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path"></param>
+    /// <param name="entityId">The entity id.</param>
+    /// <returns></returns>
+    IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId);
+
+    /// <summary>
     /// Renames the entity part.
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
@@ -54,17 +63,21 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <param name="entityId">The entity id.</param>
-    /// <param name="entityPart">The entity part.</param>
+    /// <param name="partName"></param>
+    /// <param name="category"></param>
     /// <returns></returns>
-    bool UpdateEntityPart(string containerTitle, string path, Guid entityId, EntityPart entityPart);
+    EntityPart UpdateEntityPart(string containerTitle, string path, Guid entityId, string partName, string category);
 
     /// <summary>
-    /// Lists the entity parts associated with the specified entity in the specified container.
+    /// Updates the data portion of the specified entity part.
     /// </summary>
-    /// <param name="containerTitle">The container title.</param>
+    /// <param name="containerTitle"></param>
     /// <param name="path"></param>
-    /// <param name="entityId">The entity id.</param>
+    /// <param name="entityId"></param>
+    /// <param name="partName"></param>
+    /// <param name="eTag"></param>
+    /// <param name="data"></param>
     /// <returns></returns>
-    IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId);
+    EntityPart UpdateEntityPartData(string containerTitle, string path, Guid entityId, string partName, string eTag, string data);
   }
 }

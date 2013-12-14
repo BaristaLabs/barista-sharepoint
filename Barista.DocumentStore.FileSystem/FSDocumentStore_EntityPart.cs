@@ -36,10 +36,7 @@
 
       using (var entityPackage = EntityPackage.Open(packagePath))
       {
-        var entityPart = entityPackage.GetEntityPart(partName, false);
-        entityPart.Category = category;
-
-        return entityPackage.UpdateEntityPart(entityPart);
+        return entityPackage.UpdateEntityPart(partName, category);
       }
     }
 
@@ -49,11 +46,7 @@
 
       using (var entityPackage = EntityPackage.Open(packagePath))
       {
-        var entityPart = entityPackage.GetEntityPart(partName, false);
-        entityPart.ETag = eTag;
-        entityPart.Data = data;
-
-        return entityPackage.UpdateEntityPart(entityPart);
+        return entityPackage.UpdateEntityPartData(partName, eTag, data);
       }
     }
   }

@@ -222,7 +222,9 @@
     <Compile Include="Configuration\IndexDefinitionCollection.cs" />
     <Compile Include="Configuration\IndexDefinition.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
+    <Compile Include="DocumentStore\EntityExistsException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />
+    <Compile Include="DocumentStore\EntityPartExistsException.cs" />
     <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
     <Compile Include="DocumentStore\Library\CommentInstance.cs" />
     <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
