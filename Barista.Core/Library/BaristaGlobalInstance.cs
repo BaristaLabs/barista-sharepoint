@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
   using System.Web;
+  using Barista.Jurassic.Compiler;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -10,14 +11,17 @@
   [Serializable]
   public class BaristaGlobal : ObjectInstance
   {
-    public BaristaGlobal(ObjectInstance prototype)
+    public BaristaGlobal(ScriptEngine engine)
+      : base(engine)
+    {
+      this.PopulateFunctions();
+    }
+
+    protected BaristaGlobal(ObjectInstance prototype)
       : base(prototype)
     {
       this.Common = new Common(prototype);
       this.Environment = new EnvironmentInstance(prototype);
-
-      this.PopulateFields();
-      this.PopulateFunctions();
     }
 
     [JSProperty(Name = "common")]
@@ -67,43 +71,31 @@
     }
 
     [JSFunction(Name = "include")]
-    public void Include(string scriptPath)
+    public virtual object Include(string scriptPath)
     {
-      //TODO: Um.. It's wierd accessing httpcontext here.. but BaristaContext.current will be null if sharepoint...
-      var path = HttpContext.Current.Request.MapPath(scriptPath);
-      var source = new FileScriptSource(path, System.Text.Encoding.Unicode);
+      scriptPath = HttpContext.Current.Request.MapPath(scriptPath);
+      var source = new FileScriptSource(scriptPath, System.Text.Encoding.Unicode);
 
-      this.Engine.Execute(source);
+      return this.Engine.Evaluate(source);
     }
 
     /// <summary>
     /// Override of include intended to be used from .net
     /// </summary>
-    /// <param name="engine"></param>
-    /// <param name="scriptPath"></param>
-    public void Include(ScriptEngine engine, string scriptPath)
+    /// <param name="scriptPath">The path to the code to execute.</param>
+    /// <param name="scope">The containing scope.</param>
+    /// <param name="thisObject">The value of the "this" object.</param>
+    /// <param name="strictMode">Indicates if the statement is being called under strict mode code.</param>
+    /// <returns></returns>
+    public virtual object Include(string scriptPath, Scope scope, object thisObject, bool strictMode)
     {
-      if (this.Common.RegisteredBundles.ContainsKey("Web"))
-      {
-        var bundle = this.Common.RegisteredBundles["Web"];
-        WebInstanceBase webInstance;
-
-        if (this.Common.InstalledBundles.ContainsKey(bundle))
-          webInstance = this.Common.InstalledBundles[bundle] as WebInstanceBase;
-        else
-          webInstance = bundle.InstallBundle(engine) as WebInstanceBase;
-
-        if (webInstance != null)
-        {
-          //Hmm.. this works too well, it gets the file path.
-          var req = new HttpRequest(null, webInstance.Request.Request.Url.ToString(), null);
-          scriptPath = req.MapPath(scriptPath);
-        }
-      }
-
+      scriptPath = HttpContext.Current.Request.MapPath(scriptPath);
       var source = new FileScriptSource(scriptPath, System.Text.Encoding.Unicode);
 
-      this.Engine.Execute(source);
+      var sourceReader = source.GetReader();
+      var code = sourceReader.ReadToEnd();
+
+      return this.Engine.Eval(code, scope, thisObject, strictMode);
     }
 
     [JSFunction(Name = "isArray")]
@@ -185,7 +177,7 @@
 
     #region Members
 
-    private static ObjectInstance GetObjectInfo(ScriptEngine engine, ObjectInstance obj)
+    protected static ObjectInstance GetObjectInfo(ScriptEngine engine, ObjectInstance obj)
     {
       var result = engine.Object.Construct();
       var type = obj.GetType();
@@ -253,7 +245,7 @@
       return result;
     }
 
-    private static ObjectInstance GetMemberDocumentationObject(ScriptEngine engine, MemberInfo member)
+    protected static ObjectInstance GetMemberDocumentationObject(ScriptEngine engine, MemberInfo member)
     {
       var jsDocAttributes = member.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
 
@@ -312,7 +304,7 @@
       return doc;
     }
 
-    public static string GetTypeString(Type type)
+    protected static string GetTypeString(Type type)
     {
       var result = type.ToString();
       switch (result)

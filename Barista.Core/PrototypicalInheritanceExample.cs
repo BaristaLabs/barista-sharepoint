@@ -30,9 +30,14 @@ namespace Barista
       this.PopulateFunctions();
     }
 
+    /// <summary>
+    /// Called by the derived classes.
+    /// </summary>
+    /// <param name="prototype"></param>
     protected CustomObjectInstance(ObjectInstance prototype)
       : base(prototype)
     {
+      //initialization code here.
     }
 
     [JSProperty(Name = "a")]

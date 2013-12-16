@@ -49,7 +49,7 @@
         };
 
         //Register Bundles.
-        var instance = new BaristaGlobal(engine.Object.InstancePrototype);
+        var instance = new BaristaGlobal(engine);
 
         if (webBundle != null)
           instance.Common.RegisterBundle(webBundle);

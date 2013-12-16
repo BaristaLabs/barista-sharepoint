@@ -965,7 +965,7 @@
     /// strict mode code. </param>
     /// <returns> The value of the last statement that was executed, or <c>undefined</c> if
     /// there were no executed statements. </returns>
-    internal object Eval(string code, Compiler.Scope scope, object thisObject, bool strictMode)
+    public object Eval(string code, Compiler.Scope scope, object thisObject, bool strictMode)
     {
       // Check if the cache contains the eval already.
       //var key = new EvalCacheKey() { Code = code, Scope = scope, StrictMode = strictMode };

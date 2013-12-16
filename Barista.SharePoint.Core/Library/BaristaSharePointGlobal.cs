@@ -1,5 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
+  using System.Reflection;
+  using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
   using System;
@@ -8,25 +10,34 @@
   using System.Web.Caching;
 
   [Serializable]
-  public class BaristaSharePointGlobal : ObjectInstance
+  public class BaristaSharePointGlobal : BaristaGlobal
   {
-    public BaristaSharePointGlobal(ObjectInstance prototype)
-      : base(prototype)
+    public BaristaSharePointGlobal(ScriptEngine engine)
+      : base(new BaristaGlobal(engine))
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
     }
 
     [JSFunction(Name = "include")]
-    public void Include(string scriptUrl)
+    public override object Include(string scriptUrl)
     {
       var source = new SPFileScriptSource(this.Engine, scriptUrl);
 
-      this.Engine.Execute(source);
+      return this.Engine.Evaluate(source);
+    }
+
+    public override object Include(string scriptUrl, Jurassic.Compiler.Scope scope, object thisObject, bool strictMode)
+    {
+      var source = new SPFileScriptSource(this.Engine, scriptUrl);
+
+      var sourceReader = source.GetReader();
+      var code = sourceReader.ReadToEnd();
+
+      return this.Engine.Eval(code, scope, thisObject, strictMode);
     }
 
     [JSFunction(Name = "isCurrentInstanceSaved")]
-    public static bool IsCurrentInstanceStored()
+    public bool IsCurrentInstanceStored()
     {
       var result = false;
 
@@ -41,7 +52,7 @@
     }
 
     [JSFunction(Name = "clearCurrentInstance")]
-    public static bool ClearCurrentInstance()
+    public bool ClearCurrentInstance()
     {
       bool result = true;
       switch (SPBaristaContext.Current.Request.InstanceMode)
@@ -176,7 +187,7 @@
       return engine;
     }
 
-    internal static bool RemoveScriptEngineInstanceFromSession(string instanceName)
+    public static bool RemoveScriptEngineInstanceFromSession(string instanceName)
     {
       if (HttpContext.Current == null || HttpContext.Current.Session == null)
         throw new InvalidOperationException("When using PerSession instance mode, a valid Http Context and Session must be available.");

@@ -120,7 +120,7 @@
       var engine = new ScriptEngine();
 
       //Register Bundles.
-      var instance = new BaristaGlobal(engine.Object.InstancePrototype);
+      var instance = new BaristaGlobal(engine);
 
       instance.Common.RegisterBundle(new StringBundle());
       instance.Common.RegisterBundle(new SugarBundle());

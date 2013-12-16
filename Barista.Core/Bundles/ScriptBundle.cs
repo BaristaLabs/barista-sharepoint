@@ -78,40 +78,29 @@
 
       //Use the implemented "include" function to include the scripts.
       //this promotes loose coupling between the script bundle and the include.
+      var variableNames = dependencyResultObj.Properties.Select(pn => pn.Name).ToArray();
+      var resultArray = engine.Array.Construct();
+
       foreach (var scriptReference in m_scriptReferences)
       {
-        //Inject dependencies as globals, first capturing current state.
-        var tempVals = new Dictionary<string, object>();
+        //Create a new scope, and eval the script within the new scope.
+        var scope = DeclarativeScope.CreateRuntimeScope(engine.CreateGlobalScope(), variableNames);
         foreach (var property in dependencyResultObj.Properties)
         {
           if (property.Value == Undefined.Value || property.Value == Null.Value || property.Value == null)
             continue;
 
-          if (engine.HasGlobalValue(property.Name))
-            tempVals.Add(property.Name, engine.GetGlobalValue(property.Name));
-          
-          engine.SetGlobalValue(property.Name, TypeConverter.ToObject(engine, property.Value));
+          scope.SetValue(property.Name, property.Value);
         }
 
-        //Think about creating a new scope and extending evaluate to execute the script in the new scope.
-        //var scope = DeclarativeScope.CreateRuntimeScope(null, null);
-       
-        engine.Evaluate("include('" + scriptReference + "');");
-        //baristaInstance.Include(engine, scriptReference); // TODO: Include needs to be fixed to get the web-context url.
+        var result = baristaInstance.Include(scriptReference, scope, engine.Global, engine.ForceStrictMode);
 
-        foreach (var property in dependencyResultObj.Properties)
-        {
-          if (property.Value == Undefined.Value || property.Value == Null.Value || property.Value == null)
-            continue;
-
-          if (tempVals.ContainsKey(property.Name))
-            engine.SetGlobalValue(property.Name, TypeConverter.ToObject(engine, tempVals[property.Name]));
-          else
-            engine.Global.Delete(property.Name, false);
-        }
+        ArrayInstance.Push(resultArray, result);
       }
 
-      return null;
+      return resultArray.Length == 1
+        ? resultArray[0]
+        : resultArray;
     }
 
     public void AddDependency(string dependencyName, string diName)

@@ -53,7 +53,7 @@
         };
 
         //Register Bundles.
-        var instance = new BaristaGlobal(engine.Object.InstancePrototype);
+        var instance = new BaristaSharePointGlobal(engine);
 
         if (webBundle != null)
           instance.Common.RegisterBundle(webBundle);
@@ -87,7 +87,6 @@
 
         //Global Types
         engine.SetGlobalValue("barista", instance);
-        instance.SetPropertyValue("SharePoint", new BaristaSharePointGlobal(engine.Object.InstancePrototype), true);
 
         //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
@@ -118,7 +117,7 @@
 var require = function(name) { return barista.common.require(name); };
 var listBundles = function() { return barista.common.listBundles(); };
 var define = function() { return barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3]); };
-var include = function(scriptUrl) { return barista.SharePoint.include(scriptUrl); };");
+var include = function(scriptUrl) { return barista.include(scriptUrl); };");
 
         //Execute any instance initialization code.
         if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCode) == false)
