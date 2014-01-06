@@ -884,7 +884,7 @@
     <Compile Include="Library\AjaxSettingsInstance.cs" />
     <Compile Include="Library\Base64EncodedByteArrayInstance.cs" />
     <Compile Include="Library\DeferredInstance.cs" />
-    <Compile Include="Library\EntityFilterCriteriaInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityFilterCriteriaInstance.cs" />
     <Compile Include="Library\FileSystemInstance.cs" />
     <Compile Include="Library\GuidInstance.cs" />
     <Compile Include="Library\HttpRequestInstance.cs" />

@@ -33,6 +33,14 @@
       set { EntityFilterCriteria.Path = value; }
     }
 
+    [JSProperty(Name = "includeData")]
+    [JsonProperty("includeData")]
+    public bool IncludeData
+    {
+      get { return EntityFilterCriteria.IncludeData; }
+      set { EntityFilterCriteria.IncludeData = value; }
+    }
+
     [JSProperty(Name = "namespace")]
     [JsonProperty("namespace")]
     public string Namespace

@@ -1290,6 +1290,11 @@
           {
             var currentUser = web.AllUsers[CurrentUserLoginName];
             importedDocSet = DocumentSet.Import(archiveData, entityId.ToString(), folder, docEntityContentTypeId, properties, currentUser);
+            
+            //Update with the specified id.
+            importedDocSet.Item[SPBuiltInFieldId.Title] = entityId.ToString();
+            importedDocSet.Item[Constants.DocumentEntityGuidFieldId] = entityId.ToString();
+            importedDocSet.Item.SystemUpdate(false);
           }
           finally
           {

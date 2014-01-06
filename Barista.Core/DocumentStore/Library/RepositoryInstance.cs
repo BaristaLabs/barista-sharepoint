@@ -1,6 +1,7 @@
 ﻿namespace Barista.DocumentStore.Library
 {
   using Barista.DocumentStore;
+  using Barista.Extensions;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -341,6 +342,9 @@
     }
 
     [JSFunction(Name = "listEntities")]
+    [JSDoc("Lists the entities according to the specified criteria. If filterCriteria argument is null, returns all objects, " +
+           "if filterCriteria object is a string, restricts to the folder with the specified name. If an object, uses the following " +
+           "properties: path, includeData, namespace, namespaceMatchType, queryPairs, skip, top.")]
     public ArrayInstance ListEntities(object filterCriteria)
     {
       var criteria = new EntityFilterCriteriaInstance(this.Engine.Object.InstancePrototype);
@@ -375,6 +379,41 @@
         criteria = JurassicHelper.Coerce<EntityFilterCriteriaInstance>(this.Engine, filterCriteria);
 
       return m_repository.CountEntities(criteria.EntityFilterCriteria);
+    }
+
+    [JSFunction(Name = "exportEntity")]
+    public Base64EncodedByteArrayInstance ExportEntity(object entityId)
+    {
+      var id = ConvertFromJsObjectToGuid(entityId);
+
+      using (var exportStream = m_repository.ExportEntity(id))
+      {
+        var exportData = exportStream.ToByteArray();
+        return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, exportData);
+      }
+    }
+
+    [JSFunction(Name = "importEntity")]
+    public EntityInstance ImportEntity(string path, object entityId, string @namespace, Base64EncodedByteArrayInstance archiveData)
+    {
+      if (entityId == Null.Value || entityId == Undefined.Value || entityId == null)
+        throw new JavaScriptException(this.Engine, "Error", "Entity Id must be specified.");
+
+      if (@namespace == null)
+        throw new JavaScriptException(this.Engine, "Error", "Namespace must be specified.");
+
+      if (archiveData == null)
+        throw new JavaScriptException(this.Engine, "Error", "Archive Data must be specified.");
+
+      var id = ConvertFromJsObjectToGuid(entityId);
+
+      Entity entity = String.IsNullOrEmpty(path)
+        ? m_repository.ImportEntity(id, @namespace, archiveData.Data)
+        : m_repository.ImportEntity(path, id, @namespace, archiveData.Data);
+      
+      return entity == null
+        ? null
+        : new EntityInstance(this.Engine, entity);
     }
 
     [JSFunction(Name = "moveEntity")]

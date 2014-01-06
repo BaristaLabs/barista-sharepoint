@@ -370,6 +370,53 @@
 
       return result;
     }
+
+    /// <summary>
+    /// Imports the specified entity into the repository.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="namespace"></param>
+    /// <param name="archiveData"></param>
+    /// <returns></returns>
+    public Entity ImportEntity(Guid entityId, string @namespace, byte[] archiveData)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+
+      var result = documentStore.ImportEntity(this.Configuration.ContainerTitle, entityId, @namespace, archiveData);
+
+      return result;
+    }
+
+    /// <summary>
+    /// Imports the specified entity into the repository.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="entityId"></param>
+    /// <param name="namespace"></param>
+    /// <param name="archiveData"></param>
+    /// <returns></returns>
+    public Entity ImportEntity(string path, Guid entityId, string @namespace, byte[] archiveData)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
+
+      var result = documentStore.ImportEntity(this.Configuration.ContainerTitle, path, entityId, @namespace, archiveData);
+
+      return result;
+    }
+
+    /// <summary>
+    /// Exports the specified entity from the repository.
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <returns></returns>
+    public Stream ExportEntity(Guid entityId)
+    {
+      var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
+
+      var result = documentStore.ExportEntity(this.Configuration.ContainerTitle, entityId);
+
+      return result;
+    }
     #endregion
 
     #region Entity Comments
