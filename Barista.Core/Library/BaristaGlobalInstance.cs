@@ -44,6 +44,16 @@
       return TypeComparer.Equals(o1, o2);
     }
 
+    [JSFunction(Name = "grabMutex")]
+    public MutexInstance GrabMutex(string name)
+    {
+      if (String.IsNullOrEmpty(name))
+        throw new JavaScriptException(this.Engine, "Error", "A mutex name must be specified as the first argument.");
+
+      var mutex = BaristaScriptMutexManager.GrabMutex(name);
+      return new MutexInstance(this.Engine.Object.InstancePrototype, mutex);
+    }
+
     /// <summary>
     /// Returns a JSON object that contains the shape of the specified object with any JSDoc attributes applied.
     /// </summary>
@@ -163,7 +173,7 @@
     {
       var assembly = Assembly.GetExecutingAssembly();
       var version = assembly.GetName().Version;
-      var codeName = "rascally-rabbit"; //TODO: Pull this from a custom assembly attribute.
+      var codeName = "flying-rodent"; //TODO: Pull this from a custom assembly attribute.
 
       var result = this.Engine.Object.Construct();
       result.SetPropertyValue("full", version + " " + codeName, true);

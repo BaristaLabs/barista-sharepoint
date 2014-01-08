@@ -119,117 +119,98 @@
       
       SPBaristaContext.Current = new SPBaristaContext(request, response);
 
-      Mutex syncRoot = null;
-
-      if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
-      {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
-      }
-
       var webBundle = new SPWebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
-      if (syncRoot != null)
-        syncRoot.WaitOne();
+      bool isNewScriptEngineInstance;
+      bool errorInInitialization;
+
+      var scriptEngineFactory = new SPBaristaScriptEngineFactory();
+      var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+      if (errorInInitialization)
+        return response;
 
       try
       {
-        bool isNewScriptEngineInstance;
-        bool errorInInitialization;
+        object result;
+        using (new SPMonitoredScope("Barista Script Eval", 110000,
+                  new SPCriticalTraceCounter(),
+                  new SPExecutionTimeCounter(11000),
+                  new SPRequestUsageCounter(),
+                  new SPSqlQueryCounter()))
+        {
+          result = engine.Evaluate(source);
+        }
 
-        var scriptEngineFactory = new SPBaristaScriptEngineFactory();
-        var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+        var isRaw = false;
 
-        if (errorInInitialization)
-          return response;
+        //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
+        if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+        {
+          response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
 
+          var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
+          if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
+          {
+            var br = BrowserUserAgentParser.GetDefault();
+            var clientInfo = br.Parse(request.UserAgent);
+
+            if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+              response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
+            else if (clientInfo.UserAgent.Family == "Safari")
+              response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
+            else
+              response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
+          }
+        }
+
+        if (webBundle.WebInstance != null)
+        {
+          isRaw = webBundle.WebInstance.Response.IsRaw;
+        }
+
+        response.SetContentsFromResultObject(engine, result, isRaw);
+      }
+      catch (JavaScriptException ex)
+      {
         try
         {
-          object result;
-          using (new SPMonitoredScope("Barista Script Eval", 110000,
-                    new SPCriticalTraceCounter(),
-                    new SPExecutionTimeCounter(11000),
-                    new SPRequestUsageCounter(),
-                    new SPSqlQueryCounter()))
-          {
-            result = engine.Evaluate(source);
-          }
-
-          var isRaw = false;
-
-          //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
-          if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
-          {
-            response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
-
-            var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
-            if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
-            {
-              var br = BrowserUserAgentParser.GetDefault();
-              var clientInfo = br.Parse(request.UserAgent);
-
-              if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
-                response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
-              else if (clientInfo.UserAgent.Family == "Safari")
-                response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
-              else
-                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
-            }
-          }
-
-          if (webBundle.WebInstance != null)
-          {
-            isRaw = webBundle.WebInstance.Response.IsRaw;
-          }
-
-          response.SetContentsFromResultObject(engine, result, isRaw);
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+            "A JavaScript exception was thrown while evaluating script: ");
         }
-        catch (JavaScriptException ex)
+        catch
         {
-          try
-          {
-            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-              "A JavaScript exception was thrown while evaluating script: ");
-          }
-          catch
-          {
-            //Do Nothing...
-          }
-
-          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
+          //Do Nothing...
         }
-        catch (Exception ex)
+
+        scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
+      }
+      catch (Exception ex)
+      {
+        try
         {
-          try
-          {
-            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-              "An internal error occurred while evaluating script: ");
-          }
-          catch
-          {
-            //Do Nothing...
-          }
-          scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+            "An internal error occurred while evaluating script: ");
         }
-        finally
+        catch
         {
-          //Cleanup
-          // ReSharper disable RedundantAssignment
-          engine = null;
-          // ReSharper restore RedundantAssignment
-
-          if (SPBaristaContext.Current != null)
-            SPBaristaContext.Current.Dispose();
-
-          SPBaristaContext.Current = null;
+          //Do Nothing...
         }
+        scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
       }
       finally
       {
-        if (syncRoot != null)
-          syncRoot.ReleaseMutex();
-      }
+        //Cleanup
+        // ReSharper disable RedundantAssignment
+        engine = null;
+        // ReSharper restore RedundantAssignment
 
+        if (SPBaristaContext.Current != null)
+          SPBaristaContext.Current.Dispose();
+
+        SPBaristaContext.Current = null;
+      }
       return response;
     }
 
@@ -244,88 +225,71 @@
       };
 
       //Set the current context with information from the current request and response.
-      SPBaristaContext.Current = new SPBaristaContext(request, response);
+      SPBaristaContext.Current = new SPBaristaContext(request, response) {
+        WebBundle = new SPWebBundle()
+      };
 
-      //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
-      Mutex syncRoot = null;
-      if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
-      {
-        syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
-      }
-
-      SPBaristaContext.Current.WebBundle = new SPWebBundle();
       var source = new BaristaScriptSource(request.Code, request.CodePath);
 
-      if (syncRoot != null)
-        syncRoot.WaitOne();
+      bool isNewScriptEngineInstance;
+      bool errorInInitialization;
+
+      var scriptEngineFactory = new SPBaristaScriptEngineFactory();
+      var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
+                                                        out errorInInitialization);
+
+      if (errorInInitialization)
+        return;
 
       try
       {
-        bool isNewScriptEngineInstance;
-        bool errorInInitialization;
-
-        var scriptEngineFactory = new SPBaristaScriptEngineFactory();
-        var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
-                                                         out errorInInitialization);
-
-        if (errorInInitialization)
-          return;
-
+        using (new SPMonitoredScope("Barista Script Exec", 110000,
+                                    new SPCriticalTraceCounter(),
+                                    new SPExecutionTimeCounter(),
+                                    new SPRequestUsageCounter(),
+                                    new SPSqlQueryCounter()))
+        {
+          engine.Execute(source);
+        }
+      }
+      catch (JavaScriptException ex)
+      {
         try
         {
-          using (new SPMonitoredScope("Barista Script Exec", 110000,
-                                      new SPCriticalTraceCounter(),
-                                      new SPExecutionTimeCounter(),
-                                      new SPRequestUsageCounter(),
-                                      new SPSqlQueryCounter()))
-          {
-            engine.Execute(source);
-          }
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+            "A JavaScript exception was thrown while evaluating script: ");
         }
-        catch (JavaScriptException ex)
+        catch
         {
-          try
-          {
-            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-              "A JavaScript exception was thrown while evaluating script: ");
-          }
-          catch
-          {
-            //Do Nothing...
-          }
-          scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
+          //Do Nothing...
         }
-        catch (Exception ex)
+        scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
+      }
+      catch (Exception ex)
+      {
+        try
         {
-          try
-          {
-            BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-              "An internal error occured while executing script: ");
-          }
-          catch
-          {
-            //Do Nothing...
-          }
-
-          scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
+          BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+            "An internal error occured while executing script: ");
         }
-        finally
+        catch
         {
-          //Cleanup
-          // ReSharper disable RedundantAssignment
-          engine = null;
-          // ReSharper restore RedundantAssignment
-
-          if (SPBaristaContext.Current != null)
-            SPBaristaContext.Current.Dispose();
-
-          SPBaristaContext.Current = null;
+          //Do Nothing...
         }
+
+        scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
       }
       finally
       {
-        if (syncRoot != null)
-          syncRoot.ReleaseMutex();
+        //Cleanup
+        // ReSharper disable RedundantAssignment
+        engine = null;
+        // ReSharper restore RedundantAssignment
+
+        if (SPBaristaContext.Current != null)
+          SPBaristaContext.Current.Dispose();
+
+        SPBaristaContext.Current = null;
       }
     }
     #endregion

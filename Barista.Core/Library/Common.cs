@@ -15,6 +15,7 @@
   [Serializable]
   public class Common : ObjectInstance
   {
+    private readonly object m_syncRoot = new object();
     private readonly Dictionary<string, IBundle> m_registeredBundles = new Dictionary<string, IBundle>();
     private readonly Dictionary<IBundle, object> m_installedBundles = new Dictionary<IBundle, object>();
 
@@ -69,14 +70,19 @@
                                       "A bundle was specified, but the instance of the bundle was null.");
 
       //Insure that bundles are only installed once.
-      if (m_installedBundles.ContainsKey(bundle))
+      if (m_installedBundles.ContainsKey(bundle) == false)
       {
-        return m_installedBundles[bundle];
+        lock (m_syncRoot)
+        {
+          if (m_installedBundles.ContainsKey(bundle) == false)
+          {
+            var result = bundle.InstallBundle(this.Engine);
+            m_installedBundles.Add(bundle, result);
+          }
+        }
       }
 
-      var result = bundle.InstallBundle(this.Engine);
-      m_installedBundles.Add(bundle, result);
-      return result;
+      return m_installedBundles[bundle];
     }
 
     [JSFunction(Name = "define")]

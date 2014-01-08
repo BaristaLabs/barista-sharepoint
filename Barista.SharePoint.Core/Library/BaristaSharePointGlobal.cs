@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
   using System.Reflection;
+  using System.Threading;
   using Barista.Library;
   using Jurassic;
   using Jurassic.Library;
@@ -74,15 +75,13 @@
     /// Returns the stored instance of the script engine, if it exists, from the runtime cache. If it does not exist, a new instance is created.
     /// </summary>
     /// <returns></returns>
-    public static ScriptEngine GetOrCreateScriptEngineInstanceFromRuntimeCache(string instanceName, out bool isNewScriptEngineInstance)
+    public static ScriptEngine GetOrCreateScriptEngineInstanceFromRuntimeCache(string instanceName, out Mutex mutex)
     {
       if (String.IsNullOrEmpty(instanceName))
         throw new InvalidOperationException("When using Single instance mode, an instance name must be specified.");
 
-      ScriptEngine engine = null;
       var cacheKey = "Barista_ScriptEngineInstance_" + instanceName;
       string instanceInitializationCodeETag = null;
-      isNewScriptEngineInstance = false;
 
       //If a instance initialization code path is defined, retrieve the etag.
       if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCodePath) == false)
@@ -98,32 +97,40 @@
         HttpRuntime.Cache.Remove(cacheKey);
         HttpRuntime.Cache.Remove(cacheKey + "_eTag");
       }
-      else
-      {
-        engine = HttpRuntime.Cache.Get(cacheKey) as ScriptEngine;
-      }
 
+      var engine = HttpRuntime.Cache.Get(cacheKey) as ScriptEngine;
       if (engine == null)
       {
-        var absoluteExpiration = Cache.NoAbsoluteExpiration;
-        var slidingExpiration = Cache.NoSlidingExpiration;
-
-        if (SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
-          absoluteExpiration = SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
-
-        if (SPBaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
-          slidingExpiration = SPBaristaContext.Current.Request.InstanceSlidingExpiration.Value;
-
-        engine = new ScriptEngine();
-        isNewScriptEngineInstance = true;
-        HttpRuntime.Cache.Add(cacheKey, engine, null, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null);
-        if (instanceInitializationCodeETag != null)
+        mutex = BaristaInstanceMutexManager.GrabMutex(instanceName);
+        mutex.WaitOne();
+        engine = HttpRuntime.Cache.Get(cacheKey) as ScriptEngine;
+        if (engine == null)
         {
-          HttpRuntime.Cache.Add(cacheKey + "_eTag", instanceInitializationCodeETag, null, absoluteExpiration,
-                                slidingExpiration, CacheItemPriority.Normal, null);
+
+          var absoluteExpiration = Cache.NoAbsoluteExpiration;
+          var slidingExpiration = Cache.NoSlidingExpiration;
+
+          if (SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.HasValue)
+            absoluteExpiration = SPBaristaContext.Current.Request.InstanceAbsoluteExpiration.Value;
+
+          if (SPBaristaContext.Current.Request.InstanceSlidingExpiration.HasValue)
+            slidingExpiration = SPBaristaContext.Current.Request.InstanceSlidingExpiration.Value;
+
+          engine = new ScriptEngine();
+          HttpRuntime.Cache.Add(cacheKey, engine, null, absoluteExpiration, slidingExpiration,
+            CacheItemPriority.Normal,
+            null);
+          if (instanceInitializationCodeETag != null)
+          {
+            HttpRuntime.Cache.Add(cacheKey + "_eTag", instanceInitializationCodeETag, null, absoluteExpiration,
+              slidingExpiration, CacheItemPriority.Normal, null);
+          }
+          return engine;
         }
+        mutex.ReleaseMutex();
       }
 
+      mutex = null;
       return engine;
     }
 
@@ -137,7 +144,7 @@
       return (scriptEngine != null);
     }
 
-    public static ScriptEngine GetOrCreateScriptEngineInstanceFromSession(string instanceName, out bool isNewScriptEngineInstance)
+    public static ScriptEngine GetOrCreateScriptEngineInstanceFromSession(string instanceName, out Mutex mutex)
     {
       if (String.IsNullOrEmpty(instanceName))
         throw new InvalidOperationException("When using PerSession instance mode, an instance name must be specified.");
@@ -145,10 +152,8 @@
       if (HttpContext.Current == null || HttpContext.Current.Session == null)
         throw new InvalidOperationException("When using PerSession instance mode, a valid Http Context and Session must be available.");
 
-      ScriptEngine engine = null;
       var cacheKey = "Barista_ScriptEngineInstance_" + instanceName;
       string instanceInitializationCodeETag = null;
-      isNewScriptEngineInstance = false;
 
       //If a instance initialization code path is defined, retrieve the etag.
       if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCodePath) == false)
@@ -168,22 +173,30 @@
         HttpContext.Current.Session.Remove(cacheKey);
         HttpContext.Current.Session.Remove(cacheKey + "_eTag");
       }
-      else
-      {
-        if (HttpContext.Current.Session.Keys.OfType<string>().Any(k => k == cacheKey))
-        {
-          engine = HttpContext.Current.Session[cacheKey] as ScriptEngine;
-        }
-      }
+
+      ScriptEngine engine = null;
+      if (HttpContext.Current.Session.Keys.OfType<string>().Any(k => k == cacheKey))
+        engine = HttpContext.Current.Session[cacheKey] as ScriptEngine;
 
       if (engine == null)
       {
-        engine = new ScriptEngine();
-        isNewScriptEngineInstance = true;
-        HttpContext.Current.Session.Add(cacheKey, engine);
-        HttpContext.Current.Session.Add(cacheKey + "_eTag", instanceInitializationCodeETag);
+        mutex = BaristaInstanceMutexManager.GrabMutex(instanceName);
+        mutex.WaitOne();
+        if (HttpContext.Current.Session.Keys.OfType<string>().Any(k => k == cacheKey))
+          engine = HttpContext.Current.Session[cacheKey] as ScriptEngine;
+
+        if (engine == null)
+        {
+          engine = new ScriptEngine();
+
+          HttpContext.Current.Session.Add(cacheKey, engine);
+          HttpContext.Current.Session.Add(cacheKey + "_eTag", instanceInitializationCodeETag);
+          return engine;
+        }
+        mutex.ReleaseMutex();
       }
 
+      mutex = null;
       return engine;
     }
 

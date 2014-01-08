@@ -193,6 +193,7 @@
     <Compile Include="BaristaContext.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
+    <Compile Include="BaristaInstanceMutexManager.cs" />
     <Compile Include="BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Configuration\IIndexConfig.cs" />
     <Compile Include="Configuration\IndexDefinitionCollection.cs" />
     <Compile Include="Configuration\IndexDefinition.cs" />
+    <Compile Include="BaristaScriptMutexManager.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
     <Compile Include="DocumentStore\EntityExistsException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />
@@ -596,6 +598,7 @@
     <Compile Include="Library\ClientInfoInstance.cs" />
     <Compile Include="Library\EnvironmentInstance.cs" />
     <Compile Include="Library\HttpUtilityInstance.cs" />
+    <Compile Include="Library\MutexInstance.cs" />
     <Compile Include="Library\NetworkCredentialInstance.cs" />
     <Compile Include="Library\DeviceInstance.cs" />
     <Compile Include="Library\ExcelAddressInstance.cs" />
