@@ -14,22 +14,33 @@ param (
 
 	[Parameter(Mandatory=$false, Position=3, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$Uri = "http://ofsdev"
+	[string]$Uri = "http://ofsdev",
+
+	[Parameter(Mandatory=$false, Position=4, ParameterSetName="FileOrDirectory")]
+	[bool]$restartServices = $true
 )
 
-$ver = $host | select version
-if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
-if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -eq $null )
+if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -ne $null )
 {
-    Add-PsSnapin  Microsoft.SharePoint.PowerShell
+    Remove-PsSnapin Microsoft.SharePoint.PowerShell
 }
 
-[xml]$ConfigXml = Get-Content $Config
+if ($restartServices -eq $true) {
+	& powershell.exe "& .\RestartSharePointServices.ps1"
+}
 
-& .\RestartSharePointServices.ps1
-& .\UninstallBaristaSearchService.ps1
-& .\UninstallBaristaServiceApplication.ps1
-& .\Deploy-SPSolutions.ps1 
-Deploy-SPSolutions $ConfigXml
+& powershell.exe "& .\UninstallBaristaSearchService.ps1"
+& powershell.exe "& .\UninstallBaristaServiceApplication.ps1"
+$cmd = @"
+& Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
+& .\Deploy-SPSolutions.ps1
+& Deploy-SPSolutions $Config
+"@
+& powershell.exe $cmd
 & iisreset
-& powershell.exe -NoExit "& .\Deploy-PostSolutionDeployment.ps1 '$ManagedAccount' '$SPApplicationPoolName' '$Uri'"
+& powershell.exe "& .\Deploy-PostSolutionDeployment.ps1 '$ManagedAccount' '$SPApplicationPoolName' '$Uri'"
+
+if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -eq $null )
+{
+    Add-PsSnapin Microsoft.SharePoint.PowerShell
+}

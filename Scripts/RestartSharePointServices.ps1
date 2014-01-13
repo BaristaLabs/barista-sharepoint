@@ -3,7 +3,14 @@ param
     [Parameter(Mandatory=$false, HelpMessage='-ServiceNames Optional, provide a set of service names to restart.')]
     [Array]$ServiceNames=@("SharePoint 2010 Timer","SharePoint 2010 Administration","IIS Admin Service","World Wide Web Publishing Service","Web Analytics Service","ReportServer*")
 );
- 
+
+$ver = $host | select version
+if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
+if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -eq $null )
+{
+    Add-PsSnapin  Microsoft.SharePoint.PowerShell
+}
+
 Write-Host "Attempting to get SharePoint Servers in Farm" -ForegroundColor White;
 $farm = Get-SPFarm;
 $servers = $farm.Servers;

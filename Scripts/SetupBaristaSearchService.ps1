@@ -34,7 +34,7 @@ write-host
 write-host "[[STEP]] Installing Search Service" -foregroundcolor Yellow
 write-host 
 
-& netsh http add urlacl url=http://+:8500/Barista user=$ManagedAccount
+& netsh http add urlacl url=http://+:8500/Barista user=$ManagedAccount | out-null
 & $serviceLocation install --sudo
 
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'"
@@ -51,8 +51,8 @@ if ($searchService -eq $null)
 write-host 
 write-host "[[STEP]] Creating Barista Service Hooks." -foregroundcolor Yellow
 write-host 
-New-BaristaSearchService -ManagedAccount $ManagedAccount -ErrorAction SilentlyContinue
-New-BaristaSearchServiceInstance -ErrorAction SilentlyContinue
+New-BaristaSearchService -ManagedAccount $ManagedAccount -ErrorAction SilentlyContinue | out-null
+New-BaristaSearchServiceInstance -ErrorAction SilentlyContinue | out-null
 
 write-host 
 write-host "Successfully installed service $($searchService.name)" -foregroundcolor Green

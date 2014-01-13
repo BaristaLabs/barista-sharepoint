@@ -23,11 +23,12 @@ param (
 
 function LoadSharePointPowerShellEnvironment
 {
-	write-host 
-	write-host "Setting up PowerShell environment for SharePoint" -foregroundcolor Yellow
-	write-host 
-	Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
-	write-host "SharePoint PowerShell Snapin loaded." -foregroundcolor Green
+	$ver = $host | select version
+	if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
+	if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -eq $null )
+	{
+		Add-PsSnapin  Microsoft.SharePoint.PowerShell
+	}
 }
 
 function WaitForJobToFinish([string]$JobTitle)
