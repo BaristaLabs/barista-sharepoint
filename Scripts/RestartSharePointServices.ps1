@@ -1,7 +1,7 @@
 param
 (
     [Parameter(Mandatory=$false, HelpMessage='-ServiceNames Optional, provide a set of service names to restart.')]
-    [Array]$ServiceNames=@("SharePoint 2010 Timer","SharePoint 2010 Administration","IIS Admin Service","World Wide Web Publishing Service","Web Analytics Service")
+    [Array]$ServiceNames=@("SharePoint 2010 Timer","SharePoint 2010 Administration","IIS Admin Service","World Wide Web Publishing Service","Web Analytics Service","ReportServer*")
 );
  
 Write-Host "Attempting to get SharePoint Servers in Farm" -ForegroundColor White;
