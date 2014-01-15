@@ -13,13 +13,14 @@ write-host
 
 $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGenericSetupPath("ISAPI")) "BaristaServices\Search\SPBaristaSearchService.exe"
 
+if (Get-Command "Remove-BaristaSearchService" -errorAction SilentlyContinue) {
+	Remove-BaristaSearchService -errorAction SilentlyContinue
+}
+
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'" -ComputerName $env:COMPUTERNAME
 
 if ($searchService -ne $null) 
 { 
-	# deactivate in SharePoint
-	Remove-BaristaSearchService
-
 	& $serviceLocation stop --sudo
     & $serviceLocation uninstall --sudo
 	$searchService.Delete()

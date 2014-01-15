@@ -477,14 +477,14 @@
           result.ServerVariables.Add(serverVariableName, request.ServerVariables[serverVariableName]);
       }
 
-      if (request.QueryString.AllKeys.Any(k => k.ToLowerInvariant() == "barista_forcestrict") ||
-          request.Headers.AllKeys.Any(k => k.ToLowerInvariant() == "barista_forcestrict"))
+      if (request.QueryString.AllKeys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_forcestrict") ||
+          request.Headers.AllKeys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_forcestrict"))
       {
         result.ForceStrict = true;
       }
 
       //InstanceMode
-      string instanceModeKey = request.Headers.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instancemode");
+      string instanceModeKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
       string instanceNameKey;
       string instanceAbsoluteExpirationKey;
       string instanceSlidingExpirationKey;
@@ -498,19 +498,19 @@
 
         if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
         {
-          instanceNameKey = request.Headers.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instancename");
+          instanceNameKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
           if (instanceNameKey == null)
             throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
 
           result.InstanceName = request.Headers[instanceNameKey];
 
-          instanceAbsoluteExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
+          instanceAbsoluteExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
           if (instanceAbsoluteExpirationKey != null)
           {
             result.InstanceAbsoluteExpiration = DateTime.Parse(request.Headers[instanceAbsoluteExpirationKey]);
           }
 
-          instanceSlidingExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceslidingexpiration");
+          instanceSlidingExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceslidingexpiration");
           if (instanceSlidingExpirationKey != null)
           {
             result.InstanceSlidingExpiration = TimeSpan.Parse(request.Headers[instanceSlidingExpirationKey]);
@@ -520,7 +520,7 @@
       }
       else
       {
-        instanceModeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instancemode");
+        instanceModeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
         if (instanceModeKey != null)
         {
           BaristaInstanceMode instanceMode;
@@ -531,20 +531,20 @@
 
           if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
           {
-            instanceNameKey = request.QueryString.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instancename");
+            instanceNameKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
 
             if (instanceNameKey == null)
               throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
 
             result.InstanceName = request.QueryString[instanceNameKey];
 
-            instanceAbsoluteExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
+            instanceAbsoluteExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
             if (instanceAbsoluteExpirationKey != null)
             {
               result.InstanceAbsoluteExpiration = DateTime.Parse(request.QueryString[instanceAbsoluteExpirationKey]);
             }
 
-            instanceSlidingExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceslidingexpiration");
+            instanceSlidingExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceslidingexpiration");
             if (instanceSlidingExpirationKey != null)
             {
               result.InstanceSlidingExpiration = TimeSpan.Parse(request.QueryString[instanceSlidingExpirationKey]);
@@ -554,14 +554,14 @@
       }
 
       //Instance Initialization Code
-      string instanceInitializationCodeKey = request.Headers.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceinitializationcode");
+      string instanceInitializationCodeKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceinitializationcode");
       if (instanceInitializationCodeKey != null)
       {
         result.InstanceInitializationCode = request.Headers[instanceInitializationCodeKey];
       }
       else
       {
-        instanceInitializationCodeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_instanceinitializationcode");
+        instanceInitializationCodeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceinitializationcode");
         if (instanceInitializationCodeKey != null)
         {
           result.InstanceInitializationCode = request.QueryString[instanceInitializationCodeKey];
