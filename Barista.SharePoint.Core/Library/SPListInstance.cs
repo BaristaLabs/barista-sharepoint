@@ -3,6 +3,7 @@
   using System;
   using System.Linq;
   using System.Reflection;
+  using Barista.Extensions;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
@@ -71,6 +72,8 @@
 
     #region Properties
 
+    //alerttemplate
+
     [JSProperty(Name = "allowContentTypes")]
     public bool AllowContentTypes
     {
@@ -88,6 +91,95 @@
       }
     }
 
+    [JSProperty(Name = "allowDeletion")]
+    public bool AllowDeletion
+    {
+      get
+      {
+        try
+        {
+          return m_list.AllowDeletion;
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+      }
+      set
+      {
+        m_list.AllowDeletion = value;
+      }
+    }
+
+    [JSProperty(Name = "allowEveryoneViewItems")]
+    public bool AllowEveryoneViewItems
+    {
+      get
+      {
+        try
+        {
+          return m_list.AllowEveryoneViewItems;
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+      }
+      set
+      {
+        m_list.AllowEveryoneViewItems = value;
+      }
+    }
+
+    [JSProperty(Name = "allowMultiResponses")]
+    public bool AllowMultiResponses
+    {
+      get
+      {
+        try
+        {
+          return m_list.AllowMultiResponses;
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+      }
+      set
+      {
+        m_list.AllowMultiResponses = value;
+      }
+    }
+
+    [JSProperty(Name = "allowRssFeeds")]
+    public bool AllowRssFeeds
+    {
+      get
+      {
+        try
+        {
+          return m_list.AllowRssFeeds;
+        }
+        catch (Exception)
+        {
+          return false;
+        }
+      }
+    }
+
+    //audit
+
+    [JSProperty(Name = "author")]
+    public SPUserInstance Author
+    {
+      get
+      {
+        if (m_list.Author == null)
+          return null;
+        return new SPUserInstance(this.Engine.Object.InstancePrototype, m_list.Author);
+      }
+    }
+
     [JSProperty(Name = "baseTemplate")]
     public int BaseTemplate
     {
@@ -99,6 +191,45 @@
     //{
     //  get { return m_list.BaseType; }
     //}
+
+    [JSProperty(Name = "browserFileHandling")]
+    public string BrowserFileHandling
+    {
+      get
+      {
+        return m_list.BrowserFileHandling.ToString();
+      }
+      set
+      {
+        SPBrowserFileHandling enumValue;
+        if (value.TryParseEnum(true, out enumValue))
+          m_list.BrowserFileHandling = enumValue;
+      }
+    }
+
+    [JSProperty(Name = "calculationOptions")]
+    public string CalculationOptions
+    {
+      get
+      {
+        return m_list.CalculationOptions.ToString();
+      }
+      set
+      {
+        SPCalculationOptions enumValue;
+        if (value.TryParseEnum(true, out enumValue))
+          m_list.CalculationOptions = enumValue;
+      }
+    }
+
+    [JSProperty(Name = "canReceiveEmail")]
+    public string CanReceiveEmail
+    {
+      get
+      {
+        return m_list.CanReceiveEmail.ToString();
+      }
+    }
 
     [JSProperty(Name = "contentTypes")]
     public SPContentTypeCollectionInstance ContentTypes
@@ -115,12 +246,34 @@
     public bool ContentTypesEnabled
     {
       get { return m_list.ContentTypesEnabled; }
+      set
+      {
+        m_list.ContentTypesEnabled = value;
+      }
     }
 
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_list.Created); }
+    }
+
+    //currentchangetoken
+    //datasource
+
+    public GuidInstance DefaultContentApprovalWorkflowId
+    {
+      get
+      {
+        return new GuidInstance(this.Engine.Object.InstancePrototype, m_list.DefaultContentApprovalWorkflowId);
+      }
+      set
+      {
+        if (value == null)
+          m_list.DefaultContentApprovalWorkflowId = Guid.Empty;
+        else
+          m_list.DefaultContentApprovalWorkflowId = value.Value;
+      }
     }
 
     [JSProperty(Name = "defaultDisplayFormUrl")]
@@ -137,11 +290,61 @@
       set { m_list.DefaultEditFormUrl = value; }
     }
 
+    [JSProperty(Name = "defaultItemOpen")]
+    public string DefaultItemOpen
+    {
+      get
+      {
+        return m_list.DefaultItemOpen.ToString();
+      }
+      set
+      {
+        DefaultItemOpen enumValue;
+        if (value.TryParseEnum(true, out enumValue))
+        {
+          m_list.DefaultItemOpen = enumValue;
+        }
+      }
+    }
+
+    [JSProperty(Name = "defaultItemOpenUseListSetting")]
+    public bool DefaultItemOpenUseListSetting
+    {
+      get
+      {
+        return m_list.DefaultItemOpenUseListSetting;
+      }
+      set
+      {
+        m_list.DefaultItemOpenUseListSetting = value;
+      }
+    }
+
     [JSProperty(Name = "defaultNewFormUrl")]
     public string DefaultNewFormUrl 
     {
       get { return m_list.DefaultNewFormUrl; }
       set { m_list.DefaultNewFormUrl = value; }
+    }
+
+    [JSProperty(Name = "defaultView")]
+    public SPViewInstance DefaultView
+    {
+      get
+      {
+        if (m_list.DefaultView == null)
+          return null;
+        return new SPViewInstance(this.Engine.Object.InstancePrototype, m_list.DefaultView);
+      }
+    }
+
+    [JSProperty(Name = "defaultViewUrl")]
+    public string DefaultViewUrl
+    {
+      get
+      {
+        return m_list.DefaultViewUrl;
+      }
     }
 
     [JSProperty(Name = "description")]
@@ -151,6 +354,8 @@
       set { m_list.Description = value; }
     }
 
+    //descriptionresource
+
     [JSProperty(Name = "direction")]
     public string Direction
     {
@@ -158,11 +363,37 @@
       set { m_list.Direction = value; }
     }
 
+    [JSProperty(Name = "disableGridEditing")]
+    public bool DisableGridEditing
+    {
+      get { return m_list.DisableGridEditing; }
+      set { m_list.DisableGridEditing = value; }
+    }
+
     [JSProperty(Name = "draftVersionVisibility")]
     public string DraftVersionVisibility
     {
       get { return m_list.DraftVersionVisibility.ToString(); }
-      set { m_list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), value); }
+      set
+      {
+        DraftVisibilityType enumValue;
+        if (value.TryParseEnum(true, out enumValue))
+          m_list.DraftVersionVisibility = enumValue;
+      }
+    }
+
+    [JSProperty(Name = "emailAlias")]
+    public string EmailAlias
+    {
+      get { return m_list.EmailAlias; }
+      set { m_list.EmailAlias = value; }
+    }
+
+    [JSProperty(Name = "enableAssignToEmail")]
+    public bool EnableAssignToEmail
+    {
+      get { return m_list.EnableAssignToEmail; }
+      set { m_list.EnableAssignToEmail = value; }
     }
 
     [JSProperty(Name = "enableAttachments")]
@@ -170,6 +401,13 @@
     {
       get { return m_list.EnableAttachments; }
       set { m_list.EnableAttachments = value; }
+    }
+
+    [JSProperty(Name = "enableDeployWithDependentList")]
+    public bool EnableDeployWithDependentList
+    {
+      get { return m_list.EnableDeployWithDependentList; }
+      set { m_list.EnableDeployWithDependentList = value; }
     }
 
     [JSProperty(Name = "enableFolderCreation")]
@@ -193,12 +431,71 @@
       set { m_list.EnableModeration = value; }
     }
 
+    [JSProperty(Name = "enablePeopleSelector")]
+    public bool EnablePeopleSelector
+    {
+      get { return m_list.EnablePeopleSelector; }
+      set { m_list.EnablePeopleSelector = value; }
+    }
+
+    [JSProperty(Name = "enableResourceSelector")]
+    public bool EnableResourceSelector
+    {
+      get { return m_list.EnableResourceSelector; }
+      set { m_list.EnableResourceSelector = value; }
+    }
+
+    [JSProperty(Name = "enableSchemaCaching")]
+    public bool EnableSchemaCaching
+    {
+      get { return m_list.EnableSchemaCaching; }
+      set { m_list.EnableSchemaCaching = value; }
+    }
+
+    [JSProperty(Name = "enableSyndication")]
+    public bool EnableSyndication
+    {
+      get { return m_list.EnableSyndication; }
+      set { m_list.EnableSyndication = value; }
+    }
+
+    [JSProperty(Name = "enableThrottling")]
+    public bool EnableThrottling
+    {
+      get { return m_list.EnableThrottling; }
+      set { m_list.EnableThrottling = value; }
+    }
+
     [JSProperty(Name = "enableVersioning")]
     public bool EnableVersioning
     {
       get { return m_list.EnableVersioning; }
       set { m_list.EnableVersioning = value; }
     }
+
+    [JSProperty(Name = "enforceDataValidation")]
+    public bool EnforceDataValidation
+    {
+      get { return m_list.EnforceDataValidation; }
+      set { m_list.EnforceDataValidation = value; }
+    }
+
+    //Event stuff?
+
+    [JSProperty(Name = "excludeFromOfflineClient")]
+    public bool ExcludeFromOfflineClient
+    {
+      get { return m_list.ExcludeFromOfflineClient; }
+      set { m_list.ExcludeFromOfflineClient = value; }
+    }
+
+    [JSProperty(Name = "excludeFromTemplate")]
+    public bool ExcludeFromTemplate
+    {
+      get { return m_list.ExcludeFromTemplate; }
+    }
+
+    //fieldindexes
 
     [JSProperty(Name = "fields")]
     public SPFieldCollectionInstance Fields
@@ -218,6 +515,8 @@
       set { m_list.ForceCheckout = value; }
     }
 
+    //forms
+
     [JSProperty(Name = "hasExternalDataSource")]
     public bool HasExternalDataSource
     {
@@ -232,9 +531,9 @@
     }
 
     [JSProperty(Name = "id")]
-    public string Id
+    public GuidInstance Id
     {
-      get { return m_list.ID.ToString(); }
+      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_list.ID); }
     }
 
     [JSProperty(Name = "imageUrl")]
@@ -242,6 +541,8 @@
     {
       get { return m_list.ImageUrl; }
     }
+
+    //irm stuff
 
     [JSProperty(Name = "isApplicationList")]
     public bool IsApplicationList
@@ -263,6 +564,12 @@
       get { return m_list.IsSiteAssetsLibrary; }
     }
 
+    [JSProperty(Name = "isThrottled")]
+    public bool IsThrottled
+    {
+      get { return m_list.IsThrottled; }
+    }
+
     [JSProperty(Name = "itemCount")]
     public int ItemCount
     {
@@ -281,6 +588,57 @@
       get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemModifiedDate); }
     }
 
+    [JSProperty(Name = "listViewWebPartKey")]
+    public string ListViewWebPartKey
+    {
+      get
+      {
+        return m_list.ListViewWebPartKey;
+      }
+    }
+
+    [JSProperty(Name = "majorVersionLimit")]
+    public int MajorVersionLimit
+    {
+      get
+      {
+        return m_list.MajorVersionLimit;
+      }
+      set
+      {
+        m_list.MajorVersionLimit = value;
+      }
+    }
+
+    [JSProperty(Name = "majorWithMinorVersionsLimit")]
+    public int MajorWithMinorVersionsLimit
+    {
+      get
+      {
+        return m_list.MajorWithMinorVersionsLimit;
+      }
+      set
+      {
+        m_list.MajorWithMinorVersionsLimit = value;
+      }
+    }
+
+    //mobile view urls.
+
+    [JSProperty(Name = "multipleDataList")]
+    public bool MultipleDataList
+    {
+      get { return m_list.MultipleDataList; }
+      set { m_list.MultipleDataList = value; }
+    }
+
+    [JSProperty(Name = "navigateForFormsPages")]
+    public bool NavigateForFormsPages
+    {
+      get { return m_list.NavigateForFormsPages; }
+      set { m_list.NavigateForFormsPages = value; }
+    }
+
     [JSProperty(Name = "noCrawl")]
     public bool NoCrawl
     {
@@ -295,6 +653,13 @@
       set { m_list.OnQuickLaunch = value; }
     }
 
+    [JSProperty(Name = "ordered")]
+    public bool Ordered
+    {
+      get { return m_list.Ordered; }
+      set { m_list.Ordered = value; }
+    }
+
     [JSProperty(Name = "parentWebUrl")]
     public string ParentWebUrl
     {
@@ -307,11 +672,54 @@
       get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_list.RootFolder); }
     }
 
+    [JSProperty(Name = "requestAccessEnabled")]
+    public bool RequestAccessEnabled
+    {
+      get { return m_list.RequestAccessEnabled; }
+      set { m_list.RequestAccessEnabled = value; }
+    }
+
+    [JSProperty(Name = "restrictedTemplateList")]
+    public bool RestrictedTemplateList
+    {
+      get { return m_list.RestrictedTemplateList; }
+    }
+
+    [JSProperty(Name = "rootWebOnly")]
+    public bool RootWebOnly
+    {
+      get { return m_list.RootWebOnly; }
+      set { m_list.RootWebOnly = value; }
+    }
+
+    [JSProperty(Name = "sendToLocationName")]
+    public string SendToLocationName
+    {
+      get { return m_list.SendToLocationName; }
+      set { m_list.SendToLocationName = value; }
+    }
+
+    [JSProperty(Name = "sendToLocationUrl")]
+    public string SendToLocationUrl
+    {
+      get { return m_list.SendToLocationUrl; }
+      set { m_list.SendToLocationUrl = value; }
+    }
+
     [JSProperty(Name = "serverTemplateCanCreateFolders")]
     public bool ServerTemplateCanCreateFolders
     {
       get { return m_list.ServerTemplateCanCreateFolders; }
     }
+
+    [JSProperty(Name = "showUser")]
+    public bool ShowUser
+    {
+      get { return m_list.ShowUser; }
+      set { m_list.ShowUser = value; }
+    }
+
+    //smsaltertemplate.
 
     [JSProperty(Name = "serverTemplateId")]
     public string ServerTemplateId
@@ -336,6 +744,17 @@
     {
       get { return m_list.Title; }
     }
+
+    //title resource
+
+    [JSProperty(Name = "useFormsForDisplay")]
+    public bool UseFormsForDisplay
+    {
+      get { return m_list.UseFormsForDisplay; }
+      set { m_list.UseFormsForDisplay = value; }
+    }
+
+    //customactions
 
     [JSProperty(Name = "validationFormula")]
     public string ValidationFormula
@@ -375,6 +794,12 @@
     public string Url
     {
       get { return SPUtility.ConcatUrls(m_list.ParentWeb.Url, m_list.RootFolder.Url); }
+    }
+
+    [JSProperty(Name = "version")]
+    public int Version
+    {
+      get { return m_list.Version; }
     }
     #endregion
 
