@@ -1287,6 +1287,25 @@
     }
 
     /// <summary>
+    /// Lists the entity parts associated with the specified entity.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="entityId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public IList<EntityPart> ListEntityParts<TEntity>(Guid entityId, string path)
+    {
+      var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
+
+      if (entityDefinition == null)
+        throw new InvalidOperationException("The specified entity type has not been registered with the repository. " + typeof(TEntity));
+
+      var documentStore = this.Configuration.GetDocumentStore<IEntityPartFolderCapableDocumentStore>();
+
+      return documentStore.ListEntityParts(this.Configuration.ContainerTitle, path, entityId);
+    }
+
+    /// <summary>
     /// Returns the specified entity part associated with the first entity in the repository.
     /// </summary>
     /// <returns></returns>
