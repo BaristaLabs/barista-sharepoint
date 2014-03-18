@@ -15,9 +15,12 @@
     public ActiveDirectoryInstance(ScriptEngine engine)
       : base(engine)
     {
-      var currentWindowsIdentity = WindowsIdentity.GetCurrent();
-      if (currentWindowsIdentity != null)
-        this.CurrentUserLoginName = currentWindowsIdentity.Name;
+
+      this.CurrentUserLoginNameFactory = () =>
+      {
+        var currentWindowsIdentity = WindowsIdentity.GetCurrent();
+        return currentWindowsIdentity == null ? "" : currentWindowsIdentity.Name;
+      };
 
       this.PopulateFields();
       this.PopulateFunctions();
@@ -26,7 +29,7 @@
     /// <summary>
     /// Gets or sets the username of the current user.
     /// </summary>
-    public string CurrentUserLoginName
+    public Func<string> CurrentUserLoginNameFactory
     {
       get;
       set;
@@ -69,7 +72,7 @@
       if (loginName == null || loginName == Undefined.Value || loginName == Null.Value ||
           TypeConverter.ToString(loginName).IsNullOrWhiteSpace())
       {
-        user = ADHelper.GetADUser(CurrentUserLoginName, this.LdapPath);
+        user = ADHelper.GetADUser(CurrentUserLoginNameFactory(), this.LdapPath);
       }
       else
         user = ADHelper.GetADUser(TypeConverter.ToString(loginName), this.LdapPath);
