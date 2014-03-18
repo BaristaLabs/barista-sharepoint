@@ -176,11 +176,7 @@
       if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==false)
         return null;
 
-      EntityContents entityContents = SPDocumentStoreHelper.GetEntityContentsEntityPart(web, list, defaultEntityPart.ParentFolder);
-
-      if (entityContents == null)
-        throw new NotImplementedException(); // TODO: Build it, update the hash yada yada.
-
+      var entityContents = SPDocumentStoreHelper.GetEntityContents(web, list, defaultEntityPart.ParentFolder);
       return entityContents;
     }
   }

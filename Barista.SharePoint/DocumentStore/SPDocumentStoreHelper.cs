@@ -27,112 +27,6 @@
     #region Mapping
 
     /// <summary>
-    /// Returns an Attachment which represents the specified SPFile.
-    /// </summary>
-    /// <param name="file">The file to map from.</param>
-    /// <returns>Attachment.</returns>
-    public static Attachment MapAttachmentFromSPFile(SPFile file)
-    {
-      var result = new Attachment
-        {
-          Category = file.Item["Category"] as string,
-          Path = file.Item["Path"] as string,
-          ETag = file.ETag,
-          FileName = file.Name,
-          MimeType = StringHelper.GetMimeTypeFromFileName(file.Name),
-          Size = file.Length,
-          Url = SPUtility.ConcatUrls(file.Web.Url, file.Url),
-          Created = ((DateTime) file.Item[SPBuiltInFieldId.Created]).ToLocalTime(),
-          Modified = ((DateTime) file.Item[SPBuiltInFieldId.Modified]).ToLocalTime()
-        };
-
-      var createdByUser = file.Item[SPBuiltInFieldId.Created_x0020_By] as SPFieldUserValue;
-      if (createdByUser != null)
-      {
-        result.CreatedBy = new User
-          {
-            Email = createdByUser.User.Email,
-            LoginName = createdByUser.User.LoginName,
-            Name = createdByUser.User.Name,
-          };
-      }
-
-      var modifiedByUser = file.Item[SPBuiltInFieldId.Modified_x0020_By] as SPFieldUserValue;
-      if (modifiedByUser != null)
-      {
-        result.ModifiedBy = new User
-          {
-            Email = modifiedByUser.User.Email,
-            LoginName = modifiedByUser.User.LoginName,
-            Name = modifiedByUser.User.Name,
-          };
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Returns a comment which represents the first comment defined on the specified list item.
-    /// </summary>
-    /// <param name="listItem">The list item.</param>
-    /// <returns>Comment.</returns>
-    public static Comment MapCommentFromSPListItem(SPListItem listItem)
-    {
-      return
-        MapCommentFromSPListItemVersion(
-          listItem.Versions.OfType<SPListItemVersion>().OrderByDescending(v => v.Created).First());
-    }
-
-    public static Comment MapCommentFromSPListItemVersion(SPListItemVersion listItemVersion)
-    {
-      var result = new Comment
-        {
-          Id = listItemVersion.VersionId,
-          CommentText = listItemVersion["Comments"] as string,
-          Created = listItemVersion.Created.ToLocalTime(),
-          CreatedBy = new User
-            {
-              Email = listItemVersion.CreatedBy.User.Email,
-              LoginName = listItemVersion.CreatedBy.User.LoginName,
-              Name = listItemVersion.CreatedBy.User.Name,
-            },
-        };
-
-      return result;
-    }
-
-    /// <summary>
-    /// Returns a container which represents the SPList.
-    /// </summary>
-    /// <param name="list"></param>
-    /// <returns></returns>
-    public static Container MapContainerFromSPList(SPList list)
-    {
-      if (list == null)
-        throw new ArgumentNullException("list");
-
-      var result = new Container
-        {
-          Id = list.ID,
-          Title = list.Title,
-          Description = list.Description,
-          EntityCount = list.ItemCount,
-          Url = list.RootFolder.Url.Substring(list.RootFolder.Url.IndexOf('/') + 1),
-          Created = list.Created.ToLocalTime(),
-          CreatedBy = new User
-            {
-              Email = list.Author.Email,
-              LoginName = list.Author.LoginName,
-              Name = list.Author.Name,
-            },
-          Modified = (DateTime) list.RootFolder.Properties["vti_timelastmodified"]
-        };
-
-      //TODO: ModifiedBy using the last item added to the list.
-      return result;
-    }
-
-    /// <summary>
     /// Returns an entity that represents the specified entity document set.
     /// </summary>
     /// <param name="documentSet"></param>
@@ -147,92 +41,6 @@
       var dataFile = documentSet.ParentList.ParentWeb.GetFile(SPUtility.ConcatUrls(documentSet.Folder.Url, Constants.DocumentStoreDefaultEntityPartFileName));
 
       return MapEntityFromDocumentSet(documentSet, dataFile, data);
-    }
-
-    /// <summary>
-    /// Returns an entity that represents the specified document set
-    /// </summary>
-    /// <param name="documentSet">The entity document set.</param>
-    /// <param name="file">The file that represents the default entity part. If no file is supplied, and no data is supplied, the data value of the entity will be null.</param>
-    /// <param name="data">Optionally, the data within the default entity part. If a null string is provided, the file's contents will be retrieved.</param>
-    /// <returns></returns>
-    public static Entity MapEntityFromDocumentSet(DocumentSet documentSet, SPFile file, string data)
-    {
-      if (documentSet == null)
-        throw new ArgumentNullException("documentSet");
-
-      var entity = new Entity();
-
-      try
-      {
-        var id = documentSet.Item[Constants.DocumentEntityGuidFieldId] as string;
-
-        if (id != null)
-          entity.Id = new Guid(id);
-      }
-      catch
-      {
-        //Do Nothing...
-      }
-
-      entity.Namespace = documentSet.Item[Constants.NamespaceFieldId] as string;
-
-      entity.Title = documentSet.Item.Title;
-      entity.Description = documentSet.Item["DocumentSetDescription"] as string;
-      entity.Created = ((DateTime)documentSet.Item[SPBuiltInFieldId.Created]).ToLocalTime();
-      entity.Modified = ((DateTime)documentSet.Item[SPBuiltInFieldId.Modified]).ToLocalTime();
-
-      entity.ContentsETag = documentSet.Item["DocumentEntityContentsHash"] as string;
-
-      if (documentSet.Item["DocumentEntityContentsLastModified"] != null)
-      {
-        entity.ContentsModified = (DateTime)documentSet.Item["DocumentEntityContentsLastModified"];
-      }
-
-      entity.Path = documentSet.ParentFolder.Url.Substring(documentSet.ParentList.RootFolder.Url.Length);
-      entity.Path = entity.Path.TrimStart('/');
-
-      if (data != null)
-      {
-        entity.ETag = StringHelper.CreateMD5Hash(data);
-        entity.Data = data;
-      }
-      else
-      {
-        if (file != null && file.Exists)
-        {
-          entity.ETag = file.ETag;
-          entity.Data = Encoding.UTF8.GetString(file.OpenBinary());
-        }
-      }
-      
-      var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
-      var createdByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, createdByUserValue);
-
-      if (createdByUser.User != null)
-      {
-        entity.CreatedBy = new User
-        {
-          Email = createdByUser.User.Email,
-          LoginName = createdByUser.User.LoginName,
-          Name = createdByUser.User.Name,
-        };
-      }
-
-      var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
-      var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
-
-      if (modifiedByUser.User != null)
-      {
-        entity.ModifiedBy = new User
-        {
-          Email = modifiedByUser.User.Email,
-          LoginName = modifiedByUser.User.LoginName,
-          Name = modifiedByUser.User.Name,
-        };
-      }
-
-      return entity;
     }
 
     /// <summary>
@@ -762,7 +570,7 @@
 
 
     /// <summary>
-    /// Gets the hash of the specified Entities' contents.
+    /// Gets the hash of the specified Entities' contents that were pre-calculated and set on the document set property bag.
     /// </summary>
     /// <param name="web"></param>
     /// <param name="containerTitle">The container title.</param>
@@ -783,186 +591,7 @@
       return defaultEntityPart.ParentFolder.Item["DocumentEntityContentsHash"] as string;
     }
 
-    /// <summary>
-    /// Gets the ETag of the specified entity part
-    /// </summary>
-    /// <param name="web"></param>
-    /// <param name="containerTitle">The container title.</param>
-    /// <param name="entityId">The entity id.</param>
-    /// <param name="partName"></param>
-    /// <returns></returns>
-    public static string GetEntityPartETag(SPWeb web, string containerTitle, Guid entityId, string partName)
-    {
-      SPList list;
-      SPFolder folder;
-      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-        return null;
-
-      SPFile entityPart;
-      if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
-        return null;
-
-      var result = entityPart.ETag;
-      return result;
-    }
-
-    /// <summary>
-    /// Removes the specified key from the content entity part for the specified document set folder.
-    /// </summary>
-    /// <param name="web"></param>
-    /// <param name="list"></param>
-    /// <param name="documentSetFolder"></param>
-    /// <param name="key"></param>
-    /// <param name="contentHash"></param>
-    /// <returns></returns>
-    public static string RemoveContentEntityPartKeyValue(SPWeb web, SPList list, SPFolder documentSetFolder, string key,
-                                                         out string contentHash)
-    {
-      if (web == null)
-        throw new ArgumentNullException("web",
-                                        @"The web argument must be specified and contain the web that contains the document set folder.");
-
-      if (list == null)
-        throw new ArgumentNullException("list",
-                                        @"The list argument must be specified and contain the list that contains the document set folder.");
-
-      if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder",
-                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
-
-      var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-                                      .FirstOrDefault(
-                                        ct =>
-                                        ct.Id.ToString()
-                                          .ToLowerInvariant()
-                                          .StartsWith(
-                                            Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
-
-      if (entityPartContentType == null)
-        throw new InvalidOperationException("Unable to locate the entity part content type");
-
-      var contentFile =
-        documentSetFolder.Files.OfType<SPFile>()
-                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
-
-      if (contentFile == null || contentFile.Exists == false)
-      {
-        contentHash = String.Empty;
-        return String.Empty;
-      }
-
-      var contentData = contentFile.OpenBinary();
-      var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
-      Dictionary<string, EntityPart> contentDictionary =
-        JsonConvert.DeserializeObject<Dictionary<string, EntityPart>>(contentJson);
-
-      if (contentDictionary.ContainsKey(key) == false)
-      {
-        var unmodifiedContent = JsonConvert.SerializeObject(contentDictionary);
-        contentHash = StringHelper.CreateMD5Hash(unmodifiedContent);
-        return unmodifiedContent;
-      }
-
-      contentDictionary.Remove(key);
-
-      var content = JsonConvert.SerializeObject(contentDictionary);
-      contentHash = StringHelper.CreateMD5Hash(content);
-
-      web.AllowUnsafeUpdates = true;
-
-      try
-      {
-        contentFile.SaveBinary(System.Text.Encoding.Default.GetBytes(content));
-      }
-      finally
-      {
-        web.AllowUnsafeUpdates = false;
-      }
-
-      return content;
-    }
-
-    /// <summary>
-    /// Returns a value that indicates if the specified document set folder contains a content entity part.
-    /// </summary>
-    /// <param name="documentSetFolder">The document set folder.</param>
-    /// <returns><c>true</c> if [has content entity part] [the specified document set folder]; otherwise, <c>false</c>.</returns>
-    /// <exception cref="System.ArgumentNullException">documentSetFolder;@The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.</exception>
-    public static bool HasContentEntityPart(SPFolder documentSetFolder)
-    {
-      if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder",
-                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
-
-      var contentFile =
-        documentSetFolder.Files.OfType<SPFile>()
-                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
-
-      return (contentFile != null && contentFile.Exists);
-    }
-
-    /// <summary>
-    /// Gets the entity contents entity part.
-    /// </summary>
-    /// <param name="web">The web.</param>
-    /// <param name="list">The list.</param>
-    /// <param name="documentSetFolder">The document set folder.</param>
-    /// <returns>EntityContents.</returns>
-    /// <exception cref="System.ArgumentNullException">web;@The web argument must be specified and contain the web that contains the document set folder.</exception>
-    /// <exception cref="System.InvalidOperationException">Unable to locate the entity part content type</exception>
-    public static EntityContents GetEntityContentsEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder)
-    {
-      if (web == null)
-        throw new ArgumentNullException("web",
-                                        @"The web argument must be specified and contain the web that contains the document set folder.");
-
-      if (list == null)
-        throw new ArgumentNullException("list",
-                                        @"The list argument must be specified and contain the list that contains the document set folder.");
-
-      if (documentSetFolder == null)
-        throw new ArgumentNullException("documentSetFolder",
-                                        @"The document set folder argument must be specified and contains the folder object of the document set which represents a document store entity.");
-
-      var entityPartContentType = list.ContentTypes.OfType<SPContentType>()
-                                      .FirstOrDefault(
-                                        ct =>
-                                        ct.Id.ToString()
-                                          .ToLowerInvariant()
-                                          .StartsWith(
-                                            Constants.DocumentStoreEntityPartContentTypeId.ToLowerInvariant()));
-
-      if (entityPartContentType == null)
-        throw new InvalidOperationException("Unable to locate the entity part content type");
-
-      var contentFile =
-        documentSetFolder.Files.OfType<SPFile>()
-                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
-
-      if (contentFile == null)
-        return null;
-
-      var contentData = contentFile.OpenBinary();
-      var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
-      var entityContents = JsonConvert.DeserializeObject<EntityContents>(contentJson);
-
-      return entityContents;
-    }
-
-    /// <summary>
-    /// Creates or updates the content entity part for the specified document set folder, optionally using the entity part to update.
-    /// </summary>
-    /// <param name="web"></param>
-    /// <param name="list"></param>
-    /// <param name="documentSetFolder"></param>
-    /// <param name="updatedEntity"></param>
-    /// <param name="updatedEntityPart"></param>
-    /// <param name="contentHash"></param>
-    /// <param name="contentModified"></param>
-    /// <returns></returns>
-    public static string CreateOrUpdateContentEntityPart(SPWeb web, SPList list, SPFolder documentSetFolder,
-                                                         Entity updatedEntity, EntityPart updatedEntityPart,
-                                                         out string contentHash, out DateTime contentModified)
+    public static EntityContents GetEntityContents(SPWeb web, SPList list, SPFolder documentSetFolder)
     {
       if (web == null)
         throw new ArgumentNullException("web",
@@ -989,91 +618,52 @@
       if (entityPartContentType == null)
         throw new InvalidOperationException("Unable to locate the entity part content type");
 
-      EntityContents entityContents;
-
-      var contentFile =
-        documentSetFolder.Files.OfType<SPFile>()
-                         .FirstOrDefault(f => f.Name == Constants.DocumentStoreEntityContentsPartFileName);
-
-      //If the content file does not exist, create a new content dictionary object
-      //that contains all the entity parts contained in the document store entity
-      //Except for the content part and, if specified, the updated entity part.
-      //Otherwise, read the content file and update the entity part.
-      if (contentFile == null)
-      {
-        var entityParts = documentSetFolder.Files.OfType<SPFile>()
+      var entityParts = documentSetFolder.Files.OfType<SPFile>()
                                            .Where(f => f.Item.ContentTypeId == entityPartContentType.Id &&
-                                                       f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
-                                                       f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
-                                                       (updatedEntityPart == null || f.Name != updatedEntityPart.Name + Constants.DocumentSetEntityPartExtension))
+                                                       f.Name != Constants.DocumentStoreDefaultEntityPartFileName)
                                            .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
                                            .ToList();
 
-        entityContents = new EntityContents
-          {
-            Entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null),
-            EntityParts = entityParts.ToDictionary(entityPart => entityPart.Name)
-          };
-      }
-      else
+      var entityContents = new EntityContents
       {
-        var contentData = contentFile.OpenBinary();
-        var contentJson = System.Text.Encoding.UTF8.GetString(contentData);
-        entityContents = JsonConvert.DeserializeObject<EntityContents>(contentJson);
-      }
+        Entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null),
+        EntityParts = entityParts.ToDictionary(entityPart => entityPart.Name)
+      };
 
-      if (updatedEntity != null)
-        entityContents.Entity = updatedEntity;
+      return entityContents;
+    }
 
-      if (updatedEntityPart != null)
-      {
-        if (entityContents.EntityParts.ContainsKey(updatedEntityPart.Name))
-          entityContents.EntityParts[updatedEntityPart.Name] = updatedEntityPart;
-        else
-          entityContents.EntityParts.Add(updatedEntityPart.Name, updatedEntityPart);
-      }
-
+    /// <summary>
+    /// Calculates the hash of the specified entity by retrieving the entity and all entity parts and returning the hash.
+    /// </summary>
+    public static string CalculateEntityHash(SPWeb web, SPList list, SPFolder documentSetFolder)
+    {
+      var entityContents = GetEntityContents(web, list, documentSetFolder);
       var content = JsonConvert.SerializeObject(entityContents);
-      contentHash = StringHelper.CreateMD5Hash(content);
-      contentModified = DateTime.Now;
+      return StringHelper.CreateMD5Hash(content);
+    }
 
-      //Update the hash on the entity to match what 'will' be the current.
-      entityContents.Entity.ContentsETag = contentHash;
-      entityContents.Entity.ContentsModified = contentModified;
-      content = JsonConvert.SerializeObject(entityContents);
+    /// <summary>
+    /// Gets the ETag of the specified entity part
+    /// </summary>
+    /// <param name="web"></param>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="entityId">The entity id.</param>
+    /// <param name="partName"></param>
+    /// <returns></returns>
+    public static string GetEntityPartETag(SPWeb web, string containerTitle, Guid entityId, string partName)
+    {
+      SPList list;
+      SPFolder folder;
+      if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+        return null;
 
-      //Perform the update.
+      SPFile entityPart;
+      if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+        return null;
 
-      if (documentSetFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
-        throw new InvalidOperationException("Insufficient Permissions.");
-
-      var originalAllowUnsafeUpdates = web.AllowUnsafeUpdates;
-
-      web.AllowUnsafeUpdates = true;
-
-      try
-      {
-        if (contentFile == null)
-        {
-          var properties = new Hashtable
-            {
-              {"ContentTypeId", entityPartContentType.Id.ToString()},
-              {"Content Type", entityPartContentType.Name}
-            };
-          documentSetFolder.Files.Add(Constants.DocumentStoreEntityContentsPartFileName,
-                                      System.Text.Encoding.Default.GetBytes(content), properties, true);
-        }
-        else
-        {
-          contentFile.SaveBinary(System.Text.Encoding.Default.GetBytes(content));
-        }
-      }
-      finally
-      {
-        web.AllowUnsafeUpdates = originalAllowUnsafeUpdates;
-      }
-
-      return content;
+      var result = entityPart.ETag;
+      return result;
     }
 
     public static bool TryGetListForContainer(SPWeb web, string containerTitle, out SPList list)

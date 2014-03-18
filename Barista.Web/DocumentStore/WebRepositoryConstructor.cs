@@ -2,7 +2,7 @@
 {
   using System;
   using Barista.DocumentStore;
-  using Barista.DocumentStore.FileSystem;
+  //using Barista.DocumentStore.FileSystem;
   using Barista.DocumentStore.Library;
   using Barista.Jurassic;
   using RepositoryConfiguration = Barista.DocumentStore.Library.RepositoryConfiguration;
@@ -32,9 +32,11 @@
           if (configuration.Options.ContainsKey("path") == false)
             throw new InvalidOperationException("FSDocument Store requires a 'path' variable passed as a config option.");
 
-          var fs = new FSDocumentStore(configuration.Options["path"]);
-          var repository = new Repository(fs);
-          return new RepositoryInstance(this.Engine, repository);
+          //var fs = new FSDocumentStore(configuration.Options["path"]);
+          //var repository = new Repository(fs);
+          //return new RepositoryInstance(this.Engine, repository);
+
+          throw new NotImplementedException();
       }
     }
   }

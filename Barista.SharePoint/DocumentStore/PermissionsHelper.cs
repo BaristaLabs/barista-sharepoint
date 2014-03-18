@@ -51,9 +51,9 @@
     {
       var result = new PrincipalRoleInfo();
 
-      if (roleAssignment.Member is SPUser)
+      if (roleAssignment.Member is SPDocumentStoreUser)
       {
-        var spUser = roleAssignment.Member as SPUser;
+        var spUser = roleAssignment.Member as SPDocumentStoreUser;
         result.Principal = new User
           {
             Email = spUser.Email,
@@ -99,7 +99,7 @@
     {
       if (principalType.ToLowerInvariant() == "user")
       {
-        SPUser user = null;
+        SPDocumentStoreUser user = null;
         try
         {
           user = web.AllUsers[principalName];

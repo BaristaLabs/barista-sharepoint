@@ -57,24 +57,24 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityPackage_EntityParts.cs" />
-    <Compile Include="EntityPackage_Attachments.cs" />
-    <Compile Include="EntityPackage_Mapping.cs" />
-    <Compile Include="Data\AttachmentMetadata.cs" />
-    <Compile Include="Data\Constants.cs" />
-    <Compile Include="EntityContainer.cs" />
-    <Compile Include="EntityPackage.cs" />
-    <Compile Include="FSDocumentStore_Attachment.cs" />
-    <Compile Include="Data\ContainerInfo.cs" />
-    <Compile Include="Data\EntityPartMetadata.cs" />
-    <Compile Include="FSDocumentStore_FolderEntityPart.cs" />
-    <Compile Include="FSDocumentStore_EntityPart.cs" />
-    <Compile Include="Data\DocumentStoreContainer.cs" />
-    <Compile Include="FSDocumentStore.cs" />
-    <Compile Include="FSDocumentStoreHelper.cs" />
-    <Compile Include="FSDocumentStore_Container.cs" />
-    <Compile Include="FSDocumentStore_Entity.cs" />
-    <Compile Include="FSDocumentStore_Folder.cs" />
+    <None Include="EntityPackage_EntityParts.cs" />
+    <None Include="EntityPackage_Attachments.cs" />
+    <None Include="EntityPackage_Mapping.cs" />
+    <None Include="Data\AttachmentMetadata.cs" />
+    <None Include="Data\Constants.cs" />
+    <None Include="EntityContainer.cs" />
+    <None Include="EntityPackage.cs" />
+    <None Include="FSDocumentStore_Attachment.cs" />
+    <None Include="Data\ContainerInfo.cs" />
+    <None Include="Data\EntityPartMetadata.cs" />
+    <None Include="FSDocumentStore_FolderEntityPart.cs" />
+    <None Include="FSDocumentStore_EntityPart.cs" />
+    <None Include="Data\DocumentStoreContainer.cs" />
+    <None Include="FSDocumentStore.cs" />
+    <None Include="FSDocumentStoreHelper.cs" />
+    <None Include="FSDocumentStore_Container.cs" />
+    <None Include="FSDocumentStore_Entity.cs" />
+    <None Include="FSDocumentStore_Folder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="WindowsPropertyKeys.cs" />
   </ItemGroup>

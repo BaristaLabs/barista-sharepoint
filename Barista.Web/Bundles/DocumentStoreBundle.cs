@@ -1,7 +1,7 @@
 ﻿namespace Barista.Web.Bundles
 {
   using Barista.DocumentStore;
-  using Barista.DocumentStore.FileSystem;
+  //using Barista.DocumentStore.FileSystem;
   using Barista.DocumentStore.Library;
   using Barista.Web.DocumentStore;
   using System;
@@ -32,8 +32,10 @@
       var rootPath = Path.Combine(HttpContext.Current.Request.MapPath("~"), "DocumentStore");
 
       engine.SetGlobalValue("Repository", new WebRepositoryConstructor(engine));
-      var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
-      return new RepositoryInstance(engine, repository);
+
+      throw new NotImplementedException();
+      //var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
+      //return new RepositoryInstance(engine, repository);
     }
 
     [Serializable]

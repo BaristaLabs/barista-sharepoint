@@ -3,36 +3,38 @@
   using System;
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public abstract class DSObject
+  public interface IEntityPart : IDSObject, IDSComments, IDSMetadata, IDSVersions, IDSPermissions
   {
     [DataMember]
-    public DateTime Created
+    Guid EntityId
     {
       get;
       set;
     }
 
     [DataMember]
-    public User CreatedBy
-    {
-      get;
-      set;
-    }
-  }
-
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public abstract class DSEditableObject : DSObject
-  {
-    [DataMember]
-    public DateTime Modified
+    string Name
     {
       get;
       set;
     }
 
     [DataMember]
-    public User ModifiedBy
+    string Category
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    string ETag
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    string Data
     {
       get;
       set;

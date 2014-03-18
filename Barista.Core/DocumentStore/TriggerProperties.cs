@@ -16,13 +16,13 @@
       set;
     }
 
-    public Entity Entity
+    public IEntity Entity
     {
       get;
       set;
     }
 
-    public EntityPart EntityPart
+    public IEntityPart EntityPart
     {
       get;
       set;
@@ -34,7 +34,7 @@
       set;
     }
 
-    public Attachment Attachment
+    public IAttachment Attachment
     {
       get;
       set;

@@ -8,11 +8,11 @@
   using System;
 
   [Serializable]
-  public class EntityPartInstance : ObjectInstance
+  public class EntityPartInstance : ObjectInstance, IEntityPart
   {
-    private readonly EntityPart m_entityPart;
+    private readonly IEntityPart m_entityPart;
 
-    public EntityPartInstance(ScriptEngine engine, EntityPart entityPart)
+    public EntityPartInstance(ScriptEngine engine, IEntityPart entityPart)
       : base(engine)
     {
       if (entityPart == null)
@@ -24,7 +24,7 @@
       this.PopulateFunctions();
     }
 
-    public EntityPart EntityPart
+    public IEntityPart EntityPart
     {
       get { return m_entityPart; }
     }
@@ -38,6 +38,12 @@
         if (value != null)
           m_entityPart.EntityId = value.Value;
       }
+    }
+
+    Guid IEntityPart.EntityId
+    {
+      get { return m_entityPart.EntityId; }
+      set { m_entityPart.EntityId = value; }
     }
 
     [JSProperty(Name = "name")]
@@ -97,11 +103,23 @@
       }
     }
 
+    string IEntityPart.Data
+    {
+      get { return m_entityPart.Data; }
+      set { m_entityPart.Data = value; }
+    }
+
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entityPart.Created); }
       set { m_entityPart.Created = DateTime.Parse(value.ToIsoString()); }
+    }
+
+    DateTime IEntityPart.Created
+    {
+      get { return m_entityPart.Created; }
+      set { m_entityPart.Created = value; }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -116,11 +134,23 @@
       }
     }
 
+    IUser IEntityPart.CreatedBy
+    {
+      get { return m_entityPart.CreatedBy; }
+      set { m_entityPart.CreatedBy = value; }
+    }
+
     [JSProperty(Name = "modified")]
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entityPart.Modified); }
       set { m_entityPart.Modified = DateTime.Parse(value.ToIsoString()); }
+    }
+
+    DateTime IEntityPart.Modified
+    {
+      get { return m_entityPart.Modified; }
+      set { m_entityPart.Modified = value; }
     }
 
     [JSProperty(Name = "modifiedBy")]
@@ -133,6 +163,12 @@
 
         return m_entityPart.ModifiedBy.LoginName;
       }
+    }
+
+    IUser IEntityPart.ModifiedBy
+    {
+      get { return m_entityPart.ModifiedBy; }
+      set { m_entityPart.ModifiedBy = value; }
     }
   }
 }

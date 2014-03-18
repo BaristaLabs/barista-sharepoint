@@ -1,19 +1,19 @@
 ﻿namespace Barista.DocumentStore
 {
+  using System.Collections.Generic;
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public class Comment : DSObject
+  public interface IPrincipalRoleInfo
   {
     [DataMember]
-    public int Id
+    IPrincipal Principal
     {
       get;
       set;
     }
 
     [DataMember]
-    public string CommentText
+    IList<IRole> Roles
     {
       get;
       set;

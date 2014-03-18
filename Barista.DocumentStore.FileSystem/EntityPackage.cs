@@ -52,7 +52,7 @@
     /// Returns the default entity part.
     /// </summary>
     /// <returns></returns>
-    public EntityPart GetDefaultEntityPart()
+    public IEntityPart GetDefaultEntityPart()
     {
       var defaultEntityPartPackagePart = GetDefaultEntityPartPackagePart();
       return MapEntityPartFromPackagePart(defaultEntityPartPackagePart);
@@ -65,7 +65,7 @@
     /// <param name="description">The description.</param>
     /// <param name="namespace">The namespace.</param>
     /// <returns>Entity.</returns>
-    public Entity UpdateDefaultEntityPart(string title, string description, string @namespace)
+    public IEntity UpdateDefaultEntityPart(string title, string description, string @namespace)
     {
       // Update the metadata part in the Package.
       m_package.PackageProperties.Subject = @namespace;
@@ -79,7 +79,7 @@
       return MapEntityFromPackage(true);
     }
 
-    public Entity UpdateDefaultEntityPartData(string etag, string data)
+    public IEntity UpdateDefaultEntityPartData(string etag, string data)
     {
       //TODO: Check to see if the eTag matches.
 

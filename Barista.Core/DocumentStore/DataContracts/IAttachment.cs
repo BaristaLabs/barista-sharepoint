@@ -3,60 +3,59 @@
   using System;
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public class Attachment : DSEditableObject
+  public interface IAttachment : IDSObject, IDSComments, IDSMetadata, IDSPermissions
   {
     [DataMember]
-    public string FileName
+    string FileName
     {
       get;
       set;
     }
 
     [DataMember]
-    public string Category
+    string Category
     {
       get;
       set;
     }
 
     [DataMember]
-    public string Path
+    string Path
     {
       get;
       set;
     }
 
     [DataMember]
-    public DateTime TimeLastModified
+    DateTime TimeLastModified
     {
       get;
       set;
     }
 
     [DataMember]
-    public string ETag
+    string ETag
     {
       get;
       set;
     }
 
     [DataMember]
-    public string MimeType
+    string MimeType
     {
       get;
       set;
     }
 
     [DataMember]
-    public long Size
+    long Size
     {
       get;
       set;
     }
 
     [DataMember]
-    public string Url
+    string Url
     {
       get;
       set;

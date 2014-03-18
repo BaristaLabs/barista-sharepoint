@@ -23,7 +23,7 @@
     /// <param name="category"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public EntityPart CreateEntityPart(string partName, string category, string data)
+    public IEntityPart CreateEntityPart(string partName, string category, string data)
     {
       var entityPartMetadata = new EntityPartMetadata
       {
@@ -71,7 +71,7 @@
     /// <param name="partName"></param>
     /// <param name="includeData"></param>
     /// <returns></returns>
-    public EntityPart GetEntityPart(string partName, bool includeData)
+    public IEntityPart GetEntityPart(string partName, bool includeData)
     {
       var entityPartPackagePart = GetEntityPartPackagePart(partName);
       return MapEntityPartFromPackagePart(entityPartPackagePart, includeData);
@@ -81,7 +81,7 @@
     /// Returns a collection of all non-default entity parts contained within the EntityPackage.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<EntityPart> ListEntityParts()
+    public IEnumerable<IEntityPart> ListEntityParts()
     {
       var defaultEntityPart = GetDefaultEntityPartPackagePart();
 
@@ -127,7 +127,7 @@
     /// <param name="partName"></param>
     /// <param name="category"></param>
     /// <returns></returns>
-    public EntityPart UpdateEntityPart(string partName, string category)
+    public IEntityPart UpdateEntityPart(string partName, string category)
     {
       //Update the metadata part.
       var entityPartMetadata = GetEntityPartMetadata(partName);
@@ -150,7 +150,7 @@
       return GetEntityPart(partName, true);
     }
 
-    public EntityPart UpdateEntityPartData(string partName, string eTag, string newData)
+    public IEntityPart UpdateEntityPartData(string partName, string eTag, string newData)
     {
       //TODO: Check e-tag
 
@@ -183,7 +183,7 @@
 
     #region Private Methods
 
-    private EntityPart CreateEntityPart(string partName, EntityPartMetadata entityPartMetadata, string data)
+    private IEntityPart CreateEntityPart(string partName, EntityPartMetadata entityPartMetadata, string data)
     {
       if (partName.IsNullOrWhiteSpace())
         throw new ArgumentNullException("partName");

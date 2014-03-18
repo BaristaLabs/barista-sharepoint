@@ -3,53 +3,52 @@
   using System;
   using System.Runtime.Serialization;
 
-  [DataContract(Namespace = Constants.ServiceV1Namespace)]
-  public class EntityPartVersion
+  public interface IVersion
   {
     [DataMember]
-    public int VersionId
+    int VersionId
     {
       get;
       set;
     }
 
     [DataMember]
-    public string VersionLabel
+    string VersionLabel
     {
       get;
       set;
     }
 
     [DataMember]
-    public bool IsCurrentVersion
+    bool IsCurrentVersion
     {
       get;
       set;
     }
 
     [DataMember]
-    public string Comment
+    string Comment
     {
       get;
       set;
     }
 
     [DataMember]
-    public DateTime Created
+    DateTime Created
     {
       get;
       set;
     }
 
     [DataMember]
-    public string CreatedByLoginName
+    string CreatedByLoginName
     {
       get;
       set;
     }
 
     [DataMember]
-    public EntityPart EntityPart
+    IDSObject DSObject
     {
       get;
       set;
