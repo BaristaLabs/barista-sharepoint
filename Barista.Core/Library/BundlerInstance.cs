@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+  using System.Collections.Concurrent;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using System;
@@ -11,7 +12,7 @@
   [Serializable]
   public class BundlerInstance : ObjectInstance
   {
-    private readonly Dictionary<string, Tuple<DateTime, string>> m_fileModifiedDates = new Dictionary<string, Tuple<DateTime, string>>(); 
+    private static readonly ConcurrentDictionary<string, Tuple<DateTime, string>> FileModifiedDates = new ConcurrentDictionary<string, Tuple<DateTime, string>>(); 
 
     public BundlerInstance(ScriptEngine engine)
       : base(engine)
@@ -89,15 +90,15 @@
         }
 
         Tuple<DateTime, string> contents;
-        if (m_fileModifiedDates.ContainsKey(file))
+        if (FileModifiedDates.ContainsKey(file))
         {
-          var fileContents = m_fileModifiedDates[file];
+          var fileContents = FileModifiedDates[file];
           var lastModified = this.GetLastModifiedDate(file);
           if (lastModified > fileContents.Item1)
           {
             var text = this.ReadAllText(file);
             contents = new Tuple<DateTime, string>(lastModified, text);
-            m_fileModifiedDates[file] = contents;
+            FileModifiedDates[file] = contents;
           }
           else
           {
@@ -109,7 +110,7 @@
           var lastModified = this.GetLastModifiedDate(file);
           var text = this.ReadAllText(file);
           contents = new Tuple<DateTime, string>(lastModified, text);
-          m_fileModifiedDates.Add(file, contents);
+          FileModifiedDates.TryAdd(file, contents);
         }
 
         sb.AppendLine(contents.Item2);
