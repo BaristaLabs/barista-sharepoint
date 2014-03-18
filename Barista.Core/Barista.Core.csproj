@@ -198,6 +198,7 @@
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\BundlerBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
     <Compile Include="Bundles\JsonDataBundle.cs" />
@@ -595,6 +596,7 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
     <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\BundlerInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
     <Compile Include="Library\EnvironmentInstance.cs" />
     <Compile Include="Library\HttpUtilityInstance.cs" />
