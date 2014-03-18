@@ -6,11 +6,11 @@
   using System;
 
   [Serializable]
-  public class AttachmentInstance : ObjectInstance, IAttachment
+  public class AttachmentInstance : ObjectInstance
   {
-    private readonly IAttachment m_attachment;
+    private readonly Attachment m_attachment;
 
-    public AttachmentInstance(ScriptEngine engine, IAttachment attachment)
+    public AttachmentInstance(ScriptEngine engine, Attachment attachment)
       : base(engine)
     {
       if (attachment == null)
@@ -20,11 +20,6 @@
 
       this.PopulateFields();
       this.PopulateFunctions();
-    }
-
-    public IAttachment Attachment
-    {
-      get { return m_attachment; }
     }
 
     [JSProperty(Name = "fileName")]
@@ -55,12 +50,6 @@
       set { m_attachment.TimeLastModified = DateTime.Parse(value.ToIsoString()); }
     }
 
-    DateTime IAttachment.TimeLastModified
-    {
-      get { return m_attachment.TimeLastModified; }
-      set { m_attachment.TimeLastModified = value; }
-    }
-
     [JSProperty(Name = "eTag")]
     public string ETag
     {
@@ -82,12 +71,6 @@
       set { m_attachment.Size = (long)value; }
     }
 
-    long IAttachment.Size
-    {
-      get { return m_attachment.Size; }
-      set { m_attachment.Size = value; }
-    }
-
     [JSProperty(Name = "url")]
     public string Url
     {
@@ -102,12 +85,6 @@
       set { m_attachment.Created = DateTime.Parse(value.ToIsoString()); }
     }
 
-    DateTime IAttachment.Created
-    {
-      get { return m_attachment.Created; }
-      set { m_attachment.Created = value; }
-    }
-
     [JSProperty(Name = "createdBy")]
     public object CreatedBy
     {
@@ -120,23 +97,11 @@
       }
     }
 
-    IUser IAttachment.CreatedBy
-    {
-      get { return m_attachment.CreatedBy; }
-      set { m_attachment.CreatedBy = value; }
-    }
-
     [JSProperty(Name = "modified")]
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_attachment.Modified); }
       set { m_attachment.Modified = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IAttachment.Modified
-    {
-      get { return m_attachment.Modified; }
-      set { m_attachment.Modified = value; }
     }
 
     [JSProperty(Name = "modifiedBy")]
@@ -149,12 +114,6 @@
 
         return m_attachment.ModifiedBy.LoginName;
       }
-    }
-
-    IUser IAttachment.ModifiedBy
-    {
-      get { return m_attachment.ModifiedBy; }
-      set { m_attachment.ModifiedBy = value; }
     }
   }
 }

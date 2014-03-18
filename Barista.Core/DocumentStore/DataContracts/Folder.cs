@@ -2,24 +2,25 @@
 {
   using System.Runtime.Serialization;
 
-  public interface IGroup
+  [DataContract(Namespace = Constants.ServiceV1Namespace)]
+  public class Folder : DSEditableObject
   {
     [DataMember]
-    string LoginName
+    public string Name
     {
       get;
       set;
     }
 
     [DataMember]
-    string DistributionGroupEmail
+    public string FullPath
     {
       get;
       set;
     }
 
     [DataMember]
-    string Name
+    public int EntityCount
     {
       get;
       set;

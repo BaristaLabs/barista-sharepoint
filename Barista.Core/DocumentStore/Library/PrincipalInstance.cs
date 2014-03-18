@@ -6,11 +6,11 @@
   using System;
 
   [Serializable]
-  public class PrincipalInstance : ObjectInstance, IPrincipal
+  public class PrincipalInstance : ObjectInstance
   {
-    private readonly IPrincipal m_principal;
+    private readonly Principal m_principal;
 
-    public PrincipalInstance(ScriptEngine engine, IPrincipal principal)
+    public PrincipalInstance(ScriptEngine engine, Principal principal)
       : base(engine)
     {
       if (principal == null)
@@ -27,7 +27,7 @@
     {
       get
       {
-        if (m_principal is IUser)
+        if (m_principal is User)
           return "User";
 
         return "Group";
@@ -46,19 +46,19 @@
     {
       get
       {
-        if (m_principal is IUser)
-          return (m_principal as IUser).LoginName;
+        if (m_principal is User)
+          return (m_principal as User).LoginName;
 
-        return (m_principal as IGroup) == null
+        return (m_principal as Group) == null
           ? ""
-          : (m_principal as IGroup).LoginName;
+          : (m_principal as Group).LoginName;
       }
       set
       {
-        if (m_principal is IUser)
-          (m_principal as IUser).LoginName = value;
-        else if (m_principal is IGroup)
-          (m_principal as IGroup).LoginName = value;
+        if (m_principal is User)
+          (m_principal as User).LoginName = value;
+        else if (m_principal is Group)
+          (m_principal as Group).LoginName = value;
       }
     }
 
@@ -67,16 +67,16 @@
     {
       get
       {
-        if (m_principal is IUser)
-          return (m_principal as IUser).Email;
-        return (m_principal as IGroup) == null ? "" : (m_principal as IGroup).DistributionGroupEmail;
+        if (m_principal is User)
+          return (m_principal as User).Email;
+        return (m_principal as Group) == null ? "" : (m_principal as Group).DistributionGroupEmail;
       }
       set
       {
-        if (m_principal is IUser)
-          (m_principal as IUser).Email = value;
-        else if (m_principal is IGroup)
-          (m_principal as IGroup).DistributionGroupEmail = value;
+        if (m_principal is User)
+          (m_principal as User).Email = value;
+        else if (m_principal is Group)
+          (m_principal as Group).DistributionGroupEmail = value;
       }
     }
     

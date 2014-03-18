@@ -25,7 +25,7 @@
     /// <param name="path"></param>
     /// <param name="attachmentData"></param>
     /// <returns></returns>
-    public IAttachment CreateAttachment(string fileName, string category, string path, Stream attachmentData)
+    public Attachment CreateAttachment(string fileName, string category, string path, Stream attachmentData)
     {
       var metadata = new AttachmentMetadata
       {
@@ -93,7 +93,7 @@
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns></returns>
-    public IAttachment GetAttachment(string fileName)
+    public Attachment GetAttachment(string fileName)
     {
       var attachmentPackagePart = GetAttachmentPackagePart(fileName);
       return MapAttachmentFromPackagePart(attachmentPackagePart);
@@ -103,7 +103,7 @@
     /// Returns a collection of all attachment contained within the EntityPackage
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IAttachment> ListAttachments()
+    public IEnumerable<Attachment> ListAttachments()
     {
       var defaultEntityPart = GetDefaultEntityPartPackagePart();
 
@@ -145,7 +145,7 @@
     }
 
     #region Private Methods
-    private IAttachment CreateAttachment(string fileName, AttachmentMetadata attachment, Stream attachmentData)
+    private Attachment CreateAttachment(string fileName, AttachmentMetadata attachment, Stream attachmentData)
     {
       if (fileName.IsNullOrWhiteSpace())
         throw new ArgumentNullException("fileName");

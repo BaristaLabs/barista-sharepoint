@@ -65,7 +65,7 @@
     /// Gets the container with the speicfied title from the document store.
     /// </summary>
     /// <returns></returns>
-    public IContainer GetContainer(string containerTitle)
+    public Container GetContainer(string containerTitle)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.GetContainer(containerTitle);
@@ -75,7 +75,7 @@
     /// Lists all containers contained in the document store.
     /// </summary>
     /// <returns></returns>
-    public IList<IContainer> ListContainers()
+    public IList<Container> ListContainers()
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.ListContainers();
@@ -87,7 +87,7 @@
     /// <param name="containerTitle"></param>
     /// <param name="description"></param>
     /// <returns></returns>
-    public IContainer CreateContainer(string containerTitle, string description)
+    public Container CreateContainer(string containerTitle, string description)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.CreateContainer(containerTitle, description);
@@ -111,7 +111,7 @@
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IList<IFolder> ListFolders(string path)
+    public IList<Folder> ListFolders(string path)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       return documentStore.ListFolders(this.Configuration.ContainerTitle, path);
@@ -122,7 +122,7 @@
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IFolder CreateFolder(string path)
+    public Folder CreateFolder(string path)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       return documentStore.CreateFolder(this.Configuration.ContainerTitle, path);
@@ -149,7 +149,7 @@
     /// <param name="entityNamespace"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public IEntity CreateEntity(string path, string title, string entityNamespace, string data)
+    public Entity CreateEntity(string path, string title, string entityNamespace, string data)
     {
       //Validate the namespace parameter.
       Uri entityNamespaceUri;
@@ -159,7 +159,7 @@
       //Ensure a container title has been specified.
       EnsureValidConfiguration();
 
-      IEntity result;
+      Entity result;
       if (path.IsNullOrWhiteSpace())
       {
         var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
@@ -182,7 +182,7 @@
     /// <param name="targetPath"></param>
     /// <param name="newTitle"></param>
     /// <returns></returns>
-    public IEntity CloneEntity(Guid entityId, string sourcePath, string targetPath, string newTitle)
+    public Entity CloneEntity(Guid entityId, string sourcePath, string targetPath, string newTitle)
     {
       var entity = GetEntity(entityId, sourcePath);
       var newEntity = CreateEntity(targetPath, newTitle, entity.Namespace, entity.Data);
@@ -219,9 +219,9 @@
     /// <param name="entityId"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IEntity GetEntity(Guid entityId, string path)
+    public Entity GetEntity(Guid entityId, string path)
     {
-      IEntity result;
+      Entity result;
       if (path.IsNullOrWhiteSpace())
       {
         var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
@@ -241,9 +241,9 @@
     /// <param name="entityId"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IEntity GetEntityLight(Guid entityId, string path)
+    public Entity GetEntityLight(Guid entityId, string path)
     {
-      IEntity result;
+      Entity result;
       if (path.IsNullOrWhiteSpace())
       {
         var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
@@ -260,9 +260,9 @@
     /// <summary>
     /// Returns a collection of entities of the specified namespace contained in the specified path.
     /// </summary>
-    public IList<IEntity> ListEntities(EntityFilterCriteria filterCriteria)
+    public IList<Entity> ListEntities(EntityFilterCriteria filterCriteria)
     {
-      IList<IEntity> result;
+      IList<Entity> result;
       if (filterCriteria.Path == null)
       {
         var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
@@ -302,7 +302,7 @@
     /// </summary>
     /// <param name="filterCriteria"></param>
     /// <returns></returns>
-    public IEntity Single(EntityFilterCriteria filterCriteria)
+    public Entity Single(EntityFilterCriteria filterCriteria)
     {
       return ListEntities(new EntityFilterCriteria
         {
@@ -314,7 +314,7 @@
         .FirstOrDefault();
     }
 
-    public IEntity UpdateEntity(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
+    public Entity UpdateEntity(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
     {
       //Validate the namespace parameter.
       Uri entityNamespaceUri;
@@ -328,16 +328,16 @@
       return result;
     }
 
-    public IEntity UpdateEntityData(Guid entityId, string data)
+    public Entity UpdateEntityData(Guid entityId, string data)
     {
       return UpdateEntityData(entityId, null, data);
     }
 
-    public IEntity UpdateEntityData(Guid entityId, string eTag, string data)
+    public Entity UpdateEntityData(Guid entityId, string eTag, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
-      var result = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entityId, eTag, data);
+      Entity result = documentStore.UpdateEntityData(this.Configuration.ContainerTitle, entityId, eTag, data);
 
       return result;
     }
@@ -378,7 +378,7 @@
     /// <param name="namespace"></param>
     /// <param name="archiveData"></param>
     /// <returns></returns>
-    public IEntity ImportEntity(Guid entityId, string @namespace, byte[] archiveData)
+    public Entity ImportEntity(Guid entityId, string @namespace, byte[] archiveData)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
@@ -395,7 +395,7 @@
     /// <param name="namespace"></param>
     /// <param name="archiveData"></param>
     /// <returns></returns>
-    public IEntity ImportEntity(string path, Guid entityId, string @namespace, byte[] archiveData)
+    public Entity ImportEntity(string path, Guid entityId, string @namespace, byte[] archiveData)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
 
@@ -426,7 +426,7 @@
     /// <param name="entityId"></param>
     /// <param name="comment"></param>
     /// <returns></returns>
-    public IComment AddEntityComment(Guid entityId, string comment)
+    public Comment AddEntityComment(Guid entityId, string comment)
     {
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
 
@@ -440,7 +440,7 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public IList<IComment> ListEntityComments(Guid entityId)
+    public IList<Comment> ListEntityComments(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
       return documentStore.ListEntityComments(this.Configuration.ContainerTitle, entityId);
@@ -469,7 +469,7 @@
     /// <param name="category"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public IEntityPart CreateEntityPart(Guid entityId, string partName, string category, string data)
+    public EntityPart CreateEntityPart(Guid entityId, string partName, string category, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -484,7 +484,7 @@
     /// <param name="entityId"></param>
     /// <param name="partName"></param>
     /// <returns></returns>
-    public IEntityPart GetEntityPart(Guid entityId, string partName)
+    public EntityPart GetEntityPart(Guid entityId, string partName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -495,10 +495,9 @@
     /// Returns the entity part associated with the specified entity in the specified path.
     /// </summary>
     /// <param name="entityId"></param>
-    /// <param name="path"></param>
     /// <param name="partName"></param>
     /// <returns></returns>
-    public IEntityPart GetEntityPart(Guid entityId, string path, string partName)
+    public EntityPart GetEntityPart(Guid entityId, string path, string partName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartFolderCapableDocumentStore>();
 
@@ -506,7 +505,7 @@
     }
 
 
-    public IEntityPart UpdateEntityPart(Guid entityId, string partName, string category)
+    public EntityPart UpdateEntityPart(Guid entityId, string partName, string category)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -520,12 +519,12 @@
     /// <param name="partName"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public IEntityPart UpdateEntityPartData(Guid entityId, string partName, string data)
+    public EntityPart UpdateEntityPartData(Guid entityId, string partName, string data)
     {
       return UpdateEntityPartData(entityId, partName, null, data);
     }
 
-    public IEntityPart UpdateEntityPartData(Guid entityId, string partName, string eTag, string data)
+    public EntityPart UpdateEntityPartData(Guid entityId, string partName, string eTag, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -537,7 +536,7 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public IList<IEntityPart> ListEntityParts(Guid entityId)
+    public IList<EntityPart> ListEntityParts(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -561,21 +560,21 @@
     #endregion
 
     #region Attachments
-    public IList<IAttachment> ListAttachments(Guid entityId)
+    public IList<Attachment> ListAttachments(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
 
       return documentStore.ListAttachments(this.Configuration.ContainerTitle, entityId);
     }
 
-    public IAttachment GetAttachment(Guid entityId, string fileName)
+    public Attachment GetAttachment(Guid entityId, string fileName)
     {
        var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
 
        return documentStore.GetAttachment(this.Configuration.ContainerTitle, entityId, fileName);
     }
 
-    public IAttachment UploadAttachment(Guid entityId, string fileName, byte[] attachment)
+    public Attachment UploadAttachment(Guid entityId, string fileName, byte[] attachment)
     {
       var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
 
@@ -598,7 +597,7 @@
     #endregion
 
     #region Permissions
-    public IPrincipalRoleInfo AddPrincipalRoleToEntity(Guid entityId, string principalName, string principalType, string roleName)
+    public PrincipalRoleInfo AddPrincipalRoleToEntity(Guid entityId, string principalName, string principalType, string roleName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IPermissionsCapableDocumentStore>();
 
@@ -612,14 +611,14 @@
       return documentStore.RemovePrincipalRoleFromEntity(this.Configuration.ContainerTitle, entityId, principalName, principalType, roleName);
     }
 
-    public IPermissionsInfo ResetEntityPermissions(Guid entityId)
+    public PermissionsInfo ResetEntityPermissions(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IPermissionsCapableDocumentStore>();
 
       return documentStore.ResetEntityPermissions(this.Configuration.ContainerTitle, entityId);
     }
 
-    public IPermissionsInfo GetEntityPermissions(Guid entityId)
+    public PermissionsInfo GetEntityPermissions(Guid entityId)
     {
         var documentStore = this.Configuration.GetDocumentStore<IPermissionsCapableDocumentStore>();
 

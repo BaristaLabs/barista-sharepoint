@@ -15,7 +15,7 @@
     /// </summary>
     /// <param name="attachmentPackagePart">The attachment package part.</param>
     /// <returns>Attachment.</returns>
-    public IAttachment MapAttachmentFromPackagePart(PackagePart attachmentPackagePart)
+    public Attachment MapAttachmentFromPackagePart(PackagePart attachmentPackagePart)
     {
       var metadata = GetAttachmentMetadata(attachmentPackagePart);
 

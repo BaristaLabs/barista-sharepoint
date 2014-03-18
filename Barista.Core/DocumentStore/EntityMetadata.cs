@@ -61,7 +61,7 @@
       set;
     }
 
-    public static EntityMetadata CreateMetadata(IEntity entity)
+    public static EntityMetadata CreateMetadata(Entity entity)
     {
       if (entity == null)
         return null;

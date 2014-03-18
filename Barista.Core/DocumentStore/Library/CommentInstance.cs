@@ -6,11 +6,11 @@
   using System;
 
   [Serializable]
-  public class CommentInstance : ObjectInstance, IComment
+  public class CommentInstance : ObjectInstance
   {
-    private readonly IComment m_comment;
+    private readonly Comment m_comment;
 
-    public CommentInstance(ScriptEngine engine, IComment comment)
+    public CommentInstance(ScriptEngine engine, Comment comment)
       : base(engine)
     {
       if (comment == null)
@@ -20,11 +20,6 @@
 
       this.PopulateFields();
       this.PopulateFunctions();
-    }
-
-    public IComment Comment
-    {
-      get { return m_comment; }
     }
 
     [JSProperty(Name = "id")]
@@ -39,37 +34,6 @@
     {
       get { return m_comment.CommentText; }
       set { m_comment.CommentText = value; }
-    }
-
-    [JSProperty(Name = "created")]
-    public DateInstance Created
-    {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_comment.Created); }
-      set { m_comment.Created = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IComment.Created
-    {
-      get { return m_comment.Created; }
-      set { m_comment.Created = value; }
-    }
-
-    [JSProperty(Name = "createdBy")]
-    public object CreatedBy
-    {
-      get
-      {
-        if (m_comment.CreatedBy == null)
-          return Null.Value;
-
-        return m_comment.CreatedBy.LoginName;
-      }
-    }
-
-    IUser IComment.CreatedBy
-    {
-      get { return m_comment.CreatedBy; }
-      set { m_comment.CreatedBy = value; }
     }
   }
 }

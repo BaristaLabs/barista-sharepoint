@@ -4,7 +4,6 @@
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using Microsoft.SharePoint.Utilities;
 
   [Serializable]
   public class SPUserConstructor : ClrFunction

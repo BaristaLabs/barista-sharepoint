@@ -1,6 +1,5 @@
 ﻿namespace Barista.DocumentStore.Library
 {
-  using System.Collections.Generic;
   using Barista.DocumentStore;
   using Jurassic;
   using Jurassic.Library;
@@ -8,11 +7,11 @@
   using System.Linq;
 
   [Serializable]
-  public class PermissionsInfoInstance : ObjectInstance, IPermissionsInfo
+  public class PermissionsInfoInstance : ObjectInstance
   {
-    private readonly IPermissionsInfo m_permissionsInfo;
+    private readonly PermissionsInfo m_permissionsInfo;
 
-    public PermissionsInfoInstance(ScriptEngine engine, IPermissionsInfo permissionsInfo)
+    public PermissionsInfoInstance(ScriptEngine engine, PermissionsInfo permissionsInfo)
       : base(engine)
     {
       if (permissionsInfo == null)
@@ -22,11 +21,6 @@
 
       this.PopulateFields();
       this.PopulateFunctions();
-    }
-
-    public IPermissionsInfo PermissionsInfo
-    {
-      get { return m_permissionsInfo; }
     }
 
     [JSProperty(Name = "hasUniqueRoleAssignments")]
@@ -46,14 +40,8 @@
 // ReSharper restore CoVariantArrayConversion
         return result;
       }
-
-      //TODO: Setter?
     }
 
-    IList<IPrincipalRoleInfo> IPermissionsInfo.Principals
-    {
-      get { return m_permissionsInfo.Principals; }
-      set { m_permissionsInfo.Principals = value; }
-    }
+    //TODO: Setter?
   }
 }

@@ -10,10 +10,10 @@
   [Serializable]
   public class EntitySetInstance : ObjectInstance
   {
-    private readonly IEntity m_entity;
-    private readonly IList<IEntityPart> m_entityParts;
+    private readonly Entity m_entity;
+    private readonly IList<EntityPart> m_entityParts;
 
-    public EntitySetInstance(ScriptEngine engine, IEntity entity, IList<IEntityPart> entityParts)
+    public EntitySetInstance(ScriptEngine engine, Entity entity, IList<EntityPart> entityParts)
       : base(engine)
     {
       if (entity == null)

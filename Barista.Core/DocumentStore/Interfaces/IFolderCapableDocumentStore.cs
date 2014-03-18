@@ -6,7 +6,53 @@
   public interface IFolderCapableDocumentStore
   {
     #region Folders
-    
+    /// <summary>
+    /// Creates the folder with the specified path in the container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <returns></returns>
+    Folder CreateFolder(string containerTitle, string path);
+
+    /// <summary>
+    /// Deletes the folder with the specified path from the container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    void DeleteFolder(string containerTitle, string path);
+
+    /// <summary>
+    /// Gets the folder with the specified path that is contained in the container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <returns></returns>
+    Folder GetFolder(string containerTitle, string path);
+
+    /// <summary>
+    /// Lists all folders contained in the specified container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <returns></returns>
+    IList<Folder> ListAllFolders(string containerTitle, string path);
+
+    /// <summary>
+    /// Lists the folders at the specified level in the container.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <returns></returns>
+    IList<Folder> ListFolders(string containerTitle, string path);
+
+    /// <summary>
+    /// Renames the specified folder to the new folder name.
+    /// </summary>
+    /// <param name="containerTitle">The container title.</param>
+    /// <param name="path">The path.</param>
+    /// <param name="newFolderName">New name of the folder.</param>
+    /// <returns></returns>
+    Folder RenameFolder(string containerTitle, string path, string newFolderName);
     #endregion
 
     #region Entity Folders
@@ -20,7 +66,7 @@
     /// <param name="namespace">The namespace of the entity. Optional.</param>
     /// <param name="data">The data to store with the entity. Optiona.</param>
     /// <returns></returns>
-    IEntity CreateEntity(string containerTitle, string path, string title, string @namespace, string data);
+    Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data);
 
     /// <summary>
     /// Gets the specified untyped entity in the specified path.
@@ -32,7 +78,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="path"></param>
     /// <returns></returns>
-    IEntity GetEntity(string containerTitle, Guid entityId, string path);
+    Entity GetEntity(string containerTitle, Guid entityId, string path);
 
     /// <summary>
     /// Gets the specified untyped entity in the specified path without populating the data field.
@@ -41,7 +87,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="path"></param>
     /// <returns>An entity that does not have its Data property populated.</returns>
-    IEntity GetEntityLight(string containerTitle, Guid entityId, string path);
+    Entity GetEntityLight(string containerTitle, Guid entityId, string path);
 
     /// <summary>
     /// Imports an entity from a previous export.
@@ -52,7 +98,7 @@
     /// <param name="namespace">The @namespace.</param>
     /// <param name="archiveData">The archive data.</param>
     /// <returns></returns>
-    IEntity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, Byte[] archiveData);
+    Entity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, Byte[] archiveData);
 
     /// <summary>
     /// Lists all entities in the specified path in the container with the specified criteria.
@@ -61,7 +107,7 @@
     /// <param name="path">The path.</param>
     /// <param name="criteria">The criteria.</param>
     /// <returns></returns>
-    IList<IEntity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria);
+    IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria);
 
     /// <summary>
     /// Returns the total number of entities that correspond to the specified criteria.

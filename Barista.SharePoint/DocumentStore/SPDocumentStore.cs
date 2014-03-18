@@ -99,7 +99,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="description">The description.</param>
     /// <returns></returns>
-    public virtual IContainer CreateContainer(string containerTitle, string description)
+    public virtual Container CreateContainer(string containerTitle, string description)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -130,7 +130,7 @@
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <returns></returns>
-    public virtual IContainer GetContainer(string containerTitle)
+    public virtual Container GetContainer(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -151,7 +151,7 @@
     /// </summary>
     /// <param name="container">The container.</param>
     /// <returns></returns>
-    public virtual bool UpdateContainer(IContainer container)
+    public virtual bool UpdateContainer(Container container)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -212,7 +212,7 @@
     /// Lists all containers contained in the document store.
     /// </summary>
     /// <returns></returns>
-    public virtual IList<IContainer> ListContainers()
+    public virtual IList<Container> ListContainers()
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -235,7 +235,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IFolder CreateFolder(string containerTitle, string path)
+    public virtual Folder CreateFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -291,7 +291,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IFolder GetFolder(string containerTitle, string path)
+    public virtual Folder GetFolder(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -314,7 +314,7 @@
     /// <param name="path">The path.</param>
     /// <param name="newFolderName">New name of the folder.</param>
     /// <returns></returns>
-    public virtual IFolder RenameFolder(string containerTitle, string path, string newFolderName)
+    public virtual Folder RenameFolder(string containerTitle, string path, string newFolderName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -380,7 +380,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IList<IFolder> ListFolders(string containerTitle, string path)
+    public virtual IList<Folder> ListFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -404,7 +404,7 @@
     </Eq>
 </Where>";
 
-          var result = new List<IFolder>();
+          var result = new List<Folder>();
           var itemsIterator = new ContentIterator();
           itemsIterator.ProcessListItems(list, camlQuery + ContentIterator.ItemEnumerationOrderByPath, ContentIterator.MaxItemsPerQuery, false, folder,
                                          spListItems =>
@@ -431,7 +431,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IList<IFolder> ListAllFolders(string containerTitle, string path)
+    public virtual IList<Folder> ListAllFolders(string containerTitle, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -454,7 +454,7 @@
     </Eq>
 </Where>";
 
-          var result = new List<IFolder>();
+          var result = new List<Folder>();
           var itemsIterator = new ContentIterator();
           itemsIterator.ProcessListItems(list, camlQuery + ContentIterator.ItemEnumerationOrderByPath, ContentIterator.MaxItemsPerQuery, false, folder,
                                          spListItems =>
@@ -486,7 +486,7 @@
     /// <param name="namespace">The namespace of the entity. Optional.</param>
     /// <param name="data">The data to store with the entity. Optional.</param>
     /// <returns></returns>
-    public IEntity CreateEntity(string containerTitle, string title, string @namespace, string data)
+    public Entity CreateEntity(string containerTitle, string title, string @namespace, string data)
     {
       return CreateEntity(containerTitle, String.Empty, title, @namespace, data);
     }
@@ -500,7 +500,7 @@
     /// <param name="namespace">The namespace of the entity. Optional.</param>
     /// <param name="data">The data to store with the entity. Optional.</param>
     /// <returns></returns>
-    public virtual IEntity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
+    public virtual Entity CreateEntity(string containerTitle, string path, string title, string @namespace, string data)
     {
       if (data == null)
         data = String.Empty;
@@ -574,11 +574,17 @@
                       Encoding.Default.GetBytes(data), entityPartProperties, currentUser, currentUser, DateTime.UtcNow,
                       DateTime.UtcNow, true);
 
+                    //Update the contents entity part and the modified by user stamp.
+                    string contentHash;
+                    DateTime contentModified;
+                    SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder, null, null,
+                      out contentHash, out contentModified);
+
                     //Set the created/updated fields of the new document set to the current user.
                     var userLogonName = currentUser.ID + ";#" + currentUser.Name;
                     documentSet.Item[SPBuiltInFieldId.Editor] = userLogonName;
-                    documentSet.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, documentSet.Folder);
-                    documentSet.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+                    documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+                    documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
                     documentSet.Item.UpdateOverwriteVersion();
 
                     return SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, data);
@@ -625,8 +631,13 @@
                       Encoding.Default.GetBytes(data), entityPartProperties, true);
 
                     //Update the contents Entity Part.
-                    documentSet.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, documentSet.Folder);
-                    documentSet.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+                    string contentHash;
+                    DateTime contentModified;
+                    SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder, null, null,
+                      out contentHash, out contentModified);
+
+                    documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+                    documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
                     documentSet.Item.UpdateOverwriteVersion();
 
                     return SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, data);
@@ -655,7 +666,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
-    public IEntity GetEntity(string containerTitle, Guid entityId)
+    public Entity GetEntity(string containerTitle, Guid entityId)
     {
       return GetEntity(containerTitle, entityId, String.Empty);
     }
@@ -666,7 +677,7 @@
     /// <param name="containerTitle"></param>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public IEntity GetEntityLight(string containerTitle, Guid entityId)
+    public Entity GetEntityLight(string containerTitle, Guid entityId)
     {
       return GetEntityLight(containerTitle, entityId, String.Empty);
     }
@@ -678,7 +689,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public virtual IEntity GetEntity(string containerTitle, Guid entityId, string path)
+    public virtual Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -708,7 +719,7 @@
     /// <param name="entityId"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public virtual IEntity GetEntityLight(string containerTitle, Guid entityId, string path)
+    public virtual Entity GetEntityLight(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -740,7 +751,7 @@
     /// <param name="description"></param>
     /// <param name="namespace"></param>
     /// <returns></returns>
-    public virtual IEntity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
+    public virtual Entity UpdateEntity(string containerTitle, Guid entityId, string title, string description, string @namespace)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -759,7 +770,7 @@
           if (documentSet.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
             throw new InvalidOperationException("Insufficent Permissions.");
 
-          IEntity entity;
+          Entity entity;
           web.AllowUnsafeUpdates = true;
           try
           {
@@ -788,13 +799,18 @@
 
               entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null);
 
-              //Update document set metadata
-              entity.ContentsETag = SPDocumentStoreHelper.CalculateEntityHash(web, list, documentSet.Folder);
-              entity.ContentsModified = DateTime.UtcNow;
+              //Update the contents entity part
+              string contentHash;
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, documentSet.Folder,
+                                                                    entity, null, out contentHash, out contentModified);
 
-              documentSet.Item["DocumentEntityContentsHash"] = entity.ContentsETag;
-              documentSet.Item["DocumentEntityContentsLastModified"] = entity.ContentsModified;
+              documentSet.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSet.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSet.Item.UpdateOverwriteVersion();
+
+              entity.ContentsETag = contentHash;
+              entity.ContentsModified = contentModified;
             }
             else
             {
@@ -819,7 +835,7 @@
     /// <param name="eTag"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public virtual IEntity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
+    public virtual Entity UpdateEntityData(string containerTitle, Guid entityId, string eTag, string data)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -856,13 +872,17 @@
                                              : System.Text.Encoding.Default.GetBytes(String.Empty));
 
               //Update the contents Entity Part.
-              var documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
-              entity.ContentsETag = SPDocumentStoreHelper.CalculateEntityHash(web, list, documentSetFolder);
-              entity.ContentsModified = DateTime.UtcNow;
+              string contentHash;
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, defaultEntityPart.ParentFolder, entity, null, out contentHash, out contentModified);
 
-              documentSetFolder.Item["DocumentEntityContentsHash"] = entity.ContentsETag;
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = entity.ContentsModified;
+              var documentSetFolder = web.GetFolder(defaultEntityPart.ParentFolder.UniqueId);
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
+
+              entity.ContentsETag = contentHash;
+              entity.ContentsModified = contentModified;
             }
           }
           finally
@@ -917,7 +937,7 @@
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <returns></returns>
-    public IList<IEntity> ListEntities(string containerTitle)
+    public IList<Entity> ListEntities(string containerTitle)
     {
       return ListEntities(containerTitle, String.Empty, null);
     }
@@ -928,7 +948,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public IList<IEntity> ListEntities(string containerTitle, string path)
+    public IList<Entity> ListEntities(string containerTitle, string path)
     {
       return ListEntities(containerTitle, path, null);
     }
@@ -939,7 +959,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="criteria"></param>
     /// <returns></returns>
-    public IList<IEntity> ListEntities(string containerTitle, EntityFilterCriteria criteria)
+    public IList<Entity> ListEntities(string containerTitle, EntityFilterCriteria criteria)
     {
       return ListEntities(containerTitle, criteria.Path, criteria);
     }
@@ -962,7 +982,7 @@
     /// <param name="path">The path.</param>
     /// <param name="criteria">The criteria.</param>
     /// <returns></returns>
-    public virtual IList<IEntity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria)
+    public virtual IList<Entity> ListEntities(string containerTitle, string path, EntityFilterCriteria criteria)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1001,7 +1021,7 @@
                                            },
                                          null);
 
-          var result = new List<IEntity>();
+          var result = new List<Entity>();
           if (criteria == null || criteria.IncludeData)
           {
             result.AddRange(
@@ -1213,7 +1233,7 @@
     /// <param name="criteria"></param>
     /// <param name="folder"></param>
     /// <param name="entities"></param>
-    protected virtual void ProcessEntityList(string containerTitle, string path, EntityFilterCriteria criteria, SPFolder folder, IList<IEntity> entities)
+    protected virtual void ProcessEntityList(string containerTitle, string path, EntityFilterCriteria criteria, SPFolder folder, IList<Entity> entities)
     {
       //Does nothing in the base implementation.
     }
@@ -1226,7 +1246,7 @@
     /// <param name="namespace">The @namespace.</param>
     /// <param name="archiveData">The archive data.</param>
     /// <returns></returns>
-    public IEntity ImportEntity(string containerTitle, Guid entityId, string @namespace, byte[] archiveData)
+    public Entity ImportEntity(string containerTitle, Guid entityId, string @namespace, byte[] archiveData)
     {
       return ImportEntity(containerTitle, String.Empty, entityId, @namespace, archiveData);
     }
@@ -1240,7 +1260,7 @@
     /// <param name="namespace">The @namespace.</param>
     /// <param name="archiveData">The archive data.</param>
     /// <returns></returns>
-    public virtual IEntity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, byte[] archiveData)
+    public virtual Entity ImportEntity(string containerTitle, string path, Guid entityId, string @namespace, byte[] archiveData)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1370,7 +1390,7 @@
     /// <param name="partName">Name of the part.</param>
     /// <param name="data">The data.</param>
     /// <returns></returns>
-    public IEntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string data)
+    public EntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string data)
     {
       return CreateEntityPart(containerTitle, entityId, partName, String.Empty, data);
     }
@@ -1384,15 +1404,16 @@
     /// <param name="category">The category.</param>
     /// <param name="data">The data.</param>
     /// <returns></returns>
-    public IEntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string category, string data)
+    public EntityPart CreateEntityPart(string containerTitle, Guid entityId, string partName, string category, string data)
     {
       return CreateEntityPart(containerTitle, String.Empty, entityId, partName, category, data);
     }
 
-    public virtual IEntityPart CreateEntityPart(string containerTitle, string path, Guid entityId, string partName,
+    public virtual EntityPart CreateEntityPart(string containerTitle, string path, Guid entityId, string partName,
       string category, string data)
     {
-      if (partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName)
+      if (partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName ||
+          partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreEntityContentsPartFileName)
         throw new InvalidOperationException("Filename is reserved.");
 
       //Get a new web in case we're executing in elevated permissions.
@@ -1450,8 +1471,15 @@
                     System.Text.Encoding.Default.GetBytes(data), properties, true);
                   var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(partFile, data);
 
-                  documentSet.Folder.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, partFile.ParentFolder);
-                  documentSet.Folder.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+                  //Update the content Entity Part
+                  string contentHash;
+                  DateTime contentModified;
+                  SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, partFile.ParentFolder, null,
+                    entityPart,
+                    out contentHash, out contentModified);
+
+                  documentSet.Folder.Item["DocumentEntityContentsHash"] = contentHash;
+                  documentSet.Folder.Item["DocumentEntityContentsLastModified"] = contentModified;
                   documentSet.Folder.Item.UpdateOverwriteVersion();
 
                   return entityPart;
@@ -1481,12 +1509,12 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="partName">Name of the part.</param>
     /// <returns></returns>
-    public virtual IEntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
+    public virtual EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
     {
       return GetEntityPart(containerTitle, String.Empty, entityId, partName);
     }
 
-    public virtual IEntityPart GetEntityPart(string containerTitle, string path, Guid entityId, string partName)
+    public virtual EntityPart GetEntityPart(string containerTitle, string path, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1518,7 +1546,7 @@
     /// <param name="entityPartFile"></param>
     /// <param name="entity"></param>
     /// <param name="partName"></param>
-    protected virtual void ProcessEntityPartFile(string containerTitle, Guid entityId, string partName, SPFile entityPartFile, IEntityPart entity)
+    protected virtual void ProcessEntityPartFile(string containerTitle, Guid entityId, string partName, SPFile entityPartFile, EntityPart entity)
     {
       //Does nothing in the base implementation.
     }
@@ -1579,12 +1607,12 @@
     /// <param name="partName"></param>
     /// <param name="category"></param>
     /// <returns></returns>
-    public IEntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
+    public EntityPart UpdateEntityPart(string containerTitle, Guid entityId, string partName, string category)
     {
       return UpdateEntityPart(containerTitle, String.Empty, entityId, partName, category);
     }
 
-    public virtual IEntityPart UpdateEntityPart(string containerTitle, string path, Guid entityId, string partName,
+    public virtual EntityPart UpdateEntityPart(string containerTitle, string path, Guid entityId, string partName,
       string category)
     {
       var mutex = SPEntityMutexManager.GrabMutex(this.DocumentStoreUrl, entityId);
@@ -1622,9 +1650,15 @@
 
               var entityPart = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
 
+              //Update the content entity part
+              string contentHash;
+              DateTime contentModified;
+              SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null,
+                                                                    entityPart, out contentHash, out contentModified);
+
               var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
-              documentSetFolder.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, entityPartFile.ParentFolder);
-              documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+              documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+              documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
               documentSetFolder.Item.UpdateOverwriteVersion();
 
               return entityPart;
@@ -1643,12 +1677,12 @@
       }
     }
 
-    public IEntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
+    public EntityPart UpdateEntityPartData(string containerTitle, Guid entityId, string partName, string eTag, string data)
     {
       return UpdateEntityPartData(containerTitle, String.Empty, entityId, partName, eTag, data);
     }
 
-    public virtual IEntityPart UpdateEntityPartData(string containerTitle, string path, Guid entityId, string partName,
+    public virtual EntityPart UpdateEntityPartData(string containerTitle, string path, Guid entityId, string partName,
       string eTag, string data)
     {
       var mutex = SPEntityMutexManager.GrabMutex(this.DocumentStoreUrl, entityId);
@@ -1694,9 +1728,15 @@
                                             ? System.Text.Encoding.Default.GetBytes(data)
                                             : System.Text.Encoding.Default.GetBytes(String.Empty));
 
+                //Update the content entity part
+                string contentHash;
+                DateTime contentModified;
+                SPDocumentStoreHelper.CreateOrUpdateContentEntityPart(web, list, entityPartFile.ParentFolder, null,
+                                                                      entityPart, out contentHash, out contentModified);
+
                 var documentSetFolder = web.GetFolder(entityPartFile.ParentFolder.UniqueId);
-                documentSetFolder.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, entityPartFile.ParentFolder);
-                documentSetFolder.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+                documentSetFolder.Item["DocumentEntityContentsHash"] = contentHash;
+                documentSetFolder.Item["DocumentEntityContentsLastModified"] = contentModified;
                 documentSetFolder.Item.UpdateOverwriteVersion();
               }
 
@@ -1748,8 +1788,11 @@
           {
             entityPartFile.Recycle();
 
-            entityPartFile.ParentFolder.Item["DocumentEntityContentsHash"] = SPDocumentStoreHelper.CalculateEntityHash(web, list, entityPartFile.ParentFolder);
-            entityPartFile.ParentFolder.Item["DocumentEntityContentsLastModified"] = DateTime.UtcNow;
+            string contentHash;
+            SPDocumentStoreHelper.RemoveContentEntityPartKeyValue(web, list, entityPartFile.ParentFolder, partName, out contentHash);
+
+            entityPartFile.ParentFolder.Item["DocumentEntityContentsHash"] = contentHash;
+            entityPartFile.ParentFolder.Item["DocumentEntityContentsLastModified"] = DateTime.Now;
             entityPartFile.ParentFolder.Item.UpdateOverwriteVersion();
           }
           finally
@@ -1768,12 +1811,12 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
-    public IList<IEntityPart> ListEntityParts(string containerTitle, Guid entityId)
+    public IList<EntityPart> ListEntityParts(string containerTitle, Guid entityId)
     {
       return ListEntityParts(containerTitle, String.Empty, entityId);
     }
 
-    public virtual IList<IEntityPart> ListEntityParts(string containerTitle, string path, Guid entityId)
+    public virtual IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1819,9 +1862,9 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
-    public IList<IEntityVersion> ListEntityVersions(string containerTitle, Guid entityId)
+    public IList<EntityVersion> ListEntityVersions(string containerTitle, Guid entityId)
     {
-      var result = new List<IEntityVersion>();
+      var result = new List<EntityVersion>();
 
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1860,7 +1903,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="versionId">The version id.</param>
     /// <returns></returns>
-    public IEntityVersion GetEntityVersion(string containerTitle, Guid entityId, int versionId)
+    public EntityVersion GetEntityVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1905,7 +1948,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="versionId">The version id.</param>
     /// <returns></returns>
-    public IEntityVersion RevertEntityToVersion(string containerTitle, Guid entityId, int versionId)
+    public EntityVersion RevertEntityToVersion(string containerTitle, Guid entityId, int versionId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -1970,7 +2013,7 @@
     /// <param name="fileName">Name of the file.</param>
     /// <param name="attachment">The attachment.</param>
     /// <returns></returns>
-    public virtual IAttachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment)
+    public virtual Attachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment)
     {
       return UploadAttachment(containerTitle, entityId, fileName, attachment, String.Empty, string.Empty);
     }
@@ -1985,7 +2028,7 @@
     /// <param name="category">The category.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IAttachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment, string category, string path)
+    public virtual Attachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2053,7 +2096,7 @@
     /// <param name="category">The category.</param>
     /// <param name="path">The path.</param>
     /// <returns></returns>
-    public virtual IAttachment UploadAttachmentFromSourceUrl(string containerTitle, Guid entityId, string fileName, string sourceUrl, string category, string path)
+    public virtual Attachment UploadAttachmentFromSourceUrl(string containerTitle, Guid entityId, string fileName, string sourceUrl, string category, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2149,7 +2192,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
-    public virtual IAttachment GetAttachment(string containerTitle, Guid entityId, string fileName)
+    public virtual Attachment GetAttachment(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2253,7 +2296,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
-    public virtual IList<IAttachment> ListAttachments(string containerTitle, Guid entityId)
+    public virtual IList<Attachment> ListAttachments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2714,7 +2757,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="comment">The comment.</param>
     /// <returns></returns>
-    public virtual IComment AddEntityComment(string containerTitle, Guid entityId, string comment)
+    public virtual Comment AddEntityComment(string containerTitle, Guid entityId, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2752,7 +2795,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="entityId">The entity id.</param>
     /// <returns></returns>
-    public virtual IList<IComment> ListEntityComments(string containerTitle, Guid entityId)
+    public virtual IList<Comment> ListEntityComments(string containerTitle, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2768,7 +2811,7 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
             return null;
 
-          var result = new List<IComment>();
+          List<Comment> result = new List<Comment>();
           Comment[] lastComment =
             {new Comment
               {
@@ -2796,7 +2839,7 @@
     /// <param name="partName">Name of the part.</param>
     /// <param name="comment">The comment.</param>
     /// <returns></returns>
-    public virtual IComment AddEntityPartComment(string containerTitle, Guid entityId, string partName, string comment)
+    public virtual Comment AddEntityPartComment(string containerTitle, Guid entityId, string partName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2835,7 +2878,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="partName">Name of the part.</param>
     /// <returns></returns>
-    public virtual IList<IComment> ListEntityPartComments(string containerTitle, Guid entityId, string partName)
+    public virtual IList<Comment> ListEntityPartComments(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2879,7 +2922,7 @@
     /// <param name="fileName">Name of the file.</param>
     /// <param name="comment">The comment.</param>
     /// <returns></returns>
-    public virtual IComment AddAttachmentComment(string containerTitle, Guid entityId, string fileName, string comment)
+    public virtual Comment AddAttachmentComment(string containerTitle, Guid entityId, string fileName, string comment)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2918,7 +2961,7 @@
     /// <param name="entityId">The entity id.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
-    public virtual IList<IComment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName)
+    public virtual IList<Comment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -2934,7 +2977,7 @@
           if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
             return null;
 
-          List<IComment> result = new List<Comment>();
+          List<Comment> result = new List<Comment>();
           Comment lastComment = new Comment
             {
             CommentText = null
@@ -2964,7 +3007,7 @@
     /// <param name="principalType">Type of the principal.</param>
     /// <param name="roleName">Name of the role.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo AddPrincipalRoleToContainer(string containerTitle, string principalName, string principalType, string roleName)
+    public virtual PrincipalRoleInfo AddPrincipalRoleToContainer(string containerTitle, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3026,7 +3069,7 @@
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo GetContainerPermissions(string containerTitle)
+    public virtual PermissionsInfo GetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3049,7 +3092,7 @@
     /// <param name="principalName">Name of the principal.</param>
     /// <param name="principalType">Type of the principal.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo GetContainerPermissionsForPrincipal(string containerTitle, string principalName, string principalType)
+    public virtual PrincipalRoleInfo GetContainerPermissionsForPrincipal(string containerTitle, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3075,7 +3118,7 @@
     /// </summary>
     /// <param name="containerTitle">The container title.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo ResetContainerPermissions(string containerTitle)
+    public virtual PermissionsInfo ResetContainerPermissions(string containerTitle)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3114,7 +3157,7 @@
     /// <param name="principalType">Type of the principal.</param>
     /// <param name="roleName">Name of the role.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo AddPrincipalRoleToEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
+    public virtual PrincipalRoleInfo AddPrincipalRoleToEntity(string containerTitle, Guid guid, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3187,7 +3230,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="guid">The GUID.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo GetEntityPermissions(string containerTitle, Guid guid)
+    public virtual PermissionsInfo GetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3216,7 +3259,7 @@
     /// <param name="principalName">Name of the principal.</param>
     /// <param name="principalType">Type of the principal.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo GetEntityPermissionsForPrincipal(string containerTitle, Guid guid, string principalName, string principalType)
+    public virtual PrincipalRoleInfo GetEntityPermissionsForPrincipal(string containerTitle, Guid guid, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3248,7 +3291,7 @@
     /// <param name="containerTitle">The container title.</param>
     /// <param name="guid">The GUID.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo ResetEntityPermissions(string containerTitle, Guid guid)
+    public virtual PermissionsInfo ResetEntityPermissions(string containerTitle, Guid guid)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3295,7 +3338,7 @@
     /// <param name="principalType">Type of the principal.</param>
     /// <param name="roleName">Name of the role.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo AddPrincipalRoleToEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
+    public virtual PrincipalRoleInfo AddPrincipalRoleToEntityPart(string containerTitle, Guid guid, string partName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3370,7 +3413,7 @@
     /// <param name="guid">The GUID.</param>
     /// <param name="partName">Name of the part.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo GetEntityPartPermissions(string containerTitle, Guid guid, string partName)
+    public virtual PermissionsInfo GetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3400,7 +3443,7 @@
     /// <param name="principalName">Name of the principal.</param>
     /// <param name="principalType">Type of the principal.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo GetEntityPartPermissionsForPrincipal(string containerTitle, Guid guid, string partName, string principalName, string principalType)
+    public virtual PrincipalRoleInfo GetEntityPartPermissionsForPrincipal(string containerTitle, Guid guid, string partName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3433,7 +3476,7 @@
     /// <param name="guid">The GUID.</param>
     /// <param name="partName">Name of the part.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo ResetEntityPartPermissions(string containerTitle, Guid guid, string partName)
+    public virtual PermissionsInfo ResetEntityPartPermissions(string containerTitle, Guid guid, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3478,7 +3521,7 @@
     /// <param name="principalType">Type of the principal.</param>
     /// <param name="roleName">Name of the role.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo AddPrincipalRoleToAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
+    public virtual PrincipalRoleInfo AddPrincipalRoleToAttachment(string containerTitle, Guid guid, string fileName, string principalName, string principalType, string roleName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3553,7 +3596,7 @@
     /// <param name="guid">The GUID.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo GetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
+    public virtual PermissionsInfo GetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3582,7 +3625,7 @@
     /// <param name="principalName">Name of the principal.</param>
     /// <param name="principalType">Type of the principal.</param>
     /// <returns></returns>
-    public virtual IPrincipalRoleInfo GetAttachmentPermissionsForPrincipal(string containerTitle, Guid guid, string fileName, string principalName, string principalType)
+    public virtual PrincipalRoleInfo GetAttachmentPermissionsForPrincipal(string containerTitle, Guid guid, string fileName, string principalName, string principalType)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))
@@ -3615,7 +3658,7 @@
     /// <param name="guid">The GUID.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
-    public virtual IPermissionsInfo ResetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
+    public virtual PermissionsInfo ResetAttachmentPermissions(string containerTitle, Guid guid, string fileName)
     {
       //Get a new web in case we're executing in elevated permissions.
       using (var site = new SPSite(this.DocumentStoreUrl))

@@ -1,11 +1,11 @@
-﻿namespace Barista.SharePoint.Library
+﻿using System.Globalization;
+
+namespace Barista.SharePoint.Library
 {
+  using System;
   using Jurassic;
   using Jurassic.Library;
   using Microsoft.SharePoint;
-  using System;
-  using System.Globalization;
-
 
   [Serializable]
   public class SPCamlQueryConstructor : ClrFunction
@@ -31,6 +31,14 @@
       }
 
       return result;
+    }
+
+    public SPUserInstance Construct(SPUser user)
+    {
+      if (user == null)
+        throw new ArgumentNullException("user");
+
+      return new SPUserInstance(this.InstancePrototype, user);
     }
   }
 

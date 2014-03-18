@@ -130,7 +130,7 @@
     /// Lists all containers contained in the document store.
     /// </summary>
     /// <returns></returns>
-    public IList<IContainer> ListContainers()
+    public IList<Container> ListContainers()
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.ListContainers();
@@ -141,7 +141,7 @@
     /// </summary>
     /// <param name="containerTitle"></param>
     /// <returns></returns>
-    public IContainer CreateContainer(string containerTitle)
+    public Container CreateContainer(string containerTitle)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
       return documentStore.CreateContainer(this.Configuration.ContainerTitle, containerTitle);
@@ -165,7 +165,7 @@
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IList<IFolder> ListFolders(string path)
+    public IList<Folder> ListFolders(string path)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       return documentStore.ListFolders(this.Configuration.ContainerTitle, path);
@@ -176,7 +176,7 @@
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IFolder CreateFolder(string path)
+    public Folder CreateFolder(string path)
     {
       var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
       return documentStore.CreateFolder(this.Configuration.ContainerTitle, path);
@@ -532,22 +532,22 @@
     /// <returns></returns>
     public IList<Entity<T>> ListEntities<T>(EntityFilterCriteria filterCriteria)
     {
-      IList<IEntity> entities;
+      IList<Entity> result;
       if (filterCriteria.Path != null)
       {
         var documentStore = this.Configuration.GetDocumentStore<IFolderCapableDocumentStore>();
-        entities = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria.Path, filterCriteria);
       }
       else
       {
         var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
-        entities = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria);
+        result = documentStore.ListEntities(this.Configuration.ContainerTitle, filterCriteria);
       }
 
-      if (entities == null)
+      if (result == null)
         return null;
 
-      return entities.
+      return result.
         Select(e => new Entity<T>(e))
         .ToList();
     }
@@ -604,7 +604,7 @@
       return new Entity<TEntity>(entity);
     }
 
-    public Entity<TEntity> UpdateEntity<TEntity>(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
+    public Entity UpdateEntity(Guid entityId, string entityTitle, string entityDescription, string entityNamespace)
     {
       var documentStore = this.Configuration.GetDocumentStore<IDocumentStore>();
 
@@ -623,7 +623,7 @@
         trigger(triggerProperties);
       }
 
-      return new Entity<TEntity>(result);
+      return result;
     }
 
     /// <summary>
@@ -766,7 +766,7 @@
     /// <param name="entityId"></param>
     /// <param name="comment"></param>
     /// <returns></returns>
-    public IComment AddEntityComment(Guid entityId, string comment)
+    public Comment AddEntityComment(Guid entityId, string comment)
     {
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
       var result = documentStore.AddEntityComment(this.Configuration.ContainerTitle, entityId, comment);
@@ -794,7 +794,7 @@
     /// </summary>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public IList<IComment> ListEntityComments(Guid entityId)
+    public IList<Comment> ListEntityComments(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
       return documentStore.ListEntityComments(this.Configuration.ContainerTitle, entityId);
@@ -827,7 +827,7 @@
     }
 
 
-    public EntityPart<TEntityPart> CreateEntityPart<TEntityPart>(Guid entityId, string partName, string category, string data)
+    public EntityPart CreateEntityPart(Guid entityId, string partName, string category, string data)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -854,7 +854,7 @@
         trigger(triggerProperties);
       }
 
-      return new EntityPart<TEntityPart>(result);
+      return result;
     }
 
     /// <summary>
@@ -1080,7 +1080,7 @@
       return true;
     }
 
-    public EntityPart<TEntityPart> UpdateEntityPart<TEntityPart>(Guid entityId, string partName, string category)
+    public EntityPart UpdateEntityPart(Guid entityId, string partName, string category)
     {
       var documentStore = this.Configuration.GetDocumentStore<IEntityPartCapableDocumentStore>();
 
@@ -1111,7 +1111,7 @@
         trigger(triggerProperties);
       }
 
-      return new EntityPart<TEntityPart>(result);
+      return result;
     }
 
     public EntityPart<TEntityPart> UpdateEntityPart<TEntity, TEntityPart>(Guid entityId, string category)
@@ -1274,7 +1274,7 @@
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    public IList<IEntityPart> ListEntityParts<TEntity>(Guid entityId)
+    public IList<EntityPart> ListEntityParts<TEntity>(Guid entityId)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
 
@@ -1293,7 +1293,7 @@
     /// <param name="entityId"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public IList<IEntityPart> ListEntityParts<TEntity>(Guid entityId, string path)
+    public IList<EntityPart> ListEntityParts<TEntity>(Guid entityId, string path)
     {
       var entityDefinition = this.Configuration.RegisteredEntityDefinitions.FirstOrDefault(ed => ed.EntityType == typeof(TEntity));
 
@@ -1384,21 +1384,21 @@
     #endregion
 
     #region Attachments
-    public IList<IAttachment> ListAttachments(Guid entityId)
+    public IList<Attachment> ListAttachments(Guid entityId)
     {
       var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
 
       return documentStore.ListAttachments(this.Configuration.ContainerTitle, entityId);
     }
 
-    public IAttachment GetAttachment(Guid entityId, string fileName)
+    public Attachment GetAttachment(Guid entityId, string fileName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
 
       return documentStore.GetAttachment(this.Configuration.ContainerTitle, entityId, fileName);
     }
 
-    public IAttachment UploadAttachment(Guid entityId, string fileName, byte[] attachment)
+    public Attachment UploadAttachment(Guid entityId, string fileName, byte[] attachment)
     {
       var documentStore = this.Configuration.GetDocumentStore<IAttachmentCapableDocumentStore>();
       var result = documentStore.UploadAttachment(this.Configuration.ContainerTitle, entityId, fileName, attachment);
@@ -1460,7 +1460,7 @@
     #endregion
 
     #region Permissions
-    public IPrincipalRoleInfo AddPrincipalRoleToEntity(Guid entityId, string principalName, string principalType, string roleName)
+    public PrincipalRoleInfo AddPrincipalRoleToEntity(Guid entityId, string principalName, string principalType, string roleName)
     {
       var documentStore = this.Configuration.GetDocumentStore<IPermissionsCapableDocumentStore>();
 

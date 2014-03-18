@@ -24,7 +24,7 @@
       set;
     }
 
-    public Func<IEntity, object> Map
+    public Func<Entity, object> Map
     {
       get;
       set;

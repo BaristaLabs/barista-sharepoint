@@ -153,17 +153,9 @@
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
     <Compile Include="DocumentStore\DocumentStoreContainerEventReceiver\DocumentStoreContainerEventReceiver.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreAttachment.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreComment.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreContainer.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreEntity.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreEntityPart.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreFolder.cs" />
-    <Compile Include="DocumentStore\SPEntity.cs" />
     <Compile Include="DocumentStore\SPEntityMutexManager.cs" />
     <Compile Include="DocumentStore\SPRepositoryConstructor.cs" />
-    <Compile Include="DocumentStore\SPDocumentStoreUser.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
     <Compile Include="Features\Barista\Barista.EventReceiver.cs">
       <DependentUpon>Barista.feature</DependentUpon>

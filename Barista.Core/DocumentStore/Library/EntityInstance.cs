@@ -8,11 +8,11 @@
   using System;
 
   [Serializable]
-  public class EntityInstance : ObjectInstance, IEntity
+  public class EntityInstance : ObjectInstance
   {
-    private readonly IEntity m_entity;
+    private readonly Entity m_entity;
 
-    public EntityInstance(ScriptEngine engine, IEntity entity)
+    public EntityInstance(ScriptEngine engine, Entity entity)
       : base(engine)
     {
       if (entity == null)
@@ -24,7 +24,7 @@
       this.PopulateFunctions();
     }
 
-    public IEntity Entity
+    public Entity Entity
     {
       get { return m_entity; }
     }
@@ -38,12 +38,6 @@
         if (value != null)
           m_entity.Id = value.Value;
       }
-    }
-
-    Guid IEntity.Id
-    {
-      get { return m_entity.Id; }
-      set { m_entity.Id = value; }
     }
 
     [JSProperty(Name = "title")]
@@ -73,12 +67,6 @@
       set { m_entity.Namespace = value.ToString(); }
     }
 
-    string IEntity.Namespace
-    {
-      get { return m_entity.Namespace; }
-      set { m_entity.Namespace = value; }
-    }
-
     [JSProperty(Name = "eTag")]
     public string ETag
     {
@@ -98,12 +86,6 @@
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.ContentsModified); }
       set { m_entity.ContentsModified = DateTime.Parse(value.ToIsoString());  }
-    }
-
-    DateTime IEntity.ContentsModified
-    {
-      get { return m_entity.ContentsModified; }
-      set { m_entity.ContentsModified = value; }
     }
 
     [JSProperty(Name = "path")]
@@ -149,23 +131,11 @@
       }
     }
 
-    string IEntity.Data
-    {
-      get { return m_entity.Data; }
-      set { m_entity.Data = value; }
-    }
-
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Created); }
       set { m_entity.Created = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IEntity.Created
-    {
-      get { return m_entity.Created; }
-      set { m_entity.Created = value; }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -180,23 +150,11 @@
       }
     }
 
-    IUser IEntity.CreatedBy
-    {
-      get { return m_entity.CreatedBy; }
-      set { m_entity.CreatedBy = value; }
-    }
-
     [JSProperty(Name = "modified")]
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_entity.Modified); }
       set { m_entity.Modified = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IEntity.Modified
-    {
-      get { return m_entity.Modified; }
-      set { m_entity.Modified = value; }
     }
 
     [JSProperty(Name = "modifiedBy")]
@@ -209,12 +167,6 @@
 
         return m_entity.ModifiedBy.LoginName;
       }
-    }
-
-    IUser IEntity.ModifiedBy
-    {
-      get { return m_entity.ModifiedBy; }
-      set { m_entity.ModifiedBy = value; }
     }
   }
 }

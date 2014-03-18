@@ -6,11 +6,11 @@
   using System;
 
   [Serializable]
-  public class FolderInstance : ObjectInstance, IFolder
+  public class FolderInstance : ObjectInstance
   {
-    private readonly IFolder m_folder;
+    private readonly Folder m_folder;
 
-    public FolderInstance(ScriptEngine engine, IFolder folder)
+    public FolderInstance(ScriptEngine engine, Folder folder)
       : base(engine)
     {
       if (folder == null)
@@ -20,11 +20,6 @@
 
       this.PopulateFields();
       this.PopulateFunctions();
-    }
-
-    public IFolder Folder
-    {
-      get { return m_folder; }
     }
 
     [JSProperty(Name = "name")]
@@ -41,17 +36,18 @@
       set { m_folder.FullPath = value; }
     }
 
+    [JSProperty(Name = "entityCount")]
+    public int EntityCount
+    {
+      get { return m_folder.EntityCount; }
+      set { m_folder.EntityCount = value; }
+    }
+
     [JSProperty(Name = "created")]
     public DateInstance Created
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_folder.Created); }
       set { m_folder.Created = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IFolder.Created
-    {
-      get { return m_folder.Created; }
-      set { m_folder.Created = value; }
     }
 
     [JSProperty(Name = "createdBy")]
@@ -66,23 +62,11 @@
       }
     }
 
-    IUser IFolder.CreatedBy
-    {
-      get { return m_folder.CreatedBy; }
-      set { m_folder.CreatedBy = value; }
-    }
-
     [JSProperty(Name = "modified")]
     public DateInstance Modified
     {
       get { return JurassicHelper.ToDateInstance(this.Engine, m_folder.Modified); }
       set { m_folder.Modified = DateTime.Parse(value.ToIsoString()); }
-    }
-
-    DateTime IFolder.Modified
-    {
-      get { return m_folder.Modified; }
-      set { m_folder.Modified = value; }
     }
 
     [JSProperty(Name = "modifiedBy")]
@@ -95,19 +79,6 @@
 
         return m_folder.ModifiedBy.LoginName;
       }
-    }
-
-    IUser IFolder.ModifiedBy
-    {
-      get { return m_folder.ModifiedBy; }
-      set { m_folder.ModifiedBy = value; }
-    }
-
-
-    [JSProperty(Name = "entityCount")]
-    public int EntityCount
-    {
-      get { return m_folder.EntityCount; }
     }
   }
 }

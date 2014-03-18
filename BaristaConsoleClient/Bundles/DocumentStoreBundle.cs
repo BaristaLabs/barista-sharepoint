@@ -4,7 +4,7 @@
   using System.IO;
   using Barista;
   using Barista.DocumentStore;
-  //using Barista.DocumentStore.FileSystem;
+  using Barista.DocumentStore.FileSystem;
   using Barista.DocumentStore.Library;
   using Barista.Jurassic;
   using BaristaConsoleClient.DocumentStore;
@@ -33,9 +33,8 @@
       var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "DocumentStore");
 
       engine.SetGlobalValue("Repository", new ConsoleRepositoryConstructor(engine));
-      throw new NotImplementedException();
-      //var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
-      //return new RepositoryInstance(engine, repository);
+      var repository = Repository.GetRepository(factory, new FSDocumentStore(rootPath));
+      return new RepositoryInstance(engine, repository);
     }
 
     [Serializable]

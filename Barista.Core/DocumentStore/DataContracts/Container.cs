@@ -3,31 +3,39 @@
   using System;
   using System.Runtime.Serialization;
 
-  public interface IComment
+  [DataContract(Namespace = Constants.ServiceV1Namespace)]
+  public class Container : DSEditableObject
   {
     [DataMember]
-    int Id
+    public Guid Id
     {
       get;
       set;
     }
 
     [DataMember]
-    string CommentText
+    public string Title
     {
       get;
       set;
     }
 
     [DataMember]
-    DateTime Created
+    public string Description
     {
       get;
       set;
     }
 
     [DataMember]
-    IUser CreatedBy
+    public string Url
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+    public int EntityCount
     {
       get;
       set;

@@ -4,15 +4,14 @@
   using Jurassic;
   using Jurassic.Library;
   using System;
-  using System.Collections.Generic;
   using System.Linq;
 
   [Serializable]
-  public class RoleInstance : ObjectInstance, IRole
+  public class RoleInstance : ObjectInstance
   {
-    private readonly IRole m_role;
+    private readonly Role m_role;
 
-    public RoleInstance(ScriptEngine engine, IRole role)
+    public RoleInstance(ScriptEngine engine, Role role)
       : base(engine)
     {
       if (role == null)
@@ -22,11 +21,6 @@
 
       this.PopulateFields();
       this.PopulateFunctions();
-    }
-
-    public IRole Role
-    {
-      get { return m_role; }
     }
 
     [JSProperty(Name = "name")]
@@ -64,12 +58,6 @@
       {
         m_role.BasePermissions = value.ElementValues.OfType<string>().ToList();
       }
-    }
-
-    IList<string> IRole.BasePermissions
-    {
-      get { return m_role.BasePermissions; }
-      set { m_role.BasePermissions = value; }
     }
   }
 }

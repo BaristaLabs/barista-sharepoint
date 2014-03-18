@@ -224,30 +224,9 @@
     <Compile Include="Configuration\IndexDefinition.cs" />
     <Compile Include="BaristaScriptMutexManager.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
-    <Compile Include="DocumentStore\DataContracts\IAttachment.cs" />
-    <Compile Include="DocumentStore\DataContracts\IComment.cs" />
-    <Compile Include="DocumentStore\DataContracts\IContainer.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSComments.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSLock.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSMetadata.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSObject.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSPermissions.cs" />
-    <Compile Include="DocumentStore\DataContracts\IDSVersions.cs" />
-    <Compile Include="DocumentStore\DataContracts\IEntity.cs" />
-    <Compile Include="DocumentStore\DataContracts\IEntityPart.cs" />
-    <Compile Include="DocumentStore\DataContracts\IVersion.cs" />
-    <Compile Include="DocumentStore\DataContracts\IFolder.cs" />
-    <Compile Include="DocumentStore\DataContracts\IGroup.cs" />
-    <Compile Include="DocumentStore\DataContracts\IPermissionsInfo.cs" />
-    <Compile Include="DocumentStore\DataContracts\IPrincipal.cs" />
-    <Compile Include="DocumentStore\DataContracts\IPrincipalRoleInfo.cs" />
-    <Compile Include="DocumentStore\DataContracts\IRole.cs" />
-    <Compile Include="DocumentStore\DataContracts\IUser.cs" />
     <Compile Include="DocumentStore\EntityExistsException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />
     <Compile Include="DocumentStore\EntityPartExistsException.cs" />
-    <Compile Include="DocumentStore\EntityPartT.cs" />
-    <Compile Include="DocumentStore\EntityT.cs" />
     <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
     <Compile Include="DocumentStore\Library\CommentInstance.cs" />
     <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
@@ -923,6 +902,18 @@
     <Compile Include="Library\WebInstanceBase.cs" />
     <Compile Include="Library\ZipFileInstance.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
+    <Compile Include="DocumentStore\DataContracts\Attachment.cs" />
+    <Compile Include="DocumentStore\DataContracts\Comment.cs" />
+    <Compile Include="DocumentStore\DataContracts\Container.cs" />
+    <Compile Include="DocumentStore\DataContracts\DSObject.cs" />
+    <Compile Include="DocumentStore\DataContracts\Entity.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityPart.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityPartVersion.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityVersion.cs" />
+    <Compile Include="DocumentStore\DataContracts\Folder.cs" />
+    <Compile Include="DocumentStore\DataContracts\Principal.cs" />
+    <Compile Include="DocumentStore\DataContracts\PrincipalPermissions.cs" />
+    <Compile Include="DocumentStore\DataContracts\SchemaOptions.cs" />
     <Compile Include="DocumentStore\DocumentStoreHelper.cs" />
     <Compile Include="DocumentStore\DomainModel\ApplicationConfiguration.cs" />
     <Compile Include="DocumentStore\DomainModel\ApplicationLog.cs" />
@@ -1141,10 +1132,20 @@
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\QueryString.cs" />
     <Compile Include="DocumentStore\IndexDefinition.cs" />
+    <Compile Include="DocumentStore\Interfaces\IAttachmentCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\ICommentCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartFolderCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartVersionHistoryCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IFolderCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\IFullyCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\Interfaces\ILockCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IManagedPropertyCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IMetadataCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IPermissionsCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\ISchemaCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IVersionHistoryCapableDocumentStore.cs" />
     <Compile Include="DocumentStore\IRepositoryFactory.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="Linq\Csv\CsvColumnAttribute.cs" />
@@ -1182,7 +1183,12 @@
     <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DocumentStore\FileSystem\" />
+    <Folder Include="DocumentStore\Framework\" />
+    <Folder Include="DocumentStore\Helpers\" />
+    <Folder Include="DocumentStore\SharpKit\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\jsonDataHandler.js" />
   </ItemGroup>

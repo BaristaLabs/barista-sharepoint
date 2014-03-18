@@ -32,7 +32,7 @@
           NamespaceMatchType = NamespaceMatchType.Equals,
         });
 
-        var dsApplicationLog = dsApplicationLogs.FirstOrDefault();
+        Entity dsApplicationLog = dsApplicationLogs.FirstOrDefault();
         if (dsApplicationLog == null)
         {
           var data = DocumentStoreHelper.SerializeObjectToJson(new ApplicationLog());

@@ -407,7 +407,7 @@
 
       var id = ConvertFromJsObjectToGuid(entityId);
 
-      var entity = String.IsNullOrEmpty(path)
+      Entity entity = String.IsNullOrEmpty(path)
         ? m_repository.ImportEntity(id, @namespace, archiveData.Data)
         : m_repository.ImportEntity(path, id, @namespace, archiveData.Data);
       
@@ -617,7 +617,7 @@
 
       var id = ConvertFromJsObjectToGuid(entityId);
 
-      IEntityPart result;
+      EntityPart result;
       if (partName == Undefined.Value || partName == Null.Value || partName == null)
         //Use the path argument as the part name.
         result = m_repository.GetEntityPart(id, path);
