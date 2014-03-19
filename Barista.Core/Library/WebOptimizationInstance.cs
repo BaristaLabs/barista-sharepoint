@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
   using System.Collections.Concurrent;
+  using System.IO.Compression;
   using System.Linq;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
@@ -75,16 +76,17 @@
 
     [JSFunction(Name = "bundle")]
     [JSDoc("Using a xml bundle definition, combines the specified files and returns the bundle as an object.")]
-    public object Bundle(string bundleDefinitionXml, string fileName, object update)
+    public object Bundle(string bundleDefinitionXml, string fileName, object update, object minify)
     {
       if (String.IsNullOrEmpty(fileName))
         fileName = "bundle.txt";
 
       var bUpdate = JurassicHelper.GetTypedArgumentValue(this.Engine, update, true);
+      var bMinify = JurassicHelper.GetTypedArgumentValue(this.Engine, minify, false);
 
       var doc = new XmlDocument();
       doc.LoadXml(bundleDefinitionXml);
-      var bundleText = GenerateBundleFromBundleDefinition(fileName, doc, bUpdate);
+      var bundleText = GenerateBundleFromBundleDefinition(fileName, doc, bUpdate, bMinify);
 
       var bytes = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(bundleText))
       {
@@ -95,6 +97,55 @@
       var result = this.Engine.Object.Construct();
       result.SetPropertyValue("lastModified", JurassicHelper.ToDateInstance(this.Engine, FileModifiedDates.Values.Max(v => v.Item1)), false);
       result.SetPropertyValue("data", bytes, false);
+      return result;
+    }
+
+    [JSFunction(Name = "gzip")]
+    public Base64EncodedByteArrayInstance GZip(object obj, object fileName, object mimeType)
+    {
+      byte[] data;
+      if (obj is Base64EncodedByteArrayInstance)
+      {
+        var b = obj as Base64EncodedByteArrayInstance;
+        if (fileName == Undefined.Value || fileName == Null.Value || fileName == null)
+          fileName = b.FileName;
+        
+
+        if (mimeType == Undefined.Value || mimeType == Null.Value || mimeType == null)
+          mimeType = b.MimeType;
+        
+        data = b.Data;
+      }
+      else
+      {
+        data = Encoding.UTF8.GetBytes(TypeConverter.ToString(obj));
+      }
+
+      Base64EncodedByteArrayInstance result;
+      using (var inStream = new MemoryStream(data))
+      {
+        using (var outStream = new MemoryStream())
+        {
+          using (var compress = new GZipStream(outStream, CompressionMode.Compress))
+          {
+            // Copy the source file into the compression stream.
+            byte[] buffer = new byte[4096];
+            int numRead;
+            while ((numRead = inStream.Read(buffer, 0, buffer.Length)) != 0)
+            {
+              compress.Write(buffer, 0, numRead);
+            }
+          }
+          result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, outStream.ToArray());
+
+          if (fileName != Undefined.Value && fileName != Null.Value && fileName != null)
+            result.FileName = TypeConverter.ToString(fileName);
+
+          if (mimeType != Undefined.Value && mimeType != Null.Value && mimeType != null)
+            result.MimeType = TypeConverter.ToString(mimeType);
+        }
+      }
+
       return result;
     }
 
@@ -168,7 +219,7 @@
       }
     }
 
-    private string GenerateBundleFromBundleDefinition(string filePath, XmlDocument doc, bool update)
+    private string GenerateBundleFromBundleDefinition(string filePath, XmlDocument doc, bool update, bool minify)
     {
       var files = ParseBundleDefinition(doc);
 
@@ -192,8 +243,25 @@
 
           if (extension.Equals(".js", StringComparison.OrdinalIgnoreCase))
             sb.AppendLine("///#source 1 1 " + files[file]);
-          
-          sb.AppendLine(contents.Item2);
+          else if (extension.Equals(".css", StringComparison.OrdinalIgnoreCase))
+            sb.AppendLine("/* source 1 1 " + files[file] + "*/");
+
+          var source = contents.Item2;
+          if (minify)
+          {
+            try
+            {
+              if (extension.Equals(".js", StringComparison.OrdinalIgnoreCase))
+                source = MinifyJs(source);
+              else if (extension.Equals(".css", StringComparison.OrdinalIgnoreCase))
+                source = MinifyCss(source);
+            }
+            catch (Exception ex)
+            {
+              throw new JavaScriptException(this.Engine, "Error", "Error occurred while minifying file " + contents.Item1 + " " + ex.Message);
+            }
+          }
+          sb.AppendLine(source);
         }
       }
 
