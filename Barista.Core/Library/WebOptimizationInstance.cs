@@ -3,6 +3,7 @@
   using System.Collections.Concurrent;
   using System.IO.Compression;
   using System.Linq;
+  using System.Text.RegularExpressions;
   using Barista.Jurassic;
   using Barista.Jurassic.Library;
   using System;
@@ -22,6 +23,12 @@
     {
       this.PopulateFields();
       this.PopulateFunctions();
+    }
+
+    public Func<string, string> GetAbsoluteUrlFromPath
+    {
+      get;
+      set;
     }
 
     public Func<string, DateTime> GetLastModifiedDate
@@ -165,6 +172,36 @@
       return jsCompressor.Compress(javascript);
     }
 
+    [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]
+    [JSDoc("Returns the specified CSS file with the included url values to be absolute urls.")]
+    public string ReplaceRelativeUrlsWithAbsoluteInCss(string css, string cssFilePath)
+    {
+      Regex pattern = new Regex(@"url\s*\(\s*([""']?)([^:)]+)\s*\1\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+      MatchCollection matches = pattern.Matches(css);
+
+      // Ignore the content if no match 
+      if (matches.Count > 0)
+      {
+        foreach (Match match in matches)
+        {
+          // this is a path that is relative to the CSS file
+          string relativeToCss = match.Groups[2].Value;
+          // combine the relative path to the cssAbsolute
+          string absoluteToUrl = cssFilePath.TrimEnd('/') + "/" + relativeToCss;
+            
+          // make this server absolute
+          string absUrl = GetAbsoluteUrlFromPath(absoluteToUrl);
+
+          string quote = match.Groups[1].Value;
+          string replace = String.Format("url({0}{1}{0})", quote, absUrl);
+          css = css.Replace(match.Groups[0].Value, replace);
+        }
+      }
+
+      return css;
+    }
+
     private IDictionary<string, string> ParseBundleDefinition(XmlDocument doc)
     {
       var result = new Dictionary<string, string>();
@@ -244,7 +281,21 @@
           if (extension.Equals(".js", StringComparison.OrdinalIgnoreCase))
             sb.AppendLine("///#source 1 1 " + files[file]);
           else if (extension.Equals(".css", StringComparison.OrdinalIgnoreCase))
+          {
             sb.AppendLine("/* source 1 1 " + files[file] + "*/");
+
+            //make paths absolute in css files.
+            var relCssPath = file.Substring(0, file.LastIndexOf('/'));
+            try
+            {
+              contents = new Tuple<DateTime, string>(contents.Item1,
+                ReplaceRelativeUrlsWithAbsoluteInCss(contents.Item2, relCssPath));
+            }
+            catch (Exception ex)
+            {
+              throw new JavaScriptException(this.Engine, "Error", "Error processing " + file + " " + ex.Message);
+            }
+          }
 
           var source = contents.Item2;
           if (minify)

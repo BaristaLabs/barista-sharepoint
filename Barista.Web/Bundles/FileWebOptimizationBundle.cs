@@ -16,6 +16,20 @@
     {
       var bundlerInstance = new WebOptimizationInstance(engine)
       {
+        GetAbsoluteUrlFromPath = filePath =>
+        {
+          string result;
+          if (filePath.StartsWith("~"))
+          {
+            result = VirtualPathUtility.ToAbsolute(filePath); 
+          }
+          else
+          {
+            throw new NotImplementedException();
+          }
+
+          return result;
+        },
         GetLastModifiedDate = fileName =>
         {
           DateTime? result = null;
