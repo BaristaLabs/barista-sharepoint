@@ -2379,7 +2379,7 @@ namespace Barista.EcmaScript.NET
 
             if (m_ResourceManager == null) {
                 m_ResourceManager = new ResourceManager (
-                    "EcmaScript.NET.Resources.Messages", typeof (ScriptRuntime).Assembly);
+                    "Barista.Resources.Messages", typeof (ScriptRuntime).Assembly);
             }
 
             string formatString = m_ResourceManager.GetString (messageId, culture);
