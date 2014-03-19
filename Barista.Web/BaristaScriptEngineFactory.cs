@@ -57,7 +57,7 @@
         instance.Common.RegisterBundle(new StringBundle());
         instance.Common.RegisterBundle(new SugarBundle());
         instance.Common.RegisterBundle(new SucraloseBundle());
-        instance.Common.RegisterBundle(new FileBundlerBundle());
+        instance.Common.RegisterBundle(new FileWebOptimizationBundle());
         instance.Common.RegisterBundle(new MomentBundle());
         instance.Common.RegisterBundle(new MustacheBundle());
         instance.Common.RegisterBundle(new LinqBundle());

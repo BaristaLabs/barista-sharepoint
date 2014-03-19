@@ -4,7 +4,7 @@
   using Barista.Library;
 
   [Serializable]
-  public class BundlerBundle : IBundle
+  public class WebOptimizationBundle : IBundle
   {
     public bool IsSystemBundle
     {
@@ -13,17 +13,17 @@
 
     public string BundleName
     {
-      get { return "Bundler"; }
+      get { return "Web Optimization"; }
     }
 
     public string BundleDescription
     {
-      get { return "Bundler Bundle. Provides behavior to bundle/minify a collection of files."; }
+      get { return "Web Optimization Bundle. Provides functionality to help optimize web content. Bundling, minification, sprites, image resizing and so forth."; }
     }
 
     public virtual object InstallBundle(Jurassic.ScriptEngine engine)
     {
-      var bundlerInstance = new BundlerInstance(engine);
+      var bundlerInstance = new WebOptimizationInstance(engine);
 
       return bundlerInstance;
     }

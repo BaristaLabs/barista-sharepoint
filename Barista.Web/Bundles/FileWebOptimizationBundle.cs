@@ -10,11 +10,11 @@
   using Barista.Jurassic;
   using Barista.Library;
 
-  public class FileBundlerBundle : BundlerBundle
+  public class FileWebOptimizationBundle : WebOptimizationBundle
   {
     public override object InstallBundle(ScriptEngine engine)
     {
-      var bundlerInstance = new BundlerInstance(engine)
+      var bundlerInstance = new WebOptimizationInstance(engine)
       {
         GetLastModifiedDate = fileName =>
         {

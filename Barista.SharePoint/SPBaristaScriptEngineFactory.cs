@@ -61,7 +61,7 @@
         instance.Common.RegisterBundle(new StringBundle());
         instance.Common.RegisterBundle(new SugarBundle());
         instance.Common.RegisterBundle(new SucraloseBundle());
-        instance.Common.RegisterBundle(new SPBundlerBundle());
+        instance.Common.RegisterBundle(new SPWebOptimizationBundle());
         instance.Common.RegisterBundle(new MomentBundle());
         instance.Common.RegisterBundle(new MustacheBundle());
         instance.Common.RegisterBundle(new LinqBundle());

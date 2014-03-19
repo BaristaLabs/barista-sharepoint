@@ -77,6 +77,33 @@
       set;
     }
 
+    [JSProperty(Name = "lastModified")]
+    public DateInstance LastModified
+    {
+      get
+      {
+        return JurassicHelper.ToDateInstance(this.Engine, Response.LastModified);
+      }
+      set
+      {
+        Response.LastModified = value.Value;
+      }
+    }
+
+    [JSProperty(Name = "expires")]
+    public int Expires
+    {
+      get
+      {
+        return Response.Expires;
+      }
+      set
+      {
+        Response.Expires = value;
+      }
+    }
+
+
     [JSProperty(Name = "redirectLocation")]
     public string Location
     {

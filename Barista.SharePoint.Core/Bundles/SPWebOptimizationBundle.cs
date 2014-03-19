@@ -6,11 +6,11 @@
   using Barista.Library;
   using Microsoft.SharePoint;
 
-  public class SPBundlerBundle : BundlerBundle
+  public class SPWebOptimizationBundle : WebOptimizationBundle
   {
     public override object InstallBundle(ScriptEngine engine)
     {
-      var bundlerInstance = new BundlerInstance(engine)
+      var bundlerInstance = new WebOptimizationInstance(engine)
       {
         GetLastModifiedDate = fileName =>
         {

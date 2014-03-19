@@ -113,7 +113,7 @@
     <Compile Include="Bundles\BaristaSearchIndexBundle.cs" />
     <Compile Include="Bundles\BaristaWebBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
-    <Compile Include="Bundles\FileBundlerBundle.cs" />
+    <Compile Include="Bundles\FileWebOptimizationBundle.cs" />
     <Compile Include="DocumentStore\WebRepositoryConstructor.cs" />
     <Compile Include="Libraries\BaristaWebInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

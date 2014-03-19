@@ -174,6 +174,7 @@ namespace Barista
     {
       response.ContentEncoding = this.ContentEncoding;
       response.ContentType = this.ContentType;
+      response.Cache.SetLastModified(this.LastModified);
       response.Expires = this.Expires;
       response.RedirectLocation = this.RedirectLocation;
       response.StatusCode = (int)this.StatusCode;
