@@ -1,6 +1,8 @@
 ﻿namespace Barista
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using System.Text;
   using System.Security.Cryptography;
 
@@ -30,6 +32,22 @@
       for (var i = 0; i < numberChars; i += 2)
         bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
       return bytes;
+    }
+
+    public static string ResolveParentPaths(string path)
+    {
+      var pathParts = path.Split(new [] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+
+      var pathStack = new Stack<string>();
+      foreach (var pathPart in pathParts)
+      {
+        if (pathPart == "..")
+          pathStack.Pop();
+        else
+          pathStack.Push(pathPart);
+      }
+
+      return String.Join("/", pathStack.Reverse().ToArray());
     }
 
     /// <summary>

@@ -2,7 +2,6 @@
 {
   using System;
   using System.Globalization;
-  using System.Runtime.InteropServices.ComTypes;
   using Microsoft.SharePoint;
   using System.IO;
   using System.Web;
@@ -492,6 +491,25 @@
 
       filePath = null;
       fileContents = null;
+      return false;
+    }
+
+    public static bool TryGetHiveFileInfo(string fileUrl, out FileInfo hiveFileInfo)
+    {
+      hiveFileInfo = null;
+
+      //Attempt to get the file relative to the sharepoint hive.
+      try
+      {
+        var path = HttpRuntime.AppDomainAppPath + fileUrl.TrimStart('/').Replace("~", string.Empty).Replace('/', '\\');
+        if (File.Exists(path))
+        {
+          hiveFileInfo = new FileInfo(path);
+          return true;
+        }
+      }
+      catch { /* Do Nothing... */ }
+
       return false;
     }
 

@@ -18,15 +18,24 @@
           Uri codeUri;
           if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out codeUri))
           {
-            SPFile file;
-            if (SPHelper.TryGetSPFile(fileName, out file))
-            {
-              result = (string)file.Item[SPBuiltInFieldId.EncodedAbsUrl];
-            }
+            if (codeUri.IsAbsoluteUri)
+              result = codeUri.ToString();
             else
             {
-              var error = string.Format("Bundle error: The file '{0}' doesn't exist", fileName);
-              throw new JavaScriptException(engine, "Error", error);
+              fileName = StringHelper.ResolveParentPaths(fileName);
+              SPFile file;
+              if (SPHelper.TryGetSPFile(fileName, out file))
+              {
+                if (file.Item != null)
+                  result = (string) file.Item[SPBuiltInFieldId.EncodedAbsUrl];
+                else
+                  result = SPBaristaContext.Current.Web.Url + "/" + file.Url;
+              }
+              else
+              {
+                var error = string.Format("Bundle error: The file '{0}' doesn't exist", fileName);
+                throw new JavaScriptException(engine, "Error", error);
+              }
             }
           }
           else

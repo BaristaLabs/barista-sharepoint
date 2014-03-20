@@ -176,7 +176,7 @@
     [JSDoc("Returns the specified CSS file with the included url values to be absolute urls.")]
     public string ReplaceRelativeUrlsWithAbsoluteInCss(string css, string cssFilePath)
     {
-      Regex pattern = new Regex(@"url\s*\(\s*([""']?)([^:)]+)\s*\1\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+      Regex pattern = new Regex(@"url\s*\(\s*([""']?)([^:?]+?)(?<frag>#.+?)?(?<qs>\?.+?)?\1\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       MatchCollection matches = pattern.Matches(css);
 
@@ -194,7 +194,9 @@
           string absUrl = GetAbsoluteUrlFromPath(absoluteToUrl);
 
           string quote = match.Groups[1].Value;
-          string replace = String.Format("url({0}{1}{0})", quote, absUrl);
+          string fragment = match.Groups["frag"].Value;
+          string queryString = match.Groups["qs"].Value;
+          string replace = String.Format("url({0}{1}{2}{3}{0})", quote, absUrl, fragment, queryString);
           css = css.Replace(match.Groups[0].Value, replace);
         }
       }
