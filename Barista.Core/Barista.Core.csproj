@@ -198,6 +198,7 @@
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\LoDashBundle.cs" />
     <Compile Include="Bundles\WebOptimizationBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
@@ -1328,6 +1329,7 @@
     <Content Include="Imports\SuperWebSocket\readme.txt" />
     <Content Include="Resources\Automapper.js" />
     <Content Include="Resources\chance.js" />
+    <Content Include="Resources\lodash.min.js" />
     <Content Include="Resources\moment.min.js" />
     <Content Include="Resources\uaregexes.yaml" />
     <None Include="Resources\sugar-1.3.9-custom.min.js" />

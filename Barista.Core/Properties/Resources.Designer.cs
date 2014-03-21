@@ -188,12 +188,26 @@ namespace Barista.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // moment.js
-        ///// version : 1.7.2
-        ///// author : Tim Wood
-        ///// license : MIT
-        ///// momentjs.com
-        ///(function(a){function E(a,b,c,d){var e=c.lang();return e[a].call?e[a](c,d):e[a][b]}function F(a,b){return function(c){return K(a.call(this,c),b)}}function G(a){return function(b){var c=a.call(this,b);return c+this.lang().ordinal(c)}}function H(a,b,c){this._d=a,this._isUTC=!!b,this._a=a._a||null,this._lang=c||!1}function I(a){var b=this._data={},c=a.years||a.y||0,d=a.months||a.M||0,e=a.weeks||a.w||0,f=a.days||a.d||0,g=a.hou [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to /**
+        /// * @license
+        /// * Lo-Dash 2.4.1 (Custom Build) lodash.com/license | Underscore.js 1.5.2 underscorejs.org/LICENSE
+        /// * Build: `lodash modern -o ./dist/lodash.js`
+        /// */
+        ///;(function(){function n(n,t,e){e=(e||0)-1;for(var r=n?n.length:0;++e&lt;r;)if(n[e]===t)return e;return-1}function t(t,e){var r=typeof e;if(t=t.l,&quot;boolean&quot;==r||null==e)return t[e]?0:-1;&quot;number&quot;!=r&amp;&amp;&quot;string&quot;!=r&amp;&amp;(r=&quot;object&quot;);var u=&quot;number&quot;==r?e:m+e;return t=(t=t[r])&amp;&amp;t[u],&quot;object&quot;==r?t&amp;&amp;-1&lt;n(t,e)?0:-1:t?0:-1}function e(n){var t=this.l,e=typeof n;if(&quot;b [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string lodash_min {
+            get {
+                return ResourceManager.GetString("lodash_min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to //! moment.js
+        /////! version : 2.5.1
+        /////! authors : Tim Wood, Iskren Chernev, Moment.js contributors
+        /////! license : MIT
+        /////! momentjs.com
+        ///(function (a) { function b() { return { empty: !1, unusedTokens: [], unusedInput: [], overflow: -2, charsLeftOver: 0, nullInput: !1, invalidMonth: null, invalidFormat: !1, userInvalidated: !1, iso: !1 } } function c(a, b) { return function (c) { return k(a.call(this, c), b) } } function d(a, b) { return function (c) { return this.lang().ordinal(a.call(this, c), b) } } func [rest of string was truncated]&quot;;.
         /// </summary>
         public static string moment_min {
             get {
