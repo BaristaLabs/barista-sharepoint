@@ -260,6 +260,8 @@
       Assert.AreEqual(ToJSDate(new DateTime(2010, 3, 11, 23, 0, 0, DateTimeKind.Utc)), TestUtils.Evaluate("Date.UTC(2010, 2, 12, -1)"));
       Assert.AreEqual(ToJSDate(new DateTime(2010, 3, 12, 1, 3, 0, DateTimeKind.Utc)), TestUtils.Evaluate("Date.UTC(2010, 2, 12, 0, 63)"));
       Assert.AreEqual(ToJSDate(new DateTime(2010, 3, 12, 0, 1, 3, DateTimeKind.Utc)), TestUtils.Evaluate("Date.UTC(2010, 2, 12, 0, 0, 63)"));
+
+      Assert.AreEqual(1397675459668D, TestUtils.Evaluate("Date.UTC.apply(null, [2014, 3, 16, 19, 10, 59, 668]);"));
     }
 
     [TestMethod]

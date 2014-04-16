@@ -126,16 +126,16 @@
     /// 
     /// If any of the parameters are out of range, then the other values are modified accordingly.
     /// </remarks>
-    [JSInternalFunction(Name = "UTC", Flags = JSFunctionFlags.HasThisObject)]
-    public static double Utc(ObjectInstance thisObj, int year, int month, [DefaultParameterValue(1)] object dayArg, [DefaultParameterValue(0)] object hourArg,
+    [JSInternalFunction(Name = "UTC", Flags = JSFunctionFlags.HasEngineParameter)]
+    public static double Utc(ScriptEngine engine, int year, int month, [DefaultParameterValue(1)] object dayArg, [DefaultParameterValue(0)] object hourArg,
         [DefaultParameterValue(0)] object minuteArg, [DefaultParameterValue(0)] object secondArg, [DefaultParameterValue(0)] object millisecondArg)
     {
-      var day = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, dayArg, 1);
-      var hour = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, hourArg, 0);
-      var minute = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, minuteArg, 0);
-      var second = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, secondArg, 0);
-      var millisecond = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, millisecondArg, 0);
-      return DateInstance.Utc(thisObj, year, month, day, hour, minute, second, millisecond);
+      var day = JurassicHelper.GetTypedArgumentValue(engine, dayArg, 1);
+      var hour = JurassicHelper.GetTypedArgumentValue(engine, hourArg, 0);
+      var minute = JurassicHelper.GetTypedArgumentValue(engine, minuteArg, 0);
+      var second = JurassicHelper.GetTypedArgumentValue(engine, secondArg, 0);
+      var millisecond = JurassicHelper.GetTypedArgumentValue(engine, millisecondArg, 0);
+      return DateInstance.Utc(engine, year, month, day, hour, minute, second, millisecond);
     }
 
     /// <summary>

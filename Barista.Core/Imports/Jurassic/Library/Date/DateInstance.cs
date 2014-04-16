@@ -943,7 +943,7 @@
     /// Given the components of a UTC date, returns the number of milliseconds since January 1,
     /// 1970, 00:00:00 UTC to that date.
     /// </summary>
-    /// <param name="thisObj"></param>
+    /// <param name="engine"></param>
     /// <param name="year"> The full year. </param>
     /// <param name="month"> The month as an integer between 0 and 11 (january to december). </param>
     /// <param name="dayArg"> The day of the month, from 1 to 31.  Defaults to 1. </param>
@@ -960,15 +960,15 @@
     /// 
     /// If any of the parameters are out of range, then the other values are modified accordingly.
     /// </remarks>
-    [JSFunction(Name = "UTC", Flags = JSFunctionFlags.HasThisObject)]
-    public static double Utc(ObjectInstance thisObj, int year, int month, [DefaultParameterValue(1)] object dayArg, [DefaultParameterValue(0)] object hourArg,
+    [JSFunction(Name = "UTC", Flags = JSFunctionFlags.HasEngineParameter)]
+    public static double Utc(ScriptEngine engine, int year, int month, [DefaultParameterValue(1)] object dayArg, [DefaultParameterValue(0)] object hourArg,
         [DefaultParameterValue(0)] object minuteArg, [DefaultParameterValue(0)] object secondArg, [DefaultParameterValue(0)] object millisecondArg)
     {
-      var day = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, dayArg, 1);
-      var hour = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, hourArg, 0);
-      var minute = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, minuteArg, 0);
-      var second = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, secondArg, 0);
-      var millisecond = JurassicHelper.GetTypedArgumentValue(thisObj.Engine, millisecondArg, 0);
+      var day = JurassicHelper.GetTypedArgumentValue(engine, dayArg, 1);
+      var hour = JurassicHelper.GetTypedArgumentValue(engine, hourArg, 0);
+      var minute = JurassicHelper.GetTypedArgumentValue(engine, minuteArg, 0);
+      var second = JurassicHelper.GetTypedArgumentValue(engine, secondArg, 0);
+      var millisecond = JurassicHelper.GetTypedArgumentValue(engine, millisecondArg, 0);
       return ToJSDate(ToDateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Utc));
     }
 
