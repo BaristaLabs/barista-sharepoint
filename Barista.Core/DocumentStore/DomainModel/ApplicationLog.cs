@@ -11,7 +11,7 @@
 
     public static void AddLogEntry(Repository repository, ApplicationLogEntry entry)
     {
-      var date = DateTime.Now;
+      var date = DateTime.UtcNow;
       var configuration = ApplicationConfiguration.GetApplicationConfiguration(repository);
 
       if (configuration.MinimumLogLevel > entry.Level)
@@ -75,7 +75,7 @@
         Logger = "Exception",
         Message = ex.Message, 
         StackTrace = ex.StackTrace,
-        TimeStamp = DateTime.Now,
+        TimeStamp = DateTime.UtcNow,
       };
 
       AddLogEntry(repository, entry);

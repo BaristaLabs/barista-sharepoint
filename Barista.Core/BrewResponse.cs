@@ -29,7 +29,7 @@ namespace Barista
       this.ETag = String.Empty;
       this.Expires = 0;
       this.Headers = new Dictionary<string, string>();
-      this.LastModified = DateTime.Now;
+      this.LastModified = DateTime.UtcNow;
       this.RedirectLocation = String.Empty;
       this.StatusCode = HttpStatusCode.OK;
       this.StatusDescription = "OK";
@@ -174,7 +174,11 @@ namespace Barista
     {
       response.ContentEncoding = this.ContentEncoding;
       response.ContentType = this.ContentType;
-      response.Cache.SetLastModified(this.LastModified);
+
+      //Last Modified cannot be in the future. May occur if server times are not synchronized.
+      if (this.LastModified <= DateTime.UtcNow)
+        response.Cache.SetLastModified(this.LastModified);
+
       response.Expires = this.Expires;
       response.RedirectLocation = this.RedirectLocation;
       response.StatusCode = (int)this.StatusCode;
