@@ -176,8 +176,8 @@ namespace Barista
       response.ContentType = this.ContentType;
 
       //Last Modified cannot be in the future. May occur if server times are not synchronized.
-      if (this.LastModified <= DateTime.UtcNow)
-        response.Cache.SetLastModified(this.LastModified);
+      if (this.LastModified.ToUniversalTime() <= DateTime.UtcNow)
+        response.Cache.SetLastModified(this.LastModified.ToUniversalTime());
 
       response.Expires = this.Expires;
       response.RedirectLocation = this.RedirectLocation;
