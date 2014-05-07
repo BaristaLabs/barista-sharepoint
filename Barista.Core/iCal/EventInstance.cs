@@ -162,6 +162,19 @@
             }
         }
 
+        [JSProperty(Name = "isAllDay")]
+        public bool IsAllDay
+        {
+            get
+            {
+                return m_iEvent.IsAllDay;
+            }
+            set
+            {
+                m_iEvent.IsAllDay = value;
+            }
+        }
+
         [JSProperty(Name = "location")]
         public string Location
         {
@@ -175,6 +188,32 @@
             }
         }
 
+        [JSProperty(Name = "organizer")]
+        public object Organizer
+        {
+            get
+            {
+                return new OrganizerInstance(this.Engine.Object.InstancePrototype, m_iEvent.Organizer);
+            }
+            set
+            {
+                if (value == null)
+                {
+                    m_iEvent.Organizer = null;
+                    return;
+                }
+
+                if (value is OrganizerInstance)
+                {
+                    m_iEvent.Organizer = ((OrganizerInstance) value).Organizer;
+                }
+                else
+                {
+                    m_iEvent.Organizer = new Organizer(TypeConverter.ToString(value));
+                }
+            }
+        }
+
         [JSProperty(Name = "priority")]
         public int Priority
         {
@@ -185,6 +224,15 @@
             set
             {
                 m_iEvent.Priority = value;
+            }
+        }
+
+        [JSProperty(Name = "properties")]
+        public CalendarPropertyListInstance CalendarProperties
+        {
+            get
+            {
+                return new CalendarPropertyListInstance(this.Engine.Object.InstancePrototype, m_iEvent.Properties);
             }
         }
 
@@ -223,6 +271,8 @@
                     m_iEvent.Start = ((iCalDateTimeInstance)value).iCalDateTime;
                 else if (value is DateTime)
                     m_iEvent.Start = new iCalDateTime((DateTime) value);
+                else if (value is DateInstance)
+                    m_iEvent.Start = new iCalDateTime(((DateInstance)value).Value);
                 else
                 {
                     var strValue = TypeConverter.ToString(value);

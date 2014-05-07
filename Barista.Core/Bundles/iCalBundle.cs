@@ -26,6 +26,8 @@ namespace Barista.Bundles
             engine.SetGlobalValue("iCalendar", new iCalendarConstructor(engine));
             engine.SetGlobalValue("iCalDateTime", new iCalDateTimeConstructor(engine));
             engine.SetGlobalValue("iEvent", new EventConstructor(engine));
+            engine.SetGlobalValue("iCalendarProperty", new CalendarPropertyConstructor(engine));
+            engine.SetGlobalValue("iOrganizer", new OrganizerConstructor(engine));
             engine.SetGlobalValue("iTimeZone", new TimeZoneConstructor(engine));
 
             var iCalInstance = new iCalInstance(engine);
