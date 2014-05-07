@@ -236,6 +236,44 @@
             }
         }
 
+        private ArrayInstance m_resources;
+        [JSProperty(Name = "resources")]
+        public ArrayInstance Resources
+        {
+            get
+            {
+                if (m_iEvent.Resources == null)
+                    return null;
+
+                return m_resources ?? (m_resources = this.Engine.Array.Construct(m_iEvent.Resources));
+            }
+            set
+            {
+                if (value == null)
+                {
+                    m_resources = null;
+                    m_iEvent.Resources = null;
+                    return;
+                }
+
+                if (m_resources == null)
+                    m_resources = this.Engine.Array.Construct();
+                else
+                {
+                    while (m_resources.Length > 0)
+                        m_resources.Pop();
+                }
+
+                m_iEvent.Resources = new List<string>();
+                foreach (var instance in value.ElementValues)
+                {
+                    var v = TypeConverter.ToString(instance);
+                    m_iEvent.Resources.Add(v);
+                    m_resources.Push(v);
+                }
+            }
+        }
+
         [JSProperty(Name = "status")]
         public string Status
         {
@@ -250,7 +288,6 @@
                     m_iEvent.Status = status;
             }
         }
-
 
         [JSProperty(Name = "start")]
         public object Start
@@ -320,5 +357,11 @@
             }
         }
         #endregion
+
+        [JSFunction(Name = "getCalendar")]
+        public iCalendarInstance GetCalendar()
+        {
+            return new iCalendarInstance(this.Engine.Object.InstancePrototype, (iCalendar)m_iEvent.iCalendar);
+        }
     }
 }

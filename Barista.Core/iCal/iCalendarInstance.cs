@@ -74,6 +74,13 @@
             return new EventInstance(this.Engine.Object.InstancePrototype, result);
         }
 
+        [JSFunction(Name = "createTodo")]
+        public TodoInstance CreateTodo()
+        {
+            var result = m_iCalendar.Create<Todo>();
+            return new TodoInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
         [JSFunction(Name = "getBytes")]
         public Base64EncodedByteArrayInstance GetBytes(object fileName)
         {

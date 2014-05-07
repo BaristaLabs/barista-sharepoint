@@ -270,11 +270,13 @@
     <Compile Include="iCal\CalendarPropertyListInstance.cs" />
     <Compile Include="iCal\EventInstance.cs" />
     <Compile Include="iCal\iCalDateTimeInstance.cs" />
+    <Compile Include="iCal\iCalendarCollectionInstance.cs" />
     <Compile Include="iCal\iCalendarInstance.cs" />
     <Compile Include="iCal\iCalInstance.cs" />
     <Compile Include="iCal\OrganizerInstance.cs" />
     <Compile Include="iCal\CalendarPropertyInstance.cs" />
     <Compile Include="iCal\TimeZoneInstance.cs" />
+    <Compile Include="iCal\TodoInstance.cs" />
     <Compile Include="Imports\EcmaScript.NET\Arguments.cs" />
     <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptClassAttribute.cs" />
     <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptFunctionAttribute.cs" />
