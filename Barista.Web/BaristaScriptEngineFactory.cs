@@ -65,6 +65,7 @@
         instance.Common.RegisterBundle(new JsonDataBundle());
         instance.Common.RegisterBundle(new ActiveDirectoryBundle());
         instance.Common.RegisterBundle(new DocumentBundle());
+        instance.Common.RegisterBundle(new iCalBundle());
         //instance.Common.RegisterBundle(new K2Bundle());
         instance.Common.RegisterBundle(new UtilityBundle());
         instance.Common.RegisterBundle(new DocumentStoreBundle());

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.DDay.iCal
+﻿namespace Barista.DDay.iCal
 {
+    using System.Collections.Generic;
+
     public interface IRecurringComponent :
         IUniqueComponent,
         IRecurrable,

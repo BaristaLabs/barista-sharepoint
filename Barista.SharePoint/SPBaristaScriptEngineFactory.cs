@@ -74,6 +74,7 @@
         instance.Common.RegisterBundle(new SharePointTaxonomyBundle());
         instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
         instance.Common.RegisterBundle(new SPDocumentBundle());
+        instance.Common.RegisterBundle(new iCalBundle());
         instance.Common.RegisterBundle(new K2Bundle());
         instance.Common.RegisterBundle(new UtilityBundle());
         instance.Common.RegisterBundle(new UlsLogBundle());

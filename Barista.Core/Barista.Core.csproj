@@ -201,6 +201,7 @@
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\iCalBundle.cs" />
     <Compile Include="Bundles\LoDashBundle.cs" />
     <Compile Include="Bundles\WebOptimizationBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
@@ -266,6 +267,11 @@
     <Compile Include="Helpers\UserAgentParser.cs" />
     <Compile Include="Helpers\UserAgentPattern.cs" />
     <Compile Include="Helpers\YamlParsing.cs" />
+    <Compile Include="iCal\EventInstance.cs" />
+    <Compile Include="iCal\iCalDateTimeInstance.cs" />
+    <Compile Include="iCal\iCalendarInstance.cs" />
+    <Compile Include="iCal\iCalInstance.cs" />
+    <Compile Include="iCal\TimeZoneInstance.cs" />
     <Compile Include="Imports\EcmaScript.NET\Arguments.cs" />
     <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptClassAttribute.cs" />
     <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptFunctionAttribute.cs" />

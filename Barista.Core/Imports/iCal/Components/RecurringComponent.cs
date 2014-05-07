@@ -125,7 +125,7 @@ namespace Barista.DDay.iCal
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public IDateTime RecurrenceID
+        virtual public IDateTime RecurrenceId
         {
             get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }

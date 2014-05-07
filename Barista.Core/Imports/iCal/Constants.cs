@@ -214,7 +214,7 @@
 
     public class CalendarProductIDs
     {
-        public const string Default = "-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN";
+        public const string Default = "-//baristajs.com//NONSGML Barista.iCal 1.0//EN";
     }
 
     public class CalendarVersions

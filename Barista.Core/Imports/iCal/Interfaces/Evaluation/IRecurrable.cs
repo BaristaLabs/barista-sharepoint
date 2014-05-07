@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Barista.DDay.iCal
+﻿namespace Barista.DDay.iCal
 {
+    using System.Collections.Generic;
+
     public interface IRecurrable :
         IGetOccurrences,
         IServiceProvider
     {
-        [Obsolete("Use the Start property instead.")]
-        IDateTime DTStart { get; set; }
-
         /// <summary>
         /// Gets/sets the start date/time of the component.
         /// </summary>
@@ -20,6 +15,6 @@ namespace Barista.DDay.iCal
         IList<IRecurrencePattern> ExceptionRules { get; set; }
         IList<IPeriodList> RecurrenceDates { get; set; }
         IList<IRecurrencePattern> RecurrenceRules { get; set; }
-        IDateTime RecurrenceID { get; set; }        
+        IDateTime RecurrenceId { get; set; }        
     }
 }

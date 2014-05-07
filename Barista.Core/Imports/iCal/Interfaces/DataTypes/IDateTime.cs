@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Barista.DDay.iCal
+﻿namespace Barista.DDay.iCal
 {
+    using System;
+
     public interface IDateTime :
         IEncodableDataType,
         IComparable<IDateTime>,

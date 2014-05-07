@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Collections;
-using System.IO;
-using System.Resources;
-using System.Web;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using NUnit.Framework;
-
 namespace Barista.DDay.iCal.Test
 {
+    using NUnit.Framework;
+    using System.Collections;
+    using System.Collections.Generic;
+
     [TestFixture]
     public class TodoTest
     {

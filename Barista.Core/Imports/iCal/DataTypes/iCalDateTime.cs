@@ -270,13 +270,13 @@ namespace Barista.DDay.iCal
 
         public static bool operator ==(iCalDateTime left, IDateTime right)
         {
-            if (left == null && right == null)
+            if (Object.Equals(left, null) && Object.Equals(right, null))
                 return true;
 
-            if (left == null)
+            if (Object.Equals(left, null))
                 return false;
 
-            if (right == null)
+            if (Object.Equals(right, null))
                 return false;
 
             left.AssociateWith(right);
@@ -288,13 +288,13 @@ namespace Barista.DDay.iCal
 
         public static bool operator !=(iCalDateTime left, IDateTime right)
         {
-            if (left == null && right == null)
+            if (Object.Equals(left, null) && Object.Equals(right, null))
                 return true;
 
-            if (left == null)
+            if (Object.Equals(left, null))
                 return false;
 
-            if (right == null)
+            if (Object.Equals(right, null))
                 return false;
 
             left.AssociateWith(right);
