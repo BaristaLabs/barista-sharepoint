@@ -154,6 +154,14 @@
     <Compile Include="DocumentStore\DocumentStoreContainerEventReceiver\DocumentStoreContainerEventReceiver.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Attachments.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Comments.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Containers.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Entities.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_EntityParts.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_EntityVersion.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Folders.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Metadata.cs" />
     <Compile Include="DocumentStore\SPEntityMutexManager.cs" />
     <Compile Include="DocumentStore\SPRepositoryConstructor.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
