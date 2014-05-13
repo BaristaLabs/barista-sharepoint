@@ -1,7 +1,10 @@
 ﻿namespace Barista.SharePoint
 {
   using System;
+  using System.Diagnostics;
   using System.Globalization;
+  using System.Runtime.InteropServices;
+  using System.Security.Principal;
   using Microsoft.SharePoint;
   using System.IO;
   using System.Web;
@@ -15,6 +18,44 @@
   /// </summary>
   public static class SPHelper
   {
+      private const uint ProcessToken = 0x0008;
+
+      /// <summary>
+      /// Returns a value that indicates if the process identity matches the current identity (and thus is elevated)
+      /// </summary>
+      /// <returns></returns>
+      public static bool IsElevated()
+      {
+          using (var identity = WindowsIdentity.GetCurrent())
+          {
+              return identity != null && GetProcessIdentity().User == identity.User;
+          }
+      }
+
+      private static WindowsIdentity GetProcessIdentity()
+      {
+          var handle = IntPtr.Zero;
+          try
+          {
+              var process = Process.GetCurrentProcess();
+              OpenProcessToken(process.Handle, ProcessToken, out handle);
+              return new WindowsIdentity(handle);
+          }
+          finally
+          {
+              if (handle != IntPtr.Zero)
+              {
+                  CloseHandle(handle);
+              }
+          }
+      }
+
+      [DllImport("kernel32.dll")]
+      public static extern Boolean CloseHandle(IntPtr hObject);
+
+      [DllImport("advapi32.dll", SetLastError = true)]
+      public static extern bool OpenProcessToken(IntPtr processHandle, UInt32 desiredAccess, out IntPtr tokenHandle);
+
     public static bool TryGetSPUserFromLoginName(string loginName, out SPUser user)
     {
       if (String.IsNullOrEmpty(loginName) || loginName == Undefined.Value.ToString())

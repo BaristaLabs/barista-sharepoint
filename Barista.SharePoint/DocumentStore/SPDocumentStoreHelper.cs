@@ -463,6 +463,70 @@
             return result;
         }
 
+        public static bool TryGetDocumentStoreEntityDocumentSetDirect(SPWeb web, string containerTitle, string path, Guid entityId,
+            out DocumentSet entityDocumentSet)
+
+        {
+            SPList list;
+            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            {
+                entityDocumentSet = null;
+                return false;
+            }
+
+            var url = SPUtility.ConcatUrls(list.RootFolder.ServerRelativeUrl, path);
+            url = SPUtility.ConcatUrls(url, entityId.ToString());
+
+            try
+            {
+                var fileOrFolder = web.GetFileOrFolderObject(url);
+                if (fileOrFolder is SPFolder)
+                {
+                    entityDocumentSet = DocumentSet.GetDocumentSet(fileOrFolder as SPFolder);
+                    return entityDocumentSet != null;
+                }
+            }
+            catch(FileNotFoundException)
+            {
+                //Do nothing..
+            }
+
+            entityDocumentSet = null;
+            return false;
+        }
+
+        public static bool TryGetDocumentStoreEntityPartDirect(SPWeb web, string containerTitle, string path, Guid entityId, string partName,
+            out SPFile entityPartFile)
+        {
+            SPList list;
+            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            {
+                entityPartFile = null;
+                return false;
+            }
+
+            var url = SPUtility.ConcatUrls(list.RootFolder.ServerRelativeUrl, path);
+            url = SPUtility.ConcatUrls(url, entityId.ToString());
+            url = SPUtility.ConcatUrls(url, partName);
+
+            try
+            {
+                var fileOrFolder = web.GetFileOrFolderObject(url);
+                if (fileOrFolder is SPFile)
+                {
+                    entityPartFile = fileOrFolder as SPFile;
+                    return true;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                //Do Nothing...
+            }
+
+            entityPartFile = null;
+            return false;
+        }
+
         /// <summary>
         /// Returns a value that indicates if a SPFolder that corresponds to the specified path is able to be retrieved.
         /// </summary>

@@ -145,14 +145,21 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-                return null;
-
             SPFile entityPartFile;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPartFile) == false)
-                return null;
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreEntityPartDirect(web, containerTitle, path, entityId, partName,
+                    out entityPartFile))
+            {
+                SPList list;
+                SPFolder folder;
+                if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+                    return null;
+
+
+                if (
+                    SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName,
+                        out entityPartFile) == false)
+                    return null;
+            }
 
             var result = SPDocumentStoreHelper.MapEntityPartFromSPFile(entityPartFile, null);
             ProcessEntityPartFile(containerTitle, entityId, partName, entityPartFile, result);

@@ -175,6 +175,7 @@
     <Compile Include="Bundles\SharePointContentMigrationBundle.cs" />
     <Compile Include="Bundles\SharePointSearchBundle.cs" />
     <Compile Include="Bundles\SPWebOptimizationBundle.cs" />
+    <Compile Include="Extensions\SPWebExtensions.cs" />
     <Compile Include="Imports\Camlex.NET\Attributes.cs" />
     <Compile Include="Imports\Camlex.NET\Camlex.cs" />
     <Compile Include="Imports\Camlex.NET\DataTypes.cs" />

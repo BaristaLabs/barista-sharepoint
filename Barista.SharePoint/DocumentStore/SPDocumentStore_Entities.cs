@@ -228,14 +228,21 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-                return null;
-
             DocumentSet entityDocumentSet;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out entityDocumentSet) == false)
-                return null;
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSetDirect(web, containerTitle, path, entityId,
+                out entityDocumentSet))
+            {
+                SPList list;
+                SPFolder folder;
+                if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+                    return null;
+
+
+                if (
+                    SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId,
+                        out entityDocumentSet) == false)
+                    return null;
+            }
 
             var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet, null);
 
@@ -254,14 +261,20 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-                return null;
-
             DocumentSet entityDocumentSet;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out entityDocumentSet) == false)
-                return null;
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSetDirect(web, containerTitle, path, entityId,
+                out entityDocumentSet))
+            {
+                SPList list;
+                SPFolder folder;
+                if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+                    return null;
+
+                if (
+                    SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId,
+                        out entityDocumentSet) == false)
+                    return null;
+            }
 
             var entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(entityDocumentSet, null, null);
 
