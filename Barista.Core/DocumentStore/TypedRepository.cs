@@ -799,6 +799,12 @@
       var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
       return documentStore.ListEntityComments(this.Configuration.ContainerTitle, entityId);
     }
+
+    public IList<Comment> ListEntityComments(Guid entityId, string path)
+    {
+        var documentStore = this.Configuration.GetDocumentStore<ICommentCapableDocumentStore>();
+        return documentStore.ListEntityComments(this.Configuration.ContainerTitle, entityId, path);
+    }
     #endregion
 
     #region Entity Parts

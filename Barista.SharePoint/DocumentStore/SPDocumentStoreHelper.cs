@@ -101,6 +101,24 @@
             return result;
         }
 
+        public static Comment MapCommentFromSPFileVersion(SPFileVersion fileVersion)
+        {
+            var result = new Comment
+            {
+                Id = fileVersion.ID,
+                CommentText = fileVersion.CheckInComment,
+                Created = fileVersion.Created.ToLocalTime(),
+                CreatedBy = new User
+                {
+                    Email = fileVersion.CreatedBy.Email,
+                    LoginName = fileVersion.CreatedBy.LoginName,
+                    Name = fileVersion.CreatedBy.Name,
+                },
+            };
+
+            return result;
+        }
+
         /// <summary>
         /// Returns a container which represents the SPList.
         /// </summary>
@@ -524,6 +542,44 @@
             }
 
             entityPartFile = null;
+            return false;
+        }
+
+        public static bool TryGetDocumentStoreDefaultEntityPartDirect(SPWeb web, string containerTitle, string path, Guid entityId, out SPFile entityPartFile)
+        {
+            return TryGetDocumentStoreEntityPartDirect(web, containerTitle, path, entityId,
+                Constants.DocumentStoreDefaultEntityPartFileName, out entityPartFile);
+        }
+
+        public static bool TryGetDocumentStoreAttachmentDirect(SPWeb web, string containerTitle, string path, Guid entityId, string attachmentFileName,
+            out SPFile attachment)
+        {
+            SPList list;
+            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            {
+                attachment = null;
+                return false;
+            }
+
+            var url = SPUtility.ConcatUrls(list.RootFolder.ServerRelativeUrl, path);
+            url = SPUtility.ConcatUrls(url, entityId.ToString());
+            url = SPUtility.ConcatUrls(url, attachmentFileName);
+
+            try
+            {
+                var fileOrFolder = web.GetFileOrFolderObject(url);
+                if (fileOrFolder is SPFile)
+                {
+                    attachment = fileOrFolder as SPFile;
+                    return true;
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                //Do Nothing...
+            }
+
+            attachment = null;
             return false;
         }
 

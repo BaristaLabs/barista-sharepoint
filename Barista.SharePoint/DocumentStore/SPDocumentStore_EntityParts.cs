@@ -431,19 +431,25 @@
         {
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
-                    
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
-                return null;
 
             DocumentSet documentSet;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
-                return null;
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSetDirect(web, containerTitle, path, entityId,
+                    out documentSet))
+            {
+                SPList list;
+                SPFolder folder;
+                if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+                    return null;
+
+
+                if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) ==
+                    false)
+                    return null;
+            }
 
             var entityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
-            var listEntityPartContentTypeId = list.ContentTypes.BestMatch(entityPartContentTypeId);
-            var entityPartContentType = list.ContentTypes[listEntityPartContentTypeId];
+            var listEntityPartContentTypeId = documentSet.ParentList.ContentTypes.BestMatch(entityPartContentTypeId);
+            var entityPartContentType = documentSet.ParentList.ContentTypes[listEntityPartContentTypeId];
 
             if (entityPartContentType == null)
                 throw new InvalidOperationException("Unable to locate the entity part content type");

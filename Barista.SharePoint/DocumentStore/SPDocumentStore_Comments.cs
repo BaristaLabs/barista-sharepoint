@@ -1,10 +1,10 @@
 ﻿namespace Barista.SharePoint.DocumentStore
 {
+    using Barista.DocumentStore;
+    using Microsoft.SharePoint;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Barista.DocumentStore;
-    using Microsoft.SharePoint;
 
     public partial class SPDocumentStore
     {
@@ -21,13 +21,17 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
+            SPFile defaultEntityPart;
             SPList list;
             SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            if (
+                SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                false)
                 return null;
 
-            SPFile defaultEntityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
+            if (
+                SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId,
+                    out defaultEntityPart) == false)
                 return null;
 
             web.AllowUnsafeUpdates = true;
@@ -40,8 +44,8 @@
             }
             finally
             {
-                        web.AllowUnsafeUpdates = false;
-                    }
+                web.AllowUnsafeUpdates = false;
+            }
         }
 
         /// <summary>
@@ -52,33 +56,45 @@
         /// <returns></returns>
         public virtual IList<Comment> ListEntityComments(string containerTitle, Guid entityId)
         {
+            return ListEntityComments(containerTitle, entityId, String.Empty);
+        }
+
+        public virtual IList<Comment> ListEntityComments(string containerTitle, Guid entityId, string path)
+        {
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-                return null;
-
             SPFile defaultEntityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
-                return null;
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPartDirect(web, containerTitle, path, entityId, out defaultEntityPart))
+            {
+                SPList list;
+                SPFolder folder;
+                if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) == false)
+                    return null;
 
-            List<Comment> result = new List<Comment>();
-            Comment[] lastComment = {
-                                        new Comment
-                                                {
-                                                CommentText = null
-                                                }
-                                    };
+                if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId,
+                        out defaultEntityPart) == false)
+                    return null;
+            }
 
-            foreach (var itemVersion in defaultEntityPart.Item.Versions.OfType<SPListItemVersion>()
+            var result = new List<Comment>();
+            Comment[] lastComment =
+                {
+                    new Comment
+                    {
+                        CommentText = null
+                    }
+                };
+
+            var versions = defaultEntityPart.Item.Versions;
+            foreach (var itemVersion in versions.OfType<SPListItemVersion>()
                 .OrderBy(v => Double.Parse(v.VersionLabel))
                 .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
             {
                 lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
                 result.Add(lastComment[0]);
             }
+
             result.Reverse();
             return result;
         }
@@ -96,13 +112,17 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
+            SPFile entityPart;
             SPList list;
             SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            if (
+                SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                false)
                 return null;
 
-            SPFile entityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+            if (
+                SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) ==
+                false)
                 return null;
 
             web.AllowUnsafeUpdates = true;
@@ -128,32 +148,50 @@
         /// <returns></returns>
         public virtual IList<Comment> ListEntityPartComments(string containerTitle, Guid entityId, string partName)
         {
+            return ListEntityPartComments(containerTitle, entityId, partName, String.Empty);
+        }
+
+        public virtual IList<Comment> ListEntityPartComments(string containerTitle, Guid entityId, string partName,
+            string path)
+        {
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-                return null;
-
             SPFile entityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
-                return null;
-
-            List<Comment> result = new List<Comment>();
-            Comment lastComment = new Comment
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreEntityPartDirect(web, containerTitle, path, entityId, partName,
+                    out entityPart))
             {
-                CommentText = null
+                SPList list;
+                SPFolder folder;
+                if (
+                    SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, path) ==
+                    false)
+                    return null;
+
+                if (
+                    SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) ==
+                    false)
+                    return null;
+            }
+
+            var result = new List<Comment>();
+            Comment[] lastComment =
+            {
+                new Comment
+                {
+                    CommentText = null
+                }
             };
 
-            foreach (var itemVersion in entityPart.Item.Versions.OfType<SPListItemVersion>().OrderBy(v => Double.Parse(v.VersionLabel)))
+            var versions = entityPart.Item.Versions;
+            foreach (var itemVersion in versions.OfType<SPListItemVersion>()
+                .OrderBy(v => Double.Parse(v.VersionLabel))
+                .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
             {
-                if (String.CompareOrdinal(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
-                {
-                    lastComment = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
-                    result.Add(lastComment);
-                }
+                lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
+                result.Add(lastComment[0]);
             }
+
             result.Reverse();
             return result;
         }
@@ -171,13 +209,15 @@
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
+            SPFile attachment;
             SPList list;
             SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                false)
                 return null;
 
-            SPFile attachment;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
+            if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) ==
+                false)
                 return null;
 
             web.AllowUnsafeUpdates = true;
@@ -203,35 +243,53 @@
         /// <returns></returns>
         public virtual IList<Comment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName)
         {
+            return ListAttachmentComments(containerTitle, entityId, fileName, String.Empty);
+        }
+
+        public virtual IList<Comment> ListAttachmentComments(string containerTitle, Guid entityId, string fileName,
+            string path)
+        {
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
-            SPList list;
-            SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
-                return null;
-
             SPFile attachment;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) == false)
-                return null;
-
-            List<Comment> result = new List<Comment>();
-            Comment lastComment = new Comment
+            if (!SPDocumentStoreHelper.TryGetDocumentStoreAttachmentDirect(web, containerTitle, path, entityId, fileName, out attachment))
             {
-                CommentText = null
+                SPList list;
+                SPFolder folder;
+                if (
+                    SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) ==
+                    false)
+                    return null;
+
+
+                if (
+                    SPDocumentStoreHelper.TryGetDocumentStoreAttachment(list, folder, entityId, fileName, out attachment) ==
+                    false)
+                    return null;
+            }
+
+            var result = new List<Comment>();
+            Comment[] lastComment =
+            {
+                new Comment
+                {
+                    CommentText = null
+                }
             };
 
-            foreach (var itemVersion in attachment.Item.Versions.OfType<SPListItemVersion>().OrderBy(v => Double.Parse(v.VersionLabel)))
+            var versions = attachment.Item.Versions;
+            foreach (var itemVersion in versions.OfType<SPListItemVersion>()
+                .OrderBy(v => Double.Parse(v.VersionLabel))
+                .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
             {
-                if (String.CompareOrdinal(itemVersion["Comments"] as string, lastComment.CommentText) != 0)
-                {
-                    lastComment = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
-                    result.Add(lastComment);
-                }
+                lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
+                result.Add(lastComment[0]);
             }
             result.Reverse();
             return result;
         }
+
         #endregion
     }
 }
