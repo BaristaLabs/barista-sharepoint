@@ -14,6 +14,8 @@ write-host
 $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGenericSetupPath("ISAPI")) "BaristaServices\Search\SPBaristaSearchService.exe"
 
 if (Get-Command "Remove-BaristaSearchService" -errorAction SilentlyContinue) {
+
+	//TODO: This throws...
 	Remove-BaristaSearchService -errorAction SilentlyContinue
 }
 
@@ -23,6 +25,7 @@ if ($searchService -ne $null)
 { 
 	& $serviceLocation stop --sudo
     & $serviceLocation uninstall --sudo
+	//TODO: This throws...
 	$searchService.Delete()
 	write-host 
 	write-host "Search Service Removed..." -foregroundcolor Green
