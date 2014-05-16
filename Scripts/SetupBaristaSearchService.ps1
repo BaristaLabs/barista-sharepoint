@@ -15,8 +15,12 @@ $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGen
 
 if (Get-Command "Remove-BaristaSearchService" -errorAction SilentlyContinue) {
 
-	//TODO: This throws...
+	Try {
 	Remove-BaristaSearchService -errorAction SilentlyContinue
+	}
+	Catch {
+		# Do Nothing...
+	}
 }
 
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'" -ComputerName $env:COMPUTERNAME
@@ -25,8 +29,12 @@ if ($searchService -ne $null)
 { 
 	& $serviceLocation stop --sudo
     & $serviceLocation uninstall --sudo
-	//TODO: This throws...
+	Try {
 	$searchService.Delete()
+	}
+	Catch {
+		# Do Nothing...
+	}
 	write-host 
 	write-host "Search Service Removed..." -foregroundcolor Green
 	write-host 
