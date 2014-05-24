@@ -21,7 +21,7 @@
 
       //Make the entity part content types not visible on the new button.
       var documentStoreEntityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
-      var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+      var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
 
       var contentTypes = properties.List.RootFolder.ContentTypeOrder.ToList();
 

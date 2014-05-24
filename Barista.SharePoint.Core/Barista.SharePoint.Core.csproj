@@ -299,6 +299,7 @@
     <Compile Include="Library\SPAlternateUrlCollectionInstance.cs" />
     <Compile Include="Library\SPAlternateUrlInstance.cs" />
     <Compile Include="Library\SPApplicationPoolInstance.cs" />
+    <Compile Include="Library\SPAttachmentCollectionInstance.cs" />
     <Compile Include="Library\SPContentDatabaseCollectionInstance.cs" />
     <Compile Include="Library\SPContentDatabaseInstance.cs" />
     <Compile Include="Library\SPContentTypeCollectionInstance.cs" />
@@ -316,6 +317,9 @@
     <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
     <Compile Include="Library\SPListCollectionInstance.cs" />
+    <Compile Include="Library\SPListItemCollectionInstance.cs" />
+    <Compile Include="Library\SPListItemVersionCollectionInstance.cs" />
+    <Compile Include="Library\SPListItemVersionInstance.cs" />
     <Compile Include="Library\SPListTemplateCollectionInstance.cs" />
     <Compile Include="Library\SPPrincipalInstance.cs" />
     <Compile Include="Library\SPProcessAccountInstance.cs" />

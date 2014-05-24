@@ -4,12 +4,7 @@
     using Microsoft.Office.DocumentManagement.DocumentSets;
     using Microsoft.SharePoint;
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
     using Microsoft.SharePoint.Utilities;
 
     /// <summary>
@@ -1024,6 +1019,14 @@
                 }
             }
         }
+
+        private void CheckIfFileNameIsReserved(string fileName)
+        {
+            if (fileName == Constants.DocumentStoreDefaultEntityPartFileName ||
+                fileName == Constants.DocumentStoreEntityContentsPartFileName)
+                throw new InvalidOperationException("Filename is reserved.");
+        }
+
         #endregion
 
         #region IDisposable

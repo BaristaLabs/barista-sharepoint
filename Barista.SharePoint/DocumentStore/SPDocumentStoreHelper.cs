@@ -89,6 +89,9 @@
               {
                   Id = listItemVersion.VersionId,
                   CommentText = listItemVersion["Comments"] as string,
+                  /*Source = listItemVersion["Source"] as string,
+                  Category = listItemVersion["Category"] as string,
+                  Tags = listItemVersion["Tags"] as ICollection<string>,*/
                   Created = listItemVersion.Created.ToLocalTime(),
                   CreatedBy = new User
                     {
@@ -107,6 +110,9 @@
             {
                 Id = fileVersion.ID,
                 CommentText = fileVersion.CheckInComment,
+                Source = fileVersion.Properties["Source"] as string,
+                Category = fileVersion.Properties["Category"] as string,
+                Tags = fileVersion.Properties["Tags"] as ICollection<string>,
                 Created = fileVersion.Created.ToLocalTime(),
                 CreatedBy = new User
                 {
@@ -829,7 +835,7 @@
 
             attachment = list.ParentWeb.GetFile(SPUtility.ConcatUrls(documentSet.Folder.Url, attachmentFileName));
 
-            var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+            var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
             if (attachment.Exists == false || attachment.Item.ContentTypeId.IsChildOf(attachmentContentTypeId) == false)
             {
                 attachment = null;

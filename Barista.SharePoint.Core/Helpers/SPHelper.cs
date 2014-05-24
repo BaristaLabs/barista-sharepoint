@@ -420,19 +420,74 @@
 
       try
       {
-        object rawValue = listItem[fieldId];
+        var rawValue = listItem[fieldId];
 
-        if (rawValue != null)
-        {
+          if (rawValue == null)
+              return false;
+
           value = (T)rawValue;
           return true;
-        }
-        return false;
       }
       catch
       {
         return false;
       }
+    }
+
+    /// <summary>
+    /// Attempts to get a field value of the specified type from the specified list item version and field id.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="version"></param>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool TryGetSPFieldValue<T>(this SPListItemVersion version, int index, out T value)
+    {
+        value = default(T);
+
+        try
+        {
+            var rawValue = version[index];
+
+            if (rawValue == null)
+                return false;
+
+            value = (T)rawValue;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Attempts to get a field value of the specified type from the specified list item version and field id.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="version"></param>
+    /// <param name="fieldName"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool TryGetSPFieldValue<T>(this SPListItemVersion version, string fieldName, out T value)
+    {
+        value = default(T);
+
+        try
+        {
+            var rawValue = version[fieldName];
+
+            if (rawValue == null)
+                return false;
+
+            value = (T)rawValue;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /// <summary>

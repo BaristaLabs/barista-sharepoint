@@ -39,6 +39,8 @@
         /// <returns></returns>
         public virtual Attachment UploadAttachment(string containerTitle, Guid entityId, string fileName, byte[] attachment, string category, string path)
         {
+            CheckIfFileNameIsReserved(fileName);
+
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
@@ -51,7 +53,7 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
                 return null;
 
-            var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+            var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
             var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
             var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
@@ -103,6 +105,8 @@
         /// <returns></returns>
         public virtual Attachment UploadAttachmentFromSourceUrl(string containerTitle, Guid entityId, string fileName, string sourceUrl, string category, string path)
         {
+            CheckIfFileNameIsReserved(fileName);
+
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
@@ -154,7 +158,7 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
                 return null;
 
-            var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+            var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
             var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
             var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
@@ -219,6 +223,8 @@
         /// <returns></returns>
         public virtual bool RenameAttachment(string containerTitle, Guid entityId, string fileName, string newFileName)
         {
+            CheckIfFileNameIsReserved(newFileName);
+
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
 
@@ -299,13 +305,13 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
                 return null;
 
-            var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+            var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
             var listAttachmentContentTypeId = list.ContentTypes.BestMatch(attachmentContentTypeId);
             var attachmentContentType = list.ContentTypes[listAttachmentContentTypeId];
 
             return documentSet.Folder.Files.OfType<SPFile>()
                 .Where(f => attachmentContentType != null && f.Item.ContentTypeId == attachmentContentType.Id)
-                .Select(f => SPDocumentStoreHelper.MapAttachmentFromSPFile(f))
+                .Select(SPDocumentStoreHelper.MapAttachmentFromSPFile)
                 .ToList();
         }
 

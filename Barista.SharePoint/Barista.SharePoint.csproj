@@ -151,6 +151,7 @@
       <DependentUpon>Manage.aspx.cs</DependentUpon>
     </Compile>
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
+    <Compile Include="DocumentStore\BaristaDocumentStoreFeatureReceiver.cs" />
     <Compile Include="DocumentStore\DocumentStoreContainerEventReceiver\DocumentStoreContainerEventReceiver.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreEventReceiver\SPDocumentStoreEventReceiver.cs" />
@@ -222,6 +223,20 @@
     <Compile Include="SPBaristaScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ADMIN\BaristaService\Styles\bootstrap-theme.css.map" />
+    <None Include="ADMIN\BaristaService\Styles\bootstrap.css.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-animate.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-cookies.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-loader.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-resource.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-route.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-sanitize.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-touch.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular.min.js.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\errors.json" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\angular\version.json" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\jquery\jquery-1.10.2.min.map" />
+    <None Include="ADMIN\BaristaService\Scripts\Vendor\ui-bootstrap\ui-bootstrap-tpls-0.11.0.min.js.map" />
     <None Include="ADMIN\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{9a196b90-3a4a-49ac-b3b5-eff220cb60ef}</SharePointProjectItemId>
     </None>
@@ -459,10 +474,56 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ADMIN\BaristaService\Scripts\app.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManageGeneralCtrl.js" />
     <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManageIndexesCtrl.js" />
+    <Content Include="ADMIN\BaristaService\Styles\bootstrap-theme.css" />
+    <Content Include="ADMIN\BaristaService\Styles\bootstrap-theme.min.css" />
+    <Content Include="ADMIN\BaristaService\Styles\bootstrap.css" />
+    <Content Include="ADMIN\BaristaService\Styles\bootstrap.min.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-animate.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-animate.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-cookies.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-cookies.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-csp.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-loader.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-loader.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-mocks.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-resource.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-resource.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-route.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-route.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-sanitize.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-sanitize.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-scenario.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-touch.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular-touch.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\angular.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\angular\version.txt" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\jquery-1.10.2.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\jquery-1.10.2.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\jquery.tablesorter.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\jquery.tablesorter.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\jquery.tablesorter.widgets-filter-formatter.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\jquery.tablesorter.widgets.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\jquery.tablesorter.widgets.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\theme\css\images\black-asc.gif" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\theme\css\images\black-desc.gif" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\theme\css\images\black-unsorted.gif" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\jquery\plugins\tablesorter\theme\css\theme.default.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\json3.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\modernizr.custom.32669.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ng-grid\ng-grid-2.0.11.debug.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ng-grid\ng-grid-2.0.11.min.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ng-grid\ng-grid.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ng-grid\ng-grid.min.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\toastr\toastr.css" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\toastr\toastr.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ui-bootstrap\ui-bootstrap-tpls-0.11.0.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\ui-bootstrap\ui-bootstrap-tpls-0.11.0.min.js" />
     <Content Include="ADMIN\BaristaService\Views\addeditindexdialog.html" />
     <Content Include="ADMIN\BaristaService\Views\indexes.html" />
-    <Content Include="ADMIN\BaristaService\Views\main.html" />
+    <Content Include="ADMIN\BaristaService\Views\general.html" />
     <Content Include="ADMIN\BaristaService\Views\addedittrustedlocationdialog.html" />
     <Content Include="ADMIN\BaristaService\API\AddOrUpdateTrustedLocation.js" />
     <Content Include="ADMIN\BaristaService\API\AddOrUpdateSearchIndex.js" />

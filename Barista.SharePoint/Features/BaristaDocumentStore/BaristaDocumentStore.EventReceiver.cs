@@ -14,7 +14,7 @@ namespace Barista.SharePoint.Features.BaristaDocumentStore
   /// The GUID attached to this class may be used during packaging and should not be modified.
   /// </remarks>
   [Guid("6ca8eee8-ab24-48e0-9f39-bba9dea18621")]
-  public class BaristaDocumentStoreEventReceiver : SPFeatureReceiver
+  public partial class BaristaDocumentStoreFeatureReceiver : SPFeatureReceiver
   {
     public override void FeatureActivated(SPFeatureReceiverProperties properties)
     {

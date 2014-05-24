@@ -36,6 +36,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPSite", new SPSiteConstructor(engine));
       engine.SetGlobalValue("SPWeb", new SPWebConstructor(engine));
       engine.SetGlobalValue("SPFile", new SPFileConstructor(engine));
+      engine.SetGlobalValue("SPDocumentSet", new SPDocumentSetConstructor(engine));
       engine.SetGlobalValue("SPFolder", new SPFolderConstructor(engine));
       engine.SetGlobalValue("SPList", new SPListConstructor(engine));
       engine.SetGlobalValue("SPView", new SPViewConstructor(engine));
@@ -47,6 +48,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPContentTypeId", new SPContentTypeIdConstructor(engine));
       engine.SetGlobalValue("SPField", new SPFieldConstructor(engine));
       engine.SetGlobalValue("SPFieldLink", new SPFieldLinkConstructor(engine));
+      
 
       //Security Related
       engine.SetGlobalValue("SPRoleDefinition", new SPRoleDefinitionConstructor(engine));

@@ -170,7 +170,7 @@
 
       var documentStoreEntityContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId);
       var documentStoreEntityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
-      var attachmentContentTypeId = new SPContentTypeId(Constants.AttachmentDocumentContentTypeId);
+      var attachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
 
       if (properties.ListItem.ContentTypeId.IsChildOf(documentStoreEntityContentTypeId))
       {

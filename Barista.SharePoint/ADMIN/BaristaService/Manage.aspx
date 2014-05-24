@@ -1,4 +1,4 @@
-﻿<%@ Assembly Name="$SharePoint.Project.AssemblyFullName$" %>
+﻿<%@ Assembly Name="Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" %>
 <%@ Import Namespace="Microsoft.SharePoint.ApplicationPages" %>
 <%@ Register Tagprefix="SharePoint" Namespace="Microsoft.SharePoint.WebControls" Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
 <%@ Register Tagprefix="Utilities" Namespace="Microsoft.SharePoint.Utilities" Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
@@ -16,10 +16,10 @@
 </asp:Content>
 
 <asp:Content ID="PlaceHolderAdditionalPageHead" ContentPlaceHolderID="PlaceHolderAdditionalPageHead" runat="server">
-    <SharePoint:CssLink Id="BootstrapCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/bootstrap-2.3.1/css/bootstrap.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="AngularUiCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="AngularNgGridCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/angular/ng-grid.css"></SharePoint:CssLink>
-    <SharePoint:CssLink Id="ToastrCssLink" runat="server" DefaultUrl="/_layouts/BaristaJS/toastr-1.2.3/toastr.min.css"></SharePoint:CssLink>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/modernizr.custom.32669.js"></script>
+    <SharePoint:CssLink Id="BootstrapCssLink" runat="server" DefaultUrl="/_admin/BaristaService/styles/bootstrap.min.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="AngularNgGridCssLink" runat="server" DefaultUrl="/_admin/BaristaService/Scripts/Vendor/ng-grid/ng-grid.css"></SharePoint:CssLink>
+    <SharePoint:CssLink Id="ToastrCssLink" runat="server" DefaultUrl="/_admin/BaristaService/Scripts/Vendor/toastr/toastr.css"></SharePoint:CssLink>
     <style type="text/css">
         a:visited {
             color: black;
@@ -47,35 +47,36 @@
         img {
             max-width: none;
         }
+		
+		.nav.nav-tabs {
+			height: 37px;
+		}
     </style>
 </asp:Content>
 
 <asp:Content ID="Main" ContentPlaceHolderID="PlaceHolderMain" runat="server">
-    <div class="container-fluid" style="padding-top:5px;" ng-app="managebarista">
-        <ul class="nav nav-tabs" style="height: 37px" ng-controller="ManageMainCtrl">
-            <li ui-route="{{tab.route}}" ng-repeat="tab in tabs" ng-class="{active: $uiRoute}" class="ng-scope ng-binding" style="cursor:pointer">
-                <a ng-click="reload($event, tab.route)">{{tab.title}}</a>
-            </li>
-        </ul>
-        <div id="main-content">
-            <div ng-view></div>
+    <div style="padding:5px;" data-ng-app="managebarista" data-ng-controller="ManageMainCtrl">
+        <div data-tabset="">
+            <div data-tab="" heading="General" style="cursor: pointer;" style="height: 37px;">
+				<div data-ng-include="'/_admin/BaristaService/Views/General.html'" data-ng-controller="ManageGeneralCtrl"></div>
+            </div>
+			<div data-tab="" heading="Indexes" style="cursor: pointer;">
+				<div data-ng-include="'/_admin/BaristaService/Views/Indexes.html'" data-ng-controller="ManageIndexesCtrl"></div>
+            </div>
         </div>
     </div>
     
-    <script type="text/javascript" src="/_layouts/BaristaJS/json2.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/modernizr-2.6.2.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/toastr-1.2.3/toastr.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-0.4.0.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-ieshiv.min.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/json3.min.js"></script>
     
-    <script type="text/javascript" src="/_layouts/BaristaJS/bootstrap-2.3.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/angular-ui-bootstrap-0.2.0.tpls.min.js"></script>
-    <script type="text/javascript" src="/_layouts/BaristaJS/angular/ng-grid-2.0.4.min.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/toastr/toastr.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/angular/angular.js"></script>
+
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/ng-grid/ng-grid-2.0.11.min.js"></script>
     
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageGeneralCtrl.js"></script>
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js"></script>
     
     <script type="text/javascript">

@@ -4,12 +4,21 @@
             <b>Barista Search Locations:</b>
             <div class="toolbar">
                 <div class="btn-group">
-                    <a id="btnNewIndex" class="btn btn-primary" ng-click="addNewIndex()">
+                    <a id="btnNewIndex" class="btn btn-primary" data-ng-click="addNewIndex()">
                         <img src="/_layouts/images/newitem.gif" alt="New" /><span style="color: white;"> New Index</span>
                     </a>
                 </div>
             </div>
-            <div class="gridStyle" ng-grid="gridOptions"></div>
+            <div class="gridStyle" data-ng-grid="gridOptions"></div>
         </td>
     </tr>
 </table>
+
+<script type="text/ng-template" id="confirmRemoveIndex.html">
+	<div style="padding: 15px;">
+        <p>Are you SURE you wish to delete this index?</p>
+    </div>
+    <div class="modal-footer">
+        <div class="btn" data-ng-click="$dismiss()">Cancel</div><div data-ng-click="$close()" class="btn btn-primary">Ok</div>
+    </div>
+</script>

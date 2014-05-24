@@ -43,9 +43,7 @@
         public virtual EntityPart CreateEntityPart(string containerTitle, string path, Guid entityId, string partName,
           string category, string data)
         {
-            if (partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName ||
-                partName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreEntityContentsPartFileName)
-                throw new InvalidOperationException("Filename is reserved.");
+            CheckIfFileNameIsReserved(partName + Constants.DocumentSetEntityPartExtension);
 
             SPSite site;
             var web = GetDocumentStoreWeb(out site);
@@ -195,8 +193,7 @@
 
         public virtual bool RenameEntityPart(string containerTitle, string path, Guid entityId, string partName, string newPartName)
         {
-            if (newPartName + Constants.DocumentSetEntityPartExtension == Constants.DocumentStoreDefaultEntityPartFileName)
-                throw new InvalidOperationException("Filename is reserved.");
+            CheckIfFileNameIsReserved(newPartName + Constants.DocumentSetEntityPartExtension);
 
             SPSite site;
             var web = GetDocumentStoreWeb(out site);

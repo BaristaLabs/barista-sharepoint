@@ -1026,6 +1026,19 @@
             return result;
         }
 
+        [JSFunction(Name = "getItemsCollection")]
+        public SPListItemCollectionInstance GetItemsCollection(ArrayInstance fields)
+        {
+            var result = m_list.GetItems(fields == null
+                ? new string[] {}
+                : fields.ElementValues.Select(TypeConverter.ToString).ToArray()
+                );
+
+            return result == null
+                ? null
+                : new SPListItemCollectionInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
         [JSFunction(Name = "getItemsByQuery")]
         public ArrayInstance GetItemsByQuery(object query)
         {
