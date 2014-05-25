@@ -323,6 +323,7 @@
     <Compile Include="Library\SPListTemplateCollectionInstance.cs" />
     <Compile Include="Library\SPPrincipalInstance.cs" />
     <Compile Include="Library\SPProcessAccountInstance.cs" />
+    <Compile Include="Library\SPPropertyBagInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentCollectionInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionBindingCollectionInstance.cs" />

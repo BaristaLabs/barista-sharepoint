@@ -74,13 +74,21 @@
         #region Properties
 
         [JSProperty(Name = "attachments")]
-        public SPAttachmentCollectionInstance Attachments
+        public object Attachments
         {
             get
             {
-                return m_listItem.Attachments == null
-                    ? null
-                    : new SPAttachmentCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Attachments);
+                try
+                {
+                    return m_listItem.Attachments == null
+                        ? null
+                        : new SPAttachmentCollectionInstance(this.Engine.Object.InstancePrototype,
+                            m_listItem.Attachments);
+                }
+                catch// Occurs when the list is a Document Library.
+                {
+                }
+                return Undefined.Value;
             }
         }
 
@@ -183,15 +191,23 @@
         }
 
         [JSProperty(Name = "iconOverlay")]
-        public string IconOverlay
+        public object IconOverlay
         {
             get
             {
-                return m_listItem.IconOverlay;
+                try
+                {
+                    return m_listItem.IconOverlay;
+                }
+                catch
+                {
+                }
+
+                return Undefined.Value;
             }
             set
             {
-                m_listItem.IconOverlay = value;
+                m_listItem.IconOverlay = TypeConverter.ToString(value);
             }
         }
 
@@ -245,6 +261,17 @@
             set
             {
                 m_listItem.ProgId = value;
+            }
+        }
+
+        [JSProperty(Name = "propertyBag")]
+        public HashtableInstance PropertyBag
+        {
+            get
+            {
+                return m_listItem.Properties == null
+                    ? null
+                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_listItem.Properties);
             }
         }
 

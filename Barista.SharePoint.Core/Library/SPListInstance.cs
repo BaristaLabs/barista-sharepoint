@@ -1027,11 +1027,12 @@
         }
 
         [JSFunction(Name = "getItemsCollection")]
-        public SPListItemCollectionInstance GetItemsCollection(ArrayInstance fields)
+        public SPListItemCollectionInstance GetItemsCollection(object fields)
         {
-            var result = m_list.GetItems(fields == null
+            var fieldsArray = fields as ArrayInstance;
+            var result = m_list.GetItems(fields == null || fields == Null.Value || fields == Undefined.Value || fieldsArray == null
                 ? new string[] {}
-                : fields.ElementValues.Select(TypeConverter.ToString).ToArray()
+                : fieldsArray.ElementValues.Select(TypeConverter.ToString).ToArray()
                 );
 
             return result == null

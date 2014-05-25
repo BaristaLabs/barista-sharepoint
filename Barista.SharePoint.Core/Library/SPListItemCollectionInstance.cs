@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.Linq;
     using Barista.Extensions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
@@ -95,7 +96,7 @@
         {
             get
             {
-                var result = this.Engine.Array.Construct(m_listItemCollection.QueryFieldNames);
+                var result = this.Engine.Array.Construct(m_listItemCollection.QueryFieldNames.OfType<string>().ToArray());
                 return result;
             }
         }

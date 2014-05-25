@@ -903,6 +903,7 @@
     <Compile Include="Imports\Yahoo.Yui.Compressor\Tokens.cs" />
     <Compile Include="Imports\Yahoo.Yui.Compressor\YUICompressor.cs" />
     <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\HashtableInstance.cs" />
     <Compile Include="Library\WebOptimizationInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
     <Compile Include="Library\EnvironmentInstance.cs" />
