@@ -83,6 +83,17 @@
             get { return new GuidInstance(this.Engine.Object, m_service.Id); }
         }
 
+        [JSProperty(Name = "propertyBag")]
+        public HashtableInstance PropertyBag
+        {
+            get
+            {
+                return m_service.Properties == null
+                    ? null
+                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_service.Properties);
+            }
+        }
+
         [JSProperty(Name = "status")]
         public string Status
         {

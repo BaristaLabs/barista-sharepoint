@@ -89,6 +89,17 @@
             }
         }
 
+        [JSProperty(Name = "propertyBag")]
+        public HashtableInstance PropertyBag
+        {
+            get
+            {
+                return m_folder.Properties == null
+                    ? null
+                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_folder.Properties);
+            }
+        }
+
         [JSProperty(Name = "allProperties")]
         public ObjectInstance AllProperties
         {

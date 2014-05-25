@@ -3,6 +3,7 @@
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using Barista.Extensions;
   using Barista.Jurassic.Library;
 
   /// <summary>
@@ -77,7 +78,7 @@
 
         // If that still didn't work, then we have a problem.
         if (this.m_buckets[argumentCount] == null)
-          throw new InvalidOperationException("No preferred method could be found.");
+          throw new InvalidOperationException("No preferred method could be found: " + targetMethods.Select(tm => tm.Name).Join(", "));
       }
     }
 
