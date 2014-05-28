@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.Reflection;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using System;
@@ -9,65 +10,75 @@
     public class SPServiceInstanceConstructor : ClrFunction
     {
         public SPServiceInstanceConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPServiceInstance", new SPServiceInstanceInstance(engine.Object.InstancePrototype))
+            : base(engine.Function.InstancePrototype, "SPServiceInstance", new SPServiceInstanceInstance(engine))
         {
         }
 
         [JSConstructorFunction]
         public SPServiceInstanceInstance Construct()
         {
-            return new SPServiceInstanceInstance(this.InstancePrototype);
+            return new SPServiceInstanceInstance(this.Engine);
         }
     }
 
     [Serializable]
     public class SPServiceInstanceInstance : ObjectInstance
     {
-        private readonly Microsoft.SharePoint.Administration.SPServiceInstance m_serviceInstance;
+        public SPServiceInstanceInstance(ScriptEngine engine)
+            : base(engine)
+        {
+            this.PopulateFunctions();
+        }
 
         public SPServiceInstanceInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
         }
 
         public SPServiceInstanceInstance(ObjectInstance prototype, Microsoft.SharePoint.Administration.SPServiceInstance serviceInstance)
-            : this(prototype)
+            : base(prototype)
         {
             if (serviceInstance == null)
                 throw new ArgumentNullException("serviceInstance");
 
-            m_serviceInstance = serviceInstance;
+            SPServiceInstance = serviceInstance;
+            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         public Microsoft.SharePoint.Administration.SPServiceInstance SPServiceInstance
         {
-            get { return m_serviceInstance; }
+            get;
+            set;
         }
 
         [JSProperty(Name = "description")]
         public string Description
         {
-            get { return m_serviceInstance.Description; }
+            get { return SPServiceInstance.Description; }
         }
 
         [JSProperty(Name = "displayName")]
         public string DisplayName
         {
-            get { return m_serviceInstance.DisplayName; }
+            get { return SPServiceInstance.DisplayName; }
         }
 
         [JSProperty(Name = "hidden")]
         public bool Hidden
         {
-            get { return m_serviceInstance.Hidden; }
+            get { return SPServiceInstance.Hidden; }
+        }
+
+        [JSProperty(Name = "id")]
+        public GuidInstance Id
+        {
+            get { return new GuidInstance(this.Engine.Object.InstancePrototype, SPServiceInstance.Id); }
         }
 
         [JSProperty(Name = "name")]
         public string Name
         {
-            get { return m_serviceInstance.Name; }
+            get { return SPServiceInstance.Name; }
         }
 
         [JSProperty(Name = "manageLinkUrl")]
@@ -75,8 +86,8 @@
         {
             get
             {
-                if (m_serviceInstance.ManageLink != null)
-                    return m_serviceInstance.ManageLink.Url;
+                if (SPServiceInstance.ManageLink != null)
+                    return SPServiceInstance.ManageLink.Url;
                 return String.Empty;
             }
         }
@@ -86,9 +97,9 @@
         {
             get
             {
-                return m_serviceInstance.Properties == null
+                return SPServiceInstance.Properties == null
                     ? null
-                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_serviceInstance.Properties);
+                    : new HashtableInstance(this.Engine.Object.InstancePrototype, SPServiceInstance.Properties);
             }
         }
 
@@ -97,9 +108,9 @@
         {
             get
             {
-                if (m_serviceInstance.ProvisionLink != null)
-                    return m_serviceInstance.ProvisionLink.Url;
-                return string.Empty;
+                return SPServiceInstance.ProvisionLink != null
+                    ? SPServiceInstance.ProvisionLink.Url
+                    : string.Empty;
             }
         }
 
@@ -108,29 +119,29 @@
         {
             get
             {
-                if (m_serviceInstance.Server == null)
+                if (SPServiceInstance.Server == null)
                     return Null.Value;
 
-                return new SPServerInstance(this.Engine.Object.InstancePrototype, m_serviceInstance.Server);
+                return new SPServerInstance(this.Engine.Object.InstancePrototype, SPServiceInstance.Server);
             }
         }
 
         [JSProperty(Name = "status")]
         public string Status
         {
-            get { return m_serviceInstance.Status.ToString(); }
+            get { return SPServiceInstance.Status.ToString(); }
         }
 
         [JSProperty(Name = "systemService")]
         public bool SystemService
         {
-            get { return m_serviceInstance.SystemService; }
+            get { return SPServiceInstance.SystemService; }
         }
 
         [JSProperty(Name = "typeName")]
         public string TypeName
         {
-            get { return m_serviceInstance.TypeName; }
+            get { return SPServiceInstance.TypeName; }
         }
 
         [JSProperty(Name = "unprovisionLinkUrl")]
@@ -138,10 +149,31 @@
         {
             get
             {
-                if (m_serviceInstance.UnprovisionLink != null)
-                    return m_serviceInstance.UnprovisionLink.Url;
-                return string.Empty;
+                return SPServiceInstance.UnprovisionLink != null
+                    ? SPServiceInstance.UnprovisionLink.Url
+                    : string.Empty;
             }
+        }
+
+        [JSProperty(Name = "version")]
+        public double Version
+        {
+            get
+            {
+                return SPServiceInstance.Version;
+            }
+        }
+
+        [JSFunction(Name = "getFarm")]
+        public SPFarmInstance GetFarm()
+        {
+            return new SPFarmInstance(this.Engine.Object.InstancePrototype, SPServiceInstance.Farm);
+        }
+
+        [JSFunction(Name = "update")]
+        public void Update()
+        {
+            SPServiceInstance.Update();
         }
     }
 }

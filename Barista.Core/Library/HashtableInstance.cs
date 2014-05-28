@@ -126,6 +126,7 @@
         [JSFunction(Name = "getKeys")]
         public ArrayInstance GetKeys()
         {
+// ReSharper disable once CoVariantArrayConversion
             return this.Engine.Array.Construct(m_hashtable.Keys.OfType<object>().Select(o => TypeConverter.ToObject(this.Engine, o)).ToArray());
         }
 
@@ -138,6 +139,7 @@
         [JSFunction(Name = "getValues")]
         public ArrayInstance GetValues()
         {
+// ReSharper disable once CoVariantArrayConversion
             return this.Engine.Array.Construct(m_hashtable.Values.OfType<object>().Select(o => TypeConverter.ToObject(this.Engine, o)).ToArray());
         }
 

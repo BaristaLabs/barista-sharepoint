@@ -32,14 +32,6 @@ namespace Barista.SharePoint.Library
 
       return result;
     }
-
-    public SPUserInstance Construct(SPUser user)
-    {
-      if (user == null)
-        throw new ArgumentNullException("user");
-
-      return new SPUserInstance(this.InstancePrototype, user);
-    }
   }
 
   public class SPCamlQueryInstance : ObjectInstance

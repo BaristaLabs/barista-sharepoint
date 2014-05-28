@@ -203,6 +203,7 @@
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
     <Compile Include="Bundles\iCalBundle.cs" />
     <Compile Include="Bundles\LoDashBundle.cs" />
+    <Compile Include="Bundles\SmtpBundle.cs" />
     <Compile Include="Bundles\WebOptimizationBundle.cs" />
     <Compile Include="Bundles\DeferredBundle.cs" />
     <Compile Include="Bundles\DocumentBundle.cs" />
@@ -903,7 +904,10 @@
     <Compile Include="Imports\Yahoo.Yui.Compressor\Tokens.cs" />
     <Compile Include="Imports\Yahoo.Yui.Compressor\YUICompressor.cs" />
     <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\CollectionInstance.cs" />
+    <Compile Include="Library\EncodingInstance.cs" />
     <Compile Include="Library\HashtableInstance.cs" />
+    <Compile Include="Library\StringDictionaryInstance.cs" />
     <Compile Include="Library\WebOptimizationInstance.cs" />
     <Compile Include="Library\ClientInfoInstance.cs" />
     <Compile Include="Library\EnvironmentInstance.cs" />
@@ -1411,6 +1415,18 @@
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
     <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
     <Compile Include="Search\BaristaSearchService.cs" />
+    <Compile Include="Smtp\AlternateViewCollectionInstance.cs" />
+    <Compile Include="Smtp\AlternateViewInstance.cs" />
+    <Compile Include="Smtp\AttachmentBaseInstance.cs" />
+    <Compile Include="Smtp\AttachmentCollectionInstance.cs" />
+    <Compile Include="Smtp\AttachmentInstance.cs" />
+    <Compile Include="Smtp\ContentDispositionInstance.cs" />
+    <Compile Include="Smtp\LinkedResourceCollectionInstance.cs" />
+    <Compile Include="Smtp\LinkedResourceInstance.cs" />
+    <Compile Include="Smtp\MailAddressCollectionInstance.cs" />
+    <Compile Include="Smtp\MailAddressInstance.cs" />
+    <Compile Include="Smtp\MailMessageInstance.cs" />
+    <Compile Include="Smtp\SmtpClientInstance.cs" />
     <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />

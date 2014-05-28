@@ -210,7 +210,7 @@
     }
 
     [JSProperty(Name = "allowOMCodeOverrideThrottleSettings")]
-    public bool AllowOMCodeOverrideThrottleSettings
+    public bool AllowOmCodeOverrideThrottleSettings
     {
       get
       {
@@ -302,7 +302,7 @@
     //TODO: BlockedFileExtensions
 
     [JSProperty(Name = "browserCEIPEnabled")]
-    public bool BrowserCEIPEnabled
+    public bool BrowserCeipEnabled
     {
       get
       {
@@ -353,6 +353,19 @@
       }
     }
 
+    [JSProperty(Name = "maximumFileSize")]
+    public int MaximumFileSize
+    {
+        get
+        {
+            return m_webApplication.MaximumFileSize;
+        }
+        set
+        {
+            m_webApplication.MaximumFileSize = value;
+        }
+    }
+
     [JSProperty(Name = "name")]
     public string Name
     {
@@ -364,6 +377,17 @@
       {
         m_webApplication.Name = value;
       }
+    }
+
+    [JSProperty(Name = "outboundMailServiceInstance")]
+    public SPServiceInstanceInstance OutboundMailServiceInstance
+    {
+        get
+        {
+            return m_webApplication.OutboundMailServiceInstance == null
+                ? null
+                : new SPServiceInstanceInstance(this.Engine.Object.InstancePrototype, m_webApplication.OutboundMailServiceInstance);
+        }
     }
 
     [JSProperty(Name = "typeName")]

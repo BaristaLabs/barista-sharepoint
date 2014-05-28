@@ -332,6 +332,8 @@
     <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
     <Compile Include="Library\SPServiceCollectionInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowManagerInstance.cs" />
     <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
     <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPUserCollectionInstance.cs" />

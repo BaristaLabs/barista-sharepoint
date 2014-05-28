@@ -11,6 +11,7 @@
         public SPUserConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "SPUser", new SPUserInstance(engine.Object.InstancePrototype))
         {
+            this.PopulateFunctions();
         }
 
         [JSConstructorFunction]
@@ -26,11 +27,19 @@
             SPUser user;
             if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
             {
-                throw new JavaScriptException(this.Engine, "Error", "No user with the specified name exists in the current context.");
+                throw new JavaScriptException(this.Engine, "Error", "User cannot be found.");
             }
 
             return new SPUserInstance(this.InstancePrototype, user);
         }
+
+        [JSFunction(Name = "doesUserExist")]
+        public bool DoesUserExist(string loginName)
+        {
+            SPUser user;
+            return SPHelper.TryGetSPUserFromLoginName(loginName, out user) && user != null;
+        }
+
     }
 
     [Serializable]

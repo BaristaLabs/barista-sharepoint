@@ -139,6 +139,88 @@ public object $PropertyName$&#xD;
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=63E5D17247351C49924002D2EEB92503/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=63E5D17247351C49924002D2EEB92503/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=63E5D17247351C49924002D2EEB92503/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=camelCasedName/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=camelCasedName/Expression/@EntryValue">decapitalize(CollectionName)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=camelCasedName/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=camelCasedName/Order/@EntryValue">3</s:Int64>
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItem/@KeyIndexDefined">True</s:Boolean>
+	
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItem/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItemCamelCased/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItemCamelCased/Expression/@EntryValue">decapitalize(CollectionItem)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItemCamelCased/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionItemCamelCased/Order/@EntryValue">4</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionName/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionName/InitialRange/@EntryValue">7</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionName/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItem/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItem/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItemCamelCased/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItemCamelCased/Expression/@EntryValue">decapitalize(CollectionWrappedItem)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItemCamelCased/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Field/=CollectionWrappedItemCamelCased/Order/@EntryValue">5</s:Int64>
+	
+	
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Shortcut/@EntryValue">Jurassic Collection Instance</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=681ED4E9DD62C447801C760B2B385594/Text/@EntryValue">using System.Reflection;&#xD;
+using Barista.Jurassic;&#xD;
+using Barista.Jurassic.Library;&#xD;
+using System;&#xD;
+using Barista.Library;&#xD;
+&#xD;
+[Serializable]&#xD;
+public class $CollectionName$Constructor : ClrFunction&#xD;
+{&#xD;
+    public $CollectionName$Constructor(ScriptEngine engine)&#xD;
+        : base(engine.Function.InstancePrototype, "$CollectionName$", new $CollectionName$Instance(engine, null))&#xD;
+    {&#xD;
+    }&#xD;
+&#xD;
+    [JSConstructorFunction]&#xD;
+    public $CollectionName$Instance Construct()&#xD;
+    {&#xD;
+        return new $CollectionName$Instance(this.Engine, null);&#xD;
+    }&#xD;
+}&#xD;
+&#xD;
+[Serializable]&#xD;
+public class $CollectionName$Instance : CollectionInstance&lt;$CollectionName$, $CollectionWrappedItem$, $CollectionItem$&gt;&#xD;
+{&#xD;
+    private readonly $CollectionName$ m_$camelCasedName$;&#xD;
+&#xD;
+    public $CollectionName$Instance(ScriptEngine engine,$CollectionName$ $camelCasedName$)&#xD;
+        : base(new CollectionInstance&lt;$CollectionName$, $CollectionName$Instance, $CollectionItem$&gt;(engine))&#xD;
+    {&#xD;
+        this.m_$camelCasedName$ = $camelCasedName$;&#xD;
+        Collection = $camelCasedName$;&#xD;
+&#xD;
+        this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);&#xD;
+    }&#xD;
+&#xD;
+	protected override $CollectionWrappedItem$ Wrap($CollectionItem$ $CollectionItemCamelCased$)&#xD;
+	{&#xD;
+		return $CollectionItemCamelCased$ == null&#xD;
+                ? null&#xD;
+                : new $CollectionWrappedItem$(this.Engine.Object.InstancePrototype, $CollectionItemCamelCased$);&#xD;
+	}&#xD;
+&#xD;
+	protected override $CollectionItem$ Unwrap($CollectionWrappedItem$ $CollectionWrappedItemCamelCased$)&#xD;
+	{&#xD;
+		return $CollectionWrappedItemCamelCased$ == null&#xD;
+                ? null&#xD;
+                : $CollectionWrappedItemCamelCased$.$CollectionItem$;&#xD;
+	}&#xD;
+}</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B1CE46A22D7414296AA0B621ED14906/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B1CE46A22D7414296AA0B621ED14906/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7B1CE46A22D7414296AA0B621ED14906/Categories/=Jurassic/@EntryIndexedValue">Jurassic</s:String>
