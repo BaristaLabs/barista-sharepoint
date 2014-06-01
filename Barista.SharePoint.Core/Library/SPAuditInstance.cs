@@ -84,10 +84,20 @@
             }
         }
 
-        //[JSFunction(Name = "getEntries")]
-        //public SPAuditEntryCollectionInstance GetEntries(object query)
-        //{
-        //}
+        [JSFunction(Name = "getEntries")]
+        public SPAuditEntryCollectionInstance GetEntries(object query)
+        {
+            SPAuditEntryCollection result;
+
+            if (query is SPAuditQueryInstance)
+                result = m_audit.GetEntries((query as SPAuditQueryInstance).SPAuditQuery);
+            else
+                result = m_audit.GetEntries();
+
+            return result == null
+                ? null
+                : new SPAuditEntryCollectionInstance(this.Engine.Object.InstancePrototype, result);
+        }
 
         [JSFunction(Name = "deleteEntries")]
         public int DeleteEntries(DateInstance deleteEndDate)
@@ -111,7 +121,43 @@
             m_audit.Update();
         }
 
-        //WriteAuditEvent
-        //WriteAuditEventUnlimitedData
+        [JSFunction(Name = "writeAuditEvent")]
+        public bool WriteAuditEvent(string eventName, string eventSource, object arg3, object arg4)
+        {
+            if (arg4 == Undefined.Value)
+            {
+                return m_audit.WriteAuditEvent(eventName, eventSource, TypeConverter.ToString(arg3));
+            }
+            return m_audit.WriteAuditEvent(eventName, eventSource, TypeConverter.ToInteger(arg3), TypeConverter.ToString(arg4));
+        }
+
+        [JSFunction(Name = "writeAuditEvent2")]
+        public bool WriteAuditEvent2(string eventType, string eventSource, string xmlData)
+        {
+            SPAuditEventType auditEventType;
+
+            if (!eventType.TryParseEnum(true, out auditEventType))
+                throw new JavaScriptException(this.Engine, "Error", "EventType parameter must be of the possible SPAuditEventTypes");
+
+            return m_audit.WriteAuditEvent(auditEventType, eventSource, xmlData);
+        }
+
+
+        [JSFunction(Name = "writeAuditEventUnlimitedData")]
+        public bool WriteAuditEventUnlimitedData(string eventName, string eventSource, string xmlData)
+        {
+            return m_audit.WriteAuditEventUnlimitedData(eventName, eventSource, xmlData);
+        }
+
+        [JSFunction(Name = "writeAuditEventUnlimitedData2")]
+        public bool WriteAuditEventUnlimitedData2(string eventType, string eventSource, string xmlData)
+        {
+            SPAuditEventType auditEventType;
+
+            if (!eventType.TryParseEnum(true, out auditEventType))
+                throw new JavaScriptException(this.Engine, "Error", "EventType parameter must be of the possible SPAuditEventTypes");
+
+            return m_audit.WriteAuditEventUnlimitedData(auditEventType, eventSource, xmlData);
+        }
     }
 }

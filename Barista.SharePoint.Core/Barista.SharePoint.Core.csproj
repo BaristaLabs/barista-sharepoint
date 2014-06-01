@@ -301,7 +301,10 @@
     <Compile Include="Library\SPAlternateUrlInstance.cs" />
     <Compile Include="Library\SPApplicationPoolInstance.cs" />
     <Compile Include="Library\SPAttachmentCollectionInstance.cs" />
+    <Compile Include="Library\SPAuditEntryCollectionInstance.cs" />
+    <Compile Include="Library\SPAuditEntryInstance.cs" />
     <Compile Include="Library\SPAuditInstance.cs" />
+    <Compile Include="Library\SPAuditQueryInstance.cs" />
     <Compile Include="Library\SPCheckedOutFileInstance.cs" />
     <Compile Include="Library\SPCheckedOutFilesList.cs" />
     <Compile Include="Library\SPContentDatabaseCollectionInstance.cs" />
