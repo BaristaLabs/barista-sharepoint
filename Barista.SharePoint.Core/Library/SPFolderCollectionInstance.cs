@@ -112,6 +112,14 @@
                 ? null
                 : new SPWebInstance(this.Engine, result);
         }
-        
+
+        [JSFunction(Name = "toArray")]
+        public ArrayInstance ToArray()
+        {
+            var result = this.Engine.Array.Construct();
+            foreach (SPFolder folder in this.m_folderCollection)
+                ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, folder.ParentWeb.Site, folder.ParentWeb, folder));
+            return result;
+        }
     }
 }

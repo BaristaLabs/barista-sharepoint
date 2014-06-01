@@ -428,10 +428,15 @@
             };
         }
 
-        [JSFunction(Name = "getPropertyBagValue")]
-        public string GetPropertyBagValue(string value)
+        [JSFunction(Name = "getPropertyBagValueAsString")]
+        public string GetPropertyBagValue(string key)
         {
-            return m_folder.GetProperty(value) as string;
+            var value = m_folder.GetProperty(key);
+
+            if (value is string)
+                return value as string;
+
+            return value.ToString();
         }
 
         [JSFunction(Name = "getPropertyBagValue")]
@@ -508,11 +513,11 @@
                 m_site = null;
             }
 
-            if (m_web != null)
-            {
-                m_web.Dispose();
-                m_web = null;
-            }
+            if (m_web == null)
+                return;
+
+            m_web.Dispose();
+            m_web = null;
         }
 
         [JSFunction(Name = "toString")]

@@ -92,6 +92,15 @@
             }
         }
 
+        [JSProperty(Name = "audit")]
+        public SPAuditInstance Audit
+        {
+            get
+            {
+                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_listItem.Audit);
+            }
+        }
+
         //Audit
         //Backward links
 

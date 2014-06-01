@@ -250,6 +250,7 @@
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
     <Compile Include="Etag.cs" />
+    <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
     <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />

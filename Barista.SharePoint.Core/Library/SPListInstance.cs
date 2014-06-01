@@ -65,9 +65,11 @@
             this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
-        protected SPListInstance(ObjectInstance prototype)
+        protected SPListInstance(ObjectInstance prototype, SPList list)
           : base(prototype)
         {
+            m_list = list;
+            this.SecurableObject = m_list;
         }
 
         public SPList List
@@ -172,7 +174,14 @@
             }
         }
 
-        //audit
+        [JSProperty(Name = "audit")]
+        public SPAuditInstance Audit
+        {
+            get
+            {
+                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_site.Audit);
+            }
+        }
 
         [JSProperty(Name = "author")]
         public SPUserInstance Author

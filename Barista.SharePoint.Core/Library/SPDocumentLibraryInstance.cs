@@ -39,7 +39,7 @@
         private readonly SPDocumentLibrary m_documentLibrary;
 
         public SPDocumentLibraryInstance(ScriptEngine engine, SPSite site, SPWeb web, SPDocumentLibrary documentLibrary)
-            : base(new SPListInstance(engine, site, web, documentLibrary))
+            : base(new SPListInstance(engine, site, web, documentLibrary), documentLibrary)
         {
             m_documentLibrary = documentLibrary;
 
