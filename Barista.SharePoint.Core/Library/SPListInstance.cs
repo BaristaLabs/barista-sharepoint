@@ -65,6 +65,11 @@
             this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
+        protected SPListInstance(ObjectInstance prototype)
+          : base(prototype)
+        {
+        }
+
         public SPList List
         {
             get { return m_list; }

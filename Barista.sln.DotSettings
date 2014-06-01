@@ -358,6 +358,80 @@ public ArrayInstance $PropertyName$&#xD;
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CBA826F492C35442B316841AE827EB61/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CBA826F492C35442B316841AE827EB61/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CBA826F492C35442B316841AE827EB61/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	
+	
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItem/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItem/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItemCamelCased/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItemCamelCased/Expression/@EntryValue">decapitalize(ListItem)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItemCamelCased/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListItemCamelCased/Order/@EntryValue">4</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListName/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListName/InitialRange/@EntryValue">6</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListName/Order/@EntryValue">3</s:Int64>
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItem/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItem/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItemCamelCased/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItemCamelCased/Expression/@EntryValue">decapitalize(ListWrappedItem)</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItemCamelCased/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Field/=ListWrappedItemCamelCased/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Scope/=C3001E7C0DA78E4487072B7E050D86C5/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Scope/=C3001E7C0DA78E4487072B7E050D86C5/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Shortcut/@EntryValue">Jurassic List Instance</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1648DCC5DF0074D8A55826E6826C0D7/Text/@EntryValue">using System.Reflection;&#xD;
+using Barista.Jurassic;&#xD;
+using Barista.Jurassic.Library;&#xD;
+using System;&#xD;
+using Barista.Library;&#xD;
+&#xD;
+[Serializable]&#xD;
+public class $ListName$Constructor : ClrFunction&#xD;
+{&#xD;
+    public $ListName$Constructor(ScriptEngine engine)&#xD;
+        : base(engine.Function.InstancePrototype, "$ListName$", new $ListName$Instance(engine, null))&#xD;
+    {&#xD;
+    }&#xD;
+&#xD;
+    [JSConstructorFunction]&#xD;
+    public $ListName$Instance Construct()&#xD;
+    {&#xD;
+        return new $ListName$Instance(this.Engine, null);&#xD;
+    }&#xD;
+}&#xD;
+&#xD;
+[Serializable]&#xD;
+public class $ListName$Instance : ListInstance&lt;$ListWrappedItem$, $ListItem$&gt;&#xD;
+{&#xD;
+    public $ListName$Instance(ScriptEngine engine, IList&lt;$ListItem$&gt; $ListName$)&#xD;
+        : base(new ListInstance&lt;$ListName$Instance, $ListItem$&gt;(engine))&#xD;
+    {&#xD;
+		this.List = $ListName$;&#xD;
+        this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);&#xD;
+    }&#xD;
+&#xD;
+	protected override $ListWrappedItem$ Wrap($ListItem$ $ListItemCamelCased$)&#xD;
+	{&#xD;
+		return $ListItemCamelCased$ == null&#xD;
+                ? null&#xD;
+                : new $ListWrappedItem$(this.Engine.Object.InstancePrototype, $ListItemCamelCased$);&#xD;
+	}&#xD;
+&#xD;
+	protected override $ListItem$ Unwrap($ListWrappedItem$ $ListWrappedItemCamelCased$)&#xD;
+	{&#xD;
+		return $ListWrappedItemCamelCased$ == null&#xD;
+                ? null&#xD;
+                : $ListWrappedItemCamelCased$.$ListItem$;&#xD;
+	}&#xD;
+}</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E9BD285D451B6E468C153727C28FF138/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E9BD285D451B6E468C153727C28FF138/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E9BD285D451B6E468C153727C28FF138/Categories/=Jurassic/@EntryIndexedValue">Jurassic</s:String>

@@ -486,7 +486,7 @@
             }
         }
 
-        [JSFunction(Name = "setFieldValue")]
+        [JSFunction(Name = "setTaxonomyFieldValue")]
         public void SetFieldValue(string fieldName, TermInstance fieldValue)
         {
             var taxonomyField = m_listItem.Fields[fieldName] as TaxonomyField;
@@ -497,6 +497,7 @@
             }
         }
 
+        [JSFunction(Name = "setFieldValue")]
         public void SetFieldValue(string fieldName, string fieldValue)
         {
             var field = m_listItem.Fields[fieldName];

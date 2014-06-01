@@ -64,6 +64,15 @@
         }
 
         #region Properties
+        [JSProperty(Name = "audit")]
+        public SPAuditInstance Audit
+        {
+            get
+            {
+                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_web.Audit);
+            }
+        }
+
         [JSDoc("Gets a Boolean value that specifies whether the current user is allowed to use the designer for this website. The default value is false.")]
         [JSProperty(Name = "allowDesignerForCurrentUser")]
         public bool AllowDesignerForCurrentUser

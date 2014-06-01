@@ -72,6 +72,15 @@
             get { return new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_site.AllWebs); }
         }
 
+        [JSProperty(Name = "audit")]
+        public SPAuditInstance Audit
+        {
+            get
+            {
+                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_site.Audit);
+            }
+        }
+
         [JSProperty(Name = "allowDesigner")]
         public bool AllowDesigner
         {

@@ -39,6 +39,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPDocumentSet", new SPDocumentSetConstructor(engine));
       engine.SetGlobalValue("SPFolder", new SPFolderConstructor(engine));
       engine.SetGlobalValue("SPList", new SPListConstructor(engine));
+      engine.SetGlobalValue("SPDocumentLibrary", new SPDocumentLibraryConstructor(engine));
       engine.SetGlobalValue("SPView", new SPViewConstructor(engine));
       engine.SetGlobalValue("SPListItem", new SPListItemConstructor(engine));
       engine.SetGlobalValue("SPCamlQuery", new SPCamlQueryConstructor(engine));

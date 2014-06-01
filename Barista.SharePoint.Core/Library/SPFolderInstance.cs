@@ -1,15 +1,14 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System;
-    using System.Linq;
+    using Barista.Library;
     using Jurassic;
     using Jurassic.Library;
-    using Microsoft.SharePoint;
     using Microsoft.Office.DocumentManagement.DocumentSets;
-    using System.Text;
-    using System.Collections.Generic;
-    using Barista.Library;
+    using Microsoft.SharePoint;
     using Newtonsoft.Json;
+    using System;
+    using System.Linq;
+    using System.Text;
 
     [Serializable]
     public class SPFolderConstructor : ClrFunction
@@ -51,7 +50,6 @@
         public SPFolderInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
             this.PopulateFunctions();
         }
 
@@ -62,6 +60,14 @@
             this.m_site = site;
             this.m_web = web;
             this.m_folder = folder;
+
+            m_files = new Lazy<SPFileCollectionInstance>(() => m_folder.Files == null
+                ? null
+                : new SPFileCollectionInstance(this.Engine.Object.InstancePrototype, m_folder.Files));
+
+            m_subFolders = new Lazy<SPFolderCollectionInstance>(() => m_folder.SubFolders == null
+                ? null
+                : new SPFolderCollectionInstance(this.Engine.Object.InstancePrototype, m_folder.SubFolders));
         }
 
         #region Properties
@@ -69,6 +75,59 @@
         public SPFolder Folder
         {
             get { return m_folder; }
+        }
+
+        [JSProperty(Name = "audit")]
+        public SPAuditInstance Audit
+        {
+            get
+            {
+                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_folder.Audit);
+            }
+        }
+
+        [JSProperty(Name = "containingDocumentLibrary")]
+        public GuidInstance ContainingDocumentLibrary
+        {
+            get
+            {
+                return new GuidInstance(this.Engine.Object.InstancePrototype, m_folder.ContainingDocumentLibrary);
+            }
+        }
+
+        [JSProperty(Name = "contentTypeOrder")]
+        public SPContentTypeListInstance ContentTypeOrder
+        {
+            get
+            {
+                return m_folder.ContentTypeOrder == null
+                    ? null
+                    : new SPContentTypeListInstance(this.Engine, m_folder.ContentTypeOrder);
+            }
+        }
+
+        //Effective Audit Mask
+        //EffectiveRawPermissions
+
+
+        [JSProperty(Name = "exists")]
+        public bool Exists
+        {
+            get
+            {
+                return m_folder.Exists;
+            }
+        }
+
+        private readonly Lazy<SPFileCollectionInstance> m_files;
+
+        [JSProperty(Name = "files")]
+        public SPFileCollectionInstance Files
+        {
+            get
+            {
+                return m_files.Value;
+            }
         }
 
         [JSProperty(Name = "itemCount")]
@@ -86,6 +145,24 @@
             get
             {
                 return m_folder.Name;
+            }
+        }
+
+        [JSProperty(Name = "parentListId")]
+        public GuidInstance ParentListId
+        {
+            get
+            {
+                return new GuidInstance(this.Engine.Object.InstancePrototype, m_folder.ParentListId);
+            }
+        }
+
+        [JSProperty(Name = "progId")]
+        public string ProgId
+        {
+            get
+            {
+                return m_folder.ProgID;
             }
         }
 
@@ -124,12 +201,43 @@
             }
         }
 
+        [JSProperty(Name = "requiresCheckout")]
+        public bool RequiresCheckout
+        {
+            get
+            {
+                return m_folder.RequiresCheckout;
+            }
+        }
+
         [JSProperty(Name = "serverRelativeUrl")]
         public string ServerRelativeUrl
         {
             get
             {
                 return m_folder.ServerRelativeUrl;
+            }
+        }
+
+        private readonly Lazy<SPFolderCollectionInstance> m_subFolders;
+
+        [JSProperty(Name = "subFolders")]
+        public SPFolderCollectionInstance SubFolders
+        {
+            get
+            {
+                return m_subFolders.Value;
+            }
+        }
+
+        [JSProperty(Name = "uniqueContentTypeOrder")]
+        public SPContentTypeListInstance UniqueContentTypeOrder
+        {
+            get
+            {
+                return m_folder.UniqueContentTypeOrder == null
+                    ? null
+                    : new SPContentTypeListInstance(this.Engine, m_folder.UniqueContentTypeOrder);
             }
         }
 
@@ -232,6 +340,12 @@
             return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
         }
 
+        [JSFunction(Name = "addProperty")]
+        public void AddProperty(object key, object value)
+        {
+            m_folder.AddProperty(key, value);
+        }
+
         [JSFunction(Name = "addSubFolder")]
         public SPFolderInstance AddSubFolder(string url)
         {
@@ -239,10 +353,22 @@
             return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
         }
 
+        [JSFunction(Name = "copyTo")]
+        public void CopyTo(string strNewUrl)
+        {
+            m_folder.CopyTo(strNewUrl);
+        }
+
         [JSFunction(Name = "delete")]
         public void Delete()
         {
             m_folder.Delete();
+        }
+
+        [JSFunction(Name = "deleteProperty")]
+        public void DeleteProperty(object key)
+        {
+            m_folder.DeleteProperty(key);
         }
 
         [JSFunction(Name = "ensureSubFolderExists")]
@@ -264,22 +390,20 @@
             return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
         }
 
-        [JSFunction(Name = "getContentTypeOrder")]
-        public ArrayInstance ContentTypeOrder()
+        [JSFunction(Name = "getDocumentLibrary")]
+        public SPDocumentLibraryInstance GetDocumentLibrary()
         {
-            if (m_folder.ParentListId == Guid.Empty)
-                return null;
+            return m_folder.DocumentLibrary == null
+                ? null
+                : new SPDocumentLibraryInstance(this.Engine, m_site, m_web, m_folder.DocumentLibrary);
+        }
 
-            if (m_folder.ContentTypeOrder == null)
-                return null;
-
-            var result = this.Engine.Array.Construct();
-            foreach (var contentType in m_folder.ContentTypeOrder)
-            {
-                ArrayInstance.Push(result, new SPContentTypeInstance(this.Engine.Object.InstancePrototype, contentType));
-            }
-
-            return result;
+        [JSFunction(Name = "getItem")]
+        public SPListItemInstance GetItem()
+        {
+            return m_folder.Item == null
+                ? null
+                : new SPListItemInstance(this.Engine, m_folder.Item);
         }
 
         [JSFunction(Name = "getParentFolder")]
@@ -310,27 +434,15 @@
             return m_folder.GetProperty(value) as string;
         }
 
-        [JSFunction(Name = "getFiles")]
-        public ArrayInstance GetFiles([DefaultParameterValue(false)] bool recursive)
+        [JSFunction(Name = "getPropertyBagValue")]
+        public object GetProperty(object key)
         {
-            //ContentIterator iterator = new ContentIterator();
-            //iterator.ProcessFilesInFolder(m_folder, recursive, (file) =>
-            //  {
-            //    files.Add(file);
-            //  },
-            //  (file, ex) =>
-            //  {
-            //    return false; // do not rethrow errors;
-            //  });
+            return TypeConverter.ToObject(this.Engine, m_folder.GetProperty(key));
+        }
 
-            //var result = this.Engine.Array.Construct();
-
-            //foreach (SPFile file in files)
-            //{
-            //  ArrayInstance.Push(result, new SPFileInstance(this.Engine.Object.InstancePrototype, file));
-            //}
-            //return result;
-
+        [JSFunction(Name = "getFiles")]
+        public ArrayInstance GetFiles(bool recursive)
+        {
             var listItemInstances = m_folder.Files
                                             .OfType<SPFile>()
                                             .Select(file => new SPFileInstance(this.Engine.Object.InstancePrototype, file));
@@ -352,22 +464,10 @@
             return result;
         }
 
-        [JSFunction(Name = "getUniqueContentTypeOrder")]
-        public ArrayInstance GetUniqueContentTypeOrder()
+        [JSFunction(Name = "moveTo")]
+        public void MoveTo(string strNewUrl)
         {
-            if (m_folder.ParentListId == Guid.Empty)
-                return null;
-
-            if (m_folder.UniqueContentTypeOrder == null)
-                return null;
-
-            var result = this.Engine.Array.Construct();
-            foreach (var contentType in m_folder.UniqueContentTypeOrder)
-            {
-                ArrayInstance.Push(result, contentType.Id.ToString());
-            }
-
-            return result;
+            m_folder.MoveTo(strNewUrl);
         }
 
         [JSFunction(Name = "setPropertyBagValue")]
@@ -376,27 +476,10 @@
             m_folder.SetProperty(key, value);
         }
 
-        [JSFunction(Name = "setUniqueContentTypeOrder")]
-        public void SetUniqueContentTypeOrder(ArrayInstance value)
+        [JSFunction(Name = "setProperty")]
+        public void SetProperty(object key, object value)
         {
-            List<SPContentType> contentTypes = new List<SPContentType>();
-            for (int i = 0; i < value.Length; i++)
-            {
-                SPContentType inOrderContentType = null;
-                if (value[i] is SPContentTypeInstance)
-                {
-                    inOrderContentType = (value[i] as SPContentTypeInstance).ContentType;
-                }
-
-                if (inOrderContentType != null)
-                {
-                    if (m_folder.ContentTypeOrder.Any(ct => ct.Id == inOrderContentType.Id))
-                        contentTypes.Add(inOrderContentType);
-                }
-            }
-
-            if (m_folder.ContentTypeOrder.Count == contentTypes.Count)
-                m_folder.UniqueContentTypeOrder = contentTypes;
+            m_folder.SetProperty(key, value);
         }
 
         [JSFunction(Name = "recycle")]
@@ -430,6 +513,12 @@
                 m_web.Dispose();
                 m_web = null;
             }
+        }
+
+        [JSFunction(Name = "toString")]
+        public override string ToString()
+        {
+            return m_folder.ToString();
         }
     }
 }

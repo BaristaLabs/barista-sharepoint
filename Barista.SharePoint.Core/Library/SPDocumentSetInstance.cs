@@ -45,7 +45,20 @@
         }
 
         [JSFunction(Name = "createDocumentSet")]
-        public SPDocumentSetInstance CreateDocumentSet(SPFolderInstance folder, string name, SPContentTypeIdInstance ctid, object properties, object provisionDefaultContent, object user)
+        [JSDoc("Creates a new document set in the specified folder with the specified name and content type id.")]
+        public SPDocumentSetInstance CreateDocumentSet(
+            [JSDoc("The folder to create the document set in.")]
+            SPFolderInstance folder,
+            [JSDoc("The name of the new document set.")]
+            string name,
+            [JSDoc("The content type id of the new documentset. Use new ContentTypeId('<CTID>')")]
+            SPContentTypeIdInstance ctid,
+            [JSDoc("Optional. Specifies a hashtable of fields that will be set on the document set where the key is the static field name.")]
+            object properties,
+            [JSDoc("Optional. Specifies a value that indicates if the default document set content will be provisioned. Default is true.")]
+            object provisionDefaultContent,
+            [JSDoc("Optional. Specifies the SPUser that created the document set.")]
+            object user)
         {
             if (folder == null)
                 throw new JavaScriptException(this.Engine, "Error", "An instance of an SPFolder must be specified as the first argument.");

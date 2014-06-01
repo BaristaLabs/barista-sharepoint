@@ -905,6 +905,7 @@
     <Compile Include="Imports\Yahoo.Yui.Compressor\YUICompressor.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
+    <Compile Include="Library\ListInstance.cs" />
     <Compile Include="Library\EncodingInstance.cs" />
     <Compile Include="Library\HashtableInstance.cs" />
     <Compile Include="Library\StringDictionaryInstance.cs" />
