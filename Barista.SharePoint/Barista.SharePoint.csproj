@@ -23,12 +23,12 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\Scripts\SetupBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
-    <PreDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -file "%24%28SolutionDir%29Scripts\VSDeploy-PreSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PreDeploymentCommand>
+    <PreDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -file "%24%28SolutionDir%29Scripts\VSDeploy-PreSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PreDeploymentCommand>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\Scripts\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>..\Scripts\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>
     <CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>../Scripts/Deploy.ps1 -Config ./Deployment/Solutions-LocalDev-Debug.xml</CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>
-    <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
+    <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
