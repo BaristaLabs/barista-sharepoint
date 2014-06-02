@@ -1531,7 +1531,6 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    [CLSCompliant(false)]
     public static implicit operator JToken(uint value)
     {
       return new JValue(value);
@@ -1542,7 +1541,6 @@ namespace Barista.Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="value">The value to create a <see cref="JValue"/> from.</param>
     /// <returns>The <see cref="JValue"/> initialized with the specified value.</returns>
-    [CLSCompliant(false)]
     public static implicit operator JToken(ulong value)
     {
       return new JValue(value);
