@@ -176,6 +176,17 @@
             }
         }
 
+        [JSProperty(Name = "eventReceivers")]
+        public SPEventReceiverDefinitionCollectionInstance EventReceivers
+        {
+            get
+            {
+                return m_file.EventReceivers == null
+                    ? null
+                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_file.EventReceivers);
+            }
+        }
+
         [JSProperty(Name = "exists")]
         [JSDoc("Returns a value that indicates if the file exists.")]
         public bool Exists

@@ -179,7 +179,9 @@
         {
             get
             {
-                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_site.Audit);
+                return m_list.Audit == null
+                    ? null
+                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_list.Audit);
             }
         }
 
@@ -493,7 +495,16 @@
             set { m_list.EnforceDataValidation = value; }
         }
 
-        //Event stuff?
+        [JSProperty(Name = "eventReceivers")]
+        public SPEventReceiverDefinitionCollectionInstance EventReceivers
+        {
+            get
+            {
+                return m_list.EventReceivers == null
+                    ? null
+                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_list.EventReceivers);
+            }
+        }
 
         [JSProperty(Name = "excludeFromOfflineClient")]
         public bool ExcludeFromOfflineClient

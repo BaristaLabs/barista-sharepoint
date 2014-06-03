@@ -122,7 +122,16 @@
       set { m_contentType.EditFormUrl = value; }
     }
 
-    //TODO: Event Receivers
+    [JSProperty(Name = "eventReceivers")]
+    public SPEventReceiverDefinitionCollectionInstance EventReceivers
+    {
+        get
+        {
+            return m_contentType.EventReceivers == null
+                ? null
+                : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_contentType.EventReceivers);
+        }
+    }
 
     [JSProperty(Name = "featureId")]
     public string FeatureId

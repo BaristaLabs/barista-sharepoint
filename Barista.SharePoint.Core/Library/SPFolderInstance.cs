@@ -82,7 +82,9 @@
         {
             get
             {
-                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_folder.Audit);
+                return m_folder.Audit == null
+                    ? null
+                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_folder.Audit);
             }
         }
 
@@ -100,6 +102,9 @@
         {
             get
             {
+                if (m_folder.ParentListId == Guid.Empty)
+                    return null;
+
                 return m_folder.ContentTypeOrder == null
                     ? null
                     : new SPContentTypeListInstance(this.Engine, m_folder.ContentTypeOrder);
@@ -235,6 +240,9 @@
         {
             get
             {
+                if (m_folder.ParentListId == Guid.Empty)
+                    return null;
+
                 return m_folder.UniqueContentTypeOrder == null
                     ? null
                     : new SPContentTypeListInstance(this.Engine, m_folder.UniqueContentTypeOrder);

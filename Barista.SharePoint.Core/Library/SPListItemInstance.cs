@@ -97,7 +97,9 @@
         {
             get
             {
-                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_listItem.Audit);
+                return m_listItem.Audit == null
+                    ? null
+                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_listItem.Audit);
             }
         }
 

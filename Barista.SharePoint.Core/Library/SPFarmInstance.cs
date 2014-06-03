@@ -36,6 +36,17 @@
             }
         }
 
+        [JSProperty(Name = "featureDefinitions")]
+        public SPFeatureDefinitionCollectionInstance FeatureDefinitions
+        {
+            get
+            {
+                return m_farm.FeatureDefinitions == null
+                    ? null
+                    : new SPFeatureDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_farm.FeatureDefinitions);
+            }
+        }
+
         [JSProperty(Name = "propertyBag")]
         public HashtableInstance PropertyBag
         {

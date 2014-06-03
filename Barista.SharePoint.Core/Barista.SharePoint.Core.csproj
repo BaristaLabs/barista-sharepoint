@@ -316,8 +316,10 @@
     <Compile Include="Library\SPDeletedSiteCollectionInstance.cs" />
     <Compile Include="Library\SPDeletedSiteInstance.cs" />
     <Compile Include="Library\SPDocumentLibraryInstance.cs" />
+    <Compile Include="Library\SPEventReceiverDefinitionCollectionInstance.cs" />
     <Compile Include="Library\SPFarmManagedAccountCollectionInstance.cs" />
     <Compile Include="Library\SPFeatureCollectionInstance.cs" />
+    <Compile Include="Library\SPFeatureDefinitionCollectionInstance.cs" />
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
@@ -335,6 +337,7 @@
     <Compile Include="Library\SPPrincipalInstance.cs" />
     <Compile Include="Library\SPProcessAccountInstance.cs" />
     <Compile Include="Library\SPPropertyBagInstance.cs" />
+    <Compile Include="Library\SPQuotaInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentCollectionInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionBindingCollectionInstance.cs" />
@@ -342,7 +345,11 @@
     <Compile Include="Library\SPServerCollectionInstance.cs" />
     <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
     <Compile Include="Library\SPServiceCollectionInstance.cs" />
+    <Compile Include="Library\SPUserSolutionCollection.cs" />
+    <Compile Include="Library\SPUserSolutionInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowAssociationInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowFilterInstance.cs" />
     <Compile Include="Workflow\SPWorkflowInstance.cs" />
     <Compile Include="Workflow\SPWorkflowManagerInstance.cs" />
     <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
@@ -486,6 +493,10 @@
     <Compile Include="Taxonomy\Library\TermStoreInstance.cs" />
     <Compile Include="Taxonomy\Library\TermStoreCollectionInstance.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="Workflow\SPWorkflowModificationCollectionInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowModificationInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowTaskCollection.cs" />
+    <Compile Include="Workflow\SPWorkflowTaskInstance.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>
   <ItemGroup>

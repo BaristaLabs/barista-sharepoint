@@ -69,7 +69,9 @@
         {
             get
             {
-                return new SPAuditInstance(this.Engine.Object.InstancePrototype, m_web.Audit);
+                return m_web.Audit == null
+                    ? null
+                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_web.Audit);
             }
         }
 
@@ -282,6 +284,17 @@
             set { m_web.Description = value; }
         }
 
+        [JSProperty(Name = "eventReceivers")]
+        public SPEventReceiverDefinitionCollectionInstance EventReceivers
+        {
+            get
+            {
+                return m_web.EventReceivers == null
+                    ? null
+                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_web.EventReceivers);
+            }
+        }
+
         [JSProperty(Name = "features")]
         public SPFeatureCollectionInstance Features
         {
@@ -440,10 +453,9 @@
         {
             get
             {
-                if (m_web.RoleDefinitions == null)
-                    return null;
-
-                return new SPRoleDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_web.RoleDefinitions);
+                return m_web.RoleDefinitions == null
+                    ? null
+                    : new SPRoleDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_web.RoleDefinitions);
             }
         }
 
@@ -514,10 +526,9 @@
         {
             get
             {
-                if (m_web.SiteUserInfoList == null)
-                    return null;
-
-                return new SPListInstance(this.Engine, null, null, m_web.SiteUserInfoList);
+                return m_web.SiteUserInfoList == null
+                    ? null
+                    : new SPListInstance(this.Engine, null, null, m_web.SiteUserInfoList);
             }
         }
 
