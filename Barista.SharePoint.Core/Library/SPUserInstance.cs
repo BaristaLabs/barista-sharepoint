@@ -1,9 +1,9 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
+    using System;
 
     [Serializable]
     public class SPUserConstructor : ClrFunction
@@ -63,6 +63,17 @@
         internal SPUser User
         {
             get { return m_user; }
+        }
+
+        [JSProperty(Name = "alerts")]
+        public SPAlertCollectionInstance Alerts
+        {
+            get
+            {
+                return m_user.Alerts == null
+                    ? null
+                    : new SPAlertCollectionInstance(this.Engine.Object.InstancePrototype, m_user.Alerts);
+            }
         }
 
         [JSProperty(Name = "email")]

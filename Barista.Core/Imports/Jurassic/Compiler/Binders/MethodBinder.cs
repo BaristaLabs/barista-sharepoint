@@ -54,10 +54,10 @@
         else
         {
           if (this.Name != method.Name)
-            throw new ArgumentException(@"Every method must have the same name.", "targetMethods");
+            throw new ArgumentException(@"Every method must have the same name. (" + method.Name + @")", "targetMethods");
 
           if (this.m_declaringType != method.DeclaringType)
-            throw new ArgumentException(@"Every method must have the same declaring type.", "targetMethods");
+            throw new ArgumentException(@"Every method must have the same declaring type. (" + method.Name + @")", "targetMethods");
         }
 
         this.m_functionLength = Math.Max(this.FunctionLength, method.RequiredParameterCount +
