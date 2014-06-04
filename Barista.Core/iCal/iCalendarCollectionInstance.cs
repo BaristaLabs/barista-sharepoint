@@ -57,7 +57,7 @@
             foreach (var calendar in m_iCalendarCollection.OfType<iCalendar>())
             {
                 var iCal = new iCalendarInstance(this.Engine.Object.InstancePrototype, calendar);
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, iCal);
+                ArrayInstance.Push(result, iCal);
             }
 
             return result;

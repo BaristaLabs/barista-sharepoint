@@ -107,12 +107,10 @@
                 if (
                   SPBaristaContext.Current.Request != null &&
                   SPBaristaContext.Current.Request.ExtendedProperties != null &&
-                  SPBaristaContext.Current.Request.ExtendedProperties.ContainsKey(
-                    Constants.BaristaItemEventReceiverCodePropertyBagKey))
+                  SPBaristaContext.Current.Request.ExtendedProperties.ContainsKey("SPItemEventProperties"))
                 {
                     var properties =
-                      SPBaristaContext.Current.Request.ExtendedProperties[
-                        Constants.BaristaItemEventReceiverCodePropertyBagKey];
+                      SPBaristaContext.Current.Request.ExtendedProperties["SPItemEventProperties"];
 
                     var itemEventProperties = JsonConvert.DeserializeObject<BaristaItemEventProperties>(properties);
                     engine.SetGlobalValue("CurrentItemEventProperties",
@@ -127,53 +125,53 @@ var define = function() { return barista.common.define(arguments[0], arguments[1
 var include = function(scriptUrl) { return barista.include(scriptUrl); };");
 
                 //Execute any instance initialization code.
-                if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCode) == false)
-                {
-                    var initializationScriptSource =
-                      new BaristaScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
+                if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCode))
+                    return engine;
+
+                var initializationScriptSource =
+                    new BaristaScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
                         SPBaristaContext.Current.Request.InstanceInitializationCodePath);
 
-                    try
-                    {
-                        engine.Execute(initializationScriptSource);
-                    }
-                    catch (JavaScriptException ex)
-                    {
-                        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-                          "A JavaScript exception was thrown while evaluating script: ");
-                        UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
-                        errorInInitialization = true;
+                try
+                {
+                    engine.Execute(initializationScriptSource);
+                }
+                catch (JavaScriptException ex)
+                {
+                    BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+                        "A JavaScript exception was thrown while evaluating script: ");
+                    UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
+                    errorInInitialization = true;
 
-                        switch (SPBaristaContext.Current.Request.InstanceMode)
-                        {
-                            case BaristaInstanceMode.Single:
-                                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                  SPBaristaContext.Current.Request.InstanceName);
-                                break;
-                            case BaristaInstanceMode.PerSession:
-                                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                  SPBaristaContext.Current.Request.InstanceName);
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
+                    switch (SPBaristaContext.Current.Request.InstanceMode)
                     {
-                        BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-                          "An internal error occured while evaluating script: ");
-                        errorInInitialization = true;
-                        switch (SPBaristaContext.Current.Request.InstanceMode)
-                        {
-                            case BaristaInstanceMode.Single:
-                                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                  SPBaristaContext.Current.Request.InstanceName);
-                                break;
-                            case BaristaInstanceMode.PerSession:
-                                BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                  SPBaristaContext.Current.Request.InstanceName);
-                                break;
-                        }
-                        throw;
+                        case BaristaInstanceMode.Single:
+                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                                SPBaristaContext.Current.Request.InstanceName);
+                            break;
+                        case BaristaInstanceMode.PerSession:
+                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                                SPBaristaContext.Current.Request.InstanceName);
+                            break;
                     }
+                }
+                catch (Exception ex)
+                {
+                    BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+                        "An internal error occured while evaluating script: ");
+                    errorInInitialization = true;
+                    switch (SPBaristaContext.Current.Request.InstanceMode)
+                    {
+                        case BaristaInstanceMode.Single:
+                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                                SPBaristaContext.Current.Request.InstanceName);
+                            break;
+                        case BaristaInstanceMode.PerSession:
+                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                                SPBaristaContext.Current.Request.InstanceName);
+                            break;
+                    }
+                    throw;
                 }
             }
 

@@ -193,14 +193,10 @@
         var list = web.Lists[properties.ListId];
         var item = list.GetItemById(properties.ListItemId);
 
-        if (list.RootFolder.Properties.ContainsKey(Constants.BaristaItemEventReceiverCodePropertyBagKey) == false ||
-            (list.RootFolder.Properties[Constants.BaristaItemEventReceiverCodePropertyBagKey] is string) == false)
-          return;
-
         request = new BrewRequest
           {
             ContentType = "application/json", //default to application/json.
-            Code = (string) list.RootFolder.Properties[Constants.BaristaItemEventReceiverCodePropertyBagKey],
+            Code = properties.ReceiverData
           };
 
         request.SetExtendedPropertiesFromSPItemEventProperties(web, list, item, properties);

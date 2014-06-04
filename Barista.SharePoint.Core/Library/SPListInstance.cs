@@ -845,7 +845,7 @@
         #region Functions
 
         [JSFunction(Name = "addEventReceiver")]
-        public SPEventReceiverDefinitionInstance AddEventReceiver(string eventReceiverType, string assembly, string className, object code)
+        public SPEventReceiverDefinitionInstance AddEventReceiver(string eventReceiverType, string assembly, string className)
         {
             var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
 
@@ -855,25 +855,22 @@
 
             var eventReceiversAfter = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
 
-            if (code != null && code != Null.Value && code != Undefined.Value)
-            {
-                m_list.RootFolder.AddProperty(Constants.BaristaItemEventReceiverCodePropertyBagKey, code.ToString());
-                m_list.RootFolder.Update();
-            }
-
             var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
             return result != null
               ? new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result)
               : null;
         }
 
-        [JSFunction(Name = "addBaristaEventReceiver")]
-        public SPEventReceiverDefinitionInstance AddBaristaEventReceiver(string eventReceiverType, object code)
+        [JSFunction(Name = "addOrUpdateBaristaItemEventReceiver")]
+        [JSDoc("Adds an BaristaItemEventReceiver to the list. Note -- existing item event receivers are not modified. Update existing event receivers via the eventreceiver property")]
+        public SPEventReceiverDefinitionInstance AddOrUpdateBaristaItemEventReceiver(string eventReceiverType, object code)
         {
-            var receiverType = (SPEventReceiverType)Enum.Parse(typeof(SPEventReceiverType), eventReceiverType);
+            SPEventReceiverType receiverType;
+            if (!eventReceiverType.TryParseEnum(true, out receiverType))
+                throw new JavaScriptException(this.Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
 
             var baristaItemEventReceiverType =
-              Type.GetType("Barista.SharePoint. BaristaItemEventReceiver, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52");
+              Type.GetType("Barista.SharePoint.EventReceivers.BaristaItemEventReceiver.BaristaItemEventReceiver, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52");
 
             if (baristaItemEventReceiverType == null)
                 throw new InvalidOperationException("Unable to locate BaristaItemEventReceiver");
@@ -884,16 +881,54 @@
 
             var eventReceiversAfter = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
 
-            if (code != null && code != Null.Value && code != Undefined.Value)
-            {
-                m_list.RootFolder.AddProperty(Constants.BaristaItemEventReceiverCodePropertyBagKey, code.ToString());
-                m_list.RootFolder.Update();
-            }
+            var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
+            if (result == null)
+                return null;
+
+            if (code == null || code == Null.Value || code == Undefined.Value)
+                return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+
+            result.Data = TypeConverter.ToString(code);
+            result.Update();
+
+            return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "addBaristaRemoteItemEventReceiver")]
+        [JSDoc("Adds an BaristaRemoteItemEventReceiver to the list. Note -- existing item event receivers are not modified. Update existing event receivers via the eventreceiver property")]
+        public SPEventReceiverDefinitionInstance AddBaristaRemoteItemEventReceiver(string eventReceiverType, string targetUrl)
+        {
+            SPEventReceiverType receiverType;
+            if (!eventReceiverType.TryParseEnum(true, out receiverType))
+                throw new JavaScriptException(this.Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
+
+            if (targetUrl.IsNullOrWhiteSpace())
+                throw new JavaScriptException(this.Engine, "Error", "A target url must be specified.");
+
+            Uri uriTargetUri;
+            if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out uriTargetUri))
+                throw new JavaScriptException(this.Engine, "Error", "A target url must be a valid absolute url.");
+
+            var baristaRemoteItemEventReceiverType =
+              Type.GetType("Barista.SharePoint.EventReceivers.BaristaRemoteItemEventReceiver.BaristaRemoteItemEventReceiver, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52");
+
+            if (baristaRemoteItemEventReceiverType == null)
+                throw new InvalidOperationException("Unable to locate BaristaRemoteItemEventReceiver");
+
+            var eventReceiversBefore = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
+
+            m_list.EventReceivers.Add(receiverType, baristaRemoteItemEventReceiverType.Assembly.FullName, baristaRemoteItemEventReceiverType.FullName);
+
+            var eventReceiversAfter = m_list.EventReceivers.OfType<SPEventReceiverDefinition>().ToList();
 
             var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
-            return result != null
-              ? new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result)
-              : null;
+            if (result == null)
+                return null;
+
+            result.Data = uriTargetUri.ToString();
+            result.Update();
+
+            return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addItem")]

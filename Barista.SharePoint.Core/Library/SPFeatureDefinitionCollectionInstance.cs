@@ -151,7 +151,7 @@
             //Mmmm, feet....
             foreach (var feat in m_featureDefinitionCollection.Select(def => new SPFeatureDefinitionInstance(this.Engine.Object.InstancePrototype, def)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, feat);
+                ArrayInstance.Push(result, feat);
             }
 
             return result;

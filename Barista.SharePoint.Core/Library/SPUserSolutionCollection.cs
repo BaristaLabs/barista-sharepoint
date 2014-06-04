@@ -96,7 +96,7 @@
                 .OfType<SPUserSolution>()
                 .Select(def => new SPUserSolutionInstance(this.Engine.Object.InstancePrototype, def)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, sol);
+                ArrayInstance.Push(result, sol);
             }
 
             return result;

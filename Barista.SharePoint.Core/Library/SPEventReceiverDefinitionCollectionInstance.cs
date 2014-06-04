@@ -176,7 +176,7 @@
             var result = this.Engine.Array.Construct();
             foreach (var iCal in m_eventReceiverDefinitionCollection.OfType<SPEventReceiverDefinition>().Select(def => new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, def)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, iCal);
+                ArrayInstance.Push(result, iCal);
             }
 
             return result;

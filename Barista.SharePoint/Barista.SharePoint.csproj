@@ -166,6 +166,7 @@
     <Compile Include="DocumentStore\SPEntityMutexManager.cs" />
     <Compile Include="DocumentStore\SPRepositoryConstructor.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
+    <Compile Include="EventReceivers\BaristaRemoteItemEventReceiver\BaristaRemoteItemEventReceiver.cs" />
     <Compile Include="Features\Barista\Barista.EventReceiver.cs">
       <DependentUpon>Barista.feature</DependentUpon>
     </Compile>
@@ -204,6 +205,7 @@
     <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
     <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\BaristaService.cs" />
     <Compile Include="Services\BaristaServiceApplicationProxy.cs" />
     <Compile Include="Services\BaristaServiceClient.cs" />
@@ -255,6 +257,9 @@
     </None>
     <None Include="EventReceivers\BaristaItemEventReceiver\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0b4817fb-dfd3-401f-b84c-b925b2eb1f3e}</SharePointProjectItemId>
+    </None>
+    <None Include="EventReceivers\BaristaRemoteItemEventReceiver\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{d0ee4eb7-b183-4b86-bd61-7696ec3ff84b}</SharePointProjectItemId>
     </None>
     <None Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe.config" />
     <None Include="Layouts\BaristaJS\angular\angular-kendo.min.js.map">

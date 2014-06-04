@@ -101,7 +101,7 @@
             foreach (var action in m_userCustomActionCollection
                 .Select(a => new SPUserCustomActionInstance(this.Engine.Object.InstancePrototype, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, action);
+                ArrayInstance.Push(result, action);
             }
 
             return result;

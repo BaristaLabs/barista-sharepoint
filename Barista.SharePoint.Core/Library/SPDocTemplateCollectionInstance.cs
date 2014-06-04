@@ -90,7 +90,7 @@
                 .OfType<SPDocTemplate>()
                 .Select(t => new SPDocTemplateInstance(this.Engine.Object.InstancePrototype, t)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, sol);
+                ArrayInstance.Push(result, sol);
             }
 
             return result;

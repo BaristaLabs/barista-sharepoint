@@ -169,7 +169,7 @@
       var result = this.Engine.Array.Construct();
       foreach (var term in m_termSet.GetAllTerms())
       {
-        ArrayInstance.Push(this.Engine.Object.InstancePrototype, new TermInstance(this.Engine.Object.InstancePrototype, term));
+        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
       }
       return result;
     }
