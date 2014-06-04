@@ -23,7 +23,7 @@
             }
 
             var loginName = TypeConverter.ToString(arg1);
-
+            
             SPUser user;
             if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
             {
@@ -145,6 +145,17 @@
         public string Sid
         {
             get { return m_user.Sid; }
+        }
+
+        [JSProperty(Name = "userToken")]
+        public SPUserTokenInstance UserToken
+        {
+            get
+            {
+                return m_user.UserToken == null
+                    ? null
+                    : new SPUserTokenInstance(this.Engine.Object.InstancePrototype, m_user.UserToken);
+            }
         }
 
         [JSFunction(Name = "getXml")]

@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.Text;
     using Barista.Extensions;
     using Barista.Library;
     using Barista.SharePoint.Taxonomy.Library;
@@ -41,6 +42,29 @@
                 throw new ArgumentNullException("site");
 
             return new SPSiteInstance(this.InstancePrototype, site);
+        }
+
+        [JSFunction(Name = "getSiteFromGuid")]
+        public SPSiteInstance CreateFromGuid(object id, object userToken)
+        {
+            var guidId = GuidInstance.ConvertFromJsObjectToGuid(id);
+
+            SPUserToken spUserToken = null;
+            if (userToken != Undefined.Value)
+            {
+                if (userToken is Base64EncodedByteArrayInstance)
+                    spUserToken = new SPUserToken((userToken as Base64EncodedByteArrayInstance).Data);
+                else if (userToken is SPUserTokenInstance)
+                    spUserToken = (userToken as SPUserTokenInstance).SPUserToken;
+                else
+                    spUserToken = new SPUserToken(Encoding.UTF8.GetBytes(TypeConverter.ToString(userToken)));
+            }
+
+            var site = spUserToken == null
+                ? new SPSite(guidId)
+                : new SPSite(guidId, spUserToken);
+
+            return new SPSiteInstance(this.Engine.Object.InstancePrototype, site);
         }
 
         [JSFunction(Name = "exists")]
@@ -643,7 +667,16 @@
             }
         }
 
-        //UserCustomActions
+        [JSProperty(Name = "userCustomActions")]
+        public SPUserCustomActionCollectionInstance UserCustomActions
+        {
+            get
+            {
+                return m_site.UserCustomActions == null
+                    ? null
+                    : new SPUserCustomActionCollectionInstance(this.Engine.Object.InstancePrototype, m_site.UserCustomActions);
+            }
+        }
 
         [JSProperty(Name = "userDefinedWorkflowsEnabled")]
         public bool UserDefinedWorkflowsEnabled
@@ -658,7 +691,16 @@
             }
         }
 
-        //UserToken
+        [JSProperty(Name = "userToken")]
+        public SPUserTokenInstance UserToken
+        {
+            get
+            {
+                return m_site.UserToken == null
+                    ? null
+                    : new SPUserTokenInstance(this.Engine.Object.InstancePrototype, m_site.UserToken);
+            }
+        }
 
         [JSProperty(Name = "warningNotificationSent")]
         public bool WarningNotificationSent

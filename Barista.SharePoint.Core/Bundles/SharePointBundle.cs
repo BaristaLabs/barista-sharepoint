@@ -59,6 +59,7 @@ namespace Barista.SharePoint.Bundles
       engine.SetGlobalValue("SPRoleAssignment", new SPRoleAssignmentConstructor(engine));
       engine.SetGlobalValue("SPUser", new SPUserConstructor(engine));
       engine.SetGlobalValue("SPGroup", new SPGroupConstructor(engine));
+      engine.SetGlobalValue("SPUserToken", new SPUserTokenConstructor(engine));
 
       return new SPInstance(engine, SPBaristaContext.Current, SPFarm.Local, SPServer.Local);
     }

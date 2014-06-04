@@ -1644,7 +1644,14 @@
             return m_web.GetUserEffectivePermissions(userName).ToString();
         }
 
-        //GetUserToken
+        [JSFunction(Name = "getUserToken")]
+        public SPUserTokenInstance GetUserToken(string userName)
+        {
+            var result = m_web.GetUserToken(userName);
+            return result == null
+                    ? null
+                    : new SPUserTokenInstance(this.Engine.Object.InstancePrototype, result);
+        }
 
         [JSFunction(Name = "getViewFromUrl")]
         public SPViewInstance GetViewFromUrl(string listUrl)

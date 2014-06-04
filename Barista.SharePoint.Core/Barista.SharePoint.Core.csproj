@@ -356,6 +356,7 @@
     <Compile Include="Library\SPUserCustomActionInstance.cs" />
     <Compile Include="Library\SPUserSolutionCollection.cs" />
     <Compile Include="Library\SPUserSolutionInstance.cs" />
+    <Compile Include="Library\SPUserTokenInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Library\SPWebListInfoInstance.cs" />
     <Compile Include="Workflow\SPWorkflowAssociationCollectionInstance.cs" />
