@@ -2,8 +2,10 @@
 {
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
+    using Barista.Library;
     using Microsoft.SharePoint.Workflow;
+    using System;
+    using System.Globalization;
 
     [Serializable]
     public class SPWorkflowTemplateCollectionConstructor : ClrFunction
@@ -47,6 +49,54 @@
             {
                 return m_workflowTemplateCollection;
             }
+        }
+
+        [JSProperty(Name = "count")]
+        public int Count
+        {
+            get
+            {
+                return m_workflowTemplateCollection.Count;
+            }
+        }
+
+        [JSFunction(Name = "getTemplateByBaseId")]
+        public SPWorkflowTemplateInstance GetTemplateByBaseId(object baseTemplateId)
+        {
+            var guidId = GuidInstance.ConvertFromJsObjectToGuid(baseTemplateId);
+            var result = m_workflowTemplateCollection.GetTemplateByBaseID(guidId);
+            return result == null
+                ? null
+                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "getTemplateById")]
+        public SPWorkflowTemplateInstance GetTemplateById(object id)
+        {
+            var guidId = GuidInstance.ConvertFromJsObjectToGuid(id);
+            var result = m_workflowTemplateCollection[guidId];
+            return result == null
+                ? null
+                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "getTemplateByIndex")]
+        public SPWorkflowTemplateInstance GetTemplateByIndex(int index)
+        {
+            var result = m_workflowTemplateCollection[index];
+            return result == null
+                ? null
+                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "getTemplateByName")]
+        public SPWorkflowTemplateInstance GetWorkflowAssociationByName(string name)
+        {
+            //TODO: Cultureinfo.
+            var result = m_workflowTemplateCollection.GetTemplateByName(name, CultureInfo.CurrentCulture);
+            return result == null
+                ? null
+                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
         }
     }
 }

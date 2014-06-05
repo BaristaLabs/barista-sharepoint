@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.SharePoint.Workflow
+﻿namespace Barista.SharePoint.Workflow
 {
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using System;
+    using Barista.Library;
     using Microsoft.SharePoint.Workflow;
 
     [Serializable]
@@ -51,6 +47,24 @@ namespace Barista.SharePoint.Workflow
             get
             {
                 return m_workflowTask;
+            }
+        }
+
+        [JSProperty(Name = "workflowId")]
+        public GuidInstance WorkflowId
+        {
+            get
+            {
+                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflowTask.WorkflowId);
+            }
+        }
+
+        [JSProperty(Name = "xml")]
+        public string Xml
+        {
+            get
+            {
+                return m_workflowTask.Xml;
             }
         }
     }

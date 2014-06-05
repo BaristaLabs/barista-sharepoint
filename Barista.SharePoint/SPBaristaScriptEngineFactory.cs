@@ -72,6 +72,7 @@
                 instance.Common.RegisterBundle(new SharePointPublishingBundle());
                 instance.Common.RegisterBundle(new SharePointContentMigrationBundle());
                 instance.Common.RegisterBundle(new SharePointTaxonomyBundle());
+                instance.Common.RegisterBundle(new SharePointWorkflowBundle());
                 instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
                 instance.Common.RegisterBundle(new SPDocumentBundle());
                 instance.Common.RegisterBundle(new iCalBundle());

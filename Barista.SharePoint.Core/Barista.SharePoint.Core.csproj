@@ -517,6 +517,7 @@
     <Compile Include="Workflow\SPWorkflowTaskCollection.cs" />
     <Compile Include="Workflow\SPWorkflowTaskInstance.cs" />
     <Compile Include="Workflow\SPWorkflowTemplateCollectionInstance.cs" />
+    <Compile Include="Workflow\SPWorkflowTemplateInstance.cs" />
     <Compile Include="_Constants.cs" />
   </ItemGroup>
   <ItemGroup>
