@@ -333,6 +333,8 @@
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
+    <Compile Include="Library\SPLimitedWebPartCollectionInstance.cs" />
+    <Compile Include="Library\SPLimitedWebPartManagerInstance.cs" />
     <Compile Include="Library\SPListCollectionInstance.cs" />
     <Compile Include="Library\SPListItemCollectionInstance.cs" />
     <Compile Include="Library\SPListItemVersionCollectionInstance.cs" />
@@ -359,6 +361,10 @@
     <Compile Include="Library\SPUserTokenInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Library\SPWebListInfoInstance.cs" />
+    <Compile Include="Library\SPWebPartConnectionCollectionInstance.cs" />
+    <Compile Include="Library\SPWebPartConnectionInstance.cs" />
+    <Compile Include="Library\SPWebPartInstance.cs" />
+    <Compile Include="Library\WebPartZoneBaseInstance.cs" />
     <Compile Include="Workflow\SPWorkflowAssociationCollectionInstance.cs" />
     <Compile Include="Workflow\SPWorkflowAssociationInstance.cs" />
     <Compile Include="Workflow\SPWorkflowCollectionInstance.cs" />

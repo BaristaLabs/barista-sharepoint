@@ -1,14 +1,15 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System;
-    using System.Linq;
     using Barista.Extensions;
+    using Barista.Library;
     using Barista.Newtonsoft.Json;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
-    using Barista.Library;
     using Microsoft.SharePoint.Utilities;
+    using System;
+    using System.Linq;
+    using System.Web.UI.WebControls.WebParts;
 
     [Serializable]
     public class SPFileConstructor : ClrFunction
@@ -655,6 +656,19 @@
             return new SPListInstance(this.Engine, null, null, m_file.DocumentLibrary);
         }
 
+        [JSFunction(Name = "getLimitedWebPartManager")]
+        public SPLimitedWebPartManagerInstance GetLimitedWebPartManager(string personalizationScope)
+        {
+            PersonalizationScope scope;
+            if (!personalizationScope.TryParseEnum(true, out scope))
+                throw new JavaScriptException(this.Engine, "Error", "A valid personalization scope must be supplied.");
+
+            var result = m_file.GetLimitedWebPartManager(scope);
+            return result == null
+                ? null
+                : new SPLimitedWebPartManagerInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
         [JSFunction(Name = "getListItem")]
         public SPListItemInstance GetListItem(ArrayInstance fields)
         {
@@ -700,8 +714,6 @@
             return m_file.GetProperty(key);
         }
 
-        //GetWebPartCollection
-
         [JSFunction(Name = "getVersionHistory")]
         public SPFileVersionCollectionInstance GetVersionHistory()
         {
@@ -713,8 +725,6 @@
         {
             return new SPWebInstance(this.Engine, m_file.Web);
         }
-
-        //TODO: getLimitedWebPartManager
 
         [JSFunction(Name = "lock")]
         public void Lock(string lockType, string lockId, string timeout)

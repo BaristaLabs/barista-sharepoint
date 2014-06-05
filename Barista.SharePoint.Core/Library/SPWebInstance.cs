@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.Web.UI.WebControls.WebParts;
     using Barista.Extensions;
     using Barista.Library;
     using Barista.SharePoint.Workflow;
@@ -1459,7 +1460,18 @@
             return result;
         }
 
-        //GetLimitedWebPartManager
+        [JSFunction(Name = "getLimitedWebPartManager")]
+        public SPLimitedWebPartManagerInstance GetLimitedWebPartManager(string fullOrRelativeUrl, string personalizationScope)
+        {
+            PersonalizationScope scope;
+            if (!personalizationScope.TryParseEnum(true, out scope))
+                throw new JavaScriptException(this.Engine, "Error", "A valid personalization scope must be supplied.");
+
+            var result = m_web.GetLimitedWebPartManager(fullOrRelativeUrl, scope);
+            return result == null
+                ? null
+                : new SPLimitedWebPartManagerInstance(this.Engine.Object.InstancePrototype, result);
+        }
 
         [JSFunction(Name = "getListByServerRelativeUrl")]
         public object GetListFromServerRelativeUrl(string serverRelativeUrl)

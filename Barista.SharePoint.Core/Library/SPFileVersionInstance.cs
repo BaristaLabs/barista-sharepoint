@@ -1,11 +1,11 @@
 ﻿namespace Barista.SharePoint.Library
 {
-  using System;
-  using Barista.Newtonsoft.Json;
-  using Jurassic;
-  using Jurassic.Library;
-  using Microsoft.SharePoint;
-  using Barista.Library;
+    using Barista.Library;
+    using Barista.Newtonsoft.Json;
+    using Jurassic;
+    using Jurassic.Library;
+    using Microsoft.SharePoint;
+    using System;
 
   [Serializable]
   public class SPFileVersionConstructor : ClrFunction
@@ -126,6 +126,15 @@
     public void Delete()
     {
       m_fileVersion.Delete();
+    }
+
+    [JSFunction(Name = "getLimitedWebPartManager")]
+    public SPLimitedWebPartManagerInstance GetLimitedWebPartManager()
+    {
+        var result = m_fileVersion.GetLimitedWebPartManager();
+        return result == null
+            ? null
+            : new SPLimitedWebPartManagerInstance(this.Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getFile")]
