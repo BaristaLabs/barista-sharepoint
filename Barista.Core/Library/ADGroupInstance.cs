@@ -1,76 +1,137 @@
 ﻿namespace Barista.Library
 {
-  using Jurassic;
-  using Jurassic.Library;
-  using System;
-  using Barista.DirectoryServices;
+    using System.Linq;
+    using Jurassic;
+    using Jurassic.Library;
+    using System;
+    using Barista.DirectoryServices;
 
-  [Serializable]
-  public class ADGroupConstructor : ClrFunction
-  {
-    public ADGroupConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "ADGroup", new ADGroupInstance(engine.Object.InstancePrototype))
+    [Serializable]
+    public class ADGroupConstructor : ClrFunction
     {
-    }
-
-    [JSConstructorFunction]
-    public ADGroupInstance Construct()
-    {
-      ADGroup group = new ADGroup();
-
-      return new ADGroupInstance(this.InstancePrototype, group);
-    }
-
-    public ADGroupInstance Construct(ADGroup group)
-    {
-      if (group == null)
-        throw new ArgumentNullException("group");
-
-      return new ADGroupInstance(this.InstancePrototype, group);
-    }
-  }
-
-  [Serializable]
-  public class ADGroupInstance : ObjectInstance
-  {
-    private readonly ADGroup m_group;
-
-    public ADGroupInstance(ObjectInstance prototype)
-      : base(prototype)
-    {
-      this.PopulateFields();
-      this.PopulateFunctions();
-    }
-
-    public ADGroupInstance(ObjectInstance prototype, ADGroup group)
-      : this(prototype)
-    {
-      this.m_group = group;
-    }
-
-    #region Properties
-    [JSProperty(Name = "name")]
-    public string Name
-    {
-      get { return m_group.Name; }
-    }
-
-    [JSProperty(Name = "members")]
-    public ArrayInstance Members
-    {
-      get
-      {
-        var result = this.Engine.Array.Construct();
-
-        foreach (var memberLogonName in m_group.Members)
+        public ADGroupConstructor(ScriptEngine engine)
+            : base(engine.Function.InstancePrototype, "ADGroup", new ADGroupInstance(engine.Object.InstancePrototype))
         {
-          var user = ADHelper.GetADUser(memberLogonName);
-          ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, user));
         }
 
-        return result;
-      }
+        [JSConstructorFunction]
+        public ADGroupInstance Construct()
+        {
+            var group = new ADGroup();
+
+            return new ADGroupInstance(this.InstancePrototype, group);
+        }
+
+        public ADGroupInstance Construct(ADGroup group)
+        {
+            if (group == null)
+                throw new ArgumentNullException("group");
+
+            return new ADGroupInstance(this.InstancePrototype, group);
+        }
     }
-    #endregion
-  }
+
+    [Serializable]
+    public class ADGroupInstance : ObjectInstance
+    {
+        private readonly ADGroup m_group;
+        private readonly string m_ldap;
+
+        public ADGroupInstance(ObjectInstance prototype)
+            : base(prototype)
+        {
+            this.PopulateFunctions();
+        }
+
+        public ADGroupInstance(ObjectInstance prototype, ADGroup group)
+            : this(prototype)
+        {
+            this.m_group = group;
+        }
+
+        public ADGroupInstance(ObjectInstance prototype, ADGroup group, string ldap)
+            : this(prototype, group)
+        {
+            this.m_ldap = ldap;
+        }
+
+        #region Properties
+        [JSProperty(Name = "rawSid")]
+        // ReSharper disable InconsistentNaming
+        public object RawsID
+        // ReSharper restore InconsistentNaming
+        {
+            get { return StringHelper.ByteArrayToString((byte[])m_group.RawsID); }
+        }
+
+        [JSProperty(Name = "sId")]
+        // ReSharper disable InconsistentNaming
+        public object sID
+        // ReSharper restore InconsistentNaming
+        {
+            get { return m_group.sID; }
+        }
+
+        [JSProperty(Name = "name")]
+        public string Name
+        {
+            get { return m_group.Name; }
+        }
+
+        [JSProperty(Name = "displayName")]
+        public string DisplayName
+        {
+            get { return m_group.DisplayName; }
+        }
+
+        [JSProperty(Name = "members")]
+        public ArrayInstance Members
+        {
+            get
+            {
+                var result = this.Engine.Array.Construct();
+
+                foreach (var user in m_group.Members)
+                {
+                    ArrayInstance.Push(result, user);
+                }
+
+                return result;
+            }
+        }
+
+        #endregion
+
+        [JSFunction(Name = "expandUsers")]
+        public ArrayInstance ExpandUsers()
+        {
+            var result = this.Engine.Array.Construct();
+
+            foreach (var user in m_group.Members.Select(memberLogonName => ADHelper.GetADUserByDistinguishedName(memberLogonName, m_ldap)))
+            {
+                if (user == null)
+                    continue;
+
+                ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, user));
+            }
+
+            return result;
+        }
+
+        [JSFunction(Name = "expandGroups")]
+        public ArrayInstance ExpandGroups()
+        {
+            var result = this.Engine.Array.Construct();
+
+            foreach (var group in m_group.Members.Select(memberLogonName => ADHelper.GetADGroupByDistinguishedName(memberLogonName, m_ldap)))
+            {
+                if (group == null)
+                    continue;
+
+                ArrayInstance.Push(result, new ADGroupInstance(this.Engine.Object.InstancePrototype, group));
+            }
+
+            return result;
+        }
+    }
 }
