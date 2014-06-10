@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -83,11 +83,14 @@
       <SharePointProjectItemId>{73cf1656-e2c7-40dd-9b38-baf771d433e7}</SharePointProjectItemId>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
       <Project>{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}</Project>
       <Name>Barista.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj">
+      <Project>{17b92dc5-9402-44df-b03c-4687e99fef61}</Project>
+      <Name>Barista.SharePoint.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Barista.SharePoint\Barista.SharePoint.csproj">
       <Project>{77bc7214-5d7d-472c-88c5-7d022d93c231}</Project>
