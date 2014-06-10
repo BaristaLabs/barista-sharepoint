@@ -19,13 +19,13 @@
       {
         request.ExtendedProperties.Add("SPSiteId", SPContext.Current.Site.ID.ToString());
         request.ExtendedProperties.Add("SPUrlZone", SPContext.Current.Site.Zone.ToString());
-        request.ExtendedProperties.Add("SPUserToken", Encoding.Unicode.GetString(SPContext.Current.Site.UserToken.BinaryToken));
+        request.ExtendedProperties.Add("SPUserToken", Convert.ToBase64String(SPContext.Current.Site.UserToken.BinaryToken));
       }
 
-      if (SPContext.Current.Web != null)
-        request.ExtendedProperties.Add("SPWebId", SPContext.Current.Web.ID.ToString());
+        if (SPContext.Current.Web != null)
+            request.ExtendedProperties.Add("SPWebId", SPContext.Current.Web.ID.ToString());
 
-      if (SPContext.Current.ListId != default(Guid) && SPContext.Current.ListId != Guid.Empty)
+        if (SPContext.Current.ListId != default(Guid) && SPContext.Current.ListId != Guid.Empty)
         request.ExtendedProperties.Add("SPListId", SPContext.Current.ListId.ToString());
 
       if (String.IsNullOrEmpty(SPContext.Current.ListItemServerRelativeUrl) == false)

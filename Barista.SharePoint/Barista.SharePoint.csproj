@@ -195,7 +195,6 @@
     <Compile Include="Features\BaristaUnitTests\BaristaUnitTests.EventReceiver.cs">
       <DependentUpon>BaristaUnitTests.feature</DependentUpon>
     </Compile>
-    <Compile Include="Layouts\BaristaJS\linqjs-2.2.0.2\sample\LinqJS.cs" />
     <Compile Include="DocumentStore\Constants.cs" />
     <Compile Include="DocumentStore\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="DocumentStore\HandleEventFiring.cs" />
@@ -3604,7 +3603,6 @@
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\linq.min.js" />
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\ReadMe.txt" />
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\reference.htm" />
-    <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\sample\script.wsf" />
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\sample\tutorial.htm" />
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\test\action.js" />
     <Content Include="Layouts\BaristaJS\linqjs-2.2.0.2\test\aggregate.js" />

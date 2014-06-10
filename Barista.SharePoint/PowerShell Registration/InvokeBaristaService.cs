@@ -2,8 +2,8 @@
 {
   using System;
   using System.Management.Automation;
+  using System.Text;
   using Microsoft.SharePoint.PowerShell;
-  using Microsoft.SharePoint;
   using Barista.SharePoint.Services;
 
   [Cmdlet("Invoke", "BaristaService", SupportsShouldProcess = true)]
@@ -47,7 +47,7 @@
     protected override void InternalProcessRecord()
     {
       // get the specified service context
-      SPServiceContext serviceContext = ServiceContext.Read();
+      var serviceContext = ServiceContext.Read();
       if (serviceContext == null)
       {
         WriteError(new InvalidOperationException("Invalid service context."), ErrorCategory.ResourceExists, null);
@@ -81,7 +81,7 @@
             response.ContentType.StartsWith("application/xml", StringComparison.InvariantCultureIgnoreCase) ||
             response.ContentType.StartsWith("application/javascript", StringComparison.InvariantCultureIgnoreCase) ||
             response.ContentType.StartsWith("text", StringComparison.InvariantCultureIgnoreCase))
-          WriteResult(System.Text.Encoding.UTF8.GetString(response.Content));
+          WriteResult(Encoding.UTF8.GetString(response.Content));
         else
           WriteObject(response.Content);
       }

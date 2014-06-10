@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<WorkflowInfo>
+  <Actions>
+    <Action Name="Barista Eval Action"
+    ClassName="Barista.SharePoint.WorkflowActivities.BaristaEvalAction"
+    Assembly="Barista.SharePoint.WorkflowActivities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52"
+    AppliesTo="all" Category="Barista" UsesCurrentItem="true">
+      <RuleDesigner Sentence="Barista Eval = %1.">
+        <FieldBind Field="Code" DesignerType="TextArea" Id="1" />
+      </RuleDesigner>
+      <Parameters>
+        <Parameter Name="__Context" Type="Microsoft.SharePoint.WorkflowActions.WorkflowContext, Microsoft.SharePoint.WorkflowActions" Direction="In" DesignerType="Hide"/>
+        <Parameter Name="__ListId" Type="System.String, mscorlib" Direction="In" InitialBinding="__list" DesignerType="Hide"/>
+        <Parameter Name="__ListItem" Type="Microsoft.SharePoint.Workflow.SPItemKey, Microsoft.SharePoint" Direction="In" InitialBinding="__item" DesignerType="ListItem"/>
+        <Parameter Name="Code" Type="System.String, mscorlib"  DisplayName="Code to Execute" Direction="In" />
+        <Parameter Name="Body" Type="System.String, mscorlib"  DisplayName="Request Body" Direction="Optional"/>
+        <Parameter Name="Result" Type="System.String, mscorlib"  DisplayName="Eval Result" Direction="Out" DesignerType="ParameterNames"/>
+        <Parameter Name="__ActivationProperties" Type="Microsoft.SharePoint.Workflow.SPWorkflowActivationProperties, Microsoft.SharePoint" Direction="Out" DesignerType="Hide"/>
+      </Parameters>
+    </Action>
+  </Actions>
+</WorkflowInfo>

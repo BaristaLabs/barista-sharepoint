@@ -96,7 +96,6 @@
 
     protected override void CreateChildControls()
     {
-
       if (String.IsNullOrEmpty(this.Code))
         return;
 
@@ -159,7 +158,7 @@
           {
             if (isHiveFile == false)
             {
-              string lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
+              var lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
               if (String.IsNullOrEmpty(lockDownMode) == false && lockDownMode.ToLowerInvariant() == "BaristaContentLibraryOnly")
               {
                 //TODO: implement this.

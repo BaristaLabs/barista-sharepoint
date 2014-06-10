@@ -1,12 +1,12 @@
 ﻿namespace Barista.SharePoint.Workflow
 {
-    using System.Globalization;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
     using Barista.Library;
     using Barista.SharePoint.Library;
     using Microsoft.SharePoint.Workflow;
+    using System;
+    using System.Globalization;
 
     [Serializable]
     public class SPWorkflowAssociationCollectionConstructor : ClrFunction

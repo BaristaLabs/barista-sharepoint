@@ -3,11 +3,11 @@
     using Barista.Extensions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
     using Barista.Library;
     using Barista.SharePoint.Library;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Workflow;
+    using System;
 
     [Serializable]
     public class SPWorkflowAssociationConstructor : ClrFunction

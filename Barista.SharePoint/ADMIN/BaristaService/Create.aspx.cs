@@ -17,13 +17,16 @@
     // wire up event on the OK button
     protected override void OnInit(EventArgs e)
     {
-      base.OnInit(e);
+        base.OnInit(e);
 
       // get reference to OK button on dialog master page & wire up handler to it's OK button
-      ((DialogMaster)this.Page.Master).OkButton.Click += new EventHandler(OkButton_Click);
+        var dialogMaster = (DialogMaster)this.Page.Master;
+
+        if (dialogMaster != null)
+            dialogMaster.OkButton.Click += OkButton_Click;
     }
 
-    void OkButton_Click(object sender, EventArgs e)
+      void OkButton_Click(object sender, EventArgs e)
     {
       // create the service app
       SetupBaristaServiceApp();
@@ -63,13 +66,14 @@
     private BaristaServiceApplication CreateServiceApplication(BaristaService service)
     {
       // create service app
-      BaristaServiceApplication serviceApp = BaristaServiceApplication.Create(
+      var serviceApp = BaristaServiceApplication.Create(
           ServiceAppName.Text,
           service,
           ApplicationPoolSelection.GetOrCreateApplicationPool());
       serviceApp.Update();
 
       // start it if it isn't already started
+// ReSharper disable once RedundantCheckBeforeAssignment
       if (serviceApp.Status != SPObjectStatus.Online)
         serviceApp.Status = SPObjectStatus.Online;
 
@@ -98,6 +102,7 @@
       serviceAppProxy.Provision();
 
       // start it if it isn't already started
+// ReSharper disable once RedundantCheckBeforeAssignment
       if (serviceAppProxy.Status != SPObjectStatus.Online)
         serviceAppProxy.Status = SPObjectStatus.Online;
       serviceAppProxy.Update(true);
@@ -123,29 +128,6 @@
         if ((baristaServiceInstance != null) &&
                 (baristaServiceInstance.Status != SPObjectStatus.Online))
           baristaServiceInstance.Status = SPObjectStatus.Online;
-      }
-    }
-
-    private Guid ApplicationId
-    {
-      get
-      {
-        if (Request.QueryString != null)
-        {
-          string s = base.Request.QueryString["appid"];
-          if (string.IsNullOrEmpty(s))
-            return Guid.Empty;
-
-          try
-          {
-            return new Guid(s);
-          }
-          catch (FormatException)
-          {
-            throw new Exception();
-          }
-        }
-        return Guid.Empty;
       }
     }
   }
