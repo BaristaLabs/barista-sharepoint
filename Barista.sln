@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint", "Barista.SharePoint\Barista.SharePoint.csproj", "{77BC7214-5D7D-472C-88C5-7D022D93C231}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WorkflowActivities", "Barista.SharePoint.WorkflowActivities\Barista.SharePoint.WorkflowActivities.csproj", "{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5A961B80-5532-4AC2-873F-DC1F29BAC26C}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -47,8 +51,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{47FDFAD3-D
 		Lib\wnvhtmlconvert.dll = Lib\wnvhtmlconvert.dll
 		Lib\wnvhtmlconvert.xml = Lib\wnvhtmlconvert.xml
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0384B6AA-AF6D-45DC-A583-C87DF988372A}"
 	ProjectSection(SolutionItems) = preProject
@@ -138,8 +140,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaConsoleClient", "BaristaConsoleClient\BaristaConsoleClient.csproj", "{04D32EAA-9039-46EE-B571-2A2F482B15DC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.iCal", "Barista.UnitTests.iCal\Barista.UnitTests.iCal.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WorkflowActivities", "Barista.SharePoint.WorkflowActivities\Barista.SharePoint.WorkflowActivities.csproj", "{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
