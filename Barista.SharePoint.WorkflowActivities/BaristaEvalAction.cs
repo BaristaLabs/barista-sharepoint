@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.WorkflowActivities
 {
+    using System.Globalization;
     using Barista.SharePoint.Services;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Workflow;
@@ -144,7 +145,19 @@
                     {"SPUserToken", Convert.ToBase64String(__Context.Site.UserToken.BinaryToken)},
                     {"SPWebId", web.ID.ToString()},
                     {"SPListId", __ListId},
-                    {"SPListItemUrl", myItem.Url}
+                    {"SPListItemUrl", myItem.Url},
+                    {"SPWorkflowAssociationTitle", __Context.AssociationTitle},
+                    {"SPWorkflowInstanceId", __Context.WorkflowInstanceId.ToString()},
+                    {"SPWorkflowCurrentItemUrl", __Context.CurrentItemUrl},
+                    {"SPWorkflowCurrentWebUrl", __Context.CurrentWebUrl},
+                    {"SPWorkflowItemName", __Context.ItemName},
+                    {"SPWorkflowTaskListGuid", __Context.TaskListGuid},
+                    {"SPWorkflowStatusUrl", __Context.WorkflowStatusUrl},
+                    {"SPWorkflowAssociatorUserLoginName", __Context.AssociatorUser.LoginName},
+                    {"SPWorkflowInitiatorUserLoginName", __Context.InitiatorUser.LoginName},
+                    {"SPWorkflowItemId", __Context.ItemId.ToString(CultureInfo.InvariantCulture)},
+                    {"SPWorkflowStartedDateTime", __Context.StartedDateTime.ToUniversalTime().ToString(@"yyyy-MM-ddTHH\:mm\:ss.fffffffzzz")},
+                    {"SPWorkflowLastRunDateTime", __Context.LastRunDateTime.ToUniversalTime().ToString(@"yyyy-MM-ddTHH\:mm\:ss.fffffffzzz")}
                 }
             };
 

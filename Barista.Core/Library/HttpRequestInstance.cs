@@ -1,5 +1,6 @@
 ﻿namespace Barista.Library
 {
+    using System.Collections;
     using System.Linq;
     using Barista.Extensions;
     using Barista.Helpers;
@@ -35,6 +36,19 @@
             // ReSharper disable CoVariantArrayConversion
             get { return this.Engine.Array.Construct(this.Request.AcceptTypes); }
             // ReSharper restore CoVariantArrayConversion
+        }
+
+        [JSProperty(Name = "extendedProperties")]
+        public HashtableInstance ExtendedProperties
+        {
+            get
+            {
+                var ht = new Hashtable();
+                foreach(var kvp in Request.ExtendedProperties)
+                    ht.Add(kvp.Key, kvp.Value);
+
+                return new HashtableInstance(this.Engine.Object.InstancePrototype, ht);
+            }
         }
 
         [JSProperty(Name = "contentType")]
