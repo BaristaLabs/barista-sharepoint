@@ -514,7 +514,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="Workflow\SPWorkflowModificationCollectionInstance.cs" />
     <Compile Include="Workflow\SPWorkflowModificationInstance.cs" />
-    <Compile Include="Workflow\SPWorkflowTaskCollection.cs" />
+    <Compile Include="Workflow\SPWorkflowTaskCollectionInstance.cs" />
     <Compile Include="Workflow\SPWorkflowTaskInstance.cs" />
     <Compile Include="Workflow\SPWorkflowTemplateCollectionInstance.cs" />
     <Compile Include="Workflow\SPWorkflowTemplateInstance.cs" />

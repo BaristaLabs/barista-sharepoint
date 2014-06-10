@@ -1,9 +1,12 @@
 ﻿namespace Barista.SharePoint.Workflow
 {
+    //Complete 6/10/14
+
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using Barista.Library;
     using Barista.SharePoint.Library;
+    using Microsoft.SharePoint;
     using Microsoft.SharePoint.Workflow;
     using System;
 
@@ -13,12 +16,43 @@
         public SPWorkflowConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "SPWorkflow", new SPWorkflowInstance(engine.Object.InstancePrototype))
         {
+            PopulateFunctions();
         }
 
         [JSConstructorFunction]
-        public SPWorkflowInstance Construct()
+        public SPWorkflowInstance Construct(object arg1, object id)
         {
-            return new SPWorkflowInstance(this.InstancePrototype);
+            if (arg1 is SPWebInstance)
+            {
+                var wi = arg1 as SPWebInstance;
+                return new SPWorkflowInstance(this.Engine.Object.InstancePrototype, new SPWorkflow(wi.Web, GuidInstance.ConvertFromJsObjectToGuid(id)));
+            }
+
+            if (arg1 is SPListItemInstance)
+            {
+                var li = arg1 as SPListItemInstance;
+                return new SPWorkflowInstance(this.Engine.Object.InstancePrototype, new SPWorkflow(li.ListItem, GuidInstance.ConvertFromJsObjectToGuid(id)));
+            }
+            
+            throw new JavaScriptException(this.Engine, "Error", "The first argument must be either an SPListItem or an SPWeb.");
+        }
+
+        [JSFunction(Name = "createHistoryEvent")]
+        public void CreateHistoryEvent(SPWebInstance web, object workflowId, int eventId, object user, string duration, string outcome, string description, string otherData)
+        {
+            if (web == null)
+                throw new JavaScriptException(this.Engine, "Error", "A web must be supplied as the first argument.");
+
+            SPMember member;
+            if (user is SPUserInstance)
+                member = (user as SPUserInstance).User;
+            else if (user is SPGroupInstance)
+                member = (user as SPGroupInstance).Group;
+            else
+                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+
+            SPWorkflow.CreateHistoryEvent(web.Web, GuidInstance.ConvertFromJsObjectToGuid(workflowId), eventId, member, TimeSpan.Parse(duration), outcome,
+                description, otherData);
         }
     }
 
@@ -30,7 +64,6 @@
         public SPWorkflowInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
             this.PopulateFunctions();
         }
 
@@ -261,6 +294,53 @@
             }
         }
 
+        [JSFunction(Name = "compareTo")]
+        public int CompareTo(SPWorkflowInstance workflow)
+        {
+            if (workflow == null)
+                throw new JavaScriptException(this.Engine, "Error", "The workflow to compare to must be specified.");
+
+            return m_workflow.CompareTo(workflow.SPWorkflow);
+        }
+
+        [JSFunction(Name = "createHistoryDurationEvent")]
+        public void CreateHistoryDurationEvent(int eventId, object groupId, object user, string duration, string outcome, string description, string otherData)
+        {
+            SPMember member;
+            if (user is SPUserInstance)
+                member = (user as SPUserInstance).User;
+            else if (user is SPGroupInstance)
+                member = (user as SPGroupInstance).Group;
+            else
+                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+
+            m_workflow.CreateHistoryDurationEvent(eventId, groupId, member, TimeSpan.Parse(duration), outcome,
+                description, otherData);
+        }
+
+        [JSFunction(Name = "createHistoryEvent")]
+        public void CreateHistoryEvent(int eventId, object groupId, object user, string outcome, string description, string otherData)
+        {
+            SPMember member;
+            if (user is SPUserInstance)
+                member = (user as SPUserInstance).User;
+            else if (user is SPGroupInstance)
+                member = (user as SPGroupInstance).Group;
+            else
+                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+
+            m_workflow.CreateHistoryEvent(eventId, groupId, member, outcome,
+                description, otherData);
+        }
+
+        [JSFunction(Name = "getActivityDetails")]
+        public ArrayInstance GetActivityDetails()
+        {
+            var result = this.Engine.Array.Construct();
+            foreach (var ad in m_workflow.GetActivityDetails())
+                ArrayInstance.Push(result, ad.ToString());
+            return result;
+        }
 
         [JSFunction(Name = "getHistoryList")]
         public SPListInstance GetHistoryList()

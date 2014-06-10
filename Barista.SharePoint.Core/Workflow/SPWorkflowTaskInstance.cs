@@ -1,45 +1,74 @@
 ﻿namespace Barista.SharePoint.Workflow
 {
+    //Complete 6/10/14
+
+    using System.Reflection;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using System;
     using Barista.Library;
     using Microsoft.SharePoint.Workflow;
+    using Barista.SharePoint.Library;
 
     [Serializable]
     public class SPWorkflowTaskConstructor : ClrFunction
     {
         public SPWorkflowTaskConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPWorkflowTask", new SPWorkflowTaskInstance(engine.Object.InstancePrototype))
+            : base(engine.Function.InstancePrototype, "SPWorkflowTask", new SPWorkflowTaskInstance(engine, null))
         {
+            PopulateFunctions();
         }
 
-        [JSConstructorFunction]
-        public SPWorkflowTaskInstance Construct()
+        [JSFunction(Name="alterTask")]
+        public bool AlterTask(SPListItemInstance task, HashtableInstance htData, bool synchronous)
         {
-            return new SPWorkflowTaskInstance(this.InstancePrototype);
+            if (task == null)
+                throw new JavaScriptException(this.Engine, "Error", "A task must be specified.");
+
+            if (htData == null)
+                throw new JavaScriptException(this.Engine, "Error", "A hashtable of data must be specified.");
+
+            return SPWorkflowTask.AlterTask(task.ListItem, htData.Hashtable, synchronous);
+        }
+
+        [JSFunction(Name = "getExtendedPropertiesAsHashtable")]
+        public HashtableInstance GetExtendedPropertiesAsHashtable(SPListItemInstance task)
+        {
+            if (task == null)
+                throw new JavaScriptException(this.Engine, "Error", "A task must be specified.");
+
+            var result = SPWorkflowTask.GetExtendedPropertiesAsHashtable(task.ListItem);
+            return result == null
+                ? null
+                : new HashtableInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "getWorkflowData")]
+        public string GetWorkflowData(SPListItemInstance task)
+        {
+            if (task == null)
+                throw new JavaScriptException(this.Engine, "Error", "A task must be specified.");
+
+            return SPWorkflowTask.GetWorkflowData(task.ListItem);
         }
     }
 
     [Serializable]
-    public class SPWorkflowTaskInstance : ObjectInstance
+    public class SPWorkflowTaskInstance : SPListItemInstance
     {
         private readonly SPWorkflowTask m_workflowTask;
 
-        public SPWorkflowTaskInstance(ObjectInstance prototype)
-            : base(prototype)
-        {
-            this.PopulateFields();
-            this.PopulateFunctions();
-        }
-
-        public SPWorkflowTaskInstance(ObjectInstance prototype, SPWorkflowTask workflowTask)
-            : this(prototype)
+        public SPWorkflowTaskInstance(ScriptEngine engine, SPWorkflowTask workflowTask)
+            : base(new SPListItemInstance(engine, workflowTask))
         {
             if (workflowTask == null)
                 throw new ArgumentNullException("workflowTask");
 
-            m_workflowTask = workflowTask;
+            this.m_workflowTask = workflowTask;
+            this.ListItem = workflowTask;
+            this.SecurableObject = workflowTask;
+
+            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         public SPWorkflowTask SPWorkflowTask

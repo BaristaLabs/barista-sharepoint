@@ -25,8 +25,14 @@
         public object InstallBundle(Jurassic.ScriptEngine engine)
         {
             engine.SetGlobalValue("SPWorkflow", new SPWorkflowConstructor(engine));
+            engine.SetGlobalValue("SPWorkflowCollection", new SPWorkflowCollectionConstructor(engine));
+            engine.SetGlobalValue("SPWorkflowFilter", new SPWorkflowFilterConstructor(engine));
             engine.SetGlobalValue("SPWorkflowAssociation", new SPWorkflowAssociationConstructor(engine));
             engine.SetGlobalValue("SPWorkflowAssociationCollection", new SPWorkflowAssociationCollectionConstructor(engine));
+
+            engine.SetGlobalValue("SPWorkflowTask", new SPWorkflowTaskConstructor(engine));
+            engine.SetGlobalValue("SPWorkflowTaskCollection", new SPWorkflowTaskCollectionConstructor(engine));
+            engine.SetGlobalValue("SPWorkflowTemplate", new SPWorkflowTemplateConstructor(engine));
 
             //TODO: finish this.
             return Undefined.Value;

@@ -1,5 +1,8 @@
 ﻿namespace Barista.SharePoint.Workflow
 {
+    //Complete 6/10/14
+
+    using System.Linq;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using Barista.Library;
@@ -173,6 +176,20 @@
         {
             var guidAssociationId = GuidInstance.ConvertFromJsObjectToGuid(associationId);
             m_workflowAssociationCollection.Remove(guidAssociationId);
+        }
+
+        [JSFunction(Name = "toArray")]
+        public ArrayInstance ToArray()
+        {
+            var result = this.Engine.Array.Construct();
+            foreach (var assoc in m_workflowAssociationCollection
+                .OfType<SPWorkflowAssociation>()
+                .Select(a => new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, a)))
+            {
+                ArrayInstance.Push(this.Engine.Object.InstancePrototype, assoc);
+            }
+
+            return result;
         }
 
         [JSFunction(Name = "update")]

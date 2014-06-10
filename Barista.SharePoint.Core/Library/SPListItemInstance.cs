@@ -52,7 +52,7 @@
     {
         private static readonly Regex DigitRegex = new Regex(@"^\d+;#.*$", RegexOptions.Compiled);
 
-        private readonly SPListItem m_listItem;
+        private SPListItem m_listItem;
 
         public SPListItemInstance(ScriptEngine engine, SPListItem listItem)
             : base(new SPSecurableObjectInstance(engine))
@@ -63,11 +63,20 @@
             this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
+        protected SPListItemInstance(ObjectInstance prototype)
+          : base(prototype)
+        {
+        }
+
         public SPListItem ListItem
         {
             get
             {
                 return m_listItem;
+            }
+            set
+            {
+                m_listItem = value;
             }
         }
 

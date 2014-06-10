@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.SharePoint.Workflow
+﻿namespace Barista.SharePoint.Workflow
 {
+    //Complete 6/10/14
+
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
+    using Barista.Library;
     using Microsoft.SharePoint.Workflow;
+    using System;
 
     [Serializable]
     public class SPWorkflowModificationConstructor : ClrFunction
@@ -51,6 +49,42 @@ namespace Barista.SharePoint.Workflow
             get
             {
                 return m_workflowModification;
+            }
+        }
+
+        [JSProperty(Name="contextData")]
+        public string ContextData
+        {
+            get
+            {
+                return m_workflowModification.ContextData;
+            }
+        }
+
+        [JSProperty(Name = "id")]
+        public GuidInstance Id
+        {
+            get
+            {
+                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflowModification.Id);
+            }
+        }
+
+        [JSProperty(Name = "nameFormatData")]
+        public string NameFormatData
+        {
+            get
+            {
+                return m_workflowModification.NameFormatData;
+            }
+        }
+
+        [JSProperty(Name = "typeId")]
+        public GuidInstance TypeId
+        {
+            get
+            {
+                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflowModification.TypeId);
             }
         }
     }

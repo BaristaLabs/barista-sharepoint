@@ -1,5 +1,8 @@
 ﻿namespace Barista.SharePoint.Workflow
 {
+    //Complete 6/10/14
+
+    using System.Linq;
     using Barista.Extensions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
@@ -15,12 +18,24 @@
         public SPWorkflowTemplateConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "SPWorkflowTemplate", new SPWorkflowTemplateInstance(engine.Object.InstancePrototype))
         {
+            PopulateFunctions();
         }
 
-        [JSConstructorFunction]
+        //[JSConstructorFunction]
         public SPWorkflowTemplateInstance Construct()
         {
             return new SPWorkflowTemplateInstance(this.InstancePrototype);
+        }
+
+        [JSFunction(Name = "isCategoryApplicable")]
+        public bool IsCategoryApplicable(string strAllCategs, ArrayInstance rgReqCateg)
+        {
+            if (rgReqCateg == null)
+                throw new JavaScriptException(this.Engine, "Errr", "An array of requred categories is required");
+
+            var strs = rgReqCateg.ElementValues.Select(TypeConverter.ToString).ToArray();
+
+            return SPWorkflowTemplate.IsCategoryApplicable(strAllCategs, strs);
         }
     }
 
@@ -288,6 +303,29 @@
             {
                 return m_workflowTemplate.Xml;
             }
+        }
+
+        [JSFunction(Name = "clone")]
+        public SPWorkflowTemplateInstance Clone()
+        {
+            var result = m_workflowTemplate.Clone() as SPWorkflowTemplate;
+            return result == null
+                ? null
+                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "getStatusChoices")]
+        public ArrayInstance GetStatusChoices(SPWebInstance web)
+        {
+            if (web == null)
+                throw new JavaScriptException(this.Engine, "Error", "A SPWeb must be supplied as the first argument.");
+
+            var result = m_workflowTemplate.GetStatusChoices(web.Web);
+
+            return result == null
+                ? null
+// ReSharper disable once CoVariantArrayConversion
+                : this.Engine.Array.Construct(result.OfType<string>().ToArray());
         }
 
         [JSFunction(Name = "getPropertyByName")]
