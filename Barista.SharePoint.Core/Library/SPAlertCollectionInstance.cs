@@ -127,7 +127,7 @@
                 .OfType<SPAlert>()
                 .Select(a => new SPAlertInstance(this.Engine.Object.InstancePrototype, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, alert);
+                ArrayInstance.Push(result, alert);
             }
 
             return result;

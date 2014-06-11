@@ -160,7 +160,6 @@
                     {"SPWorkflowLastRunDateTime", __Context.LastRunDateTime.ToUniversalTime().ToString(@"yyyy-MM-ddTHH\:mm\:ss.fffffffzzz")}
                 }
             };
-
             var response = client.Eval(request);
             Result = Encoding.UTF8.GetString(response.Content);
 

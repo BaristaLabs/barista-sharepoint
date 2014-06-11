@@ -89,7 +89,7 @@
                 .OfType<SPWorkflowModification>()
                 .Select(a => new SPWorkflowModificationInstance(this.Engine.Object.InstancePrototype, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, wfm);
+                ArrayInstance.Push(result, wfm);
             }
 
             return result;

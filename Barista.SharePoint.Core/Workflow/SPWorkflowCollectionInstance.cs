@@ -169,7 +169,7 @@
             foreach (var id in m_workflowCollection.GetInstanceIds()
                 .Select(guid => new GuidInstance(this.Engine.Object.InstancePrototype, guid)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, id);
+                ArrayInstance.Push(result, id);
             }
 
             return result;
@@ -208,7 +208,7 @@
                 .OfType<SPWorkflow>()
                 .Select(a => new SPWorkflowInstance(this.Engine.Object.InstancePrototype, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, wf);
+                ArrayInstance.Push(result, wf);
             }
 
             return result;

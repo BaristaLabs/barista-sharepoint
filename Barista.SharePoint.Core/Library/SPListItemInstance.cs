@@ -1,17 +1,18 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
     using Barista.Extensions;
     using Barista.Library;
+    using Barista.SharePoint.Taxonomy.Library;
+    using Barista.SharePoint.Workflow;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Taxonomy;
-    using Barista.SharePoint.Taxonomy.Library;
+    using System;
+    using System.Linq;
+    using System.Reflection;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     [Serializable]
     public class SPListItemConstructor : ClrFunction
@@ -328,7 +329,16 @@
             }
         }
 
-        //Tasks
+        [JSProperty(Name = "tasks")]
+        public SPWorkflowTaskCollectionInstance Tasks
+        {
+            get
+            {
+                return m_listItem.Tasks == null
+                    ? null
+                    : new SPWorkflowTaskCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Tasks);
+            }
+        }
 
         [JSProperty(Name = "title")]
         public string Title
@@ -357,7 +367,16 @@
             }
         }
 
-        //Workflows
+        [JSProperty(Name = "workflows")]
+        public SPWorkflowCollectionInstance Workflows
+        {
+            get
+            {
+                return m_listItem.Workflows == null
+                    ? null
+                    : new SPWorkflowCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Workflows);
+            }
+        }
 
         #endregion
 

@@ -186,7 +186,7 @@
                 .OfType<SPWorkflowAssociation>()
                 .Select(a => new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, assoc);
+                ArrayInstance.Push(result, assoc);
             }
 
             return result;

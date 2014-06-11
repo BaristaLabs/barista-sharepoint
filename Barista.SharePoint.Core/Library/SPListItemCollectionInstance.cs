@@ -217,7 +217,7 @@
         {
             var result = this.Engine.Array.Construct();
             foreach (SPListItem listItem in m_listItemCollection)
-                ArrayInstance.Push(new SPListItemInstance(this.Engine, listItem));
+                ArrayInstance.Push(result, new SPListItemInstance(this.Engine, listItem));
 
             return result;
         }

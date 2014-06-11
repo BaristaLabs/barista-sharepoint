@@ -24,6 +24,8 @@
 
         public object InstallBundle(Jurassic.ScriptEngine engine)
         {
+            engine.SetGlobalValue("SPWorkflowManager", new SPWorkflowManagerConstructor(engine));
+
             engine.SetGlobalValue("SPWorkflow", new SPWorkflowConstructor(engine));
             engine.SetGlobalValue("SPWorkflowCollection", new SPWorkflowCollectionConstructor(engine));
             engine.SetGlobalValue("SPWorkflowFilter", new SPWorkflowFilterConstructor(engine));

@@ -114,7 +114,7 @@
                 .OfType<SPWorkflowTask>()
                 .Select(a => new SPWorkflowTaskInstance(this.Engine, a)))
             {
-                ArrayInstance.Push(this.Engine.Object.InstancePrototype, wf);
+                ArrayInstance.Push(result, wf);
             }
 
             return result;

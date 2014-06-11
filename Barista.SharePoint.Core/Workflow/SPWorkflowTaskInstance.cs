@@ -14,7 +14,7 @@
     public class SPWorkflowTaskConstructor : ClrFunction
     {
         public SPWorkflowTaskConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPWorkflowTask", new SPWorkflowTaskInstance(engine, null))
+            : base(engine.Object.InstancePrototype, "SPWorkflowTask", new SPWorkflowTaskInstance(engine, null))
         {
             PopulateFunctions();
         }
@@ -61,9 +61,6 @@
         public SPWorkflowTaskInstance(ScriptEngine engine, SPWorkflowTask workflowTask)
             : base(new SPListItemInstance(engine, workflowTask))
         {
-            if (workflowTask == null)
-                throw new ArgumentNullException("workflowTask");
-
             this.m_workflowTask = workflowTask;
             this.ListItem = workflowTask;
             this.SecurableObject = workflowTask;

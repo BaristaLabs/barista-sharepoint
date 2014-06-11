@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Reflection;
     using Barista.Extensions;
+    using Barista.SharePoint.Workflow;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
@@ -347,9 +348,9 @@
         {
             get
             {
-                if (m_list.DefaultView == null)
-                    return null;
-                return new SPViewInstance(this.Engine.Object.InstancePrototype, m_list.DefaultView);
+                return m_list.DefaultView == null
+                    ? null
+                    : new SPViewInstance(this.Engine.Object.InstancePrototype, m_list.DefaultView);
             }
         }
 
@@ -592,6 +593,17 @@
         public bool IsThrottled
         {
             get { return m_list.IsThrottled; }
+        }
+
+        [JSProperty(Name = "items")]
+        public SPListItemCollectionInstance Items
+        {
+            get
+            {
+                return m_list.Items == null
+                    ? null
+                    : new SPListItemCollectionInstance(this.Engine.Object.InstancePrototype, m_list.Items);
+            }
         }
 
         [JSProperty(Name = "itemCount")]
@@ -838,6 +850,17 @@
         {
             get { return m_list.WriteSecurity; }
             set { m_list.WriteSecurity = value; }
+        }
+
+        [JSProperty(Name = "workflowAssociations")]
+        public SPWorkflowAssociationCollectionInstance WorkflowAssociations
+        {
+            get
+            {
+                return m_list.WorkflowAssociations == null
+                    ? null
+                    : new SPWorkflowAssociationCollectionInstance(this.Engine.Object.InstancePrototype, m_list.WorkflowAssociations);
+            }
         }
 
         #endregion
