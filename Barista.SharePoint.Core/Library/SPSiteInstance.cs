@@ -716,9 +716,14 @@
         {
             get
             {
-                return m_site.WorkflowManager == null
+                //Sharepoint... gotta love it.
+                //var systoken = m_site.SystemAccount.UserToken;
+                //using (var site = new SPSite(m_site.ID, systoken))
+                //{
+                    return site.WorkflowManager == null
                     ? null
-                    : new SPWorkflowManagerInstance(this.Engine.Object.InstancePrototype, m_site.WorkflowManager);
+                    : new SPWorkflowManagerInstance(this.Engine.Object.InstancePrototype, site.WorkflowManager);
+                //}
             }
         }
 

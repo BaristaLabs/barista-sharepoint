@@ -2,6 +2,7 @@
 {
     //Complete 6/10/14
 
+    using System.Collections;
     using System.Reflection;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
@@ -20,7 +21,7 @@
         }
 
         [JSFunction(Name="alterTask")]
-        public bool AlterTask(SPListItemInstance task, HashtableInstance htData, bool synchronous)
+        public bool AlterTask(SPListItemInstance task, object htData, bool synchronous)
         {
             if (task == null)
                 throw new JavaScriptException(this.Engine, "Error", "A task must be specified.");
@@ -28,7 +29,21 @@
             if (htData == null)
                 throw new JavaScriptException(this.Engine, "Error", "A hashtable of data must be specified.");
 
-            return SPWorkflowTask.AlterTask(task.ListItem, htData.Hashtable, synchronous);
+            Hashtable ht;
+            if (htData is HashtableInstance)
+                ht = (htData as HashtableInstance).Hashtable;
+            else if (htData is ObjectInstance)
+            {
+                ht = new Hashtable();
+                foreach(var prop in (htData as ObjectInstance).Properties)
+                    ht.Add(prop.Name, prop.Value);
+            }
+            else
+            {
+                throw new JavaScriptException(this.Engine, "Error", "htData argument must either be a hashtable instance, or a js hashtable");
+            }
+                
+            return SPWorkflowTask.AlterTask(task.ListItem, ht, synchronous);
         }
 
         [JSFunction(Name = "getExtendedPropertiesAsHashtable")]

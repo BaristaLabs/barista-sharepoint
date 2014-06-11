@@ -96,6 +96,7 @@
         {
             get
             {
+// ReSharper disable once CoVariantArrayConversion
                 var result = this.Engine.Array.Construct(m_listItemCollection.QueryFieldNames.OfType<string>().ToArray());
                 return result;
             }

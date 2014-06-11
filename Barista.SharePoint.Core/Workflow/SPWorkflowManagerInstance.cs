@@ -310,6 +310,7 @@
                 throw new JavaScriptException(this.Engine, "Error",
                     "An instance of a SPWorkflowAssociation object must be supplied as the second argument.");
 
+            //Impersonate the system account.
             SPWorkflow result;
             if (isAutoStart == Undefined.Value)
                 result = m_workflowManager.StartWorkflow(listItem.ListItem,
