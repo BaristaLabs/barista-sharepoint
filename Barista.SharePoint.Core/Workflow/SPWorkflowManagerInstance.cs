@@ -280,19 +280,37 @@
             m_workflowManager.RemoveWorkflowFromListItem(workflow.SPWorkflow);
         }
 
-        [JSFunction(Name = "startWorkflowWithContext")]
-        public SPWorkflowInstance StartWorkflowWithContext(object context, SPWorkflowAssociationInstance association, string eventData, string runOptions)
+        [JSFunction(Name = "startWorkflowFromContext")]
+        public SPWorkflowInstance StartWorkflowWithContext(object context, SPWorkflowAssociationInstance association, object eventData, object runOptions)
         {
             if (association == null)
                 throw new JavaScriptException(this.Engine, "Error",
                     "An instance of a SPWorkflowAssociation object must be supplied as the second argument.");
 
-            SPWorkflowRunOptions wfRunOptions;
-            if (!runOptions.TryParseEnum(true, out wfRunOptions))
-                throw new JavaScriptException(this.Engine, "Error", "The runOptions argument must be convertable to a SPWorkflowRunOptions enum value.");
+            var wfRunOptions = SPWorkflowRunOptions.Synchronous;
+            if (runOptions != Undefined.Value)
+            {
+                SPWorkflowRunOptions tmpOptions;
+                if (TypeConverter.ToString(runOptions).TryParseEnum(true, out tmpOptions))
+                    wfRunOptions = tmpOptions;
+            }
 
-            var result = m_workflowManager.StartWorkflow(TypeConverter.ToObject(this.Engine, context),
-                association.SPWorkflowAssociation, eventData, wfRunOptions);
+            var assData = association.SPWorkflowAssociation.AssociationData;
+            if (eventData != Undefined.Value)
+                assData = TypeConverter.ToString(eventData);
+
+            object localContext = null;
+            if (context is SPListItemInstance)
+                localContext = (context as SPListItemInstance).ListItem;
+            else if (context is SPSiteInstance)
+                localContext = (context as SPSiteInstance).Site;
+            else if (context is SPListInstance)
+                localContext = (context as SPListInstance).List;
+             else if (context is SPContentTypeInstance)
+                localContext = (context as SPContentTypeInstance).ContentType;
+
+            var result = m_workflowManager.StartWorkflow(localContext,
+                association.SPWorkflowAssociation, assData, wfRunOptions);
 
             return result == null
                 ? null
@@ -300,7 +318,7 @@
         }
 
         [JSFunction(Name = "startWorkflow")]
-        public SPWorkflowInstance StartWorkflow(SPListItemInstance listItem, SPWorkflowAssociationInstance association, string eventData, object isAutoStart)
+        public SPWorkflowInstance StartWorkflow(SPListItemInstance listItem, SPWorkflowAssociationInstance association, object eventData, object isAutoStart)
         {
             if (listItem == null)
                 throw new JavaScriptException(this.Engine, "Error",
@@ -310,14 +328,13 @@
                 throw new JavaScriptException(this.Engine, "Error",
                     "An instance of a SPWorkflowAssociation object must be supplied as the second argument.");
 
-            //Impersonate the system account.
-            SPWorkflow result;
-            if (isAutoStart == Undefined.Value)
-                result = m_workflowManager.StartWorkflow(listItem.ListItem,
-                    association.SPWorkflowAssociation, eventData);
-            else
-                result = m_workflowManager.StartWorkflow(listItem.ListItem,
-                    association.SPWorkflowAssociation, eventData, TypeConverter.ToBoolean(isAutoStart));
+            var assData = association.SPWorkflowAssociation.AssociationData;
+            if (eventData != Undefined.Value)
+                assData = TypeConverter.ToString(eventData);
+
+            var result = isAutoStart == Undefined.Value
+                ? m_workflowManager.StartWorkflow(listItem.ListItem, association.SPWorkflowAssociation, assData)
+                : m_workflowManager.StartWorkflow(listItem.ListItem, association.SPWorkflowAssociation, assData, TypeConverter.ToBoolean(isAutoStart));
             
             return result == null
                 ? null

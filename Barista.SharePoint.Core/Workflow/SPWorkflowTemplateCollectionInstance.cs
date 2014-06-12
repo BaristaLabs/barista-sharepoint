@@ -2,6 +2,7 @@
 {
     //Complete 6/10/14
 
+    using System.Linq;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using Barista.Library;
@@ -99,6 +100,20 @@
             return result == null
                 ? null
                 : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+        }
+
+        [JSFunction(Name = "toArray")]
+        public ArrayInstance ToArray()
+        {
+            var result = this.Engine.Array.Construct();
+            foreach (var wft in m_workflowTemplateCollection
+                .OfType<SPWorkflowTemplate>()
+                .Select(a => new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, a)))
+            {
+                ArrayInstance.Push(result, wft);
+            }
+
+            return result;
         }
     }
 }
