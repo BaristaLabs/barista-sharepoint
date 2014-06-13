@@ -75,7 +75,7 @@
             web.AllowUnsafeUpdates = true;
             try
             {
-                if (documentSet.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)
+                if (documentSet.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false)
                     throw new InvalidOperationException("Insufficent Permissions.");
 
                 var partFileName = partName + Constants.DocumentSetEntityPartExtension;
@@ -260,7 +260,7 @@
                 web.AllowUnsafeUpdates = true;
                 try
                 {
-                    if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+                    if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                         throw new InvalidOperationException("Insufficent Permissions.");
 
                     entityPartFile.Item["Category"] = category;

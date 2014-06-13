@@ -1169,7 +1169,7 @@
 
             //Perform the update.
 
-            if (documentSetFolder.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+            if (documentSetFolder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficient Permissions.");
 
             var originalAllowUnsafeUpdates = web.AllowUnsafeUpdates;

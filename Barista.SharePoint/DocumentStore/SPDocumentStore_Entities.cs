@@ -67,8 +67,8 @@
             web.AllowUnsafeUpdates = true;
             try
             {
-                if ((folder.Item == null && list.RootFolder == folder && list.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false) ||
-                    (folder.Item != null && (folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems) == false)))
+                if ((folder.Item == null && list.RootFolder == folder && list.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false) ||
+                    (folder.Item != null && (folder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false)))
                     throw new InvalidOperationException("Insufficient Permissions.");
 
                 DocumentSet documentSet;
@@ -304,7 +304,7 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
                 return null;
 
-            if (documentSet.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+            if (documentSet.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficent Permissions.");
 
             Entity entity;
@@ -384,7 +384,7 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
                 return null;
 
-            if (defaultEntityPart.Item.DoesUserHavePermissions(SPBasePermissions.EditListItems) == false)
+            if (defaultEntityPart.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficent Permissions.");
 
             if (String.IsNullOrEmpty(eTag) == false && defaultEntityPart.ETag != eTag)
