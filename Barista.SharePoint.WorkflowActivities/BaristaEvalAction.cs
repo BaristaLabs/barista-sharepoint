@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.WorkflowActivities
 {
     using System.Globalization;
+    using System.Net;
     using Barista.SharePoint.Services;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Workflow;
@@ -161,7 +162,63 @@
                 }
             };
             var response = client.Eval(request);
+            if (response.StatusCode == HttpStatusCode.BadRequest && response.ExtendedProperties.ContainsKey("Exception_Message"))
+            {
+                var wfService = executionContext.GetService<ISharePointService>();
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Message",
+                    response.ExtendedProperties["Exception_Message"],
+                    "");
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Name",
+                    response.ExtendedProperties["Exception_Name"],
+                    "");
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Function Name",
+                    response.ExtendedProperties["Exception_FunctionName"],
+                    "");
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Line Number",
+                    response.ExtendedProperties["Exception_LineNumber"],
+                    "");
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Source Path",
+                    response.ExtendedProperties["Exception_SourcePath"],
+                    "");
+
+                wfService.LogToHistoryList(executionContext.ContextGuid,
+                    SPWorkflowHistoryEventType.WorkflowError,
+                    0,
+                    TimeSpan.Zero,
+                    "Stack Trace",
+                    response.ExtendedProperties["Exception_StackTrace"],
+                    "");
+
+                return ActivityExecutionStatus.Faulting;
+            }
+
             Result = Encoding.UTF8.GetString(response.Content);
+
 
             return ActivityExecutionStatus.Closed;
         }

@@ -34,6 +34,7 @@ namespace Barista
             this.StatusCode = HttpStatusCode.OK;
             this.StatusDescription = "OK";
             this.SuppressContent = false;
+            this.ExtendedProperties = new Dictionary<string, string>();
         }
 
         [DataMember]
@@ -129,6 +130,13 @@ namespace Barista
 
         [DataMember]
         public string StatusDescription
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public IDictionary<string, string> ExtendedProperties
         {
             get;
             set;

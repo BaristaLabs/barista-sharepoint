@@ -1,7 +1,11 @@
 ﻿
 namespace Barista.SharePoint.Bundles
 {
+    using System.Linq;
+    using System.Reflection;
+    using Barista.Library;
     using Barista.SharePoint.Library;
+    using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
     using System;
 
@@ -31,7 +35,27 @@ namespace Barista.SharePoint.Bundles
             engine.SetGlobalValue("SPFeatureDefinition", new SPFeatureDefinitionConstructor(engine));
             engine.SetGlobalValue("SPFeature", new SPFeatureConstructor(engine));
 
+            //Lookups
+            var spBuiltInFieldId = engine.Object.Construct();
+            var type = typeof(SPBuiltInFieldId);
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var field in fields.OrderBy(f => f.Name))
+                spBuiltInFieldId.SetPropertyValue(field.Name, new GuidInstance(engine.Object.InstancePrototype, (Guid)field.GetValue(null)), false);
+
+            engine.SetGlobalValue("SPBuiltInFieldId", spBuiltInFieldId);
+
+            var spBuiltInContentTypeId = engine.Object.Construct();
+            type = typeof(SPBuiltInContentTypeId);
+            fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var field in fields.OrderBy(f => f.Name))
+                spBuiltInContentTypeId.SetPropertyValue(field.Name, new SPContentTypeIdInstance(engine.Object.InstancePrototype, (SPContentTypeId)field.GetValue(null)), false);
+
+            engine.SetGlobalValue("SPBuiltInContentTypeId", spBuiltInContentTypeId);
+
             //Data Related
+            engine.SetGlobalValue("SPResource", new SPResourceConstructor(engine));
             engine.SetGlobalValue("SPWebApplication", new SPWebApplicationConstructor(engine));
             engine.SetGlobalValue("SPSite", new SPSiteConstructor(engine));
             engine.SetGlobalValue("SPWeb", new SPWebConstructor(engine));

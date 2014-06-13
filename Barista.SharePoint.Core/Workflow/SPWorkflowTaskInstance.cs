@@ -31,18 +31,33 @@
 
             Hashtable ht;
             if (htData is HashtableInstance)
-                ht = (htData as HashtableInstance).Hashtable;
+            {
+                var temp = (htData as HashtableInstance).Hashtable;
+                ht = new Hashtable();
+                foreach (var key in temp.Keys)
+                {
+                    if (key is GuidInstance)
+                    {
+                        ht.Add((key as GuidInstance).Value, temp[key]);
+                    }
+                    else
+                    {
+                        ht.Add(TypeConverter.ToObject(this.Engine, key), TypeConverter.ToObject(this.Engine, temp[key]));
+                    }
+                }
+            }
             else if (htData is ObjectInstance)
             {
                 ht = new Hashtable();
-                foreach(var prop in (htData as ObjectInstance).Properties)
+                foreach (var prop in (htData as ObjectInstance).Properties)
                     ht.Add(prop.Name, prop.Value);
             }
             else
             {
-                throw new JavaScriptException(this.Engine, "Error", "htData argument must either be a hashtable instance, or a js hashtable");
+                throw new JavaScriptException(this.Engine, "Error",
+                    "htData argument must either be a hashtable instance, or a js hashtable");
             }
-                
+
             return SPWorkflowTask.AlterTask(task.ListItem, ht, synchronous);
         }
 

@@ -96,6 +96,7 @@
                 //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
                 engine.SetGlobalValue("Guid", new GuidConstructor(engine));
+                engine.SetGlobalValue("HashTable", new HashtableConstructor(engine));
                 engine.SetGlobalValue("Uri", new UriConstructor(engine));
                 engine.SetGlobalValue("Encoding", new EncodingInstance(engine.Object.InstancePrototype));
 

@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public HashtableInstance Construct()
         {
-            return new HashtableInstance(this.InstancePrototype);
+            return new HashtableInstance(this.InstancePrototype, new Hashtable());
         }
     }
 

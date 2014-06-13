@@ -347,6 +347,7 @@
     <Compile Include="Library\SPProcessAccountInstance.cs" />
     <Compile Include="Library\SPPropertyBagInstance.cs" />
     <Compile Include="Library\SPQuotaInstance.cs" />
+    <Compile Include="Library\SPResourceInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentCollectionInstance.cs" />
     <Compile Include="Library\SPRoleAssignmentInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionBindingCollectionInstance.cs" />

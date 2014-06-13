@@ -1,20 +1,21 @@
 ﻿namespace Barista
 {
-  using System.Linq;
-  using System.Net;
-  using System.Text;
-  using Barista.Bundles;
-  using Barista.Extensions;
-  using Jurassic;
-  using Jurassic.Library;
-  using System;
+    using System.Globalization;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using Barista.Bundles;
+    using Barista.Extensions;
+    using Jurassic;
+    using Jurassic.Library;
+    using System;
 
-  /// <summary>
-  /// Represents a class that initializes a new ScriptEngine instance.
-  /// </summary>
-  public abstract class ScriptEngineFactory
-  {
-    protected const string JavaScriptExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    /// <summary>
+    /// Represents a class that initializes a new ScriptEngine instance.
+    /// </summary>
+    public abstract class ScriptEngineFactory
+    {
+        protected const string JavaScriptExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <HTML><HEAD>
 <STYLE type=""text/css"">
 #content{{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}}
@@ -34,7 +35,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 </DIV>
 </BODY></HTML>
 ";
-    protected const string JavaScriptExceptionMessageWithStackTrace = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        protected const string JavaScriptExceptionMessageWithStackTrace = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <HTML><HEAD>
 <STYLE type=""text/css"">
 #content{{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}}
@@ -58,7 +59,7 @@ Source Path: <span id=""sourcePath"">{4}</span></p>
 </BODY></HTML>
 ";
 
-    protected const string JavaScriptTimeoutMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        protected const string JavaScriptTimeoutMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <HTML><HEAD>
 <STYLE type=""text/css"">
 #content{{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}}
@@ -76,7 +77,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
 </BODY></HTML>
 ";
 
-    protected const string ExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        protected const string ExceptionMessage = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <HTML><HEAD>
 <STYLE type=""text/css"">
 #content{{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}}
@@ -96,110 +97,119 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
 </BODY></HTML>
 ";
 
-    /// <summary>
-    /// Returns a new instance of a script engine object with all runtime objects available.
-    /// </summary>
-    /// <param name="webBundle">The web bundle. (Optional)</param>
-    /// <param name="isNewScriptEngineInstance">if set to <c>true</c> [is new script engine instance].</param>
-    /// <param name="errorInInitialization">if set to <c>true</c> [error in initialization].</param>
-    /// <returns>ScriptEngine.</returns>
-    public abstract ScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
-                                                 out bool errorInInitialization);
+        /// <summary>
+        /// Returns a new instance of a script engine object with all runtime objects available.
+        /// </summary>
+        /// <param name="webBundle">The web bundle. (Optional)</param>
+        /// <param name="isNewScriptEngineInstance">if set to <c>true</c> [is new script engine instance].</param>
+        /// <param name="errorInInitialization">if set to <c>true</c> [error in initialization].</param>
+        /// <returns>ScriptEngine.</returns>
+        public abstract ScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
+                                                     out bool errorInInitialization);
 
-    public virtual void UpdateResponseWithJavaScriptExceptionDetails(ScriptEngine engine, JavaScriptException exception, BrewResponse response)
-    {
-      if (exception == null)
-        throw new ArgumentNullException("exception");
-
-      if (response == null)
-        throw new ArgumentNullException("response");
-
-      string message;
-      var stack = String.Empty;
-
-      var javascriptExceptionMessage = JavaScriptExceptionMessage;
-
-      if (TypeUtilities.IsString(exception.ErrorObject))
-      {
-        message = TypeConverter.ToString(exception.ErrorObject);
-      }
-      else if (exception.ErrorObject is ObjectInstance)
-      {
-        var errorObject = exception.ErrorObject as ObjectInstance;
-
-        message = errorObject.GetPropertyValue("message") as string;
-        if (message == null || message.IsNullOrWhiteSpace())
+        public virtual void UpdateResponseWithJavaScriptExceptionDetails(ScriptEngine engine, JavaScriptException exception, BrewResponse response)
         {
-          message = JSONObject.Stringify(engine, exception.ErrorObject, null, 4);
+            if (exception == null)
+                throw new ArgumentNullException("exception");
+
+            if (response == null)
+                throw new ArgumentNullException("response");
+
+            string message;
+            var stack = String.Empty;
+            var rawStack = String.Empty;
+
+            var javascriptExceptionMessage = JavaScriptExceptionMessage;
+
+            if (TypeUtilities.IsString(exception.ErrorObject))
+            {
+                message = TypeConverter.ToString(exception.ErrorObject);
+            }
+            else if (exception.ErrorObject is ObjectInstance)
+            {
+                var errorObject = exception.ErrorObject as ObjectInstance;
+
+                message = errorObject.GetPropertyValue("message") as string;
+                if (message == null || message.IsNullOrWhiteSpace())
+                {
+                    message = JSONObject.Stringify(engine, exception.ErrorObject, null, 4);
+                }
+                else
+                {
+                    stack = errorObject.GetPropertyValue("stack") as string;
+                    rawStack = stack;
+                    if (stack != null && stack.IsNullOrWhiteSpace() == false)
+                    {
+                        stack = stack.Replace("at ", "at<br/>");
+                        javascriptExceptionMessage = JavaScriptExceptionMessageWithStackTrace;
+                    }
+                }
+            }
+            else
+            {
+                message = exception.ErrorObject.ToString();
+            }
+
+            response.StatusCode = HttpStatusCode.BadRequest;
+            response.StatusDescription = message;
+            response.AutoDetectContentType = false;
+            response.ContentType = "text/html";
+
+            string exceptionName = exception.Name;
+            if (exceptionName.IsNullOrWhiteSpace())
+                exceptionName = "JavaScript Error";
+
+            var resultMessage = String.Format(javascriptExceptionMessage, exceptionName, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
+            response.Content = Encoding.UTF8.GetBytes(resultMessage);
+
+            response.ExtendedProperties.Add("Exception_Message", message);
+            response.ExtendedProperties.Add("Exception_Name", exceptionName);
+            response.ExtendedProperties.Add("Exception_FunctionName", exception.FunctionName);
+            response.ExtendedProperties.Add("Exception_LineNumber", exception.LineNumber.ToString(CultureInfo.InvariantCulture));
+            response.ExtendedProperties.Add("Exception_SourcePath", exception.SourcePath);
+            response.ExtendedProperties.Add("Exception_StackTrace", rawStack);
         }
-        else
+
+        public virtual void UpdateResponseWithExceptionDetails(Exception exception, BrewResponse response)
         {
-          stack = errorObject.GetPropertyValue("stack") as string;
-          if (stack != null && stack.IsNullOrWhiteSpace() == false)
-          {
-            stack = stack.Replace("at ", "at<br/>");
-            javascriptExceptionMessage = JavaScriptExceptionMessageWithStackTrace;
-          }
+            if (exception == null)
+                throw new ArgumentNullException("exception");
+
+            if (response == null)
+                throw new ArgumentNullException("response");
+
+            if (exception is AggregateException)
+            {
+                var exceptions = (exception as AggregateException).InnerExceptions;
+
+                //TODO: Make this better.
+                exception = exceptions.First();
+            }
+
+            var message = exception.Message;
+            var stack = exception.StackTrace;
+            if (String.IsNullOrEmpty(stack) == false)
+                stack = stack.Replace("at ", "at<br/>");
+
+            response.StatusCode = HttpStatusCode.BadRequest;
+            response.StatusDescription = message;
+            response.AutoDetectContentType = false;
+            response.ContentType = "text/html";
+
+            var resultMessage = String.Format(ExceptionMessage, message, stack);
+            response.Content = Encoding.UTF8.GetBytes(resultMessage);
         }
-      }
-      else
-      {
-        message = exception.ErrorObject.ToString();
-      }
 
-      response.StatusCode = HttpStatusCode.BadRequest;
-      response.StatusDescription = message;
-      response.AutoDetectContentType = false;
-      response.ContentType = "text/html";
+        public virtual void UpdateResponseWithTimeoutDetails(int executionTimeout, BrewResponse response)
+        {
+            response.StatusCode = HttpStatusCode.BadRequest;
+            response.StatusDescription =
+              "The script being executed exceeded the maximum allowable timeout as set by an Administrator. ({0}ms).";
+            response.AutoDetectContentType = false;
+            response.ContentType = "text/html";
 
-      string exceptionName = exception.Name;
-      if (exceptionName.IsNullOrWhiteSpace())
-        exceptionName = "JavaScript Error";
-
-      var resultMessage = String.Format(javascriptExceptionMessage, exceptionName, message, exception.FunctionName, exception.LineNumber, exception.SourcePath, stack);
-      response.Content = Encoding.UTF8.GetBytes(resultMessage);
+            var resultMessage = String.Format(JavaScriptTimeoutMessage, executionTimeout);
+            response.Content = Encoding.UTF8.GetBytes(resultMessage);
+        }
     }
-
-    public virtual void UpdateResponseWithExceptionDetails(Exception exception, BrewResponse response)
-    {
-      if (exception == null)
-        throw new ArgumentNullException("exception");
-
-      if (response == null)
-        throw new ArgumentNullException("response");
-
-      if (exception is AggregateException)
-      {
-        var exceptions = (exception as AggregateException).InnerExceptions;
-
-        //TODO: Make this better.
-        exception = exceptions.First();
-      }
-
-      var message = exception.Message;
-      var stack = exception.StackTrace;
-      if (String.IsNullOrEmpty(stack) == false)
-        stack = stack.Replace("at ", "at<br/>");
-
-      response.StatusCode = HttpStatusCode.BadRequest;
-      response.StatusDescription = message;
-      response.AutoDetectContentType = false;
-      response.ContentType = "text/html";
-
-      var resultMessage = String.Format(ExceptionMessage, message, stack);
-      response.Content = Encoding.UTF8.GetBytes(resultMessage);
-    }
-
-    public virtual void UpdateResponseWithTimeoutDetails(int executionTimeout, BrewResponse response)
-    {
-      response.StatusCode = HttpStatusCode.BadRequest;
-      response.StatusDescription =
-        "The script being executed exceeded the maximum allowable timeout as set by an Administrator. ({0}ms).";
-      response.AutoDetectContentType = false;
-      response.ContentType = "text/html";
-
-      var resultMessage = String.Format(JavaScriptTimeoutMessage, executionTimeout);
-      response.Content = Encoding.UTF8.GetBytes(resultMessage);
-    }
-  }
 }
