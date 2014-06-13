@@ -968,7 +968,7 @@
                     {
                         if (m_elevatedDocumentStoreWeb == null)
                         {
-                            m_elevatedDocumentStoreSite = new SPSite(this.DocumentStoreUrl);
+                            m_elevatedDocumentStoreSite = new SPSite(this.DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
                             m_elevatedDocumentStoreWeb = m_elevatedDocumentStoreSite.OpenWeb();
                         }
                     }
@@ -983,7 +983,7 @@
                 {
                     if (m_documentStoreWeb == null)
                     {
-                        m_documentStoreSite = new SPSite(this.DocumentStoreUrl);
+                        m_documentStoreSite = new SPSite(this.DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
                         m_documentStoreWeb = m_elevatedDocumentStoreSite.OpenWeb();
                     }
                 }
@@ -1020,6 +1020,7 @@
             }
         }
 
+// ReSharper disable once UnusedParameter.Local
         private void CheckIfFileNameIsReserved(string fileName)
         {
             if (fileName == Constants.DocumentStoreDefaultEntityPartFileName ||
