@@ -29,9 +29,9 @@
     public override Entity GetEntity(string containerTitle, Guid entityId, string path)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 
@@ -83,9 +83,9 @@
     public override EntityPart GetEntityPart(string containerTitle, Guid entityId, string partName)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 
@@ -130,9 +130,9 @@
     public override IList<EntityPart> ListEntityParts(string containerTitle, string path, Guid entityId)
     {
       //Get a new web in case we're executing in elevated permissions.
-      using (SPSite site = new SPSite(this.DocumentStoreUrl))
+      using (var site = new SPSite(this.DocumentStoreUrl))
       {
-        using (SPWeb web = site.OpenWeb())
+        using (var web = site.OpenWeb())
         {
           var contentsHash = SPDocumentStoreHelper.GetEntityContentsHash(web, containerTitle, entityId);
 

@@ -859,8 +859,8 @@
                   {
                       if (HttpContext.Current == null || SPContext.Current == null)
                       {
-                          SPSite site = new SPSite(siteId);
-                          SPWeb web = site.OpenWeb(webId);
+                          var site = new SPSite(siteId, webContext.Site.UserToken);
+                          var web = site.OpenWeb(webId);
                           HttpContext.Current = new HttpContext(context.Request, context.Response) { User = context.User };
                           HttpContext.Current.Items["HttpHandlerSPWeb"] = web;
 

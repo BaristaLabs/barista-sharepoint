@@ -163,6 +163,7 @@
     <Compile Include="DocumentStore\SPDocumentStore_EntityVersion.cs" />
     <Compile Include="DocumentStore\SPDocumentStore_Folders.cs" />
     <Compile Include="DocumentStore\SPDocumentStore_Metadata.cs" />
+    <Compile Include="DocumentStore\SPDocumentStore_Permissions.cs" />
     <Compile Include="DocumentStore\SPEntityMutexManager.cs" />
     <Compile Include="DocumentStore\SPRepositoryConstructor.cs" />
     <Compile Include="EventReceivers\BaristaItemEventReceiver\BaristaItemEventReceiver.cs" />
