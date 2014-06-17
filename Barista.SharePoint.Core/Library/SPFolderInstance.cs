@@ -414,6 +414,42 @@
                 : new SPListItemInstance(this.Engine, m_folder.Item);
         }
 
+        [JSFunction(Name = "getItems")]
+        public ArrayInstance GetItems(object scope)
+        {
+            var query = new SPQuery
+            {
+                Folder = m_folder,
+            };
+
+            if (scope != Undefined.Value)
+            {
+                var strScope = TypeConverter.ToString(scope);
+                switch (strScope.ToLowerInvariant())
+                {
+                    case "recursive":
+                        query.ViewAttributes = "Scope=\"Recursive\"";
+                        break;
+                    case "recursiveall":
+                         query.ViewAttributes = "Scope=\"RecursiveAll\"";
+                        break;
+                    case "filesonly":
+                        query.ViewAttributes = "Scope=\"FilesOnly\"";
+                        break;
+                }
+            }
+
+            var parentList = m_folder.ParentWeb.Lists[m_folder.ParentListId];
+            var allItems = parentList.GetItems(query);
+            var allListItemInstances = allItems
+                    .OfType<SPListItem>()
+                    .Select(li => new SPListItemInstance(this.Engine, li));
+
+            // ReSharper disable CoVariantArrayConversion
+            return this.Engine.Array.Construct(allListItemInstances.ToArray());
+            // ReSharper restore CoVariantArrayConversion
+        }
+
         [JSFunction(Name = "getParentFolder")]
         public SPFolderInstance GetParentFolder()
         {
@@ -454,14 +490,33 @@
         }
 
         [JSFunction(Name = "getFiles")]
-        public ArrayInstance GetFiles(bool recursive)
+        public ArrayInstance GetFiles(object recursive)
         {
-            var listItemInstances = m_folder.Files
-                                            .OfType<SPFile>()
-                                            .Select(file => new SPFileInstance(this.Engine.Object.InstancePrototype, file));
+            if (recursive == Undefined.Value || TypeConverter.ToBoolean(recursive) == false)
+            {
+                var listItemInstances = m_folder.Files
+                    .OfType<SPFile>()
+                    .Select(file => new SPFileInstance(this.Engine.Object.InstancePrototype, file));
+
+                // ReSharper disable CoVariantArrayConversion
+                return this.Engine.Array.Construct(listItemInstances.ToArray());
+                // ReSharper restore CoVariantArrayConversion
+            }
+
+            var query = new SPQuery {
+                Folder = m_folder,
+                ViewAttributes = "Scope=\"RecursiveAll\""
+            };
+
+            var parentList = m_folder.ParentWeb.Lists[m_folder.ParentListId];
+            var allItems = parentList.GetItems(query);
+            var allListItemInstances = allItems
+                    .OfType<SPListItem>()
+                    .Where(li => li.File != null && li.File.Exists)
+                    .Select(li => new SPFileInstance(this.Engine.Object.InstancePrototype, li.File));
 
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(listItemInstances.ToArray());
+            return this.Engine.Array.Construct(allListItemInstances.ToArray());
             // ReSharper restore CoVariantArrayConversion
         }
 
