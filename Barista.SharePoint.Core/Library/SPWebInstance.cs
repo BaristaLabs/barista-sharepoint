@@ -213,21 +213,13 @@
         }
 
         [JSProperty(Name = "associatedGroups")]
-        public ArrayInstance AssociatedGroups
+        public SPGroupListInstance AssociatedGroups
         {
             get
             {
-                if (m_web.AssociatedGroups == null)
-                    return null;
-
-                var result = this.Engine.Array.Construct();
-
-                foreach (var group in m_web.AssociatedGroups)
-                {
-                    ArrayInstance.Push(result, new SPGroupInstance(this.Engine.Object.InstancePrototype, group));
-                }
-
-                return result;
+                return m_web.AssociatedGroups == null
+                    ? null
+                    : new SPGroupListInstance(this.Engine, m_web.AssociatedGroups);
             }
         }
 
@@ -896,13 +888,20 @@
         }
 
         [JSProperty(Name = "siteAdministrators")]
-        public SPUserCollectionInstance SiteAdministrators
+        public object SiteAdministrators
         {
             get
             {
-                return m_web.SiteAdministrators == null
-                    ? null
-                    : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_web.SiteAdministrators);
+                try
+                {
+                    return m_web.SiteAdministrators == null
+                        ? null
+                        : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_web.SiteAdministrators);
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 

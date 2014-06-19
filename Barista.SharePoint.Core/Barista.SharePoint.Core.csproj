@@ -331,6 +331,7 @@
     <Compile Include="Library\SPFileCollectionInstance.cs" />
     <Compile Include="Library\SPFolderCollectionInstance.cs" />
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
+    <Compile Include="Library\SPGroupsListInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
     <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
     <Compile Include="Library\SPLimitedWebPartCollectionInstance.cs" />
