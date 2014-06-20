@@ -49,11 +49,18 @@
     }
 
     [JSProperty(Name = "count")]
-    public int Count
+    public object Count
     {
       get
       {
-        return m_roleAssignmentCollection.Count;
+          try
+          {
+              return m_roleAssignmentCollection.Count;
+          }
+          catch(Exception)
+          {
+              return Undefined.Value;
+          }
       }
     }
 

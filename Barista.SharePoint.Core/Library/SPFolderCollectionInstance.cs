@@ -94,7 +94,7 @@
         }
 
         [JSFunction(Name = "getParentFolder")]
-        public SPFolderInstance GetParenFolder()
+        public SPFolderInstance GetParentFolder()
         {
             var result = m_folderCollection.Folder;
             if (result == null)

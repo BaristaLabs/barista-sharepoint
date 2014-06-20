@@ -163,13 +163,23 @@
         }
 
         [JSProperty(Name = "allWebs")]
-        public SPWebCollectionInstance AllWebs
+        public object AllWebs
         {
             get
             {
-                return m_site.AllWebs == null
-                    ? null
-                    : new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_site.AllWebs);
+                try
+                {
+                    //checking m_site.allwebs.count will load the collection. This allows us to capture the exception before it would otherwise occur.
+// ReSharper disable once UnusedVariable
+                    var count = m_site.AllWebs.Count;
+                    return m_site.AllWebs == null
+                        ? null
+                        : new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_site.AllWebs);
+                }
+                catch
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
@@ -396,17 +406,33 @@
         }
 
         [JSProperty(Name = "owner")]
-        public SPUserInstance Owner
+        public Object Owner
         {
             get
             {
-                return m_site.Owner == null
-                    ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.Owner);
+                try
+                {
+                    return m_site.Owner == null
+                        ? null
+                        : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.Owner);
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
             }
             set
             {
-                m_site.Owner = value == null ? null : value.User;
+                if (value == null)
+                {
+                    m_site.Owner = null;
+                    return;
+                }
+
+                if ((value is SPUserInstance) == false)
+                    return;
+
+                m_site.Owner = (value as SPUserInstance).User;
             }
         }
 
@@ -559,17 +585,33 @@
         }
 
         [JSProperty(Name = "secondaryContact")]
-        public SPUserInstance SecondaryContact
+        public object SecondaryContact
         {
             get
             {
-                return m_site.SecondaryContact == null
-                    ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.SecondaryContact);
+                try
+                {
+                    return m_site.SecondaryContact == null
+                        ? null
+                        : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.SecondaryContact);
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
             set
             {
-                m_site.SecondaryContact = value == null ? null : value.User;
+                if (value == null)
+                {
+                    m_site.SecondaryContact = null;
+                    return;
+
+                }
+
+                if (value is SPUserInstance == false)
+                    return;
+                m_site.SecondaryContact = (value as SPUserInstance).User;
             }
         }
 

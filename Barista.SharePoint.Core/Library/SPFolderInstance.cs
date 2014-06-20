@@ -98,16 +98,23 @@
         }
 
         [JSProperty(Name = "contentTypeOrder")]
-        public SPContentTypeListInstance ContentTypeOrder
+        public object ContentTypeOrder
         {
             get
             {
-                if (m_folder.ParentListId == Guid.Empty)
-                    return null;
+                try
+                {
+                    if (m_folder.ParentListId == Guid.Empty)
+                        return null;
 
-                return m_folder.ContentTypeOrder == null
-                    ? null
-                    : new SPContentTypeListInstance(this.Engine, m_folder.ContentTypeOrder);
+                    return m_folder.ContentTypeOrder == null
+                        ? null
+                        : new SPContentTypeListInstance(this.Engine, m_folder.ContentTypeOrder);
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
