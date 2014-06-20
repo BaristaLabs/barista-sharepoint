@@ -143,11 +143,18 @@
         }
 
         [JSProperty(Name = "itemCount")]
-        public int ItemCount
+        public object ItemCount
         {
             get
             {
-                return m_folder.ItemCount;
+                try
+                {
+                    return m_folder.ItemCount;
+                }
+                catch
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
@@ -170,46 +177,68 @@
         }
 
         [JSProperty(Name = "progId")]
-        public string ProgId
+        public object ProgId
         {
             get
             {
-                return m_folder.ProgID;
+                try
+                {
+                    return m_folder.ProgID;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
         [JSProperty(Name = "propertyBag")]
-        public HashtableInstance PropertyBag
+        public object PropertyBag
         {
             get
             {
-                return m_folder.Properties == null
+                try
+                {
+                    return m_folder.Properties == null
                     ? null
                     : new HashtableInstance(this.Engine.Object.InstancePrototype, m_folder.Properties);
+                }
+                catch (Exception)
+                {
+
+                    return Undefined.Value;
+                }
             }
         }
 
         [JSProperty(Name = "allProperties")]
-        public ObjectInstance AllProperties
+        public object AllProperties
         {
             get
             {
-                var result = this.Engine.Object.Construct();
-
-                foreach (var key in m_folder.Properties.Keys)
+                try
                 {
-                    string serializedKey;
-                    if (key is string)
-                        serializedKey = key as string;
-                    else
-                        serializedKey = JsonConvert.SerializeObject(key);
+                    var result = this.Engine.Object.Construct();
 
-                    var serializedValue = JsonConvert.SerializeObject(m_folder.Properties[key]);
+                    foreach (var key in m_folder.Properties.Keys)
+                    {
+                        string serializedKey;
+                        if (key is string)
+                            serializedKey = key as string;
+                        else
+                            serializedKey = JsonConvert.SerializeObject(key);
 
-                    result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+                        var serializedValue = JsonConvert.SerializeObject(m_folder.Properties[key]);
+
+                        result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+                    }
+
+                    return result;
                 }
-
-                return result;
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
@@ -243,16 +272,24 @@
         }
 
         [JSProperty(Name = "uniqueContentTypeOrder")]
-        public SPContentTypeListInstance UniqueContentTypeOrder
+        public object UniqueContentTypeOrder
         {
             get
             {
-                if (m_folder.ParentListId == Guid.Empty)
-                    return null;
+                try
+                {
+                    if (m_folder.ParentListId == Guid.Empty)
+                        return null;
 
-                return m_folder.UniqueContentTypeOrder == null
-                    ? null
-                    : new SPContentTypeListInstance(this.Engine, m_folder.UniqueContentTypeOrder);
+                    return m_folder.UniqueContentTypeOrder == null
+                        ? null
+                        : new SPContentTypeListInstance(this.Engine, m_folder.UniqueContentTypeOrder);
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+                
             }
         }
 
@@ -275,15 +312,22 @@
         }
 
         [JSProperty(Name = "welcomePage")]
-        public string WelcomePage
+        public object WelcomePage
         {
             get
             {
-                return m_folder.WelcomePage;
+                try
+                {
+                    return m_folder.WelcomePage;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
             set
             {
-                m_folder.WelcomePage = value;
+                m_folder.WelcomePage = TypeConverter.ToString(value);
             }
         }
         #endregion

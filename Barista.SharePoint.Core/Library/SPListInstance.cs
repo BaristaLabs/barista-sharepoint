@@ -576,17 +576,20 @@
             set { m_list.IsApplicationList = value; }
         }
 
-        //[JSProperty(Name = "isCatalog")]
-        //public bool IsCatalog
-        //{
-        //  get { return m_list; }
-        //  set { m_list.IsGallery = value; }
-        //}
-
         [JSProperty(Name = "isSiteAssetsLibrary")]
-        public bool IsSiteAssetsLibrary
+        public object IsSiteAssetsLibrary
         {
-            get { return m_list.IsSiteAssetsLibrary; }
+            get
+            {
+                try
+                {
+                    return m_list.IsSiteAssetsLibrary;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+            }
         }
 
         [JSProperty(Name = "isThrottled")]
@@ -765,14 +768,22 @@
         //smsaltertemplate.
 
         [JSProperty(Name = "serverTemplateId")]
-        public string ServerTemplateId
+        public object ServerTemplateId
         {
             get
             {
-                var serverTemplateId = m_list.RootFolder.Properties["vti_listservertemplate"]; //Gotta love SharePoint!!
-                return serverTemplateId != null
-                  ? serverTemplateId.ToString()
-                  : String.Empty;
+                try
+                {
+                    var serverTemplateId = m_list.RootFolder.Properties["vti_listservertemplate"];
+                        //Gotta love SharePoint!!
+                    return serverTemplateId != null
+                        ? serverTemplateId.ToString()
+                        : String.Empty;
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
@@ -791,10 +802,23 @@
         //title resource
 
         [JSProperty(Name = "useFormsForDisplay")]
-        public bool UseFormsForDisplay
+        public object UseFormsForDisplay
         {
-            get { return m_list.UseFormsForDisplay; }
-            set { m_list.UseFormsForDisplay = value; }
+            get
+            {
+                try
+                {
+                    return m_list.UseFormsForDisplay;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+            }
+            set
+            {
+                m_list.UseFormsForDisplay = TypeConverter.ToBoolean(value);
+            }
         }
 
         //customactions

@@ -46,11 +46,19 @@
         }
 
         [JSProperty(Name = "count")]
-        public int Count
+        public object Count
         {
             get
             {
-                return m_folderCollection.Count;
+                try
+                {
+                    return m_folderCollection.Count;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+                
             }
         }
 
