@@ -51,9 +51,20 @@
     }
 
     [JSProperty(Name = "count")]
-    public int Count
+    public object Count
     {
-      get { return m_recycleBinItemCollection.Count; }
+        get
+        {
+            try
+            {
+                return m_recycleBinItemCollection.Count;
+            }
+            catch
+            {
+                return Undefined.Value;
+            }
+            
+        }
     }
 
     //TODO: RecycleBinListItemCollectionPosition...

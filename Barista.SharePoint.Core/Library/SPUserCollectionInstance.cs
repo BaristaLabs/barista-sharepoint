@@ -48,9 +48,19 @@
         }
 
         [JSProperty(Name = "count")]
-        public int Count
+        public object Count
         {
-            get { return m_userCollection.Count; }
+            get
+            {
+                try
+                {
+                    return m_userCollection.Count;
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
+            }
         }
 
         [JSFunction(Name = "add")]

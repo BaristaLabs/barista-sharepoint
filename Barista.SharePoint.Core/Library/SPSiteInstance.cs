@@ -692,20 +692,35 @@
         }
 
         [JSProperty(Name="usage")]
-        public UsageInfoInstance UsageInfo
+        public object UsageInfo
         {
             get
             {
-                return new UsageInfoInstance(this.Engine.Object.InstancePrototype, m_site.Usage);
+                try
+                {
+                    return new UsageInfoInstance(this.Engine.Object.InstancePrototype, m_site.Usage);
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
         [JSProperty(Name = "userCodeEnabled")]
-        public bool UserCodeEnabled
+        public object UserCodeEnabled
         {
             get
             {
-                return m_site.UserCodeEnabled;
+                try
+                {
+                    return m_site.UserCodeEnabled;
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
+                
             }
         }
 

@@ -52,11 +52,19 @@
         }
 
         [JSProperty(Name = "count")]
-        public int Count
+        public object Count
         {
             get
             {
-                return m_alertCollection.Count;
+                try
+                {
+                    return m_alertCollection.Count;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+                
             }
         }
 

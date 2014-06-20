@@ -54,11 +54,19 @@
         }
 
         [JSProperty(Name = "count")]
-        public int Count
+        public object Count
         {
             get
             {
-                return m_eventReceiverDefinitionCollection.Count;
+                try
+                {
+                    return m_eventReceiverDefinitionCollection.Count;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+                
             }
         }
 

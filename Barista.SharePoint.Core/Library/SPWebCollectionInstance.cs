@@ -48,24 +48,39 @@
     }
 
     [JSProperty(Name = "count")]
-    public int Count
+    public object Count
     {
       get
       {
-        return m_webCollection.Count;
+          try
+          {
+              return m_webCollection.Count;
+          }
+          catch(Exception)
+          {
+              return Undefined.Value;
+          }
+        
       }
     }
 
     [JSProperty(Name = "names")]
-    public ArrayInstance Names
+    public object Names
     {
       get
       {
-        // ReSharper disable CoVariantArrayConversion
-        return m_webCollection.Names == null
-          ? null
-          : this.Engine.Array.Construct(m_webCollection.Names);
-        // ReSharper restore CoVariantArrayConversion
+          try
+          {
+              // ReSharper disable CoVariantArrayConversion
+              return m_webCollection.Names == null
+                ? null
+                : this.Engine.Array.Construct(m_webCollection.Names);
+              // ReSharper restore CoVariantArrayConversion
+          }
+          catch (Exception)
+          {
+              return Undefined.Value;
+          }
       }
     }
 

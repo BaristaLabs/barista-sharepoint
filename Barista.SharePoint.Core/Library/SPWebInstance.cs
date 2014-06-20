@@ -838,10 +838,23 @@
         //RegionalSettings
 
         [JSProperty(Name = "requestAccessEmail")]
-        public string RequestAccessEmail
+        public object RequestAccessEmail
         {
-            get { return m_web.RequestAccessEmail; }
-            set { m_web.RequestAccessEmail = value; }
+            get
+            {
+                try
+                {
+                    return m_web.RequestAccessEmail;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+            }
+            set
+            {
+                m_web.RequestAccessEmail = TypeConverter.ToString(value);
+            }
         }
 
         [JSProperty(Name = "requestAccessEnabled")]
