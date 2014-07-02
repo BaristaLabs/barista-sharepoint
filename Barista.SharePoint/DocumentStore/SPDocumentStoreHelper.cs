@@ -243,18 +243,41 @@
                 };
             }
 
-            var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
-            var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
+            var defaultEntityPart =
+                documentSet.Folder.Files.OfType<SPFile>()
+                    .FirstOrDefault(f => f.Name == Constants.DocumentStoreDefaultEntityPartFileName);
 
-            if (modifiedByUser.User != null)
+            //Use the modified by value on the default entity part instead.
+            if (defaultEntityPart != null)
             {
-                entity.ModifiedBy = new User
+                var modifiedBy = defaultEntityPart.ModifiedBy;
+                if (modifiedBy != null)
                 {
-                    Email = modifiedByUser.User.Email,
-                    LoginName = modifiedByUser.User.LoginName,
-                    Name = modifiedByUser.User.Name,
-                };
+                    entity.ModifiedBy = new User
+                    {
+                        Email = modifiedBy.Email,
+                        LoginName = modifiedBy.LoginName,
+                        Name = modifiedBy.Name,
+                    };
+                }
             }
+            else
+            {
+                var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
+                var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
+
+                if (modifiedByUser.User != null)
+                {
+                    entity.ModifiedBy = new User
+                    {
+                        Email = modifiedByUser.User.Email,
+                        LoginName = modifiedByUser.User.LoginName,
+                        Name = modifiedByUser.User.Name,
+                    };
+                }
+            }
+
+            
 
             return entity;
         }
