@@ -684,8 +684,8 @@
                            var jsonDocumentField = indexSearcher.Doc(hit.Doc).GetField(Constants.JsonDocumentFieldName);
 
                            var fieldDoc = (hit as FieldDoc);
-                           if (fieldDoc != null)
-                               hit.Score = (float)fieldDoc.fields[0];
+                           if (fieldDoc != null && Double.IsNaN(hit.Score) && fieldDoc.fields.Length > 0 && fieldDoc.fields[0] is float)
+                               hit.Score = (float)fieldDoc.fields[0]; //TODO: is this really true?
 
                            if (jsonDocumentField == null)
                                return new SearchResult
