@@ -52,9 +52,20 @@
 
     #region Properties
     [JSProperty(Name = "count")]
-    public int Count
+    public object Count
     {
-      get { return m_fieldCollection.Count; }
+      get
+      {
+          try
+          {
+              return m_fieldCollection.Count;
+          }
+          catch
+          {
+              return Undefined.Value;
+          }
+          
+      }
     }
     #endregion
 
