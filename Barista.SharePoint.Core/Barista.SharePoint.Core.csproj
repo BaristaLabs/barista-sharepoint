@@ -374,6 +374,17 @@
     <Compile Include="Library\SPWebPartConnectionInstance.cs" />
     <Compile Include="Library\SPWebPartInstance.cs" />
     <Compile Include="Library\WebPartZoneBaseInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ScopeCollectionInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ScopeDisplayGroupCollectionInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ScopeDisplayGroupInstance.cs" />
+    <Compile Include="SharePointSearch\Library\FullTextSqlQueryInstance.cs" />
+    <Compile Include="SharePointSearch\Library\KeywordQueryInstance.cs" />
+    <Compile Include="SharePointSearch\Library\RemoteScopesInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ResultTableCollectionInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ResultTableInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ScopeInformationInstance.cs" />
+    <Compile Include="SharePointSearch\Library\ScopeInstance.cs" />
+    <Compile Include="SharePointSearch\Library\SearchServiceApplicationProxyInstance.cs" />
     <Compile Include="Workflow\SPWorkflowAssociationCollectionInstance.cs" />
     <Compile Include="Workflow\SPWorkflowAssociationInstance.cs" />
     <Compile Include="Workflow\SPWorkflowCollectionInstance.cs" />

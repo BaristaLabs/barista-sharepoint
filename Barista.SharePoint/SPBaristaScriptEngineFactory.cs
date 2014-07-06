@@ -68,7 +68,7 @@
                 instance.Common.RegisterBundle(new LinqBundle());
                 instance.Common.RegisterBundle(new JsonDataBundle());
                 instance.Common.RegisterBundle(new SharePointBundle());
-                //instance.Common.RegisterBundle(new SharePointSearchBundle());
+                instance.Common.RegisterBundle(new SharePointSearchBundle());
                 instance.Common.RegisterBundle(new SharePointPublishingBundle());
                 instance.Common.RegisterBundle(new SharePointContentMigrationBundle());
                 instance.Common.RegisterBundle(new SharePointTaxonomyBundle());
