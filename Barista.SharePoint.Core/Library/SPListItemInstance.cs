@@ -65,7 +65,7 @@
         }
 
         protected SPListItemInstance(ObjectInstance prototype)
-          : base(prototype)
+            : base(prototype)
         {
         }
 

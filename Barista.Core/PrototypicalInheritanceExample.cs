@@ -2,75 +2,77 @@
 
 namespace Barista
 {
-  using Barista.Jurassic;
-  using Barista.Jurassic.Library;
-  using System;
-  using System.Reflection;
+    using Barista.Jurassic;
+    using Barista.Jurassic.Library;
+    using System;
+    using System.Reflection;
 
-  [Serializable]
-  public class InheritedObjectConstructor : ClrFunction
-  {
-    public InheritedObjectConstructor(ScriptEngine engine)
-      : base(engine.Function.InstancePrototype, "InheritedObject", new InheritedObjectInstance(engine))
+    [Serializable]
+    public class InheritedObjectConstructor : ClrFunction
     {
+        public InheritedObjectConstructor(ScriptEngine engine)
+            : base(engine.Function.InstancePrototype, "InheritedObject", new InheritedObjectInstance(engine))
+        {
+        }
+
+        [JSConstructorFunction]
+        public InheritedObjectInstance Construct()
+        {
+            return new InheritedObjectInstance(this.Engine);
+        }
     }
 
-    [JSConstructorFunction]
-    public InheritedObjectInstance Construct()
+    public class CustomObjectInstance : ObjectInstance
     {
-      return new InheritedObjectInstance(this.Engine);
-    }
-  }
+        public CustomObjectInstance(ScriptEngine engine)
+            : base(engine)
+        {
+            this.PopulateFunctions();
+        }
 
-  public class CustomObjectInstance : ObjectInstance
-  {
-    public CustomObjectInstance(ScriptEngine engine)
-      : base(engine)
-    {
-      this.PopulateFunctions();
-    }
+        /// <summary>
+        /// Called by the derived classes.
+        /// </summary>
+        /// <param name="prototype"></param>
+        protected CustomObjectInstance(ObjectInstance prototype)
+            : base(prototype)
+        {
+            //initialization code here.
 
-    /// <summary>
-    /// Called by the derived classes.
-    /// </summary>
-    /// <param name="prototype"></param>
-    protected CustomObjectInstance(ObjectInstance prototype)
-      : base(prototype)
-    {
-      //initialization code here.
-    }
+            //This constructor should NOT have a this.PopulateFunctions() call.
+        }
 
-    [JSProperty(Name = "a")]
-    public int Test1
-    {
-      get { return 5; }
-    }
+        [JSProperty(Name = "a")]
+        public int Test1
+        {
+            get { return 5; }
+        }
 
-    [JSFunction(Name = "doIt1")]
-    public int DoIt1()
-    {
-      return 5;
-    }
-  }
-
-  public class InheritedObjectInstance : CustomObjectInstance
-  {
-    public InheritedObjectInstance(ScriptEngine engine)
-      : base(new CustomObjectInstance(engine))
-    {
-      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+        [JSFunction(Name = "doIt1")]
+        public int DoIt1()
+        {
+            return 5;
+        }
     }
 
-    [JSProperty(Name = "b")]
-    public int Test2
+    public class InheritedObjectInstance : CustomObjectInstance
     {
-      get { return 6; }
-    }
+        public InheritedObjectInstance(ScriptEngine engine)
+            : base(new CustomObjectInstance(engine))
+        {
+            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+        }
 
-    [JSFunction(Name = "doIt2")]
-    public int DoIt2()
-    {
-      return 6;
+        [JSProperty(Name = "b")]
+        public int Test2
+        {
+            get { return 6; }
+        }
+
+        [JSFunction(Name = "doIt2")]
+        public int DoIt2()
+        {
+            return 6;
+        }
     }
-  }
 }

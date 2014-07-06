@@ -328,6 +328,13 @@
     <Compile Include="Library\SPFieldInstance.cs" />
     <Compile Include="Library\SPFieldLinkCollectionInstance.cs" />
     <Compile Include="Library\SPFieldLinkInstance.cs" />
+    <Compile Include="Library\SPFieldLookupValueCollectionInstance.cs" />
+    <Compile Include="Library\SPFieldLookupValueInstance.cs" />
+    <Compile Include="Library\SPFieldMultiChoiceValueInstance.cs" />
+    <Compile Include="Library\SPFieldMultiColumnValueInstance.cs" />
+    <Compile Include="Library\SPFieldUrlValueInstance.cs" />
+    <Compile Include="Library\SPFieldUserValueCollectionInstance.cs" />
+    <Compile Include="Library\SPFieldUserValueInstance.cs" />
     <Compile Include="Library\SPFileCollectionInstance.cs" />
     <Compile Include="Library\SPFolderCollectionInstance.cs" />
     <Compile Include="Library\SPGroupCollectionInstance.cs" />

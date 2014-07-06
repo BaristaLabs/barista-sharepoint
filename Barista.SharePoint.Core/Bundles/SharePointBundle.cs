@@ -72,8 +72,19 @@ namespace Barista.SharePoint.Bundles
             engine.SetGlobalValue("SPSiteDataQuery", new SPSiteDataQueryConstructor(engine));
             engine.SetGlobalValue("SPContentType", new SPContentTypeConstructor(engine));
             engine.SetGlobalValue("SPContentTypeId", new SPContentTypeIdConstructor(engine));
+
+            //Fields
             engine.SetGlobalValue("SPField", new SPFieldConstructor(engine));
             engine.SetGlobalValue("SPFieldLink", new SPFieldLinkConstructor(engine));
+
+            //FieldValues
+            engine.SetGlobalValue("SPFieldUrlValue", new SPFieldUrlValueConstructor(engine));
+            engine.SetGlobalValue("SPFieldLookupValue", new SPFieldLookupValueConstructor(engine));
+            engine.SetGlobalValue("SPFieldLookupValueCollection", new SPFieldLookupValueCollectionConstructor(engine));
+            engine.SetGlobalValue("SPFieldUserValue", new SPFieldUserValueConstructor(engine));
+            engine.SetGlobalValue("SPFieldUserValueCollection", new SPFieldUserValueCollectionConstructor(engine));
+            engine.SetGlobalValue("SPFieldMultiChoiceValueCollection", new SPFieldMultiChoiceValueConstructor(engine));
+            engine.SetGlobalValue("SPFieldMultiColumnValueCollection", new SPFieldMultiColumnValueConstructor(engine));
 
             //Navigation Related
             engine.SetGlobalValue("SPNavigationNode", new SPNavigationNodeConstructor(engine));
