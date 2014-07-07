@@ -3,6 +3,7 @@
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using System;
+    using Barista.SharePoint.Library;
     using Microsoft.Office.Server.Search.Administration;
     using Microsoft.SharePoint;
 
@@ -15,9 +16,13 @@
         }
 
         [JSConstructorFunction]
-        public SearchServiceApplicationProxyInstance Construct()
+        public SearchServiceApplicationProxyInstance Construct(object site)
         {
-            var context = SPServiceContext.GetContext(SPBaristaContext.Current.Site);
+            var spSite = SPBaristaContext.Current.Site;
+            if (site != Undefined.Value && site is SPSiteInstance)
+                spSite = ((SPSiteInstance) site).Site;
+
+            var context = SPServiceContext.GetContext(spSite);
             var proxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy));
             if (proxy == null)
                 throw new JavaScriptException(this.Engine, "Error", "Could not locate a SearchServiceApplicationProxy for the current context. Ensure that A Search Service Application has been created.");
