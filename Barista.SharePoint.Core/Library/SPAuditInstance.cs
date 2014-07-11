@@ -48,39 +48,63 @@
         }
 
         [JSProperty(Name = "auditFlags")]
-        public string AuditFlags
+        public object AuditFlags
         {
             get
             {
-                return m_audit.AuditFlags.ToString();
+                try
+                {
+                    return m_audit.AuditFlags.ToString();
+                }
+                catch(Exception)
+                {
+                    return Undefined.Value;
+                }
             }
             set
             {
+                var str = TypeConverter.ToString(value);
+
                 SPAuditMaskType mask;
-                if (value.TryParseEnum(true, out mask))
+                if (str.TryParseEnum(true, out mask))
                     m_audit.AuditFlags = mask;
             }
         }
 
         [JSProperty(Name = "effectiveAuditMask")]
-        public string EffectiveAuditMask
+        public object EffectiveAuditMask
         {
             get
             {
-                return m_audit.EffectiveAuditMask.ToString();
+                try
+                {
+                    return m_audit.EffectiveAuditMask.ToString();
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
         }
 
         [JSProperty(Name = "useAuditFlagCache")]
-        public bool UseAuditFlagCache
+        public object UseAuditFlagCache
         {
             get
             {
-                return m_audit.UseAuditFlagCache;
+                try
+                {
+                    return m_audit.UseAuditFlagCache;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
             }
             set
             {
-                m_audit.UseAuditFlagCache = value;
+                var b = TypeConverter.ToBoolean(value);
+                m_audit.UseAuditFlagCache = b;
             }
         }
 
