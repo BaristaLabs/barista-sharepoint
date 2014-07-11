@@ -369,6 +369,8 @@
     <Compile Include="Library\SPUserSolutionInstance.cs" />
     <Compile Include="Library\SPUserTokenInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
+    <Compile Include="Library\SPWebInfoInstance.cs" />
+    <Compile Include="Library\SPWebInfoListInstance.cs" />
     <Compile Include="Library\SPWebListInfoInstance.cs" />
     <Compile Include="Library\SPWebPartConnectionCollectionInstance.cs" />
     <Compile Include="Library\SPWebPartConnectionInstance.cs" />

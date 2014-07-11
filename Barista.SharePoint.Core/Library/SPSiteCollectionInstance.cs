@@ -1,12 +1,11 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System.IO;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using Barista.Library;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
     using System;
+    using System.IO;
 
     [Serializable]
     public class SPSiteCollectionConstructor : ClrFunction
