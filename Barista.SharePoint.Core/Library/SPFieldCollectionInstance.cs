@@ -226,7 +226,7 @@
             var field = m_fieldCollection.GetFieldByInternalName(name);
             return field == null
               ? null
-              : new SPFieldInstance(this.Engine, null);
+              : new SPFieldInstance(this.Engine, field);
         }
 
         [JSFunction(Name = "getList")]
