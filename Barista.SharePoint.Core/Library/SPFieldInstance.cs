@@ -10,7 +10,7 @@
     public class SPFieldConstructor : ClrFunction
     {
         public SPFieldConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPField", new SPFieldInstance(engine))
+            : base(engine.Function.InstancePrototype, "SPField", new SPFieldInstance(engine, null))
         {
         }
 
@@ -24,7 +24,7 @@
               ? new SPField(fieldCollection.SPFieldCollection, arg1)
               : new SPField(fieldCollection.SPFieldCollection, arg1, TypeConverter.ToString(arg2));
 
-            return new SPFieldInstance(this.Engine.Object.InstancePrototype, newField);
+            return new SPFieldInstance(this.Engine, newField);
         }
     }
 
@@ -33,18 +33,17 @@
     {
         private readonly SPField m_field;
 
-        public SPFieldInstance(ScriptEngine engine)
+        public SPFieldInstance(ScriptEngine engine, SPField field)
             : base(engine)
         {
+            m_field = field;
+
             this.PopulateFunctions();
         }
 
-        public SPFieldInstance(ObjectInstance prototype, SPField field)
+        protected SPFieldInstance(ObjectInstance prototype, SPField field)
             : base(prototype)
         {
-            if (field == null)
-                throw new ArgumentNullException("field");
-
             m_field = field;
         }
 
@@ -253,12 +252,14 @@
         }
 
         [JSProperty(Name = "fieldValueType")]
-        public string FieldValueType
+        public object FieldValueType
         {
             get
             {
                 //TODO: do we want to wrap System.Type?
-                return m_field.FieldValueType.ToString();
+                if (m_field.FieldValueType != null)
+                    return m_field.FieldValueType.ToString();
+                return Undefined.Value;
             }
         }
 
