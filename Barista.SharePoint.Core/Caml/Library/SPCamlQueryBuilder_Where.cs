@@ -69,6 +69,12 @@
       return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Date", false);
     }
 
+    [JSFunction(Name = "GuidField")]
+    public SPCamlQueryBuilder_FieldRef GuidField(string name)
+    {
+        return new SPCamlQueryBuilder_FieldRef(this.Engine.Object.InstancePrototype, Builder, name, "Guid", false);
+    }
+
     /// <summary>
     /// Specifies reference to the datetime field with given internal name
     /// </summary>
