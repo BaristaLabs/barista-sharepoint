@@ -670,12 +670,16 @@
         }
 
         [JSFunction(Name = "getListItem")]
-        public SPListItemInstance GetListItem(ArrayInstance fields)
+        public SPListItemInstance GetListItem(object fields)
         {
             if (fields == null)
                 throw new JavaScriptException(this.Engine, "Error", "Fields argument must be supplied.");
 
-            return new SPListItemInstance(this.Engine, m_file.GetListItem(fields.ElementValues.Select(TypeConverter.ToString).ToArray()));
+            var fieldsArrayInstance = fields as ArrayInstance;
+            if (fields == Undefined.Value || fields == Null.Value || fieldsArrayInstance == null || fieldsArrayInstance.Length == 0)
+                return new SPListItemInstance(this.Engine, m_file.GetListItem());
+
+            return new SPListItemInstance(this.Engine, m_file.GetListItem(fieldsArrayInstance.ElementValues.Select(TypeConverter.ToString).ToArray()));
         }
 
         [JSFunction(Name = "getListItemAllFields")]
