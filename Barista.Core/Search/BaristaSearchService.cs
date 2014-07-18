@@ -585,7 +585,12 @@
                   }
                   else
                   {
-                      EnsureIndexVersionMatches(indexDefinition.Name, targetDirectory);
+                      if (!EnsureIndexVersionMatches(indexDefinition.Name, targetDirectory))
+                      {
+                          CheckIndexAndRecover(targetDirectory, indexName);
+                          targetDirectory.DeleteFile("writing-to-index.lock");
+                          WriteIndexVersion(targetDirectory);
+                      }
 
                       if (targetDirectory.FileExists("write.lock"))// force lock release, because it was still open when we shut down
                       {
@@ -736,11 +741,12 @@
             return result;
         }
 
-        private static void EnsureIndexVersionMatches(string indexName, Lucene.Net.Store.Directory directory)
+        private static bool EnsureIndexVersionMatches(string indexName, Lucene.Net.Store.Directory directory)
         {
             if (directory.FileExists("index.version") == false)
             {
-                throw new InvalidOperationException("Could not find index.version " + indexName + ", resetting index");
+                return false;
+                //throw new InvalidOperationException("Could not find index.version " + indexName + ", resetting index");
             }
             using (var indexInput = directory.OpenInput("index.version"))
             {
@@ -749,6 +755,8 @@
                     throw new InvalidOperationException("Index " + indexName + " is of version " + versionFromDisk +
                                       " which is not compatible with " + IndexVersion + ", resetting index");
             }
+
+            return true;
         }
 
         private static void CheckIndexAndRecover(Lucene.Net.Store.Directory directory, string indexName)
@@ -790,6 +798,7 @@
             {
                 indexOutput.WriteString(IndexVersion);
                 indexOutput.Flush();
+                indexOutput.Dispose();
             }
         }
 
