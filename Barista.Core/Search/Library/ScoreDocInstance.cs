@@ -72,7 +72,7 @@
       get
       {
         return m_searcher != null
-          ? new DocumentInstance(this.Engine.Object.InstancePrototype, m_searcher.Doc(m_scoreDoc.Doc))
+          ? new DocumentInstance(this.Engine, m_searcher.Doc(m_scoreDoc.Doc))
           : null;
       }
     }

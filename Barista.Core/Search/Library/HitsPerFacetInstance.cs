@@ -64,7 +64,8 @@
       get
       {
         var docs =
-          m_hitsPerFacet.Documents.Select(d => new DocumentInstance(this.Engine.Object.InstancePrototype, d));
+          m_hitsPerFacet.Documents.Select(d => new DocumentInstance(this.Engine, d));
+// ReSharper disable once CoVariantArrayConversion
         return this.Engine.Array.Construct(docs.ToArray());
       }
     }

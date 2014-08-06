@@ -65,7 +65,7 @@
     {
       get
       {
-        var docs = m_facetedSearchResult.Documents.Select(d => new SearchResultInstance(this.Engine.Object.InstancePrototype, d));
+        var docs = m_facetedSearchResult.Documents.Select(d => new SearchResultInstance(this.Engine, d));
 // ReSharper disable CoVariantArrayConversion
         return this.Engine.Array.Construct(docs.ToArray());
 // ReSharper restore CoVariantArrayConversion

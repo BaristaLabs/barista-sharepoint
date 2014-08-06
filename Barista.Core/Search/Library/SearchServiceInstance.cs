@@ -469,7 +469,7 @@
       {
         var documentObjects = documentObject as ArrayInstance;
         var documentsToIndex = documentObjects.ElementValues
-          .Select(documentToIndex => ConvertObjectToJsonDocumentDto(documentToIndex))
+          .Select(ConvertObjectToJsonDocumentDto)
           .ToList();
 
         m_baristaSearchServiceProxy.IndexJsonDocuments(this.IndexName, documentsToIndex);
@@ -492,7 +492,7 @@
       var result = m_baristaSearchServiceProxy.Retrieve(this.IndexName, documentId);
       return result == null
         ? null
-        : new JsonDocumentInstance(this.Engine.Object.InstancePrototype, result);
+        : new JsonDocumentInstance(this.Engine, result);
     }
 
     [JSFunction(Name = "search")]
@@ -506,7 +506,7 @@
       var searchResults = m_baristaSearchServiceProxy.Search(this.IndexName, args);
 
       // ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine.Object.InstancePrototype, sr)).ToArray());
+      return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine, sr)).ToArray());
       // ReSharper restore CoVariantArrayConversion
     }
 
@@ -549,7 +549,7 @@
       if (fieldOptions is ArrayInstance)
       {
         var fieldOptionsArray = fieldOptions as ArrayInstance;
-        args.AddRange(fieldOptionsArray.ElementValues.OfType<ObjectInstance>().Select(o => CoerceFieldOptions(o)));
+        args.AddRange(fieldOptionsArray.ElementValues.OfType<ObjectInstance>().Select(CoerceFieldOptions));
       }
       else if (fieldOptions is ObjectInstance)
       {
@@ -642,7 +642,7 @@
           args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
 
         if (groupByFields != null && groupByFields != Undefined.Value && groupByFields != Null.Value && groupByFields is ArrayInstance)
-          args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
+          args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(TypeConverter.ToString).ToList();
       }
       else if (query is SearchArgumentsInstance)
       {
@@ -699,7 +699,7 @@
           var groupByFieldsValue = argumentsObj["groupByFields"] as ArrayInstance;
           if (groupByFieldsValue != null)
           {
-            args.GroupByFields = groupByFieldsValue.ElementValues.Select(v => TypeConverter.ToString(v)).ToList();
+            args.GroupByFields = groupByFieldsValue.ElementValues.Select(TypeConverter.ToString).ToList();
           }
         }
 
