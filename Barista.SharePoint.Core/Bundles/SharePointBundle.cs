@@ -53,6 +53,7 @@ namespace Barista.SharePoint.Bundles
                 spBuiltInContentTypeId.SetPropertyValue(field.Name, new SPContentTypeIdInstance(engine.Object.InstancePrototype, (SPContentTypeId)field.GetValue(null)), false);
 
             engine.SetGlobalValue("SPBuiltInContentTypeId", spBuiltInContentTypeId);
+            engine.SetGlobalValue("SPUtility", new SPUtilityInstance(engine));
 
             //Data Related
             engine.SetGlobalValue("SPResource", new SPResourceConstructor(engine));

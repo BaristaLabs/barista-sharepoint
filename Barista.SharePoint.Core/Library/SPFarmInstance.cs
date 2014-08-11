@@ -1,5 +1,7 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.IO;
+    using Barista.DocumentStore;
     using Barista.Library;
     using Jurassic;
     using Jurassic.Library;
@@ -70,8 +72,6 @@
             get { return new SPServiceCollectionInstance(this.Engine.Object.InstancePrototype, m_farm.Services); }
         }
 
-
-
         [JSFunction(Name = "getServiceApplicationById")]
         public object GetServiceApplicationById(object id)
         {
@@ -84,6 +84,26 @@
             }
 
             return Null.Value;
+        }
+
+        [JSFunction(Name = "extractFarmSolutionByName")]
+        public Base64EncodedByteArrayInstance ExtractFarmSolutionByName(string solutionName)
+        {
+            var solution = m_farm.Solutions.FirstOrDefault(s => s.Name == solutionName);
+            if (solution == null)
+                return null;
+
+            var fileName = Utilities.GetTempFileName(".wsp");
+            solution.SolutionFile.SaveAs(fileName);
+
+            Base64EncodedByteArrayInstance result;
+            using (var solutionFile = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                var data = solutionFile.ReadToEnd();
+                result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, data);
+            }
+
+            return result;
         }
 
         [JSFunction(Name = "getFarmKeyValue")]

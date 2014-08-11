@@ -351,6 +351,7 @@
     <Compile Include="Library\SPNavigationInstance.cs" />
     <Compile Include="Library\SPNavigationNodeCollectionInstance.cs" />
     <Compile Include="Library\SPNavigationNodeInstance.cs" />
+    <Compile Include="Library\SPPrincipalInfoInstance.cs" />
     <Compile Include="Library\SPPrincipalInstance.cs" />
     <Compile Include="Library\SPProcessAccountInstance.cs" />
     <Compile Include="Library\SPPropertyBagInstance.cs" />
@@ -368,6 +369,7 @@
     <Compile Include="Library\SPUserSolutionCollection.cs" />
     <Compile Include="Library\SPUserSolutionInstance.cs" />
     <Compile Include="Library\SPUserTokenInstance.cs" />
+    <Compile Include="Library\SPUtilityInstance.cs" />
     <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Library\SPWebInfoInstance.cs" />
     <Compile Include="Library\SPWebInfoListInstance.cs" />
