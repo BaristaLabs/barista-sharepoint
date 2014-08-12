@@ -2,4 +2,4 @@
 
 Current Release:
 
-Json.NET 5.0 Release 8
+Json.NET 6.0.4

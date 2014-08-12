@@ -29,13 +29,13 @@ using Barista.Newtonsoft.Json.Utilities;
 
 namespace Barista.Newtonsoft.Json.Serialization
 {
-  internal static class CachedAttributeGetter<T> where T : Attribute
-  {
-    private static readonly ThreadSafeStore<object, T> TypeAttributeCache = new ThreadSafeStore<object, T>(JsonTypeReflector.GetAttribute<T>);
-
-    public static T GetAttribute(object type)
+    internal static class CachedAttributeGetter<T> where T : Attribute
     {
-      return TypeAttributeCache.Get(type);
+        private static readonly ThreadSafeStore<object, T> TypeAttributeCache = new ThreadSafeStore<object, T>(JsonTypeReflector.GetAttribute<T>);
+
+        public static T GetAttribute(object type)
+        {
+            return TypeAttributeCache.Get(type);
+        }
     }
-  }
 }
