@@ -918,6 +918,8 @@
     <Compile Include="Imports\Yahoo.Yui.Compressor\YUICompressor.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
+    <Compile Include="Library\DiffInfoInstance.cs" />
+    <Compile Include="Library\DiffResultInstance.cs" />
     <Compile Include="Library\JsonData.cs" />
     <Compile Include="Library\JsonMergeSettingsInstance.cs" />
     <Compile Include="Library\JsonSchemaInstance.cs" />

@@ -34,11 +34,20 @@
 
     public static string ReplaceFirstOccurence(this string inputstring, string searchText, string replacementText)
     {
-      int index = inputstring.IndexOf(searchText, System.StringComparison.Ordinal);
+      var index = inputstring.IndexOf(searchText, StringComparison.Ordinal);
       if (index == -1)
         return inputstring;
 
       return inputstring.Substring(0, index) + replacementText + inputstring.Substring(index + searchText.Length);
+    }
+
+    public static string ReplaceFirstOccurenceIgnoreCase(this string inputstring, string searchText, string replacementText)
+    {
+        var index = inputstring.IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase);
+        if (index == -1)
+            return inputstring;
+
+        return inputstring.Substring(0, index) + replacementText + inputstring.Substring(index + searchText.Length);
     }
 
     internal static List<Dictionary<string, string>> ConvertToDictionaryList(this YamlSequenceNode yamlNode)

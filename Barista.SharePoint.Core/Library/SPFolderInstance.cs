@@ -1,14 +1,21 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.IO;
+    using System.Security.Cryptography;
+    using Barista.Extensions;
     using Barista.Library;
+    using ICSharpCode.SharpZipLib.Zip;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.Office.DocumentManagement.DocumentSets;
+    using Microsoft.Office.Server.Utilities;
     using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Utilities;
     using Newtonsoft.Json;
     using System;
     using System.Linq;
     using System.Text;
+    using System.Collections.Generic;
 
     [Serializable]
     public class SPFolderConstructor : ClrFunction
@@ -422,6 +429,150 @@
         public void Delete()
         {
             m_folder.Delete();
+        }
+
+        [JSFunction(Name="diff")]
+        public DiffResultInstance Diff(SPFolderInstance targetFolder, object recursive)
+        {
+            if (targetFolder == null)
+                throw new JavaScriptException(this.Engine, "Error", "Target Folder must be specified.");
+
+            var bRecurse = true;
+            if (recursive != Undefined.Value && recursive != Null.Value && recursive != null)
+                bRecurse = TypeConverter.ToBoolean(recursive);
+
+            var sourceFolderInfo = new List<DiffInfoInstance>();
+            var targetFolderInfo = new List<DiffInfoInstance>();
+
+            var itemsIterator = new ContentIterator();
+            itemsIterator.ProcessFilesInFolder(m_folder, bRecurse,
+                                           spFile =>
+                                           {
+                                               var fileInfo = new DiffInfoInstance(this.Engine)
+                                               {
+                                                   Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(m_folder.Url, ""),
+                                                   TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                                                       spFile.TimeLastModified)
+                                               };
+
+                                               var fileBytes = spFile.OpenBinary(SPOpenBinaryOptions.SkipVirusScan);
+                                               using (var md5 = MD5.Create())
+                                               {
+                                                   fileInfo.Hash =
+                                                       Convert.ToBase64String(md5.ComputeHash(fileBytes));
+                                               }
+
+                                               sourceFolderInfo.Add(fileInfo);
+                                           },
+                                           null);
+
+            itemsIterator.ProcessFilesInFolder(targetFolder.Folder, bRecurse,
+                                           spFile =>
+                                           {
+                                               var fileInfo = new DiffInfoInstance(this.Engine)
+                                               {
+                                                   Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(targetFolder.Folder.Url, ""),
+                                                   TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                                                       spFile.TimeLastModified)
+                                               };
+
+                                               var fileBytes = spFile.OpenBinary(SPOpenBinaryOptions.SkipVirusScan);
+                                               using (var md5 = MD5.Create())
+                                               {
+                                                   fileInfo.Hash =
+                                                       Convert.ToBase64String(md5.ComputeHash(fileBytes));
+                                               }
+
+                                               targetFolderInfo.Add(fileInfo);
+                                           },
+                                           null);
+
+            var result = new DiffResultInstance(this.Engine);
+            result.Process(sourceFolderInfo, targetFolderInfo);
+            return result;
+        }
+
+        [JSFunction(Name = "diffWithZip")]
+        public DiffResultInstance DiffWithZip(object target)
+        {
+            byte[] zipBytes;
+            if (target is Base64EncodedByteArrayInstance)
+            {
+                //Create the excel document instance from a byte array.
+                var byteArray = target as Base64EncodedByteArrayInstance;
+                zipBytes = byteArray.Data;
+            }
+            else
+            {
+                var targetUrl = TypeConverter.ToString(target);
+                if (Uri.IsWellFormedUriString(targetUrl, UriKind.Relative))
+                    targetUrl = SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, targetUrl);
+                SPFile file;
+                if (SPHelper.TryGetSPFile(targetUrl, out file))
+                    zipBytes = file.OpenBinary(SPOpenBinaryOptions.SkipVirusScan);
+                else
+                    throw new JavaScriptException(this.Engine, "Error",
+                        "A file was not found in the specified location: " + targetUrl);
+            }
+
+            var sourceFolderInfo = new List<DiffInfoInstance>();
+            var targetFolderInfo = new List<DiffInfoInstance>();
+
+            var itemsIterator = new ContentIterator();
+            itemsIterator.ProcessFilesInFolder(m_folder, true,
+                spFile =>
+                {
+                    var fileInfo = new DiffInfoInstance(this.Engine)
+                    {
+                        Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(m_folder.Url, ""),
+                        TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                            spFile.TimeLastModified)
+                    };
+
+                    var fileBytes = spFile.OpenBinary(SPOpenBinaryOptions.SkipVirusScan);
+                    using (var md5 = MD5.Create())
+                    {
+                        fileInfo.Hash =
+                            Convert.ToBase64String(md5.ComputeHash(fileBytes));
+                    }
+
+                    sourceFolderInfo.Add(fileInfo);
+                },
+                null);
+
+            using(var ms = new MemoryStream(zipBytes))
+            {
+                using (var zf = new ZipFile(ms))
+                {
+                    foreach (ZipEntry ze in zf)
+                    {
+                        if (ze.IsDirectory)
+                            continue;
+
+                        var fileInfo = new DiffInfoInstance(this.Engine)
+                        {
+                            Url = "/" + ze.Name,
+                            TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                                ze.DateTime)
+                        };
+
+                        using (var zs = zf.GetInputStream(ze))
+                        {
+                            using (var md5 = MD5.Create())
+                            {
+                                fileInfo.Hash =
+                                    Convert.ToBase64String(md5.ComputeHash(zs));
+                            }
+                        }
+                        
+                        targetFolderInfo.Add(fileInfo);
+                    }
+                }
+            }
+
+            var result = new DiffResultInstance(this.Engine);
+            result.Process(sourceFolderInfo, targetFolderInfo);
+            return result;
         }
 
         [JSFunction(Name = "deleteProperty")]
