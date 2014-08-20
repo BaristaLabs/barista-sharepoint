@@ -5,6 +5,7 @@
     using Barista.Framework;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Client.Services;
+    using Microsoft.SharePoint.Utilities;
     using Newtonsoft.Json.Linq;
     using System;
     using System.IO;
@@ -303,6 +304,9 @@
                 Uri codeUri;
                 if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
                 {
+                    if (Uri.IsWellFormedUriString(code, UriKind.Relative))
+                        code = SPUtility.ConcatUrls(SPContext.Current.Web.Url, code);
+
                     string scriptFilePath;
                     bool isHiveFile;
                     String codeFromfile;

@@ -5,8 +5,9 @@
   using Barista.Jurassic;
   using Barista.Library;
   using Microsoft.SharePoint;
+  using Microsoft.SharePoint.Utilities;
 
-  public class SPWebOptimizationBundle : WebOptimizationBundle
+    public class SPWebOptimizationBundle : WebOptimizationBundle
   {
     public override object InstallBundle(ScriptEngine engine)
     {
@@ -50,16 +51,17 @@
         {
           DateTime? result;
           Uri codeUri;
-          if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out codeUri))
+          var url = SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, fileName);
+          if (Uri.TryCreate(url, UriKind.Absolute, out codeUri))
           {
             SPFile file;
-            if (SPHelper.TryGetSPFile(fileName, out file))
+            if (SPHelper.TryGetSPFile(codeUri.ToString(), out file))
             {
               result = file.TimeLastModified;
             }
             else
             {
-              var error = string.Format("Bundle error: The file '{0}' doesn't exist", fileName);
+              var error = string.Format("Bundle error: The file '{0}' doesn't exist", codeUri.ToString());
               throw new JavaScriptException(engine, "Error", error);
             }
           }
@@ -75,18 +77,19 @@
         {
           string result;
           Uri codeUri;
-          if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out codeUri))
+          var url = SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, fileName);
+          if (Uri.TryCreate(url, UriKind.Absolute, out codeUri))
           {
             string scriptFilePath;
             bool isHiveFile;
             String codeFromfile;
-            if (SPHelper.TryGetSPFileAsString(fileName, out scriptFilePath, out codeFromfile, out isHiveFile))
+            if (SPHelper.TryGetSPFileAsString(codeUri.ToString(), out scriptFilePath, out codeFromfile, out isHiveFile))
             {
               result = codeFromfile;
             }
             else
             {
-              var error = string.Format("Bundle error: The file '{0}' doesn't exist", fileName);
+              var error = string.Format("Bundle error: The file '{0}' doesn't exist", codeUri.ToString());
               throw new JavaScriptException(engine, "Error", error);
             }
           }

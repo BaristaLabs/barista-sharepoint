@@ -1335,6 +1335,16 @@
             return new SPUserInstance(this.Engine.Object.InstancePrototype, user);
         }
 
+        [JSDoc("Returns a value that indicates if a file exists at the specified url.")]
+        [JSFunction(Name = "fileExists")]
+        public bool FileExists(string fileUrl)
+        {
+            SPFile file;
+            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
+                fileUrl = SPUtility.ConcatUrls(m_web.Url, fileUrl);
+            return SPHelper.TryGetSPFile(fileUrl, out file);
+        }
+
         //ExportUserResources
 
         [JSFunction(Name = "getAvailableContentTypes")]
@@ -1728,6 +1738,56 @@
             return m_web.IsCurrentUserMemberOfGroup(groupId);
         }
 
+        [JSDoc("Loads the file at the specified url as a byte array.")]
+        [JSFunction(Name = "loadFileAsByteArray")]
+        public Base64EncodedByteArrayInstance LoadFileAsByteArray(string fileUrl)
+        {
+            SPFile file;
+            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
+                fileUrl = SPUtility.ConcatUrls(m_web.Url, fileUrl);
+            if (!SPHelper.TryGetSPFile(fileUrl, out file))
+                throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+
+            var data = file.OpenBinary(SPOpenBinaryOptions.None);
+            var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, data)
+            {
+                FileName = file.SourceLeafName.IsNullOrWhiteSpace() ? file.Name : file.SourceLeafName
+            };
+            return result;
+        }
+
+        [JSDoc("Loads the file at the specified url as a string.")]
+        [JSFunction(Name = "loadFileAsString")]
+        public string LoadFileAsString(string fileUrl)
+        {
+            string path;
+            bool isHiveFile;
+            string fileContents;
+            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
+                fileUrl = SPUtility.ConcatUrls(m_web.Url, fileUrl);
+            if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
+                return fileContents;
+
+            throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+        }
+
+        [JSDoc("Loads the file at the specified url as a JSON Object.")]
+        [JSFunction(Name = "loadFileAsJSON")]
+        public object LoadFileAsJson(string fileUrl)
+        {
+            string path;
+            bool isHiveFile;
+            string fileContents;
+            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
+                fileUrl = SPUtility.ConcatUrls(m_web.Url, fileUrl);
+            if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
+            {
+                return JSONObject.Parse(this.Engine, fileContents, null);
+            }
+
+            throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+        }
+
         [JSFunction(Name = "processBatchData")]
         public string ProcessBatchData(string strBatchData)
         {
@@ -1787,6 +1847,44 @@
         public bool ValidateFormDigest()
         {
             return m_web.ValidateFormDigest();
+        }
+
+        [JSDoc("Writes the specified contents to the file located at the specified url")]
+        [JSFunction(Name = "write")]
+        public SPFileInstance Write(string fileUrl, object contents)
+        {
+            byte[] data;
+            if (contents is Base64EncodedByteArrayInstance)
+                data = (contents as Base64EncodedByteArrayInstance).Data;
+            else if (contents is StringInstance || contents is string)
+                data = Encoding.UTF8.GetBytes((string)contents);
+            else if (contents is ObjectInstance)
+                data = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, contents, null, null));
+            else
+                data = Encoding.UTF8.GetBytes(contents.ToString());
+
+            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
+                fileUrl = SPUtility.ConcatUrls(m_web.Url, fileUrl);
+
+            SPFile result;
+            if (SPHelper.TryGetSPFile(fileUrl, out result))
+            {
+                SPWeb web;
+                if (SPHelper.TryGetSPWeb(fileUrl, out web))
+                {
+                    result = web.Files.Add(fileUrl, data);
+                }
+                else
+                {
+                    throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified web:  " + fileUrl);
+                }
+            }
+            else
+            {
+                result.SaveBinary(data);
+            }
+
+            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
         }
         #endregion
 

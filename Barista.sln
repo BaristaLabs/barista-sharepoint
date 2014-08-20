@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint", "Barista.SharePoint\Barista.SharePoint.csproj", "{77BC7214-5D7D-472C-88C5-7D022D93C231}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {0FA2C498-92DD-453A-8502-D192AD536E5C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
 EndProject
@@ -141,9 +144,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaConsoleClient", "Bar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.iCal", "Barista.UnitTests.iCal\Barista.UnitTests.iCal.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.PowerShell", "Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj", "{0FA2C498-92DD-453A-8502-D192AD536E5C}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 23
+		SccNumberOfProjects = 24
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -235,6 +240,10 @@ Global
 		SccProjectTopLevelParentUniqueName22 = Barista.sln
 		SccProjectName22 = Barista.SharePoint.WorkflowActivities
 		SccLocalPath22 = Barista.SharePoint.WorkflowActivities
+		SccProjectUniqueName23 = Barista.SharePoint.PowerShell\\Barista.SharePoint.PowerShell.csproj
+		SccProjectTopLevelParentUniqueName23 = Barista.sln
+		SccProjectName23 = Barista.SharePoint.PowerShell
+		SccLocalPath23 = Barista.SharePoint.PowerShell
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -257,6 +266,12 @@ Global
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -329,12 +344,10 @@ Global
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -342,9 +355,10 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{77BC7214-5D7D-472C-88C5-7D022D93C231} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
-		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{17B92DC5-9402-44DF-B03C-4687E99FEF61} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
@@ -365,6 +379,6 @@ Global
 		{298ACD3C-082D-406B-B4BB-8B8CAD5B18A6} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{04D32EAA-9039-46EE-B571-2A2F482B15DC} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
-		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
+		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,3 @@
 ﻿<%@ServiceHost Language="C#"
-    Service="Barista.SharePoint.Services.BaristaServiceApplication, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" 
-    Factory="Barista.SharePoint.Services.BaristaServiceHostFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" %>
+    Service="Barista.SharePoint.Services.BaristaServiceApplication, Barista.SharePoint.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" 
+    Factory="Barista.SharePoint.Services.BaristaServiceHostFactory, Barista.SharePoint.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52" %>

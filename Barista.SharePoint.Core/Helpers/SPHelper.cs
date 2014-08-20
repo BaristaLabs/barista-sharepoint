@@ -198,7 +198,7 @@
         }
 
         /// <summary>
-        /// Attemps to retrieve a file at the specified url.
+        /// Attempts to retrieve a file at the specified url.
         /// </summary>
         /// <param name="fileUrl"></param>
         /// <param name="file"></param>

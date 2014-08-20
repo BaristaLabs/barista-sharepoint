@@ -25,6 +25,7 @@
     <customAssembly location="YamlDotNet.RepresentationModel.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\YamlDotNet.RepresentationModel.2.0.1\lib\net35\YamlDotNet.RepresentationModel.dll" />
     <customAssembly location="antlr.runtime.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\antlr.runtime.dll" />
     <customAssembly location="Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
+    <projectOutputAssembly location="Barista.SharePoint.PowerShell.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

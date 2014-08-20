@@ -1,7 +1,7 @@
 ﻿<ps:Config xmlns:ps="urn:Microsoft.SharePoint.PowerShell"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:schemaLocation="urn:Microsoft.SharePoint.PowerShell SPCmdletSchema.xml">
-  <ps:Assembly Name="Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52">
+  <ps:Assembly Name="Barista.SharePoint.PowerShell, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52">
     <ps:Cmdlet>
       <ps:VerbName>New-BaristaSearchService</ps:VerbName>
       <ps:ClassName>Barista.SharePoint.NewBaristaSearchService</ps:ClassName>

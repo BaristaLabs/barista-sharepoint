@@ -108,17 +108,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Powershell, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2010\Microsoft.SharePoint.Powershell.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\System.Management.Automation\1.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -178,12 +170,6 @@
     <Compile Include="Layouts\Barista\v1\MochaServer.aspx.designer.cs">
       <DependentUpon>MochaServer.aspx.cs</DependentUpon>
     </Compile>
-    <Compile Include="PowerShell Registration\RemoveBaristaWebSocketsService.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaWebSocketsServiceInstance.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaWebSocketsService.cs" />
-    <Compile Include="PowerShell Registration\RemoveBaristaSearchService.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaSearchServiceInstance.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaSearchService.cs" />
     <Compile Include="DocumentStore\SPDocumentStoreHelper.cs" />
     <Compile Include="DocumentStore\SPSearchableDocumentStore.cs" />
     <Compile Include="DocumentStore\SPSimpleDocumentStore.cs" />
@@ -202,26 +188,13 @@
     <Compile Include="DocumentStore\PermissionsHelper.cs" />
     <Compile Include="DocumentStore\SPDocumentStore.cs" />
     <Compile Include="DocumentStore\SPMemoryCachedDocumentStore.cs" />
-    <Compile Include="PowerShell Registration\InvokeBaristaService.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaServiceApplication.cs" />
-    <Compile Include="PowerShell Registration\NewBaristaServiceApplicationProxy.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Services\BaristaService.cs" />
-    <Compile Include="Services\BaristaServiceApplicationProxy.cs" />
-    <Compile Include="Services\BaristaServiceClient.cs" />
-    <Compile Include="Services\BaristaServiceHostFactory.cs" />
-    <Compile Include="Services\BaristaServiceInstance.cs" />
-    <Compile Include="Services\BaristaServiceProxy.cs" />
-    <Compile Include="Services\BaristaWebService.cs" />
-    <Compile Include="Services\BaristaServiceApplication.cs" />
-    <Compile Include="Services\BaristaTestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\BaristaWcfService.cs" />
     <Compile Include="SPBaristaScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
