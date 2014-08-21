@@ -1088,8 +1088,6 @@
             string fileContents;
             if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
                 fileUrl = SPUtility.ConcatUrls(m_site.Url, fileUrl);
-            if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
-                fileUrl = SPUtility.ConcatUrls(m_site.Url, fileUrl);
             if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
                 return fileContents;
 

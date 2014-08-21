@@ -13,7 +13,6 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
-    using Microsoft.SharePoint.Utilities;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to WCF based requests.
@@ -231,9 +230,6 @@
                 Uri codeUri;
                 if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
                 {
-                    if (Uri.IsWellFormedUriString(code, UriKind.Relative))
-                        code = SPUtility.ConcatUrls(SPContext.Current.Web.Url, code);
-
                     string scriptFilePath;
                     bool isHiveFile;
                     String codeFromfile;
