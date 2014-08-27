@@ -103,7 +103,9 @@
         {
             var group = ADHelper.GetADGroup(groupName, this.LdapPath);
 
-            return new ADGroupInstance(this.Engine.Object.InstancePrototype, group);
+            return group == null
+                ? null
+                : new ADGroupInstance(this.Engine.Object.InstancePrototype, group);
         }
 
         [JSFunction(Name = "getADGroupByDistinguishedName")]
