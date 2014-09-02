@@ -109,7 +109,7 @@
         }
 
         [JSFunction(Name = "getADGroupByDistinguishedName")]
-        [JSDoc("Returns an object representating the specified user. If no login name is specified, returns the current user.")]
+        [JSDoc("Returns an object representating the specified group.")]
         public object GetADGroupByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||

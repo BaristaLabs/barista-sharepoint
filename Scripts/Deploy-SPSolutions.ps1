@@ -120,7 +120,7 @@ function global:Deploy-SPSolutions() {
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Enable-SPFeature –Identity $($identity) -Url $($url)
 "@
-						& powershell.exe $args
+						& powershell.exe -Version 2 $args
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
 					}
 					else {
@@ -129,7 +129,7 @@ Enable-SPFeature –Identity $($identity) -Url $($url)
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Enable-SPFeature –Identity $($identity)
 "@
-						& powershell.exe $args
+						& powershell.exe -Version 2 $args
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
 					}
                 }
@@ -137,12 +137,20 @@ Enable-SPFeature –Identity $($identity)
 					try {
 					if ($url -ne $null) {
 						Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabling $identity" -PercentComplete -1
-						Disable-SPFeature –Identity $identity -url $url -Confirm:$false
+						$args = @"
+Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
+Disable-SPFeature –Identity $($identity) -url $($url) -Confirm:0
+"@
+						& powershell.exe -Version 2 {$args}
 						Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabled" -Completed
 					}
 					else {
 						Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
-						Disable-SPFeature –Identity $identity -Confirm:$false
+						$args = @"
+Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
+Disable-SPFeature –Identity $($identity) -Confirm:0
+"@
+						& powershell.exe -Version 2 $args
 						Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
 					}
 					}

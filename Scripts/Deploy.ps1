@@ -20,27 +20,33 @@ param (
 	[bool]$restartServices = $true
 )
 
+Write-Host "                    Barista Deployment Script v1.1             " -foregroundcolor Green
+Write-Host "===============================================================" -foregroundcolor Green
+
 if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -ne $null )
 {
-    Remove-PsSnapin Microsoft.SharePoint.PowerShell
+    Write-Error "This deployment script must be executed from a Windows Powershell, NOT a SharePoint 2010 Management Shell."
+    return
 }
+
+Write-Host "Please ensure the following before continuing with this deployment:" -foregroundcolor Yellow
+Write-Host "`t1) Ensure that all users are logged out of all servers in the farm." -foregroundcolor Yellow
+Write-Host "`t2) Please close any other instances of the SharePoint 2010 Management Shell on all servers in the farm" -foregroundcolor Yellow
+Write-Host "" -foregroundcolor Yellow
+Write-Host "If your are certain that these prerequisites have been met, please press enter to proceed." -foregroundcolor Yellow
+$a = Read-Host
 
 if ($restartServices -eq $true) {
-	& powershell.exe "& .\RestartSharePointServices.ps1"
+	& powershell.exe -Version 2 "& .\RestartSharePointServices.ps1"
 }
 
-& powershell.exe "& .\UninstallBaristaSearchService.ps1"
-& powershell.exe "& .\UninstallBaristaServiceApplication.ps1"
+& powershell.exe -Version 2 "& .\UninstallBaristaSearchService.ps1"
+& powershell.exe -Version 2 "& .\UninstallBaristaServiceApplication.ps1"
 $cmd = @"
 & Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 & .\Deploy-SPSolutions.ps1
 & Deploy-SPSolutions $Config
 "@
-& powershell.exe $cmd
+& powershell.exe -Version 2 $cmd
 & iisreset
-& powershell.exe "& .\Deploy-PostSolutionDeployment.ps1 '$ManagedAccount' '$SPApplicationPoolName' '$Uri'"
-
-if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -eq $null )
-{
-    Add-PsSnapin Microsoft.SharePoint.PowerShell
-}
+& powershell.exe -Version 2 "& .\Deploy-PostSolutionDeployment.ps1 '$ManagedAccount' '$SPApplicationPoolName' '$Uri'"
