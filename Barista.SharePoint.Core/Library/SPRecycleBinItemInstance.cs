@@ -47,7 +47,7 @@
     {
       get
       {
-        return new SPUserInstance(this.Engine.Object.InstancePrototype, m_recycleBinItem.Author);
+        return new SPUserInstance(this.Engine, m_recycleBinItem.Author);
       }
     }
 
@@ -72,7 +72,7 @@
     [JSProperty(Name = "deletedBy")]
     public SPUserInstance DeletedBy
     {
-      get { return new SPUserInstance(this.Engine.Object.InstancePrototype, m_recycleBinItem.DeletedBy); }
+      get { return new SPUserInstance(this.Engine, m_recycleBinItem.DeletedBy); }
     }
 
     [JSProperty(Name = "deletedByEmail")]

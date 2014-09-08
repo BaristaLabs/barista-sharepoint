@@ -658,7 +658,7 @@
                             if (listItem.TryGetSPFieldValue(field.Id, out userToken))
                             {
                                 var fieldUserValue = new SPFieldUserValue(listItem.ParentList.ParentWeb, userToken);
-                                var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
+                                var userInstance = new SPUserInstance(engine, fieldUserValue.User);
                                 result.SetPropertyValue(field.InternalName, userInstance, false);
                             }
                         }
@@ -716,7 +716,7 @@
                                 else if (fieldValue is SPFieldUserValue)
                                 {
                                     var fieldUserValue = (SPFieldUserValue)fieldValue;
-                                    var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
+                                    var userInstance = new SPUserInstance(engine, fieldUserValue.User);
                                     result.SetPropertyValue(field.InternalName, userInstance, false);
                                 }
                                 else if (fieldValue is Guid)

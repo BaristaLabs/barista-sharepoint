@@ -43,7 +43,6 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
                 SPServer.Local.ServiceInstances.Remove(serviceInstance.Id);
             }
 
-
             // uninstall the service proxy
             var serviceProxy = SPFarm.Local.ServiceProxies.GetValue<BaristaServiceProxy>();
             if (serviceProxy != null)

@@ -67,7 +67,7 @@
                 if (user == null)
                     return null;
 
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, user);
+                return new SPUserInstance(this.Engine, user);
             }
         }
 
@@ -223,7 +223,7 @@
                         if (version.TryGetSPFieldValue(field.InternalName, out userToken))
                         {
                             var fieldUserValue = new SPFieldUserValue(version.ListItem.Web, userToken);
-                            var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
+                            var userInstance = new SPUserInstance(engine, fieldUserValue.User);
                             return userInstance;
                         }
                     }
@@ -284,7 +284,7 @@
                             if (fieldValue is SPFieldUserValue)
                             {
                                 var fieldUserValue = (SPFieldUserValue)fieldValue;
-                                var userInstance = new SPUserInstance(engine.Object.InstancePrototype, fieldUserValue.User);
+                                var userInstance = new SPUserInstance(engine, fieldUserValue.User);
                                 return userInstance;
                             }
                             

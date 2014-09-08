@@ -75,7 +75,7 @@
             var result = m_userCollection.GetByEmail(emailAddress);
             return result == null
               ? null
-              : new SPUserInstance(this.Engine.Object.InstancePrototype, result);
+              : new SPUserInstance(this.Engine, result);
         }
 
         [JSFunction(Name = "getUserById")]
@@ -84,7 +84,7 @@
             var result = m_userCollection.GetByID(id);
             return result == null
               ? null
-              : new SPUserInstance(this.Engine.Object.InstancePrototype, result);
+              : new SPUserInstance(this.Engine, result);
         }
 
         [JSFunction(Name = "getUserByIndex")]
@@ -93,7 +93,7 @@
             var result = m_userCollection[index];
             return result == null
               ? null
-              : new SPUserInstance(this.Engine.Object.InstancePrototype, result);
+              : new SPUserInstance(this.Engine, result);
         }
 
         [JSFunction(Name = "getUserByLogonName")]
@@ -102,7 +102,7 @@
             var result = m_userCollection[loginName];
             return result == null
               ? null
-              : new SPUserInstance(this.Engine.Object.InstancePrototype, result);
+              : new SPUserInstance(this.Engine, result);
         }
 
         [JSFunction(Name = "getUsersByLogonName")]
@@ -153,7 +153,7 @@
 
             foreach (var user in m_userCollection.OfType<SPUser>())
             {
-                ArrayInstance.Push(result, new SPUserInstance(this.Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new SPUserInstance(this.Engine, user));
             }
             return result;
         }

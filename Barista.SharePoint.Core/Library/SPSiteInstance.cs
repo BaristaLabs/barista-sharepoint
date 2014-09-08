@@ -415,7 +415,7 @@
                 {
                     return m_site.Owner == null
                         ? null
-                        : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.Owner);
+                        : new SPUserInstance(this.Engine, m_site.Owner);
                 }
                 catch(Exception)
                 {
@@ -594,7 +594,7 @@
                 {
                     return m_site.SecondaryContact == null
                         ? null
-                        : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.SecondaryContact);
+                        : new SPUserInstance(this.Engine, m_site.SecondaryContact);
                 }
                 catch (Exception)
                 {
@@ -662,7 +662,7 @@
             {
                 return m_site.SystemAccount == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_site.SystemAccount);
+                    : new SPUserInstance(this.Engine, m_site.SystemAccount);
             }
         }
 

@@ -96,7 +96,7 @@
             {
                 return m_file.Author == null
                   ? null
-                  : new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.Author);
+                  : new SPUserInstance(this.Engine, m_file.Author);
             }
         }
 
@@ -112,7 +112,7 @@
                 if (m_file.CheckedOutByUser == null)
                     return null;
 
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.CheckedOutByUser);
+                return new SPUserInstance(this.Engine, m_file.CheckedOutByUser);
             }
         }
 
@@ -273,7 +273,7 @@
             {
                 return m_file.LockedByUser == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.LockedByUser);
+                    : new SPUserInstance(this.Engine, m_file.LockedByUser);
             }
         }
 
@@ -344,7 +344,7 @@
                 if (m_file.ModifiedBy == null)
                     return null;
 
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, m_file.ModifiedBy);
+                return new SPUserInstance(this.Engine, m_file.ModifiedBy);
             }
         }
 

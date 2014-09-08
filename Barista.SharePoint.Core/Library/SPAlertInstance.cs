@@ -304,7 +304,7 @@
             {
                 return m_alert.User == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_alert.User);
+                    : new SPUserInstance(this.Engine, m_alert.User);
             }
             set
             {

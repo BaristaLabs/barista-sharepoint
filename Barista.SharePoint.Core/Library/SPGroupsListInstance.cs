@@ -38,7 +38,7 @@
         {
             return group == null
                 ? null
-                : new SPGroupInstance(this.Engine.Object.InstancePrototype, group);
+                : new SPGroupInstance(this.Engine, group);
         }
 
         protected override SPGroup Unwrap(SPGroupInstance groupInstance)

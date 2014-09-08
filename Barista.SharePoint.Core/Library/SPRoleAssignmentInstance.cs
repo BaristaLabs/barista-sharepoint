@@ -76,12 +76,12 @@
           return null;
 
         if (m_roleAssignment.Member is SPUser)
-          return new SPUserInstance(this.Engine.Object.InstancePrototype, m_roleAssignment.Member as SPUser);
+          return new SPUserInstance(this.Engine, m_roleAssignment.Member as SPUser);
         
         if (m_roleAssignment.Member is SPGroup)
-          return new SPGroupInstance(this.Engine.Object.InstancePrototype, m_roleAssignment.Member as SPGroup);
+          return new SPGroupInstance(this.Engine, m_roleAssignment.Member as SPGroup);
 
-        return new SPPrincipalInstance(this.Engine.Object.InstancePrototype, m_roleAssignment.Member);
+        return new SPPrincipalInstance(this.Engine, m_roleAssignment.Member);
       }
     }
 

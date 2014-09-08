@@ -58,7 +58,7 @@
     [JSProperty(Name = "createdBy")]
     public SPUserInstance CreatedBy
     {
-      get { return new SPUserInstance(this.Engine.Object.InstancePrototype, m_fileVersion.CreatedBy); }
+      get { return new SPUserInstance(this.Engine, m_fileVersion.CreatedBy); }
     }
 
     [JSProperty(Name = "id")]

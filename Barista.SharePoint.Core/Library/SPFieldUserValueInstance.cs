@@ -50,6 +50,7 @@
         protected SPFieldUserValueInstance(ObjectInstance prototype, SPFieldUserValue fieldUserValue)
             : base(prototype, fieldUserValue)
         {
+            m_fieldUserValue = fieldUserValue;
         }
 
         public SPFieldUserValue SPFieldUserValue
@@ -76,7 +77,7 @@
             {
                 return m_fieldUserValue.User == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_fieldUserValue.User);
+                    : new SPUserInstance(this.Engine, m_fieldUserValue.User);
             }
         }
 

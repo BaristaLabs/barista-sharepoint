@@ -53,7 +53,7 @@
             {
                 return m_checkedOutFile.CheckedOutBy == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_checkedOutFile.CheckedOutBy);
+                    : new SPUserInstance(this.Engine, m_checkedOutFile.CheckedOutBy);
             }
         }
 

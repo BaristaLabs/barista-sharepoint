@@ -193,7 +193,7 @@
             {
                 if (m_list.Author == null)
                     return null;
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, m_list.Author);
+                return new SPUserInstance(this.Engine, m_list.Author);
             }
         }
 

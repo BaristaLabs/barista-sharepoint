@@ -106,7 +106,7 @@
             {
                 return m_workflow.AuthorUser == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_workflow.AuthorUser);
+                    : new SPUserInstance(this.Engine, m_workflow.AuthorUser);
             }
         }
 
@@ -236,7 +236,7 @@
             {
                 return m_workflow.OwnerUser == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_workflow.OwnerUser);
+                    : new SPUserInstance(this.Engine, m_workflow.OwnerUser);
             }
         }
 

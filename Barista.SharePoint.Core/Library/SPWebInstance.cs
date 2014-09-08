@@ -230,7 +230,7 @@
             {
                 return m_web.AssociatedMemberGroup == null
                     ? null
-                    : new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedMemberGroup);
+                    : new SPGroupInstance(this.Engine, m_web.AssociatedMemberGroup);
             }
         }
 
@@ -241,7 +241,7 @@
             {
                 return m_web.AssociatedMemberGroup == null
                     ? null
-                    : new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedOwnerGroup);
+                    : new SPGroupInstance(this.Engine, m_web.AssociatedOwnerGroup);
             }
         }
 
@@ -252,7 +252,7 @@
             {
                 return m_web.AssociatedMemberGroup == null
                     ? null
-                    : new SPGroupInstance(this.Engine.Object.InstancePrototype, m_web.AssociatedVisitorGroup);
+                    : new SPGroupInstance(this.Engine, m_web.AssociatedVisitorGroup);
             }
         }
 
@@ -274,7 +274,7 @@
             {
                 return m_web.Author == null
                     ? null
-                    : new SPUserInstance(this.Engine.Object.InstancePrototype, m_web.Author);
+                    : new SPUserInstance(this.Engine, m_web.Author);
             }
         }
 
@@ -371,7 +371,7 @@
         [JSProperty(Name = "currentUser")]
         public SPUserInstance CurrentUser
         {
-            get { return new SPUserInstance(this.Engine.Object.InstancePrototype, m_web.CurrentUser); }
+            get { return new SPUserInstance(this.Engine, m_web.CurrentUser); }
         }
 
         [JSProperty(Name = "customJavaScriptFileUrl")]
@@ -1146,7 +1146,7 @@
             var result = m_web.AddApplicationPrincipal(logonName, allowBrowseUerInfo, requireRequestToken);
             return result == null
                 ? null
-                : new SPUserInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPUserInstance(this.Engine, result);
         }
 
         [JSFunction(Name = "addFileByUrl")]
@@ -1332,7 +1332,7 @@
         public SPUserInstance EnsureUser(string logonName)
         {
             var user = m_web.EnsureUser(logonName);
-            return new SPUserInstance(this.Engine.Object.InstancePrototype, user);
+            return new SPUserInstance(this.Engine, user);
         }
 
         [JSDoc("Returns a value that indicates if a file exists at the specified url.")]
@@ -1666,7 +1666,7 @@
         {
             var user = m_web.Users[loginName];
             if (user != null)
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, user);
+                return new SPUserInstance(this.Engine, user);
             return Null.Value;
         }
         

@@ -51,8 +51,8 @@ param(
   [switch] $removeOrphans,
   [switch] $removeIISWebSvc,
   [switch] $showActiveService,
-  [string] $logFilePath = "c:\Automation\Logs",
-  [string] $reportFilePath = "c:\Automation\Reports"
+  [string] $logFilePath = ".",
+  [string] $reportFilePath = "."
 )
 
 #region Initialize Clean Up Script
@@ -61,13 +61,11 @@ $sharepointAssembly = [System.Reflection.Assembly]::LoadWithPartialName("Microso
 
 Import-Module "WebAdministration"
 	    
-		#Include the SharePoint cmdlets
-		if ((Get-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null)
-		{
-			Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction Inquire -WarningAction Inquire
-		} 
-		
-
+#Include the SharePoint cmdlets
+if ((Get-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null)
+{
+	Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction Inquire -WarningAction Inquire
+} 
 
 #Set path for log files 
 $ERROR_LOG = $logFilePath + "\serviceCleanupErr.log"
@@ -106,17 +104,19 @@ param(
 	#Set reflection binding flags
 	$flags = [Reflection.BindingFlags] "Static,NonPublic,Instance,Public"
 
-	#Get active service application
-	$activeServiceApp = Get-SPServiceApplication | Where { $_.GetType().FullName -ieq $typeName -and $_.Name -ieq $serviceAppName }
+	if ($serviceAppName -ne $null) {
+		#Get active service application
+		$activeServiceApp = Get-SPServiceApplication | Where { $_.GetType().FullName -ieq $typeName -and $_.Name -ieq $serviceAppName }
 	
-	if ($activeServiceApp -eq $null) {
-		Write-Host "Unable to locate a SPServiceApplication with the specified Type Name and Service Application Name."
-		return $null;
+		if ($activeServiceApp -eq $null) {
+			Write-Host "Unable to locate a SPServiceApplication with the specified Type Name and Service Application Name."
+			return $null;
+		}
+
+		#Get active ID
+		$activeId = $activeServiceApp.Id.ToString().Replace("-","").Trim();
 	}
-	
-	#Get active ID
-	$activeId = $activeServiceApp.Id.ToString().Replace("-","").Trim();
-	
+
 	#Create Instance collection of sppersisted objects
 	$instance = [Activator]::CreateInstance($type,$flags,$null,$farm, [System.Globalization.CultureInfo]::CurrentCulture);
 
@@ -298,6 +298,7 @@ Write-Host "Retrieving SPPersistedObjects for $serviceFullTypeName..."
 $filteredObjs = GetPersistedObjectsForType -typeName $serviceFullTypeName -serviceAppName $serviceAppName
 
 if ($filteredObjs -eq $null) {
+	Write-Host "Did not find any instanes of the specified type..."
 	return;
 }
 

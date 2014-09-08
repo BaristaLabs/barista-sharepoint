@@ -9,7 +9,7 @@
     public class SPUserConstructor : ClrFunction
     {
         public SPUserConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPUser", new SPUserInstance(engine.Object.InstancePrototype))
+            : base(engine.Function.InstancePrototype, "SPUser", new SPUserInstance(engine, null))
         {
             this.PopulateFunctions();
         }
@@ -19,7 +19,7 @@
         {
             if (arg1 is SPUserInstance)
             {
-                return new SPUserInstance(this.Engine.Object.InstancePrototype, (arg1 as SPUserInstance).User);
+                return new SPUserInstance(this.Engine, (arg1 as SPUserInstance).User);
             }
 
             var loginName = TypeConverter.ToString(arg1);
@@ -30,7 +30,7 @@
                 throw new JavaScriptException(this.Engine, "Error", "User cannot be found.");
             }
 
-            return new SPUserInstance(this.InstancePrototype, user);
+            return new SPUserInstance(this.Engine, user);
         }
 
         [JSFunction(Name = "doesUserExist")]
@@ -43,19 +43,19 @@
     }
 
     [Serializable]
-    public class SPUserInstance : ObjectInstance
+    public class SPUserInstance : SPPrincipalInstance
     {
         private readonly SPUser m_user;
 
-        public SPUserInstance(ObjectInstance prototype)
-            : base(prototype)
+        public SPUserInstance(ScriptEngine engine, SPUser user)
+            : base(new SPPrincipalInstance(engine, user), user)
         {
-            this.PopulateFields();
+            this.m_user = user;
             this.PopulateFunctions();
         }
 
-        public SPUserInstance(ObjectInstance prototype, SPUser user)
-            : this(prototype)
+        protected SPUserInstance(ObjectInstance prototype, SPUser user)
+            : base(prototype, user)
         {
             this.m_user = user;
         }
@@ -93,12 +93,6 @@
             }
         }
 
-        [JSProperty(Name = "id")]
-        public int Id
-        {
-            get { return m_user.ID; }
-        }
-
         [JSProperty(Name = "isApplicationPrincipal")]
         public bool IsApplicationPrincipal
         {
@@ -121,18 +115,6 @@
         public bool IsSiteAuditor
         {
             get { return m_user.IsSiteAuditor; }
-        }
-
-        [JSProperty(Name = "loginName")]
-        public string LoginName
-        {
-            get { return m_user.LoginName; }
-        }
-
-        [JSProperty(Name = "name")]
-        public string Name
-        {
-            get { return m_user.Name; }
         }
 
         [JSProperty(Name = "notes")]

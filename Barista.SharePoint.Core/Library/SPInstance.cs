@@ -124,7 +124,7 @@
         [JSFunction(Name = "getCurrentUser")]
         public SPUserInstance GetCurrentSPUser()
         {
-            return new SPUserInstance(this.Engine.Object.InstancePrototype, SPBaristaContext.Current.Web.CurrentUser);
+            return new SPUserInstance(this.Engine, SPBaristaContext.Current.Web.CurrentUser);
         }
 
         [JSDoc("Gets the url that corresponds to the incoming request for the current zone.")]
