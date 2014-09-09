@@ -103,8 +103,8 @@ param(
 
 	#Set reflection binding flags
 	$flags = [Reflection.BindingFlags] "Static,NonPublic,Instance,Public"
-
-	if ($serviceAppName -ne $null) {
+	
+	if ($serviceAppName -neq $null) {
 		#Get active service application
 		$activeServiceApp = Get-SPServiceApplication | Where { $_.GetType().FullName -ieq $typeName -and $_.Name -ieq $serviceAppName }
 	
