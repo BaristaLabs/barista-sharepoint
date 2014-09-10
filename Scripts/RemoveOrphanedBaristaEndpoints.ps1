@@ -13,7 +13,14 @@ $sa = Get-SPServiceApplication | Where { $_.Name -ieq "Barista Service Applicati
 if ($sa -ne $null) {
     $webApps = Get-WebApplication | Where { $_.PhysicalPath.EndsWith("Barista") -and $_.Path -ne ("/" + $sa.Id.ToString().Substring(0,36).Replace("-",""))}
 
-    if($webApps -ne $null) { 
+    if($webApps -ne $null) {
+		Write-Host
+		Write-Host "Backing up the IIS Metabase.."
+		
+		#backup IIS Metabase 
+		$folderName = "IISBackup{0}" -f [DateTime]::Today.Ticks
+		Backup-WebConfiguration -Name $folderName
+
         foreach($webApp in $webApps) {
 	        Write-Host "Removing " $webApp.Path
 	        $webAppName = $webApp.path.Replace("/","")
