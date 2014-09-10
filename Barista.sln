@@ -102,6 +102,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 		Scripts\Deploy.ps1 = Scripts\Deploy.ps1
 		Scripts\DeployLatestNightlyBuild.ps1 = Scripts\DeployLatestNightlyBuild.ps1
 		Scripts\RemoveBaristaTypes.ps1 = Scripts\RemoveBaristaTypes.ps1
+		Scripts\RemoveOrphanedBaristaEndpoints.ps1 = Scripts\RemoveOrphanedBaristaEndpoints.ps1
 		Scripts\RestartSharePointServices.ps1 = Scripts\RestartSharePointServices.ps1
 		Scripts\SetupBaristaSearchService.ps1 = Scripts\SetupBaristaSearchService.ps1
 		Scripts\SetupBaristaServiceApplication.ps1 = Scripts\SetupBaristaServiceApplication.ps1
