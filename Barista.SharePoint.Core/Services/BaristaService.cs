@@ -7,6 +7,8 @@
     [Guid("929093C2-7BBF-41DE-8FAB-C4B2A161924D")]
     public class BaristaService : SPIisWebService, IServiceAdministration
     {
+        internal const string ServiceName = "BaristaService";
+
         #region Constructors
         public BaristaService()
         {
@@ -15,7 +17,7 @@
         public BaristaService(SPFarm farm)
             : base(farm)
         {
-            Name = "BaristaService";
+            Name = ServiceName;
         }
         #endregion
 

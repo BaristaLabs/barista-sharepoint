@@ -47,7 +47,7 @@
       }
 
       // ensure proxy installed
-      var serviceProxy = farm.ServiceProxies.GetValue<BaristaServiceProxy>();
+      var serviceProxy = BaristaHelper.GetBaristaServiceProxy(farm);
       if (serviceProxy == null)
       {
         ThrowTerminatingError(new InvalidOperationException("Barista Service Proxy not found (likely not installed)."), ErrorCategory.NotInstalled, this);

@@ -4,6 +4,8 @@
 
     public class BaristaServiceInstance : SPIisWebServiceInstance
     {
+        internal const string ServiceInstanceName = "BaristaServiceInstance";
+
         public BaristaServiceInstance()
         {
         }
@@ -11,7 +13,7 @@
         public BaristaServiceInstance(SPServer server, BaristaService service)
             : base(server, service)
         {
-            Name = "BaristaServiceInstance";
+            Name = ServiceInstanceName;
         }
 
         public override string DisplayName

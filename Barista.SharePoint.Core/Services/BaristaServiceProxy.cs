@@ -10,6 +10,8 @@
                                 typeof(BaristaServiceApplicationProxy))]
     public class BaristaServiceProxy : SPIisWebServiceProxy, IServiceProxyAdministration
     {
+        internal const string ProxyName = "BaristaServiceProxy";
+
         public BaristaServiceProxy()
         {
         }
@@ -17,7 +19,7 @@
         public BaristaServiceProxy(SPFarm farm)
             : base(farm)
         {
-            Name = "BaristaServiceProxy";
+            Name = ProxyName;
         }
 
         public SPServiceApplicationProxy CreateProxy(Type serviceApplicationProxyType, string name, Uri serviceApplicationUri, SPServiceProvisioningContext provisioningContext)

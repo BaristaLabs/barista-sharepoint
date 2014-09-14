@@ -90,7 +90,7 @@ write-host "[[STEP]] Starting Barista Service Application instance on local serv
 write-host 
 
 write-host "Ensure service instance is running on server $env:computername..." -foregroundcolor Gray
-$localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
+$localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "BaristaServiceInstance" }
 
 if ($localServiceInstance -eq $null) {
 	throw "An instance of the Barista Service could not be located. Please redeploy the Barista Solution."

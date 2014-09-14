@@ -11,7 +11,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
         public override void FeatureActivated(SPFeatureReceiverProperties properties)
         {
             // install the service
-            var service = SPFarm.Local.Services.GetValue<BaristaService>();
+            var service = BaristaHelper.GetBaristaService(SPFarm.Local);
             if (service == null)
             {
                 service = new BaristaService(SPFarm.Local);
@@ -20,7 +20,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
 
 
             // install the service proxy
-            var serviceProxy = SPFarm.Local.ServiceProxies.GetValue<BaristaServiceProxy>();
+            var serviceProxy = BaristaHelper.GetBaristaServiceProxy(SPFarm.Local);
             if (serviceProxy == null)
             {
                 serviceProxy = new BaristaServiceProxy(SPFarm.Local);
@@ -36,7 +36,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
         public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
         {
             // uninstall the instance
-            var serviceInstance = SPFarm.Local.Services.GetValue<BaristaServiceInstance>();
+            var serviceInstance = BaristaHelper.GetBaristaServiceInstance(SPFarm.Local);
             if (serviceInstance != null)
             {
                 serviceInstance.Delete();
@@ -44,7 +44,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
             }
 
             // uninstall the service proxy
-            var serviceProxy = SPFarm.Local.ServiceProxies.GetValue<BaristaServiceProxy>();
+            var serviceProxy = BaristaHelper.GetBaristaServiceProxy(SPFarm.Local);
             if (serviceProxy != null)
             {
                 serviceProxy.Delete();
@@ -52,7 +52,7 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
             }
 
             // uninstall the service
-            var service = SPFarm.Local.Services.GetValue<BaristaService>();
+            var service = BaristaHelper.GetBaristaService(SPFarm.Local);
             if (service == null)
                 return;
 

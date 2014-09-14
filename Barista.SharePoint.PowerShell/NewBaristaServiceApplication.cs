@@ -46,7 +46,7 @@
       }
 
       // ensure can hit service application
-      var service = farm.Services.GetValue<BaristaService>();
+      var service = BaristaHelper.GetBaristaService(farm);
       if (service == null)
       {
         ThrowTerminatingError(new InvalidOperationException("Barista Service not found (likely not installed)."), ErrorCategory.ResourceUnavailable, this);
