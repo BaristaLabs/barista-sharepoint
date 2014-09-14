@@ -15,6 +15,7 @@
         public BaristaService(SPFarm farm)
             : base(farm)
         {
+            Name = "BaristaService";
         }
         #endregion
 
