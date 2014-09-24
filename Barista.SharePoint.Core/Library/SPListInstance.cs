@@ -8,7 +8,6 @@
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
-    using System.Collections.Generic;
     using Barista.Library;
     using System.Text;
     using Microsoft.SharePoint.Utilities;
@@ -1117,7 +1116,7 @@
             //    return false; //don't rethrow errors.
             //  });
 
-            SPQuery query = new SPQuery
+            var query = new SPQuery
             {
                 QueryThrottleMode = SPQueryThrottleOption.Override
             };
@@ -1187,7 +1186,7 @@
             //  });
             camlQuery.QueryThrottleMode = SPQueryThrottleOption.Override;
 
-            List<SPListItem> items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
+            var items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
 
             var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
 
