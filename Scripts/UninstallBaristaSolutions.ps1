@@ -8,34 +8,24 @@ function LoadSharePointPowerShellEnvironment
 	}
 }
 
-function WaitForJobToFinish([string]$JobTitle)
-{ 
-    
-    $job = Get-SPTimerJob | where { $_.Title -like $JobTitle }
-    if ($job -eq $null) 
-    {
-        #Write-Host 'Timer job not found'
-    }
-    elseif ($job.LastRunTime -ne [DateTime]::MinValue)
-    {
-        $JobLastRunTime = $job.LastRunTime
-		$JobTitle = $job.Title
-        Write-Host -NoNewLine "Waiting to finish job $JobTitle last run on $JobLastRunTime"
-        
-        while ($job.LastRunTime -eq $JobLastRunTime) 
-        {
-            Write-Host -NoNewLine .
-            Start-Sleep -Seconds 2
-        }
-        Write-Host  "Finished waiting for job.."
-    }
-	return $job;
+function Block-SPDeployment($solution, [bool]$deploying, [string]$status, [int]$percentComplete) {
+	do { 
+		Start-Sleep 2
+		Write-Progress -Activity "Uninstalling solution $($solution.Name)" -Status $status -PercentComplete $percentComplete
+		$solution = Get-SPSolution $solution
+		if ($solution.LastOperationResult -like "*Failed*") { throw "An error occurred during the solution retraction, deployment, or update." }
+		if (!$solution.JobExists -and (($deploying -and $solution.Deployed) -or (!$deploying -and !$solution.Deployed))) { break }
+	} while ($true)
+	sleep 5
 }
 
 function RetractSolution($solution) {
-	if ($solution -ne $null) {
-		#Retract the solution
-		if ($solution.Deployed) {
+	if ($solution -eq $null) {
+		return;
+	}
+
+	#Retract the solution
+	if ($solution.Deployed) {
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Retracting $name" -PercentComplete 0
 		if ($solution.ContainsWebApplicationResource) {
 			$solution | Uninstall-SPSolution -AllWebApplications -Confirm:$false
@@ -45,25 +35,13 @@ function RetractSolution($solution) {
 		#Block until we're sure the solution is no longer deployed.
 		Block-SPDeployment $solution $false "Retracting $name" 12
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution retracted" -PercentComplete 25
-		}
-
-		#Delete the solution
-		Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
-		Get-SPSolution $name | Remove-SPSolution -Confirm:$false
-		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
 	}
-}
 
-function Block-SPDeployment($solution, [bool]$deploying, [string]$status, [int]$percentComplete) {
-    do { 
-      Start-Sleep 2
-      Write-Progress -Activity "Uninstalling solution $($solution.Name)" -Status $status -PercentComplete $percentComplete
-      $solution = Get-SPSolution $solution
-      if ($solution.LastOperationResult -like "*Failed*") { throw "An error occurred during the solution retraction, deployment, or update." }
-      if (!$solution.JobExists -and (($deploying -and $solution.Deployed) -or (!$deploying -and !$solution.Deployed))) { break }
-    } while ($true)
-    sleep 5  
-  }
+	#Delete the solution
+	Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
+	Get-SPSolution $name | Remove-SPSolution -Confirm:$false
+	Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
+}
 
 write-host 
 LoadSharePointPowerShellEnvironment
