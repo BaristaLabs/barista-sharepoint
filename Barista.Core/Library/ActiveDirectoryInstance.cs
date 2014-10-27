@@ -41,9 +41,9 @@
         {
             get
             {
-                if (m_ldapPathOverride.IsNullOrWhiteSpace())
-                    return ADHelper.LdapPath;
-                return m_ldapPathOverride;
+                return m_ldapPathOverride.IsNullOrWhiteSpace()
+                    ? ADHelper.LdapPath
+                    : m_ldapPathOverride;
             }
             set
             {
@@ -83,7 +83,7 @@
         }
 
         [JSFunction(Name = "getADUserByDistinguishedName")]
-        [JSDoc("Returns an object representating the specified user. If no login name is specified, returns the current user.")]
+        [JSDoc("Returns an object representating the specified user.")]
         public object GetADUserByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||
