@@ -129,27 +129,28 @@
             if (SPAdministrationWebApplication.Local.AlternateUrls.Any(u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
                 return;
 
-            var trusted = false;
             var trustedLocations = Utilities.GetFarmKeyValue("BaristaTrustedLocations");
-
+            
             if (String.IsNullOrEmpty(trustedLocations))
                 throw new SecurityAccessDeniedException(
                   "Cannot execute Barista: Unable to read Farm Property Bag Settings to determine trusted location.");
 
-            var trustedLocationsCollection = JArray.Parse(trustedLocations);
-            foreach (var trustedLocation in trustedLocationsCollection.OfType<JObject>())
+            var trustedLocationsJsonArray = JArray.Parse(trustedLocations);
+            var trustedLocationsCollection = trustedLocationsJsonArray.OfType<JObject>().Select(trustedLocation =>
             {
                 var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"),
                   UriKind.Absolute);
 
                 var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
 
-                if ((trustChildren && !trustedLocationUrl.IsBaseOf(currentUri)) || trustedLocationUrl != currentUri)
-                    continue;
+                return new
+                {
+                    trustedLocationUrl,
+                    trustChildren
+                };
+            });
 
-                trusted = true;
-                break;
-            }
+            var trusted = trustedLocationsCollection.Any(trustedLocation => trustedLocation.trustChildren && trustedLocation.trustedLocationUrl.IsBaseOf(currentUri) || trustedLocation.trustedLocationUrl.Equals(currentUri));
 
             if (trusted == false)
                 throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));
