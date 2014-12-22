@@ -1,6 +1,7 @@
 ﻿namespace Barista.Search
 {
-  using Barista.Framework;
+    using System.Collections.ObjectModel;
+    using Barista.Framework;
   using Barista.Newtonsoft.Json;
   using RestSharp;
   using RestSharp.Serializers;
@@ -121,6 +122,13 @@
       }));
 
       return response.Data;
+    }
+
+    public ICollection<string> GetFieldNames(string indexName)
+    {
+        var response = ExecuteRestRequest<Collection<string>>("GetFieldNames", Method.GET, request => request.AddParameter("indexName", indexName));
+
+        return response.Data;
     }
 
     public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)

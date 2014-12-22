@@ -1138,6 +1138,7 @@
     <Compile Include="Search\IQuery.cs" />
     <Compile Include="Search\Library\FacetedSearchResultInstance.cs" />
     <Compile Include="Search\Library\JsonDocumentInstance.cs" />
+    <Compile Include="Search\Library\MultiFieldQueryParserInstance.cs" />
     <Compile Include="Search\Library\ODataQueryInstance.cs" />
     <Compile Include="Search\Library\QueryParserQueryInstance.cs" />
     <Compile Include="Search\Library\SearchResultInstance.cs" />

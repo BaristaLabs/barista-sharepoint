@@ -125,6 +125,19 @@
             return explanation;
         }
 
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
+        public ICollection<string> GetFieldNames(string indexName)
+        {
+            var index = GetOrAddIndex(indexName, true);
+            IndexSearcher indexSearcher;
+            using (index.GetSearcher(out indexSearcher))
+            {
+                var fieldNames = indexSearcher.IndexReader.GetFieldNames(IndexReader.FieldOption.ALL);
+                return fieldNames;
+            }
+        }
+
         /// <summary>
         /// Returns a highlighted string for the specified query, results doc id, fieldname and fragment size.
         /// </summary>
