@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
+    using System.IO;
     using Barista.Extensions;
     using Barista.SharePoint.Bundles;
     using Microsoft.SharePoint;
@@ -81,7 +82,22 @@
                 var url = request.ExtendedProperties["SPListItemUrl"];
 
                 if (String.IsNullOrEmpty(url) == false)
-                    this.ListItem = this.Web.GetListItem(url);
+                {
+                    Uri listItemUri;
+
+                    //In the two places this gets used, this is a site-relative URL.
+                    if (Uri.TryCreate(new Uri(this.Web.Url.EnsureEndsWith("/")), url.EnsureStartsWith("/"), out listItemUri))
+                    {
+                        try
+                        {
+                            this.ListItem = this.Web.GetListItem(listItemUri.ToString());
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            //Do Nothing..
+                        }
+                    }
+                }
             }
 
             if (!request.ExtendedProperties.ContainsKey("SPFileId"))
