@@ -61,7 +61,7 @@
           {
             if (s_local == null)
             {
-              s_local = new BaristaDiagnosticsService(BaristaDiagnosticsService.DiagnosticsAreaName, SPFarm.Local);
+              s_local = SPDiagnosticsServiceBase.GetLocal<BaristaDiagnosticsService>();
             }
           }
         }
