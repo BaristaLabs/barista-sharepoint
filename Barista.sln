@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
 EndProject
@@ -13,13 +13,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WorkflowActivities", "Barista.SharePoint.WorkflowActivities\Barista.SharePoint.WorkflowActivities.csproj", "{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5A961B80-5532-4AC2-873F-DC1F29BAC26C}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A745E621-0AC3-4826-896F-DD46BEE2CA0B}"
 	ProjectSection(SolutionItems) = preProject

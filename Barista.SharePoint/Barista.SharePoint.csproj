@@ -14,7 +14,6 @@
     <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SandboxedSolution>False</SandboxedSolution>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
     <ActiveDeploymentConfiguration>Barista Deployment</ActiveDeploymentConfiguration>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>..\Scripts\UninstallBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell1>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>..\Scripts\UninstallBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell2>
@@ -29,6 +28,7 @@
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>..\Scripts\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>
     <CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>../Scripts/Deploy.ps1 -Config ./Deployment/Solutions-LocalDev-Debug.xml</CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>
     <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -3714,7 +3714,6 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{BB1F664B-9266-4fd6-B973-E1E44974B511}">
@@ -3734,4 +3733,11 @@
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)PreBuild.bat $(SolutionDir)</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
 </Project>
