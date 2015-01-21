@@ -16,6 +16,7 @@
     {
       var bundlerInstance = new WebOptimizationInstance(engine)
       {
+          FileKeyPrefix = () => "",
         GetAbsoluteUrlFromPath = filePath =>
         {
           string result;
