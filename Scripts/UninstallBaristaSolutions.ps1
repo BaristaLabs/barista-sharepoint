@@ -63,7 +63,7 @@ Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Disable-SPFeature –Identity $($identity) -force -Confirm:0 -ErrorAction SilentlyContinue
 "@
 
-& powershell.exe -Version 2 $args
+& powershell.exe -Version 3 $args
 Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
 
 

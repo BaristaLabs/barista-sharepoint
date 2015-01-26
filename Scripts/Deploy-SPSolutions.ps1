@@ -120,7 +120,7 @@ function global:Deploy-SPSolutions() {
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Enable-SPFeature –Identity $($identity) -Url $($url)
 "@
-						& powershell.exe -Version 2 $args
+						& powershell.exe -Version 3 $args
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
 					}
 					else {
@@ -129,7 +129,7 @@ Enable-SPFeature –Identity $($identity) -Url $($url)
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Enable-SPFeature –Identity $($identity)
 "@
-						& powershell.exe -Version 2 $args
+						& powershell.exe -Version 3 $args
 						Write-Progress -Activity "Enabling Farm Feature $identity" -Status "Enabled" -Completed
 					}
                 }
@@ -141,7 +141,7 @@ Enable-SPFeature –Identity $($identity)
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Disable-SPFeature –Identity $($identity) -url $($url) -Confirm:0
 "@
-						& powershell.exe -Version 2 {$args}
+						& powershell.exe -Version 3 {$args}
 						Write-Progress -Activity "Disabling Feature $identity on $url" -Status "Disabled" -Completed
 					}
 					else {
@@ -150,7 +150,7 @@ Disable-SPFeature –Identity $($identity) -url $($url) -Confirm:0
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Disable-SPFeature –Identity $($identity) -Confirm:0
 "@
-						& powershell.exe -Version 2 $args
+						& powershell.exe -Version 3 $args
 						Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
 					}
 					}
@@ -184,7 +184,7 @@ Disable-SPFeature –Identity $($identity) -Confirm:0
         if ($solution -ne $null -and $UpgradeExisting) {
           # Just update the solution, don't retract and redeploy.
           Write-Progress -Activity "Deploying solution $name" -Status "Updating $name" -PercentComplete -1
-          $solution | Update-SPSolution -CASPolicies:$($solution.ContainsCasPolicy) `
+          $solution | Update-SPSolution `
             -GACDeployment:$($solution.ContainsGlobalAssembly) `
             -LiteralPath $item.FullName
         
@@ -223,18 +223,18 @@ Disable-SPFeature –Identity $($identity) -Confirm:0
         
         if (!$solution.ContainsWebApplicationResource) {
           Write-Progress -Activity "Deploying solution $name" -Status "Installing $name" -PercentComplete 75
-          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -Confirm:$false -Force:$true
+          $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -Confirm:$false -Force:$true
           Block-SPDeployment $solution $true "Installing $name" 85
         } else {
           if ($WebApplication -eq $null -or $WebApplication.Length -eq 0) {
             Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to all Web Applications" -PercentComplete 75
-            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -CASPolicies:$($solution.ContainsCasPolicy) -AllWebApplications -Force:$true -Confirm:$false
+            $solution | Install-SPSolution -GACDeployment:$($solution.ContainsGlobalAssembly) -AllWebApplications -Force:$true -Confirm:$false
             Block-SPDeployment $solution $true "Installing $name to all Web Applications" 85
           } else {
             $WebApplication | ForEach-Object {
               $webApp = $_.Read()
               Write-Progress -Activity "Deploying solution $name" -Status "Installing $name to $($webApp.Url)" -PercentComplete 75
-              $solution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$cas -WebApplication $webApp -Confirm:$false -Force:$true
+              $solution | Install-SPSolution -GACDeployment:$gac -WebApplication $webApp -Confirm:$false -Force:$true
               Block-SPDeployment $solution $true "Installing $name to $($webApp.Url)" 85
             }
           }

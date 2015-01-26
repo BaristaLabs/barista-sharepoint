@@ -291,7 +291,7 @@
       }
 
       byte[] buffer =
-          File.ReadAllBytes(SPUtility.GetGenericSetupPath(@"Template\Features\DocumentSet\docsethomepage.aspx"));
+          File.ReadAllBytes(SPUtility.GetVersionedGenericSetupPath(@"Template\Features\DocumentSet\docsethomepage.aspx", SPUtility.ContextCompatibilityLevel));
       SPFolder resourceFolder = contentType.ResourceFolder;
       return resourceFolder.Files.Add("docsethomepage.aspx", buffer, true);
     }

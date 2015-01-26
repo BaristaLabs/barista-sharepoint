@@ -10,11 +10,11 @@ if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyCo
 
 Write-Host "Uninstalling Barista from from $env:COMPUTERNAME"
 
-& powershell.exe -Version 2 "& .\UninstallBaristaSearchService.ps1"
-& powershell.exe -Version 2 "& .\UninstallBaristaServiceApplication.ps1"
-& powershell.exe -Version 2 "& .\UninstallBaristaSolutions.ps1"
+& powershell.exe -Version 3 "& .\UninstallBaristaSearchService.ps1"
+& powershell.exe -Version 3 "& .\UninstallBaristaServiceApplication.ps1"
+& powershell.exe -Version 3 "& .\UninstallBaristaSolutions.ps1"
 
 #Cleanup
-& powershell.exe -Version 2 "& .\RemoveBaristaTypes.ps1"
+& powershell.exe -Version 3 "& .\RemoveBaristaTypes.ps1"
 
 Write-Host "Completed."

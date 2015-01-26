@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="true" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="true" sharePointProductVersion="15.0" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
     <projectOutputAssembly location="Barista.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.Core\Barista.Core.csproj" />
     <projectOutputAssembly location="Barista.SharePoint.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj" />
     <customAssembly location="wnvhtmlconvert.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\wnvhtmlconvert.dll" />
     <customAssembly location="itextsharp.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\iTextSharp.5.3.3\lib\itextsharp.dll" />
     <customAssembly location="HtmlAgilityPack.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll" />
-    <customAssembly location="System.Threading.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll" />
     <customAssembly location="Barista.Interop.ActiveDs.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Barista.Interop.ActiveDs.dll" />
     <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.3.0.3\lib\NET35\Lucene.Net.dll" />
     <customAssembly location="Lucene.Net.Contrib.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Core.dll" />

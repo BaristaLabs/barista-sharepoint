@@ -240,10 +240,17 @@
             return SPUtility.GetFullUrl(site.Site, webUrl);
         }
 
-        [JSFunction(Name = "getGenericSetupPath")]
+        
+        [JSFunction(Name = "getGenericSetupPath", Deprecated = true)]
         public string GetGenericSetupPath(string subDir)
         {
             return SPUtility.GetGenericSetupPath(subDir);
+        }
+
+        [JSFunction(Name = "getGenericSetupPath")]
+        public string GetGenericSetupPath(string subDir, int desiredPathVersion)
+        {
+            return SPUtility.GetVersionedGenericSetupPath(subDir, desiredPathVersion);
         }
 
         [JSFunction(Name = "getLocalizedString")]

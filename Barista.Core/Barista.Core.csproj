@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Barista</RootNamespace>
     <AssemblyName>Barista.Core</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -30,6 +30,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +41,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -167,10 +169,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -952,7 +950,7 @@
     <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
     <Compile Include="ErrorEventArgs.cs" />
     <Compile Include="Extensions\DisposableAction.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <None Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="Extensions\TimeSpanExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -1263,7 +1261,7 @@
     <Compile Include="DocumentStore\EntityMigrationStrategyCollection.cs" />
     <Compile Include="DocumentStore\EntityPartDefinition.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
-    <Compile Include="Extensions\ValidationAttributeExtensions.cs" />
+    <None Include="Extensions\ValidationAttributeExtensions.cs" />
     <Compile Include="Imports\Linq2Rest\ExpressionVisitor.cs" />
     <Compile Include="Imports\Linq2Rest\GeneralExtensions.cs" />
     <Compile Include="Imports\Linq2Rest\IModelFilter.cs" />
@@ -1510,11 +1508,11 @@
     <Compile Include="Extensions\TheadPoolExtensions.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsInstance.cs" />
     <Compile Include="TeamFoundationServer\TfsCredentialsProvider.cs" />
-    <Compile Include="Tuple.cs" />
+    <None Include="Tuple.cs" />
     <Compile Include="ValidationAttributeStore.cs" />
     <Compile Include="ValidationContext.cs" />
     <Compile Include="ValidationResult.cs" />
-    <Compile Include="Validator.cs" />
+    <None Include="Validator.cs" />
     <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
     <Compile Include="WebSockets\WebSocketEventScript.cs" />
     <Compile Include="WebSockets\BaristaWebSocketsServiceConfiguration.cs" />

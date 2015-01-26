@@ -25,4 +25,4 @@ if '%errorlevel%' NEQ '0' (
     CD /D "%~dp0"
 :--------------------------------------
 
-C:\Windows\System32\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -NoExit "& .\Deploy.ps1 %1 %2 %3 %4 %5 %6 %7"
+C:\Windows\System32\WindowsPowerShell\v1.0\PowerShell.exe -Version 3 -NoExit "& .\Deploy.ps1 %1 %2 %3 %4 %5 %6 %7"
