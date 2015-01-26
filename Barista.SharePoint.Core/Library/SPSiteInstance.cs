@@ -1164,12 +1164,13 @@
         {
             m_site.UpdateValidationKey();
         }
-
+#if !SP2013
         [JSFunction(Name = "visualUpgradeWebs")]
         public void VisualUpgradeWebs()
         {
             m_site.VisualUpgradeWebs();
         }
+#endif
 
         [JSDoc("Writes the specified contents to the file located at the specified url")]
         [JSFunction(Name = "write")]

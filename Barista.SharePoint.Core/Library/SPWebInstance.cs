@@ -858,9 +858,19 @@
         }
 
         [JSProperty(Name = "requestAccessEnabled")]
-        public bool RequestAccessEnabled
+        public object RequestAccessEnabled
         {
-            get { return m_web.RequestAccessEnabled; }
+            get
+            {
+                try
+                {
+                    return m_web.RequestAccessEnabled;
+                }
+                catch (Exception)
+                {
+                    return Undefined.Value;
+                }
+            }
         }
 
         //ReusableAcl
@@ -987,17 +997,21 @@
             set { m_web.SyndicationEnabled = value; }
         }
 
+#if !SP2013
         [JSProperty(Name = "theme")]
         public string Theme
         {
             get { return m_web.Theme; }
         }
+#endif
 
+#if !SP2013
         [JSProperty(Name = "themeCssUrl")]
         public string ThemeCssUrl
         {
             get { return m_web.ThemeCssUrl; }
         }
+#endif
 
         [JSProperty(Name = "themeCssFolderUrl")]
         public string ThemeCssFolderUrl
@@ -1036,12 +1050,14 @@
             set { m_web.UIVersion = value; }
         }
 
+#if !SP2013
         [JSProperty(Name = "uiVersionConfigurationEnabled")]
         public bool UIVersionConfigurationEnabled
         {
             get { return m_web.UIVersionConfigurationEnabled; }
             set { m_web.UIVersionConfigurationEnabled = value; }
         }
+#endif
 
         [JSProperty(Name = "url")]
         public string Url
@@ -1212,11 +1228,13 @@
             return new SPFeatureInstance(this.Engine.Object.InstancePrototype, activatedFeature);
         }
 
+#if !SP2013
         [JSFunction(Name = "applyTheme")]
         public void ApplyTheme(string newTheme)
         {
             m_web.ApplyTheme(newTheme);
         }
+#endif
 
         [JSFunction(Name = "applyWebTemplate")]
         public void ApplyWebTemplate(object webTemplate)

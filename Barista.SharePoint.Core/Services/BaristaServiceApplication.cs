@@ -66,7 +66,7 @@
 
         protected override string InstallPath
         {
-            get { return SPUtility.GetGenericSetupPath(@"WebServices\Barista"); }
+            get { return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.ContextCompatibilityLevel); }
         }
 
         protected override string VirtualPath
