@@ -529,6 +529,24 @@
         }
 
         /// <summary>
+        /// Shutsdown (flushes and closes) the specified index.
+        /// </summary>
+        /// <param name="indexName"></param>
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        public void Shutdown(string indexName)
+        {
+            try
+            {
+                CloseIndexWriter(indexName, true);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// When implemented in a concrete class, returns the lucene directory that corresponds to the specified name.
         /// </summary>
         /// <param name="indexName"></param>
@@ -580,6 +598,9 @@
         /// <returns></returns>
         protected Index GetOrAddIndex(string indexName, bool createIfMissing)
         {
+            //Index name is case insensitive.
+            indexName = indexName.ToLowerInvariant();
+
             return Indexes.GetOrAdd(indexName, key =>
               {
                   var targetDirectory = GetLuceneDirectoryFromIndexName(indexName);
@@ -889,6 +910,7 @@
 
         public static void CloseIndexWriter(string indexName, bool waitForMerges)
         {
+            indexName = indexName.ToLowerInvariant();
             Index index;
             if (Indexes.TryRemove(indexName, out index))
             {

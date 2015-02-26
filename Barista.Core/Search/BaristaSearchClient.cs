@@ -101,5 +101,10 @@
         {
             Channel.SetFieldOptions(indexName, fieldOptions);
         }
+
+        public void Shutdown(string indexName)
+        {
+            Channel.Shutdown(indexName);
+        }
     }
 }

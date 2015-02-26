@@ -48,5 +48,8 @@
 
         [OperationContract]
         void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions);
+
+        [OperationContract]
+        void Shutdown(string indexName);
     }
 }

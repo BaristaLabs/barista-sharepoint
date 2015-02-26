@@ -415,5 +415,22 @@
                 throw;
             }
         }
+
+        public void Shutdown(string indexName)
+        {
+            try
+            {
+                using (var searchClient = GetSearchClient())
+                {
+                    searchClient.Shutdown(indexName);
+                }
+            }
+            catch (CommunicationObjectFaultedException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+                throw;
+            }
+        }
     }
 }
