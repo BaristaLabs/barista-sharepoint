@@ -4,7 +4,6 @@
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using System;
-    using Microsoft.TeamFoundation.Framework.Client.Catalog.Objects;
 
     [Serializable]
     public class PerformanceCounterCategoryConstructor : ClrFunction
