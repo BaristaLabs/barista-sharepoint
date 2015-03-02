@@ -57,7 +57,7 @@
             m_mailAddressCollection.Add(addresses);
         }
 
-        [JSFunction(Name = "toString")]
+        [JSFunction(Name = "toMailAddressString")]
         public override string ToString()
         {
             return m_mailAddressCollection.ToString();
