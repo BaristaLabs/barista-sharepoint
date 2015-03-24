@@ -464,7 +464,7 @@
     public bool HasEntityPart(Guid entityId, string entityPartName)
     {
       var entityParts = ListEntityParts(entityId);
-      return entityParts.Any(ep => ep.Name == entityPartName);
+      return entityParts.Any(ep => String.Equals(ep.Name, entityPartName, StringComparison.InvariantCultureIgnoreCase));
     }
 
     /// <summary>
