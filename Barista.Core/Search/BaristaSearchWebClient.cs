@@ -224,5 +224,13 @@
         fieldOptions
       }));
     }
+
+    public void Shutdown(string indexName)
+    {
+        ExecuteRestRequest("Shutdown", Method.POST, request => request.AddBody(new
+        {
+            indexName
+        }));
+    }
   }
 }

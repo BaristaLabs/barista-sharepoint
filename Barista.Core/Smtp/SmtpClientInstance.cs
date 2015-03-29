@@ -1,12 +1,12 @@
 ﻿namespace Barista.Smtp
 {
-    using System.ComponentModel;
-    using System.Net.Mail;
     using Barista.Extensions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
     using Barista.Library;
+    using System;
+    using System.ComponentModel;
+    using System.Net.Mail;
     using TypeConverter = Barista.Jurassic.TypeConverter;
 
     [Serializable]

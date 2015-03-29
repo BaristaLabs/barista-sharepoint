@@ -35,7 +35,7 @@
         private const string CommentFieldDefXml =
 @"<Field ID=""{cfbc77e4-1fe5-4129-9b97-60021f9dd92f}""
     Group=""Document Store Site Columns""
-    Name=""Comments""
+    Name=""DocumentEntityComments""
     DisplayName=""Comments""
     Type=""Note""
     AppendOnly=""true"">
@@ -44,7 +44,7 @@
         private const string CategoryFieldDefXml =
 @"<Field ID=""{36b8af8b-a773-478c-abf3-038d198e90b2}""
     Group=""Document Store Site Columns""
-    Name=""Category""
+    Name=""DocumentEntityCategory""
     DisplayName=""Category""
     Type=""Text"">
 </Field>";

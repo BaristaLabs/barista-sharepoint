@@ -70,7 +70,7 @@
             };
 
             if (String.IsNullOrEmpty(category) == false)
-                properties.Add("Category", category);
+                properties.Add("DocumentEntityCategory", category);
 
             web.AllowUnsafeUpdates = true;
             try
@@ -263,7 +263,7 @@
                     if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                         throw new InvalidOperationException("Insufficent Permissions.");
 
-                    entityPartFile.Item["Category"] = category;
+                    entityPartFile.Item["DocumentEntityCategory"] = category;
                     entityPartFile.Item.SystemUpdate(true);
 
 

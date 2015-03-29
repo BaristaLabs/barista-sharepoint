@@ -1,11 +1,10 @@
 ﻿namespace Barista.SharePoint.DocumentStore
 {
     using Barista.DocumentStore;
-    using Microsoft.Office.DocumentManagement.DocumentSets;
     using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Utilities;
     using System;
     using System.Diagnostics;
-    using Microsoft.SharePoint.Utilities;
 
     /// <summary>
     /// Represents a SharePoint-backed Document Store that uses document sets as containers to hold entities.
@@ -290,7 +289,7 @@
                     if (m_documentStoreWeb == null)
                     {
                         m_documentStoreSite = new SPSite(this.DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
-                        m_documentStoreWeb = m_elevatedDocumentStoreSite.OpenWeb();
+                        m_documentStoreWeb = m_documentStoreSite.OpenWeb();
                     }
                 }
             }

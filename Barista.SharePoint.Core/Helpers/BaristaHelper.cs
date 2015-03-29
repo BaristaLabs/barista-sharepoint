@@ -54,7 +54,7 @@
             var indexDefinitionCollection = JsonConvert.DeserializeObject<IList<IndexDefinition>>(indexDefinitions);
             var indexDefinitionToUse =
               indexDefinitionCollection.FirstOrDefault(
-                id => id.IndexName.IsNullOrWhiteSpace() == false && id.IndexName.ToLowerInvariant() == indexName.ToLowerInvariant());
+                id => String.Equals(id.IndexName, indexName, StringComparison.InvariantCultureIgnoreCase));
 
             if (indexDefinitionToUse == null)
                 return null;

@@ -298,7 +298,7 @@ Write-Host "Retrieving SPPersistedObjects for $serviceFullTypeName..."
 $filteredObjs = GetPersistedObjectsForType -typeName $serviceFullTypeName -serviceAppName $serviceAppName
 
 if ($filteredObjs -eq $null) {
-	Write-Host "Did not find any instanes of the specified type..."
+	Write-Host "Did not find any instances of the specified type..."
 	return;
 }
 

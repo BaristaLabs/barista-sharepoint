@@ -132,6 +132,7 @@
       instance.Common.RegisterBundle(new JsonDataBundle());
       instance.Common.RegisterBundle(new ActiveDirectoryBundle());
       instance.Common.RegisterBundle(new DocumentBundle());
+      instance.Common.RegisterBundle(new DiagnosticsBundle());
       instance.Common.RegisterBundle(new UtilityBundle());
       instance.Common.RegisterBundle(new DocumentStoreBundle());
       instance.Common.RegisterBundle(new RavenClientBundle());

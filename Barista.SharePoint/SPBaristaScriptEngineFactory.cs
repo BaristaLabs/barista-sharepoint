@@ -75,6 +75,7 @@
                 instance.Common.RegisterBundle(new SharePointWorkflowBundle());
                 instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
                 instance.Common.RegisterBundle(new SPDocumentBundle());
+                instance.Common.RegisterBundle(new DiagnosticsBundle());
                 instance.Common.RegisterBundle(new iCalBundle());
                 instance.Common.RegisterBundle(new SmtpBundle());
                 instance.Common.RegisterBundle(new K2Bundle());

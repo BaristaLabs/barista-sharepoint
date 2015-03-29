@@ -577,6 +577,13 @@
             return this;
         }
 
+        [JSFunction(Name = "shutdown")]
+        public SearchServiceInstance Shutdown()
+        {
+            m_baristaSearchServiceProxy.Shutdown(this.IndexName);
+            return this;
+        }
+
         private FieldOptions CoerceFieldOptions(ObjectInstance fieldOptions)
         {
             if (fieldOptions == null)

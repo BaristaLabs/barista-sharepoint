@@ -35,7 +35,7 @@
         {
             var result = new Attachment
               {
-                  Category = file.Item["Category"] as string,
+                  Category = file.Item["DocumentEntityCategory"] as string,
                   Path = file.Item["Path"] as string,
                   ETag = file.ETag,
                   FileName = file.Name,
@@ -88,9 +88,9 @@
             var result = new Comment
               {
                   Id = listItemVersion.VersionId,
-                  CommentText = listItemVersion["Comments"] as string,
+                  CommentText = listItemVersion["DocumentEntityComments"] as string,
                   /*Source = listItemVersion["Source"] as string,
-                  Category = listItemVersion["Category"] as string,
+                  Category = listItemVersion["DocumentEntityCategory"] as string,
                   Tags = listItemVersion["Tags"] as ICollection<string>,*/
                   Created = listItemVersion.Created.ToLocalTime(),
                   CreatedBy = new User
@@ -377,7 +377,7 @@
                 //Do Nothing...
             }
 
-            entityPart.Category = file.Item["Category"] as string;
+            entityPart.Category = file.Item["DocumentEntityCategory"] as string;
             entityPart.ETag = file.ETag;
             entityPart.Name = file.Name.Substring(0, file.Name.Length - Constants.DocumentSetEntityPartExtension.Length);
             entityPart.Created = ((DateTime)file.Item[SPBuiltInFieldId.Created]).ToLocalTime();

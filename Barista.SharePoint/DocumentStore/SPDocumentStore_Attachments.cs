@@ -66,7 +66,7 @@
         };
 
                 if (String.IsNullOrEmpty(category) == false)
-                    properties.Add("Category", category);
+                    properties.Add("DocumentEntityCategory", category);
 
                 if (String.IsNullOrEmpty(path) == false)
                 {
@@ -171,7 +171,7 @@
         };
 
                 if (String.IsNullOrEmpty(category) == false)
-                    properties.Add("Category", category);
+                    properties.Add("DocumentEntityCategory", category);
 
                 if (String.IsNullOrEmpty(path) == false)
                     properties.Add("Path", path);

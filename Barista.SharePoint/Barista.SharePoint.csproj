@@ -22,12 +22,12 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>..\Scripts\SetupBaristaServiceApplication.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell3>
-    <PreDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -file "%24%28SolutionDir%29Scripts\VSDeploy-PreSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PreDeploymentCommand>
+    <PreDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 3 -file "%24%28SolutionDir%29Scripts\VSDeploy-PreSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PreDeploymentCommand>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>..\Scripts\SetupBaristaServiceApplicationProxy.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell4>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>..\Scripts\SetupBaristaSearchService.ps1</CKSDEVDeploy_Barista_Service_ApplicationPowerShell5>
     <CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>../Scripts/Deploy.ps1 -Config ./Deployment/Solutions-LocalDev-Debug.xml</CKSDEVDeploy_Barista_Service_Application_Via_Deploy_ScriptPowerShell1>
-    <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 2 -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
+    <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 3 -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
     <RestorePackages>true</RestorePackages>
     <ProjectMode>SharePointCustomization</ProjectMode>
     <TargetOfficeVersion>15.0</TargetOfficeVersion>
@@ -684,18 +684,24 @@
     <Content Include="UnitTests\BaristaUnitTests\BaristaActiveDirectoryTests.js" />
     <Content Include="UnitTests\BaristaUnitTests\Elements.xml" />
     <Content Include="UnitTests\BaristaUnitTests\index.html" />
-    <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreAttachment\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="DocumentStore\DocumentStoreContainer\EditDlg.htm" />
     <Content Include="DocumentStore\DocumentStoreContainer\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreContainer\FileDlg.htm" />
     <Content Include="DocumentStore\DocumentStoreContainer\Repair.aspx" />
     <Content Include="DocumentStore\DocumentStoreContainer\Upload.aspx" />
     <Content Include="DocumentStore\DocumentStoreDefaultDocuments\Elements.xml" />
-    <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreEntityPart\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\DocSetHomePage.aspx" />
     <Content Include="DocumentStore\DocumentStoreEntityWelcomePage\Elements.xml" />
     <Content Include="DocumentStore\DocumentStoreEntity\Elements.xml" />
-    <Content Include="DocumentStore\DocumentStoreSiteColumns\Elements.xml" />
+    <Content Include="DocumentStore\DocumentStoreSiteColumns\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Features\BaristaServiceInstaller\BaristaServiceInstaller.Template.xml">
       <DependentUpon>BaristaServiceInstaller.feature</DependentUpon>
     </Content>

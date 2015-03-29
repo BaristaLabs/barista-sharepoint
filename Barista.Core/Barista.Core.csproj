@@ -201,6 +201,7 @@
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\DiagnosticsBundle.cs" />
     <Compile Include="Bundles\iCalBundle.cs" />
     <Compile Include="Bundles\LoDashBundle.cs" />
     <Compile Include="Bundles\SmtpBundle.cs" />
@@ -230,6 +231,8 @@
     <Compile Include="Configuration\IndexDefinitionCollection.cs" />
     <Compile Include="Configuration\IndexDefinition.cs" />
     <Compile Include="BaristaScriptMutexManager.cs" />
+    <Compile Include="Diagnostics\PerformanceCounterCategoryInstance.cs" />
+    <Compile Include="Diagnostics\PerformanceCounterInstance.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
     <Compile Include="DocumentStore\EntityExistsException.cs" />
     <Compile Include="DocumentStore\EntityMetadata.cs" />

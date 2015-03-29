@@ -89,7 +89,7 @@
             var versions = defaultEntityPart.Item.Versions;
             foreach (var itemVersion in versions.OfType<SPListItemVersion>()
                 .OrderBy(v => Double.Parse(v.VersionLabel))
-                .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
+                .Where(itemVersion => String.CompareOrdinal(itemVersion["DocumentEntityComments"] as string, lastComment[0].CommentText) != 0))
             {
                 lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
                 result.Add(lastComment[0]);
@@ -186,7 +186,7 @@
             var versions = entityPart.Item.Versions;
             foreach (var itemVersion in versions.OfType<SPListItemVersion>()
                 .OrderBy(v => Double.Parse(v.VersionLabel))
-                .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
+                .Where(itemVersion => String.CompareOrdinal(itemVersion["DocumentEntityComments"] as string, lastComment[0].CommentText) != 0))
             {
                 lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
                 result.Add(lastComment[0]);
@@ -281,7 +281,7 @@
             var versions = attachment.Item.Versions;
             foreach (var itemVersion in versions.OfType<SPListItemVersion>()
                 .OrderBy(v => Double.Parse(v.VersionLabel))
-                .Where(itemVersion => String.CompareOrdinal(itemVersion["Comments"] as string, lastComment[0].CommentText) != 0))
+                .Where(itemVersion => String.CompareOrdinal(itemVersion["DocumentEntityComments"] as string, lastComment[0].CommentText) != 0))
             {
                 lastComment[0] = SPDocumentStoreHelper.MapCommentFromSPListItemVersion(itemVersion);
                 result.Add(lastComment[0]);
