@@ -553,6 +553,7 @@
     <Compile Include="Imports\iCal\Utility\RecurrenceUtil.cs" />
     <Compile Include="Imports\iCal\Utility\SerializationUtil.cs" />
     <Compile Include="Imports\iCal\Utility\TextUtil.cs" />
+    <Compile Include="IScriptEngine.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonObjectId.cs" />

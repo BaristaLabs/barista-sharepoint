@@ -202,7 +202,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SPBaristaScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaJurassicScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaV8ScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ADMIN\BaristaService\Styles\bootstrap-theme.css.map" />
@@ -242,6 +243,9 @@
       <SharePointProjectItemId>{d0ee4eb7-b183-4b86-bd61-7696ec3ff84b}</SharePointProjectItemId>
     </None>
     <None Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe.config" />
+    <None Include="ISAPI\Barista\v2\web.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Layouts\BaristaFiddle\Scripts\Vendor\codemirror-2.37\.gitattributes" />
     <None Include="Layouts\BaristaFiddle\Scripts\Vendor\codemirror-2.37\.gitignore" />
     <None Include="Layouts\BaristaFiddle\Scripts\Vendor\codemirror-2.37\.travis.yml" />
@@ -434,6 +438,7 @@
     <Content Include="ISAPI\BaristaServices\Search\Topshelf.dll" />
     <Content Include="ISAPI\Barista\v1\BaristaSoap.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaWcf.svc" />
+    <Content Include="ISAPI\Barista\v2\Barista.svc" />
     <Content Include="Layouts\BaristaFiddle\Styles\bootstrap-2.3.1\css\bootstrap-responsive.css" />
     <Content Include="Layouts\BaristaFiddle\Styles\bootstrap-2.3.1\css\bootstrap-responsive.min.css" />
     <Content Include="Layouts\BaristaFiddle\Styles\bootstrap-2.3.1\css\bootstrap.css" />

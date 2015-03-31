@@ -104,7 +104,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
         /// <param name="isNewScriptEngineInstance">if set to <c>true</c> [is new script engine instance].</param>
         /// <param name="errorInInitialization">if set to <c>true</c> [error in initialization].</param>
         /// <returns>ScriptEngine.</returns>
-        public abstract ScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
+        public abstract IScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
                                                      out bool errorInInitialization);
 
         public virtual void UpdateResponseWithJavaScriptExceptionDetails(ScriptEngine engine, JavaScriptException exception, BrewResponse response)

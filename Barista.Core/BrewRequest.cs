@@ -309,6 +309,13 @@
         }
 
         [DataMember]
+        public string ScriptEngineFactory
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
         public IDictionary<string, string> ServerVariables
         {
             get;

@@ -334,6 +334,7 @@
         private static void Brew(string code, string codePath)
         {
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
@@ -356,6 +357,7 @@
         private static Stream Pull(string code, string codePath)
         {
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
@@ -417,7 +419,10 @@
                 bool errorInInitialization;
 
                 var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
 
                 if (errorInInitialization)
                     return response;
@@ -519,7 +524,10 @@
                 bool errorInInitialization;
 
                 var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
 
                 if (errorInInitialization)
                     return;

@@ -9,7 +9,7 @@
   /// instantiated in order to execute javascript code.
   /// </summary>
   [Serializable]
-  public sealed class ScriptEngine : System.Runtime.Serialization.ISerializable
+  public sealed class ScriptEngine : System.Runtime.Serialization.ISerializable, IScriptEngine
   {
     // Compatibility mode.
     private CompatibilityMode m_compatibilityMode;

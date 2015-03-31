@@ -137,15 +137,21 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
-                    true);
+                if (String.IsNullOrWhiteSpace(request.ScriptEngineFactory))
+                    throw new InvalidOperationException("A ScriptEngineFactory must be specified as part of a BrewRequest.");
+
+                var baristaScriptEngineFactoryType = Type.GetType(request.ScriptEngineFactory, true);
 
                 if (baristaScriptEngineFactoryType == null)
-                    throw new InvalidOperationException("Unable to locate the SPBraistaScriptEngineFactory");
+                    throw new InvalidOperationException("Unable to locate the specified ScriptEngineFactory: " + request.ScriptEngineFactory);
 
                 var scriptEngineFactory =
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
 
                 if (errorInInitialization)
                     return response;
@@ -272,7 +278,7 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
+                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
                     true);
 
                 if (baristaScriptEngineFactoryType == null)
@@ -282,7 +288,10 @@
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
 
                 var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
-                                                                 out errorInInitialization);
+                                                                 out errorInInitialization) as Jurassic.ScriptEngine;
+
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
 
                 if (errorInInitialization)
                     return;

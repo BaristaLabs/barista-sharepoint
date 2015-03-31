@@ -12,7 +12,7 @@
 
     public sealed class BaristaScriptEngineFactory : ScriptEngineFactory
     {
-        public override Jurassic.ScriptEngine GetScriptEngine(Bundles.WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
+        public override IScriptEngine GetScriptEngine(Bundles.WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
         {
             isNewScriptEngineInstance = false;
             errorInInitialization = false;
