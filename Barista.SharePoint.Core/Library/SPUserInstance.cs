@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using System.Reflection;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
@@ -51,7 +52,7 @@
             : base(new SPPrincipalInstance(engine, user), user)
         {
             this.m_user = user;
-            this.PopulateFunctions();
+            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         protected SPUserInstance(ObjectInstance prototype, SPUser user)
