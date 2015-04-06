@@ -11,7 +11,7 @@
     using System.IO;
     using System.Text;
     using System.Xml;
-    using Barista.Yahoo.Yui.Compressor;
+    using Barista.Properties;
 
     [Serializable]
     public class WebOptimizationInstance : ObjectInstance
@@ -173,16 +173,59 @@
         [JSDoc("Returns a minified representation of the css string passed as the first argument.")]
         public string MinifyCss(string css)
         {
-            var cssCompressor = new CssCompressor();
-            return cssCompressor.Compress(css);
+            /*var script = new Script("");
+            script.Context.Eval(Resources.csso_web);
+            script.Context.DefineVariable("css").Assign(new NiL.JS.BaseLibrary.String(css));
+            var result = script.Context.Eval(@" var compressor = new CSSOCompressor(),
+                translator = new CSSOTranslator();
+            translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
+");
+            return result.ToString();*/
+
+            var se = new ScriptEngine();
+            se.Evaluate(Resources.csso_web);
+            se.SetGlobalValue("css", css);
+            var result = se.Evaluate<string>(@" var compressor = new CSSOCompressor(),
+                translator = new CSSOTranslator();
+            translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
+");
+            return result;
         }
 
         [JSFunction(Name = "minifyJs")]
         [JSDoc("Returns a minified representation of the javascript string passed as the first argument.")]
         public string MinifyJs(string javascript)
         {
-            var jsCompressor = new JavaScriptCompressor();
-            return jsCompressor.Compress(javascript);
+            /*var script = new Script("");
+            script.Context.Eval(Resources.uglifyjs);
+            script.Context.DefineVariable("code").Assign(new NiL.JS.BaseLibrary.String(javascript));
+            var result = script.Context.Eval(@"var ast = UglifyJS.parse(code);
+ast.figure_out_scope();
+compressor = UglifyJS.Compressor();
+ast = ast.transform(compressor);
+
+ast.figure_out_scope();
+ast.compute_char_frequency();
+ast.mangle_names();
+
+ast.print_to_string();");
+            return result.ToString();*/
+
+            var se = new ScriptEngine();
+            se.Evaluate(Resources.uglifyjs);
+            se.SetGlobalValue("code", javascript);
+            var result = se.Evaluate<string>(@"var ast = UglifyJS.parse(code);
+ast.figure_out_scope();
+compressor = UglifyJS.Compressor();
+ast = ast.transform(compressor);
+
+ast.figure_out_scope();
+ast.compute_char_frequency();
+ast.mangle_names();
+
+ast.print_to_string();");
+
+            return result;
         }
 
         [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]
@@ -324,7 +367,7 @@
                         }
                         catch (Exception ex)
                         {
-                            throw new JavaScriptException(this.Engine, "Error", "Error occurred while minifying file " + contents.Item1 + " " + ex.Message);
+                            throw new JavaScriptException(this.Engine, "Error", "Error occurred while minifying file " + file + " " + ex.Message);
                         }
                     }
                     sb.AppendLine(source);

@@ -89,7 +89,7 @@ write-host
 write-host "[[STEP]] Starting Barista Service Application instance on local server." -foregroundcolor Yellow
 write-host 
 
-write-host "Ensure service instance is running on server $env:computername..." -foregroundcolor Gray
+write-host "Ensure service instance is running on server $env:COMPUTERNAME..." -foregroundcolor Gray
 
 $serviceInstanceRetry = 0
 do {
@@ -97,7 +97,7 @@ do {
 		write-host "Waiting"($serviceInstanceRetry * 10)"s for Barista Service Instance deployment..." -foregroundcolor Yellow
 		Start-Sleep -s ($serviceInstanceRetry * 10)
 	}
-	$localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "BaristaServiceInstance" }
+	$localServiceInstance = Get-SPServiceInstance -Server $env:COMPUTERNAME | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "BaristaServiceInstance" }
 }
 while(++$serviceInstanceRetry -le 6 -and $localServiceInstance -eq $null)
 
@@ -123,7 +123,7 @@ if ($localServiceInstance.Status -eq 'Unprovisioning') {
 }
 
 if ($localServiceInstance.Status -ne 'Started'){
-	write-host "Starting service instance on server $env:computername..." -foregroundcolor Gray
+	write-host "Starting service instance on server $env:COMPUTERNAME..." -foregroundcolor Gray
 	#Start-SPServiceInstance $localServiceInstance
 	$localServiceInstance.Provision()
 	write-host "Barista Service Application instance started." -foregroundcolor Green

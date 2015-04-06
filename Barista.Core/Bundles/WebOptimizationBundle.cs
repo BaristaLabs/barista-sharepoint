@@ -24,7 +24,6 @@
     public virtual object InstallBundle(Jurassic.ScriptEngine engine)
     {
       var bundlerInstance = new WebOptimizationInstance(engine);
-
       return bundlerInstance;
     }
   }
