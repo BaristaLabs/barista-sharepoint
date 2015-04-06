@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET35;NET_35;CODE_ANALYSIS;CODE_ANALYSIS;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET35;NET_35;V3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET35</DefineConstants>
+    <DefineConstants>TRACE;NET35;NET_35;V3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -648,172 +648,6 @@
     <Compile Include="Imports\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="Imports\Newtonsoft.Json\WriteState.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\ArrayBuffer.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Boolean.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Console.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Date.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Debug.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Error.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\EvalError.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Float32Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Float64Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Function.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Int16Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Int32Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Int8Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\JSON.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Math.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Number.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\RangeError.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\ReferenceError.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\RegExp.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\String.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\SyntaxError.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\TypedArray.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\TypeError.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Uint16Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Uint32Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Uint8Array.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\Uint8ClampedArray.cs" />
-    <Compile Include="Imports\Nil.JS\BaseLibrary\URIError.cs" />
-    <Compile Include="Imports\Nil.JS\CompilerNotification.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Arguments.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Backward.cs" />
-    <Compile Include="Imports\Nil.JS\Core\BinaryTree.cs" />
-    <Compile Include="Imports\Nil.JS\Core\CatchContext.cs" />
-    <Compile Include="Imports\Nil.JS\Core\CodeNode.cs" />
-    <Compile Include="Imports\Nil.JS\Core\CompiledNode.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Context.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Delegates.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\BindedFunction.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\EvalFunction.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\ExternalFunction.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\MethodGroup.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\MethodProxy.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\ObjectConstructor.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Functions\ProxyConstructor.cs" />
-    <Compile Include="Imports\Nil.JS\Core\GlobalFunctions.cs" />
-    <Compile Include="Imports\Nil.JS\Core\GlobalObject.cs" />
-    <Compile Include="Imports\Nil.JS\Core\JIT\JITHelpers.cs" />
-    <Compile Include="Imports\Nil.JS\Core\JIT\TreeBuildingState.cs" />
-    <Compile Include="Imports\Nil.JS\Core\JSException.cs" />
-    <Compile Include="Imports\Nil.JS\Core\JSObject.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\AllowUnsafeCallAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\ArgumentsLengthAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\ConvertValueAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\DoNotEnumerateAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\DontDeleteAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\FieldAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\HiddenAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\ImmutableAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\ImmutablePrototypeAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\NotConfigurable.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\PrototypeAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Modules\ReadOnlyAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\ObjectContainer.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Parser.cs" />
-    <Compile Include="Imports\Nil.JS\Core\ParseResult.cs" />
-    <Compile Include="Imports\Nil.JS\Core\ParsingState.cs" />
-    <Compile Include="Imports\Nil.JS\Core\PropertyPair.cs" />
-    <Compile Include="Imports\Nil.JS\Core\RegExpCreateExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Core\RopeString.cs" />
-    <Compile Include="Imports\Nil.JS\Core\SparseArray.cs" />
-    <Compile Include="Imports\Nil.JS\Core\StringMap2.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Tools.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\AllowNullArgumentsAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\CustomType.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\GenericType.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\InstanceMemberAttribute.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\NativeList.cs" />
-    <Compile Include="Imports\Nil.JS\Core\TypeProxing\TypeProxy.cs" />
-    <Compile Include="Imports\Nil.JS\Core\VariableDescriptor.cs" />
-    <Compile Include="Imports\Nil.JS\Core\VariableReference.cs" />
-    <Compile Include="Imports\Nil.JS\Core\Visitor.cs" />
-    <Compile Include="Imports\Nil.JS\Core\WithContext.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Addition.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\And.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ArrayExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Assign.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\AssignOverReplace.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Call.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Constant.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Decriment.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Delete.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\DeleteMemberExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Division.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Equal.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Expression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ExpressionTree.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ExpressionWrapper.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\FunctionExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\GetMemberExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\GetVariableExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\In.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Incriment.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\InstanceOf.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Json.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Less.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\LessOrEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\LogicalAnd.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\LogicalNot.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\LogicalOr.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Mod.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\More.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\MoreOrEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Mul.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Neg.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\New.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\None.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Not.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NotEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NumberAddition.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NumberLess.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NumberLessOrEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NumberMore.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\NumberMoreOrEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\OpAssignCache.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Or.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\SetMemberExpression.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\SignedShiftLeft.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\SignedShiftRight.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\StrictEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\StrictNotEqual.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\StringConcat.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Substract.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Ternary.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ToBool.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ToInt.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ToNumber.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ToStr.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\ToUInt.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\TypeOf.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\UnsignedShiftRight.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Xor.cs" />
-    <Compile Include="Imports\Nil.JS\Expressions\Yield.cs" />
-    <Compile Include="Imports\Nil.JS\NamespaceProvider.cs" />
-    <Compile Include="Imports\Nil.JS\Script.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\BreakStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\CodeBlock.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ContinueStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\DebuggerOperator.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\DoWhileStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\EmptyStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ForInStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ForOfStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ForStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\IfElseStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\InfinityLoop.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\LabeledStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\MultilineComment.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ReturnStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\SinglelineComment.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\SwitchStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\ThrowStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\TryCatchStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\VariableDefineStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\WhileStatement.cs" />
-    <Compile Include="Imports\Nil.JS\Statements\WithStatement.cs" />
     <Compile Include="Imports\SuperSocket\Common\ArraySegmentEx.cs" />
     <Compile Include="Imports\SuperSocket\Common\ArraySegmentList.cs" />
     <Compile Include="Imports\SuperSocket\Common\AssemblyUtil.cs" />
@@ -972,6 +806,25 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
+    <Compile Include="Imports\V8.Net\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\FunctionTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Handle.cs" />
+    <Compile Include="Imports\V8.Net\IndexedObjectList.cs" />
+    <Compile Include="Imports\V8.Net\InternalHandle.cs" />
+    <Compile Include="Imports\V8.Net\JSProperty.cs" />
+    <Compile Include="Imports\V8.Net\ObjectTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\ObservableWeakReference.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Utilities.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Binding.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Handles.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Objects.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Tests.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Worker.cs" />
+    <Compile Include="Imports\V8.Net\V8Function.cs" />
+    <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
+    <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
     <Compile Include="Library\DiffInfoInstance.cs" />
@@ -1626,6 +1479,16 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj">
+      <Project>{b283c79c-9821-45eb-8999-88eb4299a20c}</Project>
+      <Name>Barista.V8.Net-ProxyInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj">
+      <Project>{55f72a43-2cd2-4a33-ac80-7d9c65b9a57d}</Project>
+      <Name>Barista.V8.Net-SharedTypes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

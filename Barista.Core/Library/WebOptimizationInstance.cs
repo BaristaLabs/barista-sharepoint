@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
     using System.Collections.Concurrent;
+    using System.Globalization;
     using System.IO.Compression;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -12,6 +13,7 @@
     using System.Text;
     using System.Xml;
     using Barista.Properties;
+    using Barista.V8.Net;
 
     [Serializable]
     public class WebOptimizationInstance : ObjectInstance
@@ -182,20 +184,39 @@
 ");
             return result.ToString();*/
 
-            var se = new ScriptEngine();
+            /*var se = new ScriptEngine();
             se.Evaluate(Resources.csso_web);
             se.SetGlobalValue("css", css);
             var result = se.Evaluate<string>(@" var compressor = new CSSOCompressor(),
                 translator = new CSSOTranslator();
             translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
 ");
-            return result;
+            return result;*/
+
+            throw new NotImplementedException();
         }
 
         [JSFunction(Name = "minifyJs")]
         [JSDoc("Returns a minified representation of the javascript string passed as the first argument.")]
         public string MinifyJs(string javascript)
         {
+            var engine = new V8Engine();
+            engine.Execute(Resources.uglifyjs, "uglifyjs", true);
+
+            engine.GlobalObject.SetProperty("code", @"(function (fallback) {
+    fallback = fallback || function () { };
+})(null);");
+
+            engine.Execute(@"var ast = UglifyJS.parse(code);
+ast.figure_out_scope();
+compressor = UglifyJS.Compressor();
+ast = ast.transform(compressor);
+var result = ast.print_to_string();");
+
+            return engine.GlobalObject
+                .GetProperty("result")
+                .ToString(CultureInfo.InvariantCulture);
+
             /*var script = new Script("");
             script.Context.Eval(Resources.uglifyjs);
             script.Context.DefineVariable("code").Assign(new NiL.JS.BaseLibrary.String(javascript));
@@ -211,7 +232,7 @@ ast.mangle_names();
 ast.print_to_string();");
             return result.ToString();*/
 
-            var se = new ScriptEngine();
+            /*var se = new ScriptEngine();
             se.Evaluate(Resources.uglifyjs);
             se.SetGlobalValue("code", javascript);
             var result = se.Evaluate<string>(@"var ast = UglifyJS.parse(code);
@@ -225,7 +246,7 @@ ast.mangle_names();
 
 ast.print_to_string();");
 
-            return result;
+            return result;*/
         }
 
         [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]
