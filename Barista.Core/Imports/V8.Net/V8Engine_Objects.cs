@@ -91,7 +91,7 @@ namespace Barista.V8.Net
                         try
                         {
                             void* templateProxy = (template is ObjectTemplate) ? (void*)((ObjectTemplate)template)._NativeObjectTemplateProxy :
-                                (template is FunctionTemplate) ? (void*)((FunctionTemplate)template)._NativeFunctionTemplateProxy : null;
+                                (template is FunctionTemplate) ? (void*)((FunctionTemplate)template).NativeFunctionTemplateProxyInternal : null;
 
                             V8NetProxy.ConnectObject(handle, newObject.ID, templateProxy);
 

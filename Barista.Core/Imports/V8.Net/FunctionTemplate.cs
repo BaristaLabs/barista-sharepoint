@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-
-#if V2 || V3 || V3_5
-#else
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+
+    #if V2 || V3 || V3_5
+    #else
+    using System.Dynamic;
+    #endif
+
     // ========================================================================================================================
 
     /// <summary>
@@ -26,14 +26,14 @@ namespace Barista.V8.Net
     {
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal NativeFunctionTemplateProxy* _NativeFunctionTemplateProxy;
+        internal NativeFunctionTemplateProxy* NativeFunctionTemplateProxyInternal;
 
         public string ClassName { get; private set; }
 
         /// <summary>
         /// Set this to an object that implements a call-back to execute when the function associated with this FunctionTemplate is called within JavaScript.
         /// </summary>
-        readonly Dictionary<Type, int> _FunctionsByType = new Dictionary<Type, int>();
+        private readonly Dictionary<Type, int> m_functionsByTypeInternal = new Dictionary<Type, int>();
 
         /// <summary>
         /// The V8 engine automatically creates two templates with every function template: one for object creation (instances) and one for function object itself (prototype inheritance).
@@ -48,10 +48,6 @@ namespace Barista.V8.Net
         public ObjectTemplate PrototypeTemplate { get; private set; }
 
         // --------------------------------------------------------------------------------------------------------------------
-
-        public FunctionTemplate()
-        {
-        }
 
         ~FunctionTemplate()
         {
@@ -76,10 +72,10 @@ namespace Barista.V8.Net
 
         public void Dispose()
         {
-            if (_NativeFunctionTemplateProxy != null)
+            if (NativeFunctionTemplateProxyInternal != null)
             {
-                V8NetProxy.DeleteFunctionTemplateProxy(_NativeFunctionTemplateProxy); // (delete the corresponding native object as well; WARNING: This is done on the GC thread!)
-                _NativeFunctionTemplateProxy = null;
+                V8NetProxy.DeleteFunctionTemplateProxy(NativeFunctionTemplateProxyInternal); // (delete the corresponding native object as well; WARNING: This is done on the GC thread!)
+                NativeFunctionTemplateProxyInternal = null;
 
                 PrototypeTemplate.Parent = null;
                 InstanceTemplate.Parent = null;
@@ -95,7 +91,7 @@ namespace Barista.V8.Net
             ClassName = className;
 
             _Initialize(v8EngineProxy,
-                (NativeFunctionTemplateProxy*)V8NetProxy.CreateFunctionTemplateProxy(
+                V8NetProxy.CreateFunctionTemplateProxy(
                     v8EngineProxy.NativeV8EngineProxy,
                     ClassName,
                     _SetDelegate<ManagedJSFunctionCallback>(_CallBack)) // (create a corresponding native object)
@@ -112,15 +108,15 @@ namespace Barista.V8.Net
 
             _Engine = v8EngineProxy;
 
-            _NativeFunctionTemplateProxy = nativeFunctionTemplateProxy;
+            NativeFunctionTemplateProxyInternal = nativeFunctionTemplateProxy;
 
             InstanceTemplate = _Engine.CreateObjectTemplate<ObjectTemplate>(true);
             InstanceTemplate.Parent = this;
-            InstanceTemplate._Initialize(_Engine, (NativeObjectTemplateProxy*)V8NetProxy.GetFunctionInstanceTemplateProxy(_NativeFunctionTemplateProxy), true);
+            InstanceTemplate._Initialize(_Engine, V8NetProxy.GetFunctionInstanceTemplateProxy(NativeFunctionTemplateProxyInternal), true);
 
             PrototypeTemplate = _Engine.CreateObjectTemplate<ObjectTemplate>(true);
             PrototypeTemplate.Parent = this;
-            PrototypeTemplate._Initialize(_Engine, (NativeObjectTemplateProxy*)V8NetProxy.GetFunctionPrototypeTemplateProxy(_NativeFunctionTemplateProxy), true);
+            PrototypeTemplate._Initialize(_Engine, (NativeObjectTemplateProxy*)V8NetProxy.GetFunctionPrototypeTemplateProxy(NativeFunctionTemplateProxyInternal), true);
 
             OnInitialized();
         }
@@ -134,18 +130,18 @@ namespace Barista.V8.Net
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        HandleProxy* _CallBack(Int32 managedObjectID, bool isConstructCall, HandleProxy* _this, HandleProxy** args, Int32 argCount)
+        HandleProxy* _CallBack(Int32 managedObjectId, bool isConstructCall, HandleProxy* _this, HandleProxy** args, Int32 argCount)
         {
             var functions = from f in
-                                (from t in _FunctionsByType.Keys.ToArray() // (need to convert this to an array in case the callbacks modify the dictionary!)
-                                 select _Engine._GetObjectWeakReference(_FunctionsByType[t]))
+                                (from t in m_functionsByTypeInternal.Keys.ToArray() // (need to convert this to an array in case the callbacks modify the dictionary!)
+                                 select _Engine._GetObjectWeakReference(m_functionsByTypeInternal[t]))
                             where f != null && f.Object != null && ((V8Function)f.Object).Callback != null
                             select ((V8Function)f.Object).Callback;
 
-            return _CallBack(managedObjectID, isConstructCall, _this, args, argCount, functions.ToArray());
+            return _CallBack(managedObjectId, isConstructCall, _this, args, argCount, functions.ToArray());
         }
 
-        internal static HandleProxy* _CallBack(Int32 managedObjectID, bool isConstructCall, HandleProxy* _this, HandleProxy** args, Int32 argCount, params JSFunction[] functions)
+        internal static HandleProxy* _CallBack(Int32 managedObjectId, bool isConstructCall, HandleProxy* _this, HandleProxy** args, Int32 argCount, params JSFunction[] functions)
         {
             // ... get a handle to the native "this" object ...
 
@@ -155,11 +151,11 @@ namespace Barista.V8.Net
 
                 // ... wrap the arguments ...
 
-                InternalHandle[] _args = new InternalHandle[argCount];
+                var internalHandleArgs = new InternalHandle[argCount];
                 int i;
 
                 for (i = 0; i < argCount; i++)
-                    _args[i]._Set(args[i], false); // (since these will be disposed immediately after, the "first" flag is not required [this also prevents it from getting passed on])
+                    internalHandleArgs[i]._Set(args[i], false); // (since these will be disposed immediately after, the "first" flag is not required [this also prevents it from getting passed on])
 
                 InternalHandle result = null;
 
@@ -168,16 +164,16 @@ namespace Barista.V8.Net
                     // ... call all function types (multiple custom derived function types are allowed, but only one of each type) ...
                     foreach (var callback in functions)
                     {
-                        result = callback(engine, isConstructCall, hThis, _args);
+                        result = callback(engine, isConstructCall, hThis, internalHandleArgs);
 
                         if (!result.IsEmpty) break;
                     }
                 }
                 finally
                 {
-                    for (i = 0; i < _args.Length; i++)
-                        if (_args[i] != result)
-                            _args[i].Dispose();
+                    for (i = 0; i < internalHandleArgs.Length; i++)
+                        if (internalHandleArgs[i] != result)
+                            internalHandleArgs[i].Dispose();
                 }
 
                 if (isConstructCall && result.HasObject && result.Object is V8ManagedObject && result.Object.Handle._Handle == hThis)
@@ -208,15 +204,15 @@ namespace Barista.V8.Net
             if (_Engine == null)
                 throw new InvalidOperationException("You must create object templates by calling one of the 'V8Engine.CreateFunctionTemplate()' overloads.");
 
-            if (_NativeFunctionTemplateProxy == null)
+            if (NativeFunctionTemplateProxyInternal == null)
                 throw new InvalidOperationException("This managed function template is not initialized.");
 
-            int funcID;
+            int funcId;
             V8Function func;
 
-            if (_FunctionsByType.TryGetValue(typeof(T), out funcID))
+            if (m_functionsByTypeInternal.TryGetValue(typeof(T), out funcId))
             {
-                var weakRef = _Engine._GetObjectWeakReference(funcID);
+                var weakRef = _Engine._GetObjectWeakReference(funcId);
                 func = weakRef != null ? weakRef.Reset() as V8Function : null;
                 if (func != null)
                     return (T)func;
@@ -224,7 +220,7 @@ namespace Barista.V8.Net
 
             // ... get the v8 "Function" object ...
 
-            InternalHandle hNativeFunc = V8NetProxy.GetFunction(_NativeFunctionTemplateProxy);
+            InternalHandle hNativeFunc = V8NetProxy.GetFunction(NativeFunctionTemplateProxyInternal);
 
             // ... create a managed wrapper for the V8 "Function" object (note: functions inherit the native V8 "Object" type) ...
 
@@ -238,7 +234,7 @@ namespace Barista.V8.Net
 
             func._Prototype = V8NetProxy.GetObjectPrototype(func._Handle);
 
-            _FunctionsByType[typeof(T)] = func.ID; // (this exists to index functions by type)
+            m_functionsByTypeInternal[typeof(T)] = func.ID; // (this exists to index functions by type)
 
             func.Initialize(false, null);
 
@@ -268,22 +264,22 @@ namespace Barista.V8.Net
         /// <returns>A handle to the new object.</returns>
         public InternalHandle CreateNativeInstance(params InternalHandle[] args) // TODO: Parameter passing needs testing.
         {
-            HandleProxy** _args = null;
+            HandleProxy** proxyArgs = null;
 
             if (args.Length > 0)
             {
-                _args = (HandleProxy**)Utilities.AllocPointerArray(args.Length);
+                proxyArgs = (HandleProxy**)Utilities.AllocPointerArray(args.Length);
                 for (var i = 0; i < args.Length; i++)
-                    _args[i] = args[i];
+                    proxyArgs[i] = args[i];
             }
 
             try
             {
-                return (InternalHandle)V8NetProxy.CreateFunctionInstance(_NativeFunctionTemplateProxy, -1, args.Length, _args);
+                return V8NetProxy.CreateFunctionInstance(NativeFunctionTemplateProxyInternal, -1, args.Length, proxyArgs);
             }
             finally
             {
-                Utilities.FreeNativeMemory((IntPtr)_args);
+                Utilities.FreeNativeMemory((IntPtr)proxyArgs);
             }
         }
 
@@ -298,13 +294,13 @@ namespace Barista.V8.Net
         public V8ManagedObject CreateInstance<T>(params InternalHandle[] args) // TODO: Parameter passing needs testing.
             where T : V8ManagedObject, new()
         {
-            HandleProxy** _args = null;
+            HandleProxy** proxyArgs = null;
 
             if (args.Length > 0)
             {
-                _args = (HandleProxy**)Utilities.AllocPointerArray(args.Length);
+                proxyArgs = (HandleProxy**)Utilities.AllocPointerArray(args.Length);
                 for (var i = 0; i < args.Length; i++)
-                    _args[i] = args[i];
+                    proxyArgs[i] = args[i];
             }
 
             // (note: the special case here is that the native function object will use its own template to create instances)
@@ -314,20 +310,20 @@ namespace Barista.V8.Net
 
             try
             {
-                obj._Handle._Set(V8NetProxy.CreateFunctionInstance(_NativeFunctionTemplateProxy, obj.ID, args.Length, _args));
+                obj._Handle._Set(V8NetProxy.CreateFunctionInstance(NativeFunctionTemplateProxyInternal, obj.ID, args.Length, proxyArgs));
                 // (note: setting '_NativeObject' also updates it's '_ManagedObject' field if necessary.
 
                 obj.Initialize(true, args);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // ... something went wrong, so remove the new managed object ...
                 _Engine._RemoveObjectWeakReference(obj.ID);
-                throw ex;
+                throw;
             }
             finally
             {
-                Utilities.FreeNativeMemory((IntPtr)_args);
+                Utilities.FreeNativeMemory((IntPtr)proxyArgs);
             }
 
             return obj;
@@ -348,12 +344,11 @@ namespace Barista.V8.Net
         /// <summary>
         /// This is called by '{V8NativeObject}._OnNativeGCRequested()' when the managed function object is ready to be deleted.
         /// </summary>
-        internal void _RemoveFunctionType(int objectID)
+        internal void _RemoveFunctionType(int objectId)
         {
-            var callbackTypes = _FunctionsByType.Keys.ToArray();
-            for (var i = 0; i < callbackTypes.Length; i++)
-                if (_FunctionsByType[callbackTypes[i]] == objectID)
-                    _FunctionsByType[callbackTypes[i]] = -1;
+            var callbackTypes = m_functionsByTypeInternal.Keys.ToArray();
+            foreach (var t in callbackTypes.Where(t => m_functionsByTypeInternal[t] == objectId))
+                m_functionsByTypeInternal[t] = -1;
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -365,9 +360,10 @@ namespace Barista.V8.Net
         {
             try
             {
-                if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+                if (name.IsNullOrWhiteSpace())
+                    throw new ArgumentNullException("name");
 
-                V8NetProxy.SetFunctionTemplateProperty(_NativeFunctionTemplateProxy, name, value, attributes);
+                V8NetProxy.SetFunctionTemplateProperty(NativeFunctionTemplateProxyInternal, name, value, attributes);
             }
             finally
             {
