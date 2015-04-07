@@ -1486,6 +1486,7 @@
     <ProjectReference Include="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj">
       <Project>{b283c79c-9821-45eb-8999-88eb4299a20c}</Project>
       <Name>Barista.V8.Net-ProxyInterface</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj">
       <Project>{55f72a43-2cd2-4a33-ac80-7d9c65b9a57d}</Project>

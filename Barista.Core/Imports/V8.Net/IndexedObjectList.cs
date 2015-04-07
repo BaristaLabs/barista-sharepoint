@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Implements a way to store managed objects which can be tracked by index for quick lookup.
     /// <param>Note: The indexes are similar to native pointers, and thus, an index is REQUIRED in order to retrieve or remove a reference.</param>

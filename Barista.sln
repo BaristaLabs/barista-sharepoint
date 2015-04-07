@@ -156,9 +156,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-ProxyInterfa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-ProxyInterface-x86", "Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface-x86.csproj", "{8D5FCBF7-889F-42A4-A974-474A528F84A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.ConsoleTests", "Barista.ConsoleTests\Barista.ConsoleTests.csproj", "{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 28
+		SccNumberOfProjects = 29
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -270,6 +272,10 @@ Global
 		SccProjectTopLevelParentUniqueName27 = Barista.sln
 		SccProjectName27 = Barista.V8.Net-ProxyInterface
 		SccLocalPath27 = Barista.V8.Net-ProxyInterface
+		SccProjectUniqueName28 = Barista.ConsoleTests\\Barista.ConsoleTests.csproj
+		SccProjectTopLevelParentUniqueName28 = Barista.sln
+		SccProjectName28 = Barista.ConsoleTests
+		SccLocalPath28 = Barista.ConsoleTests
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -390,6 +396,10 @@ Global
 		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -426,5 +436,6 @@ Global
 		{B283C79C-9821-45EB-8999-88EB4299A20C} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
 		{54DEA09B-9D54-4EE7-A529-6E8720E3B381} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
 		{8D5FCBF7-889F-42A4-A974-474A528F84A9} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 	EndGlobalSection
 EndGlobal

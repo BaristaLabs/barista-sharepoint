@@ -4,6 +4,7 @@
  */
 namespace Barista.V8.Net
 {
+    using System.Globalization;
     using Barista.Extensions;
     using System;
     using System.Collections;
@@ -66,7 +67,11 @@ namespace Barista.V8.Net
 
         ObjectTemplate _GlobalObjectTemplateProxy;
 
-        public ObjectHandle GlobalObject { get; private set; }
+        public ObjectHandle GlobalObject
+        {
+            get;
+            private set;
+        }
 
 #if !(V1_1 || V2 || V3 || V3_5)
         public dynamic DynamicGlobalObject { get { return GlobalObject; } }
@@ -116,7 +121,7 @@ namespace Barista.V8.Net
             var bitStr = IntPtr.Size == 8 ? "x64" : "x86";
             var platformLibraryPath = Path.Combine(assemblyRoot, bitStr);
             // ... if the platform folder doesn't exist, try loading assemblies from the current folder ...
-            string fileName = Path.Combine(Directory.Exists(platformLibraryPath)
+            var fileName = Path.Combine(Directory.Exists(platformLibraryPath)
                 ? platformLibraryPath
                 : assemblyRoot, "Barista.V8.Net.Proxy.Interface." + bitStr + ".dll");
 
@@ -124,15 +129,15 @@ namespace Barista.V8.Net
             // (see: http://stackoverflow.com/questions/7996263/how-do-i-get-iis-to-load-a-native-dll-referenced-by-my-wcf-service
             //   and http://stackoverflow.com/questions/344608/unmanaged-dlls-fail-to-load-on-asp-net-server)
 
-            //try
-            //{
-            //    var path = System.Environment.GetEnvironmentVariable("PATH"); // TODO: Detect other systems if necessary.
-            //    System.Environment.SetEnvironmentVariable("PATH", platformLibraryPath + ";" + path);
-            //}
-            //catch
-            //{
-            //    //DO NOTHING!!
-            //}
+            try
+            {
+                var path = System.Environment.GetEnvironmentVariable("PATH"); // TODO: Detect other systems if necessary.
+                System.Environment.SetEnvironmentVariable("PATH", platformLibraryPath + "\\;" + path);
+            }
+            catch
+            {
+                //DO NOTHING!!
+            }
 
             AppDomain.CurrentDomain.AssemblyResolve -= Resolver;  // (handler is only needed once)
 
@@ -214,8 +219,8 @@ namespace Barista.V8.Net
 
             ObservableWeakReference<V8NativeObject> weakRef;
 
-            for (var i = 0; i < _Objects.Count; i++)
-                if ((weakRef = _Objects[i]) != null && weakRef.Object != null)
+            for (var i = 0; i < ObjectsInternal.Count; i++)
+                if ((weakRef = ObjectsInternal[i]) != null && weakRef.Object != null)
                 {
                     weakRef.Object._ID = null;
                     weakRef.Object.Template = null;
@@ -401,7 +406,7 @@ namespace Barista.V8.Net
                 if (throwExceptionOnError)
                     throw;
                 result = CreateValue(ex.GetFullErrorMessage(true));
-                result._Handle._HandleProxy->_ValueType = JSValueType.InternalError; // (required to flag that an error has occurred)
+                result.HandleInternal.HandleProxyInternal->_ValueType = JSValueType.InternalError; // (required to flag that an error has occurred)
             }
             return result;
         }
@@ -428,7 +433,7 @@ namespace Barista.V8.Net
                 if (throwExceptionOnError)
                     throw;
                 result = CreateValue(ex.GetFullErrorMessage(true));
-                result._Handle._HandleProxy->_ValueType = JSValueType.InternalError; // (required to flag that an error has occurred)
+                result.HandleInternal.HandleProxyInternal->_ValueType = JSValueType.InternalError; // (required to flag that an error has occurred)
             }
             return result;
         }
@@ -453,7 +458,10 @@ namespace Barista.V8.Net
         /// Creates a new native V8 ObjectTemplate and associates it with a new managed ObjectTemplate.
         /// <para>Object templates are required in order to generate objects with property interceptors (that is, all property access is redirected to the managed side).</para>
         /// </summary>
-        public ObjectTemplate CreateObjectTemplate() { return CreateObjectTemplate<ObjectTemplate>(true); }
+        public ObjectTemplate CreateObjectTemplate()
+        {
+            return CreateObjectTemplate<ObjectTemplate>(true);
+        }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -581,7 +589,10 @@ namespace Barista.V8.Net
         /// </summary>
         /// <param name="v8Object"></param>
         /// <param name="initialize">(true)</param>
-        public V8NativeObject CreateObject(InternalHandle v8Object, bool initialize) { return CreateObject<V8NativeObject>(v8Object, initialize); }
+        public V8NativeObject CreateObject(InternalHandle v8Object, bool initialize)
+        {
+            return CreateObject<V8NativeObject>(v8Object, initialize);
+        }
 
         /// <summary>
         /// Creates a new CLR object which will be tracked by a new V8 native object.
@@ -677,11 +688,12 @@ namespace Barista.V8.Net
         /// </summary>
         public InternalHandle CreateValue(IEnumerable<string> items)
         {
-            if (items == null) return V8NetProxy.CreateArray(NativeV8EngineProxy, null, 0);
+            if (items == null)
+                return V8NetProxy.CreateArray(NativeV8EngineProxy, null, 0);
 
             var itemsEnum = items.GetEnumerator();
-            int strBufSize = 0; // (size needed for the string chars portion of the memory block)
-            int itemsCount = 0;
+            var strBufSize = 0; // (size needed for the string chars portion of the memory block)
+            var itemsCount = 0;
 
             while (itemsEnum.MoveNext())
             {
@@ -768,7 +780,7 @@ namespace Barista.V8.Net
             else if (value is string)
                 return CreateValue((string)value);
             else if (value is char)
-                return CreateValue(((char)value).ToString());
+                return CreateValue(((char)value).ToString(CultureInfo.InvariantCulture));
             else if (value is StringBuilder)
                 return CreateValue(((StringBuilder)value).ToString());
             else if (value is DateTime)

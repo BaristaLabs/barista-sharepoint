@@ -108,9 +108,9 @@ using System.Dynamic;
             if (objId >= 0)
             {
                 V8NativeObject obj;
-                using (_ObjectsLocker.ReadLock(Int32.MaxValue))
+                using (ObjectsLockerInternal.ReadLock(Int32.MaxValue))
                 {
-                    obj = _Objects[objId].Object;
+                    obj = ObjectsInternal[objId].Object;
                 }
                 obj._MakeWeak(); // (don't call this while '_Objects' is locked, because the main thread may be executing script that also may need a lock, but this call may also be blocked by a native V8 mutex)
             }

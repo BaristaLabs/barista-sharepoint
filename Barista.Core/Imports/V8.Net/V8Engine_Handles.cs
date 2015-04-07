@@ -1,10 +1,9 @@
-﻿
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    #endif
+
     // ========================================================================================================================
     // The handles section has methods to deal with creating and disposing of managed handles (which wrap native V8 handles).
     // This helps to reuse existing handles to prevent having to create new ones every time, thus greatly speeding things up.

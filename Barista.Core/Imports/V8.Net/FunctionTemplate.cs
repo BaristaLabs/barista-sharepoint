@@ -177,7 +177,7 @@
                             internalHandleArgs[i].Dispose();
                 }
 
-                if (isConstructCall && result.HasObject && result.Object is V8ManagedObject && result.Object.Handle._Handle == hThis)
+                if (isConstructCall && result.HasObject && result.Object is V8ManagedObject && result.Object.Handle.HandleInternal == hThis)
                     throw new InvalidOperationException("You've attempted to return the type '" + result.Object.GetType().Name
                         + "' which implements/extends IV8ManagedObject/V8ManagedObject in a construction call (using 'new' in JavaScript) to wrap the new native object."
                         + " The native V8 engine only supports interceptor hooks for objects generated from ObjectTemplate instances.  You will need to first derive/implement from V8NativeObject/IV8NativeObject"

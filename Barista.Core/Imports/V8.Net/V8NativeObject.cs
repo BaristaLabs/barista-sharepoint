@@ -1,13 +1,12 @@
-﻿using System;
-
-
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-using System.Linq.Expressions;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    using System.Linq.Expressions;
+    #endif
+
     // ========================================================================================================================
 
     /// <summary>
@@ -63,7 +62,7 @@ namespace Barista.V8.Net
         internal V8Engine _Engine;
 
         public Handle AsHandle() { return _Handle; }
-        public InternalHandle AsInternalHandle { get { return _Handle._Handle; } }
+        public InternalHandle AsInternalHandle { get { return _Handle.HandleInternal; } }
         public V8NativeObject Object { get { return this; } }
 
         /// <summary>
@@ -86,10 +85,10 @@ namespace Barista.V8.Net
         /// </summary>
         public Int32 ID
         {
-            get { var id = _Handle.ObjectID; return id < 0 ? _ID ?? id : id; } // (this attempts to return the underlying managed object ID of the handle proxy, or the local ID if -1)
+            get { var id = _Handle.ObjectId; return id < 0 ? _ID ?? id : id; } // (this attempts to return the underlying managed object ID of the handle proxy, or the local ID if -1)
             internal set
             {
-                _Handle.ObjectID = value;
+                _Handle.ObjectId = value;
                 _ID = value;
             } // (once set, the managed object will be fixed to the ID as long as the underlying handle has a handle-based object ID less than 0)
         }
@@ -120,18 +119,18 @@ namespace Barista.V8.Net
             {
                 var handle = value != null ? (InternalHandle)value : InternalHandle.Empty;
 
-                if (handle.ObjectID >= 0 && handle.Object != this)
+                if (handle.ObjectId >= 0 && handle.Object != this)
                     throw new InvalidOperationException("Another managed object is already bound to this handle.");
 
-                if (!_Handle.IsEmpty && _Handle.ObjectID >= 0)
+                if (!_Handle.IsEmpty && _Handle.ObjectId >= 0)
                     throw new InvalidOperationException("Cannot replace a the handle of a V8Engine create object once it has been set."); // (IDs < 0 are not tracked in the V8.NET's object list)
                 else
                 {
                     if (!handle.IsEmpty && !handle.IsObjectType)
-                        throw new InvalidCastException(string.Format(InternalHandle._VALUE_NOT_AN_OBJECT_ERRORMSG, handle));
+                        throw new InvalidCastException(string.Format(InternalHandle.ValueNotAnObjectErrorMsg, handle));
 
                     _Handle.Set((Handle)value);
-                    ID = _Handle.ObjectID;
+                    ID = _Handle.ObjectId;
                 }
             }
         }
@@ -165,7 +164,7 @@ namespace Barista.V8.Net
         /// <summary>
         /// Returns true if this object is ready to be garbage collected by the native side.
         /// </summary>
-        public bool IsManagedObjectWeak { get { using (Engine._ObjectsLocker.ReadLock(Int32.MaxValue)) { return _ID != null ? Engine._Objects[_ID.Value].IsGCReady : true; } } }
+        public bool IsManagedObjectWeak { get { using (Engine.ObjectsLockerInternal.ReadLock(Int32.MaxValue)) { return _ID != null ? Engine.ObjectsInternal[_ID.Value].IsGCReady : true; } } }
 
         /// <summary>
         /// Used internally to quickly determine when an instance represents a binder object type, or static type binder function (faster than reflection!).
@@ -319,7 +318,7 @@ namespace Barista.V8.Net
 
         internal bool _OnNativeGCRequested() // WARNING: The worker thread may trigger a V8 GC callback in its own thread!
         {
-            using (Engine._ObjectsLocker.WriteLock(Int32.MaxValue))
+            using (Engine.ObjectsLockerInternal.WriteLock(Int32.MaxValue))
             {
                 if (Template is FunctionTemplate)
                     ((FunctionTemplate)Template)._RemoveFunctionType(ID);// (make sure to remove the function references from the template instance)
@@ -335,7 +334,7 @@ namespace Barista.V8.Net
                 if (_ID != null)
                     _Engine._RemoveObjectWeakReference(_ID.Value);
 
-                _Handle.ObjectID = -1;
+                _Handle.ObjectId = -1;
 
                 Template = null; // (note: this decrements a template counter; allows the GC finalizer to collect the object)
                 _ID = null; // (also allows the GC finalizer to collect the object)
@@ -346,7 +345,7 @@ namespace Barista.V8.Net
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        public static implicit operator InternalHandle(V8NativeObject obj) { return obj != null ? obj._Handle._Handle : InternalHandle.Empty; }
+        public static implicit operator InternalHandle(V8NativeObject obj) { return obj != null ? obj._Handle.HandleInternal : InternalHandle.Empty; }
         public static implicit operator Handle(V8NativeObject obj) { return obj != null ? obj._Handle : ObjectHandle.Empty; }
         public static implicit operator ObjectHandle(V8NativeObject obj) { return obj != null ? obj._Handle : ObjectHandle.Empty; }
 
@@ -379,7 +378,7 @@ namespace Barista.V8.Net
         /// <param name="attributes">Flags that describe the property behavior.  They must be 'OR'd together as needed. (V8PropertyAttributes.None)</param>
         public virtual bool SetProperty(string name, InternalHandle value, V8PropertyAttributes attributes )
         {
-            return _Handle._Handle.SetProperty(name, value, attributes);
+            return _Handle.HandleInternal.SetProperty(name, value, attributes);
         }
 
         /// <summary>
@@ -388,7 +387,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool SetProperty(Int32 index, InternalHandle value)
         {
-            return _Handle._Handle.SetProperty(index, value);
+            return _Handle.HandleInternal.SetProperty(index, value);
         }
 
         /// <summary>
@@ -406,7 +405,7 @@ namespace Barista.V8.Net
         /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (null)</param>
         public virtual bool SetProperty(string name, object obj, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            return _Handle._Handle.SetProperty(name, obj, className, recursive, memberSecurity);
+            return _Handle.HandleInternal.SetProperty(name, obj, className, recursive, memberSecurity);
         }
 
         /// <summary>
@@ -423,7 +422,7 @@ namespace Barista.V8.Net
         /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (Null)</param>
         public virtual bool SetProperty(Type type, V8PropertyAttributes propertyAttributes, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            return _Handle._Handle.SetProperty(type, propertyAttributes, className, recursive, memberSecurity);
+            return _Handle.HandleInternal.SetProperty(type, propertyAttributes, className, recursive, memberSecurity);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -434,7 +433,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle GetProperty(string name)
         {
-            return _Handle._Handle.GetProperty(name);
+            return _Handle.HandleInternal.GetProperty(name);
         }
 
         /// <summary>
@@ -443,7 +442,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle GetProperty(Int32 index)
         {
-            return _Handle._Handle.GetProperty(index);
+            return _Handle.HandleInternal.GetProperty(index);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -454,7 +453,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool DeleteProperty(string name)
         {
-            return _Handle._Handle.GetProperty(name);
+            return _Handle.HandleInternal.GetProperty(name);
         }
 
         /// <summary>
@@ -463,7 +462,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool DeleteProperty(Int32 index)
         {
-            return _Handle._Handle.GetProperty(index);
+            return _Handle.HandleInternal.GetProperty(index);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -480,7 +479,7 @@ namespace Barista.V8.Net
             V8NativeObjectPropertyGetter getter, V8NativeObjectPropertySetter setter,
             V8PropertyAttributes attributes, V8AccessControl access)
         {
-            _Handle._Handle.SetAccessor(name, getter, setter, attributes, access);
+            _Handle.HandleInternal.SetAccessor(name, getter, setter, attributes, access);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -490,7 +489,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual string[] GetPropertyNames()
         {
-            return _Handle._Handle.GetPropertyNames();
+            return _Handle.HandleInternal.GetPropertyNames();
         }
 
         /// <summary>
@@ -498,7 +497,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual string[] GetOwnPropertyNames()
         {
-            return _Handle._Handle.GetOwnPropertyNames();
+            return _Handle.HandleInternal.GetOwnPropertyNames();
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -510,7 +509,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual V8PropertyAttributes GetPropertyAttributes(string name)
         {
-            return _Handle._Handle.GetPropertyAttributes(name);
+            return _Handle.HandleInternal.GetPropertyAttributes(name);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -521,7 +520,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle Call(string functionName, InternalHandle _this, params InternalHandle[] args)
         {
-            return _Handle._Handle.Call(functionName, _this, args);
+            return _Handle.HandleInternal.Call(functionName, _this, args);
         }
 
         /// <summary>
@@ -529,7 +528,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle StaticCall(string functionName, params InternalHandle[] args)
         {
-            return _Handle._Handle.StaticCall(functionName, args);
+            return _Handle.HandleInternal.StaticCall(functionName, args);
         }
 
         /// <summary>
@@ -538,7 +537,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle Call(InternalHandle _this, params InternalHandle[] args)
         {
-            return _Handle._Handle.Call(_this, args);
+            return _Handle.HandleInternal.Call(_this, args);
         }
 
         /// <summary>
@@ -547,7 +546,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle StaticCall(params InternalHandle[] args)
         {
-            return _Handle._Handle.StaticCall(args);
+            return _Handle.HandleInternal.StaticCall(args);
         }
 
         // --------------------------------------------------------------------------------------------------------------------

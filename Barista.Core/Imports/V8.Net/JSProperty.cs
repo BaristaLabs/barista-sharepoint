@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+
     // ========================================================================================================================
 
     public interface IJSProperty

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+    using System.Runtime.InteropServices;
+
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    #endif
+
     // ========================================================================================================================
     // Just some basic environment compatibility tests.
 

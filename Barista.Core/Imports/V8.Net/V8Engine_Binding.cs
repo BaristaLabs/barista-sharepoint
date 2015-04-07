@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
     using Barista.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    #endif
 
     // ========================================================================================================================
 
@@ -292,7 +290,7 @@ namespace Barista.V8.Net
         /// <summary>
         /// Returns true if the information was taken from a native ArgInfo object.
         /// </summary>
-        public bool IsSourceFromArgInfoObject { get { return ArgInfoSource.CLRTypeID >= 0; } }
+        public bool IsSourceFromArgInfoObject { get { return ArgInfoSource.ClrTypeId >= 0; } }
 
         public object As(Type newtype) { return Types.ChangeType(Value, newtype, null); }
 
@@ -334,9 +332,9 @@ namespace Barista.V8.Net
             Value = null;
             Error = null;
 
-            if (handle.CLRTypeID >= 0) // (must be an object type with ID <= -2)
+            if (handle.ClrTypeId >= 0) // (must be an object type with ID <= -2)
             {
-                TypeId = handle.CLRTypeID;
+                TypeId = handle.ClrTypeId;
 
                 using (var hValue = handle.GetProperty("$__Value"))
                 {

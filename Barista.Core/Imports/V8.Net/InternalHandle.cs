@@ -1,13 +1,14 @@
 ﻿namespace Barista.V8.Net
 {
-    using Barista.Extensions;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Runtime.InteropServices;
+    using Barista.Extensions;
 
-    #if !(V1_1 || V2 || V3 || V3_5)
+#if !(V1_1 || V2 || V3 || V3_5)
     using System.Dynamic;
-    #endif
+#endif
 
     // ========================================================================================================================
 
@@ -23,23 +24,24 @@
     {
         // --------------------------------------------------------------------------------------------------------------------
 
-        public static readonly InternalHandle Empty = new InternalHandle((HandleProxy*)null);
+        public static readonly InternalHandle Empty = new InternalHandle(null);
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal HandleProxy* _HandleProxy; // (the native proxy struct wrapped by this instance)
-        internal bool _First; // (this is true if this is the FIRST handle to wrap the proxy [first handles may become automatically disposed internally if another handle is not created from it])
+        internal HandleProxy* HandleProxyInternal; // (the native proxy struct wrapped by this instance)
+        internal bool FirstInternal; // (this is true if this is the FIRST handle to wrap the proxy [first handles may become automatically disposed internally if another handle is not created from it])
 
         // --------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// Wraps a given native handle proxy to provide methods to operate on it.
         /// </summary>
+        /// <param name="hp"></param>
         /// <param name="checkIfFirst">(true)</param>
         internal InternalHandle(HandleProxy* hp, bool checkIfFirst)
         {
-            _HandleProxy = null;
-            _First = false;
+            HandleProxyInternal = null;
+            FirstInternal = false;
             _Set(hp, checkIfFirst);
         }
 
@@ -48,8 +50,8 @@
         /// </summary>
         public InternalHandle(InternalHandle handle)
         {
-            _HandleProxy = null;
-            _First = false;
+            HandleProxyInternal = null;
+            FirstInternal = false;
             Set(handle);
         }
 
@@ -59,7 +61,7 @@
         internal static InternalHandle _WrapOnly(HandleProxy* hp)
         {
             var h = InternalHandle.Empty;
-            h._HandleProxy = hp;
+            h.HandleProxyInternal = hp;
             return h;
         }
 
@@ -72,13 +74,14 @@
         /// </summary>
         public InternalHandle Set(InternalHandle handle)
         {
-            if (handle._First)
+            if (handle.FirstInternal)
             {
-                var h = _Set(handle._HandleProxy, true);
+                var h = _Set(handle.HandleProxyInternal, true);
                 handle.Dispose(); // Disposes the handle if it is the first one (the first one is disposed automatically when passed back into the engine).
                 return h;
             }
-            else return _Set(handle._HandleProxy, true);
+
+            return _Set(handle.HandleProxyInternal, true);
         }
 
         /// <summary>
@@ -90,7 +93,7 @@
         /// </summary>
         public InternalHandle Set(Handle handle)
         {
-            Set(handle._Handle);
+            Set(handle.HandleInternal);
             return this;
         }
 
@@ -102,34 +105,34 @@
         /// <returns></returns>
         internal InternalHandle _Set(HandleProxy* hp, bool checkIfFirst)
         {
-            if (_HandleProxy != hp)
+            if (HandleProxyInternal != hp)
             {
-                if (_HandleProxy != null)
+                if (HandleProxyInternal != null)
                     Dispose();
 
-                _HandleProxy = hp;
+                HandleProxyInternal = hp;
 
-                if (_HandleProxy != null)
+                if (HandleProxyInternal != null)
                 {
                     // ... verify the native handle proxy ID is within a valid range before storing it, and resize as needed ...
 
-                    var engine = V8Engine.V8EnginesInternal[_HandleProxy->EngineID];
-                    var handleID = _HandleProxy->ID;
+                    var engine = V8Engine.V8EnginesInternal[HandleProxyInternal->EngineID];
+                    var handleId = HandleProxyInternal->ID;
 
-                    if (handleID >= engine._HandleProxies.Length)
+                    if (handleId >= engine._HandleProxies.Length)
                     {
-                        HandleProxy*[] handleProxies = new HandleProxy*[(100 + handleID) * 2];
+                        HandleProxy*[] handleProxies = new HandleProxy*[(100 + handleId) * 2];
                         for (var i = 0; i < engine._HandleProxies.Length; i++)
                             handleProxies[i] = engine._HandleProxies[i];
                         engine._HandleProxies = handleProxies;
                     }
 
-                    engine._HandleProxies[handleID] = _HandleProxy;
+                    engine._HandleProxies[handleId] = HandleProxyInternal;
 
                     if (checkIfFirst)
-                        _First = (_HandleProxy->ManagedReferenceCount == 0);
+                        FirstInternal = (HandleProxyInternal->ManagedReferenceCount == 0);
 
-                    _HandleProxy->ManagedReferenceCount++;
+                    HandleProxyInternal->ManagedReferenceCount++;
 
                     GC.AddMemoryPressure((Marshal.SizeOf(typeof(HandleProxy))));
                 }
@@ -164,27 +167,27 @@
 
         internal void _Dispose(bool inFinalizer)
         {
-            if (_HandleProxy != null)
+            if (HandleProxyInternal != null)
             {
-                if (_HandleProxy->ManagedReferenceCount > 0)
+                if (HandleProxyInternal->ManagedReferenceCount > 0)
                 {
                     // (if this handle directly references a managed object, then notify the object info that it is weak if the handle ref count is 1)
-                    if (_HandleProxy->ManagedReferenceCount == 1 && _HandleProxy->_ObjectID >= 0 && !IsInPendingDisposalQueue)
+                    if (HandleProxyInternal->ManagedReferenceCount == 1 && HandleProxyInternal->_ObjectID >= 0 && !IsInPendingDisposalQueue)
                     {
-                        var weakRef = Engine._GetObjectWeakReference(_HandleProxy->_ObjectID);
+                        var weakRef = Engine._GetObjectWeakReference(HandleProxyInternal->_ObjectID);
                         if (weakRef != null)
                             weakRef.Object._TryDisposeNativeHandle();
                     }
                     else
                     {
-                        if (_HandleProxy->ManagedReferenceCount > 0)
-                            _HandleProxy->ManagedReferenceCount--;
+                        if (HandleProxyInternal->ManagedReferenceCount > 0)
+                            HandleProxyInternal->ManagedReferenceCount--;
 
-                        if (_HandleProxy->ManagedReferenceCount == 0)
+                        if (HandleProxyInternal->ManagedReferenceCount == 0)
                         {
                             __TryDispose();
-                            _First = false;
-                            _HandleProxy = null;
+                            FirstInternal = false;
+                            HandleProxyInternal = null;
                         }
 
                     }
@@ -192,8 +195,8 @@
                 else
                 {
                     __TryDispose(); // (no other references, so try to dispose now)
-                    _First = false;
-                    _HandleProxy = null;
+                    FirstInternal = false;
+                    HandleProxyInternal = null;
                 }
             }
         }
@@ -203,48 +206,48 @@
         /// </summary>
         internal void _DisposeIfFirst()
         {
-            if (_First) Dispose();
+            if (FirstInternal) Dispose();
         }
 
         /// <summary>
         /// Returns true if this handle is disposed (no longer in use).  Disposed native proxy handles are kept in a cache for performance reasons.
         /// </summary>
-        public bool IsDisposed { get { return _HandleProxy == null || _HandleProxy->IsDisposed; } }
+        public bool IsDisposed { get { return HandleProxyInternal == null || HandleProxyInternal->IsDisposed; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
         public static implicit operator Handle(InternalHandle handle)
         {
-            return handle._HandleProxy == null ? Handle.Empty : handle.IsObjectType ? new ObjectHandle(handle) : new Handle(handle);
+            return handle.HandleProxyInternal == null ? Handle.Empty : handle.IsObjectType ? new ObjectHandle(handle) : new Handle(handle);
         }
 
         public static implicit operator ObjectHandle(InternalHandle handle)
         {
             if (!handle.IsEmpty && !handle.IsObjectType) // (note: an empty handle is ok)
-                throw new InvalidCastException(string.Format(_VALUE_NOT_AN_OBJECT_ERRORMSG, handle));
-            return handle._HandleProxy != null ? new ObjectHandle(handle) : ObjectHandle.Empty;
+                throw new InvalidCastException(string.Format(ValueNotAnObjectErrorMsg, handle));
+            return handle.HandleProxyInternal != null ? new ObjectHandle(handle) : ObjectHandle.Empty;
         }
 
         public static implicit operator V8NativeObject(InternalHandle handle)
         {
-            return handle.Object as V8NativeObject;
+            return handle.Object;
         }
 
         public static implicit operator HandleProxy*(InternalHandle handle)
         {
-            return handle._HandleProxy;
+            return handle.HandleProxyInternal;
         }
 
         public static implicit operator InternalHandle(HandleProxy* handleProxy)
         {
-            return handleProxy != null ? new InternalHandle(handleProxy) : InternalHandle.Empty;
+            return handleProxy != null ? new InternalHandle(handleProxy, true) : InternalHandle.Empty;
         }
 
         // --------------------------------------------------------------------------------------------------------------------
 
         public static bool operator ==(InternalHandle h1, InternalHandle h2)
         {
-            return h1._HandleProxy == h2._HandleProxy;
+            return h1.HandleProxyInternal == h2.HandleProxyInternal;
         }
 
         public static bool operator !=(InternalHandle h1, InternalHandle h2)
@@ -271,7 +274,7 @@
 
         public static implicit operator string(InternalHandle handle)
         {
-            return handle.ToString();
+            return handle.ToString(CultureInfo.InvariantCulture);
         }
 
         public static implicit operator DateTime(InternalHandle handle)
@@ -294,8 +297,8 @@
         /// </summary>
         public InternalHandle PassOn()
         {
-            InternalHandle h = this;
-            _First = false; // ("first" is normally only true if the system created handle is not set to another handle)
+            var h = this;
+            FirstInternal = false; // ("first" is normally only true if the system created handle is not set to another handle)
             return h;
         }
 
@@ -305,28 +308,28 @@
         /// <summary>
         /// The ID (index) of this handle on both the native and managed sides.
         /// </summary>
-        public int ID { get { return _HandleProxy != null ? _HandleProxy->ID : -1; } }
+        public int Id { get { return HandleProxyInternal != null ? HandleProxyInternal->ID : -1; } }
 
         /// <summary>
         /// The JavaScript type this handle represents.
         /// </summary>
-        public JSValueType ValueType { get { return _HandleProxy != null ? _HandleProxy->_ValueType : JSValueType.Undefined; } }
+        public JSValueType ValueType { get { return HandleProxyInternal != null ? HandleProxyInternal->_ValueType : JSValueType.Undefined; } }
 
         /// <summary>
         /// Used internally to determine the number of references to a handle.
         /// </summary>
-        public Int64 ReferenceCount { get { return _HandleProxy != null ? _HandleProxy->ManagedReferenceCount : 0; } }
+        public Int64 ReferenceCount { get { return HandleProxyInternal != null ? HandleProxyInternal->ManagedReferenceCount : 0; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// A reference to the V8Engine instance that owns this handle.
         /// </summary>
-        public V8Engine Engine { get { return _HandleProxy != null ? V8Engine.V8EnginesInternal[_HandleProxy->EngineID] : null; } }
+        public V8Engine Engine { get { return HandleProxyInternal != null ? V8Engine.V8EnginesInternal[HandleProxyInternal->EngineID] : null; } }
 
         public Handle AsHandle()
         {
-            return (Handle)this;
+            return this;
         }
 
         public InternalHandle AsInternalHandle
@@ -342,24 +345,24 @@
         /// This ID is expected when handles are passed to 'V8ManagedObject.GetObject()'.
         /// If this value is less than 0, then there is no associated 'V8NativeObject' object (and the 'Object' property will be null).
         /// </summary>
-        public Int32 ObjectID
+        public Int32 ObjectId
         {
             get
             {
-                return _HandleProxy == null ? -1
-                    : _HandleProxy->_ObjectID < -1 || _HandleProxy->_ObjectID >= 0 ? _HandleProxy->_ObjectID
-                    : IsObjectType ? V8NetProxy.GetHandleManagedObjectID(_HandleProxy) : -1; // TODO: V8NetProxy.GetHandleManagedObjectID() is not really relevant anymore...but verify first.
+                return HandleProxyInternal == null ? -1
+                    : HandleProxyInternal->_ObjectID < -1 || HandleProxyInternal->_ObjectID >= 0 ? HandleProxyInternal->_ObjectID
+                    : IsObjectType ? V8NetProxy.GetHandleManagedObjectID(HandleProxyInternal) : -1; // TODO: V8NetProxy.GetHandleManagedObjectID() is not really relevant anymore...but verify first.
             }
-            internal set { if (_HandleProxy != null) _HandleProxy->_ObjectID = value; }
+            internal set { if (HandleProxyInternal != null) HandleProxyInternal->_ObjectID = value; }
         }
 
         /// <summary>
         /// Returns the managed object ID "as is".
         /// </summary>
-        internal Int32 _CurrentObjectID
+        internal Int32 CurrentObjectIdInternal
         {
-            get { return _HandleProxy != null ? _HandleProxy->_ObjectID : -1; }
-            set { if (_HandleProxy != null) _HandleProxy->_ObjectID = value; }
+            get { return HandleProxyInternal != null ? HandleProxyInternal->_ObjectID : -1; }
+            set { if (HandleProxyInternal != null) HandleProxyInternal->_ObjectID = value; }
         }
 
         /// <summary>
@@ -371,13 +374,13 @@
         {
             get
             {
-                if (_HandleProxy->_ObjectID >= 0 || _HandleProxy->_ObjectID == -1 && HasObject)
+                if (HandleProxyInternal->_ObjectID >= 0 || HandleProxyInternal->_ObjectID == -1 && HasObject)
                 {
-                    var weakRef = Engine._GetObjectWeakReference(_HandleProxy->_ObjectID);
+                    var weakRef = Engine._GetObjectWeakReference(HandleProxyInternal->_ObjectID);
                     return weakRef != null ? weakRef.Reset() : null;
                 }
-                else
-                    return null;
+
+                return null;
             }
         }
 
@@ -392,7 +395,13 @@
         /// <summary>
         /// Returns the registered type ID for objects that represent registered CLR types.
         /// </summary>
-        public Int32 CLRTypeID { get { return _HandleProxy != null ? _HandleProxy->_CLRTypeID : -1; } }
+        public Int32 ClrTypeId
+        {
+            get
+            {
+                return HandleProxyInternal != null ? HandleProxyInternal->_CLRTypeID : -1;
+            }
+        }
 
         /// <summary>
         /// If this handle represents a type binder, then this returns the associated 'TypeBinder' instance.
@@ -416,12 +425,13 @@
         {
             get
             {
-                if (_HandleProxy->_ObjectID >= -1 && IsObjectType && ObjectID >= 0)
+                if (HandleProxyInternal->_ObjectID >= -1 && IsObjectType && ObjectId >= 0)
                 {
-                    var weakRef = Engine._GetObjectWeakReference(_CurrentObjectID);
+                    var weakRef = Engine._GetObjectWeakReference(CurrentObjectIdInternal);
                     return weakRef != null;
                 }
-                else return false;
+
+                return false;
             }
         }
 
@@ -437,18 +447,19 @@
             {
                 if (IsBinder)
                     return BoundObject;
-                else if (CLRTypeID >= 0)
+
+                if (ClrTypeId >= 0)
                 {
                     var argInfo = new ArgInfo(this, null, null);
                     return argInfo.ValueOrDefault; // (this object represents a ArgInfo object, so return its value)
                 }
 
-                if (_HandleProxy != null)
+                if (HandleProxyInternal != null)
                 {
-                    V8NetProxy.UpdateHandleValue(_HandleProxy);
-                    return _HandleProxy->Value;
+                    V8NetProxy.UpdateHandleValue(HandleProxyInternal);
+                    return HandleProxyInternal->Value;
                 }
-                else return null;
+                return null;
             }
         }
 
@@ -461,7 +472,7 @@
         {
             get
             {
-                return _HandleProxy == null ? null : ((int)_HandleProxy->_ValueType) >= 0 ? _HandleProxy->Value : Value;
+                return HandleProxyInternal == null ? null : ((int)HandleProxyInternal->_ValueType) >= 0 ? HandleProxyInternal->Value : Value;
             }
         }
 
@@ -469,7 +480,7 @@
         /// Returns the array length for handles that represent arrays. For all other types, this returns 0.
         /// Note: To get the items of the array, use 'GetProperty(#)'.
         /// </summary>
-        public Int32 ArrayLength { get { return IsArray ? V8NetProxy.GetArrayLength(_HandleProxy) : 0; } }
+        public Int32 ArrayLength { get { return IsArray ? V8NetProxy.GetArrayLength(HandleProxyInternal) : 0; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -480,14 +491,14 @@
         {
             get
             {
-                var id = _CurrentObjectID;
+                var id = CurrentObjectIdInternal;
                 if (id >= 0)
                 {
-                    var owr = Engine._GetObjectWeakReference(_CurrentObjectID);
+                    var owr = Engine._GetObjectWeakReference(CurrentObjectIdInternal);
                     if (owr != null)
                         return owr.IsGCReady;
-                    else
-                        _CurrentObjectID = id = -1; // (this ID is no longer valid)
+
+                    CurrentObjectIdInternal = id = -1; // (this ID is no longer valid)
                 }
                 return id == -1;
             }
@@ -496,7 +507,7 @@
         /// <summary>
         /// Returns true if the handle is weak and ready to be disposed.
         /// </summary>
-        public bool IsWeakHandle { get { return _HandleProxy != null && _HandleProxy->ManagedReferenceCount <= 1; } }
+        public bool IsWeakHandle { get { return HandleProxyInternal != null && HandleProxyInternal->ManagedReferenceCount <= 1; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -505,8 +516,8 @@
         /// </summary>
         public bool IsInPendingDisposalQueue
         {
-            get { return _HandleProxy != null && _HandleProxy->IsDisposeReady; }
-            internal set { if (_HandleProxy != null) _HandleProxy->IsDisposeReady = value; }
+            get { return HandleProxyInternal != null && HandleProxyInternal->IsDisposeReady; }
+            internal set { if (HandleProxyInternal != null) HandleProxyInternal->IsDisposeReady = value; }
         }
 
         /// <summary>
@@ -515,14 +526,14 @@
         /// </summary>
         public bool IsNativelyWeak
         {
-            get { return _HandleProxy != null && _HandleProxy->IsWeak; }
+            get { return HandleProxyInternal != null && HandleProxyInternal->IsWeak; }
         }
 
         /// <summary>
         /// Returns true if this handle has no references (usually a primitive type), or is weak AND is associated with a weak managed object reference.
         /// When a handle is ready to be disposed, then calling "Dispose()" will succeed and cause the handle to be placed back into the cache on the native side.
         /// </summary>
-        public bool IsDisposeReady { get { return _HandleProxy != null && _HandleProxy->ManagedReferenceCount == 0 || IsWeakHandle && IsWeakManagedObject; } }
+        public bool IsDisposeReady { get { return HandleProxyInternal != null && HandleProxyInternal->ManagedReferenceCount == 0 || IsWeakHandle && IsWeakManagedObject; } }
 
         /// <summary>
         /// Attempts to dispose of this handle (add it back into the native proxy cache for reuse).  If the handle represents a managed object with strong
@@ -534,7 +545,7 @@
         {
             if (IsDisposeReady)
             {
-                _HandleProxy->IsDisposeReady = true;
+                HandleProxyInternal->IsDisposeReady = true;
                 _CompleteDisposal(); // (no need to wait! there's no managed object.)
                 return true;
             }
@@ -549,13 +560,13 @@
         {
             if (!IsDisposed)
             {
-                _HandleProxy->ManagedReferenceCount = 0;
+                HandleProxyInternal->ManagedReferenceCount = 0;
 
-                V8NetProxy.DisposeHandleProxy(_HandleProxy);
+                V8NetProxy.DisposeHandleProxy(HandleProxyInternal);
 
-                _CurrentObjectID = -1;
+                CurrentObjectIdInternal = -1;
 
-                _HandleProxy = null;
+                HandleProxyInternal = null;
 
                 GC.RemoveMemoryPressure((Marshal.SizeOf(typeof(HandleProxy))));
             }
@@ -571,16 +582,18 @@
         /// <returns>The object released.</returns>
         public V8NativeObject ReleaseManagedObject()
         {
-            if (IsObjectType && ObjectID >= 0)
-                using (Engine._ObjectsLocker.ReadLock(Int32.MaxValue))
+            if (IsObjectType && ObjectId >= 0)
+                using (Engine.ObjectsLockerInternal.ReadLock(Int32.MaxValue))
                 {
-                    var weakRef = Engine._GetObjectWeakReference(ObjectID);
+                    var weakRef = Engine._GetObjectWeakReference(ObjectId);
                     if (weakRef != null)
                     {
                         var obj = weakRef.Object;
-                        var placeHolder = new V8NativeObject();
-                        placeHolder._Engine = obj._Engine;
-                        placeHolder.Template = obj.Template;
+                        var placeHolder = new V8NativeObject
+                        {
+                            _Engine = obj._Engine,
+                            Template = obj.Template
+                        };
                         weakRef.SetTarget(placeHolder); // (this must be done first before moving the handle to the new object!)
                         placeHolder.Handle = obj.Handle;
                         obj.Template = null;
@@ -599,7 +612,7 @@
         /// <para>An empty state is when a handle is set to 'InternalHandle.Empty' and has no valid native V8 handle assigned.
         /// This is similar to "undefined"; however, this property will be true if a valid native V8 handle exists that is set to "undefined".</para>
         /// </summary>
-        public bool IsEmpty { get { return _HandleProxy == null; } }
+        public bool IsEmpty { get { return HandleProxyInternal == null; } }
 
         /// <summary>
         /// Returns true if this handle is undefined or empty (empty is when this handle is an instance of 'Handle.Empty').
@@ -660,42 +673,42 @@
         /// Returns the 'Value' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
         /// </summary>
-        public DerivedType As<DerivedType>()
+        public TDerivedType As<TDerivedType>()
         {
-            return _HandleProxy != null ? (DerivedType)Value : default(DerivedType);
+            return HandleProxyInternal != null ? (TDerivedType)Value : default(TDerivedType);
         }
 
         /// Returns the 'LastValue' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
-        public DerivedType LastAs<DerivedType>()
+        public TDerivedType LastAs<TDerivedType>()
         {
-            return _HandleProxy != null ? (DerivedType)LastValue : default(DerivedType);
+            return HandleProxyInternal != null ? (TDerivedType)LastValue : default(TDerivedType);
         }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a Boolean type.
         /// </summary>
-        public bool AsBoolean { get { return (bool)this; } }
+        public bool AsBoolean { get { return this; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to an Int32 type.
         /// </summary>
-        public Int32 AsInt32 { get { return (Int32)this; } }
+        public Int32 AsInt32 { get { return this; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a double type.
         /// </summary>
-        public double AsDouble { get { return (double)this; } }
+        public double AsDouble { get { return this; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a string type.
         /// </summary>
-        public String AsString { get { return (String)this; } }
+        public String AsString { get { return this; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a DateTime type.
         /// </summary>
-        public DateTime AsDate { get { return (DateTime)this; } }
+        public DateTime AsDate { get { return this; } }
 
         /// <summary>
         /// Returns this handle as a new JSProperty instance with default property attributes.
@@ -718,21 +731,19 @@
                         var typeBinder = ((TypeBinderFunction)Object).TypeBinder;
                         return "(CLR Type: " + typeBinder.BoundType.FullName + ")";
                     }
-                    else
-                    {
-                        var obj = BoundObject;
-                        if (obj != null)
-                            return "(" + obj.ToString() + ")";
-                        else
-                            throw new InvalidOperationException("Object binder does not have an object instance.");
-                    }
-                }
-                else if (IsObjectType)
-                {
-                    string managedType = "";
-                    string disposal = "";
 
-                    switch (_HandleProxy->Disposed)
+                    var obj = BoundObject;
+                    if (obj != null)
+                        return "(" + obj + ")";
+                    throw new InvalidOperationException("Object binder does not have an object instance.");
+                }
+
+                if (IsObjectType)
+                {
+                    var managedType = "";
+                    var disposal = "";
+
+                    switch (HandleProxyInternal->Disposed)
                     {
                         case 0: break;
                         case 1: disposal = " - Dispose Ready"; break;
@@ -740,11 +751,11 @@
                         case 3: disposal = " - Disposed"; break;
                     }
 
-                    if (HasObject)
-                    {
-                        var mo = Engine._GetObjectAsIs(ObjectID);
-                        managedType = " (" + (mo != null ? mo.GetType().Name + " [" + mo.ID + "]" : "associated managed object is null") + ")";
-                    }
+                    if (!HasObject)
+                        return "<object: " + Enum.GetName(typeof (JSValueType), ValueType) + managedType + disposal + ">";
+
+                    var mo = Engine._GetObjectAsIs(ObjectId);
+                    managedType = " (" + (mo != null ? mo.GetType().Name + " [" + mo.ID + "]" : "associated managed object is null") + ")";
 
                     return "<object: " + Enum.GetName(typeof(JSValueType), ValueType) + managedType + disposal + ">";
                 }
@@ -765,12 +776,12 @@
         /// </summary>
         public override bool Equals(object obj)
         {
-            return obj is IHandleBased && _HandleProxy == ((IHandleBased)obj).AsInternalHandle._HandleProxy;
+            return obj is IHandleBased && HandleProxyInternal == ((IHandleBased)obj).AsInternalHandle.HandleProxyInternal;
         }
 
         public override int GetHashCode()
         {
-            return (int)ID;
+            return Id;
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -870,8 +881,8 @@
         #endregion ### SHARED HANDLE CODE END ###
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal const string _NOT_AN_OBJECT_ERRORMSG = "The handle does not represent a JavaScript object.";
-        internal const string _VALUE_NOT_AN_OBJECT_ERRORMSG = "The handle {0} does not represent a JavaScript object.";
+        internal const string NotAnObjectErrorMsg = "The handle does not represent a JavaScript object.";
+        internal const string ValueNotAnObjectErrorMsg = "The handle {0} does not represent a JavaScript object.";
 
         /// <summary>
         /// Calls the V8 'Set()' function on the underlying native object.
@@ -888,7 +899,7 @@
                     throw new ArgumentNullException("name");
 
                 if (!IsObjectType)
-                    throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+                    throw new InvalidOperationException(NotAnObjectErrorMsg);
 
                 return V8NetProxy.SetObjectPropertyByName(this, name, value, attributes);
             }
@@ -906,7 +917,7 @@
         {
             try
             {
-                if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+                if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
                 return V8NetProxy.SetObjectPropertyByIndex(this, index, value);
             }
@@ -921,35 +932,36 @@
         /// the specified property name.
         /// Returns true if successful.
         /// </summary>
-        /// <param name="name">The property name. If 'null', then the name of the object type is assumed. (Null)</param>
+        /// <param name="name">The property name. If 'null', then the name of the object type is assumed.</param>
         /// <param name="obj">Some value or object instance. 'Engine.CreateValue()' will be used to convert value types, unless the object is already a handle, in which case it is set directly.</param>
-        /// <param name="className">A custom in-script function name for the specified object type, or 'null' to use either the type name as is (the default) or any existing 'ScriptObject' attribute name.</param>
+        /// <param name="className">A custom in-script function name for the specified object type, or 'null' to use either the type name as is (the default) or any existing 'ScriptObject' attribute name. (null)</param>
         /// <param name="recursive">For object instances, if true, then object reference members are included, otherwise only the object itself is bound and returned.
         /// For security reasons, public members that point to object instances will be ignored. This must be true to included those as well, effectively allowing
         /// in-script traversal of the object reference tree (so make sure this doesn't expose sensitive methods/properties/fields). (null)</param>
         /// <param name="memberSecurity">For object instances, these are default flags that describe JavaScript properties for all object instance members that
-        /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (Null)</param>
+        /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (null)</param>
         public bool SetProperty(string name, object obj, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType)
+                throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             if (name.IsNullOrWhiteSpace())
                 if (obj == null) throw new InvalidOperationException("You cannot pass 'null' without a valid property name.");
                 else
                     name = obj.GetType().Name;
 
-            if (obj is IHandleBased)
-                return SetProperty(name, ((IHandleBased)obj).AsInternalHandle, (V8PropertyAttributes)(memberSecurity ?? ScriptMemberSecurity.ReadWrite));
+            var based = obj as IHandleBased;
+            if (based != null)
+                return SetProperty(name, based.AsInternalHandle, (V8PropertyAttributes)(memberSecurity ?? ScriptMemberSecurity.ReadWrite));
 
             if (obj == null || obj is string || obj.GetType().IsValueType) // TODO: Check enum support.
                 return SetProperty(name, Engine.CreateValue(obj, null, null), (V8PropertyAttributes)(memberSecurity ?? ScriptMemberSecurity.ReadWrite));
 
             var nObj = Engine.CreateBinding(obj, className, recursive, memberSecurity, true);
 
-            if (memberSecurity != null)
-                return SetProperty(name, nObj, (V8PropertyAttributes)memberSecurity);
-            else
-                return SetProperty(name, nObj, V8PropertyAttributes.None);
+            return memberSecurity != null
+                ? SetProperty(name, nObj, (V8PropertyAttributes)memberSecurity)
+                : SetProperty(name, nObj, V8PropertyAttributes.None);
         }
 
         /// <summary>
@@ -958,15 +970,16 @@
         /// </summary>
         /// <param name="type">The type to wrap.</param>
         /// <param name="propertyAttributes">Flags that describe the property behavior.  They must be 'OR'd together as needed. (V8PropertyAttributes.None)</param>
-        /// <param name="className">A custom in-script function name for the specified type, or 'null' to use either the type name as is (the default) or any existing 'ScriptObject' attribute name. (Null)</param>
+        /// <param name="className">A custom in-script function name for the specified type, or 'null' to use either the type name as is (the default) or any existing 'ScriptObject' attribute name. (null)</param>
         /// <param name="recursive">For object types, if true, then object reference members are included, otherwise only the object itself is bound and returned.
         /// For security reasons, public members that point to object instances will be ignored. This must be true to included those as well, effectively allowing
-        /// in-script traversal of the object reference tree (so make sure this doesn't expose sensitive methods/properties/fields). (Null)</param>
+        /// in-script traversal of the object reference tree (so make sure this doesn't expose sensitive methods/properties/fields). (null)</param>
         /// <param name="memberSecurity">For object instances, these are default flags that describe JavaScript properties for all object instance members that
-        /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (Null)</param>
+        /// don't have any 'ScriptMember' attribute.  The flags should be 'OR'd together as needed. (null)</param>
         public bool SetProperty(Type type, V8PropertyAttributes propertyAttributes, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType)
+                throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             var func = (V8Function)Engine.CreateBinding(type, className, recursive, memberSecurity).Object;
 
@@ -981,9 +994,10 @@
         /// </summary>
         public InternalHandle GetProperty(string name)
         {
-            if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("name");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return V8NetProxy.GetObjectPropertyByName(this, name);
         }
@@ -994,7 +1008,7 @@
         /// </summary>
         public InternalHandle GetProperty(Int32 index)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return V8NetProxy.GetObjectPropertyByIndex(this, index);
         }
@@ -1007,9 +1021,9 @@
         /// </summary>
         public bool DeleteProperty(string name)
         {
-            if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+            if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return V8NetProxy.DeleteObjectPropertyByName(this, name);
         }
@@ -1020,7 +1034,7 @@
         /// </summary>
         public bool DeleteProperty(Int32 index)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return V8NetProxy.DeleteObjectPropertyByIndex(this, index);
         }
@@ -1028,7 +1042,7 @@
         // --------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Calls the V8 'SetAccessor()' function on the underlying native object to create a property that is controlled by "getter" and "setter" callbacks.
+        ///  Calls the V8 'SetAccessor()' function on the underlying native object to create a property that is controlled by "getter" and "setter" callbacks.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="getter"></param>
@@ -1039,14 +1053,16 @@
             V8NativeObjectPropertyGetter getter, V8NativeObjectPropertySetter setter,
             V8PropertyAttributes attributes, V8AccessControl access)
         {
-            if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("name");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType)
+                throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             var engine = Engine;
             // TODO: Need a different native ID to track this.
-            V8NetProxy.SetObjectAccessor(this, ObjectID, name,
-                   Engine._StoreAccessor<ManagedAccessorGetter>(ObjectID, "get_" + name, (HandleProxy* _this, string propertyName) =>
+            V8NetProxy.SetObjectAccessor(this, ObjectId, name,
+                   Engine._StoreAccessor<ManagedAccessorGetter>(ObjectId, "get_" + name, (_this, propertyName) =>
                    {
                        try
                        {
@@ -1057,7 +1073,7 @@
                            return engine.CreateError(ex.GetFullErrorMessage(true), JSValueType.ExecutionError);
                        }
                    }),
-                   Engine._StoreAccessor<ManagedAccessorSetter>(ObjectID, "set_" + name, (HandleProxy* _this, string propertyName, HandleProxy* value) =>
+                   Engine._StoreAccessor<ManagedAccessorSetter>(ObjectId, "set_" + name, (_this, propertyName, value) =>
                    {
                        try
                        {
@@ -1078,18 +1094,18 @@
         /// </summary>
         public string[] GetPropertyNames()
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
-            using (InternalHandle v8array = V8NetProxy.GetPropertyNames(this))
+            using (InternalHandle v8Array = V8NetProxy.GetPropertyNames(this))
             {
-                var length = V8NetProxy.GetArrayLength(v8array);
+                var length = V8NetProxy.GetArrayLength(v8Array);
 
                 var names = new string[length];
 
                 InternalHandle itemHandle;
 
                 for (var i = 0; i < length; i++)
-                    using (itemHandle = V8NetProxy.GetObjectPropertyByIndex(v8array, i))
+                    using (itemHandle = V8NetProxy.GetObjectPropertyByIndex(v8Array, i))
                     {
                         names[i] = itemHandle;
                     }
@@ -1103,18 +1119,18 @@
         /// </summary>
         public string[] GetOwnPropertyNames()
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
-            using (InternalHandle v8array = V8NetProxy.GetOwnPropertyNames(this))
+            using (InternalHandle v8Array = V8NetProxy.GetOwnPropertyNames(this))
             {
-                var length = V8NetProxy.GetArrayLength(v8array);
+                var length = V8NetProxy.GetArrayLength(v8Array);
 
                 var names = new string[length];
 
                 InternalHandle itemHandle;
 
                 for (var i = 0; i < length; i++)
-                    using (itemHandle = V8NetProxy.GetObjectPropertyByIndex(v8array, i))
+                    using (itemHandle = V8NetProxy.GetObjectPropertyByIndex(v8Array, i))
                     {
                         names[i] = itemHandle;
                     }
@@ -1128,13 +1144,14 @@
         /// <summary>
         /// Get the attribute flags for a property of this object.
         /// If a property doesn't exist, then 'V8PropertyAttributes.None' is returned
-        /// (Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
+        /// <para>(Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
         /// </summary>
         public V8PropertyAttributes GetPropertyAttributes(string name)
         {
-            if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("name");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return V8NetProxy.GetPropertyAttributes(this, name);
         }
@@ -1145,7 +1162,7 @@
         {
             try
             {
-                if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+                if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
                 HandleProxy** nativeArrayMem = Utilities.MakeHandleProxyArray(args);
 
@@ -1169,9 +1186,10 @@
         /// </summary>
         public InternalHandle Call(string functionName, InternalHandle _this, params InternalHandle[] args)
         {
-            if (functionName.IsNullOrWhiteSpace()) throw new ArgumentNullException("functionName (cannot be null, empty, or only whitespace)");
+            if (functionName.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("functionName");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return _Call(functionName, _this, args);
         }
@@ -1182,9 +1200,10 @@
         /// </summary>
         public InternalHandle StaticCall(string functionName, params InternalHandle[] args)
         {
-            if (functionName.IsNullOrWhiteSpace()) throw new ArgumentNullException("functionName (cannot be null, empty, or only whitespace)");
+            if (functionName.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("functionName");
 
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return _Call(functionName, InternalHandle.Empty, args);
         }
@@ -1195,7 +1214,7 @@
         /// </summary>
         public InternalHandle Call(InternalHandle _this, params InternalHandle[] args)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return _Call(null, _this, args);
         }
@@ -1206,7 +1225,7 @@
         /// </summary>
         public InternalHandle StaticCall(params InternalHandle[] args)
         {
-            if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
+            if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
 
             return _Call(null, InternalHandle.Empty, args);
         }
@@ -1220,8 +1239,8 @@
         {
             get
             {
-                if (!IsObjectType) throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);
-                return V8NetProxy.GetObjectPrototype(_HandleProxy);
+                if (!IsObjectType) throw new InvalidOperationException(NotAnObjectErrorMsg);
+                return V8NetProxy.GetObjectPrototype(HandleProxyInternal);
             }
         }
 
@@ -1244,22 +1263,23 @@
 
     // ========================================================================================================================
 
-    public unsafe partial class V8Engine
+    public partial class V8Engine
     {
-        internal readonly Dictionary<Int32, Dictionary<string, Delegate>> _Accessors = new Dictionary<Int32, Dictionary<string, Delegate>>();
+        internal readonly Dictionary<Int32, Dictionary<string, Delegate>> AccessorsInternal = new Dictionary<Int32, Dictionary<string, Delegate>>();
 
         /// <summary>
         /// This is required in order prevent accessor delegates from getting garbage collected when used with P/Invoke related callbacks (a process called "thunking").
         /// </summary>
         /// <typeparam name="T">The type of delegate ('d') to store and return.</typeparam>
-        /// <param name="key">A native pointer (usually a proxy object) to associated the delegate to.</param>
+        /// <param name="propertyName"></param>
         /// <param name="d">The delegate to keep a strong reference to (expected to be of type 'T').</param>
+        /// <param name="id"></param>
         /// <returns>The same delegate passed in, cast to type of 'T'.</returns>
         internal T _StoreAccessor<T>(Int32 id, string propertyName, T d) where T : class
         {
             Dictionary<string, Delegate> delegates;
-            if (!_Accessors.TryGetValue(id, out delegates))
-                _Accessors[id] = delegates = new Dictionary<string, Delegate>();
+            if (!AccessorsInternal.TryGetValue(id, out delegates))
+                AccessorsInternal[id] = delegates = new Dictionary<string, Delegate>();
             delegates[propertyName] = (Delegate)(object)d;
             return d;
         }
@@ -1270,7 +1290,7 @@
         internal bool _HasAccessors(Int32 id)
         {
             Dictionary<string, Delegate> delegates;
-            return _Accessors.TryGetValue(id, out delegates) && delegates.Count > 0;
+            return AccessorsInternal.TryGetValue(id, out delegates) && delegates.Count > 0;
         }
 
         /// <summary>
@@ -1279,11 +1299,10 @@
         internal void _ClearAccessors(Int32 id)
         {
             Dictionary<string, Delegate> delegates;
-            if (_Accessors.TryGetValue(id, out delegates))
+            if (AccessorsInternal.TryGetValue(id, out delegates))
                 delegates.Clear();
         }
     }
 
     // ========================================================================================================================
 }
-

@@ -1,87 +1,91 @@
-﻿using System;
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
     // ========================================================================================================================
-#if !(V1_1 || V2 || V3 || V3_5)
-    using System.Dynamic;
-    using System.Reflection;
+    using System;
+    #if !(V1_1 || V2 || V3 || V3_5)
+        using System.Dynamic;
+        using System.Reflection;
 
-    //public unsafe class DynamicHandleMetaObject : DynamicMetaObject
-    //{
-    //    InternalHandle _Handle;
+        //public unsafe class DynamicHandleMetaObject : DynamicMetaObject
+        //{
+        //    InternalHandle _Handle;
 
-    //    internal DynamicHandleMetaObject(InternalHandle handle, Expression parameter)
-    //        : base(parameter, BindingRestrictions.Empty, handle)
-    //    {
-    //        _Handle = handle;
-    //    }
+        //    internal DynamicHandleMetaObject(InternalHandle handle, Expression parameter)
+        //        : base(parameter, BindingRestrictions.Empty, handle)
+        //    {
+        //        _Handle = handle;
+        //    }
 
-    //    public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
-    //    {
-    //        return base.BindGetMember(binder);
-    //    }
+        //    public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
+        //    {
+        //        return base.BindGetMember(binder);
+        //    }
 
-    //    public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
-    //    {
-    //        if (_Handle.IsObjectType)
-    //        {
-    //            V8NetProxy.SetObjectPropertyByName(_Handle, binder.Name, _Handle.Engine.CreateValue(value.Value));
-    //            return;
-    //        }
-    //        return base.BindSetMember(binder, value);
-    //    }
+        //    public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
+        //    {
+        //        if (_Handle.IsObjectType)
+        //        {
+        //            V8NetProxy.SetObjectPropertyByName(_Handle, binder.Name, _Handle.Engine.CreateValue(value.Value));
+        //            return;
+        //        }
+        //        return base.BindSetMember(binder, value);
+        //    }
 
-    //    public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
-    //    {
-    //        return base.BindInvoke(binder, args);
-    //    }
+        //    public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
+        //    {
+        //        return base.BindInvoke(binder, args);
+        //    }
 
-    //    public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
-    //    {
-    //        return base.BindInvokeMember(binder, args);
-    //    }
+        //    public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
+        //    {
+        //        return base.BindInvokeMember(binder, args);
+        //    }
 
-    //    public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
-    //    {
-    //        return base.BindGetIndex(binder, indexes);
-    //    }
+        //    public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
+        //    {
+        //        return base.BindGetIndex(binder, indexes);
+        //    }
 
-    //    public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
-    //    {
-    //        return base.BindSetIndex(binder, indexes, value);
-    //    }
+        //    public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
+        //    {
+        //        return base.BindSetIndex(binder, indexes, value);
+        //    }
 
-    //    public override DynamicMetaObject BindDeleteMember(DeleteMemberBinder binder)
-    //    {
-    //        return base.BindDeleteMember(binder);
-    //    }
+        //    public override DynamicMetaObject BindDeleteMember(DeleteMemberBinder binder)
+        //    {
+        //        return base.BindDeleteMember(binder);
+        //    }
 
-    //    public override DynamicMetaObject BindDeleteIndex(DeleteIndexBinder binder, DynamicMetaObject[] indexes)
-    //    {
-    //        return base.BindDeleteIndex(binder, indexes);
-    //    }
+        //    public override DynamicMetaObject BindDeleteIndex(DeleteIndexBinder binder, DynamicMetaObject[] indexes)
+        //    {
+        //        return base.BindDeleteIndex(binder, indexes);
+        //    }
 
-    //    public override IEnumerable<string> GetDynamicMemberNames()
-    //    {
-    //        return base.GetDynamicMemberNames();
-    //    }
+        //    public override IEnumerable<string> GetDynamicMemberNames()
+        //    {
+        //        return base.GetDynamicMemberNames();
+        //    }
 
-    //    public override DynamicMetaObject BindConvert(ConvertBinder binder)
-    //    {
-    //        if (binder.ReturnType == typeof(string))
-    //            return new DynamicMetaObject(Expression, Restrictions, _Handle.AsString);
-    //        else
-    //            return new DynamicMetaObject(Expression, Restrictions, null);
-    //    }
-    //}
+        //    public override DynamicMetaObject BindConvert(ConvertBinder binder)
+        //    {
+        //        if (binder.ReturnType == typeof(string))
+        //            return new DynamicMetaObject(Expression, Restrictions, _Handle.AsString);
+        //        else
+        //            return new DynamicMetaObject(Expression, Restrictions, null);
+        //    }
+        //}
 
-#else
-    public interface IDynamicMetaObjectProvider { }
-    public partial class Expression { public static Expression Empty() { return null; } }
-    public enum BindingRestrictions { Empty }
-    public partial class DynamicMetaObject
-    { public DynamicMetaObject(Expression ex, BindingRestrictions rest, object value) { } }
+    #else
+        public interface IDynamicMetaObjectProvider { }
+        public class Expression { public static Expression Empty() { return null; } }
+        public enum BindingRestrictions { Empty }
+
+        public class DynamicMetaObject
+        {
+            public DynamicMetaObject(Expression ex, BindingRestrictions rest, object value)
+            {
+            }
+        }
 #endif
 
     // ========================================================================================================================
@@ -189,11 +193,11 @@ namespace Barista.V8.Net
         /// Returns the 'Value' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
         /// </summary>
-        DerivedType As<DerivedType>();
+        TDerivedType As<TDerivedType>();
 
         /// Returns the 'LastValue' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
-        DerivedType LastAs<DerivedType>();
+        TDerivedType LastAs<TDerivedType>();
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a Boolean type.
@@ -295,18 +299,18 @@ namespace Barista.V8.Net
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal InternalHandle _Handle; // ('HandleInfo' or 'WeakReference<HandleInfo>' type only, or 'null' for empty/undefined handles)
+        internal InternalHandle HandleInternal; // ('HandleInfo' or 'WeakReference<HandleInfo>' type only, or 'null' for empty/undefined handles)
 
         // --------------------------------------------------------------------------------------------------------------------
 
         internal Handle(HandleProxy* hp)
         {
-            _Handle._Set(hp, false); // ("check if first" only applies to unwrapped InternalHandle values)
+            HandleInternal._Set(hp, false); // ("check if first" only applies to unwrapped InternalHandle values)
         }
 
         public Handle(InternalHandle handle)
         {
-            _Handle.Set(handle);
+            HandleInternal.Set(handle);
         }
 
         ~Handle()
@@ -314,7 +318,7 @@ namespace Barista.V8.Net
             if (!((IFinalizable)this).CanFinalize && Engine != null)
                 lock (Engine.ObjectsToFinalizeInternal)
                 {
-                    var isLastHandleForObject = (_CurrentObjectID >= 0 && ReferenceCount == 1);
+                    var isLastHandleForObject = (CurrentObjectId >= 0 && ReferenceCount == 1);
                     if (!isLastHandleForObject) // (there should ALWAYS be at least one handle associated with an object)
                         Engine.ObjectsToFinalizeInternal.Add(this);
                     GC.ReRegisterForFinalize(this);
@@ -325,7 +329,7 @@ namespace Barista.V8.Net
 
         void IFinalizable.DoFinalize()
         {
-            _Handle._Dispose(true);
+            HandleInternal._Dispose(true);
         }
 
         /// <summary>
@@ -337,7 +341,7 @@ namespace Barista.V8.Net
         /// </summary>
         public Handle Set(Handle handle)
         {
-            _Handle.Set(handle != null ? handle._Handle : InternalHandle.Empty);
+            HandleInternal.Set(handle != null ? handle.HandleInternal : InternalHandle.Empty);
             return this;
         }
 
@@ -350,15 +354,15 @@ namespace Barista.V8.Net
         /// </summary>
         public Handle Set(InternalHandle handle)
         {
-            _Handle.Set(handle);
+            HandleInternal.Set(handle);
             return this;
         }
 
-        InternalHandle IHandle.Set(InternalHandle handle) { return _Handle.Set(handle); }
+        InternalHandle IHandle.Set(InternalHandle handle) { return HandleInternal.Set(handle); }
 
         internal Handle _Set(HandleProxy* hp)
         {
-            _Handle._Set(hp, false); // ("check if first" only applies to unwrapped InternalHandle values)
+            HandleInternal._Set(hp, false); // ("check if first" only applies to unwrapped InternalHandle values)
             return this;
         }
 
@@ -370,10 +374,9 @@ namespace Barista.V8.Net
         /// </summary>
         public Handle Clone()
         {
-            if (_Handle.IsObjectType)
-                return new ObjectHandle(_Handle);
-            else
-                return new Handle(_Handle);
+            return HandleInternal.IsObjectType
+                ? new ObjectHandle(HandleInternal)
+                : new Handle(HandleInternal);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -383,12 +386,12 @@ namespace Barista.V8.Net
         /// If other handles exist, then they will still be valid, and this handle instance will become empty.
         /// <para>This is useful to use with "using" statements to quickly release a handle into the cache for reuse.</para>
         /// </summary>
-        public void Dispose() { _Handle._Dispose(false); }
+        public void Dispose() { HandleInternal._Dispose(false); }
 
         /// <summary>
         /// Returns true if this handle is disposed (no longer in use).  Disposed native proxy handles are kept in a cache for performance reasons.
         /// </summary>
-        public bool IsDisposed { get { return _Handle.IsDisposed; } }
+        public bool IsDisposed { get { return HandleInternal.IsDisposed; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -396,13 +399,13 @@ namespace Barista.V8.Net
         {
             if (handle == null) return InternalHandle.Empty;
             var h = InternalHandle.Empty;
-            h._HandleProxy = handle._Handle._HandleProxy; // (this is done to prevent incrementing the managed reference count on implicit conversions [to which a developer may not be aware])
+            h.HandleProxyInternal = handle.HandleInternal.HandleProxyInternal; // (this is done to prevent incrementing the managed reference count on implicit conversions [to which a developer may not be aware])
             return h;
         }
 
         public static implicit operator HandleProxy*(Handle handle)
         {
-            return handle != null ? handle._Handle._HandleProxy : null;
+            return handle != null ? handle.HandleInternal.HandleProxyInternal : null;
         }
 
         public static implicit operator Handle(HandleProxy* handleProxy)
@@ -416,7 +419,7 @@ namespace Barista.V8.Net
 
         public static bool operator ==(Handle h1, Handle h2)
         {
-            return (object)h1 == (object)h2 || (object)h1 != null && h1.Equals(h2);
+            return h1 == h2 || (object)h1 != null && h1.Equals(h2);
         }
 
         public static bool operator !=(Handle h1, Handle h2)
@@ -428,32 +431,32 @@ namespace Barista.V8.Net
 
         public static implicit operator bool(Handle handle)
         {
-            return (bool)handle._Handle;
+            return handle.HandleInternal;
         }
 
         public static implicit operator Int32(Handle handle)
         {
-            return (Int32)handle._Handle;
+            return handle.HandleInternal;
         }
 
         public static implicit operator double(Handle handle)
         {
-            return (double)handle._Handle;
+            return handle.HandleInternal;
         }
 
         public static implicit operator string(Handle handle)
         {
-            return (string)handle._Handle;
+            return handle.HandleInternal;
         }
 
         public static implicit operator DateTime(Handle handle)
         {
-            return (DateTime)handle._Handle;
+            return handle.HandleInternal;
         }
 
         public static implicit operator JSProperty(Handle handle)
         {
-            return (JSProperty)handle._Handle;
+            return handle.HandleInternal;
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -461,7 +464,7 @@ namespace Barista.V8.Net
         /// <summary>
         /// A reference to the V8Engine instance that owns this handle.
         /// </summary>
-        public virtual V8Engine Engine { get { return _Handle.Engine; } }
+        public virtual V8Engine Engine { get { return HandleInternal.Engine; } }
 
         public Handle AsHandle()
         {
@@ -470,7 +473,7 @@ namespace Barista.V8.Net
 
         public InternalHandle AsInternalHandle
         {
-            get { return (InternalHandle)this; }
+            get { return this; }
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -479,17 +482,23 @@ namespace Barista.V8.Net
         /// <summary>
         /// The ID (index) of this handle on both the native and managed sides.
         /// </summary>
-        public int ID { get { return _Handle.ID; } }
+        public int Id
+        {
+            get
+            {
+                return HandleInternal.Id;
+            }
+        }
 
         /// <summary>
         /// The JavaScript type this handle represents.
         /// </summary>
-        public JSValueType ValueType { get { return _Handle.ValueType; } }
+        public JSValueType ValueType { get { return HandleInternal.ValueType; } }
 
         /// <summary>
         /// Used internally to determine the number of references to a handle.
         /// </summary>
-        public Int64 ReferenceCount { get { return _Handle.ReferenceCount; } }
+        public Int64 ReferenceCount { get { return HandleInternal.ReferenceCount; } }
 
         // --------------------------------------------------------------------------------------------------------------------
         // Managed Object Properties and References
@@ -499,19 +508,19 @@ namespace Barista.V8.Net
         /// This ID is expected when handles are passed to 'V8ManagedObject.GetObject()'.
         /// If this value is less than 0 (usually -1), then there is no associated managed object.
         /// </summary>
-        public virtual Int32 ObjectID
+        public virtual Int32 ObjectId
         {
-            get { return _Handle.ObjectID; }
-            internal set { _Handle.ObjectID = value; }
+            get { return HandleInternal.ObjectId; }
+            internal set { HandleInternal.ObjectId = value; }
         }
 
         /// <summary>
         /// Returns the managed object ID "as is".
         /// </summary>
-        internal Int32 _CurrentObjectID
+        internal Int32 CurrentObjectId
         {
-            get { return _Handle._CurrentObjectID; }
-            set { _Handle._CurrentObjectID = value; }
+            get { return HandleInternal.CurrentObjectIdInternal; }
+            set { HandleInternal.CurrentObjectIdInternal = value; }
         }
 
         /// <summary>
@@ -519,33 +528,33 @@ namespace Barista.V8.Net
         /// Upon reading this property, if the managed object has been garbage collected (because no more handles or references exist), then a new basic 'V8NativeObject' instance will be created.
         /// <para>Instead of checking for 'null' (which may not work as expected), query 'HasManagedObject' instead.</para>
         /// </summary>
-        public V8NativeObject Object { get { return _Handle.Object; } }
+        public V8NativeObject Object { get { return HandleInternal.Object; } }
 
         /// <summary>
         /// If this handle represents an object instance binder, then this returns the bound object.
         /// Bound objects are usually custom user objects (non-V8.NET objects) wrapped in ObjectBinder instances.
         /// </summary>
-        public object BoundObject { get { return _Handle.BoundObject; } }
+        public object BoundObject { get { return HandleInternal.BoundObject; } }
 
         object IBasicHandle.Object { get { return BoundObject ?? Object; } }
 
         /// <summary>
         /// Returns the registered type ID for objects that represent registered CLR types.
         /// </summary>
-        public Int32 CLRTypeID { get { return _Handle.CLRTypeID; } }
+        public Int32 ClrTypeId { get { return HandleInternal.ClrTypeId; } }
 
         /// <summary>
         /// If this handle represents a type binder, then this returns the associated 'TypeBinder' instance.
         /// <para>Bound types are usually non-V8.NET types that are wrapped and exposed in the JavaScript environment for use with the 'new' operator.</para>
         /// </summary>
-        public TypeBinder TypeBinder { get { return _Handle.TypeBinder; } }
+        public TypeBinder TypeBinder { get { return HandleInternal.TypeBinder; } }
 
         /// <summary>
         /// Returns true if this handle is associated with a managed object.
         /// <para>Note: This can be false even though 'IsObjectType' may be true.
         /// A handle can represent a native V8 object handle without requiring an associated managed object.</para>
         /// </summary>
-        public bool HasObject { get { return _Handle.HasObject; } }
+        public bool HasObject { get { return HandleInternal.HasObject; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -553,32 +562,32 @@ namespace Barista.V8.Net
         /// Reading from this property causes a native call to fetch the current V8 value associated with this handle.
         /// <param>For objects, this returns the in-script type text as a string - unless this handle represents an object binder, in which case this will return the bound object instead.</param>
         /// </summary>
-        public object Value { get { return _Handle.Value; } }
+        public object Value { get { return HandleInternal.Value; } }
 
         /// <summary>
         /// Once "Value" is accessed to retrieve the JavaScript value in real time, there's no need to keep accessing it.  Just call this property
         /// instead (a small bit faster). Note: If the value changes again within the engine (i.e. another scripts executes), you may need to call
         /// 'Value' again to make sure any changes are reflected.
         /// </summary>
-        public object LastValue { get { return _Handle.LastValue; } }
+        public object LastValue { get { return HandleInternal.LastValue; } }
 
         /// <summary>
         /// Returns the array length for handles that represent arrays. For all other types, this returns 0.
         /// Note: To get the items of the array, use '{ObjectHandle|InternalHandle|V8NativeObject}.GetProperty(#)'.
         /// </summary>
-        public Int32 ArrayLength { get { return _Handle.ArrayLength; } }
+        public Int32 ArrayLength { get { return HandleInternal.ArrayLength; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// Returns true if this handle is associated with a managed object that has no other references and is ready to be disposed.
         /// </summary>
-        public bool IsWeakManagedObject { get { return _Handle.IsWeakManagedObject; } }
+        public bool IsWeakManagedObject { get { return HandleInternal.IsWeakManagedObject; } }
 
         /// <summary>
         /// Returns true if the handle is weak and ready to be disposed.
         /// </summary>
-        public bool IsWeakHandle { get { return _Handle.IsWeakHandle; } }
+        public bool IsWeakHandle { get { return HandleInternal.IsWeakHandle; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -587,8 +596,8 @@ namespace Barista.V8.Net
         /// </summary>
         public bool IsInPendingDisposalQueue
         {
-            get { return _Handle.IsInPendingDisposalQueue; }
-            internal set { _Handle.IsInPendingDisposalQueue = value; }
+            get { return HandleInternal.IsInPendingDisposalQueue; }
+            internal set { HandleInternal.IsInPendingDisposalQueue = value; }
         }
 
         /// <summary>
@@ -597,14 +606,14 @@ namespace Barista.V8.Net
         /// </summary>
         public bool IsNativelyWeak
         {
-            get { return _Handle.IsNativelyWeak; }
+            get { return HandleInternal.IsNativelyWeak; }
         }
 
         /// <summary>
         /// Returns true if this handle is weak AND is associated with a weak managed object reference.
         /// When a handle is ready to be disposed, then calling "Dispose()" will succeed and cause the handle to be placed back into the cache on the native side.
         /// </summary>
-        public bool IsDisposeReady { get { return _Handle.IsDisposeReady; } }
+        public bool IsDisposeReady { get { return HandleInternal.IsDisposeReady; } }
 
         /// <summary>
         /// Attempts to dispose of this handle (add it back into the native proxy cache for reuse).  If the handle represents a managed object,
@@ -612,13 +621,13 @@ namespace Barista.V8.Net
         /// no longer has any references, this method will be .
         /// <para>*** NOTE: This is called by Dispose() when the reference count becomes zero and should not be called directly. ***</para>
         /// </summary>
-        internal bool __TryDispose() { return _Handle.__TryDispose(); }
+        internal bool __TryDispose() { return HandleInternal.__TryDispose(); }
 
         /// <summary>
         /// Completes the disposal of the native handle.
         /// <para>Note: A disposed native handle is simply cached for reuse, and always points back to the same managed handle.</para>
         /// </summary>
-        internal void _CompleteDisposal() { _Handle._CompleteDisposal(); }
+        internal void _CompleteDisposal() { HandleInternal._CompleteDisposal(); }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -628,7 +637,7 @@ namespace Barista.V8.Net
         /// any associated handles later.  The released object is returned, or null if there is no object.
         /// </summary>
         /// <returns>The object released.</returns>
-        public V8NativeObject ReleaseManagedObject() { return _Handle.ReleaseManagedObject(); }
+        public V8NativeObject ReleaseManagedObject() { return HandleInternal.ReleaseManagedObject(); }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -637,47 +646,47 @@ namespace Barista.V8.Net
         /// <para>An empty state is when a handle is set to 'Handle.Empty' and has no valid native V8 handle assigned.
         /// This is similar to "undefined"; however, this property will be true if a valid native V8 handle exists that is set to "undefined".</para>
         /// </summary>
-        public bool IsEmpty { get { return _Handle.IsEmpty; } }
+        public bool IsEmpty { get { return HandleInternal.IsEmpty; } }
 
         /// <summary>
         /// Returns true if this handle is undefined or empty (empty is when this handle is an instance of 'Handle.Empty').
         /// <para>"Undefined" does not mean "null".  A variable (handle) can be defined and set to "null".</para>
         /// </summary>
-        public bool IsUndefined { get { return _Handle.IsUndefined; } }
+        public bool IsUndefined { get { return HandleInternal.IsUndefined; } }
 
         /// <summary>
         /// Returns 'true' if this handle represents a 'null' value (that is, an explicitly defined 'null' value).
         /// This will return 'false' if 'IsEmpty' or 'IsUndefined' is true.
         /// </summary>
-        public bool IsNull { get { return _Handle.IsNull; } }
+        public bool IsNull { get { return HandleInternal.IsNull; } }
 
-        public bool IsBoolean { get { return _Handle.IsBoolean; } }
-        public bool IsBooleanObject { get { return _Handle.IsBooleanObject; } }
-        public bool IsInt32 { get { return _Handle.IsInt32; } }
-        public bool IsNumber { get { return _Handle.IsNumber; } }
-        public bool IsNumberObject { get { return _Handle.IsNumberObject; } }
-        public bool IsString { get { return _Handle.IsString; } }
-        public bool IsStringObject { get { return _Handle.IsStringObject; } }
-        public bool IsObject { get { return _Handle.IsObject; } }
-        public bool IsFunction { get { return _Handle.IsFunction; } }
-        public bool IsDate { get { return _Handle.IsDate; } }
-        public bool IsArray { get { return _Handle.IsArray; } }
-        public bool IsRegExp { get { return _Handle.IsRegExp; } }
+        public bool IsBoolean { get { return HandleInternal.IsBoolean; } }
+        public bool IsBooleanObject { get { return HandleInternal.IsBooleanObject; } }
+        public bool IsInt32 { get { return HandleInternal.IsInt32; } }
+        public bool IsNumber { get { return HandleInternal.IsNumber; } }
+        public bool IsNumberObject { get { return HandleInternal.IsNumberObject; } }
+        public bool IsString { get { return HandleInternal.IsString; } }
+        public bool IsStringObject { get { return HandleInternal.IsStringObject; } }
+        public bool IsObject { get { return HandleInternal.IsObject; } }
+        public bool IsFunction { get { return HandleInternal.IsFunction; } }
+        public bool IsDate { get { return HandleInternal.IsDate; } }
+        public bool IsArray { get { return HandleInternal.IsArray; } }
+        public bool IsRegExp { get { return HandleInternal.IsRegExp; } }
 
         /// <summary>
         /// Returns true of the handle represents ANY object type.
         /// </summary>
-        public bool IsObjectType { get { return _Handle.IsObjectType; } }
+        public bool IsObjectType { get { return HandleInternal.IsObjectType; } }
 
         /// <summary>
         /// Used internally to quickly determine when an instance represents a binder object type (faster than reflection!).
         /// </summary>
-        public bool IsBinder { get { return _Handle.IsBinder; } }
+        public bool IsBinder { get { return HandleInternal.IsBinder; } }
 
         /// <summary>
         /// Returns the binding mode (Instance, Static, or None) represented by this handle.  The return is 'None' (0) if not applicable.
         /// </summary>
-        public BindingMode BindingMode { get { return _Handle.BindingMode; } }
+        public BindingMode BindingMode { get { return HandleInternal.BindingMode; } }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -685,53 +694,53 @@ namespace Barista.V8.Net
         /// Returns the 'Value' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
         /// </summary>
-        public DerivedType As<DerivedType>() { return _Handle.As<DerivedType>(); }
+        public TDerivedType As<TDerivedType>() { return HandleInternal.As<TDerivedType>(); }
 
         /// Returns the 'LastValue' property type cast to the expected type.
         /// Warning: No conversion is made between different value types.
-        public DerivedType LastAs<DerivedType>() { return _Handle.LastAs<DerivedType>(); }
+        public TDerivedType LastAs<TDerivedType>() { return HandleInternal.LastAs<TDerivedType>(); }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a Boolean type.
         /// </summary>
-        public bool AsBoolean { get { return (bool)_Handle; } }
+        public bool AsBoolean { get { return (bool)HandleInternal; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to an Int32 type.
         /// </summary>
-        public Int32 AsInt32 { get { return (Int32)_Handle; } }
+        public Int32 AsInt32 { get { return (Int32)HandleInternal; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a double type.
         /// </summary>
-        public double AsDouble { get { return (double)_Handle; } }
+        public double AsDouble { get { return (double)HandleInternal; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a string type.
         /// </summary>
-        public String AsString { get { return (String)_Handle; } }
+        public String AsString { get { return (String)HandleInternal; } }
 
         /// <summary>
         /// Returns the underlying value converted if necessary to a DateTime type.
         /// </summary>
-        public DateTime AsDate { get { return (DateTime)_Handle; } }
+        public DateTime AsDate { get { return (DateTime)HandleInternal; } }
 
         /// <summary>
         /// Returns this handle as a new JSProperty instance with default property attributes.
         /// </summary>
-        public IJSProperty AsJSProperty() { return (JSProperty)_Handle; }
+        public IJSProperty AsJSProperty() { return (JSProperty)HandleInternal; }
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        public override string ToString() { return _Handle.ToString(); }
+        public override string ToString() { return HandleInternal.ToString(); }
 
         /// <summary>
         /// Checks if the wrapped handle reference is the same as the one compared with. This DOES NOT compare the underlying JavaScript values for equality.
         /// To test for JavaScript value equality, convert to a desired value-type instead by first casting as needed (i.e. (int)jsv1 == (int)jsv2).
         /// </summary>
-        public override bool Equals(object obj) { return _Handle.Equals(obj); }
+        public override bool Equals(object obj) { return HandleInternal.Equals(obj); }
 
-        public override int GetHashCode() { return _Handle.GetHashCode(); }
+        public override int GetHashCode() { return HandleInternal.GetHashCode(); }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -739,14 +748,14 @@ namespace Barista.V8.Net
         /// Returns true if this handle contains an error message (the string value is the message).
         /// If you have exception catching in place, you can simply call 'ThrowOnError()' instead.
         /// </summary>
-        public bool IsError { get { return _Handle.IsError; } }
+        public bool IsError { get { return HandleInternal.IsError; } }
 
         /// <summary>
         /// Checks if the handle represents an error, and if so, throws one of the corresponding derived V8Exception exceptions.
         /// See 'JSValueType' for possible exception states.  You can check the 'IsError' property to see if this handle represents an error.
         /// <para>Exceptions thrown: V8InternalErrorException, V8CompilerErrorException, V8ExecutionErrorException, and V8Exception (for any general V8-related exceptions).</para>
         /// </summary>
-        public void ThrowOnError() { _Handle.ThrowOnError(); }
+        public void ThrowOnError() { HandleInternal.ThrowOnError(); }
 
         // --------------------------------------------------------------------------------------------------------------------
 #if !(V1_1 || V2 || V3 || V3_5)
@@ -761,24 +770,24 @@ namespace Barista.V8.Net
 #endif
         // --------------------------------------------------------------------------------------------------------------------
 
-        public TypeCode GetTypeCode() { return _Handle.GetTypeCode(); }
+        public TypeCode GetTypeCode() { return HandleInternal.GetTypeCode(); }
 
-        public bool ToBoolean(IFormatProvider provider) { return _Handle.ToBoolean(provider); }
-        public byte ToByte(IFormatProvider provider) { return _Handle.ToByte(provider); }
-        public char ToChar(IFormatProvider provider) { return _Handle.ToChar(provider); }
-        public DateTime ToDateTime(IFormatProvider provider) { return _Handle.ToDateTime(provider); }
-        public decimal ToDecimal(IFormatProvider provider) { return _Handle.ToDecimal(provider); }
-        public double ToDouble(IFormatProvider provider) { return _Handle.ToDouble(provider); }
-        public short ToInt16(IFormatProvider provider) { return _Handle.ToInt16(provider); }
-        public int ToInt32(IFormatProvider provider) { return _Handle.ToInt32(provider); }
-        public long ToInt64(IFormatProvider provider) { return _Handle.ToInt64(provider); }
-        public sbyte ToSByte(IFormatProvider provider) { return _Handle.ToSByte(provider); }
-        public float ToSingle(IFormatProvider provider) { return _Handle.ToSingle(provider); }
-        public string ToString(IFormatProvider provider) { return _Handle.ToString(provider); }
-        public object ToType(Type conversionType, IFormatProvider provider) { return _Handle.ToType(conversionType, provider); }
-        public ushort ToUInt16(IFormatProvider provider) { return _Handle.ToUInt16(provider); }
-        public uint ToUInt32(IFormatProvider provider) { return _Handle.ToUInt32(provider); }
-        public ulong ToUInt64(IFormatProvider provider) { return _Handle.ToUInt64(provider); }
+        public bool ToBoolean(IFormatProvider provider) { return HandleInternal.ToBoolean(provider); }
+        public byte ToByte(IFormatProvider provider) { return HandleInternal.ToByte(provider); }
+        public char ToChar(IFormatProvider provider) { return HandleInternal.ToChar(provider); }
+        public DateTime ToDateTime(IFormatProvider provider) { return HandleInternal.ToDateTime(provider); }
+        public decimal ToDecimal(IFormatProvider provider) { return HandleInternal.ToDecimal(provider); }
+        public double ToDouble(IFormatProvider provider) { return HandleInternal.ToDouble(provider); }
+        public short ToInt16(IFormatProvider provider) { return HandleInternal.ToInt16(provider); }
+        public int ToInt32(IFormatProvider provider) { return HandleInternal.ToInt32(provider); }
+        public long ToInt64(IFormatProvider provider) { return HandleInternal.ToInt64(provider); }
+        public sbyte ToSByte(IFormatProvider provider) { return HandleInternal.ToSByte(provider); }
+        public float ToSingle(IFormatProvider provider) { return HandleInternal.ToSingle(provider); }
+        public string ToString(IFormatProvider provider) { return HandleInternal.ToString(provider); }
+        public object ToType(Type conversionType, IFormatProvider provider) { return HandleInternal.ToType(conversionType, provider); }
+        public ushort ToUInt16(IFormatProvider provider) { return HandleInternal.ToUInt16(provider); }
+        public uint ToUInt32(IFormatProvider provider) { return HandleInternal.ToUInt32(provider); }
+        public ulong ToUInt64(IFormatProvider provider) { return HandleInternal.ToUInt64(provider); }
 
         #endregion ### SHARED HANDLE CODE END ###
         // --------------------------------------------------------------------------------------------------------------------
@@ -795,7 +804,9 @@ namespace Barista.V8.Net
         /// Calls the V8 'Set()' function on the underlying native object.
         /// Returns true if successful.
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="attributes">Flags that describe the property behavior.  They must be 'OR'd together as needed. (V8PropertyAttributes.Undefined)</param>
+        /// <param name="name"></param>
         bool SetProperty(string name, InternalHandle value, V8PropertyAttributes attributes);
 
         /// <summary>
@@ -866,6 +877,9 @@ namespace Barista.V8.Net
         /// <summary>
         /// Calls the V8 'SetAccessor()' function on the underlying native object to create a property that is controlled by "getter" and "setter" callbacks.
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="getter"></param>
+        /// <param name="setter"></param>
         /// <param name="attributes">(V8PropertyAttributes.None)</param>
         /// <param name="access">(V8AccessControl.Default)</param>
         void SetAccessor(string name,
@@ -889,7 +903,7 @@ namespace Barista.V8.Net
         /// <summary>
         /// Get the attribute flags for a property of this object.
         /// If a property doesn't exist, then 'V8PropertyAttributes.None' is returned
-        /// (Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
+        /// <para>(Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
         /// </summary>
         V8PropertyAttributes GetPropertyAttributes(string name);
 
@@ -946,10 +960,12 @@ namespace Barista.V8.Net
         /// Calls the V8 'Set()' function on the underlying native object.
         /// Returns true if successful.
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
         /// <param name="attributes">Flags that describe the property behavior.  They must be 'OR'd together as needed. (V8PropertyAttributes.None)</param>
         public virtual bool SetProperty(string name, InternalHandle value, V8PropertyAttributes attributes)
         {
-            return _Handle.SetProperty(name, value, attributes);
+            return HandleInternal.SetProperty(name, value, attributes);
         }
 
         /// <summary>
@@ -958,7 +974,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool SetProperty(Int32 index, InternalHandle value)
         {
-            return _Handle.SetProperty(index, value);
+            return HandleInternal.SetProperty(index, value);
         }
 
         /// <summary>
@@ -987,7 +1003,7 @@ namespace Barista.V8.Net
         /// <param name="memberSecurity">Flags that describe JavaScript properties.  They must be 'OR'd together as needed. (null)</param>
         public bool SetProperty(string name, object obj, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            return _Handle.SetProperty(name, obj, className, recursive, memberSecurity);
+            return HandleInternal.SetProperty(name, obj, className, recursive, memberSecurity);
         }
 
         /// <summary>
@@ -1003,7 +1019,7 @@ namespace Barista.V8.Net
         /// <param name="memberSecurity">Flags that describe JavaScript properties.  They must be 'OR'd together as needed. (Null)</param>
         public bool SetProperty(Type type, V8PropertyAttributes propertyAttributes, string className, bool? recursive, ScriptMemberSecurity? memberSecurity)
         {
-            return _Handle.SetProperty(type, propertyAttributes, className, recursive, memberSecurity);
+            return HandleInternal.SetProperty(type, propertyAttributes, className, recursive, memberSecurity);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1014,7 +1030,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle GetProperty(string name)
         {
-            return _Handle.GetProperty(name);
+            return HandleInternal.GetProperty(name);
         }
 
         /// <summary>
@@ -1023,7 +1039,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle GetProperty(Int32 index)
         {
-            return _Handle.GetProperty(index);
+            return HandleInternal.GetProperty(index);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1034,7 +1050,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool DeleteProperty(string name)
         {
-            return _Handle.GetProperty(name);
+            return HandleInternal.GetProperty(name);
         }
 
         /// <summary>
@@ -1043,7 +1059,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual bool DeleteProperty(Int32 index)
         {
-            return _Handle.GetProperty(index);
+            return HandleInternal.GetProperty(index);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1051,13 +1067,16 @@ namespace Barista.V8.Net
         /// <summary>
         /// Calls the V8 'SetAccessor()' function on the underlying native object to create a property that is controlled by "getter" and "setter" callbacks.
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="getter"></param>
+        /// <param name="setter"></param>
         /// <param name="attributes">(V8PropertyAttributes.None)</param>
         /// <param name="access">(V8AccessControl.Default)</param>
         public void SetAccessor(string name,
             V8NativeObjectPropertyGetter getter, V8NativeObjectPropertySetter setter,
             V8PropertyAttributes attributes, V8AccessControl access)
         {
-            _Handle.SetAccessor(name, getter, setter, attributes, access);
+            HandleInternal.SetAccessor(name, getter, setter, attributes, access);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1067,7 +1086,7 @@ namespace Barista.V8.Net
         /// </summary>
         public string[] GetPropertyNames()
         {
-            return _Handle.GetPropertyNames();
+            return HandleInternal.GetPropertyNames();
         }
 
         /// <summary>
@@ -1075,7 +1094,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual string[] GetOwnPropertyNames()
         {
-            return _Handle.GetOwnPropertyNames();
+            return HandleInternal.GetOwnPropertyNames();
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1083,11 +1102,11 @@ namespace Barista.V8.Net
         /// <summary>
         /// Get the attribute flags for a property of this object.
         /// If a property doesn't exist, then 'V8PropertyAttributes.None' is returned
-        /// (Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
+        /// <para>(Note: only V8 returns 'None'. The value 'Undefined' has an internal proxy meaning for property interception).</para>
         /// </summary>
         public V8PropertyAttributes GetPropertyAttributes(string name)
         {
-            return _Handle.GetPropertyAttributes(name);
+            return HandleInternal.GetPropertyAttributes(name);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1098,7 +1117,7 @@ namespace Barista.V8.Net
         /// </summary>
         public virtual InternalHandle Call(string functionName, InternalHandle _this, params InternalHandle[] args)
         {
-            return _Handle.Call(functionName, _this, args);
+            return HandleInternal.Call(functionName, _this, args);
         }
 
         /// <summary>
@@ -1106,7 +1125,7 @@ namespace Barista.V8.Net
         /// </summary>
         public InternalHandle StaticCall(string functionName, params InternalHandle[] args)
         {
-            return _Handle.StaticCall(functionName, args);
+            return HandleInternal.StaticCall(functionName, args);
         }
 
         /// <summary>
@@ -1115,7 +1134,7 @@ namespace Barista.V8.Net
         /// </summary>
         public InternalHandle Call(InternalHandle _this, params InternalHandle[] args)
         {
-            return _Handle.Call(_this, args);
+            return HandleInternal.Call(_this, args);
         }
 
         /// <summary>
@@ -1124,7 +1143,7 @@ namespace Barista.V8.Net
         /// </summary>
         public InternalHandle StaticCall(params InternalHandle[] args)
         {
-            return _Handle.StaticCall(args);
+            return HandleInternal.StaticCall(args);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1143,7 +1162,10 @@ namespace Barista.V8.Net
         /// </summary>
         public ObjectHandle Prototype
         {
-            get { return _Handle.Prototype; }
+            get
+            {
+                return HandleInternal.Prototype;
+            }
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -1156,16 +1178,18 @@ namespace Barista.V8.Net
     /// </summary>
     public sealed class DynamicHandle : DynamicMetaObject
     {
-        IV8Object _Handle;
-        V8Engine _Engine;
+        IV8Object m_handle;
+        V8Engine m_engine;
 
 #if (V1_1 || V2 || V3 || V3_5)
 
         internal DynamicHandle(object value, Expression parameter)
             : base(parameter, BindingRestrictions.Empty, value)
         {
-            _Handle = value as IV8Object;
-            if (value is IHandleBased) _Engine = ((IHandleBased)value).Engine;
+            m_handle = value as IV8Object;
+            var based = value as IHandleBased;
+            if (based != null)
+                m_engine = based.Engine;
         }
 
 #else

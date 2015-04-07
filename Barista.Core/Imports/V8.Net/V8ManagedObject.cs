@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-
-
-#if V2 || V3 || V3_5
-#else
-using System.Dynamic;
-using System.Linq.Expressions;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System.Collections.Generic;
+
+    #if V2 || V3 || V3_5
+    #else
+    using System.Dynamic;
+    using System.Linq.Expressions;
+    #endif
+
+
     // ========================================================================================================================
 
     /// <summary>

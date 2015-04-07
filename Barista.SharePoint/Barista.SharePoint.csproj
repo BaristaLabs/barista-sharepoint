@@ -3713,13 +3713,10 @@
     <Content Include="WebServices\Barista\bin\Barista.V8.Net.SharedTypes.pdb" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.pdb" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\msvcp110.dll" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\msvcr110.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.pdb" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.pdb" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\vccorlib110.dll" />
     <Content Include="XML\serverfiles_Barista.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

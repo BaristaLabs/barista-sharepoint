@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using System;
+    using System.Linq;
+    using System.Threading;
+
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    #endif
+
     // ========================================================================================================================
 
     public unsafe partial class V8Engine
@@ -17,25 +17,25 @@ namespace Barista.V8.Net
         /// <summary>
         /// Holds an index of all the created objects.
         /// </summary>
-        internal readonly IndexedObjectList<ObservableWeakReference<V8NativeObject>> _Objects =
+        internal readonly IndexedObjectList<ObservableWeakReference<V8NativeObject>> ObjectsInternal =
             new IndexedObjectList<ObservableWeakReference<V8NativeObject>>(1000);
-        internal readonly ReaderWriterLock _ObjectsLocker = new ReaderWriterLock();
+        internal readonly ReaderWriterLock ObjectsLockerInternal = new ReaderWriterLock();
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal ObservableWeakReference<V8NativeObject> _GetObjectWeakReference(Int32 objectID) // (performs the lookup in a lock block)
+        internal ObservableWeakReference<V8NativeObject> _GetObjectWeakReference(Int32 objectId) // (performs the lookup in a lock block)
         {
-            using (_ObjectsLocker.ReadLock(Int32.MaxValue)) { return _Objects[objectID]; } // (Note: if index is outside bounds, then null is returned.)
+            using (ObjectsLockerInternal.ReadLock(Int32.MaxValue)) { return ObjectsInternal[objectId]; } // (Note: if index is outside bounds, then null is returned.)
         }
 
-        internal V8NativeObject _GetObjectAsIs(Int32 objectID) // (performs the object lookup in a lock block without causing a GC reset)
+        internal V8NativeObject _GetObjectAsIs(Int32 objectId) // (performs the object lookup in a lock block without causing a GC reset)
         {
-            using (_ObjectsLocker.ReadLock(Int32.MaxValue)) { var weakRef = _Objects[objectID]; return weakRef != null ? weakRef.Object : null; }
+            using (ObjectsLockerInternal.ReadLock(Int32.MaxValue)) { var weakRef = ObjectsInternal[objectId]; return weakRef != null ? weakRef.Object : null; }
         }
 
-        internal void _RemoveObjectWeakReference(Int32 objectID) // (performs the removal in a lock block)
+        internal void _RemoveObjectWeakReference(Int32 objectId) // (performs the removal in a lock block)
         {
-            using (_ObjectsLocker.WriteLock(Int32.MaxValue)) { _Objects.Remove(objectID); }
+            using (ObjectsLockerInternal.WriteLock(Int32.MaxValue)) { ObjectsInternal.Remove(objectId); }
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -74,14 +74,16 @@ namespace Barista.V8.Net
                         if (connectNativeObject && handle.HasObject)
                             throw new InvalidOperationException("Cannot create a managed object for this handle when one already exists. Existing objects will not be returned by 'Create???' methods to prevent initializing more than once.");
 
-                newObject = new T();
-                newObject._Engine = this;
-                newObject.Template = template;
-                newObject.Handle = handle;
-
-                using (_ObjectsLocker.WriteLock(Int32.MaxValue)) // (need a lock because of the worker thread)
+                newObject = new T
                 {
-                    newObject.ID = _Objects.Add(new ObservableWeakReference<V8NativeObject>(newObject));
+                    _Engine = this,
+                    Template = template,
+                    Handle = handle
+                };
+
+                using (ObjectsLockerInternal.WriteLock(Int32.MaxValue)) // (need a lock because of the worker thread)
+                {
+                    newObject.ID = ObjectsInternal.Add(new ObservableWeakReference<V8NativeObject>(newObject));
                 }
 
                 if (!handle.IsUndefined)
@@ -91,7 +93,7 @@ namespace Barista.V8.Net
                         try
                         {
                             void* templateProxy = (template is ObjectTemplate) ? (void*)((ObjectTemplate)template)._NativeObjectTemplateProxy :
-                                (template is FunctionTemplate) ? (void*)((FunctionTemplate)template).NativeFunctionTemplateProxyInternal : null;
+                                (template is FunctionTemplate) ? ((FunctionTemplate)template).NativeFunctionTemplateProxyInternal : null;
 
                             V8NetProxy.ConnectObject(handle, newObject.ID, templateProxy);
 
@@ -99,12 +101,12 @@ namespace Barista.V8.Net
                              * to locate the associated managed object when a call-back occurs. The lookup is a fast O(1) operation using the custom 'IndexedObjectList' manager.
                              */
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             // ... something went wrong, so remove the new managed object ...
                             _RemoveObjectWeakReference(newObject.ID);
-                            handle.ObjectID = -1; // (existing ID no longer valid)
-                            throw ex;
+                            handle.ObjectId = -1; // (existing ID no longer valid)
+                            throw;
                         }
                     }
                 }
@@ -143,10 +145,9 @@ namespace Barista.V8.Net
         /// <param name="initializeOnCreate">(true)</param>
         public V8NativeObject GetObject(InternalHandle handle, bool createIfNotFound, bool initializeOnCreate)
         {
-            if (handle.IsFunction)
-                return GetObject<V8Function>(handle, createIfNotFound, initializeOnCreate);
-            else
-                return GetObject<V8NativeObject>(handle, createIfNotFound, initializeOnCreate); 
+            return handle.IsFunction
+                ? GetObject<V8Function>(handle, createIfNotFound, initializeOnCreate)
+                : GetObject<V8NativeObject>(handle, createIfNotFound, initializeOnCreate);
         }
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -172,7 +173,7 @@ namespace Barista.V8.Net
                 if (handle.Engine != this)
                     throw new InvalidOperationException("The specified handle was not generated from this V8Engine instance.");
 
-                var weakRef = _GetObjectWeakReference(handle.ObjectID); // (if out of bounds or invalid, this will simply return null)
+                var weakRef = _GetObjectWeakReference(handle.ObjectId); // (if out of bounds or invalid, this will simply return null)
                 if (weakRef != null)
                 {
                     obj = weakRef.Reset() as T;
@@ -182,7 +183,7 @@ namespace Barista.V8.Net
 
                 if (obj == null && createIfNotFound)
                 {
-                    handle.ObjectID = -1; // (managed object doesn't exist [perhaps GC'd], so reset the ID)
+                    handle.ObjectId = -1; // (managed object doesn't exist [perhaps GC'd], so reset the ID)
                     obj = _CreateObject<T>(template, handle.PassOn(), initializeOnCreate, connectNativeObject);
                 }
             }
@@ -204,9 +205,9 @@ namespace Barista.V8.Net
         /// new object put in the same place as identified by the same ID value. As long as you keep a reference/handle, or perform no other V8.NET actions
         /// between the time you read an object's ID, and the time this method is called, then you can safely use this method.</para>
         /// </summary>
-        public V8NativeObject GetObjectByID(int objectID)
+        public V8NativeObject GetObjectById(int objectId)
         { 
-            var weakRef = _Objects[objectID]; 
+            var weakRef = ObjectsInternal[objectId]; 
             return weakRef != null ? weakRef.Reset() : null; 
         }
 
@@ -217,9 +218,9 @@ namespace Barista.V8.Net
         /// </summary>
         public V8NativeObject[] GetObjects(ITemplate template)
         {
-            using (_ObjectsLocker.ReadLock(Int32.MaxValue))
+            using (ObjectsLockerInternal.ReadLock(Int32.MaxValue))
             {
-                return (from o in _Objects where o.Object.Template == template select o.Object).ToArray();
+                return (from o in ObjectsInternal where o.Object.Template == template select o.Object).ToArray();
             }
             // (WARNING: cannot enumerate objects in this block as it may cause a deadlock - 'lock (_Objects){}' can conflict with the finalizer thread if 'o.Object' blocks to wait on it)
         }
