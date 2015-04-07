@@ -2,6 +2,7 @@
 {
     using Barista.Automation.Bundles;
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using Barista.Library;
@@ -12,7 +13,7 @@
 
     public sealed class BaristaScriptEngineFactory : ScriptEngineFactory
     {
-        public override Jurassic.ScriptEngine GetScriptEngine(Bundles.WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
+        public override IScriptEngine GetScriptEngine(Bundles.WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
         {
             isNewScriptEngineInstance = false;
             errorInInitialization = false;

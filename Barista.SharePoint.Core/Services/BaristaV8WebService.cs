@@ -1,15 +1,12 @@
-﻿namespace Barista.Web
+﻿namespace Barista.SharePoint.Services
 {
-    using System.Threading;
-    using Barista.Bundles;
-    using Barista.Engine;
+    using Barista.SharePoint.Extensions;
     using Barista.Extensions;
     using Barista.Framework;
-    using Barista.Helpers;
-    using Barista.Jurassic;
+    using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Client.Services;
     using Newtonsoft.Json.Linq;
     using System;
-    using System.Configuration;
     using System.IO;
     using System.Linq;
     using System.ServiceModel;
@@ -21,14 +18,19 @@
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
     /// </summary>
+    [BasicHttpBindingServiceMetadataExchangeEndpoint]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(IncludeExceptionDetailInFaults = true,
       InstanceContextMode = InstanceContextMode.PerCall,
       ConcurrencyMode = ConcurrencyMode.Multiple)]
     [RawJsonRequestBehavior]
-    public class BaristaWebService : IBaristaWebService
+    public class BaristaV8WebService : IBaristaWebService
     {
         #region Service Operations
+
+        /// <summary>
+        /// Executes the specified script and does not return a result.
+        /// </summary>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
         public void Coffee()
@@ -53,6 +55,9 @@
             Coffee();
         }
 
+        /// <summary>
+        /// Overload for coffee to allow http POSTS.
+        /// </summary>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType]
         public void CoffeeAuLait(Stream stream)
@@ -74,6 +79,10 @@
             CoffeeAuLait(stream);
         }
 
+        /// <summary>
+        /// Evaluates the specified script.
+        /// </summary>
+        /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
         public Stream Espresso()
@@ -98,6 +107,10 @@
             return Espresso();
         }
 
+        /// <summary>
+        /// Expresso overload to support having code contained in the body of a http POST.
+        /// </summary>
+        /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType]
         public Stream Latte(Stream stream)
@@ -127,7 +140,13 @@
         /// </summary>
         private static void TakeOrder()
         {
-            //Do nothing in this impl.
+            if (SPContext.Current == null || SPContext.Current.Web == null)
+                throw new InvalidOperationException("Cannot execute Barista: Barista must execute within the context of a SharePoint Web.");
+
+            if (SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.Open) == false)
+                throw new InvalidOperationException("Cannot execute Barista: Access Denied - The current user does not have access to the current web.");
+
+            BaristaHelper.EnsureExecutionInTrustedLocation();
         }
 
         /// <summary>
@@ -177,12 +196,9 @@
             }
 
             //Otherwise, use the body of the post as code.
-            if (String.IsNullOrEmpty(code) &&
-              HttpContext.Current.Request.HttpMethod == "POST" &&
-              OperationContext.Current != null &&
-              OperationContext.Current.RequestContext.RequestMessage.IsEmpty == false)
+            if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
             {
-                var body = OperationContext.Current.RequestContext.RequestMessage.GetBody<byte[]>();
+                var body = HttpContext.Current.Request.InputStream.ToByteArray();
                 var bodyString = Encoding.UTF8.GetString(body);
 
                 if (bodyString.IsNullOrWhiteSpace() == false)
@@ -281,48 +297,34 @@
         {
             scriptPath = String.Empty;
 
-            //If the code looks like a path, attempt to retrieve a code file and use the contents of that file as the code.
-            if (code.StartsWith("~"))
+            //If the code looks like a uri, attempt to retrieve a code file and use the contents of that file as the code.
+            if (Uri.IsWellFormedUriString(code, UriKind.RelativeOrAbsolute))
             {
-                var mappedPath = HttpContext.Current.Request.MapPath(code);
-                if (File.Exists(mappedPath))
+                Uri codeUri;
+                if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
                 {
-                    scriptPath = mappedPath;
-                    code = File.ReadAllText(mappedPath);
-                }
-            }
-            else
-            {
-                var path = "API";
-                var configPathKey =
-                  ConfigurationManager.AppSettings.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "barista_scriptpath");
-                if (configPathKey != null)
-                {
-                    var configPath = ConfigurationManager.AppSettings[configPathKey];
-                    if (String.IsNullOrEmpty(configPath) == false)
+                    string scriptFilePath;
+                    bool isHiveFile;
+                    String codeFromfile;
+                    if (SPHelper.TryGetSPFileAsString(code, out scriptFilePath, out codeFromfile, out isHiveFile))
                     {
-                        path = configPath;
-                    }
-                }
+                        if (isHiveFile == false)
+                        {
+                            var lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
+                            if (String.IsNullOrEmpty(lockDownMode) == false && lockDownMode.ToLowerInvariant() == "BaristaContentLibraryOnly")
+                            {
+                                //TODO: implement this.
+                            }
+                        }
 
-                if (path.IsValidPath() && code.IsValidPath())
-                {
-                    path = Path.Combine(path, code);
-                    if (File.Exists(path))
-                    {
-                        scriptPath = path;
-                        code = File.ReadAllText(path);
+                        scriptPath = scriptFilePath;
+                        code = codeFromfile;
                     }
                 }
             }
 
             //Replace any tokens in the code.
-            //TODO: re-implement this if appropriate.
-            HttpRequest request = HttpContext.Current.Request;
-            var serverRelativeWebUrl = request.Url.AbsoluteUri.Replace(request.Url.AbsolutePath, String.Empty);
-            code = code.Replace("{WebUrl}", serverRelativeWebUrl);
-
-            //code = SPHelper.ReplaceTokens(SPContext.Current, code);
+            code = SPHelper.ReplaceTokens(SPContext.Current, code);
 
             return code;
         }
@@ -334,8 +336,10 @@
         /// <param name="codePath"></param>
         private static void Brew(string code, string codePath)
         {
+            var client = new BaristaServiceClient(SPServiceContext.Current);
+
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
-            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
+            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaV8ScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
@@ -346,7 +350,16 @@
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
-            Exec(request);
+            request.SetExtendedPropertiesFromCurrentSPContext();
+
+            client.Exec(request);
+
+            //abandon the session and set the ASP.net session cookie to nothing.
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            {
+                HttpContext.Current.Session.Abandon();
+                HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+            }
         }
 
         /// <summary>
@@ -357,6 +370,8 @@
         /// <returns></returns>
         private static Stream Pull(string code, string codePath)
         {
+            var client = new BaristaServiceClient(SPServiceContext.Current);
+
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
             request.Code = code;
             request.CodePath = codePath;
@@ -368,198 +383,31 @@
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
-            var result = Eval(request);
+            request.SetExtendedPropertiesFromCurrentSPContext();
 
-            var setHeader = true;
+            var result = client.Eval(request);
+
+            var setHeaders = true;
             if (WebOperationContext.Current != null)
             {
                 result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
-                setHeader = false;
+                setHeaders = false;
             }
 
-            result.ModifyHttpResponse(HttpContext.Current.Response, setHeader);
+            result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
 
             if (result.Content == null)
                 return null;
 
+            //abandon the session and set the ASP.net session cookie to nothing.
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            {
+                HttpContext.Current.Session.Abandon();
+                HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+            }
+
             var resultStream = new MemoryStream(result.Content);
             return resultStream;
-        }
-        #endregion
-
-        #region Implementation
-        public static BrewResponse Eval(BrewRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            var response = new BrewResponse
-            {
-                ContentType = request.ContentType
-            };
-
-            BaristaContext.Current = new BaristaContext(request, response);
-
-            Mutex syncRoot = null;
-
-            if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
-            {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
-            }
-
-            var webBundle = new BaristaWebBundle();
-            var source = new BaristaScriptSource(request.Code, request.CodePath);
-
-            if (syncRoot != null)
-                syncRoot.WaitOne();
-
-            try
-            {
-                bool isNewScriptEngineInstance;
-                bool errorInInitialization;
-
-                var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
-
-                if (errorInInitialization)
-                    return response;
-
-                try
-                {
-                    var result = engine.Evaluate(source);
-
-                    var isRaw = false;
-
-                    //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
-                    if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
-                    {
-                        response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
-
-                        var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
-                        if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
-                        {
-                            var br = BrowserUserAgentParser.GetDefault();
-                            var clientInfo = br.Parse(request.UserAgent);
-
-                            if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
-                                response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
-                            else if (clientInfo.UserAgent.Family == "Safari")
-                                response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
-                            else
-                                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
-                        }
-                    }
-
-                    if (webBundle.WebInstance != null)
-                    {
-                        isRaw = webBundle.WebInstance.Response.IsRaw;
-                    }
-
-                    response.SetContentsFromResultObject(engine, result, isRaw);
-                }
-                catch (JavaScriptException ex)
-                {
-                    //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException, "A JavaScript exception was thrown while evaluating script: ");
-                    scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
-                }
-                catch (Exception ex)
-                {
-                    //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime, "An internal error occurred while evaluating script: ");
-                    scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
-                }
-                finally
-                {
-                    //Cleanup
-                    // ReSharper disable RedundantAssignment
-                    engine = null;
-                    // ReSharper restore RedundantAssignment
-
-                    if (BaristaContext.Current != null)
-                        BaristaContext.Current.Dispose();
-
-                    BaristaContext.Current = null;
-                }
-            }
-            finally
-            {
-                if (syncRoot != null)
-                    syncRoot.ReleaseMutex();
-            }
-
-            return response;
-        }
-
-        public static void Exec(BrewRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            var response = new BrewResponse
-            {
-                ContentType = request.ContentType
-            };
-
-            //Set the current context with information from the current request and response.
-            BaristaContext.Current = new BaristaContext(request, response);
-
-            //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
-            Mutex syncRoot = null;
-            if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
-            {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
-            }
-
-            var webBundle = new BaristaWebBundle();
-            var source = new BaristaScriptSource(request.Code, request.CodePath);
-
-            if (syncRoot != null)
-                syncRoot.WaitOne();
-
-            try
-            {
-                bool isNewScriptEngineInstance;
-                bool errorInInitialization;
-
-                var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
-
-                if (errorInInitialization)
-                    return;
-
-                try
-                {
-                    engine.Evaluate(source);
-                }
-                catch (JavaScriptException ex)
-                {
-                    //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-                    //                                             "A JavaScript exception was thrown while evaluating script: ");
-                    scriptEngineFactory.UpdateResponseWithJavaScriptExceptionDetails(engine, ex, response);
-                }
-                catch (Exception ex)
-                {
-                    //BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-                    //                                             "An internal error occured while executing script: ");
-                    scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
-                }
-                finally
-                {
-                    //Cleanup
-                    // ReSharper disable RedundantAssignment
-                    engine = null;
-                    // ReSharper restore RedundantAssignment
-
-                    if (BaristaContext.Current != null)
-                        BaristaContext.Current.Dispose();
-
-                    BaristaContext.Current = null;
-                }
-            }
-            finally
-            {
-                if (syncRoot != null)
-                    syncRoot.ReleaseMutex();
-            }
         }
         #endregion
     }

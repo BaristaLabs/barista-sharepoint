@@ -195,7 +195,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SPBaristaScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaV8ScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaJurassicScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ADMIN\BaristaService\Styles\bootstrap-theme.css.map" />
@@ -235,6 +236,7 @@
       <SharePointProjectItemId>{d0ee4eb7-b183-4b86-bd61-7696ec3ff84b}</SharePointProjectItemId>
     </None>
     <None Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe.config" />
+    <None Include="ISAPI\Barista\v2\web.config" />
     <None Include="Layouts\BaristaJS\angular\angular-kendo.min.js.map">
       <DependentUpon>angular-kendo.js</DependentUpon>
     </None>
@@ -526,6 +528,7 @@
     <Content Include="DocumentStore\SPDocumentStoreEventReceiver\Elements.xml" />
     <Content Include="ISAPI\BaristaServices\Search\SPBaristaSearchService.exe" />
     <Content Include="ISAPI\BaristaServices\Search\Topshelf.dll" />
+    <Content Include="ISAPI\Barista\v2\Barista.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaSoap.svc" />
     <Content Include="ISAPI\Barista\v1\BaristaWcf.svc" />
     <Content Include="Layouts\BaristaJS\angular\angular-bootstrap-prettify.js" />

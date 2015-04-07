@@ -339,6 +339,7 @@
             var client = new BaristaServiceClient(SPServiceContext.Current);
 
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
@@ -372,6 +373,7 @@
             var client = new BaristaServiceClient(SPServiceContext.Current);
 
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 

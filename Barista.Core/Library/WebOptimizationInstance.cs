@@ -1,7 +1,6 @@
 ﻿namespace Barista.Library
 {
     using System.Collections.Concurrent;
-    using System.Globalization;
     using System.IO.Compression;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -175,25 +174,15 @@
         [JSDoc("Returns a minified representation of the css string passed as the first argument.")]
         public string MinifyCss(string css)
         {
-            /*var script = new Script("");
-            script.Context.Eval(Resources.csso_web);
-            script.Context.DefineVariable("css").Assign(new NiL.JS.BaseLibrary.String(css));
-            var result = script.Context.Eval(@" var compressor = new CSSOCompressor(),
-                translator = new CSSOTranslator();
-            translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
-");
-            return result.ToString();*/
+            var engine = new V8Engine();
+            engine.Execute(Resources.csso_web, "cssoWeb", true);
 
-            /*var se = new ScriptEngine();
-            se.Evaluate(Resources.csso_web);
-            se.SetGlobalValue("css", css);
-            var result = se.Evaluate<string>(@" var compressor = new CSSOCompressor(),
-                translator = new CSSOTranslator();
-            translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
-");
-            return result;*/
+            engine.GlobalObject.SetProperty("code", css);
 
-            throw new NotImplementedException();
+            var result = engine.Execute(@"var compressor = new CSSOCompressor(), translator = new CSSOTranslator();
+translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
+");
+            return result.AsString;
         }
 
         [JSFunction(Name = "minifyJs")]
@@ -203,50 +192,15 @@
             var engine = new V8Engine();
             engine.Execute(Resources.uglifyjs, "uglifyjs", true);
 
-            engine.GlobalObject.SetProperty("code", @"(function (fallback) {
-    fallback = fallback || function () { };
-})(null);");
+            engine.GlobalObject.SetProperty("code", javascript);
 
-            engine.Execute(@"var ast = UglifyJS.parse(code);
+            var result = engine.Execute(@"var ast = UglifyJS.parse(code);
 ast.figure_out_scope();
 compressor = UglifyJS.Compressor();
 ast = ast.transform(compressor);
-var result = ast.print_to_string();");
-
-            return engine.GlobalObject
-                .GetProperty("result")
-                .ToString(CultureInfo.InvariantCulture);
-
-            /*var script = new Script("");
-            script.Context.Eval(Resources.uglifyjs);
-            script.Context.DefineVariable("code").Assign(new NiL.JS.BaseLibrary.String(javascript));
-            var result = script.Context.Eval(@"var ast = UglifyJS.parse(code);
-ast.figure_out_scope();
-compressor = UglifyJS.Compressor();
-ast = ast.transform(compressor);
-
-ast.figure_out_scope();
-ast.compute_char_frequency();
-ast.mangle_names();
-
-ast.print_to_string();");
-            return result.ToString();*/
-
-            /*var se = new ScriptEngine();
-            se.Evaluate(Resources.uglifyjs);
-            se.SetGlobalValue("code", javascript);
-            var result = se.Evaluate<string>(@"var ast = UglifyJS.parse(code);
-ast.figure_out_scope();
-compressor = UglifyJS.Compressor();
-ast = ast.transform(compressor);
-
-ast.figure_out_scope();
-ast.compute_char_frequency();
-ast.mangle_names();
-
 ast.print_to_string();");
 
-            return result;*/
+            return result.AsString;
         }
 
         [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]

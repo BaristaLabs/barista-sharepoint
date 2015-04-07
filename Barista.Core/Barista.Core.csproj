@@ -199,7 +199,7 @@
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="BaristaInstanceMutexManager.cs" />
-    <Compile Include="BaristaScriptSource.cs" />
+    <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
@@ -254,6 +254,7 @@
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Engine\IScriptSource.cs" />
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
@@ -827,6 +828,7 @@
     <Compile Include="Imports\V8.Net\V8Function.cs" />
     <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
     <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
+    <Compile Include="Engine\IScriptEngine.cs" />
     <Compile Include="Library\AssertInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
     <Compile Include="Library\DiffInfoInstance.cs" />

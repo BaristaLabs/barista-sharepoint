@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint
 {
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Library;
     using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Bundles;
@@ -10,13 +11,13 @@
     using Jurassic.Library;
     using System;
 
-    public class SPBaristaScriptEngineFactory : ScriptEngineFactory
+    public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
         /// <summary>
         /// Returns a new instance of a script engine object with all runtime objects available.
         /// </summary>
         /// <returns></returns>
-        public override ScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
+        public override IScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
         {
             isNewScriptEngineInstance = false;
             errorInInitialization = false;
@@ -132,7 +133,7 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                     return engine;
 
                 var initializationScriptSource =
-                    new BaristaScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
+                    new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
                         SPBaristaContext.Current.Request.InstanceInitializationCodePath);
 
                 try

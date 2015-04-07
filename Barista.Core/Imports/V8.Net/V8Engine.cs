@@ -5,6 +5,7 @@
 namespace Barista.V8.Net
 {
     using System.Globalization;
+    using Barista.Engine;
     using Barista.Extensions;
     using System;
     using System.Collections;
@@ -26,7 +27,7 @@ namespace Barista.V8.Net
     /// The engine does not implement locks, so to make it thread safe, you should lock against an engine instance (i.e. lock(myEngine){...}).  The native V8
     /// environment, however, is thread safe (but blocks to allow only one thread at a time).
     /// </summary>
-    public unsafe partial class V8Engine : IDisposable
+    public unsafe partial class V8Engine : IScriptEngine, IDisposable
     {
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -47,7 +48,7 @@ namespace Barista.V8.Net
         /// 
         /// </summary>
         /// <param name="engineId">The managed side engine Id, which starts at 0</param>
-        void _RegisterEngine(int engineId)
+        private void _RegisterEngine(int engineId)
         {
             lock (V8EnginesInternal)
             {
@@ -84,7 +85,7 @@ namespace Barista.V8.Net
         /// </summary>
         public static string AspBinSubFolderName = "V8.NET";
 
-        static Assembly Resolver(object sender, ResolveEventArgs args)
+        private static Assembly Resolver(object sender, ResolveEventArgs args)
         {
             if (!args.Name.StartsWith("Barista.V8.Net.Proxy.Interface"))
                 return null;
@@ -276,7 +277,7 @@ namespace Barista.V8.Net
             return V8NetProxy.DoIdleNotification(NativeV8EngineProxy, hint);
         }
 
-        bool _V8GarbageCollectionRequestCallback(HandleProxy* persistedObjectHandle)
+        private bool _V8GarbageCollectionRequestCallback(HandleProxy* persistedObjectHandle)
         {
             if (persistedObjectHandle->_ObjectID >= 0)
             {
@@ -296,6 +297,30 @@ namespace Barista.V8.Net
         public Handle Execute(string script)
         {
             return Execute(script, "V8.NET", false);
+        }
+
+        /// <summary>
+        /// Executes the specified JavaScript on the V8 engine and returns the result.
+        /// </summary>
+        /// <param name="script"></param>
+        /// <returns></returns>
+        object IScriptEngine.Evaluate(IScriptSource script)
+        {
+            using (var x = script.GetReader())
+            {
+                var code = x.ReadToEnd();
+                return Execute(code, script.Path, false);
+            }
+        }
+
+        string IScriptEngine.Stringify(object value, object replacer, object spacer)
+        {
+            //TODO: Fix this...
+            GlobalObject.SetProperty("__stringifyValue", value);
+            GlobalObject.SetProperty("__replacer", value);
+            GlobalObject.SetProperty("__spacer", value);
+
+            return Execute("JSON.stringify(__stringifyValue, __replacer, __spacer)", "JSON.Stringify", true).AsString;
         }
 
         /// <summary>

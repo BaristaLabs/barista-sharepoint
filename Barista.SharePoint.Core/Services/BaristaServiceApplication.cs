@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint.Services
 {
     using System.Web;
+    using Barista.Engine;
     using Barista.Extensions;
     using Barista.Helpers;
     using Barista.SharePoint.Bundles;
@@ -137,15 +138,22 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
-                    true);
+                if (request.ScriptEngineFactory.IsNullOrWhiteSpace())
+                    throw new InvalidOperationException("A ScriptEngineFactory must be specified as part of a BrewRequest.");
+
+                var baristaScriptEngineFactoryType = Type.GetType(request.ScriptEngineFactory, true);
 
                 if (baristaScriptEngineFactoryType == null)
-                    throw new InvalidOperationException("Unable to locate the SPBraistaScriptEngineFactory");
+                    throw new InvalidOperationException("Unable to locate the specified ScriptEngineFactory: " + request.ScriptEngineFactory);
 
                 var scriptEngineFactory =
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
+
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
+                    out errorInInitialization);
+
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
 
                 if (errorInInitialization)
                     return response;
@@ -284,6 +292,9 @@
                 var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
                                                                  out errorInInitialization);
 
+                if (engine == null)
+                    throw new InvalidOperationException("Unable to obtain an instance of a Script Engine.");
+
                 if (errorInInitialization)
                     return;
 
@@ -295,7 +306,7 @@
                                                 new SPRequestUsageCounter(),
                                                 new SPSqlQueryCounter()))
                     {
-                        engine.Execute(source);
+                        engine.Evaluate(source);
                     }
                 }
                 catch (JavaScriptException ex)
