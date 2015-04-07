@@ -4,6 +4,7 @@
  */
 namespace Barista.V8.Net
 {
+    using Barista.Extensions;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -13,7 +14,6 @@ namespace Barista.V8.Net
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Web;
-    using Barista.Extensions;
 
     // ========================================================================================================================
     // (.NET and Mono Marshalling: http://www.mono-project.com/Interop_with_Native_Libraries)
@@ -140,8 +140,8 @@ namespace Barista.V8.Net
             // (this is required to load the correct VC++ libraries if made available locally)
 
             //var bitLibFolder = Path.Combine(Directory.GetCurrentDirectory(), bitStr);
-            if (Directory.Exists(platformLibraryPath))
-                Directory.SetCurrentDirectory(platformLibraryPath);
+            //if (Directory.Exists(platformLibraryPath))
+            //    Directory.SetCurrentDirectory(platformLibraryPath);
 
             try
             {
@@ -150,7 +150,7 @@ namespace Barista.V8.Net
             catch (Exception ex)
             {
                 var msg = "Failed to load '" + fileName + "'.  V8.NET is running in the '" + bitStr + "' mode.  Some areas to check: \r\n"
-                          + "1. The VC++ 2012 redistributable libraries are included, but if missing  for some reason, download and install from the Microsoft Site.\r\n"
+                          + "1. The VC++ 2012 redistributable libraries are included, but if missing for some reason, download and install from the Microsoft Site.\r\n"
                           + "2. Did you download the DLLs from a ZIP file? If done so on Windows, you must open the file properties of the zip file and 'Unblock' it before extracting the files.\r\n"
                     ;
                 if (HttpRuntime.AppDomainAppId != null)
@@ -196,46 +196,52 @@ namespace Barista.V8.Net
 
         public void Dispose()
         {
+            if (NativeV8EngineProxy == null)
+                return;
+
+            TerminateWorkerInternal(); // (will return only when it has successfully terminated)
+
+            // ... clear all handles of object IDs for disposal ...
+
+            for (var i = 0; i < _HandleProxies.Length; i++)
+            {
+                HandleProxy* hProxy = _HandleProxies[i];
+                if (hProxy != null && !hProxy->IsDisposed)
+                    hProxy->_ObjectID = -2; // (note: this must be <= -2, otherwise the ID auto updates -1 to -2 to flag the ID as already processed)
+            }
+
+            // ... allow all objects to be finalized by the GC ...
+
+            ObservableWeakReference<V8NativeObject> weakRef;
+
+            for (var i = 0; i < _Objects.Count; i++)
+                if ((weakRef = _Objects[i]) != null && weakRef.Object != null)
+                {
+                    weakRef.Object._ID = null;
+                    weakRef.Object.Template = null;
+                    weakRef.Object._Handle = ObjectHandle.Empty;
+                }
+
+            // ... destroy the native engine ...
+
             if (NativeV8EngineProxy != null)
             {
-                TerminateWorkerInternal(); // (will return only when it has successfully terminated)
-
-                // ... clear all handles of object IDs for disposal ...
-
-                for (var i = 0; i < _HandleProxies.Length; i++)
-                {
-                    HandleProxy* hProxy = _HandleProxies[i];
-                    if (hProxy != null && !hProxy->IsDisposed)
-                        hProxy->_ObjectID = -2; // (note: this must be <= -2, otherwise the ID auto updates -1 to -2 to flag the ID as already processed)
-                }
-
-                // ... allow all objects to be finalized by the GC ...
-
-                ObservableWeakReference<V8NativeObject> weakRef;
-
-                for (var i = 0; i < _Objects.Count; i++)
-                    if ((weakRef = _Objects[i]) != null && weakRef.Object != null)
-                    {
-                        weakRef.Object._ID = null;
-                        weakRef.Object.Template = null;
-                        weakRef.Object._Handle = ObjectHandle.Empty;
-                    }
-
-                // ... destroy the native engine ...
-
-                if (NativeV8EngineProxy != null)
-                {
-                    V8EnginesInternal[NativeV8EngineProxy->ID] = null; // (notifies any lingering handles that this engine is now gone)
-                    V8NetProxy.DestroyV8EngineProxy(NativeV8EngineProxy);
-                    NativeV8EngineProxy = null;
-                }
+                V8EnginesInternal[NativeV8EngineProxy->ID] = null; // (notifies any lingering handles that this engine is now gone)
+                V8NetProxy.DestroyV8EngineProxy(NativeV8EngineProxy);
+                NativeV8EngineProxy = null;
             }
         }
 
         /// <summary>
         /// Returns true once this engine has been disposed.
         /// </summary>
-        public bool IsDisposed { get { return NativeV8EngineProxy == null; } }
+        public bool IsDisposed
+        {
+            get
+            {
+                return NativeV8EngineProxy == null;
+            }
+        }
 
         // --------------------------------------------------------------------------------------------------------------------
 
@@ -333,7 +339,7 @@ namespace Barista.V8.Net
         /// <param name="throwExceptionOnError">If true, and the return value represents an error, an exception is thrown (default is 'false'). (false)</param>
         public Handle ConsoleExecute(string script, string sourceName, bool throwExceptionOnError)
         {
-            Handle result = Execute(script, sourceName, throwExceptionOnError);
+            var result = Execute(script, sourceName, throwExceptionOnError);
             Console.WriteLine(result.AsString);
             return result;
         }
@@ -350,7 +356,7 @@ namespace Barista.V8.Net
         public Handle VerboseConsoleExecute(string script, string sourceName, bool throwExceptionOnError)
         {
             Console.WriteLine(script);
-            Handle result = Execute(script, sourceName, throwExceptionOnError);
+            var result = Execute(script, sourceName, throwExceptionOnError);
             Console.WriteLine(result.AsString);
             return result;
         }
@@ -686,15 +692,14 @@ namespace Barista.V8.Net
 
             itemsEnum.Reset();
 
-            int strPtrBufSize = Marshal.SizeOf(typeof(IntPtr)) * itemsCount; // start buffer size with size needed for all string pointers.
+            var strPtrBufSize = Marshal.SizeOf(typeof(IntPtr)) * itemsCount; // start buffer size with size needed for all string pointers.
             char** oneBigStringBlock = (char**)Utilities.AllocNativeMemory(strPtrBufSize + Marshal.SystemDefaultCharSize * strBufSize);
             char** ptrWritePtr = oneBigStringBlock;
             char* strWritePtr = (char*)(((byte*)oneBigStringBlock) + strPtrBufSize);
-            int itemLength;
 
             while (itemsEnum.MoveNext())
             {
-                itemLength = itemsEnum.Current.Length;
+                var itemLength = itemsEnum.Current.Length;
                 Marshal.Copy(itemsEnum.Current.ToCharArray(), 0, (IntPtr)strWritePtr, itemLength);
                 Marshal.WriteInt16((IntPtr)(strWritePtr + itemLength), 0);
                 Marshal.WriteIntPtr((IntPtr)ptrWritePtr++, (IntPtr)strWritePtr);
