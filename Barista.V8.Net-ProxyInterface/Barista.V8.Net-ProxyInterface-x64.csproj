@@ -7,8 +7,8 @@
     <ProjectGuid>{54DEA09B-9D54-4EE7-A529-6E8720E3B381}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Barista.V8.Net_ProxyInterface_x64</RootNamespace>
-    <AssemblyName>Barista.V8.Net-ProxyInterface-x64</AssemblyName>
+    <RootNamespace>Barista.V8.Net</RootNamespace>
+    <AssemblyName>Barista.V8.Net.Proxy.Interface.x64</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>

@@ -7,8 +7,8 @@
     <ProjectGuid>{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Barista.V8.Net_SharedTypes</RootNamespace>
-    <AssemblyName>Barista.V8.Net-SharedTypes</AssemblyName>
+    <RootNamespace>Barista.V8.Net</RootNamespace>
+    <AssemblyName>Barista.V8.Net.SharedTypes</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>

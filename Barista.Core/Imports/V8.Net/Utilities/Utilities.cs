@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using Barista.Extensions;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+
     // ========================================================================================================================
 
     public struct ReaderLock : IDisposable
     {
-        ReaderWriterLock _RWLock;
+        readonly ReaderWriterLock m_rwLock;
         public ReaderLock(ReaderWriterLock rwlock, Int32 timeout)
         {
-            _RWLock = rwlock;
-            _RWLock.AcquireReaderLock(timeout);
+            m_rwLock = rwlock;
+            m_rwLock.AcquireReaderLock(timeout);
         }
         public void Dispose()
         {
-            _RWLock.ReleaseReaderLock();
+            m_rwLock.ReleaseReaderLock();
         }
     }
 
@@ -43,10 +43,6 @@ namespace Barista.V8.Net
 
     public static class ExtensionMethods
     {
-#if (V1_1 || V2 || V3 || V3_5)
-        public static bool HasFlag(this Enum value, Enum flag) { var f = Convert.ToInt32(flag); return (Convert.ToInt32(value) & f) == f; }
-#endif
-
         /// <summary>
         /// 
         /// </summary>
@@ -352,21 +348,6 @@ namespace Barista.V8.Net
         /// Returns true if the given object is null, or its string conversion results in an empty/null string.
         /// </summary>
         public static bool IsNullOrEmpty(object value) { return (value == null || string.IsNullOrEmpty(value.ToString())); }
-
-        /// <summary>
-        /// Returns true if the string value is null or contains white space (contains all characters less than or equal Unicode value 32).
-        /// </summary>
-        public static bool IsNullOrWhiteSpace(this string str)
-        {
-#if V2 || V3 || V3_5 // (this method exists in .NET 4.0+ as a method of the string class)
-            if (str == null || str.Length == 0) return true;
-            for (var i = 0; i < str.Length; i++)
-                if ((int)str[i] <= 32) return true;
-            return false;
-#else
-            return string.IsNullOrWhiteSpace(str);
-#endif
-        }
 
         // ---------------------------------------------------------------------------------------------------------------------
 

@@ -45,9 +45,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Topshelf">
-      <HintPath>..\..\packages\TopShelf.3.1.1\lib\net40-full\Topshelf.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaristaService.cs" />

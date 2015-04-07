@@ -30,6 +30,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +41,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

@@ -64,9 +64,9 @@ namespace Barista.V8.Net
         ~JSProperty()
         {
             if (!((IFinalizable)this).CanFinalize && _Value.Engine != null)
-                lock (_Value.Engine._ObjectsToFinalize)
+                lock (_Value.Engine.ObjectsToFinalizeInternal)
                 {
-                    _Value.Engine._ObjectsToFinalize.Add(this);
+                    _Value.Engine.ObjectsToFinalizeInternal.Add(this);
                     GC.ReRegisterForFinalize(this);
                 }
         }

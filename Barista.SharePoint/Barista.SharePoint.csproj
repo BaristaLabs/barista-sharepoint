@@ -421,6 +421,9 @@
     <None Include="WebClients\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{d8d6b1da-c4f5-4de6-9f01-8efb9458bc48}</SharePointProjectItemId>
     </None>
+    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.exp" />
+    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.lib" />
+    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.map" />
     <None Include="WebServices\Barista\web.config" />
     <None Include="WebServices\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0319abfb-7418-4653-96ae-f0df6ea3ddf1}</SharePointProjectItemId>
@@ -3706,6 +3709,17 @@
     <Content Include="Layouts\BaristaJS\tmpl.min.js" />
     <Content Include="PowerShell Registration\BaristaServiceApplication.xml" />
     <Content Include="WebServices\Barista\Barista.svc" />
+    <Content Include="WebServices\Barista\bin\Barista.V8.Net.SharedTypes.dll" />
+    <Content Include="WebServices\Barista\bin\Barista.V8.Net.SharedTypes.pdb" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.dll" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.pdb" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\msvcp110.dll" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\msvcr110.dll" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.dll" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.pdb" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.dll" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.pdb" />
+    <Content Include="WebServices\Barista\bin\V8.NET\x64\vccorlib110.dll" />
     <Content Include="XML\serverfiles_Barista.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

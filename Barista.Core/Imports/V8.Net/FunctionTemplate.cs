@@ -3,9 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Barista.Extensions;
 
 
-    #if V2 || V3 || V3_5
+#if V2 || V3 || V3_5
     #else
     using System.Dynamic;
     #endif
@@ -52,9 +53,9 @@
         ~FunctionTemplate()
         {
             if (!((IFinalizable)this).CanFinalize)
-                lock (_Engine._ObjectsToFinalize)
+                lock (_Engine.ObjectsToFinalizeInternal)
                 {
-                    _Engine._ObjectsToFinalize.Add(this);
+                    _Engine.ObjectsToFinalizeInternal.Add(this);
                     GC.ReRegisterForFinalize(this);
                 }
         }

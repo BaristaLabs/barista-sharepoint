@@ -10,6 +10,8 @@ using System.Dynamic;
 
 namespace Barista.V8.Net
 {
+    using Barista.Extensions;
+
     // ========================================================================================================================
 
     public enum BindingMode

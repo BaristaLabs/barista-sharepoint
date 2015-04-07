@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿namespace Barista.V8.Net
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
 
 #if !(V1_1 || V2 || V3 || V3_5)
 using System.Dynamic;
 #endif
-
-namespace Barista.V8.Net
-{
-    using System;
-
+    
     // ========================================================================================================================
     // The worker section implements a bridge GC system, which marks objects weak when 'V8NativeObject' instances no longer have any references.  Such objects
     // are called "weak" objects, and the worker calls the native side to also mark the native object as weak.  Once the V8 GC calls back, the managed object
@@ -23,50 +22,51 @@ namespace Barista.V8.Net
         bool CanFinalize { get; set; } // (if this is true, the GC, when triggered again, can finally collect the instance)
     }
 
-    public unsafe partial class V8Engine
+    public partial class V8Engine
     {
         // --------------------------------------------------------------------------------------------------------------------
 
-        internal Thread _Worker;
+        internal Thread WorkerThreadInternal;
 
         /// <summary>
         /// When 'V8NativeObject' objects are no longer in use, they are registered here for quick reference so the worker thread can dispose of them.
         /// </summary>
-        internal readonly List<int> _WeakObjects = new List<int>(100);
-        int _WeakObjects_Index = -1;
+        internal readonly List<int> WeakObjectsInternal = new List<int>(100);
+        private int m_weakObjectsInternalIndex = -1;
 
-        internal readonly List<IFinalizable> _ObjectsToFinalize = new List<IFinalizable>(100);
-        int _ObjectsToFinalize_Index = -1;
+        internal readonly List<IFinalizable> ObjectsToFinalizeInternal = new List<IFinalizable>(100);
+        private int m_objectsToFinalizeIndex = -1;
 
         // --------------------------------------------------------------------------------------------------------------------
 
         void _Initialize_Worker()
         {
-            _Worker = new Thread(_WorkerLoop) { IsBackground = true }; // (note: must set 'IsBackground=true', else the app will hang on exit)
-            _Worker.Priority = ThreadPriority.Lowest;
-            _Worker.Start();
+            // (note: must set 'IsBackground=true', else the app will hang on exit)
+            WorkerThreadInternal = new Thread(_WorkerLoop) {
+                IsBackground = true,
+                Priority = ThreadPriority.Lowest
+            }; 
+            WorkerThreadInternal.Start();
         }
 
         // --------------------------------------------------------------------------------------------------------------------
 
-        volatile int _PauseWorker;
+        private volatile int m_pauseWorker;
 
-        void _WorkerLoop()
+        private void _WorkerLoop()
         {
-            bool workPending;
-
             while (true)
             {
                 //??if (GlobalObject.AsInternalHandle._HandleProxy->Disposed > 0)
                 //    System.Diagnostics.Debugger.Break();
 
-                if (_PauseWorker == 1) _PauseWorker = 2;
-                else if (_PauseWorker == -1) break;
+                if (m_pauseWorker == 1) m_pauseWorker = 2;
+                else if (m_pauseWorker == -1) break;
                 else
                 {
-                    workPending = _WeakObjects.Count > 0 || _ObjectsToFinalize.Count > 0;
+                    var workPending = WeakObjectsInternal.Count > 0 || ObjectsToFinalizeInternal.Count > 0;
 
-                    while (workPending && _PauseWorker == 0)
+                    while (workPending && m_pauseWorker == 0)
                     {
                         workPending = _DoWorkStep();
                         DoIdleNotification(1);
@@ -77,7 +77,7 @@ namespace Barista.V8.Net
                 DoIdleNotification(100);
             }
 
-            _PauseWorker = -2;
+            m_pauseWorker = -2;
         }
 
         /// <summary>
@@ -88,29 +88,29 @@ namespace Barista.V8.Net
         {
             // ... do one weak object ...
 
-            int objID = -1;
+            var objId = -1;
 
-            lock (_WeakObjects)
+            lock (WeakObjectsInternal)
             {
-                if (_WeakObjects_Index < 0)
-                    _WeakObjects_Index = _WeakObjects.Count - 1;
+                if (m_weakObjectsInternalIndex < 0)
+                    m_weakObjectsInternalIndex = WeakObjectsInternal.Count - 1;
 
-                if (_WeakObjects_Index >= 0)
+                if (m_weakObjectsInternalIndex >= 0)
                 {
-                    objID = _WeakObjects[_WeakObjects_Index];
+                    objId = WeakObjectsInternal[m_weakObjectsInternalIndex];
 
-                    _WeakObjects.RemoveAt(_WeakObjects_Index);
+                    WeakObjectsInternal.RemoveAt(m_weakObjectsInternalIndex);
 
-                    _WeakObjects_Index--;
+                    m_weakObjectsInternalIndex--;
                 }
             }
 
-            if (objID >= 0)
+            if (objId >= 0)
             {
                 V8NativeObject obj;
                 using (_ObjectsLocker.ReadLock(Int32.MaxValue))
                 {
-                    obj = _Objects[objID].Object;
+                    obj = _Objects[objId].Object;
                 }
                 obj._MakeWeak(); // (don't call this while '_Objects' is locked, because the main thread may be executing script that also may need a lock, but this call may also be blocked by a native V8 mutex)
             }
@@ -119,25 +119,25 @@ namespace Barista.V8.Net
 
             IFinalizable objectToFinalize = null;
 
-            lock (_ObjectsToFinalize)
+            lock (ObjectsToFinalizeInternal)
             {
-                if (_ObjectsToFinalize_Index < 0)
-                    _ObjectsToFinalize_Index = _ObjectsToFinalize.Count - 1;
+                if (m_objectsToFinalizeIndex < 0)
+                    m_objectsToFinalizeIndex = ObjectsToFinalizeInternal.Count - 1;
 
-                if (_ObjectsToFinalize_Index >= 0)
+                if (m_objectsToFinalizeIndex >= 0)
                 {
-                    objectToFinalize = _ObjectsToFinalize[_ObjectsToFinalize_Index];
+                    objectToFinalize = ObjectsToFinalizeInternal[m_objectsToFinalizeIndex];
 
-                    _ObjectsToFinalize.RemoveAt(_ObjectsToFinalize_Index);
+                    ObjectsToFinalizeInternal.RemoveAt(m_objectsToFinalizeIndex);
 
-                    _ObjectsToFinalize_Index--;
+                    m_objectsToFinalizeIndex--;
                 }
             }
 
             if (objectToFinalize != null)
                 objectToFinalize.DoFinalize();
 
-            return _WeakObjects_Index >= 0 || _ObjectsToFinalize_Index >= 0;
+            return m_weakObjectsInternalIndex >= 0 || m_objectsToFinalizeIndex >= 0;
         }
 
         /// <summary>
@@ -145,10 +145,10 @@ namespace Barista.V8.Net
         /// </summary>
         public void PauseWorker()
         {
-            if (_Worker.IsAlive)
+            if (WorkerThreadInternal.IsAlive)
             {
-                _PauseWorker = 1;
-                while (_PauseWorker == 1 && _Worker.IsAlive) { }
+                m_pauseWorker = 1;
+                while (m_pauseWorker == 1 && WorkerThreadInternal.IsAlive) { }
             }
         }
 
@@ -156,21 +156,21 @@ namespace Barista.V8.Net
         /// Terminates the worker thread, without a 3 second timeout to be sure.
         /// This is called when the engine is shutting down. (Note: The worker thread manages object GC along with the native V8 GC.)
         /// </summary>
-        internal void _TerminateWorker()
+        internal void TerminateWorkerInternal()
         {
-            if (_Worker.IsAlive)
-            {
-                _PauseWorker = -1;
-                var timeoutCountdown = 3000;
-                while (_PauseWorker == -1 && _Worker.IsAlive)
-                    if (timeoutCountdown-- > 0)
-                        Thread.Sleep(1);
-                    else
-                    {
-                        _Worker.Abort();
-                        break;
-                    }
-            }
+            if (!WorkerThreadInternal.IsAlive)
+                return;
+
+            m_pauseWorker = -1;
+            var timeoutCountdown = 3000;
+            while (m_pauseWorker == -1 && WorkerThreadInternal.IsAlive)
+                if (timeoutCountdown-- > 0)
+                    Thread.Sleep(1);
+                else
+                {
+                    WorkerThreadInternal.Abort();
+                    break;
+                }
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Barista.V8.Net
         /// </summary>
         public void ResumeWorker()
         {
-            _PauseWorker = 0;
+            m_pauseWorker = 0;
         }
 
         // --------------------------------------------------------------------------------------------------------------------

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-
-#if !(V1_1 || V2 || V3 || V3_5)
-using System.Dynamic;
-#endif
-
-namespace Barista.V8.Net
+﻿namespace Barista.V8.Net
 {
+    using Barista.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+
+    #if !(V1_1 || V2 || V3 || V3_5)
+    using System.Dynamic;
+    #endif
+
     // ========================================================================================================================
 
     /// <summary>
@@ -113,7 +113,7 @@ namespace Barista.V8.Net
                 {
                     // ... verify the native handle proxy ID is within a valid range before storing it, and resize as needed ...
 
-                    var engine = V8Engine._Engines[_HandleProxy->EngineID];
+                    var engine = V8Engine.V8EnginesInternal[_HandleProxy->EngineID];
                     var handleID = _HandleProxy->ID;
 
                     if (handleID >= engine._HandleProxies.Length)
@@ -322,7 +322,7 @@ namespace Barista.V8.Net
         /// <summary>
         /// A reference to the V8Engine instance that owns this handle.
         /// </summary>
-        public V8Engine Engine { get { return _HandleProxy != null ? V8Engine._Engines[_HandleProxy->EngineID] : null; } }
+        public V8Engine Engine { get { return _HandleProxy != null ? V8Engine.V8EnginesInternal[_HandleProxy->EngineID] : null; } }
 
         public Handle AsHandle()
         {
@@ -877,12 +877,15 @@ namespace Barista.V8.Net
         /// Calls the V8 'Set()' function on the underlying native object.
         /// Returns true if successful.
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="attributes">Flags that describe the property behavior.  They must be 'OR'd together as needed. (V8PropertyAttributes.None)</param>
+        /// <param name="name"></param>
         public bool SetProperty(string name, InternalHandle value, V8PropertyAttributes attributes)
         {
             try
             {
-                if (name.IsNullOrWhiteSpace()) throw new ArgumentNullException("name (cannot be null, empty, or only whitespace)");
+                if (name.IsNullOrWhiteSpace())
+                    throw new ArgumentNullException("name");
 
                 if (!IsObjectType)
                     throw new InvalidOperationException(_NOT_AN_OBJECT_ERRORMSG);

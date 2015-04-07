@@ -2,19 +2,19 @@
  * Developer: James Wilkins (jameswilkins.net).
  * Source, Documentation, and Support: https://v8dotnet.codeplex.com
  */
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Web;
-
 namespace Barista.V8.Net
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Web;
+    using Barista.Extensions;
+
     // ========================================================================================================================
     // (.NET and Mono Marshalling: http://www.mono-project.com/Interop_with_Native_Libraries)
     // (Mono portable code: http://www.mono-project.com/Guidelines:Application_Portability)
@@ -39,8 +39,8 @@ namespace Barista.V8.Net
         /// <summary>
         /// A static array of all V8 engines created.
         /// </summary>
-        public V8Engine[] Engines { get { return _Engines; } }
-        internal static V8Engine[] _Engines = new V8Engine[10];
+        public V8Engine[] Engines { get { return V8EnginesInternal; } }
+        internal static V8Engine[] V8EnginesInternal = new V8Engine[10];
 
         /// <summary>
         /// 
@@ -48,13 +48,13 @@ namespace Barista.V8.Net
         /// <param name="engineId">The managed side engine Id, which starts at 0</param>
         void _RegisterEngine(int engineId)
         {
-            lock (_Engines)
+            lock (V8EnginesInternal)
             {
-                if (engineId >= _Engines.Length)
+                if (engineId >= V8EnginesInternal.Length)
                 {
-                    Array.Resize(ref _Engines, (5 + engineId) * 2); // (if many engines get allocated, for whatever crazy reason, "*2" creates an exponential capacity increase)
+                    Array.Resize(ref V8EnginesInternal, (5 + engineId) * 2); // (if many engines get allocated, for whatever crazy reason, "*2" creates an exponential capacity increase)
                 }
-                _Engines[engineId] = this;
+                V8EnginesInternal[engineId] = this;
             }
         }
 
@@ -81,13 +81,13 @@ namespace Barista.V8.Net
 
         static Assembly Resolver(object sender, ResolveEventArgs args)
         {
-            if (!args.Name.StartsWith("V8.Net.Proxy.Interface"))
+            if (!args.Name.StartsWith("Barista.V8.Net.Proxy.Interface"))
                 return null;
 
             var assemblyRoot = "";
 
-            if (HttpContext.Current != null)
-                assemblyRoot = HttpContext.Current.Server.MapPath("~/bin");
+            if (HttpRuntime.AppDomainAppId != null)
+                assemblyRoot = HttpRuntime.BinDirectory;
             else
             {
                 var codebaseuri = Assembly.GetExecutingAssembly().CodeBase;
@@ -118,30 +118,30 @@ namespace Barista.V8.Net
             // ... if the platform folder doesn't exist, try loading assemblies from the current folder ...
             string fileName = Path.Combine(Directory.Exists(platformLibraryPath)
                 ? platformLibraryPath
-                : assemblyRoot, "V8.Net.Proxy.Interface." + bitStr + ".dll");
+                : assemblyRoot, "Barista.V8.Net.Proxy.Interface." + bitStr + ".dll");
 
             // ... attempt to update environment variable automatically for the native DLLs ...
             // (see: http://stackoverflow.com/questions/7996263/how-do-i-get-iis-to-load-a-native-dll-referenced-by-my-wcf-service
             //   and http://stackoverflow.com/questions/344608/unmanaged-dlls-fail-to-load-on-asp-net-server)
 
-            try
-            {
-                var path = System.Environment.GetEnvironmentVariable("PATH"); // TODO: Detect other systems if necessary.
-                System.Environment.SetEnvironmentVariable("PATH", platformLibraryPath + ";" + path);
-            }
-            catch
-            {
-                //DO NOTHING!!
-            }
+            //try
+            //{
+            //    var path = System.Environment.GetEnvironmentVariable("PATH"); // TODO: Detect other systems if necessary.
+            //    System.Environment.SetEnvironmentVariable("PATH", platformLibraryPath + ";" + path);
+            //}
+            //catch
+            //{
+            //    //DO NOTHING!!
+            //}
 
             AppDomain.CurrentDomain.AssemblyResolve -= Resolver;  // (handler is only needed once)
 
             // ... if the current directory has an x86 or x64 folder for the bit depth, automatically change to that folder ...
             // (this is required to load the correct VC++ libraries if made available locally)
 
-            var bitLibFolder = Path.Combine(Directory.GetCurrentDirectory(), bitStr);
-            if (Directory.Exists(bitLibFolder))
-                Directory.SetCurrentDirectory(bitLibFolder);
+            //var bitLibFolder = Path.Combine(Directory.GetCurrentDirectory(), bitStr);
+            if (Directory.Exists(platformLibraryPath))
+                Directory.SetCurrentDirectory(platformLibraryPath);
 
             try
             {
@@ -153,7 +153,7 @@ namespace Barista.V8.Net
                           + "1. The VC++ 2012 redistributable libraries are included, but if missing  for some reason, download and install from the Microsoft Site.\r\n"
                           + "2. Did you download the DLLs from a ZIP file? If done so on Windows, you must open the file properties of the zip file and 'Unblock' it before extracting the files.\r\n"
                     ;
-                if (HttpContext.Current != null)
+                if (HttpRuntime.AppDomainAppId != null)
                     msg += "3. Make sure the path '" + assemblyRoot + "' is accessible to the application pool identity (usually Read & Execute for 'IIS_IUSRS', or a similar user/group)";
                 else
                     msg += "3. Make sure the path '" + assemblyRoot + "' is accessible to the application for loading the required libraries.";
@@ -198,7 +198,7 @@ namespace Barista.V8.Net
         {
             if (NativeV8EngineProxy != null)
             {
-                _TerminateWorker(); // (will return only when it has successfully terminated)
+                TerminateWorkerInternal(); // (will return only when it has successfully terminated)
 
                 // ... clear all handles of object IDs for disposal ...
 
@@ -225,7 +225,7 @@ namespace Barista.V8.Net
 
                 if (NativeV8EngineProxy != null)
                 {
-                    _Engines[NativeV8EngineProxy->ID] = null; // (notifies any lingering handles that this engine is now gone)
+                    V8EnginesInternal[NativeV8EngineProxy->ID] = null; // (notifies any lingering handles that this engine is now gone)
                     V8NetProxy.DestroyV8EngineProxy(NativeV8EngineProxy);
                     NativeV8EngineProxy = null;
                 }

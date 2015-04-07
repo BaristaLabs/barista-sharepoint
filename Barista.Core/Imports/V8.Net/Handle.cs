@@ -312,11 +312,11 @@ namespace Barista.V8.Net
         ~Handle()
         {
             if (!((IFinalizable)this).CanFinalize && Engine != null)
-                lock (Engine._ObjectsToFinalize)
+                lock (Engine.ObjectsToFinalizeInternal)
                 {
                     var isLastHandleForObject = (_CurrentObjectID >= 0 && ReferenceCount == 1);
                     if (!isLastHandleForObject) // (there should ALWAYS be at least one handle associated with an object)
-                        Engine._ObjectsToFinalize.Add(this);
+                        Engine.ObjectsToFinalizeInternal.Add(this);
                     GC.ReRegisterForFinalize(this);
                 }
         }

@@ -260,9 +260,9 @@ namespace Barista.V8.Net
             // necessary tasks that shouldn't execute in a finalizer (such as trying to dispose of the native handle first before the object gets destroyed) ...
             // (note: 'CanFinalize' should return true if the object has no ties to V8.NET's object list, or association with template objects)
             if (!((IFinalizable)this).CanFinalize)
-                lock (Engine._ObjectsToFinalize) // (this lock is sufficient, since only the worker accesses it, and the worker only locks when getting a reference from the array [and nothing more])
+                lock (Engine.ObjectsToFinalizeInternal) // (this lock is sufficient, since only the worker accesses it, and the worker only locks when getting a reference from the array [and nothing more])
                 {
-                    _Engine._ObjectsToFinalize.Add(this); // (defer the finalize event to the worker thread instead)
+                    _Engine.ObjectsToFinalizeInternal.Add(this); // (defer the finalize event to the worker thread instead)
                     GC.ReRegisterForFinalize(this);
                 }
         }
@@ -300,9 +300,9 @@ namespace Barista.V8.Net
             {
                 _Handle.IsInPendingDisposalQueue = true; // (this also helps to make sure this method isn't called again)
 
-                lock (_Engine._WeakObjects)
+                lock (_Engine.WeakObjectsInternal)
                 {
-                    _Engine._WeakObjects.Add(_ID.Value); // (queue on the worker to set a native weak reference to dispose of this object later when the native GC is ready)
+                    _Engine.WeakObjectsInternal.Add(_ID.Value); // (queue on the worker to set a native weak reference to dispose of this object later when the native GC is ready)
                 }
             }
         }

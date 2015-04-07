@@ -9,6 +9,8 @@ using System.Dynamic;
 
 namespace Barista.V8.Net
 {
+    using Barista.Extensions;
+
     // ========================================================================================================================
 
     public interface ITemplate
@@ -330,9 +332,9 @@ namespace Barista.V8.Net
         ~ObjectTemplate()
         {
             if (!((IFinalizable)this).CanFinalize)
-                lock (_Engine._ObjectsToFinalize)
+                lock (_Engine.ObjectsToFinalizeInternal)
                 {
-                    _Engine._ObjectsToFinalize.Add(this);
+                    _Engine.ObjectsToFinalizeInternal.Add(this);
                     GC.ReRegisterForFinalize(this);
                 }
         }

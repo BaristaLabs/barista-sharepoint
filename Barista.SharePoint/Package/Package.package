@@ -26,8 +26,6 @@
     <customAssembly location="antlr.runtime.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\antlr.runtime.dll" />
     <customAssembly location="Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     <projectOutputAssembly location="Barista.SharePoint.PowerShell.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj" />
-    <projectOutputAssembly location="Barista.V8.Net-SharedTypes.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj" />
-    <projectOutputAssembly location="Barista.V8.Net-ProxyInterface-x64.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface-x64.csproj" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />
