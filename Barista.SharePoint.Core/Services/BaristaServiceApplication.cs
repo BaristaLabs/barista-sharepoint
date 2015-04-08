@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint.Services
 {
-    using System.Web;
     using Barista.Engine;
     using Barista.Extensions;
     using Barista.Helpers;
@@ -12,6 +11,7 @@
     using System.Runtime.InteropServices;
     using System.ServiceModel;
     using System.Threading;
+    using System.Web;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -228,6 +228,10 @@
                 }
                 finally
                 {
+                    var engineDisposable = engine as IDisposable;
+                    if (engineDisposable != null)
+                        engineDisposable.Dispose();                      
+
                     //Cleanup
                     // ReSharper disable RedundantAssignment
                     engine = null;
