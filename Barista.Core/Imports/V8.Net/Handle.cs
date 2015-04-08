@@ -419,7 +419,9 @@
 
         public static bool operator ==(Handle h1, Handle h2)
         {
-            return h1 == h2 || (object)h1 != null && h1.Equals(h2);
+// ReSharper disable RedundantCast
+            return (object)h1 == (object)h2 || (object)h1 != null && h1.Equals(h2);
+// ReSharper restore RedundantCast
         }
 
         public static bool operator !=(Handle h1, Handle h2)
