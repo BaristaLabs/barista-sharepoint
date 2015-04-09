@@ -1,18 +1,18 @@
 ﻿namespace Barista.Library
 {
-    using System.Collections.Concurrent;
-    using System.IO.Compression;
-    using System.Linq;
-    using System.Text.RegularExpressions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
-    using System.Xml;
     using Barista.Properties;
     using Barista.V8.Net;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Xml;
 
     [Serializable]
     public class WebOptimizationInstance : ObjectInstance
@@ -22,7 +22,6 @@
         public WebOptimizationInstance(ScriptEngine engine)
             : base(engine)
         {
-            this.PopulateFields();
             this.PopulateFunctions();
         }
 
@@ -174,33 +173,37 @@
         [JSDoc("Returns a minified representation of the css string passed as the first argument.")]
         public string MinifyCss(string css)
         {
-            var engine = new V8Engine();
-            engine.Execute(Resources.csso_web, "cssoWeb", true);
+            using (var engine = new V8Engine())
+            {
+                engine.Execute(Resources.csso_web, "cssoWeb", true);
 
-            engine.GlobalObject.SetProperty("code", css);
+                engine.GlobalObject.SetProperty("code", css);
 
-            var result = engine.Execute(@"var compressor = new CSSOCompressor(), translator = new CSSOTranslator();
+                var result = engine.Execute(@"var compressor = new CSSOCompressor(), translator = new CSSOTranslator();
 translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
 ");
-            return result.AsString;
+                return result.AsString;
+            }
         }
 
         [JSFunction(Name = "minifyJs")]
         [JSDoc("Returns a minified representation of the javascript string passed as the first argument.")]
         public string MinifyJs(string javascript)
         {
-            var engine = new V8Engine();
-            engine.Execute(Resources.uglifyjs, "uglifyjs", true);
+            using (var engine = new V8Engine())
+            {
+                engine.Execute(Resources.uglifyjs, "uglifyjs", true);
+                
+                engine.GlobalObject.SetProperty("code", javascript);
 
-            engine.GlobalObject.SetProperty("code", javascript);
-
-            var result = engine.Execute(@"var ast = UglifyJS.parse(code);
+                var result = engine.Execute(@"var ast = UglifyJS.parse(code);
 ast.figure_out_scope();
 compressor = UglifyJS.Compressor();
 ast = ast.transform(compressor);
 ast.print_to_string();");
 
-            return result.AsString;
+                return result.AsString;
+            }
         }
 
         [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]
@@ -235,7 +238,7 @@ ast.print_to_string();");
             return css;
         }
 
-        private IDictionary<string, string> ParseBundleDefinition(XmlDocument doc)
+        private IDictionary<string, string> ParseBundleDefinition(XmlNode doc)
         {
             var result = new Dictionary<string, string>();
 
