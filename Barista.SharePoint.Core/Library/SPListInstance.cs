@@ -795,7 +795,14 @@
         [JSProperty(Name = "title")]
         public string Title
         {
-            get { return m_list.Title; }
+            get
+            {
+                return m_list.Title;
+            }
+            set
+            {
+                m_list.Title = value; 
+            }
         }
 
         //title resource
