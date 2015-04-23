@@ -11,7 +11,7 @@
         private readonly SPPrincipal m_principal;
 
         public SPPrincipalInstance(ScriptEngine engine, SPPrincipal principal)
-            : base(engine)
+            : base(engine, engine.Object.InstancePrototype)
         {
             this.m_principal = principal;
 

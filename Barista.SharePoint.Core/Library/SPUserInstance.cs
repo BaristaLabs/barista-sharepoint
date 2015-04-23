@@ -20,7 +20,7 @@
         {
             if (arg1 is SPUserInstance)
             {
-                return new SPUserInstance(this.Engine, (arg1 as SPUserInstance).User);
+                return new SPUserInstance(this.InstancePrototype, (arg1 as SPUserInstance).User);
             }
 
             var loginName = TypeConverter.ToString(arg1);
@@ -31,7 +31,7 @@
                 throw new JavaScriptException(this.Engine, "Error", "User cannot be found.");
             }
 
-            return new SPUserInstance(this.Engine, user);
+            return new SPUserInstance(this.InstancePrototype, user);
         }
 
         [JSFunction(Name = "doesUserExist")]
@@ -55,7 +55,7 @@
             this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
-        protected SPUserInstance(ObjectInstance prototype, SPUser user)
+        public SPUserInstance(ObjectInstance prototype, SPUser user)
             : base(prototype, user)
         {
             this.m_user = user;
