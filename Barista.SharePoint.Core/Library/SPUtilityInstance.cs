@@ -392,5 +392,11 @@
             result.SetPropertyValue("reachedMaxCount", reachedMaxCount, false);
             return result;
         }
+
+        [JSFunction(Name = "validateFormDigest")]
+        public bool ValidateFormDigest()
+        {
+            return SPUtility.ValidateFormDigest();
+        }
     }
 }
