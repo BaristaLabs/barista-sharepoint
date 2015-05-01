@@ -140,7 +140,7 @@
                         request.Credentials = CredentialCache.DefaultNetworkCredentials;
                     }
 
-                    if (String.IsNullOrEmpty(ajaxSettings.Accept))
+                    if (String.IsNullOrEmpty(ajaxSettings.Accept) == false)
                         request.Accept = ajaxSettings.Accept;
 
                     if (ajaxSettings.Proxy != null && ajaxSettings.Proxy != Undefined.Value && ajaxSettings.Proxy != Null.Value)
