@@ -121,6 +121,12 @@
                         throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
                     return new ArrayInstance(this.InstancePrototype, (uint)length, (uint)length);
                 }
+
+                if (elements[0] is uint)
+                {
+                    var length = (uint)elements[0];
+                    return new ArrayInstance(this.InstancePrototype, length, length);
+                }
             }
 
             // Transform any nulls into undefined.

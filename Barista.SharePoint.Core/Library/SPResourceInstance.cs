@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Barista.SharePoint.Library
+﻿namespace Barista.SharePoint.Library
 {
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
@@ -11,10 +6,10 @@ namespace Barista.SharePoint.Library
     using Microsoft.SharePoint;
 
     [Serializable]
-    public class SPResourceConstructor : ClrFunction
+    public class SPResourceInstance : ObjectInstance
     {
-        public SPResourceConstructor(ScriptEngine engine)
-            : base(engine.Function.InstancePrototype, "SPResource", engine.Object.InstancePrototype)
+        public SPResourceInstance(ScriptEngine engine)
+            : base(engine)
         {
             this.PopulateFunctions();
         }

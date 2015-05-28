@@ -12,6 +12,7 @@
     private string m_code;
     private bool m_isEval;
     private bool m_isExec;
+    private string m_scriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
 
     [Parameter(Mandatory = true, ValueFromPipeline = true)]
     public SPServiceContextPipeBind ServiceContext;
@@ -44,6 +45,20 @@
       }
     }
 
+    [Parameter(ParameterSetName = "ScriptEngineFactory", Mandatory = false)]
+    public string ScriptEngineFactory
+    {
+        get
+        {
+            return m_scriptEngineFactory;
+        }
+        set
+        {
+            if (!String.IsNullOrWhiteSpace(value))
+                m_scriptEngineFactory = value;
+        }
+    }
+
     protected override void InternalProcessRecord()
     {
       // get the specified service context
@@ -71,6 +86,7 @@
       var request = new BrewRequest {
         ContentType = "application/json", //default to application/json.
         Code = m_code,
+        ScriptEngineFactory = m_scriptEngineFactory
       };
 
       if (m_isEval)

@@ -65,8 +65,8 @@ write-host
 write-host "[[STEP]] Stopping Barista Service Application instance on local server." -foregroundcolor Yellow
 write-host 
 
-write-host "Stopping the service on  $env:computername..." -foregroundcolor Gray
-$localServiceInstance = Get-SPServiceInstance -Server $env:computername | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
+write-host "Stopping the service on  $env:COMPUTERNAME..." -foregroundcolor Gray
+$localServiceInstance = Get-SPServiceInstance -Server $env:COMPUTERNAME | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
 if ($localServiceInstance -ne $null){
 
 	$tj = WaitForJobToFinish("Provisioning Barista Service*")
@@ -79,7 +79,7 @@ if ($localServiceInstance -ne $null){
 		$tj.Delete()
 	}
 
-	write-host "Stopping service instance on server $env:computername..." -foregroundcolor Gray
+	write-host "Stopping service instance on server $env:COMPUTERNAME..." -foregroundcolor Gray
 	Stop-SPServiceInstance $localServiceInstance -Confirm:$false
 	write-host "Barista Service Application instance stopped." -foregroundcolor Green
 

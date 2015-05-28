@@ -1,6 +1,6 @@
 ﻿namespace Barista.SharePoint.Services
 {
-    using System.Web;
+    using Barista.Engine;
     using Barista.Extensions;
     using Barista.Helpers;
     using Barista.SharePoint.Bundles;
@@ -11,6 +11,7 @@
     using System.Runtime.InteropServices;
     using System.ServiceModel;
     using System.Threading;
+    using System.Web;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -137,7 +138,7 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                if (String.IsNullOrWhiteSpace(request.ScriptEngineFactory))
+                if (request.ScriptEngineFactory.IsNullOrWhiteSpace())
                     throw new InvalidOperationException("A ScriptEngineFactory must be specified as part of a BrewRequest.");
 
                 var baristaScriptEngineFactoryType = Type.GetType(request.ScriptEngineFactory, true);
@@ -148,10 +149,11 @@
                 var scriptEngineFactory =
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
 
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance,
+                    out errorInInitialization);
 
                 if (engine == null)
-                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
+                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
 
                 if (errorInInitialization)
                     return response;
@@ -226,6 +228,10 @@
                 }
                 finally
                 {
+                    var engineDisposable = engine as IDisposable;
+                    if (engineDisposable != null)
+                        engineDisposable.Dispose();                      
+
                     //Cleanup
                     // ReSharper disable RedundantAssignment
                     engine = null;
@@ -278,20 +284,22 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
-                    true);
+                if (request.ScriptEngineFactory.IsNullOrWhiteSpace())
+                    throw new InvalidOperationException("A ScriptEngineFactory must be specified as part of a BrewRequest.");
+
+                var baristaScriptEngineFactoryType = Type.GetType(request.ScriptEngineFactory, true);
 
                 if (baristaScriptEngineFactoryType == null)
-                    throw new InvalidOperationException("Unable to locate the SPBraistaScriptEngineFactory");
+                    throw new InvalidOperationException("Unable to locate the specified ScriptEngineFactory: " + request.ScriptEngineFactory);
 
                 var scriptEngineFactory =
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
 
                 var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
-                                                                 out errorInInitialization) as Jurassic.ScriptEngine;
+                    out errorInInitialization);
 
                 if (engine == null)
-                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
+                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
 
                 if (errorInInitialization)
                     return;
@@ -304,7 +312,7 @@
                                                 new SPRequestUsageCounter(),
                                                 new SPSqlQueryCounter()))
                     {
-                        engine.Execute(source);
+                        engine.Evaluate(source);
                     }
                 }
                 catch (JavaScriptException ex)

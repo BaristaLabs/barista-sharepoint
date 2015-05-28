@@ -2,6 +2,7 @@
 {
     using System.Threading;
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Extensions;
     using Barista.Framework;
     using Barista.Helpers;
@@ -534,7 +535,7 @@
 
                 try
                 {
-                    engine.Execute(source);
+                    engine.Evaluate(source);
                 }
                 catch (JavaScriptException ex)
                 {

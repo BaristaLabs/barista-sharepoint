@@ -103,7 +103,6 @@
                     return result;
                 }
             };
-
             return bundlerInstance;
         }
     }

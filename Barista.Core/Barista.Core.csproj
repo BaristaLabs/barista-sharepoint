@@ -24,23 +24,25 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET35;NET_35;CODE_ANALYSIS;CODE_ANALYSIS;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET35;NET_35;V3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET35</DefineConstants>
+    <DefineConstants>TRACE;NET35;NET_35;V3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -120,34 +122,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Web.Administration\7.0.0.0__31bf3856ad364e35\Microsoft.Web.Administration.dll</HintPath>
@@ -197,7 +171,7 @@
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="BaristaInstanceMutexManager.cs" />
-    <Compile Include="BaristaScriptSource.cs" />
+    <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
     <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
@@ -219,8 +193,6 @@
     <Compile Include="Bundles\StringBundle.cs" />
     <Compile Include="Bundles\SucraloseBundle.cs" />
     <Compile Include="Bundles\SugarBundle.cs" />
-    <Compile Include="Bundles\TfsBundle.cs" />
-    <Compile Include="Bundles\UnitTestingBundle.cs" />
     <Compile Include="Bundles\UtilityBundle.cs" />
     <Compile Include="Bundles\WebAdministrationBundle.cs" />
     <Compile Include="Bundles\WebBundleBase.cs" />
@@ -252,6 +224,7 @@
     <Compile Include="DocumentStore\Library\RoleInstance.cs" />
     <Compile Include="DocumentStore\TriggerProperties.cs" />
     <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Engine\IScriptSource.cs" />
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
@@ -282,99 +255,6 @@
     <Compile Include="iCal\CalendarPropertyInstance.cs" />
     <Compile Include="iCal\TimeZoneInstance.cs" />
     <Compile Include="iCal\TodoInstance.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Arguments.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptClassAttribute.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptFunctionAttribute.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptPropertyAccess.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Attributes\EcmaScriptPropertyAttribute.cs" />
-    <Compile Include="Imports\EcmaScript.NET\BaseFunction.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Collections\ObjArray.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Collections\ObjToIntMap.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Collections\UintMap.cs" />
-    <Compile Include="Imports\EcmaScript.NET\CompilerEnvirons.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Context.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ContextEvents.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ContextFactory.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Continuation.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Debugging\DebugFrame.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Debugging\DebuggableObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Debugging\DebuggableScript.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Debugging\Debugger.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Decompiler.cs" />
-    <Compile Include="Imports\EcmaScript.NET\DefaultErrorReporter.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Delegator.cs" />
-    <Compile Include="Imports\EcmaScript.NET\EcmaScriptError.cs" />
-    <Compile Include="Imports\EcmaScript.NET\EcmaScriptException.cs" />
-    <Compile Include="Imports\EcmaScript.NET\EcmaScriptRuntimeException.cs" />
-    <Compile Include="Imports\EcmaScript.NET\EcmaScriptThrow.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ErrorReporter.cs" />
-    <Compile Include="Imports\EcmaScript.NET\FunctionNode.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Helpers\CliHelper.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Helpers\StackOverflowVerifier.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Helpers\StackOverflowVerifierException.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ICallable.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IdEnumeration.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IdFunctionObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IdScriptableObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IFunction.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IIdEnumerable.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IIdFunctionCall.cs" />
-    <Compile Include="Imports\EcmaScript.NET\InterpretedFunction.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Interpreter.cs" />
-    <Compile Include="Imports\EcmaScript.NET\InterpreterData.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IRef.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IRefCallable.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IScript.cs" />
-    <Compile Include="Imports\EcmaScript.NET\IScriptable.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Node.cs" />
-    <Compile Include="Imports\EcmaScript.NET\NodeFactory.cs" />
-    <Compile Include="Imports\EcmaScript.NET\NodeTransformer.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Parser.cs" />
-    <Compile Include="Imports\EcmaScript.NET\RegExpProxy.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ScriptableObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ScriptConvert.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ScriptOrFnNode.cs" />
-    <Compile Include="Imports\EcmaScript.NET\ScriptRuntime.cs" />
-    <Compile Include="Imports\EcmaScript.NET\SecurityController.cs" />
-    <Compile Include="Imports\EcmaScript.NET\SpecialRef.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Token.cs" />
-    <Compile Include="Imports\EcmaScript.NET\TokenStream.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinArray.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinBoolean.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinCall.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinDate.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinError.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinFunction.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinGlobal.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinGlobalObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinMath.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinNumber.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinScript.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinString.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\BuiltinWith.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliArray.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliEnum.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliEventInfo.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliMethodInfo.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliObject.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliPackage.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\Cli\CliType.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\Namespace.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\QName.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XML.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XMLCtor.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XMLLibImpl.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XMLList.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XMLName.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\E4X\XMLObjectImpl.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\RegExp\BuiltinRegExp.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\RegExp\BuiltinRegExpCtor.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\RegExp\RegExpImpl.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Types\RegExp\SubString.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Undefined.cs" />
-    <Compile Include="Imports\EcmaScript.NET\UniqueTag.cs" />
-    <Compile Include="Imports\EcmaScript.NET\Wrapper.cs" />
     <Compile Include="Imports\iCal\Collections\Constants.cs" />
     <Compile Include="Imports\iCal\Collections\Enumerators\GroupedListEnumerator.cs" />
     <Compile Include="Imports\iCal\Collections\GroupedList.cs" />
@@ -553,7 +433,6 @@
     <Compile Include="Imports\iCal\Utility\RecurrenceUtil.cs" />
     <Compile Include="Imports\iCal\Utility\SerializationUtil.cs" />
     <Compile Include="Imports\iCal\Utility\TextUtil.cs" />
-    <Compile Include="IScriptEngine.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -900,27 +779,26 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\CompressionType.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\Compressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\CssCompressionType.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\CssCompressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\CustomErrorReporter.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\Extensions.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\ICompressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\ICompressorTask.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\ICssCompressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\IJavaScriptCompressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\JavaScriptCompressionType.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\JavaScriptCompressor.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\JavaScriptIdentifier.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\JavaScriptToken.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\LoggingType.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\Mozilla\Decompiler.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\Mozilla\Token.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\ScriptOrFunctionScope.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\Tokens.cs" />
-    <Compile Include="Imports\Yahoo.Yui.Compressor\YUICompressor.cs" />
-    <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Imports\V8.Net\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\FunctionTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Handle.cs" />
+    <Compile Include="Imports\V8.Net\IndexedObjectList.cs" />
+    <Compile Include="Imports\V8.Net\InternalHandle.cs" />
+    <Compile Include="Imports\V8.Net\JSProperty.cs" />
+    <Compile Include="Imports\V8.Net\ObjectTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\ObservableWeakReference.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Utilities.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Binding.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Handles.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Objects.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Tests.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Worker.cs" />
+    <Compile Include="Imports\V8.Net\V8Function.cs" />
+    <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
+    <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
+    <Compile Include="Engine\IScriptEngine.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
     <Compile Include="Library\DiffInfoInstance.cs" />
     <Compile Include="Library\DiffResultInstance.cs" />
@@ -1451,13 +1329,6 @@
     <Compile Include="Smtp\MailAddressInstance.cs" />
     <Compile Include="Smtp\MailMessageInstance.cs" />
     <Compile Include="Smtp\SmtpClientInstance.cs" />
-    <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsWorkItemInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsWorkItemFieldInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsWorkItemStoreInstance.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsWorkItemTypeInstance.cs" />
     <None Include="PrototypicalInheritanceExample.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="UuidType.cs" />
@@ -1512,8 +1383,6 @@
     <Compile Include="DocumentStore\Repository.cs" />
     <Compile Include="DocumentStore\RepositoryConfiguration.cs" />
     <Compile Include="Extensions\TheadPoolExtensions.cs" />
-    <Compile Include="TeamFoundationServer\Library\TfsInstance.cs" />
-    <Compile Include="TeamFoundationServer\TfsCredentialsProvider.cs" />
     <None Include="Tuple.cs" />
     <Compile Include="ValidationAttributeStore.cs" />
     <Compile Include="ValidationContext.cs" />
@@ -1564,14 +1433,27 @@
     <Content Include="Imports\SuperWebSocket\readme.txt" />
     <Content Include="Resources\Automapper.js" />
     <Content Include="Resources\chance.js" />
+    <Content Include="Resources\csso.web.js" />
     <Content Include="Resources\lodash.min.js" />
     <Content Include="Resources\moment.min.js" />
     <Content Include="Resources\uaregexes.yaml" />
+    <Content Include="Resources\uglifyjs.js" />
     <None Include="Resources\sugar-1.3.9-custom.min.js" />
     <None Include="Resources\string.js" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj">
+      <Project>{b283c79c-9821-45eb-8999-88eb4299a20c}</Project>
+      <Name>Barista.V8.Net-ProxyInterface</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj">
+      <Project>{55f72a43-2cd2-4a33-ac80-7d9c65b9a57d}</Project>
+      <Name>Barista.V8.Net-SharedTypes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,6 +2,7 @@
 {
     using Barista.Automation.Bundles;
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
     using Barista.Library;
@@ -106,7 +107,7 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                 //Execute any instance initialization code.
                 if (String.IsNullOrEmpty(BaristaContext.Current.Request.InstanceInitializationCode) == false)
                 {
-                    var initializationScriptSource = new BaristaScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
+                    var initializationScriptSource = new StringScriptSource(BaristaContext.Current.Request.InstanceInitializationCode, BaristaContext.Current.Request.InstanceInitializationCodePath);
 
                     try
                     {

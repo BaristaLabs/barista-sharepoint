@@ -146,6 +146,34 @@ namespace Barista.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to var $util = {};
+        ///
+        ///$util.cleanInfo = function (tree) {
+        ///    var r = [];
+        ///    tree = tree.slice(1);
+        ///
+        ///    tree.forEach(function (e) {
+        ///        r.push(Array.isArray(e) ? $util.cleanInfo(e) : e);
+        ///    });
+        ///
+        ///    return r;
+        ///};
+        ///
+        ///$util.treeToString = function (tree, level) {
+        ///    var spaces = $util.dummySpaces(level),
+        ///        level = level ? level : 0,
+        ///        s = (level ? &apos;\n&apos; + spaces : &apos;&apos;) + &apos;[&apos;;
+        ///
+        ///    tree.forEach(function (e) {
+        ///        s += (Array.isArray(e) ? $util.treeToString(e, level + 1) : e.f != [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string csso_web {
+            get {
+                return ResourceManager.GetString("csso_web", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to // Author: Michael Schøler, 2008
         ///// Dual licensed as MIT and LGPL, use as you like, don&apos;t hold me responsible for success or failure though
         ///Array.prototype.compareTo = function (compareAry) {
@@ -248,6 +276,30 @@ namespace Barista.Properties {
             get {
                 object obj = ResourceManager.GetObject("uaregexes", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (function(exports, global) {
+        ///    global[&quot;UglifyJS&quot;] = exports;
+        ///    &quot;use strict&quot;;
+        ///    function array_to_hash(a) {
+        ///        var ret = Object.create(null);
+        ///        for (var i = 0; i &lt; a.length; ++i) ret[a[i]] = true;
+        ///        return ret;
+        ///    }
+        ///    function slice(a, start) {
+        ///        return Array.prototype.slice.call(a, start || 0);
+        ///    }
+        ///    function characters(str) {
+        ///        return str.split(&quot;&quot;);
+        ///    }
+        ///    function member(name, array) {
+        ///        for (var i = array.length; --i &gt;= 0; ) if (array[i] == name) return  [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string uglifyjs {
+            get {
+                return ResourceManager.GetString("uglifyjs", resourceCulture);
             }
         }
     }

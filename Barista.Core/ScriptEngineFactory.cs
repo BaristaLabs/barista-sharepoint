@@ -5,6 +5,7 @@
     using System.Net;
     using System.Text;
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Extensions;
     using Jurassic;
     using Jurassic.Library;
@@ -103,11 +104,11 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
         /// <param name="webBundle">The web bundle. (Optional)</param>
         /// <param name="isNewScriptEngineInstance">if set to <c>true</c> [is new script engine instance].</param>
         /// <param name="errorInInitialization">if set to <c>true</c> [error in initialization].</param>
-        /// <returns>ScriptEngine.</returns>
+        /// <returns>IScriptEngine.</returns>
         public abstract IScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance,
                                                      out bool errorInInitialization);
 
-        public virtual void UpdateResponseWithJavaScriptExceptionDetails(ScriptEngine engine, JavaScriptException exception, BrewResponse response)
+        public virtual void UpdateResponseWithJavaScriptExceptionDetails(IScriptEngine engine, JavaScriptException exception, BrewResponse response)
         {
             if (exception == null)
                 throw new ArgumentNullException("exception");
@@ -132,7 +133,7 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
                 message = errorObject.GetPropertyValue("message") as string;
                 if (message == null || message.IsNullOrWhiteSpace())
                 {
-                    message = JSONObject.Stringify(engine, exception.ErrorObject, null, 4);
+                    message = engine.Stringify(exception.ErrorObject, null, 4);
                 }
                 else
                 {

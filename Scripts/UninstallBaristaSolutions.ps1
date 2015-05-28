@@ -58,7 +58,8 @@ RetractSolution($solution);
 $identity = "90fb8db4-2b5f-4de7-882b-6faba092942c";
 
 Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
-						$args = @"
+
+$args = @"
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Disable-SPFeature –Identity $($identity) -force -Confirm:0 -ErrorAction SilentlyContinue
 "@
@@ -70,4 +71,12 @@ Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -
 $solution = Get-SPSolution "Barista.SharePoint.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);
 
+Write-Progress -Activity "Checking for and removing orphaned features" -PercentComplete -1
 
+$args = @"
+Get-SPFeature | ? { $_.Scope -eq $null -and $_.DisplayName.StartsWith("Barista") } | % { $_.Delete() }
+"@
+
+& powershell.exe -Version 3 $args
+
+Write-Progress -Activity "Checking for and removing orphaned features" -Completed

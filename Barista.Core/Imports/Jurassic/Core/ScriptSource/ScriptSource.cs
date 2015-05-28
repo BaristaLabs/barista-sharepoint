@@ -2,12 +2,13 @@
 {
   using System;
   using System.IO;
+  using Barista.Engine;
 
-  /// <summary>
+    /// <summary>
   /// Represents a resource that can provide script code.  This is the abstract base class of all
   /// the script providers.
   /// </summary>
-  public abstract class ScriptSource
+  public abstract class ScriptSource : IScriptSource
   {
     /// <summary>
     /// Gets the path of the source file (either a path on the file system or a URL).  This

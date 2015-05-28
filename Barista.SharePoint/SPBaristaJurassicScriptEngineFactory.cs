@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint
 {
     using Barista.Bundles;
+    using Barista.Engine;
     using Barista.Library;
     using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Bundles;
@@ -86,10 +87,10 @@
                 instance.Common.RegisterBundle(new SqlDataBundle());
                 instance.Common.RegisterBundle(new StateMachineBundle());
                 instance.Common.RegisterBundle(new DeferredBundle());
-                instance.Common.RegisterBundle(new TfsBundle());
+                //instance.Common.RegisterBundle(new TfsBundle());
                 instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
                 instance.Common.RegisterBundle(new WebAdministrationBundle());
-                instance.Common.RegisterBundle(new UnitTestingBundle());
+                //instance.Common.RegisterBundle(new UnitTestingBundle());
 
                 //Global Types
                 engine.SetGlobalValue("barista", instance);
@@ -132,7 +133,7 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                     return engine;
 
                 var initializationScriptSource =
-                    new BaristaScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
+                    new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
                         SPBaristaContext.Current.Request.InstanceInitializationCodePath);
 
                 try

@@ -1,13 +1,24 @@
 ﻿namespace Barista.SharePoint
 {
-    using System;
-    //using V8.Net;
+    using Barista.Bundles;
+    using Barista.Engine;
+    using Barista.V8.Net;
+
     public class SPBaristaV8ScriptEngineFactory : ScriptEngineFactory
     {
-        public override IScriptEngine GetScriptEngine(Barista.Bundles.WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
+        /// <summary>
+        /// Returns a new instance of a V8 Script Engine Object with all runtime objects available.
+        /// </summary>
+        /// <returns></returns>
+        public override IScriptEngine GetScriptEngine(WebBundleBase webBundle, out bool isNewScriptEngineInstance, out bool errorInInitialization)
         {
-            //var v8Engine = new V8Engine();
-            throw new NotImplementedException();
+            isNewScriptEngineInstance = true;
+            errorInInitialization = false;
+
+            var engine = new V8Engine();
+
+            
+            return engine;
         }
     }
 }

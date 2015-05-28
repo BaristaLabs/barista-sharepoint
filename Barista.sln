@@ -143,41 +143,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.iCal", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.PowerShell", "Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj", "{0FA2C498-92DD-453A-8502-D192AD536E5C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v8", "v8", "{4E6B95E9-325F-4F32-88BF-1193AE470F21}"
-	ProjectSection(SolutionItems) = preProject
-		Lib\v8\V8.Net.dll = Lib\v8\V8.Net.dll
-		Lib\v8\V8.Net.pdb = Lib\v8\V8.Net.pdb
-		Lib\v8\V8.Net.SharedTypes.dll = Lib\v8\V8.Net.SharedTypes.dll
-		Lib\v8\V8.Net.SharedTypes.pdb = Lib\v8\V8.Net.SharedTypes.pdb
-		Lib\v8\V8.Net.SharedTypes.XML = Lib\v8\V8.Net.SharedTypes.XML
-		Lib\v8\V8.Net.XML = Lib\v8\V8.Net.XML
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-SharedTypes", "Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj", "{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x64", "x64", "{4CD03528-F85C-4346-A0B8-F89828703916}"
-	ProjectSection(SolutionItems) = preProject
-		Lib\v8\x64\V8.Net.Proxy.Interface.x64.dll = Lib\v8\x64\V8.Net.Proxy.Interface.x64.dll
-		Lib\v8\x64\V8.Net.Proxy.Interface.x64.pdb = Lib\v8\x64\V8.Net.Proxy.Interface.x64.pdb
-		Lib\v8\x64\V8_Net_Proxy_x64.dll = Lib\v8\x64\V8_Net_Proxy_x64.dll
-		Lib\v8\x64\V8_Net_Proxy_x64.exp = Lib\v8\x64\V8_Net_Proxy_x64.exp
-		Lib\v8\x64\V8_Net_Proxy_x64.lib = Lib\v8\x64\V8_Net_Proxy_x64.lib
-		Lib\v8\x64\V8_Net_Proxy_x64.map = Lib\v8\x64\V8_Net_Proxy_x64.map
-		Lib\v8\x64\V8_Net_Proxy_x64.pdb = Lib\v8\x64\V8_Net_Proxy_x64.pdb
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V8.Net", "V8.Net", "{E01704A6-C566-4DC6-A729-B2C3C0098A20}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x86", "x86", "{46F5BEAB-7005-4470-82B2-1D397E2CBB84}"
-	ProjectSection(SolutionItems) = preProject
-		Lib\v8\x86\V8.Net.Proxy.Interface.x86.dll = Lib\v8\x86\V8.Net.Proxy.Interface.x86.dll
-		Lib\v8\x86\V8.Net.Proxy.Interface.x86.pdb = Lib\v8\x86\V8.Net.Proxy.Interface.x86.pdb
-		Lib\v8\x86\V8_Net_Proxy_x86.dll = Lib\v8\x86\V8_Net_Proxy_x86.dll
-		Lib\v8\x86\V8_Net_Proxy_x86.exp = Lib\v8\x86\V8_Net_Proxy_x86.exp
-		Lib\v8\x86\V8_Net_Proxy_x86.lib = Lib\v8\x86\V8_Net_Proxy_x86.lib
-		Lib\v8\x86\V8_Net_Proxy_x86.map = Lib\v8\x86\V8_Net_Proxy_x86.map
-		Lib\v8\x86\V8_Net_Proxy_x86.pdb = Lib\v8\x86\V8_Net_Proxy_x86.pdb
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-ProxyInterface", "Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj", "{B283C79C-9821-45EB-8999-88EB4299A20C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-ProxyInterface-x64", "Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface-x64.csproj", "{54DEA09B-9D54-4EE7-A529-6E8720E3B381}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.V8.Net-ProxyInterface-x86", "Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface-x86.csproj", "{8D5FCBF7-889F-42A4-A974-474A528F84A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.ConsoleTests", "Barista.ConsoleTests\Barista.ConsoleTests.csproj", "{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bundles", "Bundles", "{C60A91B1-EF34-4616-9FAA-94DF63D11768}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core.UnitTestingBundle", "Barista.Core.UnitTestingBundle\Barista.Core.UnitTestingBundle.csproj", "{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core.TeamFoundationServerBundle", "Barista.Core.TeamFoundationServer\Barista.Core.TeamFoundationServerBundle.csproj", "{3A62E81D-5A14-4BC0-BE56-B03DA5508F86}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 24
+		SccNumberOfProjects = 31
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -273,6 +259,34 @@ Global
 		SccProjectTopLevelParentUniqueName23 = Barista.sln
 		SccProjectName23 = Barista.SharePoint.PowerShell
 		SccLocalPath23 = Barista.SharePoint.PowerShell
+		SccProjectUniqueName24 = Barista.V8.Net-SharedTypes\\Barista.V8.Net-SharedTypes.csproj
+		SccProjectTopLevelParentUniqueName24 = Barista.sln
+		SccProjectName24 = Barista.V8.Net-SharedTypes
+		SccLocalPath24 = Barista.V8.Net-SharedTypes
+		SccProjectUniqueName25 = Barista.V8.Net-ProxyInterface\\Barista.V8.Net-ProxyInterface.csproj
+		SccProjectTopLevelParentUniqueName25 = Barista.sln
+		SccProjectName25 = Barista.V8.Net-ProxyInterface
+		SccLocalPath25 = Barista.V8.Net-ProxyInterface
+		SccProjectUniqueName26 = Barista.V8.Net-ProxyInterface\\Barista.V8.Net-ProxyInterface-x64.csproj
+		SccProjectTopLevelParentUniqueName26 = Barista.sln
+		SccProjectName26 = Barista.V8.Net-ProxyInterface
+		SccLocalPath26 = Barista.V8.Net-ProxyInterface
+		SccProjectUniqueName27 = Barista.V8.Net-ProxyInterface\\Barista.V8.Net-ProxyInterface-x86.csproj
+		SccProjectTopLevelParentUniqueName27 = Barista.sln
+		SccProjectName27 = Barista.V8.Net-ProxyInterface
+		SccLocalPath27 = Barista.V8.Net-ProxyInterface
+		SccProjectUniqueName28 = Barista.ConsoleTests\\Barista.ConsoleTests.csproj
+		SccProjectTopLevelParentUniqueName28 = Barista.sln
+		SccProjectName28 = Barista.ConsoleTests
+		SccLocalPath28 = Barista.ConsoleTests
+		SccProjectUniqueName29 = Barista.Core.UnitTestingBundle\\Barista.Core.UnitTestingBundle.csproj
+		SccProjectTopLevelParentUniqueName29 = Barista.sln
+		SccProjectName29 = Barista.Core.UnitTestingBundle
+		SccLocalPath29 = Barista.Core.UnitTestingBundle
+		SccProjectUniqueName30 = Barista.Core.TeamFoundationServer\\Barista.Core.TeamFoundationServerBundle.csproj
+		SccProjectTopLevelParentUniqueName30 = Barista.sln
+		SccProjectName30 = Barista.Core.TeamFoundationServer
+		SccLocalPath30 = Barista.Core.TeamFoundationServer
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -377,6 +391,34 @@ Global
 		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FA2C498-92DD-453A-8502-D192AD536E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B283C79C-9821-45EB-8999-88EB4299A20C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B283C79C-9821-45EB-8999-88EB4299A20C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B283C79C-9821-45EB-8999-88EB4299A20C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B283C79C-9821-45EB-8999-88EB4299A20C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54DEA09B-9D54-4EE7-A529-6E8720E3B381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54DEA09B-9D54-4EE7-A529-6E8720E3B381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54DEA09B-9D54-4EE7-A529-6E8720E3B381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54DEA09B-9D54-4EE7-A529-6E8720E3B381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D5FCBF7-889F-42A4-A974-474A528F84A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A62E81D-5A14-4BC0-BE56-B03DA5508F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A62E81D-5A14-4BC0-BE56-B03DA5508F86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A62E81D-5A14-4BC0-BE56-B03DA5508F86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A62E81D-5A14-4BC0-BE56-B03DA5508F86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -399,9 +441,9 @@ Global
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA} = {7DB948B6-8410-4DB1-8C29-0310F6D2047F}
 		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{E4FE692A-8F43-43CD-86DF-00BB3DB0C56A} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
-		{1CF79B59-CDD6-4920-8EDB-4EF36E332EE0} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
-		{FB0D0FB7-E81F-4E2F-B662-C3AD92AC65D8} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
-		{962E4C28-198F-4E99-A8C0-4A8C1C61D0B4} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
+		{1CF79B59-CDD6-4920-8EDB-4EF36E332EE0} = {C60A91B1-EF34-4616-9FAA-94DF63D11768}
+		{FB0D0FB7-E81F-4E2F-B662-C3AD92AC65D8} = {C60A91B1-EF34-4616-9FAA-94DF63D11768}
+		{962E4C28-198F-4E99-A8C0-4A8C1C61D0B4} = {C60A91B1-EF34-4616-9FAA-94DF63D11768}
 		{465F6D30-4322-495B-97D1-EFD80E0C5F22} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{4A18440E-D225-4FB4-B781-950598372798} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
 		{76859B84-236A-4E5D-B47B-4F94118C342D} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
@@ -409,8 +451,12 @@ Global
 		{04D32EAA-9039-46EE-B571-2A2F482B15DC} = {615E6A1D-60F6-4320-8CE8-A38EFBB5B584}
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
-		{4E6B95E9-325F-4F32-88BF-1193AE470F21} = {47FDFAD3-D414-49D6-900A-8F7C0912C655}
-		{4CD03528-F85C-4346-A0B8-F89828703916} = {4E6B95E9-325F-4F32-88BF-1193AE470F21}
-		{46F5BEAB-7005-4470-82B2-1D397E2CBB84} = {4E6B95E9-325F-4F32-88BF-1193AE470F21}
+		{55F72A43-2CD2-4A33-AC80-7D9C65B9A57D} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
+		{B283C79C-9821-45EB-8999-88EB4299A20C} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
+		{54DEA09B-9D54-4EE7-A529-6E8720E3B381} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
+		{8D5FCBF7-889F-42A4-A974-474A528F84A9} = {E01704A6-C566-4DC6-A729-B2C3C0098A20}
+		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
+		{BD424B2E-B4AC-4C7D-87EF-C5D7C1A5940B} = {C60A91B1-EF34-4616-9FAA-94DF63D11768}
+		{3A62E81D-5A14-4BC0-BE56-B03DA5508F86} = {C60A91B1-EF34-4616-9FAA-94DF63D11768}
 	EndGlobalSection
 EndGlobal

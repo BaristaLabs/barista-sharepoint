@@ -148,4 +148,10 @@
   <data name="lodash_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lodash.min.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="uglifyjs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\uglifyjs.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="csso_web" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\csso.web.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

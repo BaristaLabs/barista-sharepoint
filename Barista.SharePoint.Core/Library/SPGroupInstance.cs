@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
@@ -19,7 +20,7 @@
         {
             if (arg1 is SPGroupInstance)
             {
-                return new SPGroupInstance(this.Engine, (arg1 as SPGroupInstance).Group);
+                return new SPGroupInstance(this.InstancePrototype, (arg1 as SPGroupInstance).Group);
             }
 
             var groupName = TypeConverter.ToString(arg1);
@@ -30,7 +31,7 @@
                 throw new JavaScriptException(this.Engine, "Error", "No group with the specified name exists in the current context.");
             }
 
-            return new SPGroupInstance(this.Engine, group);
+            return new SPGroupInstance(this.InstancePrototype, group);
         }
     }
 
@@ -43,10 +44,10 @@
             : base(new SPPrincipalInstance(engine, group), group)
         {
             this.m_group = group;
-            this.PopulateFunctions();
+            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
-        protected SPGroupInstance(ObjectInstance prototype, SPGroup group)
+        public SPGroupInstance(ObjectInstance prototype, SPGroup group)
             : base(prototype, group)
         {
             this.m_group = group;

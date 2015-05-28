@@ -2,6 +2,7 @@
 
 namespace Barista
 {
+    using Barista.Engine;
     using Barista.Extensions;
     using Barista.Library;
     using Jurassic;
@@ -220,7 +221,7 @@ namespace Barista
         /// <param name="engine"></param>
         /// <param name="result"></param>
         /// <param name="isRaw"></param>
-        public void SetContentsFromResultObject(ScriptEngine engine, object result, bool isRaw)
+        public void SetContentsFromResultObject(IScriptEngine engine, object result, bool isRaw)
         {
             //If IsRaw has been set on the response script object, convert the result value as a byte array, otherwise convert the string as a byte array.
             byte[] byteArray;
@@ -254,7 +255,7 @@ namespace Barista
             else
             {
                 //Obtain the script result and stringify it -- e.g. convert it to a json object.
-                var stringResult = JSONObject.Stringify(engine, result, null, null);
+                var stringResult = engine.Stringify(result, null, null);
                 if (String.IsNullOrEmpty(stringResult) || (String.IsNullOrEmpty(stringResult.Trim())))
                 {
                     byteArray = new byte[0];
