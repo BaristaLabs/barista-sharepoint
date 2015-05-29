@@ -10,6 +10,7 @@ namespace Barista.V8.Net
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -75,7 +76,10 @@ namespace Barista.V8.Net
         }
 
 #if !(V1_1 || V2 || V3 || V3_5)
-        public dynamic DynamicGlobalObject { get { return GlobalObject; } }
+        public dynamic DynamicGlobalObject
+        {
+            get { return GlobalObject; }
+        }
 #endif
 
         // --------------------------------------------------------------------------------------------------------------------
@@ -85,7 +89,7 @@ namespace Barista.V8.Net
         /// </summary>
         public static string AspBinSubFolderName = "V8.NET";
 
-        private static Assembly Resolver(object sender, ResolveEventArgs args)
+        public static Assembly Resolver(object sender, ResolveEventArgs args)
         {
             if (!args.Name.StartsWith("Barista.V8.Net.Proxy.Interface"))
                 return null;
@@ -163,6 +167,7 @@ namespace Barista.V8.Net
                     msg += "3. Make sure the path '" + assemblyRoot + "' is accessible to the application pool identity (usually Read & Execute for 'IIS_IUSRS', or a similar user/group)";
                 else
                     msg += "3. Make sure the path '" + assemblyRoot + "' is accessible to the application for loading the required libraries.";
+
                 throw new InvalidOperationException(msg + "\r\n", ex);
             }
         }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="true" sharePointProductVersion="15.0" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="false" sharePointProductVersion="15.0" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
     <projectOutputAssembly location="Barista.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.Core\Barista.Core.csproj" />
     <projectOutputAssembly location="Barista.SharePoint.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj" />

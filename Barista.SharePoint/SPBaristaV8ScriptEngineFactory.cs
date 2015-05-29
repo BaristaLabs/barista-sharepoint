@@ -3,6 +3,7 @@
     using Barista.Bundles;
     using Barista.Engine;
     using Barista.V8.Net;
+    using System;
 
     public class SPBaristaV8ScriptEngineFactory : ScriptEngineFactory
     {
@@ -14,6 +15,8 @@
         {
             isNewScriptEngineInstance = true;
             errorInInitialization = false;
+
+            AppDomain.CurrentDomain.AssemblyResolve += V8Engine.Resolver;
 
             var engine = new V8Engine();
 

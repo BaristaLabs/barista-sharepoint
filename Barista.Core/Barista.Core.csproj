@@ -24,11 +24,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET35;NET_35;V3_5</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET35;NET_35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>3</LangVersion>
+    <LangVersion>default</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>3021</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
@@ -37,7 +37,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET35;NET_35;V3_5</DefineConstants>
+    <DefineConstants>TRACE;NET35;NET_35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -118,6 +118,7 @@
     <Reference Include="Lucene.Net.Contrib.SpellChecker">
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
