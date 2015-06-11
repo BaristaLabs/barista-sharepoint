@@ -5,9 +5,11 @@
     using Barista.Helpers;
     using Barista.SharePoint.Bundles;
     using Jurassic;
+    using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
     using Microsoft.SharePoint.Utilities;
     using System;
+    using System.IO;
     using System.Runtime.InteropServices;
     using System.ServiceModel;
     using System.Threading;

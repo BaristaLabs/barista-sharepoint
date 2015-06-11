@@ -273,17 +273,17 @@
       else if (site is GuidInstance)
       {
         var guid = (site as GuidInstance).Value;
-        spSite = new SPSite(guid);
+        spSite = new SPSite(guid, SPBaristaContext.Current.Site.UserToken);
       }
       else if (site is UriInstance)
       {
         var uri = (site as UriInstance).Uri;
-        spSite = new SPSite(uri.ToString());
+        spSite = new SPSite(uri.ToString(), SPBaristaContext.Current.Site.UserToken);
       }
       else
       {
         var siteUrl = TypeConverter.ToString(site);
-        spSite = new SPSite(siteUrl);
+        spSite = new SPSite(siteUrl, SPBaristaContext.Current.Site.UserToken);
       }
 
       if (spSite == null)
@@ -381,7 +381,7 @@
         else if (site is GuidInstance)
         {
           var guid = (site as GuidInstance).Value;
-          using (var spSite = new SPSite(guid))
+          using (var spSite = new SPSite(guid, SPBaristaContext.Current.Site.UserToken))
           {
             importSettings.SiteUrl = spSite.Url;
           }
@@ -389,7 +389,7 @@
         else if (site is UriInstance)
         {
           var uri = (site as UriInstance).Uri;
-          using (var spSite = new SPSite(uri.ToString()))
+          using (var spSite = new SPSite(uri.ToString(), SPBaristaContext.Current.Site.UserToken))
           {
             importSettings.SiteUrl = spSite.Url;
           }
@@ -397,7 +397,7 @@
         else
         {
           var siteUrl = TypeConverter.ToString(site);
-          using (var spSite = new SPSite(siteUrl))
+          using (var spSite = new SPSite(siteUrl, SPBaristaContext.Current.Site.UserToken))
           {
             importSettings.SiteUrl = spSite.Url;
           }

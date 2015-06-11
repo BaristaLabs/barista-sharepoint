@@ -148,7 +148,7 @@
 
             try
             {
-                using (var innerSite = new SPSite(siteUri.ToString()))
+                using (var innerSite = new SPSite(siteUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     site = innerSite;
                     return true;
@@ -179,7 +179,7 @@
 
             try
             {
-                using (var site = new SPSite(webUri.ToString()))
+                using (var site = new SPSite(webUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var innerWeb = site.OpenWeb())
                     {
@@ -215,7 +215,7 @@
 
             try
             {
-                using (var site = new SPSite(fileUri.ToString()))
+                using (var site = new SPSite(fileUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var web = site.OpenWeb())
                     {
@@ -248,7 +248,7 @@
 
             try
             {
-                using (var site = new SPSite(fileUri.ToString()))
+                using (var site = new SPSite(fileUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var web = site.OpenWeb())
                     {
@@ -284,7 +284,7 @@
 
             try
             {
-                site = new SPSite(folderUri.ToString());
+                site = new SPSite(folderUri.ToString(), SPBaristaContext.Current.Site.UserToken);
                 web = site.OpenWeb();
                 folder = web.GetFolder(folderUri.ToString());
                 if (folder != null && folder.Exists)
@@ -331,7 +331,7 @@
 
             try
             {
-                site = new SPSite(listUri.ToString());
+                site = new SPSite(listUri.ToString(), SPBaristaContext.Current.Site.UserToken);
                 web = site.OpenWeb();
                 list = web.GetList(listUri.ToString());
                 return true;
@@ -368,7 +368,7 @@
 
             try
             {
-                using (var site = new SPSite(listUri.ToString()))
+                using (var site = new SPSite(listUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var web = site.OpenWeb())
                     {
@@ -400,7 +400,7 @@
 
             try
             {
-                using (var site = new SPSite(listItemUri.ToString()))
+                using (var site = new SPSite(listItemUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var web = site.OpenWeb())
                     {
@@ -522,7 +522,7 @@
             //Attempt to retrieve the file from the specified SPSite.
             try
             {
-                using (var sourceSite = new SPSite(fileUri.ToString()))
+                using (var sourceSite = new SPSite(fileUri.ToString(), SPBaristaContext.Current.Site.UserToken))
                 {
                     using (var sourceWeb = sourceSite.OpenWeb())
                     {
@@ -552,7 +552,7 @@
                 {
                     var url = SPUtility.ConcatUrls(SPUtility.GetUrlDirectory(referrer.ToString()), fileUrl);
 
-                    using (var sourceSite = new SPSite(url))
+                    using (var sourceSite = new SPSite(url, SPBaristaContext.Current.Site.UserToken))
                     {
                         using (var sourceWeb = sourceSite.OpenWeb())
                         {

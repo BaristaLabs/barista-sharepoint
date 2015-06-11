@@ -70,7 +70,7 @@
             {
                 var uri = (site as UriInstance).Uri;
 
-                spSite = new SPSite(uri.ToString());
+                spSite = new SPSite(uri.ToString(), SPBaristaContext.Current.Site.UserToken);
             }
             else
             {
