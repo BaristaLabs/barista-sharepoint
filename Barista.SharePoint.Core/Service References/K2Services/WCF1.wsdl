@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.k2.com/worklist/d1:navigation" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.k2.com/worklist/d1:navigation" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.k2.com/worklist/d1:navigation/Imports">
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" namespace="http://schemas.k2.com/worklist/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd3" namespace="http://schemas.k2.com/framework/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd4" namespace="http://schemas.k2.com/process/d1:navigation" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd5" namespace="http://schemas.k2.com/activity/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd6" namespace="http://schemas.k2.com/event/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd7" namespace="http://schemas.k2.com/worklist/d1:navigation" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklist_InputMessage">
+    <wsdl:part xmlns:q1="http://schemas.k2.com/worklist/d1" name="parameters" element="q1:OpenWorklist" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklist_OutputMessage">
+    <wsdl:part xmlns:q2="http://schemas.k2.com/worklist/d1" name="parameters" element="q2:OpenWorklistResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklist_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.k2.com/framework/d1" name="detail" element="q3:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItem_InputMessage">
+    <wsdl:part xmlns:q4="http://schemas.k2.com/worklist/d1" name="parameters" element="q4:OpenWorklistItem" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItem_OutputMessage">
+    <wsdl:part xmlns:q5="http://schemas.k2.com/worklist/d1" name="parameters" element="q5:OpenWorklistItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItem_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.k2.com/framework/d1" name="detail" element="q6:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionBySerial_InputMessage">
+    <wsdl:part xmlns:q7="http://schemas.k2.com/worklist/d1" name="parameters" element="q7:ExecuteActionBySerial" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionBySerial_OutputMessage">
+    <wsdl:part xmlns:q8="http://schemas.k2.com/worklist/d1" name="parameters" element="q8:ExecuteActionBySerialResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionBySerial_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.k2.com/framework/d1" name="detail" element="q9:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionByWorklistItem_InputMessage">
+    <wsdl:part xmlns:q10="http://schemas.k2.com/worklist/d1" name="parameters" element="q10:ExecuteActionByWorklistItem" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionByWorklistItem_OutputMessage">
+    <wsdl:part xmlns:q11="http://schemas.k2.com/worklist/d1" name="parameters" element="q11:ExecuteActionByWorklistItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_ExecuteActionByWorklistItem_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://schemas.k2.com/framework/d1" name="detail" element="q12:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_SearchForWorklistItems_InputMessage">
+    <wsdl:part xmlns:q13="http://schemas.k2.com/worklist/d1" name="parameters" element="q13:SearchForWorklistItems" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_SearchForWorklistItems_OutputMessage">
+    <wsdl:part xmlns:q14="http://schemas.k2.com/worklist/d1" name="parameters" element="q14:SearchForWorklistItemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_SearchForWorklistItems_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.k2.com/framework/d1" name="detail" element="q15:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActions_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActions" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActions_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.k2.com/framework/d1" name="detail" element="q16:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemAction_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemAction" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemAction_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemAction_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q17="http://schemas.k2.com/framework/d1" name="detail" element="q17:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstance_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstance" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstance_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstance_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q18="http://schemas.k2.com/framework/d1" name="detail" element="q18:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceDataFields" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceDataFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q19="http://schemas.k2.com/framework/d1" name="detail" element="q19:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceDataField" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceDataFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q20="http://schemas.k2.com/framework/d1" name="detail" element="q20:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceXmlFields" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceXmlFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q21="http://schemas.k2.com/framework/d1" name="detail" element="q21:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceXmlField" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemProcessInstanceXmlFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q22="http://schemas.k2.com/framework/d1" name="detail" element="q22:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestination" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q23="http://schemas.k2.com/framework/d1" name="detail" element="q23:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationDataFields" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationDataFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q24="http://schemas.k2.com/framework/d1" name="detail" element="q24:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationDataField" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationDataFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q25="http://schemas.k2.com/framework/d1" name="detail" element="q25:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationXmlFields" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationXmlFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q26="http://schemas.k2.com/framework/d1" name="detail" element="q26:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationXmlField" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemActivityInstanceDestinationXmlFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q27="http://schemas.k2.com/framework/d1" name="detail" element="q27:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemEventInstance_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemEventInstance" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemEventInstance_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemEventInstanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemEventInstance_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q28="http://schemas.k2.com/framework/d1" name="detail" element="q28:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestinations_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemDestinations" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestinations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemDestinationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestinations_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q29="http://schemas.k2.com/framework/d1" name="detail" element="q29:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestination_InputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemDestination" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestination_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OpenWorklistItemDestinationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWorklistNavigationService_OpenWorklistItemDestination_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q30="http://schemas.k2.com/framework/d1" name="detail" element="q30:FailureResult" />
+  </wsdl:message>
+  <wsdl:portType name="IWorklistNavigationService">
+    <wsdl:operation name="OpenWorklist">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklist" message="tns:IWorklistNavigationService_OpenWorklist_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistResponse" message="tns:IWorklistNavigationService_OpenWorklist_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklist_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItem">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistItem" message="tns:IWorklistNavigationService_OpenWorklistItem_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistItemResponse" message="tns:IWorklistNavigationService_OpenWorklistItem_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/OpenWorklistItemFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItem_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteActionBySerial">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionBySerial" message="tns:IWorklistNavigationService_ExecuteActionBySerial_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionBySerialResponse" message="tns:IWorklistNavigationService_ExecuteActionBySerial_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionBySerialFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_ExecuteActionBySerial_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteActionByWorklistItem">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionByWorklistItem" message="tns:IWorklistNavigationService_ExecuteActionByWorklistItem_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionByWorklistItemResponse" message="tns:IWorklistNavigationService_ExecuteActionByWorklistItem_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/ExecuteActionByWorklistItemFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_ExecuteActionByWorklistItem_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchForWorklistItems">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/SearchForWorklistItems" message="tns:IWorklistNavigationService_SearchForWorklistItems_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/SearchForWorklistItemsResponse" message="tns:IWorklistNavigationService_SearchForWorklistItems_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1/IWorklistService/SearchForWorklistItemsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_SearchForWorklistItems_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActions">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActions" message="tns:IWorklistNavigationService_OpenWorklistItemActions_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActionsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActions_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActionsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActions_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemAction">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemAction" message="tns:IWorklistNavigationService_OpenWorklistItemAction_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActionResponse" message="tns:IWorklistNavigationService_OpenWorklistItemAction_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActionFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemAction_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstance">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstance" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstance_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceResponse" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstance_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstance_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceDataFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFields" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFieldsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFieldsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceDataField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataField" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFieldResponse" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceDataFieldFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceDataField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceXmlFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFields" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFieldsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFieldsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemProcessInstanceXmlField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlField" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFieldResponse" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemProcessInstanceXmlFieldFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemProcessInstanceXmlField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestination">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestination" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestination_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationDataFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFields" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFieldsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFieldsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationDataField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataField" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFieldResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationDataFieldFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationDataField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationXmlFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFields" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFieldsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFieldsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemActivityInstanceDestinationXmlField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlField" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFieldResponse" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemActivityInstanceDestinationXmlFieldFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemActivityInstanceDestinationXmlField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemEventInstance">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemEventInstance" message="tns:IWorklistNavigationService_OpenWorklistItemEventInstance_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemEventInstanceResponse" message="tns:IWorklistNavigationService_OpenWorklistItemEventInstance_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemEventInstanceFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemEventInstance_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemDestinations">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinations" message="tns:IWorklistNavigationService_OpenWorklistItemDestinations_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinationsResponse" message="tns:IWorklistNavigationService_OpenWorklistItemDestinations_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinationsFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemDestinations_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenWorklistItemDestination">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestination" message="tns:IWorklistNavigationService_OpenWorklistItemDestination_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinationResponse" message="tns:IWorklistNavigationService_OpenWorklistItemDestination_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/worklist/d1:navigation/IWorklistNavigationService/OpenWorklistItemDestinationFailureFault" name="FailureFault" message="tns:IWorklistNavigationService_OpenWorklistItemDestination_FailureFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

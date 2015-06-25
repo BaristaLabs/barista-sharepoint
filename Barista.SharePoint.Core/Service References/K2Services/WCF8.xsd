@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.k2.com/process/d1:navigation" elementFormDefault="qualified" targetNamespace="http://schemas.k2.com/process/d1:navigation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+  <xs:element name="GetProcessInstanceDataFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="processInstanceId" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProcessInstanceDataFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="GetProcessInstanceDataFieldsResult" type="tns:ArrayOfDataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfDataField">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" name="DataField" nillable="true" type="q1:DataField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GetProcessInstanceDataField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="processInstanceId" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="dataFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProcessInstanceDataFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="GetProcessInstanceDataFieldResult" type="q2:DataField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProcessInstanceXmlFields">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="processInstanceId" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProcessInstanceXmlFieldsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="GetProcessInstanceXmlFieldsResult" type="tns:ArrayOfXmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ArrayOfXmlField">
+    <xs:sequence>
+      <xs:element xmlns:q3="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" name="XmlField" nillable="true" type="q3:XmlField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GetProcessInstanceXmlField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="processInstanceId" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="1" name="xmlFieldName" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProcessInstanceXmlFieldResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="1" name="GetProcessInstanceXmlFieldResult" type="q4:XmlField" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

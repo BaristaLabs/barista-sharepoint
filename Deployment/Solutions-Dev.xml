@@ -1,0 +1,24 @@
+<Deployment>
+  <Solutions>
+    <Solution Path=".\Barista.SharePoint.wsp" UpgradeExisting="false">
+      <WebApplications>            
+      <WebApplication>http://ofs2010dev/</WebApplication>        
+	  </WebApplications>    
+    </Solution>
+    <Solution Path=".\Barista.SharePoint.WebParts.wsp" UpgradeExisting="false">
+      <WebApplications>
+        <WebApplication>http://ofs2010dev/</WebApplication>
+      </WebApplications>
+    </Solution>
+    <Solution Path=".\Barista.SharePoint.WorkflowActivities.wsp" UpgradeExisting="false">
+      <WebApplications>
+        <WebApplication>http://ofs2010dev/</WebApplication>
+      </WebApplications>
+    </Solution>
+  </Solutions>
+  <Features>
+    <!-- Barista Services Installer -->
+    <Feature Identity="90fb8db4-2b5f-4de7-882b-6faba092942c" Action="Disable"/>
+    <Feature Identity="90fb8db4-2b5f-4de7-882b-6faba092942c" Action="Enable"/>
+  </Features>
+</Deployment>

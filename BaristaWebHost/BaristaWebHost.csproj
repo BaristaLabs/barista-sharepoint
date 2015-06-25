@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BaristaWebHost</RootNamespace>
+    <AssemblyName>BaristaWebHost</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Barista\v1\Barista.svc" />
+    <Content Include="Barista\v1\WebSockets.svc" />
+    <Content Include="Barista\v1\Search.svc" />
+    <Content Include="favicon.ico" />
+    <Content Include="index.htm" />
+    <Content Include="phantomjs.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="readme.txt" />
+    <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\Controllers\mainctrl.js" />
+    <Content Include="Scripts\Vendor\beautify.js" />
+    <Content Include="Scripts\Vendor\chance.js" />
+    <Content Include="Scripts\Vendor\codemirror\javascript.js" />
+    <Content Include="Scripts\Vendor\codemirror\ui-codemirror.js" />
+    <Content Include="Scripts\Vendor\kendoui\angular-kendo.js" />
+    <Content Include="Scripts\Vendor\kendoui\angular-kendo.min.js" />
+    <Content Include="Scripts\Vendor\ngStorage.js" />
+    <Content Include="Scripts\Vendor\snap\angular-snap.js" />
+    <Content Include="Scripts\Vendor\snap\snap.js" />
+    <Content Include="Styles\angular-snap.css" />
+    <Content Include="Styles\app.css" />
+    <Content Include="UnitTests\API\ActiveDirectory\getCurrentUser.js" />
+    <Content Include="UnitTests\API\Core\writetoConsole.js" />
+    <Content Include="UnitTests\API\DocumentStore\listEntities.js" />
+    <Content Include="UnitTests\API\DocumentStore\deleteEntity.js" />
+    <Content Include="UnitTests\API\DocumentStore\updateEntity.js" />
+    <Content Include="UnitTests\API\DocumentStore\getEntity.js" />
+    <Content Include="UnitTests\API\DocumentStore\getContainer.js" />
+    <Content Include="UnitTests\API\DocumentStore\deleteContainer.js" />
+    <Content Include="UnitTests\API\DocumentStore\listContainers.js" />
+    <Content Include="UnitTests\API\DocumentStore\createContainer.js" />
+    <Content Include="UnitTests\API\DocumentStore\createEntity.js" />
+    <Content Include="UnitTests\API\Raven\initializeDocumentStoreWithConfigurationObject.js" />
+    <Content Include="UnitTests\API\Raven\createDocument.js" />
+    <Content Include="UnitTests\API\SearchIndex\setFieldOptions.js" />
+    <Content Include="UnitTests\API\SearchIndex\searchResultCount.js" />
+    <Content Include="UnitTests\API\SearchIndex\facetedSearch.js" />
+    <Content Include="UnitTests\API\SearchIndex\search.js" />
+    <Content Include="UnitTests\API\SearchIndex\retrieve.js" />
+    <Content Include="UnitTests\API\SearchIndex\indexMultiple.js" />
+    <Content Include="UnitTests\API\SearchIndex\index.js" />
+    <Content Include="UnitTests\API\SearchIndex\highlight.js" />
+    <Content Include="UnitTests\API\SearchIndex\doesIndexExist.js" />
+    <Content Include="UnitTests\API\SearchIndex\deleteAllDocuments.js" />
+    <Content Include="UnitTests\API\SearchIndex\explanation.js" />
+    <Content Include="UnitTests\API\SearchIndex\storeAndDelete.js" />
+    <Content Include="UnitTests\API\SearchIndex\storeAndRetrieve.js" />
+    <Content Include="UnitTests\API\Sucralose\Array-Last.js" />
+    <Content Include="UnitTests\API\Sucralose\Number-ToNumber.js" />
+    <Content Include="UnitTests\API\Sucralose\Object-Has.js" />
+    <Content Include="UnitTests\API\Sucralose\String-Last.js" />
+    <Content Include="UnitTests\API\Sucralose\Number-RoundCeilFloor.js" />
+    <Content Include="UnitTests\API\Sucralose\Object-Merge.js" />
+    <Content Include="UnitTests\API\Web\getWebRequest.js" />
+    <Content Include="UnitTests\BaristaActiveDirectoryTests.js" />
+    <Content Include="UnitTests\BaristaDocumentTests.js" />
+    <Content Include="UnitTests\BaristaFileUploadTest.html" />
+    <Content Include="UnitTests\BaristaK2Tests.js" />
+    <Content Include="UnitTests\BaristaKendoUIEditor.html" />
+    <Content Include="UnitTests\BaristaTests.js" />
+    <Content Include="UnitTests\API\Core\Barista_Deferred.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_DeleteUpload.js" />
+    <Content Include="UnitTests\API\Barista_DSEventReceiverExample.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_GetUploads.js" />
+    <Content Include="UnitTests\API\Core\Barista_Include.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_KendoUI_IB.js" />
+    <Content Include="UnitTests\API\FileUpload\Barista_ProcessUpload.js" />
+    <Content Include="UnitTests\API\Core\Barista_SimpleExpression.js" />
+    <Content Include="UnitTests\Content\DemoTemplate.htm" />
+    <Content Include="UnitTests\BaristaDocumentStoreTests.js" />
+    <Content Include="UnitTests\BaristaWebTests.js" />
+    <Content Include="UnitTests\BaristaSearchIndexTests.js" />
+    <Content Include="UnitTests\BaristaSucraloseTests.js" />
+    <Content Include="UnitTests\RavenBundleTests.js" />
+    <Content Include="UnitTests\index.html" />
+    <Content Include="Views\goto.html" />
+    <Content Include="Views\jshintresults.html" />
+    <Content Include="Views\settings.html" />
+    <Content Include="Views\evaloptions.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
+      <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
+      <Name>Barista.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.DocumentStore.FileSystem\Barista.DocumentStore.FileSystem.csproj">
+      <Project>{27f98766-b157-46e3-9ea2-98d9e3e1fdc0}</Project>
+      <Name>Barista.DocumentStore.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.DocumentStore.Raven\Barista.DocumentStore.Raven.csproj">
+      <Project>{e4fe692a-8f43-43cd-86df-00bb3db0c56a}</Project>
+      <Name>Barista.DocumentStore.Raven</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.Raven\Barista.Raven.csproj">
+      <Project>{fb0d0fb7-e81f-4e2f-b662-c3ad92ac65d8}</Project>
+      <Name>Barista.Raven</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.Web\Barista.Web.csproj">
+      <Project>{83078881-2c80-47e3-9bed-a87fb429f347}</Project>
+      <Name>Barista.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="API\" />
+    <Folder Include="Content\" />
+    <Folder Include="Scripts\Directives\" />
+    <Folder Include="Scripts\Filters\" />
+    <Folder Include="Scripts\Services\" />
+    <Folder Include="UnitTests\API\Document\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>38770</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:38591/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

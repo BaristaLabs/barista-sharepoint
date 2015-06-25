@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="63944b60-4455-44a9-b0fa-da5d212b78fb" solutionId="63944b60-4455-44a9-b0fa-da5d212b78fb" resetWebServer="true" name="Barista.SharePoint" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <assemblies>
+    <projectOutputAssembly location="Barista.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.Core\Barista.Core.csproj" />
+    <projectOutputAssembly location="Barista.SharePoint.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj" />
+    <projectOutputAssembly location="Barista.SharePoint.PowerShell.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj" />
+  </assemblies>
+  <features>
+    <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />
+    <featureReference itemId="2bfc89a4-e1dc-4702-aa1c-a39f564e6d45" />
+    <featureReference itemId="bfe500a5-01af-4f7e-a5e2-38be9a7118ab" />
+    <featureReference itemId="e8b284ff-c3f9-49f3-99ec-f1bcafe12495" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="cd6a7b8a-2a02-4745-aa7a-989b5a0db704" />
+    <projectItemReference itemId="0264d2e2-8233-49be-baa7-a35d97e21650" />
+    <projectItemReference itemId="0319abfb-7418-4653-96ae-f0df6ea3ddf1" />
+    <projectItemReference itemId="9a196b90-3a4a-49ac-b3b5-eff220cb60ef" />
+    <projectItemReference itemId="d8d6b1da-c4f5-4de6-9f01-8efb9458bc48" />
+    <projectItemReference itemId="e9e563a5-cd69-47c0-b54a-79c9cd85e853" />
+    <projectItemReference itemId="efd4bbf6-4fdc-4a50-b706-9669ed1757ae" />
+  </projectItems>
+</package>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="cf99b809-2536-4fc8-a6c2-9736c84f15a6" solutionId="cf99b809-2536-4fc8-a6c2-9736c84f15a6" resetWebServer="false" name="Barista.SharePoint.WorkflowActivities" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="002e34c2-7361-4131-b349-d3225b97c475" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="73cf1656-e2c7-40dd-9b38-baf771d433e7" />
+  </projectItems>
+</package>

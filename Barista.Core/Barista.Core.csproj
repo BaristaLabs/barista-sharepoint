@@ -1,0 +1,1517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Barista</RootNamespace>
+    <AssemblyName>Barista.Core</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET35;NET_35;V3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET35;NET_35;V3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>3021</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime">
+      <HintPath>..\Lib\antlr.runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Barista.Interop.ActiveDs">
+      <HintPath>..\Lib\Barista.Interop.ActiveDs.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net35\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=3.1.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EPPlus.3.1.3.3\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.6.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.3.3.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\iTextSharp.5.3.3\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET35\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Analyzers">
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Core, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Highlighter, Version=2.3.2.1, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Highlighter.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Memory">
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Queries">
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Queries.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Regex, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Regex.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.SimpleFacetedSearch, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Snowball">
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Snowball.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.SpellChecker">
+      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.VersionControl.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.TeamFoundation.WorkItemTracking.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Web.Administration\7.0.0.0__31bf3856ad364e35\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz">
+      <HintPath>..\packages\Quartz.2.1.2\lib\net35\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="wnvhtmlconvert, Version=7.0.0.0, Culture=neutral, PublicKeyToken=5b5f377bc08a4d32, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\wnvhtmlconvert.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet.Core">
+      <HintPath>..\packages\YamlDotNet.Core.2.0.1\lib\net35\YamlDotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet.RepresentationModel">
+      <HintPath>..\packages\YamlDotNet.RepresentationModel.2.0.1\lib\net35\YamlDotNet.RepresentationModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArraySegmentEx.cs" />
+    <Compile Include="ArraySegmentList.cs" />
+    <Compile Include="AssemblyUtil.cs" />
+    <Compile Include="BaristaConsoleOutput.cs" />
+    <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaException.cs" />
+    <Compile Include="BaristaInstanceMode.cs" />
+    <Compile Include="BaristaInstanceMutexManager.cs" />
+    <Compile Include="Engine\BaristaScriptSource.cs" />
+    <Compile Include="BinaryUtil.cs" />
+    <Compile Include="BufferManager.cs" />
+    <Compile Include="Bundles\ActiveDirectoryBundle.cs" />
+    <Compile Include="Bundles\DiagnosticsBundle.cs" />
+    <Compile Include="Bundles\iCalBundle.cs" />
+    <Compile Include="Bundles\LoDashBundle.cs" />
+    <Compile Include="Bundles\SmtpBundle.cs" />
+    <Compile Include="Bundles\WebOptimizationBundle.cs" />
+    <Compile Include="Bundles\DeferredBundle.cs" />
+    <Compile Include="Bundles\DocumentBundle.cs" />
+    <Compile Include="Bundles\JsonDataBundle.cs" />
+    <Compile Include="Bundles\LinqBundle.cs" />
+    <Compile Include="Bundles\MomentBundle.cs" />
+    <Compile Include="Bundles\MustacheBundle.cs" />
+    <Compile Include="Bundles\ScriptBundle.cs" />
+    <Compile Include="Bundles\SimpleInheritanceBundle.cs" />
+    <Compile Include="Bundles\SqlDataBundle.cs" />
+    <Compile Include="Bundles\StateMachineBundle.cs" />
+    <Compile Include="Bundles\StringBundle.cs" />
+    <Compile Include="Bundles\SucraloseBundle.cs" />
+    <Compile Include="Bundles\SugarBundle.cs" />
+    <Compile Include="Bundles\TfsBundle.cs" />
+    <Compile Include="Bundles\UnitTestingBundle.cs" />
+    <Compile Include="Bundles\UtilityBundle.cs" />
+    <Compile Include="Bundles\WebAdministrationBundle.cs" />
+    <Compile Include="Bundles\WebBundleBase.cs" />
+    <Compile Include="Configuration\BaristaConfigurationSection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\IIndexConfig.cs" />
+    <Compile Include="Configuration\IndexDefinitionCollection.cs" />
+    <Compile Include="Configuration\IndexDefinition.cs" />
+    <Compile Include="BaristaScriptMutexManager.cs" />
+    <Compile Include="Diagnostics\PerformanceCounterCategoryInstance.cs" />
+    <Compile Include="Diagnostics\PerformanceCounterInstance.cs" />
+    <Compile Include="DocumentStore\BaristaDocumentStoreException.cs" />
+    <Compile Include="DocumentStore\EntityExistsException.cs" />
+    <Compile Include="DocumentStore\EntityMetadata.cs" />
+    <Compile Include="DocumentStore\EntityPartExistsException.cs" />
+    <Compile Include="DocumentStore\Library\AttachmentInstance.cs" />
+    <Compile Include="DocumentStore\Library\CommentInstance.cs" />
+    <Compile Include="DocumentStore\Library\ContainerInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityPartInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntitySetInstance.cs" />
+    <Compile Include="DocumentStore\Library\FolderInstance.cs" />
+    <Compile Include="DocumentStore\Library\PermissionsInfoInstance.cs" />
+    <Compile Include="DocumentStore\Library\PrincipalInstance.cs" />
+    <Compile Include="DocumentStore\Library\PrincipalRoleInfoInstance.cs" />
+    <Compile Include="DocumentStore\Library\RepositoryConfiguration.cs" />
+    <Compile Include="DocumentStore\Library\RepositoryInstance.cs" />
+    <Compile Include="DocumentStore\Library\RoleInstance.cs" />
+    <Compile Include="DocumentStore\TriggerProperties.cs" />
+    <Compile Include="DocumentStore\TriggerType.cs" />
+    <Compile Include="Engine\IScriptSource.cs" />
+    <Compile Include="Etag.cs" />
+    <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
+    <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
+    <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />
+    <Compile Include="Framework\NewtonsoftJsonDispatchFormatter.cs" />
+    <Compile Include="Framework\NewtonsoftJsonSettings.cs" />
+    <Compile Include="Framework\RawBodyWriter.cs" />
+    <Compile Include="Helpers\ClientInfo.cs" />
+    <Compile Include="Helpers\Device.cs" />
+    <Compile Include="Helpers\DeviceParser.cs" />
+    <Compile Include="Helpers\DevicePattern.cs" />
+    <Compile Include="Helpers\OS.cs" />
+    <Compile Include="Helpers\OSParser.cs" />
+    <Compile Include="Helpers\OSPattern.cs" />
+    <Compile Include="Helpers\BrowserUserAgentParser.cs" />
+    <Compile Include="Helpers\UserAgent.cs" />
+    <Compile Include="Helpers\UserAgentParser.cs" />
+    <Compile Include="Helpers\UserAgentPattern.cs" />
+    <Compile Include="Helpers\YamlParsing.cs" />
+    <Compile Include="iCal\CalendarPropertyListInstance.cs" />
+    <Compile Include="iCal\EventInstance.cs" />
+    <Compile Include="iCal\iCalDateTimeInstance.cs" />
+    <Compile Include="iCal\iCalendarCollectionInstance.cs" />
+    <Compile Include="iCal\iCalendarInstance.cs" />
+    <Compile Include="iCal\iCalInstance.cs" />
+    <Compile Include="iCal\OrganizerInstance.cs" />
+    <Compile Include="iCal\CalendarPropertyInstance.cs" />
+    <Compile Include="iCal\TimeZoneInstance.cs" />
+    <Compile Include="iCal\TodoInstance.cs" />
+    <Compile Include="Imports\iCal\Collections\Constants.cs" />
+    <Compile Include="Imports\iCal\Collections\Enumerators\GroupedListEnumerator.cs" />
+    <Compile Include="Imports\iCal\Collections\GroupedList.cs" />
+    <Compile Include="Imports\iCal\Collections\GroupedValueList.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IGroupedCollection.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IGroupedList.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IGroupedObject.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IGroupedValueCollection.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IGroupedValueList.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IMultiLinkedList.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\IValueObject.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\Proxies\IGroupedCollectionProxy.cs" />
+    <Compile Include="Imports\iCal\Collections\Interfaces\Proxies\IGroupedValueListProxy.cs" />
+    <Compile Include="Imports\iCal\Collections\MultiLinkedList.cs" />
+    <Compile Include="Imports\iCal\Collections\Proxies\GroupedCollectionProxy.cs" />
+    <Compile Include="Imports\iCal\Collections\Proxies\GroupedValueListProxy.cs" />
+    <Compile Include="Imports\iCal\Components\Alarm.cs" />
+    <Compile Include="Imports\iCal\Components\CalendarComponent.cs" />
+    <Compile Include="Imports\iCal\Components\Event.cs" />
+    <Compile Include="Imports\iCal\Components\FreeBusy.cs" />
+    <Compile Include="Imports\iCal\Components\iCalTimeZone.cs" />
+    <Compile Include="Imports\iCal\Components\iCalTimeZoneInfo.cs" />
+    <Compile Include="Imports\iCal\Components\Journal.cs" />
+    <Compile Include="Imports\iCal\Components\RecurringComponent.cs" />
+    <Compile Include="Imports\iCal\Components\Todo.cs" />
+    <Compile Include="Imports\iCal\Components\UniqueComponent.cs" />
+    <Compile Include="Imports\iCal\Constants.cs" />
+    <Compile Include="Imports\iCal\DataTypes\Attachment.cs" />
+    <Compile Include="Imports\iCal\DataTypes\Attendee.cs" />
+    <Compile Include="Imports\iCal\DataTypes\CalendarDataType.cs" />
+    <Compile Include="Imports\iCal\DataTypes\EncodableDataType.cs" />
+    <Compile Include="Imports\iCal\DataTypes\FreeBusyEntry.cs" />
+    <Compile Include="Imports\iCal\DataTypes\GeographicLocation.cs" />
+    <Compile Include="Imports\iCal\DataTypes\iCalDateTime.cs" />
+    <Compile Include="Imports\iCal\DataTypes\IGroupedCollection.cs" />
+    <Compile Include="Imports\iCal\DataTypes\Organizer.cs" />
+    <Compile Include="Imports\iCal\DataTypes\Period.cs" />
+    <Compile Include="Imports\iCal\DataTypes\PeriodList.cs" />
+    <Compile Include="Imports\iCal\DataTypes\RecurrencePattern.cs" />
+    <Compile Include="Imports\iCal\DataTypes\RequestStatus.cs" />
+    <Compile Include="Imports\iCal\DataTypes\StatusCode.cs" />
+    <Compile Include="Imports\iCal\DataTypes\Trigger.cs" />
+    <Compile Include="Imports\iCal\DataTypes\UTCOffset.cs" />
+    <Compile Include="Imports\iCal\DataTypes\WeekDay.cs" />
+    <Compile Include="Imports\iCal\Evaluation\Evaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\EventEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\PeriodListEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\RecurrencePatternEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\RecurringEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\TimeZoneEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\TimeZoneInfoEvaluator.cs" />
+    <Compile Include="Imports\iCal\Evaluation\TodoEvaluator.cs" />
+    <Compile Include="Imports\iCal\Exceptions\EvaluationEngineException.cs" />
+    <Compile Include="Imports\iCal\ExtensionMethods\CalendarObjectExtensions.cs" />
+    <Compile Include="Imports\iCal\ExtensionMethods\ListExtensions.cs" />
+    <Compile Include="Imports\iCal\Factory\UIDFactory.cs" />
+    <Compile Include="Imports\iCal\General\CalendarObject.cs" />
+    <Compile Include="Imports\iCal\General\CalendarObjectBase.cs" />
+    <Compile Include="Imports\iCal\General\CalendarObjectList.cs" />
+    <Compile Include="Imports\iCal\General\CalendarParameter.cs" />
+    <Compile Include="Imports\iCal\General\CalendarParameterList.cs" />
+    <Compile Include="Imports\iCal\General\CalendarProperty.cs" />
+    <Compile Include="Imports\iCal\General\CalendarPropertyList.cs" />
+    <Compile Include="Imports\iCal\General\Proxies\CalendarObjectListProxy.cs" />
+    <Compile Include="Imports\iCal\General\Proxies\CalendarParameterCollectionProxy.cs" />
+    <Compile Include="Imports\iCal\General\Proxies\UniqueComponentListProxy.cs" />
+    <Compile Include="Imports\iCal\General\ServiceProvider.cs" />
+    <Compile Include="Imports\iCal\iCalendar.cs" />
+    <Compile Include="Imports\iCal\iCalendarCollection.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IAlarm.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IAlarmContainer.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\ICalendarComponent.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IEvent.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IFreeBusy.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IJournal.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IRecurringComponent.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\ITimeZone.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\ITimeZoneInfo.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\ITodo.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Components\IUniqueComponent.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IAttachment.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IAttendee.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\ICalendarDataType.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IDateTime.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IEncodableDataType.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IFreeBusyEntry.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IGeographicLocation.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IOrganizer.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IPeriod.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IPeriodList.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IRecurrencePattern.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IRequestStatus.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IStatusCode.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\ITrigger.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IUTCOffset.cs" />
+    <Compile Include="Imports\iCal\Interfaces\DataTypes\IWeekDay.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Evaluation\IEvaluator.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Evaluation\IGetFreeBusy.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Evaluation\IGetOccurrences.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Evaluation\IRecurrable.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarObject.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarObjectList.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarParameter.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarParameterCollection.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarParameterCollectionContainer.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarProperty.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarPropertyList.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICalendarPropertyListContainer.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ICopyable.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\IFilteredCalendarObjectList.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\ILoadable.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\IMergeable.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\IServiceProvider.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\IUniqueComponentList.cs" />
+    <Compile Include="Imports\iCal\Interfaces\General\Proxies\ICalendarParameterCollectionProxy.cs" />
+    <Compile Include="Imports\iCal\Interfaces\IICalendar.cs" />
+    <Compile Include="Imports\iCal\Interfaces\IICalendarCollection.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\Factory\ICalendarComponentFactory.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\Factory\ISerializerFactory.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\IDataTypeMapper.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\IEncodingProvider.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\IEncodingStack.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\ISerializationContext.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\ISerializationProcessor.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\ISerializationSettings.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\ISerializer.cs" />
+    <Compile Include="Imports\iCal\Interfaces\Serialization\IStringSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\DataTypeMapper.cs" />
+    <Compile Include="Imports\iCal\Serialization\EncodingProvider.cs" />
+    <Compile Include="Imports\iCal\Serialization\EncodingStack.cs" />
+    <Compile Include="Imports\iCal\Serialization\Factory\ComponentFactory.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Factory\SerializerFactory.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\iCalLexer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\iCalParser.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\iCalParserTokenTypes.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Processors\CompositeProcessor.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\SerializationInfo.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Components\ComponentSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Components\UniqueComponentSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\AttendeeSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\EncodableDataTypeSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\FreeBusyEntrySerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\GeographicLocationSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\PeriodListSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\RecurrencePatternSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\RequestStatusSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\UTCOffsetSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\DataTypes\WeekDaySerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Other\IntegerSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Other\StringSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Other\TimeSpanSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\Other\UriSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\PropertySerializer.cs" />
+    <Compile Include="Imports\iCal\Serialization\iCalendar\Serializers\SerializerBase.cs" />
+    <Compile Include="Imports\iCal\Serialization\SerializationContext.cs" />
+    <Compile Include="Imports\iCal\Serialization\SerializationSettings.cs" />
+    <Compile Include="Imports\iCal\Structs\AlarmOccurrence.cs" />
+    <Compile Include="Imports\iCal\Structs\Occurrence.cs" />
+    <Compile Include="Imports\iCal\Structs\TimeZoneObservance.cs" />
+    <Compile Include="Imports\iCal\Utility\DateUtil.cs" />
+    <Compile Include="Imports\iCal\Utility\KnownTypeHelper.cs" />
+    <Compile Include="Imports\iCal\Utility\RecurrenceUtil.cs" />
+    <Compile Include="Imports\iCal\Utility\SerializationUtil.cs" />
+    <Compile Include="Imports\iCal\Utility\TextUtil.cs" />
+    <Compile Include="Imports\Jurassic\Core\CompiledScript.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonObjectId.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonToken.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonType.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Bson\BsonWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\ConstructorHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\BinaryConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\BsonObjectIdConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\CustomCreationConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\DataSetConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\DataTableConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\DateTimeConverterBase.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\DiscriminatedUnionConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\EntityKeyMemberConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\ExpandoObjectConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\IsoDateTimeConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\JavaScriptDateTimeConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\JsonValueConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\KeyValuePairConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\RegexConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\StringEnumConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\VersionConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Converters\XmlNodeConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\DateFormatHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\DateParseHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\DateTimeZoneHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\DefaultValueHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\FloatFormatHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\FloatParseHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\FormatterAssemblyStyle.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Formatting.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\IJsonLineInfo.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonArrayAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonConstructorAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonContainerAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonConvert.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonConverterAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonConverterCollection.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonDictionaryAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonException.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonExtensionDataAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonIgnoreAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonObjectAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonPosition.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonPropertyAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonReaderException.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonSerializationException.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonSerializer.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonSerializerSettings.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonTextReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonTextWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonToken.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonValidatingReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\JsonWriterException.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\Extensions.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\IJEnumerable.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JArray.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JConstructor.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JContainer.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JEnumerable.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JObject.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JProperty.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JPropertyDescriptor.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JPropertyKeyedCollection.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JRaw.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonMergeSettings.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\ArrayIndexFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\ArrayMultipleIndexFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\ArraySliceFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\FieldFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\FieldMultipleFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\JPath.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\PathFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\QueryExpression.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\QueryFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JsonPath\ScanFilter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JToken.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JTokenEqualityComparer.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JTokenReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JTokenType.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JTokenWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\JValue.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Linq\MergeArrayHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\MemberSerialization.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\MetadataPropertyHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\MissingMemberHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\NullValueHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\ObjectCreationHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\PreserveReferencesHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\ReferenceLoopHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Required.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\Extensions.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchema.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaBuilder.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaConstants.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaException.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaGenerator.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaModel.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaModelBuilder.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaNode.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaNodeCollection.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaType.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\JsonSchemaWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\UndefinedSchemaIdHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\ValidationEventArgs.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Schema\ValidationEventHandler.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\SerializationBinder.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\CachedAttributeGetter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\CamelCasePropertyNamesContractResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\DefaultContractResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\DefaultReferenceResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\DefaultSerializationBinder.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\DiagnosticsTraceWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\DynamicValueProvider.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ErrorContext.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ErrorEventArgs.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ExpressionValueProvider.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\IContractResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\IReferenceResolver.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ITraceWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\IValueProvider.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonArrayContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonContainerContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonDictionaryContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonDynamicContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonFormatterConverter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonISerializableContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonLinqContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonObjectContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonPrimitiveContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonProperty.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonPropertyCollection.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonSerializerInternalBase.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonSerializerInternalReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonSerializerInternalWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonSerializerProxy.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonStringContract.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\JsonTypeReflector.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\MemoryTraceWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ObjectConstructor.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\OnErrorAttribute.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\ReflectionValueProvider.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\TraceJsonReader.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Serialization\TraceJsonWriter.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\StringEscapeHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\TraceLevel.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\TypeNameHandling.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\Base64Encoder.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\BidirectionalDictionary.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\CollectionUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\CollectionWrapper.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ConvertUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DateTimeParser.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DateTimeUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DictionaryWrapper.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DynamicProxy.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DynamicProxyMetaObject.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DynamicReflectionDelegateFactory.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\DynamicUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\EnumUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\EnumValue.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ExpressionReflectionDelegateFactory.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\FSharpUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ILGeneratorExtensions.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ImmutableCollectionsUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\JavaScriptUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\LateBoundReflectionDelegateFactory.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\LinqBridge.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\MathUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\MethodCall.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\MiscellaneousUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ReflectionDelegateFactory.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ReflectionObject.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ReflectionUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\StringBuffer.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\StringReference.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\StringUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ThreadSafeStore.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
+    <Compile Include="Imports\Newtonsoft.Json\WriteState.cs" />
+    <Compile Include="Imports\SuperSocket\Common\ArraySegmentEx.cs" />
+    <Compile Include="Imports\SuperSocket\Common\ArraySegmentList.cs" />
+    <Compile Include="Imports\SuperSocket\Common\AssemblyUtil.cs" />
+    <Compile Include="Imports\SuperSocket\Common\BinaryUtil.cs" />
+    <Compile Include="Imports\SuperSocket\Common\BufferManager.cs" />
+    <Compile Include="Imports\SuperSocket\Common\ConfigurationElementBase.cs" />
+    <Compile Include="Imports\SuperSocket\Common\ConfigurationExtension.cs" />
+    <Compile Include="Imports\SuperSocket\Common\DictionaryExtension.cs" />
+    <Compile Include="Imports\SuperSocket\Common\ErrorEventArgs.cs" />
+    <Compile Include="Imports\SuperSocket\Common\GenericConfigurationElementCollection.cs" />
+    <Compile Include="Imports\SuperSocket\Common\Platform.cs" />
+    <Compile Include="Imports\SuperSocket\Common\SearchMarkState.cs" />
+    <Compile Include="Imports\SuperSocket\Common\SendingQueue.cs" />
+    <Compile Include="Imports\SuperSocket\Common\SmartPool.cs" />
+    <Compile Include="Imports\SuperSocket\Common\SocketEx.cs" />
+    <Compile Include="Imports\SuperSocket\Common\StringExtension.cs" />
+    <Compile Include="Imports\SuperSocket\Common\StringExtension.NET35.cs" />
+    <Compile Include="Imports\SuperSocket\Common\TheadPoolEx.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\AppServer.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\AppServerBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\AppSession.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Async.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\CommandExecutingContext.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\CommandFilterAttribute.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandLoaderBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandUpdateEventArgs.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandUpdateInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\ICommand.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\ICommandLoader.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\ReflectCommandLoader.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Command\StringCommandBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\CertificateConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\CommandAssemblyConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ConfigurationSource.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ICertificateConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ICommandAssemblyConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\IConfigurationSource.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\IListenerConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\IRootConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\IServerConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ITypeProvider.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ListenerConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\RootConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\ServerConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProvider.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProviderCollection.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProviderConfig.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\DisplayAttribute.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Extensions.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IAppServer.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IAppSession.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IBootstrap.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IConnectionFilter.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ILoggerProvider.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ISessionBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ISocketServer.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ISocketServerFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ISocketSession.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IsolationMode.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\IWorkItem.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ListenerInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\LoggerExtension.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ConsoleLog.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ConsoleLogFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILog.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILogFactory.cs" />
+    <None Include="Imports\iCal\Serialization\iCalendar\iCal.g" />
+    <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLog.cs" />
+    <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLogFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Logging\LogFactoryBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\NodeSummary.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\BasicRequestInfoParser.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\BinaryRequestInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\CommandLineReceiveFilterFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\DefaultReceiveFilterFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\FilterState.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IOffsetAdapter.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilter.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilterFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilterInitializer.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IRequestInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IRequestInfoParser.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\ReceiveFilterBase.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\RequestInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\StringRequestInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\TerminatorReceiveFilter.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\TerminatorReceiveFilterFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\UdpRequestInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ExportFactory.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ProviderFactoryInfo.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ProviderKey.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\RequestHandler.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\Security\CertificateManager.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ServerState.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\ServerSummary.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\SessionHandler.cs" />
+    <Compile Include="Imports\SuperSocket\SocketBase\SocketMode.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Binary.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Close.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Continuation.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\FragmentCommand.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\HandShake.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Ping.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Plain.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Pong.cs" />
+    <Compile Include="Imports\SuperWebSocket\Command\Text.cs" />
+    <Compile Include="Imports\SuperWebSocket\Config\CommandConfig.cs" />
+    <Compile Include="Imports\SuperWebSocket\Config\CommandConfigCollection.cs" />
+    <Compile Include="Imports\SuperWebSocket\Config\SubProtocolConfig.cs" />
+    <Compile Include="Imports\SuperWebSocket\Config\SubProtocolConfigCollection.cs" />
+    <Compile Include="Imports\SuperWebSocket\Extensions.cs" />
+    <Compile Include="Imports\SuperWebSocket\IBinaryDataConverter.cs" />
+    <Compile Include="Imports\SuperWebSocket\JsonWebSocketSession.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\CloseStatusCodeHybi10.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\CloseStatusCodeRfc6455.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\DraftHybi00Processor.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\DraftHybi10Processor.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\DataFramePartReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\ExtendedLenghtReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\FixPartReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\IDataFramePartReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\MaskKeyReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\PayloadDataReader.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\HandshakeRequest.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\ICloseStatusCode.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\IProtocolProcessor.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\IWebSocketFragment.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\MultipleProtocolSwitchProcessor.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\OpCode.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\PlainFragment.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\ProtocolProcessorBase..cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\Rfc6455Processor.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataFrame.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataFrameReceiveFilter.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataReceiveFilter.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketHeaderReceiveFilter.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketReceiveFilterBase.cs" />
+    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketSecKey3ReceiveFilter.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\AsyncJsonSubCommand.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\BasicSubCommandParser.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\BasicSubProtocol.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubCommand.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubCommandFilterLoader.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubProtocol.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubRequestInfo.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\JsonSubCommand.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\JsonSubCommandBase.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubCommandBase.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubCommandFilterAttribute.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubProtocolBase.cs" />
+    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubRequestInfo.cs" />
+    <Compile Include="Imports\SuperWebSocket\TextEncodingBinaryDataConverter.cs" />
+    <Compile Include="Imports\SuperWebSocket\WebSocketConst.cs" />
+    <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
+    <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
+    <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
+    <Compile Include="Imports\V8.Net\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\FunctionTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Handle.cs" />
+    <Compile Include="Imports\V8.Net\IndexedObjectList.cs" />
+    <Compile Include="Imports\V8.Net\InternalHandle.cs" />
+    <Compile Include="Imports\V8.Net\JSProperty.cs" />
+    <Compile Include="Imports\V8.Net\ObjectTemplate.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Exceptions.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\ObservableWeakReference.cs" />
+    <Compile Include="Imports\V8.Net\Utilities\Utilities.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Binding.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Handles.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Objects.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Tests.cs" />
+    <Compile Include="Imports\V8.Net\V8Engine_Worker.cs" />
+    <Compile Include="Imports\V8.Net\V8Function.cs" />
+    <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
+    <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
+    <Compile Include="Engine\IScriptEngine.cs" />
+    <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\CollectionInstance.cs" />
+    <Compile Include="Library\DiffInfoInstance.cs" />
+    <Compile Include="Library\DiffResultInstance.cs" />
+    <Compile Include="Library\JsonData.cs" />
+    <Compile Include="Library\JsonMergeSettingsInstance.cs" />
+    <Compile Include="Library\JsonSchemaInstance.cs" />
+    <Compile Include="Library\ListInstance.cs" />
+    <Compile Include="Library\EncodingInstance.cs" />
+    <Compile Include="Library\HashtableInstance.cs" />
+    <Compile Include="Library\StringDictionaryInstance.cs" />
+    <Compile Include="Library\WebOptimizationInstance.cs" />
+    <Compile Include="Library\ClientInfoInstance.cs" />
+    <Compile Include="Library\EnvironmentInstance.cs" />
+    <Compile Include="Library\HttpUtilityInstance.cs" />
+    <Compile Include="Library\MutexInstance.cs" />
+    <Compile Include="Library\NetworkCredentialInstance.cs" />
+    <Compile Include="Library\DeviceInstance.cs" />
+    <Compile Include="Library\ExcelAddressInstance.cs" />
+    <Compile Include="Library\ExcelBorderInstance.cs" />
+    <Compile Include="Library\ExcelBorderItemInstance.cs" />
+    <Compile Include="Library\ExcelCellAddressInstance.cs" />
+    <Compile Include="Library\ExcelColorInstance.cs" />
+    <Compile Include="Library\ExcelFillInstance.cs" />
+    <Compile Include="Library\ExcelFontInstance.cs" />
+    <Compile Include="Library\ExcelGradientFillInstance.cs" />
+    <Compile Include="Library\ExcelNumberFormatInstance.cs" />
+    <Compile Include="Library\ExcelRangeInstance.cs" />
+    <Compile Include="Library\ExcelColumnInstance.cs" />
+    <Compile Include="Library\ExcelRowInstance.cs" />
+    <Compile Include="Extensions\ConfigurationExtensions.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="DocumentStore\TypedRepository.cs" />
+    <Compile Include="DocumentStore\TypedRepositoryConfiguration.cs" />
+    <Compile Include="ErrorEventArgs.cs" />
+    <Compile Include="Extensions\DisposableAction.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\JsonExtensions.cs" />
+    <Compile Include="Extensions\TimeSpanExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Helpers\ADHelper.cs" />
+    <Compile Include="Helpers\CodeCommentsHelper.cs" />
+    <Compile Include="Helpers\DynamicHelper.cs" />
+    <Compile Include="Helpers\EncryptDecrypt.cs" />
+    <Compile Include="Helpers\PdfAttachment.cs" />
+    <Compile Include="Helpers\PortUtilities.cs" />
+    <Compile Include="IJsonDocumentMetadata.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\Binder.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\BinderMethod.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\BinderUtilities.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\ClrBinder.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\FieldBinders.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\JSBinder.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\JSBinderMethod.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Binders\MethodBinder.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Debugging\COMHelpers.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Debugging\SourceCodePosition.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Debugging\SourceCodeSpan.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\EmitConversion.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\EmitHelpers.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\DynamicILGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\ILGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\ILLabel.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\ILLocalVariable.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\LoggingILGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\ILGenerator\ReflectionEmitILGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\LongJumpException.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\MethodOptimizationHints.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\OptimizationInfo.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\PrimitiveType.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Emit\PrimitiveTypeUtilities.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\AssignmentExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\BinaryExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\Expression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\FunctionCallExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\FunctionExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\GroupingExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\IReferenceExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\ListExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\LiteralExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\MemberAccessExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\NameExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\NewExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\OperatorExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\TernaryExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\ThisExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Expressions\UnaryExpression.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\IdentifierToken.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\KeywordToken.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\Lexer.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\LiteralToken.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\PunctuatorToken.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\RegularExpressionLiteral.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Lexer\Token.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\CodeContext.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\CompilerOptions.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\EvalMethodGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\FunctionMethodGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\GeneratedMethod.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\GlobalMethodGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\MethodGenerator\MethodGenerator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Parser\AstNode.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Parser\Operator.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Parser\Parser.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Scope\DeclarativeScope.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Scope\ObjectScope.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Scope\Scope.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\BlockStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\BreakStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ContinueStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\DebuggerStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\DoWhileStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\EmptyStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ExpressionStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ForInStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ForStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\IfStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\LoopStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ReturnStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\Statement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\SwitchStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\ThrowStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\TryCatchFinallyStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\VarStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\WhileStatement.cs" />
+    <Compile Include="Imports\Jurassic\Compiler\Statements\WithStatement.cs" />
+    <Compile Include="Imports\Jurassic\Core\BigInteger.cs" />
+    <Compile Include="Imports\Jurassic\Core\CompatibilityMode.cs" />
+    <Compile Include="Imports\Jurassic\Core\ConcatenatedString.cs" />
+    <Compile Include="Imports\Jurassic\Core\JavaScriptException.cs" />
+    <Compile Include="Imports\Jurassic\Core\Null.cs" />
+    <Compile Include="Imports\Jurassic\Core\NumberFormatter.cs" />
+    <Compile Include="Imports\Jurassic\Core\NumberParser.cs" />
+    <Compile Include="Imports\Jurassic\Core\ReflectionHelpers.cs" />
+    <Compile Include="Imports\Jurassic\Core\ScriptEngine.cs" />
+    <Compile Include="Imports\Jurassic\Core\ScriptSource\FileScriptSource.cs" />
+    <Compile Include="Imports\Jurassic\Core\ScriptSource\ScriptSource.cs" />
+    <Compile Include="Imports\Jurassic\Core\ScriptSource\StringScriptSource.cs" />
+    <Compile Include="Imports\Jurassic\Core\StringHelpers.cs" />
+    <Compile Include="Imports\Jurassic\Core\TypeComparer.cs" />
+    <Compile Include="Imports\Jurassic\Core\TypeConverter.cs" />
+    <Compile Include="Imports\Jurassic\Core\TypeUtilities.cs" />
+    <Compile Include="Imports\Jurassic\Core\Undefined.cs" />
+    <Compile Include="Imports\Jurassic\Library\Array\ArrayConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Array\ArrayInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Array\SparseArray.cs" />
+    <Compile Include="Imports\Jurassic\Library\Boolean\BooleanConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Boolean\BooleanInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\ClrWrapper\ClrInstanceTypeWrapper.cs" />
+    <Compile Include="Imports\Jurassic\Library\ClrWrapper\ClrInstanceWrapper.cs" />
+    <Compile Include="Imports\Jurassic\Library\ClrWrapper\ClrStaticTypeWrapper.cs" />
+    <Compile Include="Imports\Jurassic\Library\Date\DateConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Date\DateInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Date\DateParser.cs" />
+    <Compile Include="Imports\Jurassic\Library\Error\ErrorConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Error\ErrorInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\FirebugConsole\FirebugConsole.cs" />
+    <Compile Include="Imports\Jurassic\Library\FirebugConsole\IFirebugConsoleOutput.cs" />
+    <Compile Include="Imports\Jurassic\Library\FirebugConsole\StandardConsoleOutput.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\ArgumentsInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\BoundFunction.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\ClrFunction.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\Delegates.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\FunctionConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\FunctionInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\ThrowTypeErrorFunction.cs" />
+    <Compile Include="Imports\Jurassic\Library\Function\UserDefinedFunction.cs" />
+    <Compile Include="Imports\Jurassic\Library\GlobalObject.cs" />
+    <Compile Include="Imports\Jurassic\Library\JSON\JSONLexer.cs" />
+    <Compile Include="Imports\Jurassic\Library\JSON\JSONObject.cs" />
+    <Compile Include="Imports\Jurassic\Library\JSON\JSONParser.cs" />
+    <Compile Include="Imports\Jurassic\Library\JSON\JSONSerializer.cs" />
+    <Compile Include="Imports\Jurassic\Library\MathObject.cs" />
+    <Compile Include="Imports\Jurassic\Library\Number\NumberConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Number\NumberInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\Attributes.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\HiddenClassSchema.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\JSFunctionFlags.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\ObjectConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\ObjectInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\PropertyAccessorValue.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\PropertyAttributes.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\PropertyDescriptor.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\PropertyNameAndValue.cs" />
+    <Compile Include="Imports\Jurassic\Library\Object\SchemaProperty.cs" />
+    <Compile Include="Imports\Jurassic\Library\RegExp\RegExpConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\RegExp\RegExpInstance.cs" />
+    <Compile Include="Imports\Jurassic\Library\String\StringConstructor.cs" />
+    <Compile Include="Imports\Jurassic\Library\String\StringInstance.cs" />
+    <Compile Include="Library\ActiveDirectoryInstance.cs" />
+    <Compile Include="Library\ADGroupInstance.cs" />
+    <Compile Include="Library\ADUserInstance.cs" />
+    <Compile Include="Library\ApplicationPoolInstance.cs" />
+    <Compile Include="Library\ExcelDocumentInstance.cs" />
+    <Compile Include="Library\ExcelStyleInstance.cs" />
+    <Compile Include="Library\ExcelWorkbookInstance.cs" />
+    <Compile Include="Library\ExcelWorksheetInstance.cs" />
+    <Compile Include="Library\ExcelWorksheetsInstance.cs" />
+    <Compile Include="Library\OperatingSystemInstance.cs" />
+    <Compile Include="Library\OSInstance.cs" />
+    <Compile Include="Library\PointInstance.cs" />
+    <Compile Include="Library\SizeInstance.cs" />
+    <Compile Include="Library\Sucralose.cs" />
+    <Compile Include="Library\UserAgentInfoInstance.cs" />
+    <Compile Include="Library\WebAdministrationInstance.cs" />
+    <Compile Include="ObjectInstanceConverter.cs" />
+    <Compile Include="PrincipalType.cs" />
+    <Compile Include="Scheduler\Schedule.cs" />
+    <Compile Include="ScriptEngineFactory.cs" />
+    <Compile Include="Search\BaristaSearchClient.cs" />
+    <Compile Include="Search\BaristaSearchWebClient.cs" />
+    <Compile Include="Search\Data Contracts\BooleanClause.cs" />
+    <Compile Include="Search\Data Contracts\Explanation.cs" />
+    <Compile Include="Search\Data Contracts\FacetedSearchResult.cs" />
+    <Compile Include="Search\Data Contracts\FieldOptions.cs" />
+    <Compile Include="Search\Data Contracts\Filter.cs" />
+    <Compile Include="Search\Data Contracts\Occur.cs" />
+    <Compile Include="Search\Data Contracts\SearchArguments.cs" />
+    <Compile Include="Search\Data Contracts\Sort.cs" />
+    <Compile Include="Search\IQuery.cs" />
+    <Compile Include="Search\Library\FacetedSearchResultInstance.cs" />
+    <Compile Include="Search\Library\JsonDocumentInstance.cs" />
+    <Compile Include="Search\Library\MultiFieldQueryParserInstance.cs" />
+    <Compile Include="Search\Library\ODataQueryInstance.cs" />
+    <Compile Include="Search\Library\QueryParserQueryInstance.cs" />
+    <Compile Include="Search\Library\SearchResultInstance.cs" />
+    <Compile Include="Search\Library\SearchServiceInstance.cs" />
+    <Compile Include="Search\Library\TermsFilterInstance.cs" />
+    <Compile Include="Search\OData2Lucene\ExpressionTokenizer.cs" />
+    <Compile Include="Search\OData2Lucene\QueryFactory.cs" />
+    <Compile Include="Search\OData2Lucene\FunctionTokenSet.cs" />
+    <Compile Include="Search\OData2Lucene\ISelectFilterFactory.cs" />
+    <Compile Include="Search\OData2Lucene\IQueryFactory.cs" />
+    <Compile Include="Search\JsonDocument.cs" />
+    <Compile Include="Justache\Block.cs" />
+    <Compile Include="Justache\Encoders.cs" />
+    <Compile Include="Justache\EndSection.cs" />
+    <Compile Include="Justache\FileSystemTemplateLocator.cs" />
+    <Compile Include="Justache\InvertedBlock.cs" />
+    <Compile Include="Justache\LiteralText.cs" />
+    <Compile Include="Justache\JustacheException.cs" />
+    <Compile Include="Justache\Parser.cs" />
+    <Compile Include="Justache\Part.cs" />
+    <Compile Include="Justache\RenderContext.cs" />
+    <Compile Include="Justache\TemplateParser.cs" />
+    <Compile Include="Justache\Section.cs" />
+    <Compile Include="Justache\Template.cs" />
+    <Compile Include="Justache\TemplateDefinition.cs" />
+    <Compile Include="Justache\TemplateInclude.cs" />
+    <Compile Include="Justache\VariableReference.cs" />
+    <Compile Include="Library\AjaxDataType.cs" />
+    <Compile Include="Library\Common.cs" />
+    <Compile Include="Csv\CsvParser.cs" />
+    <Compile Include="Csv\CsvReader.cs" />
+    <Compile Include="Csv\CsvWriter.cs" />
+    <Compile Include="Csv\HeaderRecord.cs" />
+    <Compile Include="Csv\RecordBase.cs" />
+    <Compile Include="BrewRequest.cs" />
+    <Compile Include="BrewResponse.cs" />
+    <Compile Include="PostedFile.cs" />
+    <Compile Include="Csv\DataRecord.cs" />
+    <Compile Include="DirectoryServices\ADContext.cs" />
+    <Compile Include="DirectoryServices\ADGroup.cs" />
+    <Compile Include="DirectoryServices\ADUser.cs" />
+    <Compile Include="DirectoryServices\Attributes.cs" />
+    <Compile Include="DirectoryServices\DirectoryContext.cs" />
+    <Compile Include="DirectoryServices\DirectoryEntry.cs" />
+    <Compile Include="DirectoryServices\DirectoryExtensions.cs" />
+    <Compile Include="DirectoryServices\DirectoryQuery.cs" />
+    <Compile Include="DirectoryServices\DirectoryQueryProvider.cs" />
+    <Compile Include="DirectoryServices\DirectorySource.cs" />
+    <Compile Include="DirectoryServices\Helpers.cs" />
+    <Compile Include="Extensions\DataExtensions.cs" />
+    <Compile Include="Framework\JsonNetDeserializer.cs" />
+    <Compile Include="Framework\MultipartParser.cs" />
+    <Compile Include="IBundle.cs" />
+    <Compile Include="Framework\JsonNetSerializer.cs" />
+    <Compile Include="Library\BaristaGlobalInstance.cs" />
+    <Compile Include="Library\CookieInstance.cs" />
+    <Compile Include="Library\CsvOptions.cs" />
+    <Compile Include="Library\DocumentInstance.cs" />
+    <Compile Include="Library\DynamicModelInstance.cs" />
+    <Compile Include="Extensions\ArgumentHelperExtensions.cs" />
+    <Compile Include="Extensions\EventHelperExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Framework\BinaryEndpointBehaviorAttribute.cs" />
+    <Compile Include="Framework\DynamicFormatter.cs" />
+    <Compile Include="Framework\DynamicResponseTypeAttribute.cs" />
+    <Compile Include="Framework\DynamicWebHttpBehavior.cs" />
+    <Compile Include="Framework\DynamicWebServiceHost.cs" />
+    <Compile Include="Framework\JSONPSupportBehavior.cs" />
+    <Compile Include="Framework\MultiPartContentProcessor.cs" />
+    <Compile Include="Framework\RawJsonRequestBehavior.cs" />
+    <Compile Include="Framework\SilverlightFaultBehavior.cs" />
+    <Compile Include="Framework\StringStream.cs" />
+    <Compile Include="Helpers\ArgumentHelper.cs" />
+    <Compile Include="Helpers\EventHelper.cs" />
+    <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\JurassicHelper.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="JSDocAttribute.cs" />
+    <Compile Include="Library\AjaxSettingsInstance.cs" />
+    <Compile Include="Library\Base64EncodedByteArrayInstance.cs" />
+    <Compile Include="Library\DeferredInstance.cs" />
+    <Compile Include="DocumentStore\Library\EntityFilterCriteriaInstance.cs" />
+    <Compile Include="Library\FileSystemInstance.cs" />
+    <Compile Include="Library\GuidInstance.cs" />
+    <Compile Include="Library\HttpRequestInstance.cs" />
+    <Compile Include="Library\HttpResponseInstance.cs" />
+    <Compile Include="Library\HttpWebResponseInstance.cs" />
+    <Compile Include="Library\PdfAttachmentInstance.cs" />
+    <Compile Include="Library\LinqFilterInstance.cs" />
+    <Compile Include="Library\MustacheInstance.cs" />
+    <Compile Include="Library\ProxySettingsInstance.cs" />
+    <Compile Include="Library\UriInstance.cs" />
+    <Compile Include="Library\UtilInstance.cs" />
+    <Compile Include="Library\WebInstanceBase.cs" />
+    <Compile Include="Library\ZipFileInstance.cs" />
+    <Compile Include="DocumentStore\Constants.cs" />
+    <Compile Include="DocumentStore\DataContracts\Attachment.cs" />
+    <Compile Include="DocumentStore\DataContracts\Comment.cs" />
+    <Compile Include="DocumentStore\DataContracts\Container.cs" />
+    <Compile Include="DocumentStore\DataContracts\DSObject.cs" />
+    <Compile Include="DocumentStore\DataContracts\Entity.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityPart.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityPartVersion.cs" />
+    <Compile Include="DocumentStore\DataContracts\EntityVersion.cs" />
+    <Compile Include="DocumentStore\DataContracts\Folder.cs" />
+    <Compile Include="DocumentStore\DataContracts\Principal.cs" />
+    <Compile Include="DocumentStore\DataContracts\PrincipalPermissions.cs" />
+    <Compile Include="DocumentStore\DataContracts\SchemaOptions.cs" />
+    <Compile Include="DocumentStore\DocumentStoreHelper.cs" />
+    <Compile Include="DocumentStore\DomainModel\ApplicationConfiguration.cs" />
+    <Compile Include="DocumentStore\DomainModel\ApplicationLog.cs" />
+    <Compile Include="DocumentStore\DomainModel\ApplicationLogEntry.cs" />
+    <Compile Include="DocumentStore\DomainModel\ApplicationLogPart.cs" />
+    <Compile Include="DocumentStore\DomainModel\Index.cs" />
+    <Compile Include="DocumentStore\DomainModel\LockStatus.cs" />
+    <Compile Include="DocumentStore\DomainModel\Script.cs" />
+    <Compile Include="DocumentStore\DSSecurity.cs" />
+    <Compile Include="DocumentStore\EntityDefinition.cs" />
+    <Compile Include="DocumentStore\EntityFilterCriteria.cs" />
+    <Compile Include="DocumentStore\EntityMigrationStrategy.cs" />
+    <Compile Include="DocumentStore\EntityMigrationStrategyCollection.cs" />
+    <Compile Include="DocumentStore\EntityPartDefinition.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\ValidationAttributeExtensions.cs" />
+    <Compile Include="Imports\Linq2Rest\ExpressionVisitor.cs" />
+    <Compile Include="Imports\Linq2Rest\GeneralExtensions.cs" />
+    <Compile Include="Imports\Linq2Rest\IModelFilter.cs" />
+    <Compile Include="Imports\Linq2Rest\IRuntimeTypeProvider.cs" />
+    <Compile Include="Imports\Linq2Rest\MethodProvider.cs" />
+    <Compile Include="Imports\Linq2Rest\ModelFilter.cs" />
+    <Compile Include="Imports\Linq2Rest\ModelFilterExtensions.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\ExpressionTokenizer.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\FilterExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\FunctionTokenSet.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\IFilterExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\IMemberNameResolver.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\IParameterParser.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\ISelectExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\ISortExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\MemberNameResolver.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\ParameterParser.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\BooleanExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\ByteArrayExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\ByteExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\DateTimeExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\DateTimeOffsetExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\DecimalExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\DoubleExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\GuidExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\IntExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\IValueExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\LongExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\ParameterValueReader.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\ShortExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\SingleExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\StreamExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\TimeSpanExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\UnsignedIntExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\UnsignedLongExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\Readers\UnsignedShortExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\SelectExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\SortDescription.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\SortExpressionFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\TokenOperatorExtensions.cs" />
+    <Compile Include="Imports\Linq2Rest\Parser\TokenSet.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ExpressionProcessor.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ExpressionWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\IExpressionProcessor.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\IExpressionWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ISerializer.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ISerializerFactory.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ODataExpressionConverter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\ParameterBuilder.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\BooleanValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\ByteArrayValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\ByteValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\DateTimeOffsetValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\DateTimeValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\DecimalValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\DoubleValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\GuidValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\IntegerValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\IntValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\IValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\LongValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\ParameterValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\RationalValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\ShortValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\SingleValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\StreamValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\StringValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\TimeSpanValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\UnsignedIntValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\UnsignedLongValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\Provider\Writers\UnsignedShortValueWriter.cs" />
+    <Compile Include="Imports\Linq2Rest\RuntimeTypeProvider.cs" />
+    <Compile Include="Imports\Linq2Rest\StringConstants.cs" />
+    <Compile Include="Imports\Linq2Rest\UntypedQueryable.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\LogExtensions.cs" />
+    <Compile Include="Logging\ILogManager.cs" />
+    <Compile Include="Logging\LoggerExecutionWrapper.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Logging\LogProviders\Log4NetLogManager.cs" />
+    <Compile Include="Logging\LogProviders\LogManagerBase.cs" />
+    <Compile Include="Logging\LogProviders\NLogLogManager.cs" />
+    <Compile Include="ObjectComparison\GraphNode.cs" />
+    <Compile Include="ObjectComparison\GraphNodeTuple.cs" />
+    <Compile Include="ObjectComparison\NamespaceDoc.cs" />
+    <Compile Include="ObjectComparison\ObjectComparisonMismatch.cs" />
+    <Compile Include="ObjectComparison\ObjectComparisonMismatchType.cs" />
+    <Compile Include="ObjectComparison\ObjectGraphCodec.cs" />
+    <Compile Include="ObjectComparison\ObjectGraphComparer.cs" />
+    <Compile Include="ObjectComparison\ObjectGraphComparisonStrategy.cs" />
+    <Compile Include="ObjectComparison\ObjectGraphFactory.cs" />
+    <Compile Include="ObjectComparison\ObjectGraphFactoryMap.cs" />
+    <Compile Include="ObjectComparison\PublicPropertyObjectGraphFactory.cs" />
+    <Compile Include="ObjectComparison\XmlObjectGraphCodec.cs" />
+    <Compile Include="Platform.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchMarkState.cs" />
+    <Compile Include="Search\AbstractAnalyzerGenerator.cs" />
+    <Compile Include="Search\AggregationOperation.cs" />
+    <Compile Include="Search\AggregationOperationExtensions.cs" />
+    <Compile Include="Search\Analyzers\LowerCaseKeywordAnalyzer.cs" />
+    <Compile Include="Search\Analyzers\LowerCaseKeywordTokenizer.cs" />
+    <Compile Include="Search\Analyzers\PerFieldAnalyzerWrapper.cs" />
+    <Compile Include="Search\Default.cs" />
+    <Compile Include="Search\OData2Lucene\ISortFactory.cs" />
+    <Compile Include="Search\OData2Lucene\LuceneModelFilter.cs" />
+    <Compile Include="Search\OData2Lucene\ODataQueryParser.cs" />
+    <Compile Include="Search\OData2Lucene\StringConstants.cs" />
+    <Compile Include="Search\OData2Lucene\TokenOperatorExtensions.cs" />
+    <Compile Include="Search\OData2Lucene\TokenSet.cs" />
+    <Compile Include="Search\OData2Lucene\SortFactory.cs" />
+    <Compile Include="Search\FieldIndexing.cs" />
+    <Compile Include="Search\FieldsToFetch.cs" />
+    <Compile Include="Search\FieldStorage.cs" />
+    <Compile Include="Search\FieldTermVector.cs" />
+    <Compile Include="Search\Index.cs" />
+    <Compile Include="Search\IndexDefinition.cs" />
+    <Compile Include="Search\IndexedTerms.cs" />
+    <Compile Include="Search\IndexingBatch.cs" />
+    <Compile Include="Search\IndexingExtensions.cs" />
+    <Compile Include="Search\IndexPerformanceStats.cs" />
+    <Compile Include="Search\IndexQueryResult.cs" />
+    <Compile Include="Search\IndexSearcherHolder.cs" />
+    <Compile Include="Search\JsonDocumentToLuceneDocumentConverter.cs" />
+    <Compile Include="Search\Library\BooleanQueryInstance.cs" />
+    <Compile Include="Search\Library\DocumentInstance.cs" />
+    <Compile Include="Search\Library\ExplanationInstance.cs" />
+    <Compile Include="Search\Library\FilterInstance.cs" />
+    <Compile Include="Search\Library\FuzzyQueryInstance.cs" />
+    <Compile Include="Search\Library\HitsPerFacetInstance.cs" />
+    <Compile Include="Search\Library\NumericRangeFilterInstance.cs" />
+    <Compile Include="Search\Library\NumericRangeQueryInstance.cs" />
+    <Compile Include="Search\Library\PhraseQueryInstance.cs" />
+    <Compile Include="Search\Library\PrefixFilterInstance.cs" />
+    <Compile Include="Search\Library\PrefixQueryInstance.cs" />
+    <Compile Include="Search\Library\QueryInstance.cs" />
+    <Compile Include="Search\Library\QueryWrapperFilterInstance.cs" />
+    <Compile Include="Search\Library\RegexQueryInstance.cs" />
+    <Compile Include="Search\Library\ScoreDocInstance.cs" />
+    <Compile Include="Search\Library\SearchArgumentsInstance.cs" />
+    <Compile Include="Search\Library\SearchField.cs" />
+    <Compile Include="Search\Library\SortInstance.cs" />
+    <Compile Include="Search\Library\TermQueryInstance.cs" />
+    <Compile Include="Search\Library\TermRangeFilterInstance.cs" />
+    <Compile Include="Search\Library\TermRangeQueryInstance.cs" />
+    <Compile Include="Search\Library\WildcardQueryInstance.cs" />
+    <Compile Include="Search\NotForQueryingAttribute.cs" />
+    <Compile Include="Search\NumberUtil.cs" />
+    <Compile Include="Search\Data Contracts\Query.cs" />
+    <Compile Include="Search\SimpleIndex.cs" />
+    <Compile Include="Search\SortOptions.cs" />
+    <Compile Include="SendingQueue.cs" />
+    <Compile Include="Helpers\HtmlConverterHelper.cs" />
+    <Compile Include="Search\Data Contracts\DocumentDto.cs" />
+    <Compile Include="Search\Data Contracts\Field.cs" />
+    <Compile Include="Search\Data Contracts\FieldIndexType.cs" />
+    <Compile Include="Search\Data Contracts\FieldStorageType.cs" />
+    <Compile Include="Search\Data Contracts\FieldTermVectorType.cs" />
+    <Compile Include="Search\Data Contracts\SearchResult.cs" />
+    <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
+    <Compile Include="Search\Data Contracts\Term.cs" />
+    <Compile Include="ServiceContracts\IBaristaScheduler.cs" />
+    <Compile Include="ServiceContracts\IBaristaSearch.cs" />
+    <Compile Include="ServiceContracts\IBaristaWebService.cs" />
+    <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
+    <Compile Include="Search\BaristaSearchService.cs" />
+    <Compile Include="Smtp\AlternateViewCollectionInstance.cs" />
+    <Compile Include="Smtp\AlternateViewInstance.cs" />
+    <Compile Include="Smtp\AttachmentBaseInstance.cs" />
+    <Compile Include="Smtp\AttachmentCollectionInstance.cs" />
+    <Compile Include="Smtp\AttachmentInstance.cs" />
+    <Compile Include="Smtp\ContentDispositionInstance.cs" />
+    <Compile Include="Smtp\LinkedResourceCollectionInstance.cs" />
+    <Compile Include="Smtp\LinkedResourceInstance.cs" />
+    <Compile Include="Smtp\MailAddressCollectionInstance.cs" />
+    <Compile Include="Smtp\MailAddressInstance.cs" />
+    <Compile Include="Smtp\MailMessageInstance.cs" />
+    <Compile Include="Smtp\SmtpClientInstance.cs" />
+    <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemFieldInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemStoreInstance.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsWorkItemTypeInstance.cs" />
+    <None Include="PrototypicalInheritanceExample.cs" />
+    <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
+    <Compile Include="UuidType.cs" />
+    <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
+    <Compile Include="SmartPool.cs" />
+    <Compile Include="Extensions\SocketExtensions.cs" />
+    <Compile Include="Stateless\DynamicTriggerBehaviour.cs" />
+    <Compile Include="Stateless\Enforce.cs" />
+    <Compile Include="Stateless\IgnoredTriggerBehaviour.cs" />
+    <Compile Include="Stateless\ParameterConversion.cs" />
+    <Compile Include="Stateless\StateConfiguration.cs" />
+    <Compile Include="Stateless\StateMachine.cs" />
+    <Compile Include="Stateless\StateReference.cs" />
+    <Compile Include="Stateless\StateRepresentation.cs" />
+    <Compile Include="Stateless\Transition.cs" />
+    <Compile Include="Stateless\TransitioningTriggerBehaviour.cs" />
+    <Compile Include="Stateless\TriggerBehaviour.cs" />
+    <Compile Include="Stateless\TriggerWithParameters.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="StringStream.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="Helpers\QueryString.cs" />
+    <Compile Include="DocumentStore\IndexDefinition.cs" />
+    <Compile Include="DocumentStore\Interfaces\IAttachmentCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\ICommentCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartFolderCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IEntityPartVersionHistoryCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IFolderCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IFullyCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\ILockCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IManagedPropertyCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IMetadataCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IPermissionsCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\ISchemaCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\Interfaces\IVersionHistoryCapableDocumentStore.cs" />
+    <Compile Include="DocumentStore\IRepositoryFactory.cs" />
+    <Compile Include="Lazy.cs" />
+    <Compile Include="Linq\Csv\CsvColumnAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvContext.cs" />
+    <Compile Include="Linq\Csv\CsvFileDescription.cs" />
+    <Compile Include="Linq\Csv\CsvInputFormatAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvOutputFormatAttribute.cs" />
+    <Compile Include="Linq\Csv\CsvStream.cs" />
+    <Compile Include="Linq\Csv\DataRow.cs" />
+    <Compile Include="Linq\Csv\DataRowItem.cs" />
+    <Compile Include="Linq\Csv\Exceptions.cs" />
+    <Compile Include="Linq\Csv\FieldMapper.cs" />
+    <Compile Include="Linq\Csv\IDataRow.cs" />
+    <Compile Include="DocumentStore\Repository.cs" />
+    <Compile Include="DocumentStore\RepositoryConfiguration.cs" />
+    <Compile Include="Extensions\TheadPoolExtensions.cs" />
+    <Compile Include="TeamFoundationServer\Library\TfsInstance.cs" />
+    <Compile Include="TeamFoundationServer\TfsCredentialsProvider.cs" />
+    <Compile Include="Tuple.cs" />
+    <Compile Include="ValidationAttributeStore.cs" />
+    <Compile Include="ValidationContext.cs" />
+    <Compile Include="ValidationResult.cs" />
+    <Compile Include="Validator.cs" />
+    <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
+    <Compile Include="WebSockets\WebSocketEventScript.cs" />
+    <Compile Include="WebSockets\BaristaWebSocketsServiceConfiguration.cs" />
+    <Compile Include="WebSockets\WebSocketServerDetails.cs" />
+    <Compile Include="WebSockets\WebSocketServerInstance.cs" />
+    <Compile Include="WebSockets\WebSocketServerOptions.cs" />
+    <Compile Include="WebSockets\WebSocketServerState.cs" />
+    <Compile Include="_Constants.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="key.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DocumentStore\FileSystem\" />
+    <Folder Include="DocumentStore\Framework\" />
+    <Folder Include="DocumentStore\Helpers\" />
+    <Folder Include="DocumentStore\SharpKit\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jsonDataHandler.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Messages.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\state-machine.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\linq.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Imports\iCal\Serialization\iCalendar\iCalParserTokenTypes.txt" />
+    <Content Include="Imports\Jurassic\Compiler\Emit\Optimizations.txt" />
+    <Content Include="Imports\Newtonsoft.Json\readme.txt" />
+    <Content Include="Imports\SuperSocket\readme.txt" />
+    <Content Include="Imports\SuperWebSocket\readme.txt" />
+    <Content Include="Resources\Automapper.js" />
+    <Content Include="Resources\chance.js" />
+    <Content Include="Resources\csso.web.js" />
+    <Content Include="Resources\lodash.min.js" />
+    <Content Include="Resources\moment.min.js" />
+    <Content Include="Resources\uaregexes.yaml" />
+    <Content Include="Resources\uglifyjs.js" />
+    <None Include="Resources\sugar-1.3.9-custom.min.js" />
+    <None Include="Resources\string.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj">
+      <Project>{b283c79c-9821-45eb-8999-88eb4299a20c}</Project>
+      <Name>Barista.V8.Net-ProxyInterface</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj">
+      <Project>{55f72a43-2cd2-4a33-ac80-7d9c65b9a57d}</Project>
+      <Name>Barista.V8.Net-SharedTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>REM "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\x64\sn.exe" -R "$(TargetPath)" "$(ProjectDir)key.snk"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+</Project>

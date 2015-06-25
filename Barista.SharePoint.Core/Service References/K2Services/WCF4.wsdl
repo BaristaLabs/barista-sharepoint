@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.k2.com/process/d1:navigation" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.k2.com/process/d1:navigation" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.k2.com/process/d1:navigation/Imports">
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd3" namespace="http://schemas.k2.com/framework/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" namespace="http://schemas.k2.com/worklist/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd4" namespace="http://schemas.k2.com/process/d1:navigation" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstance_InputMessage">
+    <wsdl:part xmlns:q1="http://schemas.k2.com/process/d1" name="parameters" element="q1:StartNewProcessInstance" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstance_OutputMessage">
+    <wsdl:part xmlns:q2="http://schemas.k2.com/process/d1" name="parameters" element="q2:StartNewProcessInstanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstance_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.k2.com/framework/d1" name="detail" element="q3:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_UpdateProcessInstance_InputMessage">
+    <wsdl:part xmlns:q4="http://schemas.k2.com/process/d1" name="parameters" element="q4:UpdateProcessInstance" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_UpdateProcessInstance_OutputMessage">
+    <wsdl:part xmlns:q5="http://schemas.k2.com/process/d1" name="parameters" element="q5:UpdateProcessInstanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_UpdateProcessInstance_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.k2.com/framework/d1" name="detail" element="q6:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_OpenProcessInstance_InputMessage">
+    <wsdl:part xmlns:q7="http://schemas.k2.com/process/d1" name="parameters" element="q7:OpenProcessInstance" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_OpenProcessInstance_OutputMessage">
+    <wsdl:part xmlns:q8="http://schemas.k2.com/process/d1" name="parameters" element="q8:OpenProcessInstanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_OpenProcessInstance_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.k2.com/framework/d1" name="detail" element="q9:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstanceScalar_InputMessage">
+    <wsdl:part xmlns:q10="http://schemas.k2.com/process/d1" name="parameters" element="q10:StartNewProcessInstanceScalar" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstanceScalar_OutputMessage">
+    <wsdl:part xmlns:q11="http://schemas.k2.com/process/d1" name="parameters" element="q11:StartNewProcessInstanceScalarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_StartNewProcessInstanceScalar_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://schemas.k2.com/framework/d1" name="detail" element="q12:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceDataFields" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceDataFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q13="http://schemas.k2.com/framework/d1" name="detail" element="q13:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataField_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceDataField" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceDataFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceDataField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q14="http://schemas.k2.com/framework/d1" name="detail" element="q14:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlFields_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceXmlFields" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlFields_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceXmlFieldsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlFields_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.k2.com/framework/d1" name="detail" element="q15:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlField_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceXmlField" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlField_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProcessInstanceXmlFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProcessNavigationService_GetProcessInstanceXmlField_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.k2.com/framework/d1" name="detail" element="q16:FailureResult" />
+  </wsdl:message>
+  <wsdl:portType name="IProcessNavigationService">
+    <wsdl:operation name="StartNewProcessInstance">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstance" message="tns:IProcessNavigationService_StartNewProcessInstance_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceResponse" message="tns:IProcessNavigationService_StartNewProcessInstance_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceFailureFault" name="FailureFault" message="tns:IProcessNavigationService_StartNewProcessInstance_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateProcessInstance">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/UpdateProcessInstance" message="tns:IProcessNavigationService_UpdateProcessInstance_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/UpdateProcessInstanceResponse" message="tns:IProcessNavigationService_UpdateProcessInstance_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/UpdateProcessInstanceFailureFault" name="FailureFault" message="tns:IProcessNavigationService_UpdateProcessInstance_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OpenProcessInstance">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/OpenProcessInstance" message="tns:IProcessNavigationService_OpenProcessInstance_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/OpenProcessInstanceResponse" message="tns:IProcessNavigationService_OpenProcessInstance_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/OpenProcessInstanceFailureFault" name="FailureFault" message="tns:IProcessNavigationService_OpenProcessInstance_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartNewProcessInstanceScalar">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceScalar" message="tns:IProcessNavigationService_StartNewProcessInstanceScalar_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceScalarResponse" message="tns:IProcessNavigationService_StartNewProcessInstanceScalar_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1/IProcessService/StartNewProcessInstanceScalarFailureFault" name="FailureFault" message="tns:IProcessNavigationService_StartNewProcessInstanceScalar_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceDataFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFields" message="tns:IProcessNavigationService_GetProcessInstanceDataFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFieldsResponse" message="tns:IProcessNavigationService_GetProcessInstanceDataFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFieldsFailureFault" name="FailureFault" message="tns:IProcessNavigationService_GetProcessInstanceDataFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceDataField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataField" message="tns:IProcessNavigationService_GetProcessInstanceDataField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFieldResponse" message="tns:IProcessNavigationService_GetProcessInstanceDataField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceDataFieldFailureFault" name="FailureFault" message="tns:IProcessNavigationService_GetProcessInstanceDataField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceXmlFields">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFields" message="tns:IProcessNavigationService_GetProcessInstanceXmlFields_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFieldsResponse" message="tns:IProcessNavigationService_GetProcessInstanceXmlFields_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFieldsFailureFault" name="FailureFault" message="tns:IProcessNavigationService_GetProcessInstanceXmlFields_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProcessInstanceXmlField">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlField" message="tns:IProcessNavigationService_GetProcessInstanceXmlField_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFieldResponse" message="tns:IProcessNavigationService_GetProcessInstanceXmlField_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/process/d1:navigation/IProcessNavigationService/GetProcessInstanceXmlFieldFailureFault" name="FailureFault" message="tns:IProcessNavigationService_GetProcessInstanceXmlField_FailureFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.k2.com/event/d1" elementFormDefault="qualified" targetNamespace="http://schemas.k2.com/event/d1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ActivityInstanceDestination" type="tns:EventInstance" />
+  <xs:complexType name="EventInstance">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Metadata" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="ExpectedDuration" type="xs:long" use="required" />
+    <xs:attribute name="ID" type="xs:long" use="required" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Priority" type="xs:int" use="required" />
+    <xs:attribute name="StartDate" type="xs:dateTime" use="required" />
+  </xs:complexType>
+</xs:schema>

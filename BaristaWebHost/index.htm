@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en" id="ng-app" data-ng-app="baristafiddle" class="ng-cloak" data-ng-controller="MainCtrl">
+<head>
+    <meta charset="utf-8">
+    <title>Barista Fiddle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" />
+    <link rel="stylesheet" href="Styles/app.css" />
+    <link rel="stylesheet" href="Styles/angular-snap.css" />
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/theme/neat.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/theme/vibrant-ink.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/lint/lint.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/hint/show-hint.min.css"/>
+
+    <link href="http://cdn.kendostatic.com/2013.2.716/styles/kendo.flat.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2013.2.716/styles/kendo.common.min.css" rel="stylesheet" />
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+    <![endif]-->
+    <!--[if lte IE 8]>
+        <script>
+            window.myCustomTags = [ 'ui-layout', 'uiLayout' ];
+        </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui-ieshiv.min.js"></script>
+    <![endif]-->
+</head>
+<body style="height: 100%" data-ng-style="{ height: getWindowHeight() + 'px' }" data-ng-cloak="">
+    <div id="main_navbar" class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li>
+                    <div>
+                        <a class="btn btn-inverse" href="#" data-snap-toggle="left">
+                            <i class="icon-reorder" style="color: #f7f7f7;"></i></a>
+                    </div>
+                </li>
+                <li class="divider-vertical" />
+                <li>
+                    <div class="btn-group">
+                        <a class="btn btn-primary" href="#" data-ng-click="evalFiddleScript()"><i class="icon-play icon-white"></i>&nbsp;&nbsp;Eval</a>
+                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret white-caret"></span></a>
+                        <ul class="dropdown-menu" data-ng-click="showEvalOptions()">
+                            <li><a href="#"><i class="icon-share"></i>&nbsp;&nbsp;Eval Options...</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="divider-vertical" />
+                <li style="display: none;">
+                    <div class="btn-group">
+                        <a class="btn" href="#"><i class="icon-folder-open icon-black"></i>Open</a>
+                        <a class="btn" href="#"><i class="icon-edit icon-black"></i>Save</a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="margin-left: 85px">
+                            <li><a href="#"><i class="icon-share"></i>&nbsp;&nbsp;Save As...</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <div class="btn-group">
+                        <a class="btn" href="#" data-ng-click="tidyUp()"><i class="icon-align-left icon-black"></i>&nbsp;&nbsp;TidyUp</a>
+                        <a class="btn" href="#" data-ng-click="jsHint()"><i class="icon-check icon-black"></i>&nbsp;&nbsp;JSHint</a>
+                        <a class="btn" href="#"><i class="icon-list-alt icon-black"></i>&nbsp;&nbsp;Create Unit Test</a>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="margin-left: 175px">
+                            <li><a href="#"><i class="icon-share"></i>&nbsp;&nbsp;Get Eval Url...</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="divider-vertical" />
+                <li class="pull-right">
+                    <div class="btn-group">
+                        <a class="btn" href="#"><i class="icon-wrench icon-black"></i>&nbsp;&nbsp;Settings</a>
+                        <a class="btn" href="#"><i class="icon-question-sign icon-black"></i>&nbsp;&nbsp;Help</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="mainContent" data-snap-content="" data-snap-options="snapOptions">
+        <div id="horizontalSplitter" data-kendo-splitter="" data-k-options="horizontalSplitterOptions" style="height: 100%; border: 0px;">
+            <div id="left-pane" style="width: 50%;">
+                <div id="code-mirror-pane" class="pane-content" style="height: 100%">
+                    <textarea id="code-mirror" data-ui-codemirror="editorOptions" data-ng-model="$storage.code"></textarea>
+                </div>
+            </div>
+            <div id="right-pane">
+                <div id="results-pane" class="pane-content" style="height: 100%">
+                    <div data-ng-show="isScriptResultLoading" class="alert alert-info">
+                        Retrieving Result...
+                    </div>
+                    <div data-ng-show="response.responseMode == 'json'">
+                        <textarea id="code-mirror-result" data-ui-codemirror="resultOptions" data-ng-model="response.formattedData"></textarea>
+                    </div>
+                    <iframe id="htmlScriptResult" data-ng-show="response.responseMode == 'html'" style="width: 100%; height: 100%; border: none; background-color: White;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-snap-drawer="">
+        Hello, world!
+    </div>
+    
+
+    <!-- /container -->
+    <div class="modal" id="getEvalUrlDialog" tabindex="-1" role="dialog" aria-labelledby="getEvalUrlLabel" aria-hidden="true" style="display: none">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="getEvalUrlLabel">Eval Url</h3>
+        </div>
+        <div class="modal-body">
+            <pre id="evalUrl"></pre>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+    </div>
+
+    <div class="modal" id="unitTestDialog" tabindex="-1" role="dialog" aria-labelledby="unitTestDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="unitTestDialogLabel">Unit Test</h3>
+        </div>
+        <div class="modal-body">
+            <pre id="unitTestCode"></pre>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+    </div>
+
+    <script id="unitTestTemplate" type="text/x-kendo-template">
+asyncTest("[Your Unit Test Title]", function () {
+    expect(1);
+
+    var code = "#= data #";
+
+    var request = jQuery.ajax({
+        type: 'POST',
+        contentType: "application/json; charset=utf-8",
+        url: getDomain() + "Barista/v1/Barista.svc/eval",
+        data: JSON.stringify({ code: code })
+    });
+
+    request.done(function (data, textStatus, jqXHR) {
+        ok(1 == 0, "Define your test case(s) here.");
+        start();
+    });
+
+    request.fail(function () {
+        ok(1 == 0, "Call to service failed.");
+        start();
+    });
+});
+    </script>
+
+    <!-- jQuery -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.0.3.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/linq.js/2.2.0.2/linq.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.0.0/masonry.pkgd.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/sugar/1.3.9/sugar.min.js"></script>
+
+    <!-- AngularJS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-resource.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.0/angular-ui-router.min.js"></script>
+    <script src="/scripts/vendor/snap/snap.js"></script>
+    <script src="/scripts/vendor/snap/angular-snap.js"></script>
+    <script src="/scripts/vendor/ngStorage.js"></script>
+
+    <!-- Kendo UI and related -->
+    <script src="//cdn.kendostatic.com/2013.2.716/js/kendo.all.min.js"></script>
+    <script src="/Scripts/Vendor/kendoui/angular-kendo.min.js"></script>
+    
+    <!-- Misc -->
+    <script src="/scripts/vendor/beautify.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- Codemirror -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/comment/comment.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/edit/matchbrackets.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/lint/lint.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/lint/javascript-lint.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/fold/foldcode.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/fold/foldgutter.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/fold/brace-fold.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/fold/comment-fold.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/search/searchcursor.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/search/match-highlighter.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/selection/active-line.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/hint/show-hint.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/addon/hint/javascript-hint.js"></script>
+    <script src="/scripts/vendor/codemirror/ui-codemirror.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- app -->
+    <script src="/Scripts/app.js"></script>
+    <!-- filters -->
+    <!-- directives -->
+    <!-- controllers -->
+    <script src="/Scripts/Controllers/mainctrl.js"></script>
+
+    <script type="text/javascript">
+        var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
+
+        $("#openDialogOpenButton").click(function () {
+            var selectedFile = $("#openDialogOpenButton").data("selectedFile");
+            var selectedDocLib = $("#openDialogOpenButton").data("selectedDocLib");
+
+            if (selectedFile != null) {
+                jQuery.ajax({
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    url: selectedFile.fileUrl,
+                    cache: false,
+                    complete: function (data) {
+                        setScriptValue(data.responseText);
+                        $('#openDialog').modal('hide');
+                        currentFileInfo = selectedFile;
+                        currentDocLibInfo = selectedDocLib;
+                        $('#btnSave').tooltip('destroy');
+                        $('#btnSave').tooltip({
+                            title: selectedFile.fileUrl,
+                            placement: "bottom"
+                        });
+                    },
+                    error: function () {
+                        //do something...
+                    }
+                });
+            }
+        });
+
+        $("#btnSave").click(function () {
+            var fileUrl = null;
+            if (currentFileInfo !== null)
+                fileUrl = currentFileInfo.fileUrl;
+
+            validateSaveFile(fileUrl);
+        });
+
+        $('#btnSave').tooltip({
+            title: "A target file has not been set...",
+            placement: "bottom"
+        });
+
+        $('#btnSaveAnyway').tooltip({
+            title: "Here, there be dragons...",
+            placement: "bottom"
+        });
+
+        $("#btnSaveAnyway").click(function () {
+            actualSaveFile(currentFileInfo.fileUrl);
+        });
+
+        $("#btnSaveAs").click(function () {
+            openSaveAsDialog();
+        });
+
+        $("#btnSaveAsSave").click(function () {
+            $("#saveAsDialog").modal("hide");
+            validateSaveFile($("#saveAsFileUrl").val());
+        });
+
+        $("#btnUnitTest").click(function () {
+            var code = getScriptValue();
+            var escaped = code.replace(/\r\n\r\n/g, "\r\n").replace(/\n\n/g, "\n");
+            escaped = escaped.replace(/\"/g, "\\\"").replace(/\r\n/g, "\\\r\n").replace(/\n/g, "\\\n");
+
+            $("#unitTestCode").text(unitTestTemplate(escaped));
+            $("#unitTestDialog").modal("show");
+        });
+
+        $("#btnGetEvalUrl").click(function () {
+
+            if (currentFileInfo !== null) {
+                $("#evalUrl").text("Barista/v1/Barista.svc/eval?c=" + encodeURIComponent(currentfileinfo.fileUrl));
+            }
+            else {
+                $("#evalUrl").text("Barista/v1/Barista.svc/eval?c=" + encodeURIComponent(getScriptValue()));
+            }
+            $("#getEvalUrlDialog").modal("show");
+        });
+    </script>
+    <style>
+        .white-caret {
+            border-top-color: white !important;
+            border-bottom-color: white !important;
+        }
+    </style>
+</body>
+</html>

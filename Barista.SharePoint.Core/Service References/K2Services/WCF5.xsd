@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.k2.com/activity/d1" elementFormDefault="qualified" targetNamespace="http://schemas.k2.com/activity/d1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+  <xs:element name="ActivityInstanceDestination" type="tns:ActivityInstanceDestination" />
+  <xs:complexType name="ActivityInstanceDestination">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Metadata" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" ref="q1:DataField" />
+      <xs:element xmlns:q2="http://schemas.k2.com/process/d1" minOccurs="0" maxOccurs="unbounded" ref="q2:XmlField" />
+    </xs:sequence>
+    <xs:attribute name="ActID" type="xs:long" use="required" />
+    <xs:attribute name="ActInstID" type="xs:long" use="required" />
+    <xs:attribute name="ExpectedDuration" type="xs:long" use="required" />
+    <xs:attribute name="ID" type="xs:long" use="required" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Priority" type="xs:int" use="required" />
+    <xs:attribute name="ProcInstID" type="xs:long" use="required" />
+    <xs:attribute name="StartDate" type="xs:dateTime" use="required" />
+  </xs:complexType>
+</xs:schema>

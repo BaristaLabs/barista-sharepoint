@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <type name="Barista.SharePoint.WebParts.WebParts.BaristaWebPart.BaristaWebPart, $SharePoint.Project.AssemblyFullName$" />
+      <importErrorMessage>$Resources:core,ImportErrorMessage;</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="Title" type="string">Barista - Barista Web Part</property>
+        <property name="Description" type="string">Web part that allows for a script to be set as a web part property and the results rendered on the page. </property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>

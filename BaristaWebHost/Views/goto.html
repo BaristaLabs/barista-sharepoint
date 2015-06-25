@@ -1,0 +1,14 @@
+﻿<form data-ng-submit="ok()">
+    <div class="modal-header">
+        <button type="button" class="close" data-ng-click="cancel()">×</button>
+        <h3 id="jsHintDialogLabel">Go To Line</h3>
+    </div>
+    <div class="modal-body">
+        Line Number:<br />
+        <input type="number" data-ng-model="cursorPosition.line" data-select-on="selectLineNumber"/>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-ng-click="ok()">OK</button>
+        <button class="btn" data-ng-click="cancel()">Cancel</button>
+    </div>
+</form>

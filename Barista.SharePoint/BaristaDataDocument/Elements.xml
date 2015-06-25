@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <!-- Parent ContentType: Document (0x0101) -->
+  <ContentType ID="0x01010079E8BA4B36EB402AADCEE8CBD42BA07D"
+               Name="Barista Data Document"
+               Group="Barista Content Types"
+               ProgId="Barista.Document"
+               Description="Represents a Barista Data Document which will open via the Barista Form Service"
+               Inherits="TRUE"
+               Version="0">
+    <Folder TargetName="_cts/Form" />
+    <DocumentTemplate TargetName="/_layouts/BaristaTemplates/BaristaDataDocument.js"></DocumentTemplate>
+  </ContentType>
+</Elements>

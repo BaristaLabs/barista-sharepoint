@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://schemas.k2.com/user/d1" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.k2.com/user/d1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://schemas.k2.com/user/d1/Imports">
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd8" namespace="http://schemas.k2.com/user/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd3" namespace="http://schemas.k2.com/framework/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd0" namespace="http://schemas.k2.com/process/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd1" namespace="http://schemas.k2.com/worklist/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd4" namespace="http://schemas.k2.com/process/d1:navigation" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd5" namespace="http://schemas.k2.com/activity/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd6" namespace="http://schemas.k2.com/event/d1" />
+      <xsd:import schemaLocation="http://sp2010dev.treasury.local:81/K2Services/WCF.svc?xsd=xsd7" namespace="http://schemas.k2.com/worklist/d1:navigation" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IIdentityService_GetAllUsers_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllUsers" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_GetAllUsers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllUsersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_GetAllUsers_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.k2.com/framework/d1" name="detail" element="q1:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_GetUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUser" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_GetUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_GetUser_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.k2.com/framework/d1" name="detail" element="q2:FailureResult" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_SearchUsers_InputMessage">
+    <wsdl:part name="parameters" element="tns:SearchUsers" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_SearchUsers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SearchUsersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IIdentityService_SearchUsers_FailureFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.k2.com/framework/d1" name="detail" element="q3:FailureResult" />
+  </wsdl:message>
+  <wsdl:portType name="IIdentityService">
+    <wsdl:operation name="GetAllUsers">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetAllUsers" message="tns:IIdentityService_GetAllUsers_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetAllUsersResponse" message="tns:IIdentityService_GetAllUsers_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetAllUsersFailureFault" name="FailureFault" message="tns:IIdentityService_GetAllUsers_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUser">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetUser" message="tns:IIdentityService_GetUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetUserResponse" message="tns:IIdentityService_GetUser_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/GetUserFailureFault" name="FailureFault" message="tns:IIdentityService_GetUser_FailureFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchUsers">
+      <wsdl:input wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/SearchUsers" message="tns:IIdentityService_SearchUsers_InputMessage" />
+      <wsdl:output wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/SearchUsersResponse" message="tns:IIdentityService_SearchUsers_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://schemas.k2.com/user/d1/IIdentityService/SearchUsersFailureFault" name="FailureFault" message="tns:IIdentityService_SearchUsers_FailureFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,142 @@
+﻿manageBarista.controller('ManageIndexesCtrl', ['$scope', '$http', '$modal',
+	function ($scope, $http, $modal) {
+
+	    $scope.indexes = null;
+
+	    $scope.addNewIndex = function () {
+
+	        var modalInstance = $modal.open(
+                {
+                    templateUrl: "Views/addeditindexdialog.html",
+                    controller: "AddEditIndexCtrl",
+                    modalFade: true,
+                    dialogFade: true,
+                    resolve: {
+                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
+                        index: function () { return null; },
+                        isNew: function () { return true; }
+                    }
+                });
+
+	        modalInstance.result
+                .then(function (result) {
+                    $scope.getIndexes();
+                });
+	    };
+
+	    $scope.editIndex = function (index) {
+
+	        var modalInstance = $modal.open(
+                {
+                    templateUrl: "Views/addeditindexdialog.html",
+                    controller: "AddEditIndexCtrl",
+                    modalFade: true,
+                    dialogFade: true,
+                    resolve: {
+                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
+                        index: function () { return index; },
+                        isNew: function () { return false; }
+                    }
+                });
+
+	        modalInstance.result
+                .then(function (result) {
+                    $scope.getIndexes();
+                });
+	    };
+
+	    $scope.removeIndex = function (index) {
+	        var msgbox = $modal.open({
+	            templateUrl: "confirmRemoveIndex.html"
+	        });
+
+	        msgbox.result.then(function (result) {
+	            toastr.info('Removing Index...');
+	            $http.post($scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteSearchIndex.js', index)
+					.success(function (index) {
+					    toastr.success("Removed Index!");
+					    $scope.getIndexes();
+					})
+					.error(function (index) {
+					    toastr.error("Unable to remove Index :(");
+					});
+	        });
+	    };
+
+	    $scope.getIndexes = function () {
+	        toastr.options = {
+	            "debug": false,
+	            "positionClass": "toast-bottom-right",
+	            "onclick": null,
+	            "fadeIn": 300,
+	            "fadeOut": 1000,
+	            "timeOut": 5000,
+	            "extendedTimeOut": 5000
+	        };
+
+	        toastr.info('Loading Indexes...');
+	        $http.get($scope.baristaBaseUrl + '/_admin/BaristaService/API/GetSearchIndexes.js')
+                .success(function (indexes) {
+
+                    toastr.success("Loaded!");
+                    toastr.clear();
+
+                    $scope.indexes = indexes;
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
+                })
+                .error(function (indexes) {
+                    toastr.error("Unable to load Indexes :(");
+                });
+	    };
+
+	    $scope.getIndexes();
+
+	    $scope.gridOptions = {
+	        data: 'indexes',
+	        enableColumnResize: true,
+	        columnDefs: [
+                { field: 'name', displayName: 'Name' },
+                { field: 'description', displayName: 'Description' },
+                { field: 'indexType', displayName: 'Index Type' },
+                { field: 'indexStoragePath', displayName: 'Index Storage Path' },
+                { field: '', displayName: '', cellTemplate: '<div class="btn btn-xs btn-primary" style="margin-left: 10px; margin-top: 5px; width: 62px;" ng-click="editIndex(row.entity)"><i class="icon-edit"></i>Edit</div><div class="btn btn-xs btn-danger" style="margin-left: 10px; margin-top: 5px; width: 62px;" ng-click="removeIndex(row.entity)"><i class="icon-remove"></i>Remove</div>' }
+	        ]
+
+	    };
+	}]);
+
+manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
+	function ($scope, $http, $modalInstance, baristaBaseUrl, index, isNew) {
+	    $scope.isNew = isNew;
+	    $scope.index = index;
+
+	    if ($scope.index == null)
+	        $scope.index = {};
+
+	    $scope.addOrUpdate = function () {
+	        if ($scope.isNew)
+	            toastr.info('Adding Index...');
+	        else
+	            toastr.info('Updating Index...');
+	        $http.post(baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js', $scope.index)
+                .success(function (index) {
+                    if ($scope.isNew)
+                        toastr.success('Added Index!');
+                    else
+                        toastr.success('Updated Index!');
+                    $modalInstance.close(index);
+                })
+                .error(function (index) {
+                    if ($scope.isNew)
+                        toastr.error("Unable to add Index :(");
+                    else
+                        toastr.error("Unable to update Index :(");
+                });
+	    };
+
+	    $scope.cancel = function () {
+	        $modalInstance.dismiss();
+	    };
+	}]);

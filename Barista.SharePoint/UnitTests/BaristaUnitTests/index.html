@@ -1,0 +1,67 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Barista SharePoint Services Unit Tests</title>
+        <link rel="stylesheet" href="/_layouts/BaristaJS/qunit-1.10.0/qunit-1.10.0.css" />
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <script type="text/javascript" src="/_layouts/BaristaJS/json2.js"></script>
+        <script type="text/javascript" src="/_layouts/BaristaJS/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="/_layouts/BaristaJS/linqjs-2.2.0.2/linq.min.js"></script>
+        <script type="text/javascript" src="/_layouts/BaristaJS/linqjs-2.2.0.2/jquery.linq.min.js"></script>
+        <script type="text/javascript" src="/_layouts/BaristaJS/qunit-1.10.0/qunit-1.10.0.js"></script>
+        <script type="text/javascript">
+            //Returns the current root url.
+            function getDomain() {
+                return location.protocol + "//" + location.hostname + ":" + location.port;
+            }
+
+            //Returns the K2 Service url appropriate for the environment that the test is running in.
+            function getK2ServiceUrl() {
+                if (location.hostname == "ofsdev")
+                    return "http://ofsdev:81/K2Services/WCF.svc";
+                else if (location.hostname == "ofs2010dev")
+                    return "http://ofs2010devk2workspace/K2Services/WCF.svc";
+                else if (location.hostname == "ofs2010stage")
+                    return "http://ofs2010stagek2workspace/K2Services/WCF.svc";
+                else if (location.hostname == "ofsportal")
+                    return "http://ofsportalk2workspace/K2Services/WCF.svc";
+                else
+                    return location.protocol + "//" + location.hostname + ":81/K2Services/WCF.svc";
+            }
+
+            //Returns a group name appropriate for the environment that the test is running in.
+            function getKnownGroupName() {
+                if (location.hostname == "ofsdev")
+                    return "Administrators";
+                else
+                    return "OFS Portal Solution Developers";
+            }
+
+            function getKnownUserName() {
+                if (location.hostname == "ofsdev")
+                    return "Administrator";
+                else
+                    return "SP10FarmAdmin";
+            }
+
+            function getProxy() {
+                if (location.hostname == "ofsdev" || location.hostname == "sp2010dev")
+                    return null;
+                else
+                    return { address: "http://proxy3.do.treas.gov:8080", useDefaultCredentials: true };
+            }
+
+            function getContentPath() {
+                    return "/Content/";
+            }
+        </script>
+        <script type="text/javascript" src="BaristaTests.js"></script>
+        <script type="text/javascript" src="BaristaActiveDirectoryTests.js"></script>
+        <script type="text/javascript" src="BaristaDocumentTests.js"></script>
+        <script type="text/javascript" src="BaristaSharePointTests.js"></script>
+        <script type="text/javascript" src="BaristaK2Tests.js"></script>
+    </body>
+</html>

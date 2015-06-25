@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1CF79B59-CDD6-4920-8EDB-4EF36E332EE0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Barista.Social</RootNamespace>
+    <AssemblyName>Barista.Social</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bundles\FlickrBundle.cs" />
+    <Compile Include="Bundles\TwitterBundle.cs" />
+    <Compile Include="Bundles\VineBundle.cs" />
+    <Compile Include="DesktopPlatformAdapter.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterEntity.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterEntityCollection.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterHashtag.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterMedia.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterMention.cs" />
+    <Compile Include="Imports\Budgie\Entities\TwitterUrl.cs" />
+    <Compile Include="Imports\Budgie\Extensions\StringExceptions.cs" />
+    <Compile Include="Imports\Budgie\Extensions\WebRequestExtensions.cs" />
+    <Compile Include="Imports\Budgie\Extensions\WebResponseExtensions.cs" />
+    <Compile Include="Imports\Budgie\IPlatformAdaptor.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonDirectMessage.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonEntityCollection.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonError.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonFriendship.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonHashtag.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonIdCursor.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonList.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonListCursor.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonMedia.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonMediaSize.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonMention.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonSavedSearch.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonSearchResult.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonSearchResults.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonStatus.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonUrl.cs" />
+    <Compile Include="Imports\Budgie\Json\JsonUser.cs" />
+    <Compile Include="Imports\Budgie\Json\TwitterizerDateConverter.cs" />
+    <Compile Include="Imports\Budgie\OAuthTokens.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.DirectMessages.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Favorites.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Friendships.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Lists.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.OAuth.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.SavedSearches.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Timelines.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Tweets.cs" />
+    <Compile Include="Imports\Budgie\TwitterClient.Users.cs" />
+    <Compile Include="Imports\Budgie\TwitterFriendship.cs" />
+    <Compile Include="Imports\Budgie\TwitterList.cs" />
+    <Compile Include="Imports\Budgie\TwitterRateLimit.cs" />
+    <Compile Include="Imports\Budgie\TwitterResponse.cs" />
+    <Compile Include="Imports\Budgie\TwitterSavedSearch.cs" />
+    <Compile Include="Imports\Budgie\TwitterSearchResults.cs" />
+    <Compile Include="Imports\Budgie\TwitterStatus.cs" />
+    <Compile Include="Imports\Budgie\TwitterUser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Barista.Core\Barista.Core.csproj">
+      <Project>{0cbc23ef-f5a0-4ddc-8c83-3b7fbb47e598}</Project>
+      <Name>Barista.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Library\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="DocumentStoreEntityWelcomePage" Url="_cts/Document Store Entity" Path="DocumentStoreEntityWelcomePage">
+    <File Path="DocSetHomePage.aspx" Url="DocSetHomePage.aspx">
+      <AllUsersWebPart WebPartOrder="0" WebPartZoneID="WebPartZone_TopLeft">
+        <![CDATA[<WebPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/WebPart/v2">
+          <Title>Image</Title>
+          <FrameType>Default</FrameType>
+          <Description>Use to display pictures and photos.</Description>
+          <IsIncluded>true</IsIncluded>
+          <ZoneID>WebPartZone_TopLeft</ZoneID>
+          <PartOrder>0</PartOrder>
+          <FrameState>Normal</FrameState>
+          <Height />
+          <Width />
+          <AllowRemove>true</AllowRemove>
+          <AllowZoneChange>true</AllowZoneChange>
+          <AllowMinimize>true</AllowMinimize>
+          <AllowConnect>true</AllowConnect>
+          <AllowEdit>true</AllowEdit>
+          <AllowHide>true</AllowHide>
+          <IsVisible>true</IsVisible>
+          <DetailLink />
+          <HelpLink />
+          <HelpMode>Modeless</HelpMode>
+          <Dir>Default</Dir>
+          <PartImageSmall />
+          <MissingAssembly>Cannot import this Web Part.</MissingAssembly>
+          <PartImageLarge />
+          <IsIncludedFilter />
+          <Assembly>Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+          <TypeName>Microsoft.SharePoint.WebPartPages.ImageWebPart</TypeName>
+          <ImageLink xmlns="http://schemas.microsoft.com/WebPart/v2/Image">/_layouts/images/docset_welcomepage_big.png</ImageLink>
+          <AlternativeText xmlns="http://schemas.microsoft.com/WebPart/v2/Image" />
+          <VerticalAlignment xmlns="http://schemas.microsoft.com/WebPart/v2/Image">Middle</VerticalAlignment>
+          <HorizontalAlignment xmlns="http://schemas.microsoft.com/WebPart/v2/Image">Center</HorizontalAlignment>
+          <BackgroundColor xmlns="http://schemas.microsoft.com/WebPart/v2/Image">transparent</BackgroundColor>
+        </WebPart>]]>
+      </AllUsersWebPart>
+      <AllUsersWebPart WebPartOrder="0" WebPartZoneID="WebPartZone_Top">
+        <![CDATA[<WebPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/WebPart/v2">
+                    <Title>Document Set Properties</Title>
+                    <FrameType>Default</FrameType>
+                    <Description>Displays the properties of the Document Set.</Description>
+                    <IsIncluded>true</IsIncluded>
+                    <ZoneID>WebPartZone_Top</ZoneID>
+                    <PartOrder>0</PartOrder>
+                    <FrameState>Normal</FrameState>
+                    <Height />
+                    <Width />
+                    <AllowRemove>true</AllowRemove>
+                    <AllowZoneChange>true</AllowZoneChange>
+                    <AllowMinimize>true</AllowMinimize>
+                    <AllowConnect>true</AllowConnect>
+                    <AllowEdit>true</AllowEdit>
+                    <AllowHide>true</AllowHide>
+                    <IsVisible>true</IsVisible>
+                    <DetailLink />
+                    <HelpLink />
+                    <HelpMode>Modeless</HelpMode>
+                    <Dir>Default</Dir>
+                    <PartImageSmall />
+                    <MissingAssembly>Cannot import this Web Part.</MissingAssembly>
+                    <PartImageLarge>/_layouts/images/msimagel.gif</PartImageLarge>
+                    <IsIncludedFilter />
+                    <DisplayText>
+                    </DisplayText>
+                    <Assembly>Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+                    <TypeName>Microsoft.Office.Server.WebControls.DocumentSetPropertiesWebPart</TypeName>
+                  </WebPart>]]>
+      </AllUsersWebPart>
+      <AllUsersWebPart WebPartOrder="0" WebPartZoneID="WebPartZone_CenterMain">
+        <![CDATA[<WebPart xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/WebPart/v2">
+          <Title>Document Set Contents</Title>
+          <FrameType>Default</FrameType>
+          <Description>Displays the contents of the Document Set.</Description>
+          <IsIncluded>true</IsIncluded>
+          <ZoneID>WebPartZone_CenterMain</ZoneID>
+          <PartOrder>0</PartOrder>
+          <FrameState>Normal</FrameState>
+          <Height />
+          <Width />
+          <AllowRemove>true</AllowRemove>
+          <AllowZoneChange>true</AllowZoneChange>
+          <AllowMinimize>true</AllowMinimize>
+          <AllowConnect>true</AllowConnect>
+          <AllowEdit>true</AllowEdit>
+          <AllowHide>true</AllowHide>
+          <IsVisible>true</IsVisible>
+          <DetailLink />
+          <HelpLink />
+          <HelpMode>Modeless</HelpMode>
+          <Dir>Default</Dir>
+          <PartImageSmall />
+          <MissingAssembly>Cannot import this Web Part.</MissingAssembly>
+          <PartImageLarge>/_layouts/images/msimagel.gif</PartImageLarge>
+          <IsIncludedFilter />
+          <DisplayText>
+          </DisplayText>
+          <Assembly>Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+          <TypeName>Microsoft.Office.Server.WebControls.DocumentSetContentsWebPart</TypeName>
+        </WebPart>]]>
+      </AllUsersWebPart>
+    </File>
+  </Module>
+</Elements>

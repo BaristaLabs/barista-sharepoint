@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="BaristaTemplates" Url="BaristaTemplates" RootWebOnly="true">
+    <File Path="BaristaTemplates\FormController.js" Url="FormController.js" Type="GhostableInLibrary"/>
+    <File Path="BaristaTemplates\FormView.html" Url="FormView.html" Type="GhostableInLibrary"/>
+    <File Path="BaristaTemplates\BaristaDataDocument.js" Url="BaristaDataDocument.js" Type="GhostableInLibrary"/>
+  </Module>
+</Elements>

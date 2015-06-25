@@ -1,0 +1,51 @@
+﻿<ps:Config xmlns:ps="urn:Microsoft.SharePoint.PowerShell"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:schemaLocation="urn:Microsoft.SharePoint.PowerShell SPCmdletSchema.xml">
+  <ps:Assembly Name="Barista.SharePoint.PowerShell, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52">
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaSearchService</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaSearchService</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaSearchServiceInstance</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaSearchServiceInstance</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>Remove-BaristaSearchService</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.RemoveBaristaSearchService</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaWebSocketsService</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaWebSocketsService</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaWebSocketsServiceInstance</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaWebSocketsServiceInstance</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>Remove-BaristaWebSocketsService</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.RemoveBaristaWebSocketsService</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaServiceApplication</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaServiceApplication</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>New-BaristaServiceApplicationProxy</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.NewBaristaServiceApplicationProxy</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>Invoke-BaristaService</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.InvokeBaristaService</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
+  </ps:Assembly>
+</ps:Config>

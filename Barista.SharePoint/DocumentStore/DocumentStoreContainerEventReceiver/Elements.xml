@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Receivers
+    ListTemplateId = "10001"
+    ListTemplateOwner = "1e084611-a8c5-449c-a1f0-841a56ee2712">
+    <Receiver>
+      <Name>DocumentStoreContainerEventReceiverListAdding</Name>
+      <Type>ListAdded</Type>
+      <Assembly>$SharePoint.Project.AssemblyFullName$</Assembly>
+      <Class>Barista.SharePoint.DocumentStore.DocumentStoreContainerEventReceiver.DocumentStoreContainerEventReceiver</Class>
+      <SequenceNumber>10000</SequenceNumber>
+      <Synchronization>Synchronous</Synchronization>
+    </Receiver>
+  </Receivers>
+</Elements>

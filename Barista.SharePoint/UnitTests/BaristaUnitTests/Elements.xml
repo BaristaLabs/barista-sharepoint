@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="BaristaUnitTests" Url="Lists/BaristaUnitTests" >
+    <File Path="\BaristaUnitTests\Content\Barista_Deferred.js" Url="Content/Barista_Deferred.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_DeleteUpload.js" Url="Content/Barista_DeleteUpload.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_GetUploads.js" Url="Content/Barista_GetUploads.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_Include.js" Url="Content/Barista_Include.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_ProcessUpload.js" Url="Content/Barista_ProcessUpload.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_RecursiveWebsRetrieval.js" Url="Content/Barista_RecursiveWebsRetrieval.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SimpleExpression.js" Url="Content/Barista_SimpleExpression.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SPListItemRetrieval.js" Url="Content/Barista_SPListItemRetrieval.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SPListItemRetrievalThroughView.js" Url="Content/Barista_SPListItemRetrievalThroughView.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SPListTitlesToPDF.js" Url="Content/Barista_SPListTitlesToPDF.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SPListItemCreation.js" Url="Content/Barista_SPListItemCreation.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_SPListEventReceiver.js" Url="Content/Barista_SPListEventReceiver.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_DSEventReceiverExample.js" Url="Content/Barista_DSEventReceiverExample.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\DemoTemplate.htm" Url="Content/DemoTemplate.htm" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaActiveDirectoryTests.js" Url="BaristaActiveDirectoryTests.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaDocumentTests.js" Url="BaristaDocumentTests.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaFileUploadTest.html" Url="BaristaFileUploadTest.html" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaK2Tests.js" Url="BaristaK2Tests.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaSharePointTests.js" Url="BaristaSharePointTests.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaTests.js" Url="BaristaTests.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\index.html" Url="index.html" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\Content\Barista_KendoUI_IB.js" Url="Content/Barista_KendoUI_IB.js" Type="GhostableInLibrary"/>
+    <File Path="\BaristaUnitTests\BaristaKendoUIEditor.html" Url="BaristaKendoUIEditor.html" Type="GhostableInLibrary"/>
+  </Module>
+</Elements>

@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Changelog for Kendo UI v2015.1.429 (April 29, 2015)</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font: .75em/1.5 Tahoma, sans-serif;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-size: normal;
+        }
+
+        h2 {
+            font-size: 2em;
+            font-weight: normal;
+
+            margin: 1.2em 0 .3em;
+            padding-bottom: .2em;
+        }
+
+        .breaking {
+            background-color: #e10c01;
+            color: #fff;
+            border-radius: 3px;
+            padding: 3px 4px;
+            display: inline-block;
+            font-size: 11px;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        #page {
+            width: 50em;
+            margin: 0 auto 2em;
+            border-radius: 0 0 1em 1em;
+            box-shadow: 0 0 10px #ccc;
+            padding: 1em 2em 2em;
+        }
+
+        .poBoxIcon {
+            float: left;
+            font-size: 2em;
+            margin: 1.2em .5em 0 0;
+        }
+
+        .poTopLine {
+            border-top: 2px solid #e1e1e1;
+            margin: 17px 0 40px 0;
+        }
+    </style>
+
+    <base href="http://www.telerik.com/support/whats-new/kendo-ui-web/release-history">
+</head>
+<body>
+    <div id="page">
+        <h1 class="title">Release notes for Kendo UI v2015.1.429</h1>
+
+        <h1>Components</h1>
+        <div class="tClear poTopLine">
+            <div class="poBoxIconText">
+                
+                <p><strong>What's fixed</strong></p>
+<ul>
+<li>kendo.expr can't handle array accessors when safe is true</li>
+<li>.map files are referencing source files as src/src</li>
+</ul>
+            </div>
+        </div>
+
+
+        <div class="tClear poTopLine">
+            <h2>AngularJS</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>k-ng-model support for auto-bind=false option</li>
+</ul>
+            
+        </div>
+        <div class="tClear poTopLine">
+            <h2>AutoComplete</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Widget does not show the fixed group header when data source is set dynamically</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Chart</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>Add value, dataItem and culture info to axis labels visual event arguments</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Notes size option is not applied</li>
+<li>Axis labels are not entirely visible when custom visual is used.</li>
+<li>Stacked and stepped area charts drop the last value</li>
+<li>Tooltip padding doesn't work</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>ComboBox</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>MVVM source binding should re-set widget's value</li>
+<li>Widget should not show selected value on initial loading</li>
+<li>k-ng-model support for auto-bind=false option</li>
+<li>MVVM auto-bind = false not obeyed</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Widget does not select the correct option on initialization</li>
+<li>Widget does not show the fixed group header when data source is set dynamically</li>
+<li>Widget does not render the items when autoBind is set to false and source is bound</li>
+<li>Show custom value when widgets data source is empty</li>
+<li>Selected item text/dataItem is not updated</li>
+<li>Virtualization is broken when dataSource is paged and filtered</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>DataSource</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Skip wrapping model field getter for XMLReader if already a function</li>
+<li>Prefetch requests should handle error events</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Diagram</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>The change event is not triggered when a connection is added</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Draggable</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>DropTargetArea filter is not applied accordingly</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Drawing</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Buggy rendering of Google Maps into PDF/PNG</li>
+<li>Border-radius too big is rendered wrongfully in PDF/SVG</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>DropDownList</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>MVVM source binding should re-set widget's value</li>
+<li>k-ng-model support for auto-bind=false option</li>
+<li>MVVM auto-bind = false not obeyed</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Widget does not select the correct option on initialization</li>
+<li>Widget does not raise the select event on blur when source is filtered</li>
+<li>Widget trigger select event with undefined item when autoBind: false is used</li>
+<li>Widget does not show the fixed group header when data source is set dynamically</li>
+<li>Widget throws an exception when press ENTER and datasource is empty</li>
+<li>dataItem method does not return correct dataitem when optionLabel element is passed to the function</li>
+<li>Selected item text/dataItem is not updated</li>
+<li>Virtualized list does not show a result on second filtering</li>
+<li>Virtualization is broken when dataSource is paged and filtered</li>
+<li>Widget does not autoscroll to selected item in Galaxy S4</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Editor</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Slow editing performance on Android devices</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Grid</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Grid resize method breaks virtual scrolbar if executed too early</li>
+<li>Conflict between adaptive and responsive styles</li>
+<li>JS error when navigating out of the grid header</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>MVVM</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>MVVM auto-bind = false not obeyed</li>
+<li>SELECT auto-selects first option, but does not update MVVM binding.</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Widget does not show the fixed group header when data source is set dynamically</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Map</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>HtmlAttributes method doesn't work for the markers</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>MobileButton</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>data-click-on=down also triggers events on up</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>MultiSelect</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>MVVM source binding should re-set widget's value</li>
+<li>k-ng-model support for auto-bind=false option</li>
+<li>MultiSelect should render the text of the underlying custom option elements</li>
+<li>Persist the selected tags on re-bind when returned data does not consist all selected data items</li>
+<li>MVVM auto-bind = false not obeyed</li>
+<li>Widget does not remove tags when "X" is pressed in mobile devices</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Widget does not show the fixed group header when data source is set dynamically</li>
+<li>Popup closes immediately on open</li>
+<li>MultiSelect clears selection when click input inside the tag element</li>
+<li>Selected item text/dataItem is not updated</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>PDF Export</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Images missing in PDF export (IE)</li>
+<li>Auto page breaking in PDF is broken when Bootstrap CSS is included</li>
+<li>Error when using PDF export with mootools loaded on page</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>Scheduler</h2>
+            
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>Conflict between adaptive and responsive styles</li>
+<li>TimelineMonth view sets k-nonwork-hour class for all events</li>
+<li>Change event is not triggered when selecting events using select method</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>StockChart</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>Add value, dataItem and culture info to axis labels visual event arguments</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>PlotBands for the navigator axes don't appear</li>
+<li>Visible: false option of the navigator.categoryAxis.majorTicks does not work</li>
+</ul>
+        </div>
+        <div class="tClear poTopLine">
+            <h2>TreeList</h2>
+            <p><strong>What's new</strong></p>
+<ul>
+<li>Display "null" as blank cell</li>
+</ul>
+            <p><strong>What's fixed</strong></p>
+<ul>
+<li>TreeList editor serialization doesn't correctly escape nested widgets</li>
+<li>Custom command in TreeList toolbar doesn't execute its handler</li>
+<li>Selection on alt rows is removed on collapse of parent row</li>
+<li>TreeList commands doesn't prevent default browser action</li>
+<li>Mixing string and custom commands triggers JS error</li>
+<li>TreeList expand can be hidden with column menu</li>
+<li>Can't hide columns when when headerAttributes are set</li>
+<li>Column headers are not scrolled on mobile devices</li>
+</ul>
+        </div>
+    </div>
+</body>
+</html>

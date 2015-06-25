@@ -1,0 +1,42 @@
+﻿<div class="editor form-horizontal" style="margin: 25px">
+    <form name="form" novalidate>
+        <div class="form-group">
+            <label>Name </label>
+            <input class="form-control" type="text" name="name" data-ng-model="index.name" placeholder="Name" required data-ng-disabled="!isNew"/>
+			<div data-ng-show="form.name.$invalid">Invalid:
+				<span data-ng-show="form.name.$error.required">You need to enter an index name.</span>
+				<span data-ng-show="form.name.$error.text">A name must be entered.</span>
+			</div>
+        </div>
+        <div class="form-group">
+            <label>Description </label>
+            <textarea class="form-control" rows="3" data-ng-model="index.description" placeholder="Description">
+            </textarea>
+        </div>
+        <div class="form-group">
+            <label>Index Type </label>
+			<select name="indexType" data-ng-model="index.indexType" required>
+				<option value="RAM Directory">RAM Directory</option>
+				<option value="File Directory">File Directory</option>
+				<option value="SharePoint Directory">SharePoint Directory</option>
+			</select>
+			<div data-ng-show="form.indexType.$invalid">Invalid:
+			  <span data-ng-show="form.indexType.$error.required">You need to enter an index type.</span>
+			</div>
+        </div>
+        <div class="form-group">
+            <label>Index Storage Path </label>
+            <input class="form-control" type="text" data-ng-model="index.indexStoragePath" placeholder="Index Storage Path" />
+        </div>
+         <div class="btn-group" style="float:right">
+            <div class="btn btn-primary" data-ng-click="addOrUpdate()" data-ng-disabled="form.$invalid">
+                <div data-ng-switch="isNew">
+                    <div data-ng-switch-when="true">Add</div>
+                    <div data-ng-switch-when="false">Update</div>
+                </div>
+            </div>
+            <div class="btn btn-default" data-ng-click="cancel()">Cancel</div>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>
