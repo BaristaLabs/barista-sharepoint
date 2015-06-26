@@ -1049,7 +1049,7 @@
                 "!doc": "Web Optimization"
             }
         },
-        "barista": {
+        "Barista": {
             "!type": "fn(?)",
             "prototype": {
                 "common": {
@@ -1120,6 +1120,9 @@
             "environment": {
                 "!type": "+Environment"
             }
+        },
+        "barista": {
+            "!type": "+Barista"
         },
         "Guid": {
             "!type": "fn(?)",
@@ -1363,7 +1366,7 @@
                     "!type": "string"
                 },
                 "members": {
-                    "!type": "[+ADUser]"
+                    "!type": "[string]"
                 },
                 "name": {
                     "!type": "string"

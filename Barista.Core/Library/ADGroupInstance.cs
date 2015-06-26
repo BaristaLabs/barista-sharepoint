@@ -85,7 +85,7 @@
         }
 
         [JSProperty(Name = "members")]
-        [JSDoc("ternPropertyType", "[+ADUser]")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Members
         {
             get
@@ -114,7 +114,7 @@
                 if (user == null)
                     continue;
 
-                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, m_ldap));
             }
 
             return result;
@@ -131,7 +131,7 @@
                 if (group == null)
                     continue;
 
-                ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, group));
+                ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, group, m_ldap));
             }
 
             return result;

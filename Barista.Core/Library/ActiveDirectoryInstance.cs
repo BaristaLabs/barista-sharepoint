@@ -79,7 +79,7 @@
 
             return user == null
               ? null
-              : new ADUserInstance(Engine.Object.InstancePrototype, user);
+              : new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath);
         }
 
         [JSFunction(Name = "getADUserByDistinguishedName")]
@@ -94,7 +94,7 @@
 
             return user == null
               ? null
-              : new ADUserInstance(Engine.Object.InstancePrototype, user);
+              : new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath);
         }
 
         [JSFunction(Name = "getADGroup")]
@@ -105,7 +105,7 @@
 
             return group == null
                 ? null
-                : new ADGroupInstance(Engine.Object.InstancePrototype, group);
+                : new ADGroupInstance(Engine.Object.InstancePrototype, group, LdapPath);
         }
 
         [JSFunction(Name = "getADGroupByDistinguishedName")]
@@ -120,7 +120,7 @@
 
             return group == null
               ? null
-              : new ADGroupInstance(Engine.Object.InstancePrototype, group);
+              : new ADGroupInstance(Engine.Object.InstancePrototype, group, LdapPath);
         }
 
         [JSFunction(Name = "searchAllDirectoryEntries")]
@@ -139,11 +139,11 @@
             {
                 if (entity is ADGroup)
                 {
-                    ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, entity as ADGroup));
+                    ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, entity as ADGroup, LdapPath));
                 }
                 else if (entity is ADUser)
                 {
-                    ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, entity as ADUser));
+                    ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, entity as ADUser, LdapPath));
                 }
             }
 
@@ -175,7 +175,7 @@
             var result = Engine.Array.Construct();
             foreach (var user in users)
             {
-                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath));
             }
             return result;
         }
@@ -190,7 +190,7 @@
             var result = Engine.Array.Construct();
             foreach (var user in users)
             {
-                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath));
             }
             return result;
         }

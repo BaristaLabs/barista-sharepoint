@@ -113,8 +113,35 @@
                 result.SetPropertyValue("!name", "barista", false);
                 result.SetPropertyValue("!define", define, false);
 
-                //Add in some barista globals.
-                result.SetPropertyValue("barista", GetTernDocumentationObject(Engine, typeof(BaristaGlobal)), false);
+                
+                //Add in all properties and functions defined on the global object except for the built-ins.
+                /*var globalExclusions = new []
+                {
+                    "Infinity", "NaN", "undefined", "JSON", "Math",
+                    "Array", "Boolean", "Date", "Function", "Number", "Object", "RegExp", "String",
+                    "Error", "RangeError", "TypeError", "SyntaxError", "URIError", "EvalError", "ReferenceError"
+                };
+
+                //muhaha.
+                var thisVar = Engine.GetGlobalValue("this") as ObjectInstance;
+                if (thisVar != null) //Woah, this would be wild wouldn't it.
+                {
+                    foreach (var property in thisVar.Properties)
+                    {
+                        if (globalExclusions.Contains(property.Name) == false &&
+                            result.HasProperty(property.Name) == false)
+                        {
+                            //GetTernDocumentationObject(Engine, property);
+                            result.SetPropertyValue(property.Name, "", false);
+                        }
+                    }
+                }*/
+
+                result.SetPropertyValue("Barista", GetTernDocumentationObject(Engine, typeof(BaristaGlobal)), false);
+                var baristaDocObj = Engine.Object.Construct();
+                baristaDocObj.SetPropertyValue("!type", "+Barista", false);
+                result.SetPropertyValue("barista", baristaDocObj, false);
+
                 result.SetPropertyValue("Guid", GetTernDocumentationObject(Engine, typeof(GuidInstance)), false);
                 result.SetPropertyValue("HashTable", GetTernDocumentationObject(Engine, typeof(HashtableInstance)), false);
                 result.SetPropertyValue("Uri", GetTernDocumentationObject(Engine, typeof(UriInstance)), false);
