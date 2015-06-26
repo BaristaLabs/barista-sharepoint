@@ -362,15 +362,15 @@
                     "!doc": "Returns an object representating the specified group."
                 },
                 "getADGroupByDistinguishedName": {
-                    "!type": "fn(distinguishedName: ?) -> ?",
+                    "!type": "fn(distinguishedName: ?) -> +ADGroup",
                     "!doc": "Returns an object representating the specified group."
                 },
                 "getADUser": {
-                    "!type": "fn(loginName: ?) -> ?",
+                    "!type": "fn(loginName: ?) -> +ADUser",
                     "!doc": "Returns an object representating the specified user. If no login name is specified, returns the current user."
                 },
                 "getADUserByDistinguishedName": {
-                    "!type": "fn(distinguishedName: ?) -> ?",
+                    "!type": "fn(distinguishedName: ?) -> +ADUser",
                     "!doc": "Returns an object representating the specified user."
                 },
                 "searchAllDirectoryEntries": {
@@ -1382,6 +1382,149 @@
                 },
                 "expandUsers": {
                     "!type": "fn() -> [+ADUser]"
+                },
+                "toLocaleString": {
+                    "!type": "fn() -> string"
+                },
+                "valueOf": {
+                    "!type": "fn() -> ?"
+                }
+            }
+        },
+        "ADUser": {
+            "!type": "fn(?)",
+            "prototype": {
+                "badPasswordCount": {
+                    "!type": "number"
+                },
+                "badPasswordTime": {
+                    "!type": "+Date"
+                },
+                "city": {
+                    "!type": "string"
+                },
+                "company": {
+                    "!type": "string"
+                },
+                "country": {
+                    "!type": "string"
+                },
+                "department": {
+                    "!type": "string"
+                },
+                "description": {
+                    "!type": "string"
+                },
+                "displayName": {
+                    "!type": "string"
+                },
+                "distinguishedName": {
+                    "!type": "string"
+                },
+                "email": {
+                    "!type": "string"
+                },
+                "failedInteractiveLogonCount": {
+                    "!type": "number"
+                },
+                "failedInteractiveLogonCountAtLastSuccessfulLogon": {
+                    "!type": "number"
+                },
+                "faxNumber": {
+                    "!type": "string"
+                },
+                "firstName": {
+                    "!type": "string"
+                },
+                "groups": {
+                    "!type": "[string]"
+                },
+                "homePage": {
+                    "!type": "string"
+                },
+                "homePhone": {
+                    "!type": "string"
+                },
+                "initials": {
+                    "!type": "string"
+                },
+                "ipPhone": {
+                    "!type": "string"
+                },
+                "isAccountDisabled": {
+                    "!type": "number"
+                },
+                "lastFailedInteractiveLogonTime": {
+                    "!type": "+Date"
+                },
+                "lastLogoff": {
+                    "!type": "+Date"
+                },
+                "lastLogon": {
+                    "!type": "+Date"
+                },
+                "lastName": {
+                    "!type": "string"
+                },
+                "lastSuccessfulInteractiveLogonTime": {
+                    "!type": "+Date"
+                },
+                "logonCount": {
+                    "!type": "number"
+                },
+                "managerLdap": {
+                    "!type": "string"
+                },
+                "managerName": {
+                    "!type": "string"
+                },
+                "mobileNumber": {
+                    "!type": "string"
+                },
+                "name": {
+                    "!type": "string"
+                },
+                "office": {
+                    "!type": "string"
+                },
+                "pager": {
+                    "!type": "string"
+                },
+                "passwordLastSet": {
+                    "!type": "+Date"
+                },
+                "phoneNumber": {
+                    "!type": "string"
+                },
+                "poBox": {
+                    "!type": "string"
+                },
+                "preWin2kLogonName": {
+                    "!type": "string"
+                },
+                "rawSid": {
+                    "!type": "?"
+                },
+                "sId": {
+                    "!type": "?"
+                },
+                "state": {
+                    "!type": "string"
+                },
+                "street": {
+                    "!type": "string"
+                },
+                "title": {
+                    "!type": "string"
+                },
+                "userLogonName": {
+                    "!type": "string"
+                },
+                "zip": {
+                    "!type": "string"
+                },
+                "expandGroups": {
+                    "!type": "fn() -> [+ADGroup]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"

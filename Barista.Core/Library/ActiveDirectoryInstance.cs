@@ -66,7 +66,7 @@
 
         [JSFunction(Name = "getADUser")]
         [JSDoc("Returns an object representating the specified user. If no login name is specified, returns the current user.")]
-        public object GetADUser(object loginName)
+        public ADUserInstance GetADUser(object loginName)
         {
             ADUser user;
             if (loginName == null || loginName == Undefined.Value || loginName == Null.Value ||
@@ -84,7 +84,7 @@
 
         [JSFunction(Name = "getADUserByDistinguishedName")]
         [JSDoc("Returns an object representating the specified user.")]
-        public object GetADUserByDistinguishedName(object distinguishedName)
+        public ADUserInstance GetADUserByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||
                 TypeConverter.ToString(distinguishedName).IsNullOrWhiteSpace())
@@ -110,7 +110,7 @@
 
         [JSFunction(Name = "getADGroupByDistinguishedName")]
         [JSDoc("Returns an object representating the specified group.")]
-        public object GetADGroupByDistinguishedName(object distinguishedName)
+        public ADGroupInstance GetADGroupByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||
                 TypeConverter.ToString(distinguishedName).IsNullOrWhiteSpace())
