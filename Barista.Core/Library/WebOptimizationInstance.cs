@@ -22,7 +22,7 @@
         public WebOptimizationInstance(ScriptEngine engine)
             : base(engine)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public Func<string> FileKeyPrefix
@@ -61,7 +61,7 @@
         public bool HasBundleChangedSince(string bundleDefinitionXml, object date)
         {
             if (date == Undefined.Value || date == Null.Value || date == null)
-                throw new JavaScriptException(this.Engine, "Error", "A date must be supplied as the second argument.");
+                throw new JavaScriptException(Engine, "Error", "A date must be supplied as the second argument.");
 
             DateTime dateToCompare;
             if (date is DateTime)
@@ -69,7 +69,7 @@
             else if (date is DateInstance)
                 dateToCompare = (date as DateInstance).Value;
             else
-                dateToCompare = (new DateInstance(this.Engine.Object.InstancePrototype, TypeConverter.ToString(date))).Value;
+                dateToCompare = (new DateInstance(Engine.Object.InstancePrototype, TypeConverter.ToString(date))).Value;
 
             var doc = new XmlDocument();
             doc.LoadXml(bundleDefinitionXml);
@@ -101,21 +101,21 @@
             if (String.IsNullOrEmpty(fileName))
                 fileName = "bundle.txt";
 
-            var bUpdate = JurassicHelper.GetTypedArgumentValue(this.Engine, update, true);
-            var bMinify = JurassicHelper.GetTypedArgumentValue(this.Engine, minify, false);
+            var bUpdate = JurassicHelper.GetTypedArgumentValue(Engine, update, true);
+            var bMinify = JurassicHelper.GetTypedArgumentValue(Engine, minify, false);
 
             var doc = new XmlDocument();
             doc.LoadXml(bundleDefinitionXml);
             var bundleText = GenerateBundleFromBundleDefinition(fileName, doc, bUpdate, bMinify);
 
-            var bytes = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(bundleText))
+            var bytes = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(bundleText))
             {
                 FileName = fileName,
                 MimeType = StringHelper.GetMimeTypeFromFileName(fileName),
             };
 
-            var result = this.Engine.Object.Construct();
-            result.SetPropertyValue("lastModified", JurassicHelper.ToDateInstance(this.Engine, FileModifiedDates.Values.Max(v => v.Item1)), false);
+            var result = Engine.Object.Construct();
+            result.SetPropertyValue("lastModified", JurassicHelper.ToDateInstance(Engine, FileModifiedDates.Values.Max(v => v.Item1)), false);
             result.SetPropertyValue("data", bytes, false);
             return result;
         }
@@ -156,7 +156,7 @@
                             compress.Write(buffer, 0, numRead);
                         }
                     }
-                    result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, outStream.ToArray());
+                    result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, outStream.ToArray());
 
                     if (fileName != Undefined.Value && fileName != Null.Value && fileName != null)
                         result.FileName = TypeConverter.ToString(fileName);
@@ -177,7 +177,7 @@
             {
                 engine.Execute(Resources.csso_web, "cssoWeb", true);
 
-                engine.GlobalObject.SetProperty("code", css);
+                engine.GlobalObject.SetProperty("css", css);
 
                 var result = engine.Execute(@"var compressor = new CSSOCompressor(), translator = new CSSOTranslator();
 translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
@@ -250,7 +250,7 @@ ast.print_to_string();");
             XmlNode outputAttr = bundleNode.Attributes["output"];
 
             if (outputAttr != null && (outputAttr.InnerText.Contains("/") || outputAttr.InnerText.Contains("\\")))
-                throw new JavaScriptException(this.Engine, "Error", "The 'output' attribute is for file names only - not paths");
+                throw new JavaScriptException(Engine, "Error", "The 'output' attribute is for file names only - not paths");
 
             var nodes = doc.SelectNodes("//file");
 
@@ -274,18 +274,18 @@ ast.print_to_string();");
                 if (FileModifiedDates.ContainsKey(FileKeyPrefix() + file))
                 {
                     var fileContents = FileModifiedDates[FileKeyPrefix() + file];
-                    var lastModified = this.GetLastModifiedDate(file);
+                    var lastModified = GetLastModifiedDate(file);
                     if (lastModified > fileContents.Item1)
                     {
-                        var text = this.ReadAllText(file);
+                        var text = ReadAllText(file);
                         contents = new Tuple<DateTime, string>(lastModified, text);
                         FileModifiedDates[FileKeyPrefix() + file] = contents;
                     }
                 }
                 else
                 {
-                    var lastModified = this.GetLastModifiedDate(file);
-                    var text = this.ReadAllText(file);
+                    var lastModified = GetLastModifiedDate(file);
+                    var text = ReadAllText(file);
                     contents = new Tuple<DateTime, string>(lastModified, text);
                     FileModifiedDates.TryAdd(FileKeyPrefix() + file, contents);
                 }
@@ -329,7 +329,7 @@ ast.print_to_string();");
                         }
                         catch (Exception ex)
                         {
-                            throw new JavaScriptException(this.Engine, "Error", "Error processing " + file + " " + ex.Message);
+                            throw new JavaScriptException(Engine, "Error", "Error processing " + file + " " + ex.Message);
                         }
                     }
 
@@ -345,7 +345,7 @@ ast.print_to_string();");
                         }
                         catch (Exception ex)
                         {
-                            throw new JavaScriptException(this.Engine, "Error", "Error occurred while minifying file " + file + " " + ex.Message);
+                            throw new JavaScriptException(Engine, "Error", "Error occurred while minifying file " + file + " " + ex.Message);
                         }
                     }
                     sb.AppendLine(source);
