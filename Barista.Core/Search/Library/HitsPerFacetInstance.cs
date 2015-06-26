@@ -16,7 +16,7 @@
     [JSConstructorFunction]
     public HitsPerFacetInstance Construct()
     {
-      return new HitsPerFacetInstance(this.InstancePrototype);
+      return new HitsPerFacetInstance(InstancePrototype);
     }
   }
 
@@ -28,8 +28,8 @@
     public HitsPerFacetInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public HitsPerFacetInstance(ObjectInstance prototype, Lucene.Net.Search.SimpleFacetedSearch.HitsPerFacet hitsPerFacet)
@@ -59,14 +59,15 @@
     }
 
     [JSProperty(Name = "documents")]
+    [JSDoc("ternPropertyType", "[+Document]")]
     public ArrayInstance Documents
     {
       get
       {
         var docs =
-          m_hitsPerFacet.Documents.Select(d => new DocumentInstance(this.Engine, d));
+          m_hitsPerFacet.Documents.Select(d => new DocumentInstance(Engine, d));
 // ReSharper disable once CoVariantArrayConversion
-        return this.Engine.Array.Construct(docs.ToArray());
+        return Engine.Array.Construct(docs.ToArray());
       }
     }
   }

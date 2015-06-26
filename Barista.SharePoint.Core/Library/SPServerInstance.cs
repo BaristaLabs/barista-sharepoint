@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPServerInstance Construct()
     {
-      return new SPServerInstance(this.InstancePrototype);
+      return new SPServerInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPServerInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPServerInstance(ObjectInstance prototype, SPServer server)
@@ -72,14 +72,15 @@
     }
 
     [JSFunction(Name = "getServiceInstances")]
+    [JSDoc("ternReturnType", "[+SPService]")]
     public ArrayInstance GetServiceInstances()
     {
       var serviceInstances = m_server.ServiceInstances;
 // ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(serviceInstances
+      return Engine.Array.Construct(serviceInstances
                                            .Select(
                                              si =>
-                                             new SPServiceInstanceInstance(this.Engine.Object.InstancePrototype, si))
+                                             new SPServiceInstanceInstance(Engine.Object.InstancePrototype, si))
                                            .ToArray()
         );
 // ReSharper restore CoVariantArrayConversion

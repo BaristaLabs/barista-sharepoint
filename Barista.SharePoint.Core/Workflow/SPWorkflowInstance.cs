@@ -25,23 +25,23 @@
             if (arg1 is SPWebInstance)
             {
                 var wi = arg1 as SPWebInstance;
-                return new SPWorkflowInstance(this.Engine.Object.InstancePrototype, new SPWorkflow(wi.Web, GuidInstance.ConvertFromJsObjectToGuid(id)));
+                return new SPWorkflowInstance(Engine.Object.InstancePrototype, new SPWorkflow(wi.Web, GuidInstance.ConvertFromJsObjectToGuid(id)));
             }
 
             if (arg1 is SPListItemInstance)
             {
                 var li = arg1 as SPListItemInstance;
-                return new SPWorkflowInstance(this.Engine.Object.InstancePrototype, new SPWorkflow(li.ListItem, GuidInstance.ConvertFromJsObjectToGuid(id)));
+                return new SPWorkflowInstance(Engine.Object.InstancePrototype, new SPWorkflow(li.ListItem, GuidInstance.ConvertFromJsObjectToGuid(id)));
             }
             
-            throw new JavaScriptException(this.Engine, "Error", "The first argument must be either an SPListItem or an SPWeb.");
+            throw new JavaScriptException(Engine, "Error", "The first argument must be either an SPListItem or an SPWeb.");
         }
 
         [JSFunction(Name = "createHistoryEvent")]
         public void CreateHistoryEvent(SPWebInstance web, object workflowId, int eventId, object user, string duration, string outcome, string description, string otherData)
         {
             if (web == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web must be supplied as the first argument.");
+                throw new JavaScriptException(Engine, "Error", "A web must be supplied as the first argument.");
 
             SPMember member;
             if (user is SPUserInstance)
@@ -49,7 +49,7 @@
             else if (user is SPGroupInstance)
                 member = (user as SPGroupInstance).Group;
             else
-                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+                throw new JavaScriptException(Engine, "Error", "User must be a SPUser or SPGroup.");
 
             SPWorkflow.CreateHistoryEvent(web.Web, GuidInstance.ConvertFromJsObjectToGuid(workflowId), eventId, member, TimeSpan.Parse(duration), outcome,
                 description, otherData);
@@ -64,7 +64,7 @@
         public SPWorkflowInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public SPWorkflowInstance(ObjectInstance prototype, SPWorkflow workflow)
@@ -86,7 +86,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.AssociationId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.AssociationId);
             }
         }
 
@@ -106,7 +106,7 @@
             {
                 return m_workflow.AuthorUser == null
                     ? null
-                    : new SPUserInstance(this.Engine, m_workflow.AuthorUser);
+                    : new SPUserInstance(Engine, m_workflow.AuthorUser);
             }
         }
 
@@ -115,7 +115,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_workflow.Created);
+                return JurassicHelper.ToDateInstance(Engine, m_workflow.Created);
             }
         }
 
@@ -133,7 +133,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.HistoryListId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.HistoryListId);
             }
         }
 
@@ -142,7 +142,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.InstanceId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.InstanceId);
             }
         }
 
@@ -178,7 +178,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.ItemGuid);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.ItemGuid);
             }
         }
 
@@ -205,7 +205,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.ListId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.ListId);
             }
         }
 
@@ -216,7 +216,7 @@
             {
                 return m_workflow.Modifications == null
                     ? null
-                    : new SPWorkflowModificationCollectionInstance(this.Engine.Object.InstancePrototype, m_workflow.Modifications);
+                    : new SPWorkflowModificationCollectionInstance(Engine.Object.InstancePrototype, m_workflow.Modifications);
             }
         }
 
@@ -225,7 +225,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_workflow.Modified);
+                return JurassicHelper.ToDateInstance(Engine, m_workflow.Modified);
             }
         }
 
@@ -236,7 +236,7 @@
             {
                 return m_workflow.OwnerUser == null
                     ? null
-                    : new SPUserInstance(this.Engine, m_workflow.OwnerUser);
+                    : new SPUserInstance(Engine, m_workflow.OwnerUser);
             }
         }
 
@@ -245,7 +245,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.SiteId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.SiteId);
             }
         }
 
@@ -263,7 +263,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.TaskListId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.TaskListId);
             }
         }
 
@@ -272,7 +272,7 @@
         {
             get
             {
-                return new SPWorkflowTaskCollectionInstance(this.Engine.Object.InstancePrototype, m_workflow.Tasks);
+                return new SPWorkflowTaskCollectionInstance(Engine.Object.InstancePrototype, m_workflow.Tasks);
             }
         }
 
@@ -290,7 +290,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflow.WebId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflow.WebId);
             }
         }
 
@@ -298,7 +298,7 @@
         public int CompareTo(SPWorkflowInstance workflow)
         {
             if (workflow == null)
-                throw new JavaScriptException(this.Engine, "Error", "The workflow to compare to must be specified.");
+                throw new JavaScriptException(Engine, "Error", "The workflow to compare to must be specified.");
 
             return m_workflow.CompareTo(workflow.SPWorkflow);
         }
@@ -312,7 +312,7 @@
             else if (user is SPGroupInstance)
                 member = (user as SPGroupInstance).Group;
             else
-                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+                throw new JavaScriptException(Engine, "Error", "User must be a SPUser or SPGroup.");
 
             m_workflow.CreateHistoryDurationEvent(eventId, groupId, member, TimeSpan.Parse(duration), outcome,
                 description, otherData);
@@ -327,16 +327,17 @@
             else if (user is SPGroupInstance)
                 member = (user as SPGroupInstance).Group;
             else
-                throw new JavaScriptException(this.Engine, "Error", "User must be a SPUser or SPGroup.");
+                throw new JavaScriptException(Engine, "Error", "User must be a SPUser or SPGroup.");
 
             m_workflow.CreateHistoryEvent(eventId, groupId, member, outcome,
                 description, otherData);
         }
 
         [JSFunction(Name = "getActivityDetails")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetActivityDetails()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var ad in m_workflow.GetActivityDetails())
                 ArrayInstance.Push(result, ad.ToString());
             return result;
@@ -347,7 +348,7 @@
         {
             return m_workflow.HistoryList == null
                 ? null
-                : new SPListInstance(this.Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.HistoryList);
+                : new SPListInstance(Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.HistoryList);
         }
 
         [JSFunction(Name = "getParentAssociation")]
@@ -355,7 +356,7 @@
         {
             return m_workflow.ParentAssociation == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, m_workflow.ParentAssociation);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, m_workflow.ParentAssociation);
         }
 
         [JSFunction(Name = "getParentItem")]
@@ -363,7 +364,7 @@
         {
             return m_workflow.ParentItem == null
                 ? null
-                : new SPListItemInstance(this.Engine, m_workflow.ParentItem);
+                : new SPListItemInstance(Engine, m_workflow.ParentItem);
         }
 
         [JSFunction(Name = "getParentList")]
@@ -371,7 +372,7 @@
         {
             return m_workflow.ParentList == null
                 ? null
-                : new SPListInstance(this.Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.ParentList);
+                : new SPListInstance(Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.ParentList);
         }
 
         [JSFunction(Name = "getParentWeb")]
@@ -379,7 +380,7 @@
         {
             return m_workflow.ParentWeb == null
                 ? null
-                : new SPWebInstance(this.Engine,m_workflow.ParentWeb);
+                : new SPWebInstance(Engine,m_workflow.ParentWeb);
         }
 
         [JSFunction(Name = "getTaskFilter")]
@@ -387,7 +388,7 @@
         {
             return m_workflow.TaskFilter == null
                 ? null
-                : new SPWorkflowFilterInstance(this.Engine.Object.InstancePrototype, m_workflow.TaskFilter);
+                : new SPWorkflowFilterInstance(Engine.Object.InstancePrototype, m_workflow.TaskFilter);
         }
 
         [JSFunction(Name = "getTaskList")]
@@ -395,7 +396,7 @@
         {
              return m_workflow.TaskList == null
                   ? null
-                  : new SPListInstance(this.Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.TaskList);
+                  : new SPListInstance(Engine, m_workflow.HistoryList.ParentWeb.Site, m_workflow.HistoryList.ParentWeb, m_workflow.TaskList);
         }
 
         [JSFunction(Name = "getXml")]

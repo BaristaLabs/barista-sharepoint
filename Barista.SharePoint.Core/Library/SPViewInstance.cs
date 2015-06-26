@@ -21,9 +21,9 @@
       SPView view;
 
       if (SPHelper.TryGetSPView(viewUrl, out view) == false)
-        throw new JavaScriptException(this.Engine, "Error", "A view is not available at the specified url.");
+        throw new JavaScriptException(Engine, "Error", "A view is not available at the specified url.");
 
-      return new SPViewInstance(this.InstancePrototype, view);
+      return new SPViewInstance(InstancePrototype, view);
     }
 
     public SPViewInstance Construct(SPView view)
@@ -31,7 +31,7 @@
       if (view == null)
         throw new ArgumentNullException("view");
 
-      return new SPViewInstance(this.InstancePrototype, view);
+      return new SPViewInstance(InstancePrototype, view);
     }
   }
 
@@ -43,14 +43,14 @@
     public SPViewInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPViewInstance(ObjectInstance prototype, SPView view)
       : this(prototype)
     {
-      this.m_view = view;
+      m_view = view;
     }
 
     #region Properties
@@ -100,7 +100,7 @@
     {
       get
       {
-        return new SPContentTypeIdInstance(this.Engine.Object.InstancePrototype, m_view.ContentTypeId);
+        return new SPContentTypeIdInstance(Engine.Object.InstancePrototype, m_view.ContentTypeId);
       }
       set
       {
@@ -403,11 +403,12 @@
     }
 
     [JSProperty(Name = "viewFields")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance ViewFields
     {
       get
       {
-        var result = this.Engine.Array.Construct();
+        var result = Engine.Array.Construct();
         foreach(var viewField in m_view.ViewFields.OfType<string>())
         {
           ArrayInstance.Push(result, viewField);

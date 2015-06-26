@@ -28,12 +28,12 @@
             SPList list;
             if (SPHelper.TryGetSPList(listUrl, out site, out web, out list))
             {
-                var result = new SPListInstance(this.Engine, site, web, list);
+                var result = new SPListInstance(Engine, site, web, list);
 
                 return result;
             }
 
-            throw new JavaScriptException(this.Engine, "Error", "A list at the specified url was not found.");
+            throw new JavaScriptException(Engine, "Error", "A list at the specified url was not found.");
         }
 
         public SPListInstance Construct(SPList list)
@@ -41,7 +41,7 @@
             if (list == null)
                 throw new ArgumentNullException("list");
 
-            return new SPListInstance(this.Engine, null, null, list);
+            return new SPListInstance(Engine, null, null, list);
         }
     }
 
@@ -56,20 +56,20 @@
         public SPListInstance(ScriptEngine engine, SPSite site, SPWeb web, SPList list)
             : base(new SPSecurableObjectInstance(engine))
         {
-            this.m_site = site;
-            this.m_web = web;
-            this.m_list = list;
+            m_site = site;
+            m_web = web;
+            m_list = list;
 
-            this.SecurableObject = m_list;
+            SecurableObject = m_list;
 
-            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         protected SPListInstance(ObjectInstance prototype, SPList list)
           : base(prototype)
         {
             m_list = list;
-            this.SecurableObject = m_list;
+            SecurableObject = m_list;
         }
 
         public SPList List
@@ -181,7 +181,7 @@
             {
                 return m_list.Audit == null
                     ? null
-                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_list.Audit);
+                    : new SPAuditInstance(Engine.Object.InstancePrototype, m_list.Audit);
             }
         }
 
@@ -192,7 +192,7 @@
             {
                 if (m_list.Author == null)
                     return null;
-                return new SPUserInstance(this.Engine, m_list.Author);
+                return new SPUserInstance(Engine, m_list.Author);
             }
         }
 
@@ -254,7 +254,7 @@
             {
                 return m_list.ContentTypes == null
                   ? null
-                  : new SPContentTypeCollectionInstance(this.Engine.Object.InstancePrototype, m_list.ContentTypes);
+                  : new SPContentTypeCollectionInstance(Engine.Object.InstancePrototype, m_list.ContentTypes);
             }
         }
 
@@ -271,7 +271,7 @@
         [JSProperty(Name = "created")]
         public DateInstance Created
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_list.Created); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_list.Created); }
         }
 
         //currentchangetoken
@@ -281,7 +281,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_list.DefaultContentApprovalWorkflowId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_list.DefaultContentApprovalWorkflowId);
             }
             set
             {
@@ -349,7 +349,7 @@
             {
                 return m_list.DefaultView == null
                     ? null
-                    : new SPViewInstance(this.Engine.Object.InstancePrototype, m_list.DefaultView);
+                    : new SPViewInstance(Engine.Object.InstancePrototype, m_list.DefaultView);
             }
         }
 
@@ -502,7 +502,7 @@
             {
                 return m_list.EventReceivers == null
                     ? null
-                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_list.EventReceivers);
+                    : new SPEventReceiverDefinitionCollectionInstance(Engine.Object.InstancePrototype, m_list.EventReceivers);
             }
         }
 
@@ -528,7 +528,7 @@
             {
                 return m_list.Fields == null
                   ? null
-                  : new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_list.Fields);
+                  : new SPFieldCollectionInstance(Engine.Object.InstancePrototype, m_list.Fields);
             }
         }
 
@@ -557,7 +557,7 @@
         [JSProperty(Name = "id")]
         public GuidInstance Id
         {
-            get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_list.ID); }
+            get { return new GuidInstance(Engine.Object.InstancePrototype, m_list.ID); }
         }
 
         [JSProperty(Name = "imageUrl")]
@@ -604,7 +604,7 @@
             {
                 return m_list.Items == null
                     ? null
-                    : new SPListItemCollectionInstance(this.Engine.Object.InstancePrototype, m_list.Items);
+                    : new SPListItemCollectionInstance(Engine.Object.InstancePrototype, m_list.Items);
             }
         }
 
@@ -617,13 +617,13 @@
         [JSProperty(Name = "lastItemDeletedDate")]
         public DateInstance LastItemDeletedDate
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemDeletedDate); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_list.LastItemDeletedDate); }
         }
 
         [JSProperty(Name = "lastItemModifiedDate")]
         public DateInstance LastItemModifiedDate
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_list.LastItemModifiedDate); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_list.LastItemModifiedDate); }
         }
 
         [JSProperty(Name = "listViewWebPartKey")]
@@ -707,7 +707,7 @@
         [JSProperty(Name = "rootFolder")]
         public SPFolderInstance RootFolder
         {
-            get { return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_list.RootFolder); }
+            get { return new SPFolderInstance(Engine.Object.InstancePrototype, null, null, m_list.RootFolder); }
         }
 
         [JSProperty(Name = "readSecurity")]
@@ -889,7 +889,7 @@
             {
                 return m_list.WorkflowAssociations == null
                     ? null
-                    : new SPWorkflowAssociationCollectionInstance(this.Engine.Object.InstancePrototype, m_list.WorkflowAssociations);
+                    : new SPWorkflowAssociationCollectionInstance(Engine.Object.InstancePrototype, m_list.WorkflowAssociations);
             }
         }
 
@@ -910,7 +910,7 @@
 
             var result = eventReceiversAfter.Except(eventReceiversBefore).FirstOrDefault();
             return result != null
-              ? new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result)
+              ? new SPEventReceiverDefinitionInstance(Engine.Object.InstancePrototype, result)
               : null;
         }
 
@@ -920,7 +920,7 @@
         {
             SPEventReceiverType receiverType;
             if (!eventReceiverType.TryParseEnum(true, out receiverType))
-                throw new JavaScriptException(this.Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
+                throw new JavaScriptException(Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
 
             var baristaItemEventReceiverType =
               Type.GetType("Barista.SharePoint.EventReceivers.BaristaItemEventReceiver.BaristaItemEventReceiver, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52");
@@ -939,12 +939,12 @@
                 return null;
 
             if (code == null || code == Null.Value || code == Undefined.Value)
-                return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+                return new SPEventReceiverDefinitionInstance(Engine.Object.InstancePrototype, result);
 
             result.Data = TypeConverter.ToString(code);
             result.Update();
 
-            return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPEventReceiverDefinitionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addBaristaRemoteItemEventReceiver")]
@@ -953,14 +953,14 @@
         {
             SPEventReceiverType receiverType;
             if (!eventReceiverType.TryParseEnum(true, out receiverType))
-                throw new JavaScriptException(this.Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
+                throw new JavaScriptException(Engine, "Error", "An event receiver type must be specified as the first argument. See http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventreceivertype.ASPX for possible values.");
 
             if (targetUrl.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "A target url must be specified.");
+                throw new JavaScriptException(Engine, "Error", "A target url must be specified.");
 
             Uri uriTargetUri;
             if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out uriTargetUri))
-                throw new JavaScriptException(this.Engine, "Error", "A target url must be a valid absolute url.");
+                throw new JavaScriptException(Engine, "Error", "A target url must be a valid absolute url.");
 
             var baristaRemoteItemEventReceiverType =
               Type.GetType("Barista.SharePoint.EventReceivers.BaristaRemoteItemEventReceiver.BaristaRemoteItemEventReceiver, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52");
@@ -981,14 +981,14 @@
             result.Data = uriTargetUri.ToString();
             result.Update();
 
-            return new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPEventReceiverDefinitionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addItem")]
         public SPListItemInstance AddItem()
         {
             var listItem = m_list.Items.Add();
-            return new SPListItemInstance(this.Engine, listItem);
+            return new SPListItemInstance(Engine, listItem);
         }
 
         [JSFunction(Name = "addFile")]
@@ -998,19 +998,19 @@
             byte[] byteData;
 
             if (String.IsNullOrEmpty(url))
-                throw new JavaScriptException(this.Engine, "Error", "A url of the new file must be specified.");
+                throw new JavaScriptException(Engine, "Error", "A url of the new file must be specified.");
 
             if (data == Null.Value || data == Undefined.Value || data == null)
-                throw new JavaScriptException(this.Engine, "Error", "Data must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Data must be specified.");
 
             var instance = data as Base64EncodedByteArrayInstance;
 
             if (instance != null)
                 byteData = instance.Data;
             else if (data is ObjectInstance)
-                byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, data, null, null));
+                byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(Engine, data, null, null));
             else
-                byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, data.ToString(), null, null));
+                byteData = Encoding.UTF8.GetBytes(JSONObject.Stringify(Engine, data.ToString(), null, null));
 
             if (overwrite != Null.Value && overwrite != Undefined.Value && overwrite != null)
             {
@@ -1021,14 +1021,14 @@
             }
 
             var file = m_list.RootFolder.Files.Add(url, byteData, bOverwrite);
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, file);
+            return new SPFileInstance(Engine.Object.InstancePrototype, file);
         }
 
         [JSFunction(Name = "addItemToFolder")]
         public SPListItemInstance AddItem(string folderUrl)
         {
             var listItem = m_list.Items.Add(folderUrl, SPFileSystemObjectType.File);
-            return new SPListItemInstance(this.Engine, listItem);
+            return new SPListItemInstance(Engine, listItem);
         }
 
         [JSFunction(Name = "addContentType")]
@@ -1054,7 +1054,7 @@
 
             SPContentType spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
 
-            return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, spContentType);
+            return new SPContentTypeInstance(Engine.Object.InstancePrototype, spContentType);
         }
 
         [JSFunction(Name = "delete")]
@@ -1098,7 +1098,7 @@
                 spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
             }
 
-            return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, spContentType);
+            return new SPContentTypeInstance(Engine.Object.InstancePrototype, spContentType);
         }
 
         [JSFunction(Name = "getItemById")]
@@ -1106,11 +1106,12 @@
         {
             var item = m_list.GetItemById(id);
 
-            var instance = new SPListItemInstance(this.Engine, item);
+            var instance = new SPListItemInstance(Engine, item);
             return instance;
         }
 
         [JSFunction(Name = "getItems")]
+        [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance GetItems()
         {
             //ContentIterator itemsIterator = new ContentIterator();
@@ -1130,7 +1131,7 @@
 
             var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
 
-            var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+            var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
             // ReSharper disable CoVariantArrayConversion
             var result = Engine.Array.Construct(listItemInstances.ToArray());
@@ -1150,10 +1151,11 @@
 
             return result == null
                 ? null
-                : new SPListItemCollectionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPListItemCollectionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getItemsByQuery")]
+        [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance GetItemsByQuery(object query)
         {
             SPQuery camlQuery;
@@ -1195,7 +1197,7 @@
 
             var items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
 
-            var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+            var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
             // ReSharper disable CoVariantArrayConversion
             var result = Engine.Array.Construct(listItemInstances.ToArray());
@@ -1205,6 +1207,7 @@
         }
 
         [JSFunction(Name = "getItemsByView")]
+        [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance GetItemsByView(object view)
         {
             SPView selectedView;
@@ -1247,7 +1250,7 @@
 
             var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
 
-            var listItemInstances = items.Select(item => new SPListItemInstance(this.Engine, item));
+            var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
             // ReSharper disable CoVariantArrayConversion
             var result = Engine.Array.Construct(listItemInstances.ToArray());
@@ -1259,16 +1262,17 @@
         [JSFunction(Name = "getParentWeb")]
         public SPWebInstance GetParentWeb()
         {
-            return new SPWebInstance(this.Engine, m_list.ParentWeb);
+            return new SPWebInstance(Engine, m_list.ParentWeb);
         }
 
         [JSFunction(Name = "getContentTypes")]
+        [JSDoc("ternReturnType", "[+SPContentType]")]
         public ArrayInstance GetContentTypes()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var contentType in m_list.ContentTypes.OfType<SPContentType>())
             {
-                ArrayInstance.Push(result, new SPContentTypeInstance(this.Engine.Object.InstancePrototype, contentType));
+                ArrayInstance.Push(result, new SPContentTypeInstance(Engine.Object.InstancePrototype, contentType));
             }
             return result;
         }
@@ -1295,28 +1299,30 @@
                 return null;
 
             var bestMatchContentType = m_list.ContentTypes[bestMatch];
-            return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, bestMatchContentType);
+            return new SPContentTypeInstance(Engine.Object.InstancePrototype, bestMatchContentType);
         }
 
         [JSFunction(Name = "getEventReceivers")]
+        [JSDoc("ternReturnType", "[+SPEventReceiver]")]
         public ArrayInstance GetEventReceivers()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var eventReceiverDefinition in m_list.EventReceivers.OfType<SPEventReceiverDefinition>())
             {
-                ArrayInstance.Push(result, new SPEventReceiverDefinitionInstance(this.Engine.Object.InstancePrototype, eventReceiverDefinition));
+                ArrayInstance.Push(result, new SPEventReceiverDefinitionInstance(Engine.Object.InstancePrototype, eventReceiverDefinition));
             }
             return result;
         }
 
         [JSFunction(Name = "getViews")]
+        [JSDoc("ternReturnType", "[+SPView]")]
         public ArrayInstance GetViews()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var view in m_list.Views.OfType<SPView>())
             {
-                ArrayInstance.Push(result, new SPViewInstance(this.Engine.Object.InstancePrototype, view));
+                ArrayInstance.Push(result, new SPViewInstance(Engine.Object.InstancePrototype, view));
             }
 
             return result;

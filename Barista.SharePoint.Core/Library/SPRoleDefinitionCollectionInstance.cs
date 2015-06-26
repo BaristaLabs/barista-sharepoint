@@ -18,7 +18,7 @@
     [JSConstructorFunction]
     public SPRoleDefinitionCollectionInstance Construct()
     {
-      return new SPRoleDefinitionCollectionInstance(this.InstancePrototype);
+      return new SPRoleDefinitionCollectionInstance(InstancePrototype);
     }
   }
 
@@ -30,8 +30,8 @@
     public SPRoleDefinitionCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPRoleDefinitionCollectionInstance(ObjectInstance prototype, SPRoleDefinitionCollection roleDefinitionCollection)
@@ -97,7 +97,7 @@
 
       return result == null
         ? null
-        : new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPRoleDefinitionInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getByType")]
@@ -112,7 +112,7 @@
 
       return result == null
         ? null
-        : new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPRoleDefinitionInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getXml")]
@@ -122,12 +122,13 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPRoleDefinition]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var roleDefinition in m_roleDefinitionCollection.OfType<SPRoleDefinition>())
       {
-        ArrayInstance.Push(result, new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, roleDefinition));
+        ArrayInstance.Push(result, new SPRoleDefinitionInstance(Engine.Object.InstancePrototype, roleDefinition));
       }
       return result;
     }

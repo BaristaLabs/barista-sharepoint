@@ -11,8 +11,6 @@
     using Barista.Newtonsoft.Json;
     using Barista.Search;
     using Barista.Newtonsoft.Json.Linq;
-    using Lucene.Net.Analysis.Standard;
-    using Lucene.Net.QueryParsers;
     using Query = Barista.Search.Query;
     using Term = Barista.Search.Term;
 
@@ -27,7 +25,7 @@
         [JSConstructorFunction]
         public SearchServiceInstance Construct()
         {
-            return new SearchServiceInstance(this.InstancePrototype);
+            return new SearchServiceInstance(InstancePrototype);
         }
     }
 
@@ -43,8 +41,8 @@
         public SearchServiceInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SearchServiceInstance(ObjectInstance prototype, IBaristaSearch baristaSearch)
@@ -54,7 +52,7 @@
                 throw new ArgumentNullException("baristaSearch");
 
             m_baristaSearchServiceProxy = baristaSearch;
-            this.DefaultMaxResults = 10000;
+            DefaultMaxResults = 10000;
         }
 
         public IBaristaSearch BaristaSearch
@@ -85,7 +83,7 @@
         [JSFunction(Name = "createTermQuery")]
         public TermQueryInstance CreateTermQuery(string fieldName, string text)
         {
-            return new TermQueryInstance(this.Engine.Object.InstancePrototype, new TermQuery
+            return new TermQueryInstance(Engine.Object.InstancePrototype, new TermQuery
               {
                   Term = new Term
                     {
@@ -98,7 +96,7 @@
         [JSFunction(Name = "createTermRangeQuery")]
         public TermRangeQueryInstance CreateTermRangeQuery(string fieldName, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
         {
-            return new TermRangeQueryInstance(this.Engine.Object.InstancePrototype, new TermRangeQuery
+            return new TermRangeQueryInstance(Engine.Object.InstancePrototype, new TermRangeQuery
             {
                 FieldName = fieldName,
                 LowerTerm = lowerTerm,
@@ -111,7 +109,7 @@
         [JSFunction(Name = "createPrefixQuery")]
         public PrefixQueryInstance CreatePrefixQuery(string fieldName, string text)
         {
-            return new PrefixQueryInstance(this.Engine.Object.InstancePrototype, new PrefixQuery
+            return new PrefixQueryInstance(Engine.Object.InstancePrototype, new PrefixQuery
               {
                   Term = new Term
                     {
@@ -128,13 +126,13 @@
             if (min == null || min == Null.Value || min == Undefined.Value)
                 intMin = null;
             else
-                intMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
+                intMin = JurassicHelper.GetTypedArgumentValue(Engine, min, 0);
 
             int? intMax;
             if (max == null || max == Null.Value || max == Undefined.Value)
                 intMax = null;
             else
-                intMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
+                intMax = JurassicHelper.GetTypedArgumentValue(Engine, max, 0);
 
             var query = new IntNumericRangeQuery
               {
@@ -145,7 +143,7 @@
                   MaxInclusive = maxInclusive
               };
 
-            return new NumericRangeQueryInstance<int>(this.Engine.Object.InstancePrototype, query);
+            return new NumericRangeQueryInstance<int>(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createDoubleRangeQuery")]
@@ -155,13 +153,13 @@
             if (min == null || min == Null.Value || min == Undefined.Value)
                 doubleMin = null;
             else
-                doubleMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
+                doubleMin = JurassicHelper.GetTypedArgumentValue(Engine, min, 0);
 
             float? doubleMax;
             if (max == null || max == Null.Value || max == Undefined.Value)
                 doubleMax = null;
             else
-                doubleMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
+                doubleMax = JurassicHelper.GetTypedArgumentValue(Engine, max, 0);
 
             var query = new DoubleNumericRangeQuery
             {
@@ -172,7 +170,7 @@
                 MaxInclusive = maxInclusive
             };
 
-            return new NumericRangeQueryInstance<double>(this.Engine.Object.InstancePrototype, query);
+            return new NumericRangeQueryInstance<double>(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createFloatRangeQuery")]
@@ -182,13 +180,13 @@
             if (min == null || min == Null.Value || min == Undefined.Value)
                 floatMin = null;
             else
-                floatMin = JurassicHelper.GetTypedArgumentValue(this.Engine, min, 0);
+                floatMin = JurassicHelper.GetTypedArgumentValue(Engine, min, 0);
 
             float? floatMax;
             if (max == null || max == Null.Value || max == Undefined.Value)
                 floatMax = null;
             else
-                floatMax = JurassicHelper.GetTypedArgumentValue(this.Engine, max, 0);
+                floatMax = JurassicHelper.GetTypedArgumentValue(Engine, max, 0);
 
             var query = new FloatNumericRangeQuery
             {
@@ -199,21 +197,21 @@
                 MaxInclusive = maxInclusive
             };
 
-            return new NumericRangeQueryInstance<float>(this.Engine.Object.InstancePrototype, query);
+            return new NumericRangeQueryInstance<float>(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createBooleanQuery")]
         public BooleanQueryInstance CreateBooleanQuery()
         {
             var query = new BooleanQuery();
-            return new BooleanQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new BooleanQueryInstance(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createPhraseQuery")]
         public PhraseQueryInstance CreatePhraseQuery()
         {
             var query = new PhraseQuery();
-            return new PhraseQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new PhraseQueryInstance(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createWildcardQuery")]
@@ -228,7 +226,7 @@
                     }
               };
 
-            return new WildcardQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new WildcardQueryInstance(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createFuzzyQuery")]
@@ -243,7 +241,7 @@
                     }
               };
 
-            return new FuzzyQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new FuzzyQueryInstance(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createQueryParserQuery")]
@@ -256,7 +254,7 @@
                 Query = query
             };
 
-            return new QueryParserQueryInstance(this.Engine.Object.InstancePrototype, qPq);
+            return new QueryParserQueryInstance(Engine.Object.InstancePrototype, qPq);
         }
 
         [JSFunction(Name = "createODataQuery")]
@@ -269,14 +267,14 @@
                 Query = query
             };
 
-            return new ODataQueryInstance(this.Engine.Object.InstancePrototype, oDataQuery);
+            return new ODataQueryInstance(Engine.Object.InstancePrototype, oDataQuery);
         }
 
         [JSFunction(Name = "createMultiFieldQueryParserQuery")]
         public MultiFieldQueryParserQueryInstance CreateMultiFieldQuery(ArrayInstance fieldNames, string query)
         {
             if (fieldNames == null)
-                throw new JavaScriptException(this.Engine, "Error", "The first parameter must be an array of field names.");
+                throw new JavaScriptException(Engine, "Error", "The first parameter must be an array of field names.");
 
             var qPq = new MultiFieldQueryParserQuery
             {
@@ -284,7 +282,7 @@
                 Query = query
             };
 
-            return new MultiFieldQueryParserQueryInstance(this.Engine.Object.InstancePrototype, qPq);
+            return new MultiFieldQueryParserQueryInstance(Engine.Object.InstancePrototype, qPq);
         }
 
         [JSFunction(Name = "createRegexQuery")]
@@ -299,14 +297,14 @@
                     }
               };
 
-            return new RegexQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new RegexQueryInstance(Engine.Object.InstancePrototype, query);
         }
 
         [JSFunction(Name = "createMatchAllDocsQuery")]
         public GenericQueryInstance CreateMatchAllDocsQuery()
         {
             var query = new MatchAllDocsQuery();
-            return new GenericQueryInstance(this.Engine.Object.InstancePrototype, query);
+            return new GenericQueryInstance(Engine.Object.InstancePrototype, query);
         }
         #endregion
 
@@ -316,20 +314,20 @@
         public PrefixFilterInstance CreatePrefixFilter(string fieldName, string text)
         {
             var filter = new PrefixFilter { Term = new Term { FieldName = fieldName, Value = text } };
-            return new PrefixFilterInstance(this.Engine.Object.InstancePrototype, filter);
+            return new PrefixFilterInstance(Engine.Object.InstancePrototype, filter);
         }
 
         [JSFunction(Name = "createTermsFilter")]
         public TermsFilterInstance CreateTermsFilter(object fieldName, object text)
         {
-            var fieldNameValue = JurassicHelper.GetTypedArgumentValue(this.Engine, fieldName, String.Empty);
-            var textValue = JurassicHelper.GetTypedArgumentValue(this.Engine, text, String.Empty);
+            var fieldNameValue = JurassicHelper.GetTypedArgumentValue(Engine, fieldName, String.Empty);
+            var textValue = JurassicHelper.GetTypedArgumentValue(Engine, text, String.Empty);
 
             var termsFilter = new TermsFilter();
             if (fieldNameValue.IsNullOrWhiteSpace() == false && textValue.IsNullOrWhiteSpace() == false)
                 termsFilter.Terms.Add(new Term { FieldName = fieldNameValue, Value = textValue });
 
-            return new TermsFilterInstance(this.Engine.Object.InstancePrototype, termsFilter);
+            return new TermsFilterInstance(Engine.Object.InstancePrototype, termsFilter);
         }
 
         [JSFunction(Name = "createQueryWrapperFilter")]
@@ -349,17 +347,17 @@
                 var queryType = query.GetType();
                 var queryProperty = queryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
                 if (queryProperty == null || typeof(Query).IsAssignableFrom(queryProperty.PropertyType) == false)
-                    throw new JavaScriptException(this.Engine, "Error", "Unsupported query object.");
+                    throw new JavaScriptException(Engine, "Error", "Unsupported query object.");
             }
 
-            return new QueryWrapperFilterInstance(this.Engine.Object.InstancePrototype, filter);
+            return new QueryWrapperFilterInstance(Engine.Object.InstancePrototype, filter);
         }
 
         [JSFunction(Name = "createSort")]
         public SortInstance CreateSort()
         {
             var sort = new Sort();
-            return new SortInstance(this.Engine.Object.InstancePrototype, sort);
+            return new SortInstance(Engine.Object.InstancePrototype, sort);
         }
 
         //TODO: More filter types...
@@ -368,24 +366,24 @@
         [JSFunction(Name = "deleteAllDocuments")]
         public void DeleteAllDocuments()
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-            m_baristaSearchServiceProxy.DeleteAllDocuments(this.IndexName);
+            m_baristaSearchServiceProxy.DeleteAllDocuments(IndexName);
         }
 
         [JSFunction(Name = "deleteDocuments")]
         public void DeleteDocuments(object documentIds)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
             IEnumerable<string> documentIdValues;
             if (documentIds is ArrayInstance)
             {
                 var arrDocumentIds = documentIds as ArrayInstance;
                 documentIdValues = arrDocumentIds.ElementValues
-                  .Select(documentId => TypeConverter.ConvertTo<string>(this.Engine, documentId))
+                  .Select(documentId => TypeConverter.ConvertTo<string>(Engine, documentId))
                   .Where(
                     documentIdValue =>
                       documentIdValue.IsNullOrWhiteSpace() == false &&
@@ -397,46 +395,47 @@
                 documentIdValues = new List<string> { TypeConverter.ToString(documentIds) };
             }
 
-            m_baristaSearchServiceProxy.DeleteDocuments(this.IndexName, documentIdValues);
+            m_baristaSearchServiceProxy.DeleteDocuments(IndexName, documentIdValues);
         }
 
         [JSFunction(Name = "doesIndexExist")]
         public bool DoesIndexExist()
         {
-            return m_baristaSearchServiceProxy.DoesIndexExist(this.IndexName);
+            return m_baristaSearchServiceProxy.DoesIndexExist(IndexName);
         }
 
         [JSFunction(Name = "explain")]
         public ExplanationInstance Explain(object query, object docId)
         {
             if (query == null || query == Null.Value || query == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error", "A query object must be specified as the first parameter.");
+                throw new JavaScriptException(Engine, "Error", "A query object must be specified as the first parameter.");
 
             if (docId == null || docId == Null.Value || docId == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error",
+                throw new JavaScriptException(Engine, "Error",
                                               "A search result or document id must be specified as the second parameter.");
 
             var searchQueryType = query.GetType();
             var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
             if (queryProperty == null || typeof(Query).IsAssignableFrom(queryProperty.PropertyType) == false)
-                throw new JavaScriptException(this.Engine, "Error", "Unsupported query object.");
+                throw new JavaScriptException(Engine, "Error", "Unsupported query object.");
 
             var queryValue = queryProperty.GetValue(query, null) as Query;
 
             //TODO: Change doc ID to also accept searchResults.
             var docIdValue = TypeConverter.ToInteger(docId);
 
-            var explanation = m_baristaSearchServiceProxy.Explain(this.IndexName, queryValue, docIdValue);
+            var explanation = m_baristaSearchServiceProxy.Explain(IndexName, queryValue, docIdValue);
 
-            return new ExplanationInstance(this.Engine.Object.InstancePrototype, explanation);
+            return new ExplanationInstance(Engine.Object.InstancePrototype, explanation);
         }
 
         [JSFunction(Name = "getFieldNames")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetFieldNames()
         {
-            var fieldNames = m_baristaSearchServiceProxy.GetFieldNames(this.IndexName);
+            var fieldNames = m_baristaSearchServiceProxy.GetFieldNames(IndexName);
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(fieldNames.ToArray());
+            return Engine.Array.Construct(fieldNames.ToArray());
             // ReSharper enable CoVariantArrayConversion
         }
 
@@ -444,20 +443,20 @@
         public string Highlight(object query, object docId, object fieldName, object fragCharSize)
         {
             if (query == null || query == Null.Value || query == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error", "A query object must be specified as the first argument.");
+                throw new JavaScriptException(Engine, "Error", "A query object must be specified as the first argument.");
 
             if (docId == null || docId == Null.Value || docId == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error",
+                throw new JavaScriptException(Engine, "Error",
                                               "A search result or document id must be specified as the second argument.");
 
             if (fieldName == null || fieldName == Null.Value || fieldName == Undefined.Value || TypeConverter.ToString(fieldName).IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error",
+                throw new JavaScriptException(Engine, "Error",
                                               "A field name must be specified as the third argument.");
 
             var searchQueryType = query.GetType();
             var queryProperty = searchQueryType.GetProperty("Query", BindingFlags.Instance | BindingFlags.Public);
             if (queryProperty == null || typeof(Query).IsAssignableFrom(queryProperty.PropertyType) == false)
-                throw new JavaScriptException(this.Engine, "Error", "Unsupported query object.");
+                throw new JavaScriptException(Engine, "Error", "Unsupported query object.");
 
             var queryValue = queryProperty.GetValue(query, null) as Query;
 
@@ -468,17 +467,17 @@
             if (fragCharSize != null && fragCharSize != Null.Value && fragCharSize != Undefined.Value)
                 fragCharSizeValue = TypeConverter.ToInteger(fragCharSize);
 
-            return m_baristaSearchServiceProxy.Highlight(this.IndexName, queryValue, docIdValue, TypeConverter.ToString(fieldName), fragCharSizeValue);
+            return m_baristaSearchServiceProxy.Highlight(IndexName, queryValue, docIdValue, TypeConverter.ToString(fieldName), fragCharSizeValue);
         }
 
         [JSFunction(Name = "index")]
         public SearchServiceInstance Index(object documentObject)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
             if (documentObject == null || documentObject == Null.Value || documentObject == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error",
+                throw new JavaScriptException(Engine, "Error",
                   "A document object to be indexed must be supplied as the first parameter.");
 
             if (documentObject is ArrayInstance)
@@ -488,12 +487,12 @@
                   .Select(ConvertObjectToJsonDocumentDto)
                   .ToList();
 
-                m_baristaSearchServiceProxy.IndexJsonDocuments(this.IndexName, documentsToIndex);
+                m_baristaSearchServiceProxy.IndexJsonDocuments(IndexName, documentsToIndex);
             }
             else
             {
                 var documentToIndex = ConvertObjectToJsonDocumentDto(documentObject);
-                m_baristaSearchServiceProxy.IndexJsonDocument(this.IndexName, documentToIndex);
+                m_baristaSearchServiceProxy.IndexJsonDocument(IndexName, documentToIndex);
             }
 
             return this;
@@ -502,55 +501,57 @@
         [JSFunction(Name = "retrieve")]
         public JsonDocumentInstance Retrieve(string documentId)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
-            var result = m_baristaSearchServiceProxy.Retrieve(this.IndexName, documentId);
+            var result = m_baristaSearchServiceProxy.Retrieve(IndexName, documentId);
             return result == null
               ? null
-              : new JsonDocumentInstance(this.Engine, result);
+              : new JsonDocumentInstance(Engine, result);
         }
 
         [JSFunction(Name = "search")]
+        [JSDoc("ternReturnType", "[+SearchResult]")]
         public ArrayInstance Search(object query, object maxResults)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
             var args = CoerceSearchArguments(query, maxResults, null);
 
-            var searchResults = m_baristaSearchServiceProxy.Search(this.IndexName, args);
+            var searchResults = m_baristaSearchServiceProxy.Search(IndexName, args);
 
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(this.Engine, sr)).ToArray());
+            return Engine.Array.Construct(searchResults.Select(sr => new SearchResultInstance(Engine, sr)).ToArray());
             // ReSharper restore CoVariantArrayConversion
         }
 
         [JSFunction(Name = "searchResultCount")]
         public int SearchResultCount(object query, object maxResults)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
             var args = CoerceSearchArguments(query, maxResults, null);
 
-            var searchResultCount = m_baristaSearchServiceProxy.SearchResultCount(this.IndexName, args);
+            var searchResultCount = m_baristaSearchServiceProxy.SearchResultCount(IndexName, args);
 
             return searchResultCount;
         }
 
         [JSFunction(Name = "facetedSearch")]
+        [JSDoc("ternReturnType", "[+FacetedSearchResult]")]
         public ArrayInstance FacetedSearch(object query, object maxResults, object groupByFields)
         {
-            if (this.IndexName.IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
+            if (IndexName.IsNullOrWhiteSpace())
+                throw new JavaScriptException(Engine, "Error", "indexName not set. Please set the indexName property on the Search Instance prior to performing an operation.");
 
             var args = CoerceSearchArguments(query, maxResults, groupByFields);
 
-            var searchResults = m_baristaSearchServiceProxy.FacetedSearch(this.IndexName, args);
+            var searchResults = m_baristaSearchServiceProxy.FacetedSearch(IndexName, args);
 
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(searchResults.Select(sr => new FacetedSearchResultInstance(this.Engine.Object.InstancePrototype, sr)).ToArray());
+            return Engine.Array.Construct(searchResults.Select(sr => new FacetedSearchResultInstance(Engine.Object.InstancePrototype, sr)).ToArray());
             // ReSharper restore CoVariantArrayConversion
         }
 
@@ -558,7 +559,7 @@
         public SearchServiceInstance SetFieldOptions(object fieldOptions)
         {
             if (fieldOptions == null || fieldOptions == Null.Value || fieldOptions == Undefined.Value)
-                throw new JavaScriptException(this.Engine, "Error",
+                throw new JavaScriptException(Engine, "Error",
                   "The first argument must be an object, or an array of objects, that defines the field options for the index.");
 
             var args = new List<FieldOptions>();
@@ -572,7 +573,7 @@
                 args.Add(CoerceFieldOptions(fieldOptions as ObjectInstance));
             }
 
-            m_baristaSearchServiceProxy.SetFieldOptions(this.IndexName, args);
+            m_baristaSearchServiceProxy.SetFieldOptions(IndexName, args);
 
             return this;
         }
@@ -580,21 +581,21 @@
         [JSFunction(Name = "shutdown")]
         public SearchServiceInstance Shutdown()
         {
-            m_baristaSearchServiceProxy.Shutdown(this.IndexName);
+            m_baristaSearchServiceProxy.Shutdown(IndexName);
             return this;
         }
 
         private FieldOptions CoerceFieldOptions(ObjectInstance fieldOptions)
         {
             if (fieldOptions == null)
-                throw new JavaScriptException(this.Engine, "Error", "Cannot convert a null field options object.");
+                throw new JavaScriptException(Engine, "Error", "Cannot convert a null field options object.");
 
             var result = new FieldOptions();
 
             if (fieldOptions.HasProperty("fieldName"))
                 result.FieldName = TypeConverter.ToString(fieldOptions.GetPropertyValue("fieldName"));
             else
-                throw new JavaScriptException(this.Engine, "Error", "All field options objects must contain a field name.");
+                throw new JavaScriptException(Engine, "Error", "All field options objects must contain a field name.");
 
             if (fieldOptions.HasProperty("index"))
             {
@@ -604,7 +605,7 @@
                     FieldIndexType fieldIndexType;
                     if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldIndexType) ==
                         false)
-                        throw new JavaScriptException(this.Engine, "Error",
+                        throw new JavaScriptException(Engine, "Error",
                           "If the index property is defined on the field options, it must be one of these values: Analyzed, AnalyzedNoNorms, NotAnalyzed, NotAnalyzedNoNorms, NotIndexed");
 
                     result.Index = fieldIndexType;
@@ -619,7 +620,7 @@
                     FieldStorageType fieldStorageType;
                     if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldStorageType) ==
                         false)
-                        throw new JavaScriptException(this.Engine, "Error",
+                        throw new JavaScriptException(Engine, "Error",
                           "If the storage property is defined on the field options, it must be one of these values: Stored, NotStored");
 
                     result.Storage = fieldStorageType;
@@ -634,7 +635,7 @@
                     FieldTermVectorType fieldTermVectorType;
                     if (TypeConverter.ToString(propertyValue).TryParseEnum(true, out fieldTermVectorType) ==
                         false)
-                        throw new JavaScriptException(this.Engine, "Error",
+                        throw new JavaScriptException(Engine, "Error",
                           "If the termVectorType property is defined on the field options, it must be one of these values: No, WithOffsets, WithPositions, WithPositionsOffsets, Yes");
 
                     result.TermVectorType = fieldTermVectorType;
@@ -652,7 +653,7 @@
             {
                 args.Query = new MatchAllDocsQuery();
                 if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-                    args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
+                    args.Take = JurassicHelper.GetTypedArgumentValue(Engine, maxResults, DefaultMaxResults);
             }
             else if (TypeUtilities.IsString(query))
             {
@@ -662,7 +663,7 @@
                 };
 
                 if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-                    args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
+                    args.Take = JurassicHelper.GetTypedArgumentValue(Engine, maxResults, DefaultMaxResults);
 
                 if (groupByFields != null && groupByFields != Undefined.Value && groupByFields != Null.Value && groupByFields is ArrayInstance)
                     args.GroupByFields = (groupByFields as ArrayInstance).ElementValues.Select(TypeConverter.ToString).ToList();
@@ -704,7 +705,7 @@
                         args.Query = queryProperty.GetValue(query, null) as Query;
 
                     if (maxResults != Undefined.Value && maxResults != Null.Value && maxResults != null)
-                        args.Take = JurassicHelper.GetTypedArgumentValue(this.Engine, maxResults, this.DefaultMaxResults);
+                        args.Take = JurassicHelper.GetTypedArgumentValue(Engine, maxResults, DefaultMaxResults);
                 }
 
                 if (argumentsObj.HasProperty("filter"))
@@ -746,7 +747,7 @@
             }
             else
             {
-                throw new JavaScriptException(this.Engine, "Error", "Unable to determine the search arguments.");
+                throw new JavaScriptException(Engine, "Error", "Unable to determine the search arguments.");
             }
 
             return args;
@@ -766,15 +767,15 @@
             {
                 var obj = documentObject as ObjectInstance;
                 if (obj.HasProperty("@id") == false)
-                    throw new JavaScriptException(this.Engine, "Error",
+                    throw new JavaScriptException(Engine, "Error",
                                                   "When adding a POJO to the index, a property named @id must be specified on the object that indicates the document id.");
 
                 var metadata = String.Empty;
                 if (obj.HasProperty("@metadata"))
-                    metadata = JSONObject.Stringify(this.Engine, obj.GetPropertyValue("@metadata"), null, null);
+                    metadata = JSONObject.Stringify(Engine, obj.GetPropertyValue("@metadata"), null, null);
 
                 //Clone the object and remove the @id and @metadata
-                var json = JSONObject.Stringify(this.Engine, obj, null, null);
+                var json = JSONObject.Stringify(Engine, obj, null, null);
                 var jObject = JObject.Parse(json);
                 jObject.Remove("@id");
                 jObject.Remove("@metadata");

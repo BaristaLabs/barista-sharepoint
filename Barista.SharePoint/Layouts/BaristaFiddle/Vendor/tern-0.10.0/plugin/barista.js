@@ -378,11 +378,11 @@
                     "!doc": "Searches all directory entries for the specified search text, optionally indicating a maximium number of results and to limit to the specified principal type."
                 },
                 "searchAllGroups": {
-                    "!type": "fn(searchText: string, maxResults: number) -> [?]",
+                    "!type": "fn(searchText: string, maxResults: number) -> [+ADGroup]",
                     "!doc": "Searches all groups for the specified search text, optionally indicating a maximium number of results."
                 },
                 "searchAllUsers": {
-                    "!type": "fn(searchText: string, maxResults: number) -> [?]",
+                    "!type": "fn(searchText: string, maxResults: number) -> [+ADUser]",
                     "!doc": "Searches all users for the specified search text contained within a user's firstname, lastname, displayname, email or logon name. Optionally indicating a maximium number of results."
                 },
                 "searchAllUsersByLogonAndEmail": {
@@ -476,10 +476,10 @@
                     "!type": "fn(query: ?, docId: ?) -> +Explanation"
                 },
                 "facetedSearch": {
-                    "!type": "fn(query: ?, maxResults: ?, groupByFields: ?) -> [?]"
+                    "!type": "fn(query: ?, maxResults: ?, groupByFields: ?) -> [+FacetedSearchResult]"
                 },
                 "getFieldNames": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "highlight": {
                     "!type": "fn(query: ?, docId: ?, fieldName: ?, fragCharSize: ?) -> string"
@@ -491,7 +491,7 @@
                     "!type": "fn(documentId: string) -> +JsonDocument"
                 },
                 "search": {
-                    "!type": "fn(query: ?, maxResults: ?) -> [?]"
+                    "!type": "fn(query: ?, maxResults: ?) -> [+SearchResult]"
                 },
                 "searchResultCount": {
                     "!type": "fn(query: ?, maxResults: ?) -> number"
@@ -622,24 +622,24 @@
                     "!type": "fn(path: string, entityId: ?, namespace: string, archiveData: +Base64EncodedByteArray) -> +Entity"
                 },
                 "listAttachments": {
-                    "!type": "fn(entityId: ?) -> [?]"
+                    "!type": "fn(entityId: ?) -> [+Attachment]"
                 },
                 "listContainers": {
-                    "!type": "fn() -> [?]",
+                    "!type": "fn() -> [+Container]",
                     "!doc": "Lists all containers contained within the repository."
                 },
                 "listEntities": {
-                    "!type": "fn(filterCriteria: ?) -> [?]",
+                    "!type": "fn(filterCriteria: ?) -> [+Entity]",
                     "!doc": "Lists the entities according to the specified criteria. If filterCriteria argument is null, returns all objects, if filterCriteria object is a string, restricts to the folder with the specified name. If an object, uses the following properties: path, includeData, namespace, namespaceMatchType, queryPairs, skip, top."
                 },
                 "listEntityComments": {
-                    "!type": "fn(entityId: ?, path: ?) -> [?]"
+                    "!type": "fn(entityId: ?, path: ?) -> [+Comment]"
                 },
                 "listEntityParts": {
                     "!type": "fn(entityId: ?) -> ?"
                 },
                 "listFolders": {
-                    "!type": "fn(path: ?) -> [?]"
+                    "!type": "fn(path: ?) -> [+Folder]"
                 },
                 "moveEntity": {
                     "!type": "fn(entityId: ?, destinationPath: string) -> bool"
@@ -801,26 +801,26 @@
             },
             "SharePoint Content Migration": {
                 "export": {
-                    "!type": "fn(exportSettings: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(exportSettings: ?, dropLocation: ?) -> [string]"
                 },
                 "exportFile": {
-                    "!type": "fn(file: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]",
+                    "!type": "fn(file: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]",
                     "!doc": "Exports the specified file."
                 },
                 "exportFolder": {
-                    "!type": "fn(folder: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(folder: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]"
                 },
                 "exportList": {
-                    "!type": "fn(list: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(list: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]"
                 },
                 "exportListItem": {
-                    "!type": "fn(listItem: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(listItem: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]"
                 },
                 "exportSite": {
-                    "!type": "fn(site: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(site: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]"
                 },
                 "exportWeb": {
-                    "!type": "fn(web: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [?]"
+                    "!type": "fn(web: ?, fileLocation: ?, baseFileName: ?, logFilePath: ?, dropLocation: ?) -> [string]"
                 },
                 "import": {
                     "!type": "fn(importSettings: ?, dropLocation: ?)"
@@ -912,7 +912,7 @@
                     "!doc": "Returns the Team Project Collection with the specified display name. If no name is specified, gets the default project collection for the specified url."
                 },
                 "listTeamProjectCollections": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TfsTeamProjectCollection]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -1002,7 +1002,7 @@
             },
             "Web Administration": {
                 "applicationPools": {
-                    "!type": "[?]"
+                    "!type": "[+ApplicationPool]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -1178,7 +1178,7 @@
                     "!type": "fn(value: ?) -> bool"
                 },
                 "getKeys": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "getValueByKey": {
                     "!type": "fn(key: ?) -> ?"
@@ -1264,7 +1264,7 @@
                     "!type": "string"
                 },
                 "segments": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "userEscaped": {
                     "!type": "bool"
@@ -1363,7 +1363,7 @@
                     "!type": "string"
                 },
                 "members": {
-                    "!type": "[?]"
+                    "!type": "[+ADUser]"
                 },
                 "name": {
                     "!type": "string"
@@ -1375,10 +1375,10 @@
                     "!type": "?"
                 },
                 "expandGroups": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+ADGroup]"
                 },
                 "expandUsers": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+ADUser]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -1728,10 +1728,10 @@
             "!type": "fn(?)",
             "prototype": {
                 "categories": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "comments": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "description": {
                     "!type": "string"
@@ -1755,7 +1755,7 @@
                     "!type": "+CalendarPropertyList"
                 },
                 "resources": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "start": {
                     "!type": "?"
@@ -1790,7 +1790,7 @@
                     "!type": "string"
                 },
                 "details": {
-                    "!type": "[?]"
+                    "!type": "[+Explanation]"
                 },
                 "explanationHtml": {
                     "!type": "string"
@@ -1915,7 +1915,7 @@
                     "!type": "fn(value: ?) -> bool"
                 },
                 "getKeys": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "getValueByKey": {
                     "!type": "fn(key: ?) -> ?"
@@ -1944,7 +1944,7 @@
             "!type": "fn(?)",
             "prototype": {
                 "accept": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "body": {
                     "!type": "+Base64EncodedByteArray"
@@ -1959,7 +1959,7 @@
                     "!type": "+Hashtable"
                 },
                 "filenames": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "files": {
                     "!type": "?"
@@ -2082,7 +2082,7 @@
             "!type": "fn(?)",
             "prototype": {
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+iCalendar]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -2212,7 +2212,7 @@
                     "!type": "bool"
                 },
                 "principals": {
-                    "!type": "[?]"
+                    "!type": "[+PrincipalRoleInfo]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -2315,7 +2315,7 @@
                     "!type": "+Principal"
                 },
                 "roles": {
-                    "!type": "[?]"
+                    "!type": "[+Role]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -2501,10 +2501,10 @@
                     "!type": "fn(query: ?, docId: ?) -> +Explanation"
                 },
                 "facetedSearch": {
-                    "!type": "fn(query: ?, maxResults: ?, groupByFields: ?) -> [?]"
+                    "!type": "fn(query: ?, maxResults: ?, groupByFields: ?) -> [+FacetedSearchResult]"
                 },
                 "getFieldNames": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "highlight": {
                     "!type": "fn(query: ?, docId: ?, fieldName: ?, fragCharSize: ?) -> string"
@@ -2516,7 +2516,7 @@
                     "!type": "fn(documentId: string) -> +JsonDocument"
                 },
                 "search": {
-                    "!type": "fn(query: ?, maxResults: ?) -> [?]"
+                    "!type": "fn(query: ?, maxResults: ?) -> [+SearchResult]"
                 },
                 "searchResultCount": {
                     "!type": "fn(query: ?, maxResults: ?) -> number"
@@ -2668,7 +2668,7 @@
                     "!type": "fn() -> +SPWeb"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPAlert]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -3844,22 +3844,22 @@
                     "!type": "fn(contentType: ?) -> +SPContentType"
                 },
                 "getContentTypes": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPContentType]"
                 },
                 "getEventReceivers": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPEventReceiver]"
                 },
                 "getItemById": {
                     "!type": "fn(id: number) -> +SPListItem"
                 },
                 "getItems": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPListItem]"
                 },
                 "getItemsByQuery": {
-                    "!type": "fn(query: ?) -> [?]"
+                    "!type": "fn(query: ?) -> [+SPListItem]"
                 },
                 "getItemsByView": {
-                    "!type": "fn(view: ?) -> [?]"
+                    "!type": "fn(view: ?) -> [+SPListItem]"
                 },
                 "getItemsCollection": {
                     "!type": "fn(fields: ?) -> +SPListItemCollection"
@@ -3874,7 +3874,7 @@
                     "!type": "fn() -> string"
                 },
                 "getViews": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPView]"
                 },
                 "recycle": {
                     "!type": "fn() -> string"
@@ -5155,7 +5155,7 @@
                     "!type": "fn() -> +SPDocumentLibrary"
                 },
                 "getFiles": {
-                    "!type": "fn(recursive: ?) -> [?]"
+                    "!type": "fn(recursive: ?) -> [+SPFile]"
                 },
                 "getItem": {
                     "!type": "fn() -> +SPListItem"
@@ -5799,22 +5799,22 @@
                     "!type": "fn(contentType: ?) -> +SPContentType"
                 },
                 "getContentTypes": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPContentType]"
                 },
                 "getEventReceivers": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPEventReceiver]"
                 },
                 "getItemById": {
                     "!type": "fn(id: number) -> +SPListItem"
                 },
                 "getItems": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPListItem]"
                 },
                 "getItemsByQuery": {
-                    "!type": "fn(query: ?) -> [?]"
+                    "!type": "fn(query: ?) -> [+SPListItem]"
                 },
                 "getItemsByView": {
-                    "!type": "fn(view: ?) -> [?]"
+                    "!type": "fn(view: ?) -> [+SPListItem]"
                 },
                 "getItemsCollection": {
                     "!type": "fn(fields: ?) -> +SPListItemCollection"
@@ -5826,7 +5826,7 @@
                     "!type": "fn() -> string"
                 },
                 "getViews": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPView]"
                 },
                 "recycle": {
                     "!type": "fn() -> string"
@@ -6123,7 +6123,7 @@
                     "!type": "number"
                 },
                 "queryFieldNames": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "add": {
                     "!type": "fn() -> +SPListItem"
@@ -6162,7 +6162,7 @@
                     "!type": "fn() -> string"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPListItem]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6358,7 +6358,7 @@
                     "!type": "fn() -> string"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPListTemplate]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6584,7 +6584,7 @@
                     "!type": "fn() -> +SPNavigationNode"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPNavigationNote]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6636,13 +6636,13 @@
                     "!type": "fn(value: string) -> bool"
                 },
                 "getKeys": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "getValueByKey": {
                     "!type": "fn(key: string) -> string"
                 },
                 "getValues": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "remove": {
                     "!type": "fn(key: string)"
@@ -6796,7 +6796,7 @@
                     "!type": "fn()"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPRecycleBinItem]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6875,7 +6875,7 @@
                     "!type": "fn(principal: +SPPrincipal)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPRoleAssignment]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6952,7 +6952,7 @@
                     "!type": "fn(roleDefinition: +SPRoleDefinition)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPRoleDefinition]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -6993,7 +6993,7 @@
                     "!type": "fn() -> string"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPRoleDefinition]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7087,7 +7087,7 @@
                     "!type": "string"
                 },
                 "getServiceInstances": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPService]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7110,7 +7110,7 @@
                     "!type": "fn(name: string) -> +SPServer"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPServer]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7191,7 +7191,7 @@
                     "!type": "fn(name: string) -> +SPService"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPService]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7273,7 +7273,7 @@
                     "!type": "fn(name: string) -> +SPServiceInstance"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPService]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7489,7 +7489,7 @@
                     "!doc": "Returns a value that indicates if a file exists at the specified url."
                 },
                 "getAllWebs": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWeb]"
                 },
                 "getCatalog": {
                     "!type": "fn(typeCatalog: string) -> +SPList"
@@ -7498,7 +7498,7 @@
                     "!type": "fn() -> +SPContentDatabase"
                 },
                 "getFeatureDefinitions": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPFeatureDefinition]"
                 },
                 "getPermissions": {
                     "!type": "fn() -> +SPSecurableObject"
@@ -7516,7 +7516,7 @@
                     "!type": "fn() -> +SPWebApplication"
                 },
                 "getWebTemplates": {
-                    "!type": "fn(language: ?) -> [?]"
+                    "!type": "fn(language: ?) -> [+SPWebTemplate]"
                 },
                 "loadFileAsByteArray": {
                     "!type": "fn(fileUrl: string) -> +Base64EncodedByteArray",
@@ -7572,7 +7572,7 @@
                     "!type": "number"
                 },
                 "names": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "add": {
                     "!type": "fn(siteUrl: string, ownerLogin: string, ownerEmail: string) -> +SPSite"
@@ -7596,7 +7596,7 @@
                     "!type": "fn(siteUrl: string, fileName: string, overwrite: bool, hostHeaderAsSiteName: ?)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPSite]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7737,7 +7737,7 @@
                     "!type": "fn(id: number)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPUser]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7834,7 +7834,7 @@
                     "!type": "fn(id: ?) -> +SPUserCustomAction"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPUserCustomAction]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -7889,7 +7889,7 @@
                     "!type": "fn(solution: +SPUserSolution)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPUserSolution]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -8013,7 +8013,7 @@
                     "!type": "string"
                 },
                 "viewFields": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "viewJoins": {
                     "!type": "string"
@@ -8048,7 +8048,7 @@
             }
         },
         "SPWeb": {
-            "!type": "fn(?)",
+            "!type": "fn(webUrl: string) -> +SPWeb",
             "prototype": {
                 "alerts": {
                     "!type": "+SPAlertCollection"
@@ -8449,16 +8449,16 @@
                     "!doc": "Returns a value that indicates if a file exists at the specified url."
                 },
                 "getAvailableContentTypes": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPContentType]"
                 },
                 "getCatalog": {
                     "!type": "fn(typeCatalog: string) -> +SPList"
                 },
                 "getContentTypes": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPContentType]"
                 },
                 "getDocTemplates": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPDocTemplate]"
                 },
                 "getFileAsString": {
                     "!type": "fn(url: string) -> string"
@@ -8473,13 +8473,13 @@
                     "!type": "fn(strUrl: string) -> ?"
                 },
                 "getFiles": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPFile]"
                 },
                 "getFolderByServerRelativeUrl": {
                     "!type": "fn(serverRelativeUrl: string) -> +SPFolder"
                 },
                 "getFolders": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPFolder]"
                 },
                 "getLimitedWebPartManager": {
                     "!type": "fn(fullOrRelativeUrl: string, personalizationScope: string) -> +SPLimitedWebPartManager"
@@ -8506,13 +8506,13 @@
                     "!type": "fn(strUrl: string, fields: [?]) -> +SPListItem"
                 },
                 "getLists": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPList]"
                 },
                 "getListsOfType": {
                     "!type": "fn(baseType: string) -> +SPListCollection"
                 },
                 "getListTemplates": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPListTemplate]"
                 },
                 "getProperty": {
                     "!type": "fn(key: ?) -> ?"
@@ -8539,10 +8539,10 @@
                     "!type": "fn(listUrl: string) -> +SPView"
                 },
                 "getWebs": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWeb]"
                 },
                 "getWebsAndListsWithUniquePermissions": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWebListInfo]"
                 },
                 "isCurrentUserMemberOfGroup": {
                     "!type": "fn(groupId: number) -> bool"
@@ -8636,7 +8636,7 @@
                     "!type": "bool"
                 },
                 "allowedInlineDownloadedMimeTypes": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "allowHighCharacterListFolderNames": {
                     "!type": "bool"
@@ -8714,7 +8714,7 @@
                     "!type": "fn(sitePath: string) -> +SPDeletedSiteCollection"
                 },
                 "getFeatures": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPFeature]"
                 },
                 "getSites": {
                     "!type": "fn() -> +SPSiteCollection"
@@ -8761,7 +8761,7 @@
                     "!type": "fn(name: string) -> +SPWeb"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWeb]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -8974,7 +8974,7 @@
                     "!type": "fn(index: number)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWebPartConnection]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9066,7 +9066,7 @@
                     "!type": "fn(eventId: number, groupId: ?, user: ?, outcome: string, description: string, otherData: string)"
                 },
                 "getActivityDetails": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [string]"
                 },
                 "getHistoryList": {
                     "!type": "fn() -> +SPList"
@@ -9295,7 +9295,7 @@
                     "!type": "fn(associationId: ?)"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWorkflowAssociation]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9324,7 +9324,7 @@
                     "!type": "string"
                 },
                 "getInstanceIds": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+Guid]"
                 },
                 "getWorkflowById": {
                     "!type": "fn(id: ?) -> +SPWorkflow"
@@ -9336,7 +9336,7 @@
                     "!type": "fn() -> string"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWorkflow]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9461,7 +9461,7 @@
                     "!type": "fn(index: number) -> +SPWorkflowModification"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWorkflowModification]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9699,7 +9699,7 @@
                     "!type": "fn() -> string"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWorkflowTask]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9782,7 +9782,7 @@
                     "!type": "fn(property: string) -> ?"
                 },
                 "getStatusChoices": {
-                    "!type": "fn(web: +SPWeb) -> [?]"
+                    "!type": "fn(web: +SPWeb) -> [string]"
                 },
                 "setPropertyByName": {
                     "!type": "fn(property: string, obj: ?)"
@@ -9814,7 +9814,7 @@
                     "!type": "fn(name: string) -> +SPWorkflowTemplate"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+SPWorkflowTemplate]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -9828,7 +9828,7 @@
             "!type": "fn(?)",
             "prototype": {
                 "offlineTermStoreNames": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "termStores": {
                     "!type": "+TermStoreCollection"
@@ -9946,7 +9946,7 @@
                     "!type": "fn(rights: string) -> bool"
                 },
                 "getAllLabels": {
-                    "!type": "fn(lcid: number) -> [?]"
+                    "!type": "fn(lcid: number) -> [+TermLabel]"
                 },
                 "getDefaultLabel": {
                     "!type": "fn(lcid: number) -> string"
@@ -9958,7 +9958,7 @@
                     "!type": "fn(term: +Term) -> bool"
                 },
                 "getLabels": {
-                    "!type": "fn(lcid: number) -> [?]"
+                    "!type": "fn(lcid: number) -> [+TermLabel]"
                 },
                 "getParent": {
                     "!type": "fn() -> +Term"
@@ -9970,13 +9970,13 @@
                     "!type": "fn() -> +Term"
                 },
                 "getTerms": {
-                    "!type": "fn(pagingLimit: number) -> [?]"
+                    "!type": "fn(pagingLimit: number) -> [+Term]"
                 },
                 "GetTermSet": {
                     "!type": "fn() -> +TermSet"
                 },
                 "GetTermSets": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TermSet]"
                 },
                 "getTermStore": {
                     "!type": "fn() -> +TermStore"
@@ -10026,7 +10026,7 @@
                     "!type": "fn(name: string) -> +Term"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+Term]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -10088,7 +10088,7 @@
                     "!type": "fn() -> string"
                 },
                 "getTermSets": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TermSet]"
                 },
                 "getTermStore": {
                     "!type": "fn() -> +TermStore"
@@ -10204,7 +10204,7 @@
                     "!type": "string"
                 },
                 "stakeholders": {
-                    "!type": "[?]"
+                    "!type": "[string]"
                 },
                 "addStakeholder": {
                     "!type": "fn(stakeHolderName: string)"
@@ -10231,7 +10231,7 @@
                     "!type": "fn() -> string"
                 },
                 "getAllTerms": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+Term]"
                 },
                 "getGroup": {
                     "!type": "fn() -> +TermGroup"
@@ -10240,7 +10240,7 @@
                     "!type": "fn(termId: ?) -> +Term"
                 },
                 "getTerms": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+Term]"
                 },
                 "getTermStore": {
                     "!type": "fn() -> +TermStore"
@@ -10275,7 +10275,7 @@
                     "!type": "fn(name: string) -> +TermSet"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TermSet]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"
@@ -10318,7 +10318,7 @@
                     "!type": "bool"
                 },
                 "languages": {
-                    "!type": "[?]"
+                    "!type": "[number]"
                 },
                 "name": {
                     "!type": "string"
@@ -10351,7 +10351,7 @@
                     "!type": "fn(id: ?) -> +TermGroup"
                 },
                 "getGroups": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TermGroup]"
                 },
                 "getSiteCollectionGroup": {
                     "!type": "fn(site: +SPSite) -> +TermGroup"
@@ -10389,7 +10389,7 @@
                     "!type": "fn(name: string) -> +TermStore"
                 },
                 "toArray": {
-                    "!type": "fn() -> [?]"
+                    "!type": "fn() -> [+TermStore]"
                 },
                 "toLocaleString": {
                     "!type": "fn() -> string"

@@ -24,14 +24,14 @@
         //[JSConstructorFunction]
         public SPWorkflowTemplateInstance Construct()
         {
-            return new SPWorkflowTemplateInstance(this.InstancePrototype);
+            return new SPWorkflowTemplateInstance(InstancePrototype);
         }
 
         [JSFunction(Name = "isCategoryApplicable")]
         public bool IsCategoryApplicable(string strAllCategs, ArrayInstance rgReqCateg)
         {
             if (rgReqCateg == null)
-                throw new JavaScriptException(this.Engine, "Errr", "An array of requred categories is required");
+                throw new JavaScriptException(Engine, "Errr", "An array of requred categories is required");
 
             var strs = rgReqCateg.ElementValues.Select(TypeConverter.ToString).ToArray();
 
@@ -47,8 +47,8 @@
         public SPWorkflowTemplateInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWorkflowTemplateInstance(ObjectInstance prototype, SPWorkflowTemplate workflowTemplate)
@@ -173,7 +173,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflowTemplate.BaseId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflowTemplate.BaseId);
             }
         }
 
@@ -208,7 +208,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_workflowTemplate.Id);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_workflowTemplate.Id);
             }
         }
 
@@ -259,7 +259,7 @@
             {
                 SPBasePermissions basePermissions;
                 if (!value.TryParseEnum(true, out basePermissions))
-                    throw new JavaScriptException(this.Engine, "Error", "Value must be a valid SPBasePermission");
+                    throw new JavaScriptException(Engine, "Error", "Value must be a valid SPBasePermission");
 
                 m_workflowTemplate.PermissionsManual = basePermissions;
             }
@@ -292,7 +292,7 @@
         {
             get
             {
-                return new SPContentTypeIdInstance(this.Engine.Object.InstancePrototype, m_workflowTemplate.TaskListContentTypeId);
+                return new SPContentTypeIdInstance(Engine.Object.InstancePrototype, m_workflowTemplate.TaskListContentTypeId);
             }
         }
 
@@ -311,21 +311,22 @@
             var result = m_workflowTemplate.Clone() as SPWorkflowTemplate;
             return result == null
                 ? null
-                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getStatusChoices")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetStatusChoices(SPWebInstance web)
         {
             if (web == null)
-                throw new JavaScriptException(this.Engine, "Error", "A SPWeb must be supplied as the first argument.");
+                throw new JavaScriptException(Engine, "Error", "A SPWeb must be supplied as the first argument.");
 
             var result = m_workflowTemplate.GetStatusChoices(web.Web);
 
             return result == null
                 ? null
 // ReSharper disable once CoVariantArrayConversion
-                : this.Engine.Array.Construct(result.OfType<string>().ToArray());
+                : Engine.Array.Construct(result.OfType<string>().ToArray());
         }
 
         [JSFunction(Name = "getPropertyByName")]
@@ -337,7 +338,7 @@
         [JSFunction(Name = "setPropertyByName")]
         public void SetPropertyByName(string property, object obj)
         {
-            m_workflowTemplate[property] = TypeConverter.ToObject(this.Engine, obj);
+            m_workflowTemplate[property] = TypeConverter.ToObject(Engine, obj);
         }
     }
 }

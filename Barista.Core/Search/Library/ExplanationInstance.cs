@@ -16,7 +16,7 @@
     [JSConstructorFunction]
     public ExplanationInstance Construct()
     {
-      return new ExplanationInstance(this.InstancePrototype);
+      return new ExplanationInstance(InstancePrototype);
     }
   }
 
@@ -28,8 +28,8 @@
     public ExplanationInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public ExplanationInstance(ObjectInstance prototype, Explanation explanation)
@@ -65,19 +65,20 @@
     }
 
     [JSProperty(Name = "details")]
+    [JSDoc("ternPropertyType", "[+Explanation]")]
     public ArrayInstance Details
     {
       get
       {
         if (m_explanation.Details == null)
-          return this.Engine.Array.Construct();
+          return Engine.Array.Construct();
 
         var details = m_explanation.Details
-                                   .Select(d => new ExplanationInstance(this.Engine.Object.InstancePrototype, d))
+                                   .Select(d => new ExplanationInstance(Engine.Object.InstancePrototype, d))
                                    .ToArray();
         return
           // ReSharper disable CoVariantArrayConversion
-          this.Engine.Array.Construct(details);
+          Engine.Array.Construct(details);
         // ReSharper restore CoVariantArrayConversion
       }
     }

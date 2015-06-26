@@ -78,6 +78,7 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPService]")]
     public ArrayInstance ToArray()
     {
       var result = Engine.Array.Construct();

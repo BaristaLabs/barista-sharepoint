@@ -5,7 +5,6 @@
     using Barista.Jurassic.Library;
     using Barista.Library;
     using Barista.SharePoint.Library;
-    using Barista.SharePoint.SharePointSearch.Library;
     using Microsoft.Office.Server.Search.Query;
     using System;
 
@@ -19,7 +18,7 @@
         {
             m_query = query;
 
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected QueryInstance(ObjectInstance prototype, Query query)
@@ -57,7 +56,7 @@
             {
                 return m_query.DirectServiceEndpointUri == null
                     ? null
-                    : new UriInstance(this.Engine.Object.InstancePrototype, m_query.DirectServiceEndpointUri);
+                    : new UriInstance(Engine.Object.InstancePrototype, m_query.DirectServiceEndpointUri);
             }
             set
             {
@@ -149,7 +148,7 @@
             {
                 return m_query.PartitionId == default(Guid)
                     ? null
-                    : new GuidInstance(this.Engine.Object.InstancePrototype, m_query.PartitionId);
+                    : new GuidInstance(Engine.Object.InstancePrototype, m_query.PartitionId);
             }
             set
             {
@@ -240,7 +239,7 @@
             {
                 return m_query.Site == null
                     ? null
-                    : new SPSiteInstance(this.Engine.Object.InstancePrototype, m_query.Site);
+                    : new SPSiteInstance(Engine.Object.InstancePrototype, m_query.Site);
             }
         }
 
@@ -251,7 +250,7 @@
             {
                 return m_query.SiteContext == null
                     ? null
-                    : new UriInstance(this.Engine.Object.InstancePrototype, m_query.SiteContext);
+                    : new UriInstance(Engine.Object.InstancePrototype, m_query.SiteContext);
             }
             set
             {
@@ -345,7 +344,7 @@
             var resultTableCollection = m_query.Execute();
             return resultTableCollection == null
                 ? null
-                : new ResultTableCollectionInstance(this.Engine.Object.InstancePrototype, resultTableCollection);
+                : new ResultTableCollectionInstance(Engine.Object.InstancePrototype, resultTableCollection);
         }
 
         [JSFunction(Name = "dispose")]
@@ -358,12 +357,13 @@
         //GetQuerySuggestions
 
         [JSFunction(Name = "getScopes")]
+        [JSDoc("ternReturnType", "[+ScopeInformation]")]
         public ArrayInstance GetScopes()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             var scopes = m_query.GetScopes();
             foreach (var scope in scopes)
-                ArrayInstance.Push(result, new ScopeInformationInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInformationInstance(Engine, scope));
 
             return result;
         }
@@ -371,7 +371,7 @@
         [JSFunction(Name = "highlightStringValue")]
         public ObjectInstance HighlightStringValue(string strValue, bool fLastTermByPrefix, bool fQuerySuggestions)
         {
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             bool hasHighlight;
             var value = m_query.HighlightStringValue(strValue, fLastTermByPrefix, fQuerySuggestions, out hasHighlight);
 

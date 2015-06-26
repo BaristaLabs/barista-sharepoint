@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPExportObjectCollectionInstance Construct()
     {
-      return new SPExportObjectCollectionInstance(this.InstancePrototype);
+      return new SPExportObjectCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPExportObjectCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPExportObjectCollectionInstance(ObjectInstance prototype, SPExportObjectCollection exportObjectCollection)
@@ -60,7 +60,7 @@
     public void Add(SPExportObjectInstance exportObj)
     {
       if (exportObj == null)
-        throw new JavaScriptException(this.Engine, "Error", "Cannot add a null Export Object object to the collection.");
+        throw new JavaScriptException(Engine, "Error", "Cannot add a null Export Object object to the collection.");
 
       m_exportObjectCollection.Add(exportObj.SPExportObject);
     }
@@ -77,16 +77,17 @@
       var exportObjectInstance = m_exportObjectCollection[index];
       return exportObjectInstance == null
         ? null
-        : new SPExportObjectInstance(this.Engine.Object.InstancePrototype, exportObjectInstance);
+        : new SPExportObjectInstance(Engine.Object.InstancePrototype, exportObjectInstance);
     }
 
     [JSFunction(Name = "getAllExportObjects")]
+    [JSDoc("ternReturnType", "[+SPExportObject]")]
     public ArrayInstance GetAllTermSets()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var exportObject in m_exportObjectCollection.OfType<SPExportObject>())
       {
-        ArrayInstance.Push(result, new SPExportObjectInstance(this.Engine.Object.InstancePrototype, exportObject));
+        ArrayInstance.Push(result, new SPExportObjectInstance(Engine.Object.InstancePrototype, exportObject));
       }
       return result;
     }

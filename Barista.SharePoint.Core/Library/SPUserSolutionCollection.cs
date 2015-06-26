@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public SPUserSolutionCollectionInstance Construct()
         {
-            return new SPUserSolutionCollectionInstance(this.InstancePrototype);
+            return new SPUserSolutionCollectionInstance(InstancePrototype);
         }
     }
 
@@ -30,8 +30,8 @@
         public SPUserSolutionCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPUserSolutionCollectionInstance(ObjectInstance prototype, SPUserSolutionCollection userSolutionCollection)
@@ -66,14 +66,14 @@
             var result = m_userSolutionCollection.Add(solutionGalleryItemId);
             return result == null
                 ? null
-                : new SPUserSolutionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPUserSolutionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "remove")]
         public void Remove(SPUserSolutionInstance solution)
         {
             if (solution == null)
-                throw new JavaScriptException(this.Engine, "Error", "Solution must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Solution must be specified.");
 
             m_userSolutionCollection.Remove(solution.SPUserSolution);
         }
@@ -85,16 +85,17 @@
             var result = m_userSolutionCollection[guidSolutionId];
             return result == null
                 ? null
-                : new SPUserSolutionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPUserSolutionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPUserSolution]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var sol in m_userSolutionCollection
                 .OfType<SPUserSolution>()
-                .Select(def => new SPUserSolutionInstance(this.Engine.Object.InstancePrototype, def)))
+                .Select(def => new SPUserSolutionInstance(Engine.Object.InstancePrototype, def)))
             {
                 ArrayInstance.Push(result, sol);
             }

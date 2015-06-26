@@ -16,7 +16,7 @@
             : base(engine)
         {
             m_scopeDisplayGroup = scopeDisplayGroup;
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected ScopeDisplayGroupInstance(ObjectInstance prototype, ScopeDisplayGroup scopeDisplayGroup)
@@ -93,7 +93,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_scopeDisplayGroup.LastModifiedTime);
+                return JurassicHelper.ToDateInstance(Engine, m_scopeDisplayGroup.LastModifiedTime);
             }
         }
 
@@ -118,7 +118,7 @@
                 var site = m_scopeDisplayGroup.OwningSite;
                 return site == null
                     ? null
-                    : new SPSiteInstance(this.Engine.Object.InstancePrototype, site);
+                    : new SPSiteInstance(Engine.Object.InstancePrototype, site);
             }
         }
 
@@ -126,7 +126,7 @@
         public void Add(ScopeInstance scope)
         {
             if (scope == null)
-                throw new JavaScriptException(this.Engine, "Error", "Scope must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Scope must be specified.");
 
             m_scopeDisplayGroup.Add(scope.Scope);
         }
@@ -141,7 +141,7 @@
         public bool Contains(ScopeInstance scope)
         {
             if (scope == null)
-                throw new JavaScriptException(this.Engine, "Error", "Scope must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Scope must be specified.");
 
             return m_scopeDisplayGroup.Contains(scope.Scope);
         }
@@ -156,7 +156,7 @@
         public int IndexOf(ScopeInstance scope)
         {
             if (scope == null)
-                throw new JavaScriptException(this.Engine, "Error", "Scope must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Scope must be specified.");
 
             return m_scopeDisplayGroup.IndexOf(scope.Scope);
         }
@@ -165,7 +165,7 @@
         public void Insert(int index, ScopeInstance scope)
         {
             if (scope == null)
-                throw new JavaScriptException(this.Engine, "Error", "Scope must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Scope must be specified.");
 
             m_scopeDisplayGroup.Insert(index, scope.Scope);
         }
@@ -174,7 +174,7 @@
         public void Remove(ScopeInstance scope)
         {
             if (scope == null)
-                throw new JavaScriptException(this.Engine, "Error", "Scope must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Scope must be specified.");
 
             m_scopeDisplayGroup.Remove(scope.Scope);
         }
@@ -197,7 +197,7 @@
             var scope = m_scopeDisplayGroup.Default;
             return scope == null
                 ? null
-                : new ScopeInstance(this.Engine, scope);
+                : new ScopeInstance(Engine, scope);
         }
 
         [JSFunction(Name = "getScopeByIndex")]
@@ -206,15 +206,16 @@
             var scope = m_scopeDisplayGroup[index];
             return scope == null
                 ? null
-                : new ScopeInstance(this.Engine, scope);
+                : new ScopeInstance(Engine, scope);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+Scope]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in m_scopeDisplayGroup.OfType<Scope>())
-                ArrayInstance.Push(result, new ScopeInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInstance(Engine, scope));
             return result;
         }
     }

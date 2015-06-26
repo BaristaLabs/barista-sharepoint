@@ -34,7 +34,7 @@
 
       var webApplication = SPWebApplication.Lookup(webApplicationUri);
 
-      return new SPWebApplicationInstance(this.InstancePrototype, webApplication);
+      return new SPWebApplicationInstance(InstancePrototype, webApplication);
     }
   }
 
@@ -46,8 +46,8 @@
     public SPWebApplicationInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPWebApplicationInstance(ObjectInstance prototype, SPWebApplication webApplication)
@@ -157,12 +157,13 @@
     }
 
     [JSProperty(Name = "allowedInlineDownloadedMimeTypes")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance AllowedInlineDownloadedMimeTypes
     {
       get
       {
 // ReSharper disable CoVariantArrayConversion
-        var result = this.Engine.Array.Construct(m_webApplication.AllowedInlineDownloadedMimeTypes.ToArray());
+        var result = Engine.Array.Construct(m_webApplication.AllowedInlineDownloadedMimeTypes.ToArray());
 // ReSharper restore CoVariantArrayConversion
         return result;
       }
@@ -269,7 +270,7 @@
         if (m_webApplication.AlternateUrls == null)
           return null;
 
-        return new SPAlternateUrlCollectionInstance(this.Engine.Object.InstancePrototype, m_webApplication.AlternateUrls);
+        return new SPAlternateUrlCollectionInstance(Engine.Object.InstancePrototype, m_webApplication.AlternateUrls);
       }
     }
 
@@ -337,7 +338,7 @@
     [JSProperty(Name = "id")]
     public GuidInstance Id
     {
-      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_webApplication.Id); }
+      get { return new GuidInstance(Engine.Object.InstancePrototype, m_webApplication.Id); }
     }
 
     [JSProperty(Name = "incomingEmailServerAddress")]
@@ -386,7 +387,7 @@
         {
             return m_webApplication.OutboundMailServiceInstance == null
                 ? null
-                : new SPServiceInstanceInstance(this.Engine.Object.InstancePrototype, m_webApplication.OutboundMailServiceInstance);
+                : new SPServiceInstanceInstance(Engine.Object.InstancePrototype, m_webApplication.OutboundMailServiceInstance);
         }
     }
 
@@ -428,7 +429,7 @@
       var applicationPool = m_webApplication.ApplicationPool;
       return applicationPool == null
         ? null
-        : new SPApplicationPoolInstance(this.Engine.Object.InstancePrototype, applicationPool);
+        : new SPApplicationPoolInstance(Engine.Object.InstancePrototype, applicationPool);
     }
 
     [JSFunction(Name = "getContentDatabases")]
@@ -437,14 +438,14 @@
       var contentDatabases = m_webApplication.ContentDatabases;
       return contentDatabases == null
         ? null
-        : new SPContentDatabaseCollectionInstance(this.Engine.Object.InstancePrototype, contentDatabases);
+        : new SPContentDatabaseCollectionInstance(Engine.Object.InstancePrototype, contentDatabases);
     }
 
     [JSFunction(Name = "getDeletedSites")]
     public SPDeletedSiteCollectionInstance GetDeletedSites()
     {
       var collection = m_webApplication.GetDeletedSites();
-      return new SPDeletedSiteCollectionInstance(this.Engine.Object.InstancePrototype, collection);
+      return new SPDeletedSiteCollectionInstance(Engine.Object.InstancePrototype, collection);
     }
 
     [JSFunction(Name = "getDeletedSitesByGuid")]
@@ -453,23 +454,24 @@
       var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
 
       var collection = m_webApplication.GetDeletedSites(guid);
-      return new SPDeletedSiteCollectionInstance(this.Engine.Object.InstancePrototype, collection);
+      return new SPDeletedSiteCollectionInstance(Engine.Object.InstancePrototype, collection);
     }
 
     [JSFunction(Name = "getDeletedSitesByPath")]
     public SPDeletedSiteCollectionInstance GetDeletedSitesByPath(string sitePath)
     {
       var collection = m_webApplication.GetDeletedSites(sitePath);
-      return new SPDeletedSiteCollectionInstance(this.Engine.Object.InstancePrototype, collection);
+      return new SPDeletedSiteCollectionInstance(Engine.Object.InstancePrototype, collection);
     }
 
     [JSFunction(Name = "getFeatures")]
+    [JSDoc("ternReturnType", "[+SPFeature]")]
     public ArrayInstance GetFeatures()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var feature in m_webApplication.Features)
       {
-        ArrayInstance.Push(result, new SPFeatureInstance(this.Engine.Object.InstancePrototype, feature));
+        ArrayInstance.Push(result, new SPFeatureInstance(Engine.Object.InstancePrototype, feature));
       }
       return result;
     }
@@ -480,7 +482,7 @@
       var sites = m_webApplication.Sites;
       return sites == null
         ? null
-        : new SPSiteCollectionInstance(this.Engine.Object.InstancePrototype, sites);
+        : new SPSiteCollectionInstance(Engine.Object.InstancePrototype, sites);
     }
 
     [JSFunction(Name = "update")]

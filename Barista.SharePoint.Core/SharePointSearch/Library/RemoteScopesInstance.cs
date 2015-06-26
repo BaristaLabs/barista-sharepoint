@@ -21,7 +21,7 @@
         public RemoteScopesInstance Construct()
         {
             var context = SPServiceContext.GetContext(SPBaristaContext.Current.Site);
-            return new RemoteScopesInstance(this.Engine, new RemoteScopes(context));
+            return new RemoteScopesInstance(Engine, new RemoteScopes(context));
         }
     }
 
@@ -35,7 +35,7 @@
         {
             m_remoteScopes = remoteScopes;
 
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected RemoteScopesInstance(ObjectInstance prototype, RemoteScopes remoteScopes)
@@ -59,7 +59,7 @@
             {
                 return m_remoteScopes.AllDisplayGroups == null
                     ? null
-                    : new ScopeDisplayGroupCollectionInstance(this.Engine, m_remoteScopes.AllDisplayGroups);
+                    : new ScopeDisplayGroupCollectionInstance(Engine, m_remoteScopes.AllDisplayGroups);
             }
         }
 
@@ -70,7 +70,7 @@
             {
                 return m_remoteScopes.AllScopes == null
                     ? null
-                    : new ScopeCollectionInstance(this.Engine, m_remoteScopes.AllScopes);
+                    : new ScopeCollectionInstance(Engine, m_remoteScopes.AllScopes);
             }
         }
 
@@ -94,29 +94,30 @@
         public ScopeDisplayGroupInstance GetDisplayGroup(UriInstance siteUrl, string name)
         {
             if (siteUrl == null)
-                throw new JavaScriptException(this.Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
+                throw new JavaScriptException(Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
 
             var result = m_remoteScopes.GetDisplayGroup(siteUrl.Uri, name);
 
             return result == null
                 ? null
-                : new ScopeDisplayGroupInstance(this.Engine, result);
+                : new ScopeDisplayGroupInstance(Engine, result);
         }
 
         [JSFunction(Name = "getDisplayGroupsForSite")]
+        [JSDoc("ternReturnType", "[+ScopeDisplayGroup]")]
         public ArrayInstance GetDisplayGroupsForSite(UriInstance siteUrl)
         {
             if (siteUrl == null)
-                throw new JavaScriptException(this.Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
+                throw new JavaScriptException(Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
 
             var groups = m_remoteScopes.GetDisplayGroupsForSite(siteUrl.Uri);
 
             if (groups == null)
                 return null;
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var dg in groups.OfType<ScopeDisplayGroup>())
-                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(this.Engine, dg));
+                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(Engine, dg));
 
             return result;
         }
@@ -125,29 +126,30 @@
         public ScopeInstance GetScope(UriInstance siteUrl, string name)
         {
             if (siteUrl == null)
-                throw new JavaScriptException(this.Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
+                throw new JavaScriptException(Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
 
             var result = m_remoteScopes.GetScope(siteUrl.Uri, name);
 
             return result == null
                 ? null
-                : new ScopeInstance(this.Engine, result);
+                : new ScopeInstance(Engine, result);
         }
 
         [JSFunction(Name = "getScopesForSite")]
+        [JSDoc("ternReturnType", "[+Scope]")]
         public ArrayInstance GetScopesForSite(UriInstance siteUrl)
         {
             if (siteUrl == null)
-                throw new JavaScriptException(this.Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
+                throw new JavaScriptException(Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
 
             var scopes = m_remoteScopes.GetScopesForSite(siteUrl.Uri);
 
             if (scopes == null)
                 return null;
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in scopes.OfType<Scope>())
-                ArrayInstance.Push(result, new ScopeInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInstance(Engine, scope));
 
             return result;
         }
@@ -159,10 +161,11 @@
 
             return result == null
                 ? null
-                : new ScopeInstance(this.Engine, result);
+                : new ScopeInstance(Engine, result);
         }
 
         [JSFunction(Name = "getSharedScopes")]
+        [JSDoc("ternReturnType", "[+Scope]")]
         public ArrayInstance GetSharedScopes()
         {
             var scopes = m_remoteScopes.GetSharedScopes();
@@ -170,27 +173,28 @@
             if (scopes == null)
                 return null;
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in scopes.OfType<Scope>())
-                ArrayInstance.Push(result, new ScopeInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInstance(Engine, scope));
 
             return result;
         }
 
         [JSFunction(Name = "getUnusedScopesForSite")]
+        [JSDoc("ternReturnType", "[+Scope]")]
         public ArrayInstance GetUnusedScopesForSite(UriInstance siteUrl)
         {
             if (siteUrl == null)
-                throw new JavaScriptException(this.Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
+                throw new JavaScriptException(Engine, "Error", "SiteUrl argument must be specified and an instance of UriInstance");
 
             var scopes = m_remoteScopes.GetUnusedScopesForSite(siteUrl.Uri);
 
             if (scopes == null)
                 return null;
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in scopes.OfType<Scope>())
-                ArrayInstance.Push(result, new ScopeInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInstance(Engine, scope));
 
             return result;
         }

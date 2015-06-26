@@ -17,9 +17,9 @@
         public HttpRequestInstance(ScriptEngine engine, BrewRequest request)
             : base(engine)
         {
-            this.Request = request;
-            this.PopulateFields();
-            this.PopulateFunctions();
+            Request = request;
+            PopulateFields();
+            PopulateFunctions();
         }
 
         #region Properties
@@ -31,10 +31,11 @@
         }
 
         [JSProperty(Name = "accept")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Accept
         {
             // ReSharper disable CoVariantArrayConversion
-            get { return this.Engine.Array.Construct(this.Request.AcceptTypes); }
+            get { return Engine.Array.Construct(Request.AcceptTypes); }
             // ReSharper restore CoVariantArrayConversion
         }
 
@@ -47,14 +48,14 @@
                 foreach(var kvp in Request.ExtendedProperties)
                     ht.Add(kvp.Key, kvp.Value);
 
-                return new HashtableInstance(this.Engine.Object.InstancePrototype, ht);
+                return new HashtableInstance(Engine.Object.InstancePrototype, ht);
             }
         }
 
         [JSProperty(Name = "contentType")]
         public string ContentType
         {
-            get { return this.Request.ContentType; }
+            get { return Request.ContentType; }
         }
 
         [JSProperty(Name = "files", IsEnumerable = true)]
@@ -64,11 +65,11 @@
             {
                 if (m_files == null)
                 {
-                    m_files = this.Engine.Object.Construct();
+                    m_files = Engine.Object.Construct();
 
-                    foreach (var file in this.Request.Files)
+                    foreach (var file in Request.Files)
                     {
-                        var content = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, file.Value.Content)
+                        var content = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, file.Value.Content)
                           {
                               FileName = file.Value.FileName,
                               MimeType = file.Value.ContentType
@@ -83,12 +84,13 @@
         }
 
         [JSProperty(Name = "filenames")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Filenames
         {
             get
             {
                 // ReSharper disable CoVariantArrayConversion
-                var result = this.Engine.Array.Construct(this.Request.Files.Select(f => f.Key).ToArray());
+                var result = Engine.Array.Construct(Request.Files.Select(f => f.Key).ToArray());
                 // ReSharper restore CoVariantArrayConversion
 
                 return result;
@@ -100,10 +102,10 @@
         {
             get
             {
-                var result = this.Engine.Object.Construct();
-                foreach (var key in this.Request.Headers.Keys)
+                var result = Engine.Object.Construct();
+                foreach (var key in Request.Headers.Keys)
                 {
-                    result.SetPropertyValue(key, this.Request.Headers[key], true);
+                    result.SetPropertyValue(key, Request.Headers[key], true);
                 }
                 return result;
             }
@@ -112,7 +114,7 @@
         [JSProperty(Name = "location")]
         public string Location
         {
-            get { return this.Request.Url.PathAndQuery; }
+            get { return Request.Url.PathAndQuery; }
         }
 
         [JSProperty(Name = "form")]
@@ -120,10 +122,10 @@
         {
             get
             {
-                var result = this.Engine.Object.Construct();
-                foreach (var key in this.Request.Form.Keys)
+                var result = Engine.Object.Construct();
+                foreach (var key in Request.Form.Keys)
                 {
-                    result.SetPropertyValue(key, this.Request.Form[key], false);
+                    result.SetPropertyValue(key, Request.Form[key], false);
                 }
                 return result;
             }
@@ -134,7 +136,7 @@
         {
             get
             {
-                return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, this.Request.Body);
+                return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, Request.Body);
             }
         }
 
@@ -143,10 +145,10 @@
         {
             get
             {
-                var result = this.Engine.Object.Construct();
-                foreach (var key in this.Request.QueryString.Keys)
+                var result = Engine.Object.Construct();
+                foreach (var key in Request.QueryString.Keys)
                 {
-                    result.SetPropertyValue(key, this.Request.QueryString[key], false);
+                    result.SetPropertyValue(key, Request.QueryString[key], false);
                 }
                 return result;
             }
@@ -157,7 +159,7 @@
         {
             get
             {
-                return this.Request.Url.ToString();
+                return Request.Url.ToString();
             }
         }
         
@@ -166,7 +168,7 @@
         {
             get
             {
-                var uri = this.Request.Url;
+                var uri = Request.Url;
                 var restStartIndex = -1;
                 for (var i = 0; i < uri.Segments.Length; i++)
                 {
@@ -191,31 +193,31 @@
         [JSProperty(Name = "referrerLocation")]
         public string ReferrerLocation
         {
-            get { return this.Request.UrlReferrer.PathAndQuery; }
+            get { return Request.UrlReferrer.PathAndQuery; }
         }
 
         [JSProperty(Name = "referrer")]
         public string Referrer
         {
-            get { return this.Request.UrlReferrer.ToString(); }
+            get { return Request.UrlReferrer.ToString(); }
         }
 
         [JSProperty(Name = "method")]
         public string Method
         {
-            get { return this.Request.Method; }
+            get { return Request.Method; }
         }
 
         [JSProperty(Name = "url")]
         public string Url
         {
-            get { return this.Request.Path; }
+            get { return Request.Path; }
         }
 
         [JSProperty(Name = "userAgent")]
         public string UserAgent
         {
-            get { return this.Request.UserAgent; }
+            get { return Request.UserAgent; }
         }
 
         [JSProperty(Name = "clientInfo")]
@@ -224,8 +226,8 @@
             get
             {
                 var br = BrowserUserAgentParser.GetDefault();
-                var clientInfo = br.Parse(this.Request.UserAgent);
-                return new ClientInfoInstance(this.Engine.Object.InstancePrototype, clientInfo);
+                var clientInfo = br.Parse(Request.UserAgent);
+                return new ClientInfoInstance(Engine.Object.InstancePrototype, clientInfo);
             }
         }
         #endregion
@@ -233,17 +235,17 @@
         [JSFunction(Name = "getBodyObject")]
         public object GetBodyObject()
         {
-            var stringBody = Encoding.UTF8.GetString(this.Request.Body);
+            var stringBody = Encoding.UTF8.GetString(Request.Body);
             if (stringBody.IsNullOrWhiteSpace())
                 return Null.Value;
 
-            return JSONObject.Parse(this.Engine, stringBody, null);
+            return JSONObject.Parse(Engine, stringBody, null);
         }
 
         [JSFunction(Name = "getBodyString")]
         public string GetBodyString()
         {
-            var stringBody = Encoding.UTF8.GetString(this.Request.Body);
+            var stringBody = Encoding.UTF8.GetString(Request.Body);
             return stringBody;
         }
     }

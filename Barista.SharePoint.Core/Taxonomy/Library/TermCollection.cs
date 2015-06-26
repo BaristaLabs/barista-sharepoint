@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public TermCollectionInstance Construct()
     {
-      return new TermCollectionInstance(this.InstancePrototype);
+      return new TermCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public TermCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermCollectionInstance(ObjectInstance prototype, TermCollection termCollection)
@@ -71,7 +71,7 @@
       var term = m_termCollection[name];
       return term == null
         ? null
-        : new TermInstance(this.Engine.Object.InstancePrototype, term);
+        : new TermInstance(Engine.Object.InstancePrototype, term);
     }
 
     [JSFunction(Name = "getTermByIndex")]
@@ -80,7 +80,7 @@
       var term = m_termCollection[index];
       return term == null
         ? null
-        : new TermInstance(this.Engine.Object.InstancePrototype, term);
+        : new TermInstance(Engine.Object.InstancePrototype, term);
     }
 
     [JSFunction(Name = "getTermById")]
@@ -90,16 +90,17 @@
       var term = m_termCollection[guid];
       return term == null
         ? null
-        : new TermInstance(this.Engine.Object.InstancePrototype, term);
+        : new TermInstance(Engine.Object.InstancePrototype, term);
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+Term]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var term in m_termCollection)
       {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
+        ArrayInstance.Push(result, new TermInstance(Engine.Object.InstancePrototype, term));
       }
       return result;
     }

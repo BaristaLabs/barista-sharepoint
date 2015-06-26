@@ -85,6 +85,7 @@
         }
 
         [JSProperty(Name = "members")]
+        [JSDoc("ternPropertyType", "[+ADUser]")]
         public ArrayInstance Members
         {
             get
@@ -103,6 +104,7 @@
         #endregion
 
         [JSFunction(Name = "expandUsers")]
+        [JSDoc("ternReturnTYpe", "[+ADUser]")]
         public ArrayInstance ExpandUsers()
         {
             var result = Engine.Array.Construct();
@@ -119,6 +121,7 @@
         }
 
         [JSFunction(Name = "expandGroups")]
+        [JSDoc("ternReturnType", "[+ADGroup]")]
         public ArrayInstance ExpandGroups()
         {
             var result = Engine.Array.Construct();

@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPListTemplateCollectionInstance Construct()
     {
-      return new SPListTemplateCollectionInstance(this.InstancePrototype);
+      return new SPListTemplateCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPListTemplateCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPListTemplateCollectionInstance(ObjectInstance prototype, SPListTemplateCollection listTemplateCollection)
@@ -63,7 +63,7 @@
       if (listTemplate == null)
         return null;
 
-      return new SPListTemplateInstance(this.Engine.Object.InstancePrototype, listTemplate);
+      return new SPListTemplateInstance(Engine.Object.InstancePrototype, listTemplate);
     }
 
     [JSFunction(Name = "getListTemplateByIndex")]
@@ -73,7 +73,7 @@
       if (listTemplate == null)
         return null;
 
-      return new SPListTemplateInstance(this.Engine.Object.InstancePrototype, listTemplate);
+      return new SPListTemplateInstance(Engine.Object.InstancePrototype, listTemplate);
     }
 
     [JSFunction(Name = "getSchemaXml")]
@@ -83,12 +83,13 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPListTemplate]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var listTemplate in m_listTemplateCollection.OfType<SPListTemplate>())
       {
-        ArrayInstance.Push(result, new SPListTemplateInstance(this.Engine.Object.InstancePrototype, listTemplate));
+        ArrayInstance.Push(result, new SPListTemplateInstance(Engine.Object.InstancePrototype, listTemplate));
       }
       return result;
     }

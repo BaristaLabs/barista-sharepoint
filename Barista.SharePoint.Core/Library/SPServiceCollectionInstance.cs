@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPServiceCollectionInstance Construct()
     {
-      return new SPServiceCollectionInstance(this.InstancePrototype);
+      return new SPServiceCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPServiceCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPServiceCollectionInstance(ObjectInstance prototype, SPServiceCollection serviceCollection)
@@ -61,7 +61,7 @@
       var result = m_serviceCollection[guid];
       return result == null
         ? null
-        : new SPServiceInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPServiceInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getServiceByName")]
@@ -70,16 +70,17 @@
       var result = m_serviceCollection[name];
       return result == null
         ? null
-        : new SPServiceInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPServiceInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPService]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var service in m_serviceCollection)
       {
-        ArrayInstance.Push(result, new SPServiceInstance(this.Engine.Object.InstancePrototype, service));
+        ArrayInstance.Push(result, new SPServiceInstance(Engine.Object.InstancePrototype, service));
       }
       return result;
     }

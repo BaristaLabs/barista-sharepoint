@@ -14,14 +14,14 @@
     public TermStoreInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermStoreInstance(ObjectInstance prototype, TermStore termStore)
       : this(prototype)
     {
-      this.m_termStore = termStore;
+      m_termStore = termStore;
     }
 
     #region Properties
@@ -44,11 +44,12 @@
     }
 
     [JSProperty(Name = "languages")]
+    [JSDoc("ternPropertyType", "[number]")]
     public ArrayInstance Languages
     {
       get
       {
-        var result = this.Engine.Array.Construct();
+        var result = Engine.Array.Construct();
         foreach (var lang in m_termStore.Languages)
         {
           ArrayInstance.Push(result, lang);
@@ -92,7 +93,7 @@
     public TermGroupInstance CreateGroup(string name)
     {
       var newGroup = m_termStore.CreateGroup(name);
-      return new TermGroupInstance(this.Engine.Object.InstancePrototype, newGroup);
+      return new TermGroupInstance(Engine.Object.InstancePrototype, newGroup);
     }
 
     [JSFunction(Name = "deleteLanguage")]
@@ -120,16 +121,17 @@
     {
       var guid = GuidInstance.ConvertFromJsObjectToGuid(id);
       var group = m_termStore.GetGroup(guid);
-      return new TermGroupInstance(this.Engine.Object.InstancePrototype, group);
+      return new TermGroupInstance(Engine.Object.InstancePrototype, group);
     }
 
     [JSFunction(Name = "getGroups")]
+    [JSDoc("ternReturnType", "[+TermGroup]")]
     public ArrayInstance GetGroups()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var group in m_termStore.Groups)
       {
-        ArrayInstance.Push(result, new TermGroupInstance(this.Engine.Object.InstancePrototype, group));
+        ArrayInstance.Push(result, new TermGroupInstance(Engine.Object.InstancePrototype, group));
       }
       return result;
     }
@@ -138,14 +140,14 @@
     public TermGroupInstance GetSiteCollectionGroup(SPSiteInstance site)
     {
       var group = m_termStore.GetSiteCollectionGroup(site.Site);
-      return new TermGroupInstance(this.Engine.Object.InstancePrototype, group);
+      return new TermGroupInstance(Engine.Object.InstancePrototype, group);
     }
 
     [JSFunction(Name = "getSystemGroup")]
     public TermGroupInstance GetSystemGroup(SPSiteInstance site)
     {
       var group = m_termStore.SystemGroup;
-      return new TermGroupInstance(this.Engine.Object.InstancePrototype, group);
+      return new TermGroupInstance(Engine.Object.InstancePrototype, group);
     }
 
     [JSFunction(Name = "resyncHiddenList")]

@@ -22,18 +22,18 @@
         public SPWorkflowTaskCollectionInstance Construct(object arg1, SPWorkflowFilterInstance filter)
         {
             if (filter == null)
-                throw new JavaScriptException(this.Engine, "Error", "A filter must be supplied as the second argument.");
+                throw new JavaScriptException(Engine, "Error", "A filter must be supplied as the second argument.");
             if (arg1 is SPListItemInstance)
             {
-                return new SPWorkflowTaskCollectionInstance(this.Engine.Object.InstancePrototype, new SPWorkflowTaskCollection((arg1 as SPListItemInstance).ListItem, filter.SPWorkflowFilter));
+                return new SPWorkflowTaskCollectionInstance(Engine.Object.InstancePrototype, new SPWorkflowTaskCollection((arg1 as SPListItemInstance).ListItem, filter.SPWorkflowFilter));
             }
 
             if (arg1 is SPWorkflowCollectionInstance)
             {
-                return new SPWorkflowTaskCollectionInstance(this.Engine.Object.InstancePrototype, new SPWorkflowTaskCollection((arg1 as SPWorkflowCollectionInstance).SPWorkflowCollection, filter.SPWorkflowFilter));
+                return new SPWorkflowTaskCollectionInstance(Engine.Object.InstancePrototype, new SPWorkflowTaskCollection((arg1 as SPWorkflowCollectionInstance).SPWorkflowCollection, filter.SPWorkflowFilter));
             }
 
-            throw new JavaScriptException(this.Engine, "Error", "The first argument must either be a list item or a workflow collection.");
+            throw new JavaScriptException(Engine, "Error", "The first argument must either be a list item or a workflow collection.");
         }
     }
 
@@ -45,8 +45,8 @@
         public SPWorkflowTaskCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWorkflowTaskCollectionInstance(ObjectInstance prototype, SPWorkflowTaskCollection workflowTaskCollection)
@@ -88,7 +88,7 @@
             var result = m_workflowTaskCollection[guidId];
             return result == null
                 ? null
-                : new SPWorkflowTaskInstance(this.Engine, result);
+                : new SPWorkflowTaskInstance(Engine, result);
         }
 
         [JSFunction(Name = "getTaskByIndex")]
@@ -97,7 +97,7 @@
             var result = m_workflowTaskCollection[index];
             return result == null
                 ? null
-                : new SPWorkflowTaskInstance(this.Engine, result);
+                : new SPWorkflowTaskInstance(Engine, result);
         }
 
         [JSFunction(Name = "getXml")]
@@ -107,12 +107,13 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWorkflowTask]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var wf in m_workflowTaskCollection
                 .OfType<SPWorkflowTask>()
-                .Select(a => new SPWorkflowTaskInstance(this.Engine, a)))
+                .Select(a => new SPWorkflowTaskInstance(Engine, a)))
             {
                 ArrayInstance.Push(result, wf);
             }

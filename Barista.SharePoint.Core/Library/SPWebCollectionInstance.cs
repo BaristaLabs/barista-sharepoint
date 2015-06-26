@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public SPWebCollectionInstance Construct()
         {
-            return new SPWebCollectionInstance(this.InstancePrototype);
+            return new SPWebCollectionInstance(InstancePrototype);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPWebCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWebCollectionInstance(ObjectInstance prototype, SPWebCollection webCollection)
@@ -74,7 +74,7 @@
                     // ReSharper disable CoVariantArrayConversion
                     return m_webCollection.Names == null
                       ? null
-                      : this.Engine.Array.Construct(m_webCollection.Names);
+                      : Engine.Array.Construct(m_webCollection.Names);
                     // ReSharper restore CoVariantArrayConversion
                 }
                 catch (Exception)
@@ -94,7 +94,7 @@
                     // ReSharper disable CoVariantArrayConversion
                     return m_webCollection.WebsInfo == null
                         ? null
-                        : new SPWebInfoListInstance(this.Engine, m_webCollection.WebsInfo);
+                        : new SPWebInfoListInstance(Engine, m_webCollection.WebsInfo);
                     // ReSharper restore CoVariantArrayConversion
                 }
                 catch (Exception)
@@ -110,7 +110,7 @@
             var result = m_webCollection.Add(strWebUrl);
             return result == null
                 ? null
-                : new SPWebInstance(this.Engine, result);
+                : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "add2")]
@@ -130,7 +130,7 @@
             
             return result == null
                 ? null
-                : new SPWebInstance(this.Engine, result);
+                : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name="delete")]
@@ -148,7 +148,7 @@
 
             return result == null
               ? null
-              : new SPWebInstance(this.Engine, result);
+              : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "getWebByName")]
@@ -157,7 +157,7 @@
             var result = m_webCollection[name];
             return result == null
               ? null
-              : new SPWebInstance(this.Engine, result);
+              : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "getWebByIndex")]
@@ -166,16 +166,17 @@
             var result = m_webCollection[index];
             return result == null
               ? null
-              : new SPWebInstance(this.Engine, result);
+              : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWeb]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (SPWeb web in m_webCollection)
             {
-                ArrayInstance.Push(result, new SPWebInstance(this.Engine, web));
+                ArrayInstance.Push(result, new SPWebInstance(Engine, web));
             }
             return result;
         }

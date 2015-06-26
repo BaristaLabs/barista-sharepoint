@@ -13,14 +13,14 @@
     public TermGroupInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermGroupInstance(ObjectInstance prototype, Group termGroup)
       : this(prototype)
     {
-      this.m_termGroup = termGroup;
+      m_termGroup = termGroup;
     }
 
     internal Group TermGroup
@@ -32,7 +32,7 @@
     [JSProperty(Name = "createdDate")]
     public DateInstance CreatedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_termGroup.CreatedDate); }
+      get { return JurassicHelper.ToDateInstance(Engine, m_termGroup.CreatedDate); }
     }
 
     [JSProperty(Name = "id")]
@@ -56,7 +56,7 @@
     [JSProperty(Name = "lastModifiedDate")]
     public DateInstance LastModifiedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_termGroup.LastModifiedDate); }
+      get { return JurassicHelper.ToDateInstance(Engine, m_termGroup.LastModifiedDate); }
     }
 
     [JSProperty(Name = "name")]
@@ -90,27 +90,27 @@
     public TermSetInstance CreateTermSet(string name)
     {
       var newTermSet = m_termGroup.CreateTermSet(name);
-      return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
+      return new TermSetInstance(Engine.Object.InstancePrototype, newTermSet);
     }
 
     public TermSetInstance CreateTermSet(string name, object newTermSetId)
     {
       var newId = GuidInstance.ConvertFromJsObjectToGuid(newTermSetId);
       var newTermSet = m_termGroup.CreateTermSet(name, newId);
-      return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
+      return new TermSetInstance(Engine.Object.InstancePrototype, newTermSet);
     }
 
     public TermSetInstance CreateTermSet(string name, int lcid)
     {
       var newTermSet = m_termGroup.CreateTermSet(name, lcid);
-      return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
+      return new TermSetInstance(Engine.Object.InstancePrototype, newTermSet);
     }
 
     public TermSetInstance CreateTermSet(string name, object newTermSetId, int lcid)
     {
       var newId = GuidInstance.ConvertFromJsObjectToGuid(newTermSetId);
       var newTermSet = m_termGroup.CreateTermSet(name, newId, lcid);
-      return new TermSetInstance(this.Engine.Object.InstancePrototype, newTermSet);
+      return new TermSetInstance(Engine.Object.InstancePrototype, newTermSet);
     }
 
     [JSFunction(Name = "delete")]
@@ -153,12 +153,13 @@
     }
 
     [JSFunction(Name = "getTermSets")]
+    [JSDoc("ternReturnType", "[+TermSet]")]
     public ArrayInstance GetTermSets()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var termSet in m_termGroup.TermSets)
       {
-        ArrayInstance.Push(result, new TermSetInstance(this.Engine.Object.InstancePrototype, termSet));
+        ArrayInstance.Push(result, new TermSetInstance(Engine.Object.InstancePrototype, termSet));
       }
       return result;
     }
@@ -166,7 +167,7 @@
     [JSFunction(Name = "getTermStore")]
     public TermStoreInstance GetTermStore()
     {
-      return new TermStoreInstance(this.Engine.Object.InstancePrototype, m_termGroup.TermStore);
+      return new TermStoreInstance(Engine.Object.InstancePrototype, m_termGroup.TermStore);
     }
 
     //TODO: Get/Set GroupManager rights, Contributor rights, site collection rights.

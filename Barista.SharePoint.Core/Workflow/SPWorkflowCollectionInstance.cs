@@ -23,7 +23,7 @@
         [JSConstructorFunction]
         public SPWorkflowCollectionInstance Construct()
         {
-            throw new JavaScriptException(this.Engine, "Error", "Use a factory method instead.");
+            throw new JavaScriptException(Engine, "Error", "Use a factory method instead.");
         }
 
         [JSFunction(Name = "createWorkflowCollectionFromWeb")]
@@ -31,7 +31,7 @@
             object exclusiveFilterStates, object rowCountLimit, object descending)
         {
             if (web == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "A web must be supplied.");
 
             SPWorkflowCollection result;
             if (inclusiveFilterStates == Undefined.Value && exclusiveFilterStates == Undefined.Value &&
@@ -41,29 +41,29 @@
             {
                 SPWorkflowState wsInclusiveFilterStates;
                 if (!TypeConverter.ToString(inclusiveFilterStates).TryParseEnum(true, out wsInclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
 
                 SPWorkflowState wsExclusiveFilterStates;
                 if (!TypeConverter.ToString(exclusiveFilterStates).TryParseEnum(true, out wsExclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
 
                 result = new SPWorkflowCollection(web.Web, wsInclusiveFilterStates, wsExclusiveFilterStates, TypeConverter.ToInteger(rowCountLimit), TypeConverter.ToBoolean(descending));
             }
 
-            return new SPWorkflowCollectionInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPWorkflowCollectionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "createWorkflowCollectionFromList")]
         public SPWorkflowCollectionInstance CreateWorkflowFromList(SPListInstance list, object associationId)
         {
             if (list == null)
-                throw new JavaScriptException(this.Engine, "Error", "A list must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "A list must be supplied.");
 
             var result = associationId == Undefined.Value
                 ? new SPWorkflowCollection(list.List)
                 : new SPWorkflowCollection(list.List, GuidInstance.ConvertFromJsObjectToGuid(associationId));
 
-            return new SPWorkflowCollectionInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPWorkflowCollectionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "createWorkflowCollectionFromListItem")]
@@ -71,7 +71,7 @@
             object exclusiveFilterStates, object rowCountLimit, object ascending)
         {
             if (listItem == null)
-                throw new JavaScriptException(this.Engine, "Error", "A listItem must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "A listItem must be supplied.");
 
             SPWorkflowCollection result;
             if (inclusiveFilterStates == Undefined.Value && exclusiveFilterStates == Undefined.Value &&
@@ -81,11 +81,11 @@
             {
                 SPWorkflowState wsInclusiveFilterStates;
                 if (!TypeConverter.ToString(inclusiveFilterStates).TryParseEnum(true, out wsInclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
 
                 SPWorkflowState wsExclusiveFilterStates;
                 if (!TypeConverter.ToString(exclusiveFilterStates).TryParseEnum(true, out wsExclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
 
                 result = new SPWorkflowCollection(listItem.ListItem, wsInclusiveFilterStates, wsExclusiveFilterStates);
             }
@@ -93,16 +93,16 @@
             {
                 SPWorkflowState wsInclusiveFilterStates;
                 if (!TypeConverter.ToString(inclusiveFilterStates).TryParseEnum(true, out wsInclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "inclusiveFilerStates argument must be a valid SPWorkflowState.");
 
                 SPWorkflowState wsExclusiveFilterStates;
                 if (!TypeConverter.ToString(exclusiveFilterStates).TryParseEnum(true, out wsExclusiveFilterStates))
-                    throw new JavaScriptException(this.Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
+                    throw new JavaScriptException(Engine, "Error", "exclusiveFilterStates argument must be a valid SPWorkflowState.");
 
                 result = new SPWorkflowCollection(listItem.ListItem, wsInclusiveFilterStates, wsExclusiveFilterStates, TypeConverter.ToInteger(rowCountLimit), TypeConverter.ToBoolean(ascending));
             }
 
-            return new SPWorkflowCollectionInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPWorkflowCollectionInstance(Engine.Object.InstancePrototype, result);
         }
     }
 
@@ -114,8 +114,8 @@
         public SPWorkflowCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWorkflowCollectionInstance(ObjectInstance prototype, SPWorkflowCollection workflowCollection)
@@ -163,11 +163,12 @@
         }
 
         [JSFunction(Name = "getInstanceIds")]
+        [JSDoc("ternReturnType", "[+Guid]")]
         public ArrayInstance GetInstanceIds()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var id in m_workflowCollection.GetInstanceIds()
-                .Select(guid => new GuidInstance(this.Engine.Object.InstancePrototype, guid)))
+                .Select(guid => new GuidInstance(Engine.Object.InstancePrototype, guid)))
             {
                 ArrayInstance.Push(result, id);
             }
@@ -182,7 +183,7 @@
             var result = m_workflowCollection[guidId];
             return result == null
                 ? null
-                : new SPWorkflowInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getWorkflowByIndex")]
@@ -191,7 +192,7 @@
             var result = m_workflowCollection[index];
             return result == null
                 ? null
-                : new SPWorkflowInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getXml")]
@@ -201,12 +202,13 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWorkflow]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var wf in m_workflowCollection
                 .OfType<SPWorkflow>()
-                .Select(a => new SPWorkflowInstance(this.Engine.Object.InstancePrototype, a)))
+                .Select(a => new SPWorkflowInstance(Engine.Object.InstancePrototype, a)))
             {
                 ArrayInstance.Push(result, wf);
             }

@@ -13,14 +13,14 @@
     public TermSetInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermSetInstance(ObjectInstance prototype, TermSet termSet)
       : this(prototype)
     {
-      this.m_termSet = termSet;
+      m_termSet = termSet;
     }
 
     internal TermSet TermSet
@@ -39,7 +39,7 @@
     [JSProperty(Name = "createdDate")]
     public DateInstance CreatedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_termSet.CreatedDate); }
+      get { return JurassicHelper.ToDateInstance(Engine, m_termSet.CreatedDate); }
     }
 
     [JSProperty(Name = "customSortOrder")]
@@ -79,7 +79,7 @@
     [JSProperty(Name = "lastModifiedDate")]
     public DateInstance LastModifiedDate
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_termSet.LastModifiedDate); }
+      get { return JurassicHelper.ToDateInstance(Engine, m_termSet.LastModifiedDate); }
     }
 
     [JSProperty(Name = "name")]
@@ -97,11 +97,12 @@
     }
 
     [JSProperty(Name = "stakeholders")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance Stakeholders
     {
       get
       {
-        var result = this.Engine.Array.Construct();
+        var result = Engine.Array.Construct();
         foreach (var stakeHolder in m_termSet.Stakeholders)
         {
           ArrayInstance.Push(result, stakeHolder);
@@ -120,14 +121,14 @@
     [JSFunction(Name = "copy")]
     public TermSetInstance Copy()
     {
-      return new TermSetInstance(this.Engine.Object.InstancePrototype, m_termSet.Copy());
+      return new TermSetInstance(Engine.Object.InstancePrototype, m_termSet.Copy());
     }
 
     [JSFunction(Name = "createTerm")]
     public TermInstance CreateTerm(string name, int lcid)
     {
       var newTerm = m_termSet.CreateTerm(name, lcid);
-      return new TermInstance(this.Engine.Object.InstancePrototype, newTerm);
+      return new TermInstance(Engine.Object.InstancePrototype, newTerm);
     }
 
     [JSFunction(Name = "createTermWithId")]
@@ -135,7 +136,7 @@
     {
       var guid = GuidInstance.ConvertFromJsObjectToGuid(newTermId);
       var newTerm = m_termSet.CreateTerm(name, lcid, guid);
-      return new TermInstance(this.Engine.Object.InstancePrototype, newTerm);
+      return new TermInstance(Engine.Object.InstancePrototype, newTerm);
     }
 
     [JSFunction(Name = "delete")]
@@ -164,12 +165,13 @@
     }
 
     [JSFunction(Name = "getAllTerms")]
+    [JSDoc("ternReturnType", "[+Term]")]
     public ArrayInstance GetAllTerms()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var term in m_termSet.GetAllTerms())
       {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
+        ArrayInstance.Push(result, new TermInstance(Engine.Object.InstancePrototype, term));
       }
       return result;
     }
@@ -177,7 +179,7 @@
     [JSFunction(Name = "getGroup")]
     public TermGroupInstance GetGroup()
     {
-      return new TermGroupInstance(this.Engine.Object.InstancePrototype, m_termSet.Group);
+      return new TermGroupInstance(Engine.Object.InstancePrototype, m_termSet.Group);
     }
 
     [JSFunction(Name = "getTerm")]
@@ -185,16 +187,17 @@
     {
       var guid = GuidInstance.ConvertFromJsObjectToGuid(termId);
       var term = m_termSet.GetTerm(guid);
-      return new TermInstance(this.Engine.Object.InstancePrototype, term);
+      return new TermInstance(Engine.Object.InstancePrototype, term);
     }
 
     [JSFunction(Name = "getTerms")]
+    [JSDoc("ternReturnType", "[+Term]")]
     public ArrayInstance GetTerms()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var term in m_termSet.Terms)
       {
-        ArrayInstance.Push(result, new TermInstance(this.Engine.Object.InstancePrototype, term));
+        ArrayInstance.Push(result, new TermInstance(Engine.Object.InstancePrototype, term));
       }
       return result;
     }
@@ -204,7 +207,7 @@
     [JSFunction(Name = "getTermStore")]
     public TermStoreInstance GetTermStore()
     {
-      return new TermStoreInstance(this.Engine.Object.InstancePrototype, m_termSet.TermStore);
+      return new TermStoreInstance(Engine.Object.InstancePrototype, m_termSet.TermStore);
     }
 
     [JSFunction(Name = "move")]
@@ -217,7 +220,7 @@
     public TermInstance ReuseTerm(TermInstance term, bool reuseBranch)
     {
       var reusedTerm = m_termSet.ReuseTerm(term.Term, reuseBranch);
-      return new TermInstance(this.Engine.Object.InstancePrototype, reusedTerm);
+      return new TermInstance(Engine.Object.InstancePrototype, reusedTerm);
     }
   }
 }

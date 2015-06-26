@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public iCalendarCollectionInstance Construct()
         {
-            return new iCalendarCollectionInstance(this.InstancePrototype);
+            return new iCalendarCollectionInstance(InstancePrototype);
         }
     }
 
@@ -31,8 +31,8 @@
         public iCalendarCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public iCalendarCollectionInstance(ObjectInstance prototype, iCalendarCollection iCalendarCollection)
@@ -51,12 +51,13 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+iCalendar]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var calendar in m_iCalendarCollection.OfType<iCalendar>())
             {
-                var iCal = new iCalendarInstance(this.Engine.Object.InstancePrototype, calendar);
+                var iCal = new iCalendarInstance(Engine.Object.InstancePrototype, calendar);
                 ArrayInstance.Push(result, iCal);
             }
 

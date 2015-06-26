@@ -71,6 +71,7 @@
     }
 
     [JSFunction(Name = "listTeamProjectCollections")]
+    [JSDoc("ternReturnType", "[+TfsTeamProjectCollection]")]
     public ArrayInstance ListTeamProjectCollections()
     {
       var configurationServer = TfsConfigurationServerFactory.GetConfigurationServer(m_tfsUri);

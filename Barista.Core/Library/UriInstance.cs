@@ -14,7 +14,7 @@
     public UriConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "Uri", new UriInstance(engine.Object.InstancePrototype))
     {
-      this.PopulateFunctions();
+      PopulateFunctions();
     }
 
     [JSConstructorFunction]
@@ -29,7 +29,7 @@
           : new Uri(uriObject as string);
       }
 
-      return new UriInstance(this.InstancePrototype, uri);
+      return new UriInstance(InstancePrototype, uri);
     }
 
     public UriInstance Construct(Uri uri)
@@ -37,7 +37,7 @@
       if (uri == null)
         throw new ArgumentNullException("uri");
 
-      return new UriInstance(this.InstancePrototype, uri);
+      return new UriInstance(InstancePrototype, uri);
     }
 
     [JSFunction(Name = "concatUrls")]
@@ -55,14 +55,14 @@
     public UriInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public UriInstance(ObjectInstance prototype, Uri uri)
       : this(prototype)
     {
-      this.m_uri = uri;
+      m_uri = uri;
     }
 
     public Uri Uri
@@ -178,7 +178,7 @@
     {
       get
       {
-        var result = this.Engine.Object.Construct();
+        var result = Engine.Object.Construct();
         var queryString = HttpUtility.ParseQueryString(m_uri.Query, Encoding.UTF8);
         foreach (var key in queryString.Keys.OfType<string>())
         {
@@ -195,11 +195,12 @@
     }
 
     [JSProperty(Name = "segments")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance Segments
     {
       get
       {
-        var result = this.Engine.Array.Construct();
+        var result = Engine.Array.Construct();
 
         foreach (var segment in m_uri.Segments)
         {
@@ -261,7 +262,7 @@
       if (result == null)
         return null;
 
-      return new UriInstance(this.Engine.Object.InstancePrototype, result);
+      return new UriInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "toString")]

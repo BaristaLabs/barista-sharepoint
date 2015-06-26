@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public HashtableInstance Construct()
         {
-            return new HashtableInstance(this.InstancePrototype, new Hashtable());
+            return new HashtableInstance(InstancePrototype, new Hashtable());
         }
     }
 
@@ -29,8 +29,8 @@
         public HashtableInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public HashtableInstance(ObjectInstance prototype, Hashtable hashtable)
@@ -102,7 +102,7 @@
             if (result == null)
                 return null;
 
-            return new HashtableInstance(this.Engine.Object.InstancePrototype, result);
+            return new HashtableInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "contains")]
@@ -124,23 +124,24 @@
         }
 
         [JSFunction(Name = "getKeys")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetKeys()
         {
 // ReSharper disable once CoVariantArrayConversion
-            return this.Engine.Array.Construct(m_hashtable.Keys.OfType<object>().Select(o => TypeConverter.ToObject(this.Engine, o)).ToArray());
+            return Engine.Array.Construct(m_hashtable.Keys.OfType<object>().Select(o => TypeConverter.ToObject(Engine, o)).ToArray());
         }
 
         [JSFunction(Name = "getValueByKey")]
         public ObjectInstance GetValueByKey(object key)
         {
-            return TypeConverter.ToObject(this.Engine, m_hashtable[key]);
+            return TypeConverter.ToObject(Engine, m_hashtable[key]);
         }
 
         [JSFunction(Name = "getValues")]
         public ArrayInstance GetValues()
         {
 // ReSharper disable once CoVariantArrayConversion
-            return this.Engine.Array.Construct(m_hashtable.Values.OfType<object>().Select(o => TypeConverter.ToObject(this.Engine, o)).ToArray());
+            return Engine.Array.Construct(m_hashtable.Values.OfType<object>().Select(o => TypeConverter.ToObject(Engine, o)).ToArray());
         }
 
         [JSFunction(Name = "setValueByKey")]
@@ -158,10 +159,10 @@
         [JSFunction(Name = "toObject")]
         public ObjectInstance ToObject()
         {
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             foreach (var key in m_hashtable.Keys)
             {
-                result.SetPropertyValue(key.ToString(), TypeConverter.ToObject(this.Engine, m_hashtable[key]), false);
+                result.SetPropertyValue(key.ToString(), TypeConverter.ToObject(Engine, m_hashtable[key]), false);
             }
 
             return result;

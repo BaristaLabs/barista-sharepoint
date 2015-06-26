@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public SPAlertCollectionInstance Construct()
         {
-            return new SPAlertCollectionInstance(this.InstancePrototype);
+            return new SPAlertCollectionInstance(InstancePrototype);
         }
     }
 
@@ -30,8 +30,8 @@
         public SPAlertCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPAlertCollectionInstance(ObjectInstance prototype, SPAlertCollection alertCollection)
@@ -74,7 +74,7 @@
             var result = m_alertCollection.Add();
             return result == null
                 ? null
-                : new SPAlertInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPAlertInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "deleteById")]
@@ -97,7 +97,7 @@
             var result = m_alertCollection[guidId];
             return result == null
                 ? null
-                : new SPAlertInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPAlertInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getAlertByIndex")]
@@ -106,7 +106,7 @@
             var result = m_alertCollection[index];
             return result == null
                 ? null
-                : new SPAlertInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPAlertInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getSite")]
@@ -115,7 +115,7 @@
             var result = m_alertCollection.Site;
             return result == null
                 ? null
-                : new SPSiteInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPSiteInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getWeb")]
@@ -124,16 +124,17 @@
             var result = m_alertCollection.Web;
             return result == null
                 ? null
-                : new SPWebInstance(this.Engine, result);
+                : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPAlert]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var alert in m_alertCollection
                 .OfType<SPAlert>()
-                .Select(a => new SPAlertInstance(this.Engine.Object.InstancePrototype, a)))
+                .Select(a => new SPAlertInstance(Engine.Object.InstancePrototype, a)))
             {
                 ArrayInstance.Push(result, alert);
             }

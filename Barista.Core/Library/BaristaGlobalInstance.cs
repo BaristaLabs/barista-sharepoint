@@ -516,10 +516,18 @@
             if (member is Type)
             {
                 var type = member as Type;
-
                 //TODO: generate constructors.
 
-                doc.SetPropertyValue("!type", "fn(?)", false);
+                var ternConstructorDefinition = "fn(?)";
+
+                var jsDocAttributes = type.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
+                var docAttributes = jsDocAttributes as JSDocAttribute[] ?? jsDocAttributes.ToArray();
+
+                var ternConstructorTypeJsDocAttribute = docAttributes.FirstOrDefault(da => string.Equals(da.Tag, "ternConstructorDefinition", StringComparison.InvariantCultureIgnoreCase));
+                if (ternConstructorTypeJsDocAttribute != null)
+                    ternConstructorDefinition = ternConstructorTypeJsDocAttribute.Text;
+
+                doc.SetPropertyValue("!type", ternConstructorDefinition, false);
                 var prototype = engine.Object.Construct();
 
                 IList<Type> propertyTypes;
@@ -585,7 +593,18 @@
                 if (methodInfo.ReturnType != typeof(void))
                 {
                     IList<Type> methodReturnTypes;
-                    methodInfoStringBuilder.Append(" -> " + GetTernTypeString(methodInfo.ReturnType, out methodReturnTypes));
+                    var returnType = GetTernTypeString(methodInfo.ReturnType, out methodReturnTypes);
+
+                    //If the method defines a JSDocAttribute with a "ternReturnType" tag, use that instead of the return type.
+                    //For example, this allows return types of Array to specify their expected value type. [+SPWeb]
+                    var jsDocAttributes = methodInfo.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
+                    var docAttributes = jsDocAttributes as JSDocAttribute[] ?? jsDocAttributes.ToArray();
+
+                    var ternReturnTypeJsDocAttribute = docAttributes.FirstOrDefault(da => string.Equals(da.Tag, "ternReturnType", StringComparison.InvariantCultureIgnoreCase));
+                    if (ternReturnTypeJsDocAttribute != null)
+                        returnType = ternReturnTypeJsDocAttribute.Text;
+
+                    methodInfoStringBuilder.Append(" -> " + returnType);
 
                     foreach (var type in methodReturnTypes)
                         if (!customTypes.Contains(type))
@@ -599,7 +618,17 @@
                 var propertyInfo = member as PropertyInfo;
 
                 IList<Type> propertyTypes;
-                doc.SetPropertyValue("!type", GetTernTypeString(propertyInfo.PropertyType, out propertyTypes), false);
+                var propertyType = GetTernTypeString(propertyInfo.PropertyType, out propertyTypes);
+                //If the method defines a JSDocAttribute with a "ternReturnType" tag, use that instead of the return type.
+                //For example, this allows return types of Array to specify their expected value type. [+SPWeb]
+                var jsDocAttributes = propertyInfo.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
+                var docAttributes = jsDocAttributes as JSDocAttribute[] ?? jsDocAttributes.ToArray();
+
+                var ternPropertyTypeJsDocAttribute = docAttributes.FirstOrDefault(da => string.Equals(da.Tag, "ternPropertyType", StringComparison.InvariantCultureIgnoreCase));
+                if (ternPropertyTypeJsDocAttribute != null)
+                    propertyType = ternPropertyTypeJsDocAttribute.Text;
+
+                doc.SetPropertyValue("!type", propertyType, false);
 
                 foreach (var type in propertyTypes)
                     if (!customTypes.Contains(type))
@@ -697,7 +726,7 @@
                 obj.SetPropertyValue("!doc", summaryJsDocAttribute.Text, false);
 
             //Pull a link jsdoc attribute, if it exists.
-            var linkJSDocAttribute = docAttributes.FirstOrDefault(da => da.Tag == "link");
+            var linkJSDocAttribute = docAttributes.FirstOrDefault(da => string.Equals(da.Tag, "link", StringComparison.InvariantCultureIgnoreCase));
 
             if (linkJSDocAttribute != null)
                 obj.SetPropertyValue("!url", linkJSDocAttribute.Text, false);

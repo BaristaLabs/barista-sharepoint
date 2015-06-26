@@ -19,7 +19,7 @@
 
             m_document = document;
 
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public Document Document
@@ -28,17 +28,18 @@
         }
 
         [JSProperty(Name = "fields")]
+        [JSDoc("ternPropertyType", "[+SearchField]")]
         public ArrayInstance Fields
         {
             get
             {
                 var fields = m_document.GetFields()
                     .OfType<Field>()
-                    .Select(f => new SearchFieldInstance(this.Engine, f))
+                    .Select(f => new SearchFieldInstance(Engine, f))
                     .ToArray();
 
 // ReSharper disable once CoVariantArrayConversion
-                var result = this.Engine.Array.Construct(fields);
+                var result = Engine.Array.Construct(fields);
                 return result;
             }
         }

@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public SPPropertyBagInstance Construct()
         {
-            return new SPPropertyBagInstance(this.InstancePrototype);
+            return new SPPropertyBagInstance(InstancePrototype);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPPropertyBagInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPPropertyBagInstance(ObjectInstance prototype, SPPropertyBag propertyBag)
@@ -84,9 +84,10 @@
         }
 
         [JSFunction(Name = "getKeys")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetKeys()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var key in m_propertyBag.Keys.OfType<string>())
                 ArrayInstance.Push(result, key);
 
@@ -100,9 +101,10 @@
         }
 
         [JSFunction(Name = "getValues")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetValues()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var value in m_propertyBag.Values.OfType<string>())
                 ArrayInstance.Push(result, value);
 
@@ -130,7 +132,7 @@
         [JSFunction(Name = "toObject")]
         public ObjectInstance ToObject()
         {
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             foreach(var key in m_propertyBag.Keys.OfType<string>())
                 result.SetPropertyValue(key, m_propertyBag[key], false);
 

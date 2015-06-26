@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public TermStoreCollectionInstance Construct()
     {
-      return new TermStoreCollectionInstance(this.InstancePrototype);
+      return new TermStoreCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public TermStoreCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermStoreCollectionInstance(ObjectInstance prototype, TermStoreCollection termStoreCollection)
@@ -62,7 +62,7 @@
       var termStore = m_termStoreCollection[name];
       return termStore == null
         ? null
-        : new TermStoreInstance(this.Engine.Object.InstancePrototype, termStore);
+        : new TermStoreInstance(Engine.Object.InstancePrototype, termStore);
     }
 
     [JSFunction(Name = "getTermStoreByIndex")]
@@ -71,7 +71,7 @@
       var termStore = m_termStoreCollection[index];
       return termStore == null
         ? null
-        : new TermStoreInstance(this.Engine.Object.InstancePrototype, termStore);
+        : new TermStoreInstance(Engine.Object.InstancePrototype, termStore);
     }
 
     [JSFunction(Name = "getTermStoreById")]
@@ -81,16 +81,17 @@
       var termStore = m_termStoreCollection[guid];
       return termStore == null
         ? null
-        : new TermStoreInstance(this.Engine.Object.InstancePrototype, termStore);
+        : new TermStoreInstance(Engine.Object.InstancePrototype, termStore);
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+TermStore]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var termStore in m_termStoreCollection)
       {
-        ArrayInstance.Push(result, new TermStoreInstance(this.Engine.Object.InstancePrototype, termStore));
+        ArrayInstance.Push(result, new TermStoreInstance(Engine.Object.InstancePrototype, termStore));
       }
       return result;
     }

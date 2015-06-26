@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public SPNavigationNodeCollectionInstance Construct()
         {
-            return new SPNavigationNodeCollectionInstance(this.InstancePrototype);
+            return new SPNavigationNodeCollectionInstance(InstancePrototype);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPNavigationNodeCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPNavigationNodeCollectionInstance(ObjectInstance prototype, SPNavigationNodeCollection navigationNodeCollection)
@@ -54,46 +54,46 @@
         public SPNavigationNodeInstance Add(SPNavigationNodeInstance node, SPNavigationNodeInstance previousNode)
         {
             if (node == null)
-                throw new JavaScriptException(this.Engine, "Error", "node must be specified.");
+                throw new JavaScriptException(Engine, "Error", "node must be specified.");
 
             if (previousNode == null)
-                throw new JavaScriptException(this.Engine, "Error", "previousNode must be specified.");
+                throw new JavaScriptException(Engine, "Error", "previousNode must be specified.");
 
             var result = m_navigationNodeCollection.Add(node.SPNavigationNode, previousNode.SPNavigationNode);
             return result == null
                 ? null
-                : new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPNavigationNodeInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addAsFirst")]
         public SPNavigationNodeInstance AddAsFirst(SPNavigationNodeInstance node)
         {
             if (node == null)
-                throw new JavaScriptException(this.Engine, "Error", "node must be specified.");
+                throw new JavaScriptException(Engine, "Error", "node must be specified.");
 
             var result = m_navigationNodeCollection.AddAsFirst(node.SPNavigationNode);
             return result == null
                 ? null
-                : new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPNavigationNodeInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addAsLast")]
         public SPNavigationNodeInstance AddAsLast(SPNavigationNodeInstance node)
         {
             if (node == null)
-                throw new JavaScriptException(this.Engine, "Error", "node must be specified.");
+                throw new JavaScriptException(Engine, "Error", "node must be specified.");
 
             var result = m_navigationNodeCollection.AddAsLast(node.SPNavigationNode);
             return result == null
                 ? null
-                : new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPNavigationNodeInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "delete")]
         public void Delete(SPNavigationNodeInstance node)
         {
             if (node == null)
-                throw new JavaScriptException(this.Engine, "Error", "node must be specified.");
+                throw new JavaScriptException(Engine, "Error", "node must be specified.");
 
             m_navigationNodeCollection.Delete(node.SPNavigationNode);
         }
@@ -103,7 +103,7 @@
         {
             return m_navigationNodeCollection.Navigation == null
                 ? null
-                : new SPNavigationInstance(this.Engine.Object.InstancePrototype, m_navigationNodeCollection.Navigation);
+                : new SPNavigationInstance(Engine.Object.InstancePrototype, m_navigationNodeCollection.Navigation);
         }
 
         [JSFunction(Name = "getNavigationNodeByIndex")]
@@ -112,7 +112,7 @@
             var result = m_navigationNodeCollection[index];
             return result == null
                 ? null
-                : new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPNavigationNodeInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getParent")]
@@ -120,16 +120,17 @@
         {
             return m_navigationNodeCollection.Parent == null
                 ? null
-                : new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, m_navigationNodeCollection.Parent);
+                : new SPNavigationNodeInstance(Engine.Object.InstancePrototype, m_navigationNodeCollection.Parent);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPNavigationNote]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var navigationNode in m_navigationNodeCollection.OfType<SPNavigationNode>())
             {
-                ArrayInstance.Push(result, new SPNavigationNodeInstance(this.Engine.Object.InstancePrototype, navigationNode));
+                ArrayInstance.Push(result, new SPNavigationNodeInstance(Engine.Object.InstancePrototype, navigationNode));
             }
             return result;
         }

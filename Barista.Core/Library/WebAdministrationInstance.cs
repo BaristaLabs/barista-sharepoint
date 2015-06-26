@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public ServerManagerInstance Construct()
     {
-      return new ServerManagerInstance(this.InstancePrototype);
+      return new ServerManagerInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public ServerManagerInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public ServerManagerInstance(ObjectInstance prototype, ServerManager serverManager)
@@ -48,15 +48,16 @@
     }
 
     [JSProperty(Name = "applicationPools")]
+    [JSDoc("ternPropertyType", "[+ApplicationPool]")]
     public ArrayInstance ApplicationPools
     {
       get
       {
         // ReSharper disable CoVariantArrayConversion
-        return this.Engine.Array.Construct(m_serverManager.ApplicationPools
+        return Engine.Array.Construct(m_serverManager.ApplicationPools
                                                           .Select(applicationPool =>
                                                                   new ApplicationPoolInstance(
-                                                                    this.Engine.Object.InstancePrototype,
+                                                                    Engine.Object.InstancePrototype,
                                                                     applicationPool)
                                              )
                                                           .ToArray());
