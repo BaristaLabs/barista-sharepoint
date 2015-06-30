@@ -7,17 +7,17 @@
     using Barista.Library;
 
     [Serializable]
-    public class ConverterInstance : ObjectInstance
+    public class ImageConverterInstance : ObjectInstance
     {
         private readonly IConverter m_converter;
 
-        public ConverterInstance(ObjectInstance prototype)
+        public ImageConverterInstance(ObjectInstance prototype)
             : base(prototype)
         {
             PopulateFunctions();
         }
 
-        public ConverterInstance(ObjectInstance prototype, IConverter converter)
+        public ImageConverterInstance(ObjectInstance prototype, IConverter converter)
             : this(prototype)
         {
             if (converter == null)
@@ -35,36 +35,16 @@
         }
 
         [JSFunction(Name = "convert")]
-        public Base64EncodedByteArrayInstance Convert(HtmlToPdfDocumentInstance document, object fileName)
+        public Base64EncodedByteArrayInstance Convert(HtmlToImageDocumentInstance document, object fileName)
         {
-            var pdfBytes = m_converter.Convert(document.HtmlToPdfDocument);
+            var pdfBytes = m_converter.Convert(document.HtmlToImageDocument);
             var result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, pdfBytes)
             {
-                MimeType = "application/pdf"
+                MimeType = "image/jpeg"
             };
 
             if (fileName != null && fileName != Null.Value && fileName != Undefined.Value)
                 result.FileName = fileName.ToString();
-
-            return result;
-        }
-
-        [JSFunction(Name = "stuff")]
-        public Base64EncodedByteArrayInstance Stuff()
-        {
-            var document = new HtmlToPdfDocument
-            {
-                Objects =
-            {
-                new ObjectSettings { PageUrl = "www.google.com" }
-            }
-            };
-
-            var pdfBytes = m_converter.Convert(document);
-            var result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, pdfBytes)
-            {
-                MimeType = "application/pdf"
-            };
 
             return result;
         }

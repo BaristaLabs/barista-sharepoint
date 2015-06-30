@@ -99,6 +99,7 @@
     <link href="Vendor/CodeMirror-5.3.0/addon/dialog/dialog.css" rel="stylesheet">
     <link href="Vendor/CodeMirror-5.3.0/addon/hint/show-hint.css" rel="stylesheet">
     <link href="Vendor/CodeMirror-5.3.0/addon/lint/lint.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/fold/foldgutter.css" rel="stylesheet">
     <link href="Vendor/CodeMirror-5.3.0/addon/tern/tern.css" rel="stylesheet">
     <link href="Vendor/CodeMirror-5.3.0/theme/neat.css" rel="stylesheet">
     <link href="Vendor/kendoui.professional.2015.1.429/styles/kendo.common.min.css" rel="stylesheet" />
@@ -372,10 +373,14 @@
     <script src="Vendor/bootstrap-3.3.4-dist/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/kendoui.professional.2015.1.429/js/kendo.web.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/lint/lint.js"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/lint/javascript-lint.js"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/dialog/dialog.js"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/hint/show-hint.js"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/lint/lint.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/lint/javascript-lint.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/foldcode.js"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/foldgutter.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/brace-fold.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/comment-fold.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/dialog/dialog.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/hint/show-hint.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/tern/tern.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/mode/javascript/javascript.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/Acorn-1.2.2/acorn.js"></script>
@@ -416,6 +421,7 @@
             var server = null;
             editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 lineNumbers: true,
+                lineWrapping: true,
                 extraKeys: {
                     "Ctrl-Enter": "run",
                     "Ctrl-Space": function (cm) { if (server) server.complete(cm); },
@@ -428,7 +434,8 @@
                 },
                 theme: "neat",
                 indentUnit: 4,
-                gutters: ["CodeMirror-lint-markers"],
+                foldGutter: true,
+                gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
                 lint: {
                     options: {
                         expr: true

@@ -48,7 +48,7 @@
                 if (Directory.Exists(System.IO.Path.Combine(assemblyRoot, WkHtmlToPdfSubFolderName)))
                     assemblyRoot = System.IO.Path.Combine(assemblyRoot, WkHtmlToPdfSubFolderName);
 
-                var dllFileName = System.IO.Path.Combine(assemblyRoot, "wkhtmltox.dll");
+                var dllFileName = System.IO.Path.Combine(assemblyRoot, WkhtmltoxBindings.DLLNAME);
                 if (!File.Exists(dllFileName))
                 {
                     var zipFileName = System.IO.Path.Combine(assemblyRoot, "wkhtmltopdf.zip");

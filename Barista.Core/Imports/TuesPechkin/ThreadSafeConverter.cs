@@ -3,7 +3,6 @@ namespace Barista.TuesPechkin
     using System;
     using System.Collections.Generic;
     using System.Reflection;
-    using System.Security.Principal;
     using System.Threading;
 
     public sealed class ThreadSafeConverter : StandardConverter
@@ -133,10 +132,10 @@ namespace Barista.TuesPechkin
 
         private void Run()
         {
-            using (WindowsIdentity.Impersonate(IntPtr.Zero))
-            {
-                Thread.CurrentPrincipal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-            }
+            //using (WindowsIdentity.Impersonate(IntPtr.Zero))
+            //{
+            //    Thread.CurrentPrincipal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+            //}
 
             while (!m_stopRequested)
             {
@@ -197,10 +196,18 @@ namespace Barista.TuesPechkin
             }
 
             // task code
-            public FuncShim<TResult> Delegate { get; private set; }
+            private FuncShim<TResult> Delegate
+            {
+                get;
+                set;
+            }
 
             // result, filled out after it's executed
-            public TResult Result { get; private set; }
+            public TResult Result
+            {
+                get;
+                private set;
+            }
         }
     }
 }
