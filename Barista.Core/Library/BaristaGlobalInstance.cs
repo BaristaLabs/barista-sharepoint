@@ -479,12 +479,25 @@
                 if (!customTypes.Contains(propertyType))
                     customTypes.Add(propertyType);
 
+            var builtInProperties =
+                new [] { "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"};
+
+            IList<Type> objectProperties = null;
             //If it's a javascript object, enumerate its properties
             foreach (var property in obj.Properties)
             {
-                //TODO: Change this to correctly pull the property type, etc...
-                if ((property.Value is FunctionInstance) == false && result.HasProperty(property.Name) == false)
-                    result.SetPropertyValue(property.Name, engine.Object.Construct(), false);
+                if ((property.Value is FunctionInstance) == false && !builtInProperties.Any( p => p.Equals(property.Name, StringComparison.Ordinal)) && result.HasProperty(property.Name) == false)
+                {
+                    var propObj = GetTernDocumentationObject(engine, property.Value.GetType(), out objectProperties);
+                    result.SetPropertyValue(property.Name, propObj, false);
+                }
+            }
+
+            if (objectProperties != null)
+            {
+                foreach (var propertyType in objectProperties)
+                    if (!customTypes.Contains(propertyType))
+                        customTypes.Add(propertyType);
             }
 
             IList<Type> functionTypes;
@@ -494,15 +507,33 @@
                 if (!customTypes.Contains(functionType))
                     customTypes.Add(functionType);
 
+            var builtInFunctions = new[] { "toLocaleString", "toString", "valueOf" };
+
             //If it's a javascript object, enumerate the functions..
+            IList<Type> objectFunctions = null;
             foreach (var property in obj.Properties)
             {
-                //TODO: Change this to correctly pull the function type, etc...
-                if (property.Value is FunctionInstance && result.HasProperty(property.Name) == false)
-                    result.SetPropertyValue(property.Name, engine.Object.Construct(), false);
+                if (property.Value is FunctionInstance && !builtInFunctions.Any( p => p.Equals(property.Name, StringComparison.Ordinal)) && result.HasProperty(property.Name) == false)
+                {
+                    var valueType = property.Value.GetType();
+
+                    var pfunc = property.Value as FunctionInstance;
+                    if (pfunc.InstancePrototype.GetType() != typeof (ObjectInstance))
+                        valueType = pfunc.InstancePrototype.GetType();
+
+                    var funcObj = GetTernDocumentationObject(engine, valueType, out objectFunctions);
+                    result.SetPropertyValue(property.Name, funcObj, false);
+                }
             }
 
-            //Output Custom Types we discovered while enumerating properties and functions as globals.
+            if (objectFunctions != null)
+            {
+                foreach (var propertyType in objectFunctions)
+                    if (!customTypes.Contains(propertyType))
+                        customTypes.Add(propertyType);
+            }
+
+            //Output Custom Global Types we discovered while enumerating properties and functions as globals.
             globals = new Dictionary<string, ObjectInstance>();
             while (customTypes.Any())
             {
@@ -828,6 +859,7 @@
             typeName = typeName.ReplaceFirstOccurence("Barista.SharePoint.Workflow.", "");
             typeName = typeName.ReplaceFirstOccurence("Barista.DocumentStore.Library.", "");
             typeName = typeName.ReplaceFirstOccurence("Barista.Search.Library.", "");
+            typeName = typeName.ReplaceFirstOccurence("Barista.WkHtmlToPdf.Library.", "");
             typeName = typeName.ReplaceFirstOccurence("Barista.iCal.", "");
 
             if (typeName.EndsWith("Instance"))

@@ -93,6 +93,12 @@
                 display: none;
             }
         }
+
+        .CodeMirror-focused .cm-matchhighlight {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQI12NgYGBgkKzc8x9CMDAwAAAmhwSbidEoSQAAAABJRU5ErkJggg==);
+            background-position: bottom;
+            background-repeat: repeat-x;
+        }
     </style>
 
     <link href="Vendor/CodeMirror-5.3.0/lib/codemirror.css" rel="stylesheet">
@@ -379,6 +385,9 @@
     <script src="Vendor/codemirror-5.3.0/addon/fold/foldgutter.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/fold/brace-fold.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/fold/comment-fold.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/search/searchcursor.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/search/match-highlighter.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/selection/active-line.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/dialog/dialog.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/hint/show-hint.js" charset="utf-8"></script>
     <script src="Vendor/codemirror-5.3.0/addon/tern/tern.js" type="text/javascript" charset="utf-8"></script>
@@ -440,7 +449,9 @@
                     options: {
                         expr: true
                     }
-                }
+                },
+                highlightSelectionMatches: { showToken: /\w/ },
+                styleActiveLine: true
             });
 
             editor.on("cursorActivity", function (cm) { if (server) server.updateArgHints(cm); });
