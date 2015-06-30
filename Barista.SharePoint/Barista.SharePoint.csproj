@@ -472,6 +472,7 @@
     <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.exp" />
     <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.lib" />
     <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.map" />
+    <None Include="WebServices\Barista\bin\wkhtmltopdf\wkhtmltopdf.zip" />
     <None Include="WebServices\Barista\web.config" />
     <None Include="WebServices\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{0319abfb-7418-4653-96ae-f0df6ea3ddf1}</SharePointProjectItemId>

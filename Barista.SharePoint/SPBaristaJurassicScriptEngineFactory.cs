@@ -10,6 +10,7 @@
     using Jurassic;
     using Jurassic.Library;
     using System;
+    using System.Web;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
@@ -59,6 +60,10 @@
                 if (webBundle != null)
                     instance.Common.RegisterBundle(webBundle);
 
+                var binDirectory = "";
+                if (HttpRuntime.AppDomainAppId != null)
+                    binDirectory = HttpRuntime.BinDirectory;
+
                 instance.Common.RegisterBundle(new StringBundle());
                 instance.Common.RegisterBundle(new SugarBundle());
                 instance.Common.RegisterBundle(new SucraloseBundle());
@@ -91,6 +96,7 @@
                 instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
                 instance.Common.RegisterBundle(new WebAdministrationBundle());
                 instance.Common.RegisterBundle(new UnitTestingBundle());
+                instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
 
                 //Global Types
                 engine.SetGlobalValue("barista", instance);

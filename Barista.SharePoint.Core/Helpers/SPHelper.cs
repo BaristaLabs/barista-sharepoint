@@ -530,8 +530,13 @@
                             throw new InvalidOperationException("The specified script url is invalid.");
 
                         filePath = fileUri.ToString();
-                        fileContents = sourceWeb.GetFileAsString(fileUri.ToString());
-                        return true;
+                        var file = sourceWeb.GetFile(fileUri.ToString());
+                        if (file != null && file.Exists)
+                        {
+                            var content = file.OpenBinary();
+                            fileContents = System.Text.Encoding.UTF8.GetString(content);
+                            return true;
+                        }
                     }
                 }
             }
@@ -560,8 +565,14 @@
                                 throw new InvalidOperationException("The specified script url is invalid.");
 
                             filePath = url.ToString(CultureInfo.InvariantCulture);
-                            fileContents = sourceWeb.GetFileAsString(url.ToString(CultureInfo.InvariantCulture));
-                            return true;
+
+                            var file = sourceWeb.GetFile(filePath);
+                            if (file != null && file.Exists)
+                            {
+                                var content = file.OpenBinary();
+                                fileContents = System.Text.Encoding.UTF8.GetString(content);
+                                return true;
+                            }
                         }
                     }
                 }

@@ -14,11 +14,11 @@
   {
     public BaristaWebPart()
     {
-      this.InstanceMode = BaristaInstanceMode.PerCall;
-      this.InstanceName = null;
-      this.InstanceInitializationCode = null;
-      this.InstanceAbsoluteExpiration = null;
-      this.InstanceSlidingExpiration = null;
+      InstanceMode = BaristaInstanceMode.PerCall;
+      InstanceName = null;
+      InstanceInitializationCode = null;
+      InstanceAbsoluteExpiration = null;
+      InstanceSlidingExpiration = null;
     }
 
     [WebBrowsable(true)]
@@ -96,16 +96,16 @@
 
     protected override void CreateChildControls()
     {
-      if (String.IsNullOrEmpty(this.Code))
+      if (String.IsNullOrEmpty(Code))
         return;
 
-      if (String.IsNullOrEmpty(this.Code.Trim()))
+      if (String.IsNullOrEmpty(Code.Trim()))
         return;
 
       BaristaHelper.EnsureExecutionInTrustedLocation();
 
       string codePath;
-      var codeToExecute = Tamp(this.Code, out codePath);
+      var codeToExecute = Tamp(Code, out codePath);
 
       var client = new BaristaServiceClient(SPServiceContext.Current);
 
@@ -114,17 +114,17 @@
       request.Code = codeToExecute;
       request.CodePath = codePath;
 
-      if (String.IsNullOrEmpty(this.InstanceInitializationCode) == false)
+      if (String.IsNullOrEmpty(InstanceInitializationCode) == false)
       {
         string filePath;
-        request.InstanceInitializationCode = Tamp(this.InstanceInitializationCode, out filePath);
+        request.InstanceInitializationCode = Tamp(InstanceInitializationCode, out filePath);
         request.InstanceInitializationCodePath = filePath;
       }
 
-      request.InstanceMode = this.InstanceMode;
-      request.InstanceName = this.InstanceName;
-      request.InstanceAbsoluteExpiration = this.InstanceAbsoluteExpiration;
-      request.InstanceSlidingExpiration = this.InstanceSlidingExpiration;
+      request.InstanceMode = InstanceMode;
+      request.InstanceName = InstanceName;
+      request.InstanceAbsoluteExpiration = InstanceAbsoluteExpiration;
+      request.InstanceSlidingExpiration = InstanceSlidingExpiration;
 
       request.SetExtendedPropertiesFromCurrentSPContext();
 

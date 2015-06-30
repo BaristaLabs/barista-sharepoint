@@ -25,9 +25,9 @@
             SPFile file;
 
             if (SPHelper.TryGetSPFile(fileUrl, out file) == false)
-                throw new JavaScriptException(this.Engine, "Error", "A file with the specified url does not exist.");
+                throw new JavaScriptException(Engine, "Error", "A file with the specified url does not exist.");
 
-            return new SPFileInstance(this.InstancePrototype, file);
+            return new SPFileInstance(InstancePrototype, file);
         }
 
         public SPFileInstance Construct(SPFile file)
@@ -35,7 +35,7 @@
             if (file == null)
                 throw new ArgumentNullException("file");
 
-            return new SPFileInstance(this.InstancePrototype, file);
+            return new SPFileInstance(InstancePrototype, file);
         }
     }
 
@@ -48,14 +48,13 @@
         public SPFileInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public SPFileInstance(ObjectInstance prototype, SPFile file)
             : this(prototype)
         {
-            this.m_file = file;
+            m_file = file;
         }
 
         internal SPFile File
@@ -69,7 +68,10 @@
         {
             get
             {
-                var result = this.Engine.Object.Construct();
+                if (!m_file.Exists)
+                    return null;
+
+                var result = Engine.Object.Construct();
 
                 foreach (var key in m_file.Properties.Keys)
                 {
@@ -81,7 +83,7 @@
 
                     var serializedValue = JsonConvert.SerializeObject(m_file.Properties[key]);
 
-                    result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+                    result.SetPropertyValue(serializedKey, JSONObject.Parse(Engine, serializedValue, null), false);
                 }
 
                 return result;
@@ -94,9 +96,12 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.Author == null
                   ? null
-                  : new SPUserInstance(this.Engine, m_file.Author);
+                  : new SPUserInstance(Engine, m_file.Author);
             }
         }
 
@@ -109,10 +114,13 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 if (m_file.CheckedOutByUser == null)
                     return null;
 
-                return new SPUserInstance(this.Engine, m_file.CheckedOutByUser);
+                return new SPUserInstance(Engine, m_file.CheckedOutByUser);
             }
         }
 
@@ -121,8 +129,11 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 if (m_file.CheckOutType != SPFile.SPCheckOutType.None)
-                    return JurassicHelper.ToDateInstance(this.Engine, m_file.CheckedOutDate);
+                    return JurassicHelper.ToDateInstance(Engine, m_file.CheckedOutDate);
 
                 return null;
             }
@@ -133,6 +144,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.CheckInComment;
             }
         }
@@ -143,6 +157,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.CheckOutType.ToString();
             }
         }
@@ -152,6 +169,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return StringHelper.GetMimeTypeFromFileName(m_file.Name);
             }
         }
@@ -161,6 +181,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.CustomizedPageStatus.ToString();
             }
         }
@@ -173,6 +196,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.ETag;
             }
         }
@@ -182,9 +208,12 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.EventReceivers == null
                     ? null
-                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_file.EventReceivers);
+                    : new SPEventReceiverDefinitionCollectionInstance(Engine.Object.InstancePrototype, m_file.EventReceivers);
             }
         }
 
@@ -225,6 +254,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return false;
+
                 return m_file.IsConvertedFile;
             }
         }
@@ -234,6 +266,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return false;
+
                 return m_file.IsSharedAccessRequested;
             }
         }
@@ -244,6 +279,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return double.NaN;
+
                 return m_file.Length;
             }
         }
@@ -254,7 +292,13 @@
         [JSDoc("Gets the list relative url of the file")]
         public string ListRelativeUrl
         {
-            get { return m_file.Url; }
+            get
+            {
+                if (!m_file.Exists)
+                    return null;
+
+                return m_file.Url;
+            }
         }
 
         [JSProperty(Name = "level")]
@@ -262,6 +306,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.Level.ToString();
             }
         }
@@ -271,9 +318,12 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.LockedByUser == null
                     ? null
-                    : new SPUserInstance(this.Engine, m_file.LockedByUser);
+                    : new SPUserInstance(Engine, m_file.LockedByUser);
             }
         }
 
@@ -283,8 +333,11 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.LockType != SPFile.SPLockType.None
-                    ? JurassicHelper.ToDateInstance(this.Engine, m_file.LockedDate)
+                    ? JurassicHelper.ToDateInstance(Engine, m_file.LockedDate)
                     : null;
             }
         }
@@ -294,8 +347,11 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.LockType != SPFile.SPLockType.None
-                    ? JurassicHelper.ToDateInstance(this.Engine, m_file.LockExpires)
+                    ? JurassicHelper.ToDateInstance(Engine, m_file.LockExpires)
                     : null;
             }
         }
@@ -305,6 +361,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.LockId;
             }
         }
@@ -314,6 +373,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.LockType.ToString();
             }
         }
@@ -323,6 +385,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return int.MinValue;
+
                 return m_file.MajorVersion;
             }
         }
@@ -332,6 +397,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return int.MinValue;
+
                 return m_file.MinorVersion;
             }
         }
@@ -341,10 +409,13 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 if (m_file.ModifiedBy == null)
                     return null;
 
-                return new SPUserInstance(this.Engine, m_file.ModifiedBy);
+                return new SPUserInstance(Engine, m_file.ModifiedBy);
             }
         }
 
@@ -372,7 +443,13 @@
         [JSProperty(Name = "progId")]
         public string ProgId
         {
-            get { return m_file.ProgID; }
+            get
+            {
+                if (!m_file.Exists)
+                    return null;
+
+                return m_file.ProgID;
+            }
         }
 
         [JSProperty(Name = "propertyBag")]
@@ -380,9 +457,12 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.Properties == null
                     ? null
-                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_file.Properties);
+                    : new HashtableInstance(Engine.Object.InstancePrototype, m_file.Properties);
             }
         }
 
@@ -400,6 +480,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return false;
+
                 return m_file.ServerRedirected;
             }
         }
@@ -421,6 +504,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return "";
+
                 return m_file.SourceLeafName;
             }
         }
@@ -430,6 +516,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return int.MinValue;
+
                 return m_file.SourceUIVersion;
             }
         }
@@ -439,7 +528,10 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeCreated);
+                if (!m_file.Exists)
+                    return null;
+
+                return JurassicHelper.ToDateInstance(Engine, m_file.TimeCreated);
             }
         }
 
@@ -448,7 +540,10 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_file.TimeLastModified);
+                if (!m_file.Exists)
+                    return null;
+
+                return JurassicHelper.ToDateInstance(Engine, m_file.TimeLastModified);
             }
         }
 
@@ -457,6 +552,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.Title;
             }
         }
@@ -468,6 +566,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return int.MinValue;
+
                 return m_file.UIVersion;
             }
         }
@@ -477,6 +578,9 @@
         {
             get
             {
+                if (!m_file.Exists)
+                    return null;
+
                 return m_file.UIVersionLabel;
             }
         }
@@ -486,7 +590,10 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_file.UniqueId);
+                if (!m_file.Exists)
+                    return null;
+
+                return new GuidInstance(Engine.Object.InstancePrototype, m_file.UniqueId);
             }
         }
 
@@ -566,7 +673,7 @@
             var conversionResult = m_file.Convert(guidConverterId, newFileName, configInfo, handlerAssembly, handlerClass,
                 (byte) priority, peopleToAlert, sendACopy, synchronous, out guidWorkItemId);
 
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             result.SetPropertyValue("workItemId", guidWorkItemId, false);
             result.SetPropertyValue("conversionResult", conversionResult.ToString(), false);
             return result;
@@ -579,10 +686,10 @@
             SPFile.SPLockType ltToType;
 
             if (!fromType.TryParseEnum(true, out ltFromType))
-                throw new JavaScriptException(this.Engine, "Error", "Cannot convert fromType");
+                throw new JavaScriptException(Engine, "Error", "Cannot convert fromType");
 
             if (!toType.TryParseEnum(true, out ltToType))
-                throw new JavaScriptException(this.Engine, "Error", "Cannot convert toType");
+                throw new JavaScriptException(Engine, "Error", "Cannot convert toType");
 
             m_file.ConvertLock(ltFromType, ltToType, fromLockId, toLockId, TimeSpan.Parse(newTimeout));
         }
@@ -645,7 +752,7 @@
             if (result == null)
                 return null;
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPFileInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getDocumentLibrary")]
@@ -653,7 +760,7 @@
         {
             if (m_file.InDocumentLibrary == false)
                 return null;
-            return new SPListInstance(this.Engine, null, null, m_file.DocumentLibrary);
+            return new SPListInstance(Engine, null, null, m_file.DocumentLibrary);
         }
 
         [JSFunction(Name = "getLimitedWebPartManager")]
@@ -661,31 +768,31 @@
         {
             PersonalizationScope scope;
             if (!personalizationScope.TryParseEnum(true, out scope))
-                throw new JavaScriptException(this.Engine, "Error", "A valid personalization scope must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "A valid personalization scope must be supplied.");
 
             var result = m_file.GetLimitedWebPartManager(scope);
             return result == null
                 ? null
-                : new SPLimitedWebPartManagerInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPLimitedWebPartManagerInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getListItem")]
         public SPListItemInstance GetListItem(object fields)
         {
             if (fields == null)
-                throw new JavaScriptException(this.Engine, "Error", "Fields argument must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "Fields argument must be supplied.");
 
             var fieldsArrayInstance = fields as ArrayInstance;
             if (fields == Undefined.Value || fields == Null.Value || fieldsArrayInstance == null || fieldsArrayInstance.Length == 0)
-                return new SPListItemInstance(this.Engine, m_file.GetListItem());
+                return new SPListItemInstance(Engine, m_file.GetListItem());
 
-            return new SPListItemInstance(this.Engine, m_file.GetListItem(fieldsArrayInstance.ElementValues.Select(TypeConverter.ToString).ToArray()));
+            return new SPListItemInstance(Engine, m_file.GetListItem(fieldsArrayInstance.ElementValues.Select(TypeConverter.ToString).ToArray()));
         }
 
         [JSFunction(Name = "getListItemAllFields")]
         public SPListItemInstance GetListItemAllFields()
         {
-            return new SPListItemInstance(this.Engine, m_file.ListItemAllFields);
+            return new SPListItemInstance(Engine, m_file.ListItemAllFields);
         }
 
         //GetHtmlTranslateCacheItem
@@ -694,19 +801,19 @@
         [JSFunction(Name = "getParentFolder")]
         public SPFolderInstance GetParentFolder()
         {
-            return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_file.ParentFolder);
+            return new SPFolderInstance(Engine.Object.InstancePrototype, null, null, m_file.ParentFolder);
         }
 
         [JSFunction(Name = "getParentWeb")]
         public SPWebInstance GetParentWeb()
         {
-            return new SPWebInstance(this.Engine, m_file.Web);
+            return new SPWebInstance(Engine, m_file.Web);
         }
 
         [JSFunction(Name = "getPermissions")]
         public SPSecurableObjectInstance GetPermissions()
         {
-            return new SPSecurableObjectInstance(this.Engine)
+            return new SPSecurableObjectInstance(Engine)
             {
                 SecurableObject = m_file.Item
             };
@@ -721,13 +828,13 @@
         [JSFunction(Name = "getVersionHistory")]
         public SPFileVersionCollectionInstance GetVersionHistory()
         {
-            return new SPFileVersionCollectionInstance(this.Engine.Object.InstancePrototype, m_file.Versions);
+            return new SPFileVersionCollectionInstance(Engine.Object.InstancePrototype, m_file.Versions);
         }
 
         [JSFunction(Name = "getWeb")]
         public SPWebInstance GetWeb()
         {
-            return new SPWebInstance(this.Engine, m_file.Web);
+            return new SPWebInstance(Engine, m_file.Web);
         }
 
         [JSFunction(Name = "lock")]
@@ -753,12 +860,12 @@
 
             if (String.IsNullOrEmpty(openOptions) || openOptions == Undefined.Value.ToString())
             {
-                result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, m_file.OpenBinary());
+                result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_file.OpenBinary());
             }
             else
             {
                 var openOptionsValue = (SPOpenBinaryOptions)Enum.Parse(typeof(SPOpenBinaryOptions), openOptions);
-                result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, m_file.OpenBinary(openOptionsValue));
+                result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_file.OpenBinary(openOptionsValue));
             }
 
             result.FileName = m_file.Name;
@@ -784,7 +891,7 @@
         [JSDoc("Moves the file to the recycle bin.")]
         public GuidInstance Recycle()
         {
-            return new GuidInstance(this.Engine.Object.InstancePrototype, m_file.Recycle());
+            return new GuidInstance(Engine.Object.InstancePrototype, m_file.Recycle());
         }
 
         [JSFunction(Name = "refreshLock")]
@@ -821,7 +928,7 @@
         [JSDoc("")]
         public string RevertToLastApprovedVersion()
         {
-            throw new JavaScriptException(this.Engine, "Error", "Not Yet Implemented");
+            throw new JavaScriptException(Engine, "Error", "Not Yet Implemented");
 
             //  var currentApprovedVersion = m_file.Item.Versions[0];
 
@@ -847,7 +954,7 @@
         public void ScheduleEnd(DateInstance endDate)
         {
             if (endDate == null)
-                throw new JavaScriptException(this.Engine, "Error", "endDate argument must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "endDate argument must be supplied.");
             m_file.ScheduleEnd(endDate.Value);
         }
 
@@ -855,7 +962,7 @@
         public void ScheduleStart(DateInstance startDate, object setModerationStatus, object approvalComment)
         {
             if (startDate == null)
-                throw new JavaScriptException(this.Engine, "Error", "startDate argument must be supplied.");
+                throw new JavaScriptException(Engine, "Error", "startDate argument must be supplied.");
 
             if (setModerationStatus == Undefined.Value)
             {

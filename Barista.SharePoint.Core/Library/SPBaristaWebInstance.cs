@@ -17,7 +17,7 @@
     public SPBaristaWebInstance(ScriptEngine engine)
       : base(engine)
     {
-      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Public);
+      PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Public);
     }
 
     [JSProperty(Name = "request")]
@@ -25,9 +25,9 @@
     {
       get
       {
-        if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, SPBaristaContext.Current.Request) == false))
+        if (m_httpRequest == null || (m_httpRequest != null && Equals(m_httpRequest.Request, SPBaristaContext.Current.Request) == false))
         {
-          m_httpRequest = new HttpRequestInstance(this.Engine, SPBaristaContext.Current.Request);
+          m_httpRequest = new HttpRequestInstance(Engine, SPBaristaContext.Current.Request);
         }
 
         return m_httpRequest;
@@ -40,9 +40,9 @@
     {
       get
       {
-        if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, SPBaristaContext.Current.Response) == false))
+        if (m_httpResponse == null || (m_httpResponse != null && Equals(m_httpResponse.Response, SPBaristaContext.Current.Response) == false))
         {
-          m_httpResponse = new HttpResponseInstance(this.Engine, SPBaristaContext.Current.Response);
+          m_httpResponse = new HttpResponseInstance(Engine, SPBaristaContext.Current.Response);
         }
 
         return m_httpResponse;

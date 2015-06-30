@@ -21,8 +21,8 @@
         /// <param name="web"></param>
         public SPBaristaContext(SPSite site, SPWeb web)
         {
-            this.Site = site;
-            this.Web = web;
+            Site = site;
+            Web = web;
         }
 
         public SPBaristaContext(BrewRequest request, BrewResponse response)
@@ -45,11 +45,11 @@
                         var tokenBytes = Convert.FromBase64String(request.ExtendedProperties["SPUserToken"]);
                         var userToken = new SPUserToken(tokenBytes);
                        
-                        this.Site = new SPSite(siteId, siteUrlZone, userToken);
+                        Site = new SPSite(siteId, siteUrlZone, userToken);
                     }
                     else
                     {
-                        this.Site = new SPSite(siteId, siteUrlZone);
+                        Site = new SPSite(siteId, siteUrlZone);
                     }
             }
 
@@ -59,21 +59,21 @@
             var webId = new Guid(request.ExtendedProperties["SPWebId"]);
 
             if (webId != Guid.Empty)
-                this.Web = this.Site.OpenWeb(webId);
+                Web = Site.OpenWeb(webId);
 
             if (request.ExtendedProperties.ContainsKey("SPListId"))
             {
                 var listId = new Guid(request.ExtendedProperties["SPListId"]);
 
                 if (listId != Guid.Empty)
-                    this.List = this.Web.Lists[listId];
+                    List = Web.Lists[listId];
 
                 if (request.ExtendedProperties.ContainsKey("SPViewId"))
                 {
                     var viewId = new Guid(request.ExtendedProperties["SPViewId"]);
 
                     if (viewId != Guid.Empty)
-                        this.View = this.List.Views[viewId];
+                        View = List.Views[viewId];
                 }
             }
 
@@ -86,11 +86,11 @@
                     Uri listItemUri;
 
                     //In the two places this gets used, this is a site-relative URL.
-                    if (Uri.TryCreate(new Uri(this.Web.Url.EnsureEndsWith("/")), url.EnsureStartsWith("/"), out listItemUri))
+                    if (Uri.TryCreate(new Uri(Web.Url.EnsureEndsWith("/")), url.EnsureStartsWith("/"), out listItemUri))
                     {
                         try
                         {
-                            this.ListItem = this.Web.GetListItem(listItemUri.ToString());
+                            ListItem = Web.GetListItem(listItemUri.ToString());
                         }
                         catch (FileNotFoundException)
                         {
@@ -106,7 +106,7 @@
             var fileId = new Guid(request.ExtendedProperties["SPFileId"]);
 
             if (fileId != Guid.Empty)
-                this.File = this.Web.GetFile(fileId);
+                File = Web.GetFile(fileId);
         }
 
         public SPWebBundle WebBundle
@@ -154,22 +154,22 @@
         protected override void Dispose(bool disposing)
         {
 
-            if (this.Web != null)
+            if (Web != null)
             {
-                this.Web.Close();
-                this.Web.Dispose();
-                this.Web = null;
+                Web.Close();
+                Web.Dispose();
+                Web = null;
             }
 
-            if (this.Site != null)
+            if (Site != null)
             {
-                this.Site.Close();
-                this.Site.Dispose();
-                this.Site = null;
+                Site.Close();
+                Site.Dispose();
+                Site = null;
             }
 
-            this.List = null;
-            this.ListItem = null;
+            List = null;
+            ListItem = null;
 
             base.Dispose(disposing);
         }
@@ -187,7 +187,7 @@
             {
                 if (s_currentContext == null && SPContext.Current != null)
                 {
-                    s_currentContext = SPBaristaContext.CreateContextFromSPContext(SPContext.Current);
+                    s_currentContext = CreateContextFromSPContext(SPContext.Current);
                 }
                 return s_currentContext;
             }

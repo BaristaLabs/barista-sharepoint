@@ -22,8 +22,8 @@
       if (response == null)
         response = new BrewResponse();
 
-      this.Request = request;
-      this.Response = response;
+      Request = request;
+      Response = response;
     }
 
     /// <summary>
@@ -62,8 +62,8 @@
         {
           if (!m_disposed)
           {
-            this.Request = null;
-            this.Response = null;
+            Request = null;
+            Response = null;
             m_disposed = true;
           }
         }
@@ -83,7 +83,7 @@
       {
         if (s_currentContext == null && HttpContext.Current != null)
         {
-          s_currentContext = BaristaContext.CreateContextFromHttpContext(HttpContext.Current);
+          s_currentContext = CreateContextFromHttpContext(HttpContext.Current);
         }
         return s_currentContext;
       }

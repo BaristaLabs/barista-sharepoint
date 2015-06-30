@@ -15,25 +15,25 @@
     public BaristaSharePointGlobal(ScriptEngine engine)
       : base(new BaristaGlobal(engine))
     {
-      this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+      PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
     }
 
     [JSFunction(Name = "include")]
     public override object Include(string scriptUrl)
     {
-      var source = new SPFileScriptSource(this.Engine, scriptUrl);
+      var source = new SPFileScriptSource(Engine, scriptUrl);
 
-      return this.Engine.Evaluate(source);
+      return Engine.Evaluate(source);
     }
 
     public override object Include(string scriptUrl, Jurassic.Compiler.Scope scope, object thisObject, bool strictMode)
     {
-      var source = new SPFileScriptSource(this.Engine, scriptUrl);
+      var source = new SPFileScriptSource(Engine, scriptUrl);
 
       var sourceReader = source.GetReader();
       var code = sourceReader.ReadToEnd();
 
-      return this.Engine.Eval(code, scope, thisObject, strictMode);
+      return Engine.Eval(code, scope, thisObject, strictMode);
     }
 
     [JSFunction(Name = "isCurrentInstanceSaved")]
@@ -58,10 +58,10 @@
       switch (SPBaristaContext.Current.Request.InstanceMode)
       {
         case BaristaInstanceMode.Single:
-          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
+          result = RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
           break;
         case BaristaInstanceMode.PerSession:
-          result = BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
+          result = RemoveScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName);
           break;
       }
 
