@@ -862,13 +862,6 @@
                 "!doc": "State Machine Bundle. Provides a mechanism to create finite state machines. (See https://github.com/jakesgordon/javascript-state-machine)"
             },
             "String": {
-                "name": {},
-                "length": {},
-                "prototype": {},
-                "VERSION": {},
-                "TMPL_OPEN": {},
-                "TMPL_CLOSE": {},
-                "ENTITIES": {},
                 "apply": {
                     "!type": "fn(thisObj: ?, arguments: ?) -> ?"
                 },
@@ -887,8 +880,95 @@
                 "valueOf": {
                     "!type": "fn() -> ?"
                 },
-                "extendPrototype": {},
-                "restorePrototype": {},
+                "name": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
+                "length": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
+                "extendPrototype": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "apply": {
+                            "!type": "fn(thisObj: ?, arguments: ?) -> ?"
+                        },
+                        "bind": {
+                            "!type": "fn(boundThis: ?, boundArguments: [?]) -> fn()"
+                        },
+                        "call": {
+                            "!type": "fn(thisObj: ?, arguments: [?]) -> ?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "toString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "restorePrototype": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "apply": {
+                            "!type": "fn(thisObj: ?, arguments: ?) -> ?"
+                        },
+                        "bind": {
+                            "!type": "fn(boundThis: ?, boundArguments: [?]) -> fn()"
+                        },
+                        "call": {
+                            "!type": "fn(thisObj: ?, arguments: [?]) -> ?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "toString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "VERSION": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
+                "TMPL_OPEN": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
+                "TMPL_CLOSE": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
+                "ENTITIES": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "hasOwnProperty": {
+                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
+                        },
+                        "isPrototypeOf": {
+                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, obj: ?) -> bool"
+                        },
+                        "propertyIsEnumerable": {
+                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "toString": {
+                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?) -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
                 "!doc": "String"
             },
             "Sucralose": {
@@ -1047,6 +1127,341 @@
                     "!type": "fn() -> ?"
                 },
                 "!doc": "Web Optimization"
+            },
+            "WkHtmlToPdf": {
+                "HtmlToPdfDocument": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "globalSettings": {
+                            "!type": "+GlobalSettings"
+                        },
+                        "objects": {
+                            "!type": "+ObjectSettingsList"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "GlobalSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "collate": {
+                            "!type": "bool?"
+                        },
+                        "colorMode": {
+                            "!type": "string"
+                        },
+                        "cookieJar": {
+                            "!type": "string"
+                        },
+                        "copies": {
+                            "!type": "number?"
+                        },
+                        "documentTitle": {
+                            "!type": "string"
+                        },
+                        "dpi": {
+                            "!type": "number?"
+                        },
+                        "dumpOutline": {
+                            "!type": "string"
+                        },
+                        "imageDpi": {
+                            "!type": "number?"
+                        },
+                        "imageQuality": {
+                            "!type": "number?"
+                        },
+                        "margins": {
+                            "!type": "+MarginSettings?"
+                        },
+                        "orientation": {
+                            "!type": "string"
+                        },
+                        "outlineDepth": {
+                            "!type": "number?"
+                        },
+                        "outputFile": {
+                            "!type": "string"
+                        },
+                        "outputFormat": {
+                            "!type": "string"
+                        },
+                        "pageOffset": {
+                            "!type": "number?"
+                        },
+                        "paperSize": {
+                            "!type": "+PaperSize"
+                        },
+                        "produceOutline": {
+                            "!type": "bool?"
+                        },
+                        "useCompression": {
+                            "!type": "bool?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "ObjectSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "countPages": {
+                            "!type": "bool?"
+                        },
+                        "headerSettings": {
+                            "!type": "?"
+                        },
+                        "htmlText": {
+                            "!type": "string"
+                        },
+                        "includeInOutline": {
+                            "!type": "bool?"
+                        },
+                        "loadSettings": {
+                            "!type": "?"
+                        },
+                        "pageUrl": {
+                            "!type": "string"
+                        },
+                        "produceExternalLinks": {
+                            "!type": "bool?"
+                        },
+                        "produceForms": {
+                            "!type": "bool?"
+                        },
+                        "webSettings": {
+                            "!type": "?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "WebSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "defaultEncoding": {
+                            "!type": "string"
+                        },
+                        "enableIntelligentShrinking": {
+                            "!type": "bool?"
+                        },
+                        "enableJavascript": {
+                            "!type": "bool?"
+                        },
+                        "enablePlugins": {
+                            "!type": "bool?"
+                        },
+                        "loadImages": {
+                            "!type": "bool?"
+                        },
+                        "minimumFontSize": {
+                            "!type": "number?"
+                        },
+                        "printBackground": {
+                            "!type": "bool?"
+                        },
+                        "printMediaType": {
+                            "!type": "bool?"
+                        },
+                        "userStyleSheet": {
+                            "!type": "string"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "LoadSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "blockLocalFileAccess": {
+                            "!type": "bool?"
+                        },
+                        "debugJavascript": {
+                            "!type": "bool?"
+                        },
+                        "errorHandling": {
+                            "!type": "string"
+                        },
+                        "password": {
+                            "!type": "string"
+                        },
+                        "proxy": {
+                            "!type": "string"
+                        },
+                        "renderDelay": {
+                            "!type": "number?"
+                        },
+                        "repeatCustomHeaders": {
+                            "!type": "bool?"
+                        },
+                        "stopSlowScript": {
+                            "!type": "bool?"
+                        },
+                        "username": {
+                            "!type": "string"
+                        },
+                        "windowStatus": {
+                            "!type": "string"
+                        },
+                        "zoomFactor": {
+                            "!type": "number?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "HeaderSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "centerText": {
+                            "!type": "string"
+                        },
+                        "contentSpacing": {
+                            "!type": "number?"
+                        },
+                        "fontName": {
+                            "!type": "string"
+                        },
+                        "fontSize": {
+                            "!type": "number?"
+                        },
+                        "htmlUrl": {
+                            "!type": "string"
+                        },
+                        "leftText": {
+                            "!type": "string"
+                        },
+                        "rightText": {
+                            "!type": "string"
+                        },
+                        "useLineSeparator": {
+                            "!type": "bool?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "FooterSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "centerText": {
+                            "!type": "string"
+                        },
+                        "contentSpacing": {
+                            "!type": "number?"
+                        },
+                        "fontName": {
+                            "!type": "string"
+                        },
+                        "fontSize": {
+                            "!type": "number?"
+                        },
+                        "htmlUrl": {
+                            "!type": "string"
+                        },
+                        "leftText": {
+                            "!type": "string"
+                        },
+                        "rightText": {
+                            "!type": "string"
+                        },
+                        "useLineSeparator": {
+                            "!type": "bool?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "MarginSettings": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "all": {
+                            "!type": "number"
+                        },
+                        "bottom": {
+                            "!type": "number?"
+                        },
+                        "left": {
+                            "!type": "number?"
+                        },
+                        "right": {
+                            "!type": "number?"
+                        },
+                        "top": {
+                            "!type": "number?"
+                        },
+                        "unit": {
+                            "!type": "string"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "PaperSize": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "height": {
+                            "!type": "string"
+                        },
+                        "width": {
+                            "!type": "string"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "pdfConverter": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "convert": {
+                            "!type": "fn(document: +WkHtmlToPdf.HtmlToPdfDocument, fileName: ?) -> +Base64EncodedByteArray"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "!doc": "WkHtmlToPdf"
             }
         },
         "Barista": {

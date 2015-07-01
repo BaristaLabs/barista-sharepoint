@@ -86,11 +86,12 @@
                 foreach (var val in Common.RegisteredBundles.OrderBy(b => b.Key))
                 {
                     var bundleResult = Common.Require(val.Value.BundleName);
+
                     if (bundleResult is ObjectInstance)
                     {
                         var broi = bundleResult as ObjectInstance;
                         IDictionary<string, ObjectInstance> globals;
-                        var definition = GetTernObjectDefinition(Engine, broi, out globals);
+                        var definition = GetTernObjectDefinition(Engine, broi, val.Key, out globals);
                         definition.SetPropertyValue("!doc", val.Key, false);
 
                         define.SetPropertyValue(val.Key, definition, false);
@@ -463,75 +464,69 @@
         protected static ObjectInstance GetTernObjectDefinition(ScriptEngine engine, ObjectInstance obj)
         {
             IDictionary<string, ObjectInstance> ignore;
-            return GetTernObjectDefinition(engine, obj, out ignore);
+            return GetTernObjectDefinition(engine, obj, null, out ignore);
         }
 
-        protected static ObjectInstance GetTernObjectDefinition(ScriptEngine engine, ObjectInstance obj, out IDictionary<string, ObjectInstance> globals)
+        protected static ObjectInstance GetTernObjectDefinition(ScriptEngine engine, ObjectInstance obj, string prefix, out IDictionary<string, ObjectInstance> globals)
         {
+            //Get the statically defined property and function defintions defined on the object.
+
             var customTypes = new List<Type>();
             var result = engine.Object.Construct();
             var type = obj.GetType();
 
-            IList<Type> propertyTypes;
-            GetTernPropertyDefinitionsForType(engine, type, result, out propertyTypes);
-
-            foreach (var propertyType in propertyTypes)
-                if (!customTypes.Contains(propertyType))
-                    customTypes.Add(propertyType);
-
-            var builtInProperties =
-                new [] { "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable"};
-
-            IList<Type> objectProperties = null;
-            //If it's a javascript object, enumerate its properties
-            foreach (var property in obj.Properties)
+            if (type.IsSubclassOf(typeof(ObjectInstance)))
             {
-                if ((property.Value is FunctionInstance) == false && !builtInProperties.Any( p => p.Equals(property.Name, StringComparison.Ordinal)) && result.HasProperty(property.Name) == false)
-                {
-                    var propObj = GetTernDocumentationObject(engine, property.Value.GetType(), out objectProperties);
-                    result.SetPropertyValue(property.Name, propObj, false);
-                }
-            }
+                IList<Type> propertyTypes;
+                GetTernPropertyDefinitionsForType(engine, type, result, out propertyTypes);
 
-            if (objectProperties != null)
-            {
-                foreach (var propertyType in objectProperties)
+                foreach (var propertyType in propertyTypes)
                     if (!customTypes.Contains(propertyType))
                         customTypes.Add(propertyType);
+
+                IList<Type> functionTypes;
+                GetTernFunctionDefinitionsForType(engine, type, result, prefix, out functionTypes);
+
+                foreach (var functionType in functionTypes)
+                    if (!customTypes.Contains(functionType))
+                        customTypes.Add(functionType);
             }
 
-            IList<Type> functionTypes;
-            GetTernFunctionDefinitionsForType(engine, type, result, out functionTypes);
+            //Get the dynamically defined property and function definitions defined on the object;
+            var builtIns = new[] { "prototype", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf" };
 
-            foreach (var functionType in functionTypes)
-                if (!customTypes.Contains(functionType))
-                    customTypes.Add(functionType);
-
-            var builtInFunctions = new[] { "toLocaleString", "toString", "valueOf" };
-
-            //If it's a javascript object, enumerate the functions..
+            // ReSharper disable once TooWideLocalVariableScope
+            // ReSharper disable once RedundantAssignment
             IList<Type> objectFunctions = null;
+
             foreach (var property in obj.Properties)
             {
-                if (property.Value is FunctionInstance && !builtInFunctions.Any( p => p.Equals(property.Name, StringComparison.Ordinal)) && result.HasProperty(property.Name) == false)
-                {
-                    var valueType = property.Value.GetType();
+                //Don't document built-in properties, or properties already defined (statically)
+                if (builtIns.Any(p => p.Equals(property.Name, StringComparison.Ordinal)) || result.HasProperty(property.Name))
+                    continue;
 
-                    var pfunc = property.Value as FunctionInstance;
+                var valueType = property.Value.GetType();
+
+                //if the property value is a functioninstance, get the doc object from the function's instance prototype.
+                var pfunc = property.Value as FunctionInstance;
+                if (pfunc != null)
+                {
                     if (pfunc.InstancePrototype.GetType() != typeof (ObjectInstance))
                         valueType = pfunc.InstancePrototype.GetType();
-
-                    var funcObj = GetTernDocumentationObject(engine, valueType, out objectFunctions);
-                    result.SetPropertyValue(property.Name, funcObj, false);
                 }
+
+                var docObj = GetTernDocumentationObject(engine, valueType, prefix, out objectFunctions);
+
+                result.SetPropertyValue(property.Name, docObj, false);
             }
 
-            if (objectFunctions != null)
-            {
-                foreach (var propertyType in objectFunctions)
-                    if (!customTypes.Contains(propertyType))
-                        customTypes.Add(propertyType);
-            }
+            //Assume that the types in dynamic properties are defined on the parent type.
+            //if (objectFunctions != null)
+            //{
+            //    foreach (var propertyType in objectFunctions)
+            //        if (!customTypes.Contains(propertyType))
+            //            customTypes.Add(propertyType);
+            //}
 
             //Output Custom Global Types we discovered while enumerating properties and functions as globals.
             globals = new Dictionary<string, ObjectInstance>();
@@ -562,10 +557,24 @@
         protected static ObjectInstance GetTernDocumentationObject(ScriptEngine engine, MemberInfo member)
         {
             IList<Type> ignoreTypes;
-            return GetTernDocumentationObject(engine, member, out ignoreTypes);
+            return GetTernDocumentationObject(engine, member, null, out ignoreTypes);
+        }
+
+        protected static ObjectInstance GetTernDocumentationObject(ScriptEngine engine, MemberInfo member, string prefix)
+        {
+            IList<Type> ignoreTypes;
+            return GetTernDocumentationObject(engine, member, prefix, out ignoreTypes);
         }
 
         protected static ObjectInstance GetTernDocumentationObject(ScriptEngine engine, MemberInfo member, out IList<Type> customTypes)
+        {
+            IList<Type> innerTypes;
+            var result = GetTernDocumentationObject(engine, member, null, out innerTypes);
+            customTypes = innerTypes;
+            return result;
+        }
+
+        protected static ObjectInstance GetTernDocumentationObject(ScriptEngine engine, MemberInfo member, string prefix, out IList<Type> customTypes)
         {
             customTypes = new List<Type>();
 
@@ -574,8 +583,8 @@
             if (member is Type)
             {
                 var type = member as Type;
-                //TODO: generate constructors.
 
+                //TODO: generate constructors.
                 var ternConstructorDefinition = "fn(?)";
 
                 var jsDocAttributes = type.GetCustomAttributes(typeof(JSDocAttribute), false).OfType<JSDocAttribute>();
@@ -596,7 +605,7 @@
                         customTypes.Add(propertyType);
 
                 IList<Type> functionTypes;
-                GetTernFunctionDefinitionsForType(engine, type, prototype, out functionTypes);
+                GetTernFunctionDefinitionsForType(engine, type, prototype, prefix, out functionTypes);
 
                 foreach (var functionType in functionTypes)
                     if (!customTypes.Contains(functionType))
@@ -619,7 +628,7 @@
                                 customTypes.Add(propertyType);
 
                         IList<Type> prototypeFunctionTypes;
-                        GetTernFunctionDefinitionsForType(engine, type, prototype, out prototypeFunctionTypes);
+                        GetTernFunctionDefinitionsForType(engine, type, prototype, prefix, out prototypeFunctionTypes);
 
                         foreach (var functionType in prototypeFunctionTypes)
                             if (!customTypes.Contains(functionType))
@@ -638,7 +647,9 @@
                 foreach (var parameter in methodInfo.GetParameters().OrderBy(p => p.Position))
                 {
                     IList<Type> parameterTypes;
-                    parameters.Add(parameter.Name + ": " + GetTernTypeString(parameter.ParameterType, out parameterTypes));
+                    var parameterType = GetTernTypeString(parameter.ParameterType, prefix, out parameterTypes);
+
+                    parameters.Add(parameter.Name + ": " + parameterType);
 
                     foreach (var type in parameterTypes)
                         if (!customTypes.Contains(type))
@@ -737,7 +748,7 @@
             }
         }
 
-        protected static void GetTernFunctionDefinitionsForType(ScriptEngine engine, Type type, ObjectInstance doc, out IList<Type> functionTypes)
+        protected static void GetTernFunctionDefinitionsForType(ScriptEngine engine, Type type, ObjectInstance doc, string prefix, out IList<Type> functionTypes)
         {
             functionTypes = new List<Type>();
 
@@ -758,7 +769,7 @@
             {
                 IList<Type> nestedFunctionTypes;
 
-                var functionDoc = GetTernDocumentationObject(engine, function.MemberInfo, out nestedFunctionTypes);
+                var functionDoc = GetTernDocumentationObject(engine, function.MemberInfo, prefix, out nestedFunctionTypes);
                 doc.SetPropertyValue(function.FunctionInfo.Name, functionDoc, false);
 
                 foreach (var nestedFunctionType in nestedFunctionTypes)
@@ -791,6 +802,14 @@
         }
 
         protected static string GetTernTypeString(Type type, out IList<Type> customTypes)
+        {
+            IList<Type> types;
+            var result = GetTernTypeString(type, null, out types);
+            customTypes = types;
+            return result;
+        }
+
+        protected static string GetTernTypeString(Type type, string prefix, out IList<Type> customTypes)
         {
             //TODO: Fix generics
 
@@ -840,6 +859,11 @@
                     break;
                 default:
                     result = GenerateTernCustomTypeString(result);
+
+                    //TODO: fix this so that globals don't get prefixed.
+                    if (!prefix.IsNullOrWhiteSpace() && result != "Base64EncodedByteArray")
+                        result = prefix + "." + result;
+
                     result = "+" + result;
                     if (!customTypes.Contains(type))
                         customTypes.Add(type);
