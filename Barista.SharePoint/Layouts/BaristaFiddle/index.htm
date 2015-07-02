@@ -451,10 +451,23 @@
                     }
                 },
                 highlightSelectionMatches: { showToken: /\w/ },
-                styleActiveLine: true
+                styleActiveLine: true,
             });
 
             editor.on("cursorActivity", function (cm) { if (server) server.updateArgHints(cm); });
+            editor.on('keyup', function (cm, e) {
+
+                if (e.keyCode === 190 && server) {
+                    server.complete(cm);
+                    return;
+                }
+
+                var cursorPos = cm.getCursor();
+                var line = cm.getLine(cursorPos.line);
+
+                if (line.match(/^.*require\(['|"]$/i))
+                    server.complete(cm);
+            });
             editor.setSize($("#left-pane").width(), $("#left-pane").height());
 
             $("#left-pane").resize(function () {
