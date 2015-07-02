@@ -248,7 +248,7 @@
                 var moduleName = resolveModulePath(name, currentFile);
                 if (moduleName &&
                     !(query.filter !== false && word &&
-                      (query.caseInsensitive ? moduleName.toLowerCase() : moduleName).indexOf(word) !== 0)) {
+                      moduleName.toLowerCase().indexOf(word) !== 0)) {
                     var rec = wrapAsObjs ? { name: moduleName } : moduleName;
                     completions.push(rec);
 
@@ -270,7 +270,7 @@
             }
         }
 
-        if (query.caseInsensitive) word = word.toLowerCase();
+        word = word.toLowerCase();
         gather(cx.definitions.barista);
         //gather(data.modules);
         return completions;

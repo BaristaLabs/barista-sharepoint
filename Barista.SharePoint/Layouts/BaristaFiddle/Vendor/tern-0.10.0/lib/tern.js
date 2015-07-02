@@ -604,6 +604,10 @@
     if (query.expandWordForward !== false)
       while (wordEnd < text.length && acorn.isIdentifierChar(text.charCodeAt(wordEnd))) ++wordEnd;
     var word = text.slice(wordStart, wordEnd), completions = [], ignoreObj;
+
+      //HACK: hardcoding caseInsensitive to be true!!
+      query.caseInsensitive = true;
+
     if (query.caseInsensitive) word = word.toLowerCase();
     var wrapAsObjs = query.types || query.depths || query.docs || query.urls || query.origins;
 
