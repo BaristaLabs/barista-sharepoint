@@ -511,13 +511,33 @@
                 var pfunc = property.Value as FunctionInstance;
                 if (pfunc != null)
                 {
-                    if (pfunc.InstancePrototype.GetType() != typeof (ObjectInstance))
+                    if (pfunc.InstancePrototype.GetType() != typeof(ObjectInstance))
                         valueType = pfunc.InstancePrototype.GetType();
+
+                    var docObj = GetTernDocumentationObject(engine, valueType, prefix, out objectFunctions);
+
+                    result.SetPropertyValue(property.Name, docObj, false);
                 }
+                else
+                {
+                    //If it's a property, get the documentation for the type, and reference it.
+                    var typeName = GetTernTypeString(valueType, false, null, out objectFunctions);
+                    if (!result.HasProperty(typeName))
+                    {
+                        var typeDocObj = GetTernDocumentationObject(engine, valueType, prefix, out objectFunctions);
+                        result.SetPropertyValue(typeName, typeDocObj, false);
+                    }
 
-                var docObj = GetTernDocumentationObject(engine, valueType, prefix, out objectFunctions);
+                    if (!prefix.IsNullOrWhiteSpace())
+                        typeName = prefix + "." + typeName;
 
-                result.SetPropertyValue(property.Name, docObj, false);
+                    var refDoc = engine.Object.Construct();
+                    refDoc.SetPropertyValue("!type", "+" + typeName, false);
+
+                    result.SetPropertyValue(property.Name, refDoc, false);
+                }
+                
+                
             }
 
             //Assume that the types in dynamic properties are defined on the parent type.
@@ -804,12 +824,20 @@
         protected static string GetTernTypeString(Type type, out IList<Type> customTypes)
         {
             IList<Type> types;
-            var result = GetTernTypeString(type, null, out types);
+            var result = GetTernTypeString(type, true, null, out types);
             customTypes = types;
             return result;
         }
 
         protected static string GetTernTypeString(Type type, string prefix, out IList<Type> customTypes)
+        {
+            IList<Type> types;
+            var result = GetTernTypeString(type, true, prefix, out types);
+            customTypes = types;
+            return result;
+        }
+
+        protected static string GetTernTypeString(Type type, bool isReference, string prefix, out IList<Type> customTypes)
         {
             //TODO: Fix generics
 
@@ -864,7 +892,9 @@
                     if (!prefix.IsNullOrWhiteSpace() && result != "Base64EncodedByteArray")
                         result = prefix + "." + result;
 
-                    result = "+" + result;
+                    if (isReference)
+                        result = "+" + result;
+
                     if (!customTypes.Contains(type))
                         customTypes.Add(type);
                     break;

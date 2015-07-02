@@ -880,13 +880,19 @@
                 "valueOf": {
                     "!type": "fn() -> ?"
                 },
+                "string": {
+                    "!type": "fn(?)",
+                    "prototype": {}
+                },
                 "name": {
+                    "!type": "+String.string"
+                },
+                "number": {
                     "!type": "fn(?)",
                     "prototype": {}
                 },
                 "length": {
-                    "!type": "fn(?)",
-                    "prototype": {}
+                    "!type": "+String.number"
                 },
                 "extendPrototype": {
                     "!type": "fn(?)",
@@ -935,18 +941,15 @@
                     }
                 },
                 "VERSION": {
-                    "!type": "fn(?)",
-                    "prototype": {}
+                    "!type": "+String.string"
                 },
                 "TMPL_OPEN": {
-                    "!type": "fn(?)",
-                    "prototype": {}
+                    "!type": "+String.string"
                 },
                 "TMPL_CLOSE": {
-                    "!type": "fn(?)",
-                    "prototype": {}
+                    "!type": "+String.string"
                 },
-                "ENTITIES": {
+                "?": {
                     "!type": "fn(?)",
                     "prototype": {
                         "hasOwnProperty": {
@@ -968,6 +971,9 @@
                             "!type": "fn() -> ?"
                         }
                     }
+                },
+                "ENTITIES": {
+                    "!type": "+String.?"
                 },
                 "!doc": "String"
             },
@@ -1447,7 +1453,7 @@
                         }
                     }
                 },
-                "pdfConverter": {
+                "PdfConverter": {
                     "!type": "fn(?)",
                     "prototype": {
                         "convert": {
@@ -1460,6 +1466,9 @@
                             "!type": "fn() -> ?"
                         }
                     }
+                },
+                "pdfConverter": {
+                    "!type": "+WkHtmlToPdf.PdfConverter"
                 },
                 "!doc": "WkHtmlToPdf"
             }
