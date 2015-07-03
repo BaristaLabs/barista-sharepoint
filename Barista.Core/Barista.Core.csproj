@@ -153,6 +153,7 @@
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="BaristaInstanceMutexManager.cs" />
+    <Compile Include="BaristaResponseMessage.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -211,6 +212,8 @@
     <Compile Include="Engine\IScriptSource.cs" />
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\WebOperationContextExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
     <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />
@@ -1343,6 +1346,7 @@
     <Compile Include="Search\Data Contracts\SearchResult.cs" />
     <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Term.cs" />
+    <Compile Include="ServiceContracts\IBaristaRestService.cs" />
     <Compile Include="ServiceContracts\IBaristaScheduler.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
@@ -1360,6 +1364,7 @@
     <Compile Include="Smtp\MailAddressInstance.cs" />
     <Compile Include="Smtp\MailMessageInstance.cs" />
     <Compile Include="Smtp\SmtpClientInstance.cs" />
+    <Compile Include="StreamBodyWriter.cs" />
     <Compile Include="TeamFoundationServer\BaristaNetworkCredentialsProvider.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsProjectInstance.cs" />
     <Compile Include="TeamFoundationServer\Library\TfsTeamProjectCollectionInstance.cs" />

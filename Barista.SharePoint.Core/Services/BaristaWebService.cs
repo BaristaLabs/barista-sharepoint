@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Services
 {
+    using System.ServiceModel.Channels;
     using Barista.SharePoint.Extensions;
     using Barista.Extensions;
     using Barista.Framework;
@@ -24,24 +25,25 @@
       InstanceContextMode = InstanceContextMode.PerCall,
       ConcurrencyMode = ConcurrencyMode.Multiple)]
     [RawJsonRequestBehavior]
-    public class BaristaWebService : IBaristaWebService
+    public class BaristaWebService : IBaristaRestService
     {
         #region Service Operations
 
-        /// <summary>
-        /// Executes the specified script and does not return a result.
-        /// </summary>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public void Coffee()
+        public void Exec(Stream requestBody)
         {
-            if (WebOperationContext.Current == null)
-                throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
+            ExecWild(requestBody);
+        }
 
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [DynamicResponseType(RestOnly = true)]
+        public void ExecWild(Stream requestBody)
+        {
             TakeOrder();
 
             string codePath;
-            var code = Grind();
+            var code = Grind(requestBody);
 
             code = Tamp(code, out codePath);
 
@@ -50,50 +52,19 @@
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public void CoffeeWild()
+        public Message Eval(Stream requestBody)
         {
-            Coffee();
+            return EvalWild(requestBody);
         }
 
-        /// <summary>
-        /// Overload for coffee to allow http POSTS.
-        /// </summary>
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public void CoffeeAuLait(Stream stream)
-        {
-            TakeOrder();
-
-            string codePath;
-            var code = Grind();
-
-            code = Tamp(code, out codePath);
-
-            Brew(code, codePath);
-        }
-
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public void CoffeeAuLaitWild(Stream stream)
-        {
-            CoffeeAuLait(stream);
-        }
-
-        /// <summary>
-        /// Evaluates the specified script.
-        /// </summary>
-        /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Stream Espresso()
+        public Message EvalWild(Stream requestBody)
         {
-            if (WebOperationContext.Current == null)
-                throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
-
             TakeOrder();
 
             string codePath;
-            var code = Grind();
+            var code = Grind(requestBody);
 
             code = Tamp(code, out codePath);
 
@@ -102,34 +73,30 @@
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Stream EspressoWild()
+        public Message Status()
         {
-            return Espresso();
-        }
+            //TODO: 
+            //return machinename
+            //machines in farm
+            //servers where barista service is running
+            //servers where barista search service is running
+            //trusted locations config
 
-        /// <summary>
-        /// Expresso overload to support having code contained in the body of a http POST.
-        /// </summary>
-        /// <returns></returns>
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public Stream Latte(Stream stream)
-        {
-            TakeOrder();
-
-            string codePath;
-            var code = Grind();
-
-            code = Tamp(code, out codePath);
-
-            return Pull(code, codePath);
+            throw new NotImplementedException();
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public Stream LatteWild(Stream stream)
+        [DynamicResponseType(RestOnly = true)]
+        public Message ListBundles()
         {
-            return Latte(stream);
+            throw new NotImplementedException();
+        }
+
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [DynamicResponseType(RestOnly = true)]
+        public Message InstallBundle(Stream requestBody)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -152,43 +119,36 @@
         /// <summary>
         /// Grinds the beans. E.g. Attempts to retrieve the code value from the request.
         /// </summary>
-        private static string Grind()
+        private static string Grind(Stream requestBody)
         {
             string code = null;
 
+            var webContext = WebOperationContext.Current;
+
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
             //If the request has a header named "X-Barista-Code" use that first.
-            if (WebOperationContext.Current != null)
-            {
-                var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-                var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code");
-                if (codeHeaderKey != null)
-                    code = requestHeaders[codeHeaderKey];
-            }
+            var requestHeaders = webContext.IncomingRequest.Headers;
+            var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code");
+            if (codeHeaderKey != null)
+                code = requestHeaders[codeHeaderKey];
 
             //If the request has a query string parameter named "c" use that.
-            if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
+            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.UriTemplateMatch != null)
             {
-                var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+                var requestQueryParameters = webContext.IncomingRequest.UriTemplateMatch.QueryParameters;
 
                 var codeKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "c");
                 if (codeKey != null)
                     code = requestQueryParameters[codeKey];
             }
 
-            //If the request contains a form variable named "c" or "code" use that.
-            if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
-            {
-                var form = HttpContext.Current.Request.Form;
-                var formKey = form.AllKeys.FirstOrDefault(k => k != null && (k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code"));
-                if (formKey != null)
-                    code = form[formKey];
-            }
-
             //If the request contains a Message header named "c" or "code in the appropriate namespace, use that.
-            if (String.IsNullOrEmpty(code) && OperationContext.Current != null)
+            if (String.IsNullOrEmpty(code))
             {
                 var headers = OperationContext.Current.IncomingMessageHeaders;
-
+                
                 if (headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "code"))
                     code = headers.GetHeader<string>("code", Barista.Constants.ServiceNamespace);
                 else if (String.IsNullOrEmpty(code) && headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "c"))
@@ -196,9 +156,9 @@
             }
 
             //Otherwise, use the body of the post as code.
-            if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
+            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.Method == "POST")
             {
-                var body = HttpContext.Current.Request.InputStream.ToByteArray();
+                var body = requestBody.ToByteArray();
                 var bodyString = Encoding.UTF8.GetString(body);
 
                 if (bodyString.IsNullOrWhiteSpace() == false)
@@ -237,52 +197,18 @@
                 }
             }
 
+            //Last Chance: attempt to use everything after eval/ or exec/ in the url as the code
+            if (String.IsNullOrEmpty(code))
+            {
+                var url = webContext.IncomingRequest.UriTemplateMatch;
+
+                var firstWildcardPathSegment = url.WildcardPathSegments.FirstOrDefault();
+                if (!firstWildcardPathSegment.IsNullOrWhiteSpace())
+                    code = firstWildcardPathSegment;
+            }
+
             if (String.IsNullOrEmpty(code))
                 throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, through a 'c' or 'code' soap message header in the http://barista/services/v1 namespace, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
-
-
-            //Determine if a language is specified.
-            string language = null;
-
-            //If the request has a header named "X-Barista-Code-Language" use that first.
-            if (WebOperationContext.Current != null)
-            {
-                var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-                var languageHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code-Language");
-                if (languageHeaderKey != null)
-                    language = requestHeaders[languageHeaderKey];
-            }
-
-            //If the request has a query string parameter named "lang" use that.
-            if (String.IsNullOrEmpty(language) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
-            {
-                var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-                var languageKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "lang");
-                if (languageKey != null)
-                    language = requestQueryParameters[languageKey];
-            }
-
-            //If the request contains a form variable named "lang" use that.
-            if (String.IsNullOrEmpty(language) && HttpContext.Current.Request.HttpMethod == "POST")
-            {
-                var form = HttpContext.Current.Request.Form;
-                var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "lang");
-                if (formKey != null)
-                    language = form[formKey];
-            }
-
-            if (String.IsNullOrEmpty(language) != true)
-            {
-                switch (language.ToLowerInvariant())
-                {
-                    case "typescript":
-                        //Call the command-line compiler and retrieve the javascript.
-
-                        //TODO: What about tsc.exe errors? Parse output? Must pass TSC.exe a temp folder location...
-                        throw new NotImplementedException();
-                }
-            }
 
             return code;
         }
@@ -308,15 +234,6 @@
                     String codeFromfile;
                     if (SPHelper.TryGetSPFileAsString(code, out scriptFilePath, out codeFromfile, out isHiveFile))
                     {
-                        if (isHiveFile == false)
-                        {
-                            var lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
-                            if (String.IsNullOrEmpty(lockDownMode) == false && lockDownMode.ToLowerInvariant() == "BaristaContentLibraryOnly")
-                            {
-                                //TODO: implement this.
-                            }
-                        }
-
                         scriptPath = scriptFilePath;
                         code = codeFromfile;
                     }
@@ -368,9 +285,9 @@
         /// <param name="code"></param>
         /// <param name="codePath"></param>
         /// <returns></returns>
-        private static Stream Pull(string code, string codePath)
+        private static Message Pull(string code, string codePath)
         {
-            var client = new BaristaServiceClient(SPServiceContext.Current);
+            var webContext = WebOperationContext.Current;
 
             var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
             request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
@@ -386,6 +303,8 @@
 
             request.SetExtendedPropertiesFromCurrentSPContext();
 
+            //Make a call to the Barista Service application to handle the request.
+            var client = new BaristaServiceClient(SPServiceContext.Current);
             var result = client.Eval(request);
 
             var setHeaders = true;
@@ -397,9 +316,6 @@
 
             result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
 
-            if (result.Content == null)
-                return null;
-
             //abandon the session and set the ASP.net session cookie to nothing.
             if (HttpContext.Current != null && HttpContext.Current.Session != null)
             {
@@ -407,8 +323,18 @@
                 HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
             }
 
-            var resultStream = new MemoryStream(result.Content);
-            return resultStream;
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    if (result.Content == null)
+                        return;
+
+                    using (var writer = new BinaryWriter(stream))
+                    {
+                        writer.Write(result.Content);
+                    }
+                },
+                result.ContentType ?? string.Empty);
         }
         #endregion
     }
