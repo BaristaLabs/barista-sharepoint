@@ -85,6 +85,7 @@
 
                 foreach (var val in Common.RegisteredBundles.OrderBy(b => b.Key))
                 {
+                    
                     var bundleResult = Common.Require(val.Value.BundleName);
 
                     if (bundleResult is ObjectInstance)
@@ -540,21 +541,13 @@
                 
             }
 
-            //Assume that the types in dynamic properties are defined on the parent type.
-            //if (objectFunctions != null)
-            //{
-            //    foreach (var propertyType in objectFunctions)
-            //        if (!customTypes.Contains(propertyType))
-            //            customTypes.Add(propertyType);
-            //}
-
             //Output Custom Global Types we discovered while enumerating properties and functions as globals.
             globals = new Dictionary<string, ObjectInstance>();
             while (customTypes.Any())
             {
                 var customType = customTypes.First();
-                var ternTypeName = GenerateTernCustomTypeString(customType.ToString());
-                if (globals.ContainsKey(ternTypeName))
+                var ternTypeName = GenerateTernCustomTypeString(customType.Name);
+                if (engine.HasGlobalValue(ternTypeName) || globals.ContainsKey(ternTypeName))
                 {
                     customTypes.Remove(customType);
                     continue;
@@ -844,78 +837,45 @@
             customTypes = new List<Type>();
 
             var result = type.ToString();
-            switch (result)
+            if (type == typeof (Boolean) || type == typeof (BooleanInstance))
+                result = "bool";
+            else if (type == typeof (string) || type == typeof (ConcatenatedString) || type == typeof (StringInstance))
+                result = "string";
+            else if (type == typeof (FunctionInstance))
+                result = "fn()";
+            else if (type == typeof (DateTime) || type == typeof (DateInstance))
+                result = "+Date";
+            else if (type == typeof (Array) || type == typeof (Object[]) || type == typeof (ArrayInstance))
+                result = "[?]"; //TODO: Specify array type - [+SPContentType] for instance.
+            else if (type == typeof (Object) || type == typeof (ObjectInstance))
+                result = "?";
+            else if (type == typeof (Double) || type == typeof (float) || type == typeof (Byte) ||
+                     type == typeof (IntPtr) ||
+                     type == typeof (Int16) || type == typeof (Int32) || type == typeof (Int64) ||
+                     type == typeof (UIntPtr) ||
+                     type == typeof (UInt16) || type == typeof (UInt32) || type == typeof (UInt64) ||
+                     type == typeof (BigInteger))
+                result = "number";
+            else
             {
-                case "System.Boolean":
-                case "Barista.Jurassic.Library.BooleanInstance":
-                    result = "bool";
-                    break;
-                case "System.String":
-                case "Barista.Jurassic.ConcatenatedString":
-                case "Barista.Jurassic.Library.StringInstance":
-                    result = "string";
-                    break;
-                case "Barista.Jurassic.Library.FunctionInstance":
-                    result = "fn()";
-                    break;
-                case "System.DateTime":
-                case "Barista.Jurassic.Library.DateInstance":
-                    result = "+Date";
-                    break;
-                case "System.Array":
-                case "System.Object[]":
-                case "Barista.Jurassic.Library.ArrayInstance":
-                    result = "[?]"; //TODO: Specify array type - [+SPContentType] for instance.
-                    break;
-                case "System.Object":
-                case "Barista.Jurassic.Library.ObjectInstance":
-                    result = "?";
-                    break;
-                case "System.Double":
-                case "System.Float":
-                case "System.Byte":
-                case "System.IntPtr":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                case "System.UIntPtr":
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "Jurassic.BigInteger":
-                    result = "number";
-                    break;
-                default:
-                    result = GenerateTernCustomTypeString(result);
+                result = GenerateTernCustomTypeString(type.Name);
 
-                    //TODO: fix this so that globals don't get prefixed.
-                    if (!prefix.IsNullOrWhiteSpace() && result != "Base64EncodedByteArray")
-                        result = prefix + "." + result;
+                //TODO: fix this so that globals don't get prefixed.
+                if (!prefix.IsNullOrWhiteSpace() && result != "Base64EncodedByteArray")
+                    result = prefix + "." + result;
 
-                    if (isReference)
-                        result = "+" + result;
+                if (isReference)
+                    result = "+" + result;
 
-                    if (!customTypes.Contains(type))
-                        customTypes.Add(type);
-                    break;
+                if (!customTypes.Contains(type))
+                    customTypes.Add(type);
             }
-
+            
             return result;
         }
 
         protected static string GenerateTernCustomTypeString(string typeName)
         {
-            typeName = typeName.ReplaceFirstOccurence("System.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.SharePoint.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.SharePoint.K2.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.SharePoint.Taxonomy.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.SharePoint.Workflow.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.DocumentStore.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.Search.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.WkHtmlToPdf.Library.", "");
-            typeName = typeName.ReplaceFirstOccurence("Barista.iCal.", "");
-
             if (typeName.EndsWith("Instance"))
                 typeName = typeName.Remove(typeName.Length - 8);
 
