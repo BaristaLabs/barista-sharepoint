@@ -410,16 +410,16 @@
                     "!type": "fn() -> +BooleanQuery"
                 },
                 "createDoubleRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Double]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createFloatRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Single]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createFuzzyQuery": {
                     "!type": "fn(fieldName: string, text: string) -> +FuzzyQuery"
                 },
                 "createIntRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Int32]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createMatchAllDocsQuery": {
                     "!type": "fn() -> +GenericQuery"
@@ -953,19 +953,19 @@
                     "!type": "fn(?)",
                     "prototype": {
                         "hasOwnProperty": {
-                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
+                            "!type": "fn(engine: +String.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
                         },
                         "isPrototypeOf": {
-                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, obj: ?) -> bool"
+                            "!type": "fn(engine: +String.ScriptEngine, thisObject: ?, obj: ?) -> bool"
                         },
                         "propertyIsEnumerable": {
-                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
+                            "!type": "fn(engine: +String.ScriptEngine, thisObject: ?, propertyName: string) -> bool"
                         },
                         "toLocaleString": {
                             "!type": "fn() -> string"
                         },
                         "toString": {
-                            "!type": "fn(engine: +String.Barista.Jurassic.ScriptEngine, thisObject: ?) -> string"
+                            "!type": "fn(engine: +String.ScriptEngine, thisObject: ?) -> string"
                         },
                         "valueOf": {
                             "!type": "fn() -> ?"
@@ -1139,10 +1139,10 @@
                     "!type": "fn(?)",
                     "prototype": {
                         "globalSettings": {
-                            "!type": "+WkHtmlToPdf.GlobalSettings"
+                            "!type": "+GlobalSettings"
                         },
                         "objects": {
-                            "!type": "+WkHtmlToPdf.ObjectSettingsList"
+                            "!type": "+ObjectSettingsList"
                         },
                         "toLocaleString": {
                             "!type": "fn() -> string"
@@ -1183,7 +1183,7 @@
                             "!type": "number?"
                         },
                         "margins": {
-                            "!type": "+WkHtmlToPdf.MarginSettings?"
+                            "!type": "+MarginSettings?"
                         },
                         "orientation": {
                             "!type": "string"
@@ -1201,60 +1201,13 @@
                             "!type": "number?"
                         },
                         "paperSize": {
-                            "!type": "+WkHtmlToPdf.PaperSize"
+                            "!type": "+PaperSize"
                         },
                         "produceOutline": {
                             "!type": "bool?"
                         },
                         "useCompression": {
                             "!type": "bool?"
-                        },
-                        "toLocaleString": {
-                            "!type": "fn() -> string"
-                        },
-                        "valueOf": {
-                            "!type": "fn() -> ?"
-                        }
-                    }
-                },
-                "ObjectSettingsList": {
-                    "!type": "fn(?)",
-                    "prototype": {
-                        "count": {
-                            "!type": "number"
-                        },
-                        "add": {
-                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings)"
-                        },
-                        "clear": {
-                            "!type": "fn()"
-                        },
-                        "contains": {
-                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings) -> bool"
-                        },
-                        "getItemByIndex": {
-                            "!type": "fn(index: number) -> +WkHtmlToPdf.ObjectSettings"
-                        },
-                        "indexOf": {
-                            "!type": "fn(item: +ObjectSettings) -> number"
-                        },
-                        "insert": {
-                            "!type": "fn(index: number, item: +WkHtmlToPdf.ObjectSettings)"
-                        },
-                        "remove": {
-                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings) -> bool"
-                        },
-                        "removeAt": {
-                            "!type": "fn(index: number)"
-                        },
-                        "reverse": {
-                            "!type": "fn()"
-                        },
-                        "setItemByIndex": {
-                            "!type": "fn(index: number, item: +WkHtmlToPdf.ObjectSettings)"
-                        },
-                        "toArray": {
-                            "!type": "fn() -> [+WkHtmlToPdf.ObjectSettings]"
                         },
                         "toLocaleString": {
                             "!type": "fn() -> string"
@@ -2743,35 +2696,7 @@
                 }
             }
         },
-        "NumericRangeQueryInstance`1[Double]": {
-            "!type": "fn(?)",
-            "prototype": {
-                "boost": {
-                    "!type": "?"
-                },
-                "toLocaleString": {
-                    "!type": "fn() -> string"
-                },
-                "valueOf": {
-                    "!type": "fn() -> ?"
-                }
-            }
-        },
-        "NumericRangeQueryInstance`1[Int32]": {
-            "!type": "fn(?)",
-            "prototype": {
-                "boost": {
-                    "!type": "?"
-                },
-                "toLocaleString": {
-                    "!type": "fn() -> string"
-                },
-                "valueOf": {
-                    "!type": "fn() -> ?"
-                }
-            }
-        },
-        "NumericRangeQueryInstance`1[Single]": {
+        "NumericRangeQuery": {
             "!type": "fn(?)",
             "prototype": {
                 "boost": {
@@ -3052,16 +2977,16 @@
                     "!type": "fn() -> +BooleanQuery"
                 },
                 "createDoubleRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Double]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createFloatRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Single]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createFuzzyQuery": {
                     "!type": "fn(fieldName: string, text: string) -> +FuzzyQuery"
                 },
                 "createIntRangeQuery": {
-                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQueryInstance`1[Int32]"
+                    "!type": "fn(fieldName: string, min: ?, max: ?, minInclusive: bool, maxInclusive: bool) -> +NumericRangeQuery"
                 },
                 "createMatchAllDocsQuery": {
                     "!type": "fn() -> +GenericQuery"

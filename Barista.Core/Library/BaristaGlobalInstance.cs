@@ -546,8 +546,12 @@
             while (customTypes.Any())
             {
                 var customType = customTypes.First();
-                var ternTypeName = GenerateTernCustomTypeString(customType.Name);
-                if (engine.HasGlobalValue(ternTypeName) || globals.ContainsKey(ternTypeName))
+                var customTypeName = customType.Name;
+                if (customType.IsGenericType)
+                    customTypeName = customTypeName.Substring(0, customTypeName.LastIndexOf("`", StringComparison.Ordinal));
+
+                var ternTypeName = GenerateTernCustomTypeString(customTypeName);
+                if (globals.ContainsKey(ternTypeName))
                 {
                     customTypes.Remove(customType);
                     continue;
@@ -832,11 +836,9 @@
 
         protected static string GetTernTypeString(Type type, bool isReference, string prefix, out IList<Type> customTypes)
         {
-            //TODO: Fix generics
-
             customTypes = new List<Type>();
 
-            var result = type.ToString();
+            string result;
             if (type == typeof (Boolean) || type == typeof (BooleanInstance))
                 result = "bool";
             else if (type == typeof (string) || type == typeof (ConcatenatedString) || type == typeof (StringInstance))
@@ -858,7 +860,11 @@
                 result = "number";
             else
             {
-                result = GenerateTernCustomTypeString(type.Name);
+                var typeName = type.Name;
+                if (type.IsGenericType)
+                    typeName = typeName.Substring(0, typeName.LastIndexOf("`", StringComparison.Ordinal));
+
+                result = GenerateTernCustomTypeString(typeName);
 
                 //TODO: fix this so that globals don't get prefixed.
                 if (!prefix.IsNullOrWhiteSpace() && result != "Base64EncodedByteArray")
