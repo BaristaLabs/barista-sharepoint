@@ -343,10 +343,12 @@
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
@@ -377,11 +379,13 @@
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
-                request.InstanceInitializationCodePath = instanceInitializationCodePath;
+                instanceSettings.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
+                instanceSettings.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
             request.SetExtendedPropertiesFromCurrentSPContext();

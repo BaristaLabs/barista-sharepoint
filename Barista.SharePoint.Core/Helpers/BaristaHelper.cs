@@ -4,6 +4,7 @@
     using Barista.Extensions;
     using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Search;
+    using Barista.SharePoint.ServiceManagement;
     using Barista.SharePoint.Services;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
@@ -24,6 +25,12 @@
         {
             return farm.Services.GetValue<BaristaService>(BaristaService.ServiceName) ??
                    farm.Services.GetValue<BaristaService>();
+        }
+
+        public static BaristaSearchService GetBaristaSearchService(SPFarm farm)
+        {
+            return farm.Services.GetValue<BaristaSearchService>(BaristaSearchService.NtServiceName) ??
+                   farm.Services.GetValue<BaristaSearchService>();
         }
 
         public static BaristaServiceInstance GetBaristaServiceInstance(SPFarm farm)

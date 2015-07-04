@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
     using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using Barista.Extensions;
     using Barista.Helpers;
@@ -34,9 +35,24 @@
         [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Accept
         {
-            // ReSharper disable CoVariantArrayConversion
-            get { return Engine.Array.Construct(Request.AcceptTypes); }
-            // ReSharper restore CoVariantArrayConversion
+            get
+            {
+                var result = Engine.Array.Construct();
+                foreach(var acceptType in Request.Headers.Accept)
+                {
+                    var obj = Engine.Object.Construct();
+                    obj.SetPropertyValue(acceptType.Item1, (double)acceptType.Item2, false);
+                    ArrayInstance.Push(result, obj);
+                }
+
+                return result;
+            }
+        }
+
+        [JSProperty(Name = "contentType")]
+        public string ContentType
+        {
+            get { return Request.Headers.ContentType; }
         }
 
         [JSProperty(Name = "extendedProperties")]
@@ -52,27 +68,61 @@
             }
         }
 
-        [JSProperty(Name = "contentType")]
-        public string ContentType
+        private ObjectInstance m_cookies;
+
+        [JSProperty(Name = "cookies", IsEnumerable = true)]
+        public ObjectInstance Cookies
         {
-            get { return Request.ContentType; }
+            get
+            {
+                if (m_cookies == null)
+                {
+                    var cookies = this.Request.Headers.Cookie;
+
+                    m_cookies = Engine.Array.Construct();
+
+                    if (cookies != null)
+                    {
+                        foreach (var cookie in cookies)
+                        {
+                            var objCookie = Engine.Object.Construct();
+                            objCookie.SetPropertyValue("domain", cookie.Domain, false);
+                            objCookie.SetPropertyValue("encodedName", cookie.EncodedName, false);
+                            objCookie.SetPropertyValue("encodedValue", cookie.EncodedValue, false);
+                            if (cookie.Expires.HasValue)
+                                objCookie.SetPropertyValue("expires", JurassicHelper.ToDateInstance(this.Engine, cookie.Expires.Value), false);
+                            objCookie.SetPropertyValue("httpOnly", cookie.HttpOnly, false);
+                            objCookie.SetPropertyValue("name", cookie.Name, false);
+                            objCookie.SetPropertyValue("path", cookie.Path, false);
+                            objCookie.SetPropertyValue("secure", cookie.Secure, false);
+                            objCookie.SetPropertyValue("value", cookie.Value, false);
+
+                            ArrayInstance.Push(m_cookies, objCookie);
+                        }
+                    }
+                }
+
+                return m_cookies;
+            }
         }
+
 
         [JSProperty(Name = "files", IsEnumerable = true)]
         public ObjectInstance Files
         {
             get
             {
+                EnsureParsedFormData();
                 if (m_files == null)
                 {
                     m_files = Engine.Object.Construct();
 
-                    foreach (var file in Request.Files)
+                    foreach (var file in m_httpFiles)
                     {
-                        var content = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, file.Value.Content)
+                        var content = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, file.Value.ToByteArray())
                           {
-                              FileName = file.Value.FileName,
-                              MimeType = file.Value.ContentType
+                              FileName = file.Name,
+                              MimeType = file.ContentType
                           };
 
                         m_files.SetPropertyValue(file.Key, content, false);
@@ -89,8 +139,10 @@
         {
             get
             {
+                EnsureParsedFormData();
+
                 // ReSharper disable CoVariantArrayConversion
-                var result = Engine.Array.Construct(Request.Files.Select(f => f.Key).ToArray());
+                var result = Engine.Array.Construct(m_httpFiles.Select(f => f.Key).ToArray());
                 // ReSharper restore CoVariantArrayConversion
 
                 return result;
@@ -105,7 +157,14 @@
                 var result = Engine.Object.Construct();
                 foreach (var key in Request.Headers.Keys)
                 {
-                    result.SetPropertyValue(key, Request.Headers[key], true);
+                    var value = Request.Headers[key];
+                    var enumerable = value as string[] ?? value.ToArray();
+
+                    if (enumerable.Count() == 1)
+                        result.SetPropertyValue(key, enumerable.First(), true);
+                    else
+// ReSharper disable once CoVariantArrayConversion
+                        result.SetPropertyValue(key, Engine.Array.Construct(enumerable), true);
                 }
                 return result;
             }
@@ -122,11 +181,18 @@
         {
             get
             {
+                EnsureParsedFormData();
+
                 var result = Engine.Object.Construct();
-                foreach (var key in Request.Form.Keys)
+
+                if (m_form == null)
+                    return result;
+
+                foreach (var key in m_form.Keys)
                 {
-                    result.SetPropertyValue(key, Request.Form[key], false);
+                    result.SetPropertyValue(key, m_form[key], false);
                 }
+
                 return result;
             }
         }
@@ -154,15 +220,6 @@
             }
         }
 
-        [JSProperty(Name = "rawUrl")]
-        public string RawUrl
-        {
-            get
-            {
-                return Request.Url.ToString();
-            }
-        }
-        
         [JSProperty(Name = "restUrl")]
         public string RestUrl
         {
@@ -193,13 +250,22 @@
         [JSProperty(Name = "referrerLocation")]
         public string ReferrerLocation
         {
-            get { return Request.UrlReferrer.PathAndQuery; }
+            get
+            {
+                Uri referrerUri;
+                if (Uri.TryCreate(Request.Headers.Referrer, UriKind.Absolute, out referrerUri))
+                    return referrerUri.PathAndQuery;
+                return String.Empty;
+            }
         }
 
         [JSProperty(Name = "referrer")]
         public string Referrer
         {
-            get { return Request.UrlReferrer.ToString(); }
+            get
+            {
+                return Request.Headers.Referrer;
+            }
         }
 
         [JSProperty(Name = "method")]
@@ -211,13 +277,13 @@
         [JSProperty(Name = "url")]
         public string Url
         {
-            get { return Request.Path; }
+            get { return Request.Url.ToString(); }
         }
 
         [JSProperty(Name = "userAgent")]
         public string UserAgent
         {
-            get { return Request.UserAgent; }
+            get { return Request.Headers.UserAgent; }
         }
 
         [JSProperty(Name = "clientInfo")]
@@ -226,7 +292,7 @@
             get
             {
                 var br = BrowserUserAgentParser.GetDefault();
-                var clientInfo = br.Parse(Request.UserAgent);
+                var clientInfo = br.Parse(Request.Headers.UserAgent);
                 return new ClientInfoInstance(Engine.Object.InstancePrototype, clientInfo);
             }
         }
@@ -247,6 +313,20 @@
         {
             var stringBody = Encoding.UTF8.GetString(Request.Body);
             return stringBody;
+        }
+
+        private bool m_parsedFormData;
+        private IDictionary<string, string> m_form; 
+        private IList<HttpFile> m_httpFiles;
+        private void EnsureParsedFormData()
+        {
+            if (m_parsedFormData)
+                return;
+
+            IList<HttpFile> files;
+            m_form = Request.ParseFormData(out files);
+            m_httpFiles = files;
+            m_parsedFormData = true;
         }
     }
 }

@@ -105,6 +105,7 @@
             var bMinify = JurassicHelper.GetTypedArgumentValue(Engine, minify, false);
 
             var doc = new XmlDocument();
+
             doc.LoadXml(bundleDefinitionXml);
             var bundleText = GenerateBundleFromBundleDefinition(fileName, doc, bUpdate, bMinify);
 

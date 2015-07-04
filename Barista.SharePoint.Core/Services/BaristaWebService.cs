@@ -1,10 +1,12 @@
 ﻿namespace Barista.SharePoint.Services
 {
     using System.ServiceModel.Channels;
+    using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Extensions;
     using Barista.Extensions;
     using Barista.Framework;
     using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Administration;
     using Microsoft.SharePoint.Client.Services;
     using Newtonsoft.Json.Linq;
     using System;
@@ -47,7 +49,7 @@
 
             code = Tamp(code, out codePath);
 
-            Brew(code, codePath);
+            Brew(code, codePath, requestBody);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
@@ -68,21 +70,91 @@
 
             code = Tamp(code, out codePath);
 
-            return Pull(code, codePath);
+            return Pull(code, codePath, requestBody);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
         public Message Status()
         {
-            //TODO: 
-            //return machinename
-            //machines in farm
-            //servers where barista service is running
-            //servers where barista search service is running
+            var webContext = WebOperationContext.Current;
+
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var result = new JObject();
+
+            var environment = new JObject();
+            environment.Add("commandLine", Environment.CommandLine);
+            environment.Add("currentDirectory", Environment.CurrentDirectory);
+            environment.Add("machineName", Environment.MachineName);
+            environment.Add("newLine", Environment.NewLine);
+
+            var osVersion = new JObject
+            {
+                {"platform", Environment.OSVersion.Platform.ToString()},
+                {"servicePack", Environment.OSVersion.ServicePack},
+                {"version", Environment.OSVersion.Version.ToString()},
+                {"versionString", Environment.OSVersion.VersionString}
+            };
+
+            environment.Add("osVersion", osVersion);
+            environment.Add("processorCount", Environment.ProcessorCount);
+            environment.Add("systemDirectory", Environment.SystemDirectory);
+            environment.Add("tickCount", Environment.TickCount);
+            environment.Add("userDomainName", Environment.UserDomainName);
+            environment.Add("userInteractive", Environment.UserInteractive);
+            environment.Add("userName", Environment.UserName);
+            environment.Add("version", Environment.Version.ToString());
+            environment.Add("workingSet", Environment.WorkingSet);
+            
+            result.Add("environment", environment);
+
+            var sharepoint = new JObject();
+
+            var servers = new JArray();
+            foreach(var spServer in SPFarm.Local.Servers)
+            {
+                var server = new JObject
+                {
+                    {"id", spServer.Id},
+                    {"address", spServer.Address},
+                    {"name", spServer.Name},
+                    {"needsUpgrade", spServer.NeedsUpgrade},
+                    {"needsUpgradeIncludeChildren", spServer.NeedsUpgradeIncludeChildren},
+                    {"version", spServer.Version},
+                    {"role", spServer.Role.ToString()}
+                };
+
+                servers.Add(server);
+            }
+            sharepoint.Add("serversInFarm", servers);
+
+            var baristaService = BaristaHelper.GetBaristaService(SPFarm.Local);
+            sharepoint.Add("baristaService", GetSharePointServiceRepresentation(baristaService));
+
+            var baristaSearchService = BaristaHelper.GetBaristaSearchService(SPFarm.Local);
+            sharepoint.Add("baristaSearchService", GetSharePointServiceRepresentation(baristaSearchService));
+
+            result.Add("sharepoint", sharepoint);
+
+            
             //trusted locations config
 
-            throw new NotImplementedException();
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    var js = new JsonSerializer
+                    {
+                        Formatting = Formatting.Indented
+                    };
+
+                    using(var sw = new StreamWriter(stream))
+                    {
+                        js.Serialize(sw, result);
+                    }
+                },
+                "application/json");
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
@@ -251,24 +323,30 @@
         /// </summary>
         /// <param name="code"></param>
         /// <param name="codePath"></param>
-        private static void Brew(string code, string codePath)
+        /// <param name="requestBody"></param>
+        private static void Brew(string code, string codePath, Stream requestBody)
         {
-            var client = new BaristaServiceClient(SPServiceContext.Current);
+            var webContext = WebOperationContext.Current;
 
-            var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var request = BrewRequest.CreateBrewRequestFromIncomingWebRequest(webContext.IncomingRequest, requestBody, OperationContext.Current);
             request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
             request.SetExtendedPropertiesFromCurrentSPContext();
-
+            var client = new BaristaServiceClient(SPServiceContext.Current);
             client.Exec(request);
 
             //abandon the session and set the ASP.net session cookie to nothing.
@@ -284,20 +362,26 @@
         /// </summary>
         /// <param name="code"></param>
         /// <param name="codePath"></param>
+        /// <param name="requestBody"></param>
         /// <returns></returns>
-        private static Message Pull(string code, string codePath)
+        private static Message Pull(string code, string codePath, Stream requestBody)
         {
             var webContext = WebOperationContext.Current;
 
-            var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var request = BrewRequest.CreateBrewRequestFromIncomingWebRequest(webContext.IncomingRequest, requestBody, OperationContext.Current);
             request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
@@ -335,6 +419,61 @@
                     }
                 },
                 result.ContentType ?? string.Empty);
+        }
+
+        private JObject GetSharePointServiceRepresentation(SPService service)
+        {
+            var objBaristaService = new JObject
+            {
+                {"displayName", service.DisplayName},
+                {"id", service.Id},
+                {"status", service.Status.ToString()}
+            };
+
+            var serviceApplications = new JArray();
+            foreach (var serviceApplication in service.Applications)
+            {
+                var objServiceApplication = new JObject
+                {
+                    {"displayName", serviceApplication.DisplayName},
+                    {"id", serviceApplication.Id},
+                    {"status", serviceApplication.Status.ToString()}
+                };
+
+                var serviceInstances = new JArray();
+                foreach (var serviceInstance in serviceApplication.ServiceInstances)
+                {
+                    var objServiceInstance = new JObject
+                    {
+                        {"id", serviceInstance.Id},
+                        {"serverAddress", serviceInstance.Server.Address},
+                        {"name", serviceInstance.Server.Name},
+                        {"status", serviceInstance.Status.ToString()}
+                    };
+
+                    serviceInstances.Add(objServiceInstance);
+                }
+
+                objServiceApplication.Add("serviceInstances", serviceInstances);
+                serviceApplications.Add(objServiceApplication);
+            }
+            objBaristaService.Add("serviceApplications", serviceApplications);
+
+            var localServiceInstances = new JArray();
+            foreach(var instance in service.Instances)
+            {
+                var objServiceInstance = new JObject
+                    {
+                        {"id", instance.Id},
+                        {"serverAddress", instance.Server.Address},
+                        {"name", instance.Server.Name},
+                        {"status", instance.Status.ToString()}
+                    };
+                localServiceInstances.Add(objServiceInstance);
+            }
+            objBaristaService.Add("serviceInstances", localServiceInstances);
+
+            return objBaristaService;
         }
         #endregion
     }

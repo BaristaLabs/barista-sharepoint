@@ -150,10 +150,13 @@
     <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="Biscotti.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="BaristaInstanceMutexManager.cs" />
     <Compile Include="BaristaResponseMessage.cs" />
+    <Compile Include="BrewRequestHeaders.cs" />
+    <Compile Include="BrewRequestInstanceSettings.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -224,6 +227,8 @@
     <Compile Include="Helpers\Device.cs" />
     <Compile Include="Helpers\DeviceParser.cs" />
     <Compile Include="Helpers\DevicePattern.cs" />
+    <Compile Include="Helpers\HttpEncoder.cs" />
+    <Compile Include="Helpers\HttpUtility.cs" />
     <Compile Include="Helpers\OS.cs" />
     <Compile Include="Helpers\OSParser.cs" />
     <Compile Include="Helpers\OSPattern.cs" />
@@ -232,6 +237,12 @@
     <Compile Include="Helpers\UserAgentParser.cs" />
     <Compile Include="Helpers\UserAgentPattern.cs" />
     <Compile Include="Helpers\YamlParsing.cs" />
+    <Compile Include="HttpFile.cs" />
+    <Compile Include="HttpMultipart.cs" />
+    <Compile Include="HttpMultipartBoundary.cs" />
+    <Compile Include="HttpMultipartBuffer.cs" />
+    <Compile Include="HttpMultipartSubStream.cs" />
+    <Compile Include="IBaristaCookie.cs" />
     <Compile Include="iCal\CalendarPropertyListInstance.cs" />
     <Compile Include="iCal\EventInstance.cs" />
     <Compile Include="iCal\iCalDateTimeInstance.cs" />

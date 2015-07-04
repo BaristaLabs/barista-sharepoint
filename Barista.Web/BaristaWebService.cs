@@ -17,6 +17,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
@@ -207,7 +208,7 @@
                     {
                         try
                         {
-                            var form = HttpUtility.ParseQueryString(bodyString);
+                            var form = Barista.Helpers.HttpUtility.ParseQueryString(bodyString);
                             var formKey =
                               form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code");
                             if (formKey != null)
@@ -395,16 +396,17 @@
 
             var response = new BrewResponse
             {
-                ContentType = request.ContentType
+                ContentType = request.Headers.ContentType
             };
 
             BaristaContext.Current = new BaristaContext(request, response);
+            var instanceSettings = BaristaContext.Current.Request.ParseInstanceSettings();
 
             Mutex syncRoot = null;
 
-            if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+            if (instanceSettings.InstanceMode != BaristaInstanceMode.PerCall)
             {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
+                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + instanceSettings.InstanceName);
             }
 
             var webBundle = new BaristaWebBundle();
@@ -439,7 +441,7 @@
                         if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
                         {
                             var br = BrowserUserAgentParser.GetDefault();
-                            var clientInfo = br.Parse(request.UserAgent);
+                            var clientInfo = br.Parse(request.Headers.UserAgent);
 
                             if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
                                 response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
@@ -496,17 +498,18 @@
 
             var response = new BrewResponse
             {
-                ContentType = request.ContentType
+                ContentType = request.Headers.ContentType
             };
 
             //Set the current context with information from the current request and response.
             BaristaContext.Current = new BaristaContext(request, response);
+            var instanceSettings = BaristaContext.Current.Request.ParseInstanceSettings();
 
             //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
             Mutex syncRoot = null;
-            if (BaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+            if (instanceSettings.InstanceMode != BaristaInstanceMode.PerCall)
             {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + BaristaContext.Current.Request.InstanceName);
+                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + instanceSettings.InstanceName);
             }
 
             var webBundle = new BaristaWebBundle();

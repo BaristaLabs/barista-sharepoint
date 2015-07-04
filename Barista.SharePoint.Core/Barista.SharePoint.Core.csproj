@@ -386,7 +386,6 @@
     <Compile Include="Services\BaristaServiceInstance.cs" />
     <Compile Include="Services\BaristaServiceProxy.cs" />
     <Compile Include="Services\BaristaTestService.cs" />
-    <Compile Include="Services\BaristaWcfService.cs" />
     <Compile Include="Services\BaristaV8WebService.cs" />
     <Compile Include="Services\BaristaWebService.cs" />
     <Compile Include="SharePointSearch\Library\ScopeCollectionInstance.cs" />
