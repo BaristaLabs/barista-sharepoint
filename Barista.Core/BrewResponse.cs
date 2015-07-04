@@ -22,16 +22,10 @@ namespace Barista
     {
         public BrewResponse()
         {
-            this.AutoDetectContentType = true;
-            this.Cookies = new Dictionary<string, string>();
-            this.ContentEncoding = Encoding.UTF8;
+            this.Cookies = new List<IBaristaCookie>(2);
             this.ContentLength = 0;
             this.ContentType = "application/json";
-            this.ETag = String.Empty;
-            this.Expires = 0;
-            this.Headers = new Dictionary<string, string>();
-            this.LastModified = DateTime.UtcNow;
-            this.RedirectLocation = String.Empty;
+            this.Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             this.StatusCode = HttpStatusCode.OK;
             this.StatusDescription = "OK";
             this.SuppressContent = false;
@@ -39,14 +33,7 @@ namespace Barista
         }
 
         [DataMember]
-        public bool AutoDetectContentType
-        {
-            get;
-            set;
-        }
-
-        [DataMember]
-        public IDictionary<string, string> Cookies
+        public IList<IBaristaCookie> Cookies
         {
             get;
             set;
@@ -60,13 +47,6 @@ namespace Barista
         }
 
         [DataMember]
-        public Encoding ContentEncoding
-        {
-            get;
-            set;
-        }
-
-        [DataMember]
         public long ContentLength
         {
             get;
@@ -74,42 +54,17 @@ namespace Barista
         }
 
         [DataMember]
+        private string m_contentType;
+
+        [IgnoreDataMember]
         public string ContentType
         {
-            get;
-            set;
-        }
-
-        [DataMember]
-        public string ETag
-        {
-            get;
-            set;
-        }
-
-        [DataMember]
-        public int Expires
-        {
-            get;
-            set;
+            get { return Headers.ContainsKey("content-type") ? Headers["content-type"] : this.m_contentType; }
+            set { this.m_contentType = value; }
         }
 
         [DataMember]
         public IDictionary<string, string> Headers
-        {
-            get;
-            set;
-        }
-
-        [DataMember]
-        public DateTime LastModified
-        {
-            get;
-            set;
-        }
-
-        [DataMember]
-        public string RedirectLocation
         {
             get;
             set;
@@ -152,57 +107,41 @@ namespace Barista
             set { m_extensionData = value; }
         }
 
-        public void ModifyWebOperationContext(OutgoingWebResponseContext response)
+        public void ModifyOutgoingWebResponse(OutgoingWebResponseContext webResponse)
         {
-            response.ContentLength = this.ContentLength;
-            response.ContentType = this.ContentType;
-            response.ETag = this.ETag;
-            response.LastModified = this.LastModified;
-            response.Location = this.RedirectLocation;
-            response.StatusCode = this.StatusCode;
+            SetHttpResponseHeaders(webResponse);
 
-            //Setting the status description on the outgoing web response context in certain situations causes the request to terminate unexpectedly.
-            //I've tried removing new-line characters and truncating to 512 characters but both don't seem to work.
-            //Since the description is being set in the httpresponse anyway, and that seems to work, I'm commenting this out.
-            //response.StatusDescription = this.StatusDescription;
-            //response.StatusDescription = response.StatusDescription.Substring(0,
-            //  response.StatusDescription.Length > 512 ? 512 : response.StatusDescription.Length);
+            webResponse.ContentLength = this.ContentLength;
+            webResponse.ContentType = this.ContentType;
 
-            response.SuppressEntityBody = this.SuppressContent;
-
-            foreach (var header in this.Headers.Keys)
+            if (ContentType != null)
             {
-                if (response.Headers.AllKeys.Any(k => k == header))
-                    response.Headers.Set(header, this.Headers[header]);
-                else
-                    response.Headers.Add(header, this.Headers[header]);
+                webResponse.ContentType = ContentType;
+            }
+
+            if (StatusDescription != null)
+            {
+                webResponse.StatusDescription = StatusDescription;
+            }
+
+            webResponse.StatusCode = StatusCode;
+            webResponse.SuppressEntityBody = SuppressContent;
+        }
+
+        private void SetHttpResponseHeaders(OutgoingWebResponseContext context)
+        {
+            foreach (var kvp in Headers)
+            {
+                context.Headers.Add(kvp.Key, kvp.Value);
+            }
+            foreach (var cookie in Cookies)
+            {
+                context.Headers.Add("Set-Cookie", cookie.ToString());
             }
         }
 
         public void ModifyHttpResponse(HttpResponse response, bool setHeaders)
         {
-            response.ContentEncoding = this.ContentEncoding;
-            response.ContentType = this.ContentType;
-
-            //Last Modified cannot be in the future. May occur if server times are not synchronized.
-            if (this.LastModified.ToUniversalTime() <= DateTime.UtcNow)
-                response.Cache.SetLastModified(this.LastModified.ToUniversalTime());
-
-            response.Expires = this.Expires;
-            response.RedirectLocation = this.RedirectLocation;
-            response.StatusCode = (int)this.StatusCode;
-            if (setHeaders)
-                response.StatusDescription = this.StatusDescription;
-            response.SuppressContent = this.SuppressContent;
-
-            foreach (var cookieName in this.Cookies.Keys)
-            {
-                if (response.Cookies.AllKeys.Any(k => k == cookieName))
-                    response.Cookies.Set(new HttpCookie(cookieName, this.Cookies[cookieName]));
-                else
-                    response.Cookies.Add(new HttpCookie(cookieName, this.Cookies[cookieName]));
-            }
-
             if (setHeaders)
             {
                 foreach (var header in this.Headers.Keys)
@@ -213,6 +152,22 @@ namespace Barista
                         response.Headers.Add(header, this.Headers[header]);
                 }
             }
+
+            foreach (var cookie in this.Cookies)
+            {
+                if (response.Cookies.AllKeys.Any(k => k == cookie.Name))
+                    response.Cookies.Set(new HttpCookie(cookie.Name, cookie.ToString()));
+                else
+                    response.Cookies.Add(new HttpCookie(cookie.Name, cookie.ToString()));
+            }
+
+            response.ContentType = this.ContentType;
+
+            if (setHeaders)
+                response.StatusDescription = this.StatusDescription;
+
+            response.StatusCode = (int)this.StatusCode;
+            response.SuppressContent = this.SuppressContent;
         }
 
         /// <summary>

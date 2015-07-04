@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint.Services
 {
+    using System.Collections.Generic;
     using System.ServiceModel.Channels;
     using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Extensions;
@@ -391,21 +392,24 @@
             var client = new BaristaServiceClient(SPServiceContext.Current);
             var result = client.Eval(request);
 
-            var setHeaders = true;
-            if (WebOperationContext.Current != null)
-            {
-                result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
-                setHeaders = false;
-            }
-
-            result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
-
             //abandon the session and set the ASP.net session cookie to nothing.
-            if (HttpContext.Current != null && HttpContext.Current.Session != null)
-            {
-                HttpContext.Current.Session.Abandon();
-                HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
-            }
+            var cookies = new List<IBaristaCookie>();
+            cookies.AddRange(result.Cookies);
+
+            var existingCookie = cookies.FirstOrDefault(c => c.Name == "ASP.NET_SessionId");
+            if (existingCookie != null)
+                cookies.Remove(existingCookie);
+            cookies.Add(new Biscotti("ASP.NET_SessionId", ""));
+            result.Cookies = cookies;
+
+            result.ModifyOutgoingWebResponse(webContext.OutgoingResponse);
+
+            
+            //if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            //{
+            //    HttpContext.Current.Session.Abandon();
+            //    HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+            //}
 
             return webContext.CreateStreamResponse(
                 stream =>

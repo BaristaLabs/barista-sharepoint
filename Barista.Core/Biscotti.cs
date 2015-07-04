@@ -2,12 +2,15 @@
 {
     using System;
     using System.Globalization;
+    using System.Runtime.Serialization;
     using System.Text;
     using Barista.Helpers;
 
     /// <summary>
     /// Default cookie implementation for Nancy.
     /// </summary>
+    [DataContract(Namespace = Constants.ServiceNamespace)]
+    [Serializable]
     public class Biscotti : IBaristaCookie
     {
         /// <summary>
@@ -74,22 +77,26 @@
         /// <summary>
         /// The domain to restrict the cookie to
         /// </summary>
+        [DataMember]
         public string Domain { get; set; }
 
         /// <summary>
         /// When the cookie should expire
         /// </summary>
         /// <value>A <see cref="DateTime"/> instance containing the date and time when the cookie should expire; otherwise <see langword="null"/> if it should expire at the end of the session.</value>
+        [DataMember]
         public DateTime? Expires { get; set; }
 
         /// <summary>
         /// The name of the cookie
         /// </summary>
+        [DataMember]
         public string Name { get; private set; }
 
         /// <summary>
         /// Gets the encoded name of the cookie
         /// </summary>
+        [IgnoreDataMember]
         public string EncodedName
         {
             get
@@ -101,16 +108,19 @@
         /// <summary>
         /// The path to restrict the cookie to
         /// </summary>
+        [DataMember]
         public string Path { get; set; }
 
         /// <summary>
         /// The value of the cookie
         /// </summary>
+        [DataMember]
         public string Value { get; private set; }
 
         /// <summary>
         /// Gets the encoded value of the cookie
         /// </summary>
+        [IgnoreDataMember]
         public string EncodedValue
         {
             get
@@ -122,11 +132,13 @@
         /// <summary>
         /// Whether the cookie is http only
         /// </summary>
+        [DataMember]
         public bool HttpOnly { get; private set; }
 
         /// <summary>
         /// Whether the cookie is secure (i.e. HTTPS only)
         /// </summary>
+        [DataMember]
         public bool Secure { get; private set; }
 
         public override string ToString()

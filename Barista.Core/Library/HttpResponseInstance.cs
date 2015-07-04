@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
-  using Jurassic;
+    using System.Globalization;
+    using Jurassic;
   using Jurassic.Library;
   using System;
   using System.Net;
@@ -15,7 +16,6 @@
     {
       this.AutoDetectContentType = true;
       this.Response = response;
-      this.PopulateFields();
       this.PopulateFunctions();
       this.StatusCode = 200;
     }
@@ -82,24 +82,42 @@
     {
       get
       {
-        return JurassicHelper.ToDateInstance(this.Engine, Response.LastModified);
+          if (!Response.Headers.ContainsKey("last-modified"))
+              return null;
+
+          DateTime result;
+          return DateTime.TryParseExact(Response.Headers["last-modified"], "R", CultureInfo.InvariantCulture, DateTimeStyles.None, out result)
+              ? JurassicHelper.ToDateInstance(this.Engine, result)
+              : null;
       }
       set
       {
-        Response.LastModified = value.Value;
+          if (value == null)
+              Response.Headers.Remove("last-modified");
+          else
+            Response.Headers["Last-Modified"] = value.Value.ToUniversalTime().ToString("R");
       }
     }
 
     [JSProperty(Name = "expires")]
-    public int Expires
+    public DateInstance Expires
     {
       get
       {
-        return Response.Expires;
+          if (!Response.Headers.ContainsKey("expires"))
+              return null;
+
+          DateTime result;
+          return DateTime.TryParseExact(Response.Headers["expires"], "R", CultureInfo.InvariantCulture, DateTimeStyles.None, out result)
+              ? JurassicHelper.ToDateInstance(this.Engine, result)
+              : null;
       }
       set
       {
-        Response.Expires = value;
+          if (value == null)
+              Response.Headers.Remove("expires");
+          else
+            Response.Headers["Expires"] = value.Value.ToUniversalTime().ToString("R");
       }
     }
 
@@ -107,8 +125,17 @@
     [JSProperty(Name = "redirectLocation")]
     public string Location
     {
-      get { return Response.RedirectLocation; }
-      set { Response.RedirectLocation = value; }
+        get
+        {
+            if (!Response.Headers.ContainsKey("location"))
+                return null;
+
+            return Response.Headers["location"];
+        }
+        set
+        {
+            Response.Headers["Location"] = value;
+        }
     }
 
     [JSProperty(Name = "statusCode")]
