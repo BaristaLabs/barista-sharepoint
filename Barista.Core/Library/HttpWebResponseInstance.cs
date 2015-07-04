@@ -29,7 +29,6 @@
     public HttpWebResponseInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      PopulateFields();
       PopulateFunctions();
     }
 

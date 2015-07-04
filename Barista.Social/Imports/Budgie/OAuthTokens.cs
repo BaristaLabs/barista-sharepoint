@@ -1,8 +1,9 @@
 ﻿namespace Barista.Social.Imports.Budgie
 {
   using System;
+  using Barista.Extensions;
 
-  public interface ITokenPair
+    public interface ITokenPair
   {
     string Token { get; }
     string Secret { get; }
@@ -19,7 +20,7 @@
 
     internal bool IsValid
     {
-      get { return !String.IsNullOrWhiteSpace(Token) && !String.IsNullOrWhiteSpace(Secret); }
+        get { return !Token.IsNullOrWhiteSpace() && !Secret.IsNullOrWhiteSpace(); }
     }
 
     public string Token { get; internal set; }
@@ -44,7 +45,7 @@
 
     internal bool IsValid
     {
-      get { return !String.IsNullOrWhiteSpace(Token) && !String.IsNullOrWhiteSpace(Secret); }
+        get { return !Token.IsNullOrWhiteSpace() && !Secret.IsNullOrWhiteSpace(); }
     }
 
     public string Token { get; internal set; }

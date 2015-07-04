@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
+    using System.IO;
     using Barista.Bundles;
     using Barista.Engine;
     using Barista.Library;
@@ -11,6 +12,8 @@
     using Jurassic.Library;
     using System;
     using System.Web;
+    using Ninject;
+    using Ninject.Extensions.Conventions;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
@@ -100,6 +103,20 @@
                 instance.Common.RegisterBundle(new UnitTestingBundle());
                 instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
 
+                //Let's do some DI
+                var kernel = new StandardKernel();
+                kernel.Bind(x => x
+                    .FromAssembliesInPath(Path.Combine(binDirectory, "Bundles"))
+                    .SelectAllClasses()
+                    .InheritedFrom<IBundle>()
+                    .BindAllInterfaces()
+                    );
+
+                foreach (var bundle in kernel.GetAll<IBundle>())
+                {
+                    instance.Common.RegisterBundle(bundle);
+                }
+
                 //Global Types
                 engine.SetGlobalValue("barista", instance);
 
@@ -115,6 +132,7 @@
 
                 engine.SetGlobalValue("console", console);
 
+                
                 //If we came from the Barista event receiver, set the appropriate context.
                 if (
                   SPBaristaContext.Current.Request != null &&

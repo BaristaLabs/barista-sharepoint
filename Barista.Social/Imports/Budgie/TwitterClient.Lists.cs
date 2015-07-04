@@ -2,6 +2,7 @@
 {
   using System.Collections.Generic;
   using System.Threading.Tasks;
+  using Barista.Extensions;
   using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using System.Linq;
@@ -64,7 +65,7 @@
 
     public Task<ListsResponse> GetUserListsAsync(string screenName)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       var relativeUri = "lists.json?screen_name=" + screenName.ToRfc3986Encoded();
 
@@ -73,7 +74,7 @@
 
     public virtual Task<ListsResponse> GetListMembershipsAsync(string screenName)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       var relativeUri = "lists/memberships.json?screen_name=" + screenName.ToRfc3986Encoded();
 

@@ -1,6 +1,7 @@
 ﻿namespace Barista.Social.Imports.Budgie
 {
-  using Barista.Social.Imports.Budgie.Extensions;
+    using Barista.Extensions;
+    using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using Barista.Newtonsoft.Json;
   using System;
@@ -21,8 +22,8 @@
     public TwitterClient(IPlatformAdaptor platformAdaptor, string consumerKey, string consumerSecret)
     {
       if (platformAdaptor == null) throw new ArgumentNullException("platformAdaptor");
-      if (String.IsNullOrWhiteSpace(consumerKey)) throw new ArgumentException("consumerKey");
-      if (String.IsNullOrWhiteSpace(consumerSecret)) throw new ArgumentException("consumerSecret");
+      if (consumerKey.IsNullOrWhiteSpace()) throw new ArgumentException("consumerKey");
+      if (consumerSecret.IsNullOrWhiteSpace()) throw new ArgumentException("consumerSecret");
 
       m_platformAdaptor = platformAdaptor;
       m_consumerKey = consumerKey;

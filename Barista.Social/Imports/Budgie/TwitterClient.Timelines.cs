@@ -1,6 +1,7 @@
 ﻿namespace Barista.Social.Imports.Budgie
 {
-  using Barista.Social.Imports.Budgie.Extensions;
+    using Barista.Extensions;
+    using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using Barista.Newtonsoft.Json;
   using System;
@@ -29,7 +30,7 @@
 
     public Task<TimelineResponse> GetUserTimelineAsync(string screenName, bool includeRetweets = false, int? count = null, long? since = null, long? max = null)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       var relativeUri = "statuses/user_timeline.json?screen_name=" + screenName.ToRfc3986Encoded();
       if (includeRetweets) relativeUri += "&include_rts=true";
@@ -39,14 +40,14 @@
 
     public Task<TimelineResponse> GetRetweetsToUserAsync(string screenName, int? count = null, long? since = null, long? max = null)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       return GetTimelineAsync("statuses/retweeted_to_user.json?screen_name=" + screenName.ToRfc3986Encoded(), count, since, max);
     }
 
     public Task<TimelineResponse> GetRetweetsByUserAsync(string screenName, int? count = null, long? since = null, long? max = null)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       return GetTimelineAsync("statuses/retweeted_by_user.json?screen_name=" + screenName.ToRfc3986Encoded(), count, since, max);
     }

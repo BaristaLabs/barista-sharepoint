@@ -1,6 +1,7 @@
 ﻿namespace Barista.Social.Imports.Budgie
 {
-  using Barista.Social.Imports.Budgie.Extensions;
+    using Barista.Extensions;
+    using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using Newtonsoft.Json;
   using System;
@@ -42,7 +43,7 @@
     public Task<IdsResponse> GetFollowerIdsAsync(string screenName = null)
     {
       var relativeUri = "followers/ids.json";
-      if (!String.IsNullOrWhiteSpace(screenName))
+      if (!screenName.IsNullOrWhiteSpace())
       {
         relativeUri += "?screen_name=" + screenName.ToRfc3986Encoded();
       }
@@ -53,7 +54,7 @@
     public Task<IdsResponse> GetFriendIdsAsync(string screenName = null)
     {
       var relativeUri = "friends/ids.json";
-      if (!String.IsNullOrWhiteSpace(screenName))
+      if (!screenName.IsNullOrWhiteSpace())
       {
         relativeUri += "?screen_name" + screenName.ToRfc3986Encoded();
       }
