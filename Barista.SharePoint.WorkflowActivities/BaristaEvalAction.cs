@@ -135,11 +135,17 @@
             var serviceContext = SPServiceContext.GetContext(__Context.Site);
             var client = new BaristaServiceClient(serviceContext);
 
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                {"Content-Type", new[] {"application/json"}}
+            };
+
             var request = new BrewRequest
             {
-                ContentType = "application/json", //default to application/json.
                 Code = Code,
+                Headers = new BrewRequestHeaders(headers),
                 Body = Encoding.UTF8.GetBytes(Body),
+                ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
                 ExtendedProperties = new Dictionary<string, string> {
                     {"SPSiteId", __Context.Site.ID.ToString()},
                     {"SPUrlZone", __Context.Site.Zone.ToString()},
@@ -161,6 +167,7 @@
                     {"SPWorkflowLastRunDateTime", __Context.LastRunDateTime.ToUniversalTime().ToString(@"yyyy-MM-ddTHH\:mm\:ss.fffffffzzz")}
                 }
             };
+
             var response = client.Eval(request);
             if (response.StatusCode == HttpStatusCode.BadRequest && response.ExtendedProperties.ContainsKey("Exception_Message"))
             {

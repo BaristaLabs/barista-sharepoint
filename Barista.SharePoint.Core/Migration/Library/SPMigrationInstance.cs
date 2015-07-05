@@ -18,12 +18,13 @@
       : base(prototype)
     {
 
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     [JSFunction(Name = "exportFile")]
     [JSDoc("Exports the specified file.")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportFile(
       [JSDoc("The SharePoint file to export. Can be a SPFileInstance, guid, uri or url string")]
       object file,
@@ -57,7 +58,7 @@
       }
 
       if (spFile == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a file with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a file with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -70,6 +71,7 @@
     }
 
     [JSFunction(Name = "exportFolder")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportFolder(
       [JSDoc("The SharePoint folder to export. Can be a SPFolderInstance, guid, uri or url string")]
       object folder,
@@ -103,7 +105,7 @@
       }
 
       if (spFolder == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a file with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a file with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -116,6 +118,7 @@
     }
 
     [JSFunction(Name = "exportListItem")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportListItem(
       [JSDoc("The SharePoint list item to export. Can be a SPListItemInstance, guid, uri or url string")]
       object listItem,
@@ -149,7 +152,7 @@
       }
 
       if (spListItem == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a list item with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a list item with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -162,6 +165,7 @@
     }
 
     [JSFunction(Name = "exportList")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportList(
       [JSDoc("The SharePoint list to export. Can be a SPListInstance, guid, uri or url string")]
       object list,
@@ -195,7 +199,7 @@
       }
 
       if (spList == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a list with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a list with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -208,6 +212,7 @@
     }
 
     [JSFunction(Name = "exportWeb")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportWeb(
       [JSDoc("The SharePoint web to export. Can be a SPWebInstance, guid, uri or url string")]
       object web,
@@ -241,7 +246,7 @@
       }
 
       if (spWeb == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a web with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a web with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -254,6 +259,7 @@
     }
 
     [JSFunction(Name = "exportSite")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance ExportSite(
       [JSDoc("The SharePoint site to export. Can be a SPSiteInstance, guid, uri or url string")]
       object site,
@@ -287,7 +293,7 @@
       }
 
       if (spSite == null)
-        throw new JavaScriptException(this.Engine, "Error", "Could not locate a site with the specified argument.");
+        throw new JavaScriptException(Engine, "Error", "Could not locate a site with the specified argument.");
 
       var exportObject = new SPExportObject
       {
@@ -300,6 +306,7 @@
     }
 
     [JSFunction(Name = "export")]
+    [JSDoc("ternReturnType", "[string]")]
     public ArrayInstance Export(
       [JSDoc("An object that contains export settings properties or an instance of SPExportSettings")]
       object exportSettings,
@@ -312,19 +319,19 @@
         export.Settings = (exportSettings as SPExportSettingsInstance).SPExportSettings;
       else if (exportSettings is ObjectInstance)
       {
-        var settings = JurassicHelper.Coerce<SPExportSettingsInstance>(this.Engine, exportSettings as ObjectInstance);
+        var settings = JurassicHelper.Coerce<SPExportSettingsInstance>(Engine, exportSettings as ObjectInstance);
         export.Settings = settings.SPExportSettings;
       }
       else
       {
-        throw new JavaScriptException(this.Engine, "Error", "Expected the first argument to be a export settings object.");
+        throw new JavaScriptException(Engine, "Error", "Expected the first argument to be a export settings object.");
       }
 
       export.Run();
       if (dropLocation != Null.Value && dropLocation != Undefined.Value)
         SPExportInstance.CopyFilesToDropLocation(export, TypeConverter.ToString(dropLocation));
 
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var dataFile in export.Settings.DataFiles.OfType<string>())
       {
         ArrayInstance.Push(result, dataFile);
@@ -345,12 +352,12 @@
         import.Settings = (importSettings as SPImportSettingsInstance).SPImportSettings;
       else if (importSettings is ObjectInstance)
       {
-        var settings = JurassicHelper.Coerce<SPImportSettingsInstance>(this.Engine, importSettings as ObjectInstance);
+        var settings = JurassicHelper.Coerce<SPImportSettingsInstance>(Engine, importSettings as ObjectInstance);
         import.Settings = settings.SPImportSettings;
       }
       else
       {
-        throw new JavaScriptException(this.Engine, "Error", "Expected the first argument to be an import settings object.");
+        throw new JavaScriptException(Engine, "Error", "Expected the first argument to be an import settings object.");
       }
 
       import.Run();
@@ -486,7 +493,7 @@
       if (dropLocation != Null.Value && dropLocation != Undefined.Value)
         SPExportInstance.CopyFilesToDropLocation(export, TypeConverter.ToString(dropLocation));
 
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var dataFile in exportSettings.DataFiles.OfType<string>())
       {
         ArrayInstance.Push(result, Path.Combine(exportSettings.FileLocation, dataFile));

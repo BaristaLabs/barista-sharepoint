@@ -19,8 +19,8 @@
 
       m_permissionsInfo = permissionsInfo;
 
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     [JSProperty(Name = "hasUniqueRoleAssignments")]
@@ -31,12 +31,13 @@
     }
 
     [JSProperty(Name = "principals")]
+    [JSDoc("ternPropertyType", "[+PrincipalRoleInfo]")]
     public ArrayInstance Principals
     {
       get
       {
 // ReSharper disable CoVariantArrayConversion
-        var result = this.Engine.Array.Construct(m_permissionsInfo.Principals.Select(p => new PrincipalRoleInfoInstance(this.Engine, p)).ToArray());
+        var result = Engine.Array.Construct(m_permissionsInfo.Principals.Select(p => new PrincipalRoleInfoInstance(Engine, p)).ToArray());
 // ReSharper restore CoVariantArrayConversion
         return result;
       }

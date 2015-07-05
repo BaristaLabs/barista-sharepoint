@@ -1,75 +1,38 @@
 ﻿namespace Barista
 {
+    using System.Collections.Specialized;
+    using System.IO;
+    using System.ServiceModel;
+    using System.ServiceModel.Channels;
+    using System.ServiceModel.Web;
+    using System.Text;
+    using System.Text.RegularExpressions;
   using Barista.Extensions;
   using System;
   using System.Collections.Generic;
-    using System.IO;
   using System.Linq;
-    using System.Reflection;
   using System.Runtime.Serialization;
-  using System.Text;
   using System.Web;
 
   [DataContract(Namespace = Constants.ServiceNamespace)]
   [Serializable]
-  public sealed class BrewRequest : IExtensibleDataObject
+    public sealed class BrewRequest : IExtensibleDataObject, IDisposable
   {
     public BrewRequest()
     {
+            this.Body = new byte[0];
       this.CodePath = String.Empty;
-      this.Content = new byte[0];
-      this.ContentLength = 0;
-      this.ContentType = "application/octet-stream";
-      this.Cookies = new Dictionary<string, string>();
       this.ExecutionTimeout = 110000;
-      this.Headers = new Dictionary<string, string>();
-      this.Files = new Dictionary<string, PostedFile>();
-      this.Form = new Dictionary<string, string>();
-      this.Params = new Dictionary<string, string>();
-      this.QueryString = new Dictionary<string, string>();
-      this.ServerVariables = new Dictionary<string, string>();
-      this.ExtendedProperties = new Dictionary<string, string>();
+            this.Headers = new BrewRequestHeaders(new Dictionary<string, IEnumerable<string>>());
 
-      this.ForceStrict = false;
-      this.InstanceMode = BaristaInstanceMode.PerCall;
-      this.InstanceName = null;
-
-      this.InstanceAbsoluteExpiration = null;
-      this.InstanceSlidingExpiration = null;
-
-      this.InstanceInitializationCode = null;
-      this.InstanceInitializationCodePath = null;
+            this.ExtendedProperties = new Dictionary<string, string>();
     }
 
     #region Properties
-    [DataMember]
-    public string[] AcceptTypes
-    {
-      get;
-      set;
-    }
 
-    [DataMember]
-    public string AnonymousId
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string ApplicationPath
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string AppRelativeCurrentExecutionFilePath
-    {
-      get;
-      set;
-    }
-
+        /// <summary>
+        /// Gets or sets the original body of the request.
+        /// </summary>
     [DataMember]
     public byte[] Body
     {
@@ -77,6 +40,9 @@
       set;
     }
 
+        /// <summary>
+        /// Gets or sets the code that will be executed by the service.
+        /// </summary>
     [DataMember]
     public string Code
     {
@@ -84,6 +50,9 @@
       set;
     }
 
+        /// <summary>
+        /// Gets or sets the path to the code (used for indicating source location if an exception is thrown during processing)
+        /// </summary>
     [DataMember]
     public string CodePath
     {
@@ -91,43 +60,21 @@
       set;
     }
 
+        /// <summary>
+        /// Gets or sets the code that will be executed by the service.
+        /// </summary>
     [DataMember]
-    public Byte[] Content
+        public string InstanceInitializationCode
     {
       get;
       set;
     }
 
+        /// <summary>
+        /// Gets or sets the path to the code (used for indicating source location if an exception is thrown during processing)
+        /// </summary>
     [DataMember]
-    public Encoding ContentEncoding
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public long ContentLength
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string ContentType
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> Cookies
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string CurrentExecutionFilePath
+        public string InstanceInitializationCodePath
     {
       get;
       set;
@@ -141,168 +88,24 @@
     }
 
     [DataMember]
-    public string FilePath
+        public BrewRequestHeaders Headers
+    {
+      get;
+      set;
+    }
+
+        /// <summary>
+        /// Gets the originating http request method (GET/POST/PUT/DELETE etc...)
+        /// </summary>
+    [DataMember]
+        public string Method
     {
       get;
       set;
     }
 
     [DataMember]
-    public IDictionary<string, PostedFile> Files
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public bool ForceStrict
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> Headers
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public BaristaInstanceMode InstanceMode
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string InstanceInitializationCode
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string InstanceInitializationCodePath
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public DateTime? InstanceAbsoluteExpiration
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public TimeSpan? InstanceSlidingExpiration
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string InstanceName
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> Form
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public bool IsAuthenticated
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public bool IsLocal
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public bool IsSecureConnection
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string LogonUserName
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string Method
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> Params
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string Path
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string PathInfo
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string PhysicalApplicationPath
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string PhysicalPath
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> QueryString
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string RawUrl
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string RequestType
+        public IDictionary<string, string> QueryString
     {
       get;
       set;
@@ -310,263 +113,280 @@
 
     [DataMember]
         public string ScriptEngineFactory
-        {
-            get;
-            set;
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+        public Uri Url
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+        public string UserHostAddress
+    {
+      get;
+      set;
+    }
+
+    [DataMember]
+        public IDictionary<string, string> ExtendedProperties
+    {
+      get;
+      set;
+    }
+
+        [NonSerialized]
+        private ExtensionDataObject m_extensionData;
+
+        public ExtensionDataObject ExtensionData
+    {
+            get { return m_extensionData; }
+            set { m_extensionData = value; }
+    }
+        #endregion
+
+        private Stream m_bodyStream;
+        public IDictionary<string, string> ParseFormData(out IList<HttpFile> files)
+    {
+            files = new List<HttpFile>();
+
+            if (string.IsNullOrEmpty(this.Headers.ContentType))
+    {
+                return null;
+    }
+
+            IDictionary<string, string> formData = new Dictionary<string, string>();
+
+            var contentType = this.Headers.ContentType;
+            var mimeType = contentType.Split(';').First();
+            if (mimeType.Equals("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
+    {
+                formData = Encoding.UTF8.GetString(this.Body).AsQueryDictionary();
+    }
+
+            if (!mimeType.Equals("multipart/form-data", StringComparison.OrdinalIgnoreCase))
+    {
+                return formData;
+    }
+
+            var boundary = Regex.Match(contentType, @"boundary=""?(?<token>[^\n\;\"" ]*)").Groups["token"].Value;
+
+            if (m_bodyStream == null)
+                m_bodyStream = new MemoryStream(this.Body);
+
+            var multipart = new HttpMultipart(m_bodyStream, boundary);
+
+            var formValues =
+                new NameValueCollection(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var httpMultipartBoundary in multipart.GetBoundaries())
+    {
+                if (string.IsNullOrEmpty(httpMultipartBoundary.Filename))
+    {
+                    var reader =
+                        new StreamReader(httpMultipartBoundary.Value);
+                    formValues.Add(httpMultipartBoundary.Name, reader.ReadToEnd());
+
+    }
+                else
+    {
+                    files.Add(new HttpFile(httpMultipartBoundary));
+    }
+    }
+
+            foreach (var key in formValues.AllKeys.Where(key => key != null))
+    {
+                formData[key] = formValues[key];
+    }
+
+            m_bodyStream.Position = 0;
+            return formData;
         }
 
-        [DataMember]
-    public IDictionary<string, string> ServerVariables
+        public bool ShouldForceStrict()
     {
-      get;
-      set;
+            const string forceStrictKey = "barista_forcestrict";
+            if (
+                (QueryString != null && QueryString.Keys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == forceStrictKey)) ||
+                (Headers != null && Headers.Keys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == forceStrictKey)))
+                return true;
+
+            return false;
     }
 
-    [DataMember]
-    public Uri Url
+        /// <summary>
+        /// Returns the barista instance initialization code param from the query string or headers.
+        /// </summary>
+        /// <returns></returns>
+        public BrewRequestInstanceSettings ParseInstanceSettings()
     {
-      get;
-      set;
+            var instanceSettings = new BrewRequestInstanceSettings();
+            string instanceInitializationCodeKey;
+            string instanceModeKey;
+            string instanceNameKey;
+            string instanceAbsoluteExpirationKey;
+            string instanceSlidingExpirationKey;
+
+            var isSet = false;
+
+            if (Headers != null)
+    {
+                //Instance Initialization Code
+                instanceInitializationCodeKey = Headers.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceinitializationcode");
+                if (instanceInitializationCodeKey != null)
+    {
+                    instanceSettings.InstanceInitializationCode = Headers[instanceInitializationCodeKey].FirstOrDefault();
     }
 
-    [DataMember]
-    public Uri UrlReferrer
+                //InstanceMode
+                instanceModeKey = Headers.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
+                if (instanceModeKey != null)
     {
-      get;
-      set;
-    }
+                    BaristaInstanceMode instanceMode;
+                    if (Headers[instanceModeKey].FirstOrDefault().TryParseEnum(true, out instanceMode))
+                        instanceSettings.InstanceMode = instanceMode;
+                    else
+                        throw new InvalidOperationException(
+                            "Unable to determine the instance mode from the request header. Possible instance modes are PerSession, PerCall, and Single. " +
+                            Headers[instanceModeKey].FirstOrDefault());
 
-    [DataMember]
-    public string UserAgent
+                    if (instanceMode == BaristaInstanceMode.Single || instanceMode == BaristaInstanceMode.PerSession)
     {
-      get;
-      set;
-    }
+                        instanceNameKey =
+                            Headers.Keys.FirstOrDefault(
+                                k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
+                        if (instanceNameKey == null)
+                            throw new InvalidOperationException(
+                                "If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
 
-    [DataMember]
-    public string UserHostAddress
+                        instanceSettings.InstanceName = Headers[instanceNameKey].FirstOrDefault();
+
+                        instanceAbsoluteExpirationKey =
+                            Headers.Keys.FirstOrDefault(
+                                k =>
+                                    k.IsNullOrWhiteSpace() == false &&
+                                    k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
+                        if (instanceAbsoluteExpirationKey != null)
     {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string UserHostName
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public string[] UserLanguages
-    {
-      get;
-      set;
-    }
-
-    [DataMember]
-    public IDictionary<string, string> ExtendedProperties
-    {
-      get;
-      set;
-    }
-
-    [NonSerialized]
-    private ExtensionDataObject m_extensionData;
-
-    public ExtensionDataObject ExtensionData
-    {
-      get { return m_extensionData; }
-      set { m_extensionData = value; }
-    }
-    #endregion
-
-    #region Static Methods
-
-    public static BrewRequest CreateServiceApplicationRequestFromHttpRequest(HttpRequest request)
-    {
-
-      var result = new BrewRequest
-        {
-          AcceptTypes = request.AcceptTypes,
-          AnonymousId = request.AnonymousID,
-          ApplicationPath = request.ApplicationPath,
-          AppRelativeCurrentExecutionFilePath = request.AppRelativeCurrentExecutionFilePath,
-          //Browser?
-          ContentEncoding = request.ContentEncoding,
-          ContentLength = request.TotalBytes,
-          ContentType = request.ContentType,
-          CurrentExecutionFilePath = request.CurrentExecutionFilePath,
-          FilePath = request.FilePath,
-          IsAuthenticated = request.IsAuthenticated,
-          IsLocal = request.IsLocal,
-          IsSecureConnection = request.IsSecureConnection,
-          Method = request.HttpMethod,
-          LogonUserName = request.LogonUserIdentity == null ? String.Empty : request.LogonUserIdentity.Name,
-          Path = request.Path,
-          PathInfo = request.PathInfo,
-          PhysicalApplicationPath = request.PhysicalApplicationPath,
-          PhysicalPath = request.PhysicalPath,
-          RawUrl = request.RawUrl,
-          RequestType = request.RequestType,
-          Url = request.Url,
-          UrlReferrer = request.UrlReferrer,
-          UserAgent = request.UserAgent,
-          UserHostAddress = request.UserHostAddress,
-          UserHostName = request.UserHostName,
-          UserLanguages = request.UserLanguages,
-        };
-
-
-        result.Body = request.InputStream.ToByteArray();
-
-        foreach (var fileName in request.Files.AllKeys)
-        {
-          var file = request.Files[fileName];
-          var content = file.InputStream.ToByteArray();
-
-          result.Files.Add(fileName, new PostedFile
-          {
-            Content = content,
-            ContentLength = file.ContentLength,
-            ContentType = file.ContentType,
-            FileName = file.FileName
-          });
+                            instanceSettings.InstanceAbsoluteExpiration =
+                                DateTime.Parse(Headers[instanceAbsoluteExpirationKey].FirstOrDefault());
         }
 
-      //TODO: Make this more robust -- i.e. Support multiple cookies by name/domain key
-      foreach (var cookieName in request.Cookies.AllKeys.Where(k => k != null))
-      {
-        if (result.Cookies.ContainsKey(cookieName) == false)
+                        instanceSlidingExpirationKey =
+                            Headers.Keys.FirstOrDefault(
+                                k =>
+                                    k.IsNullOrWhiteSpace() == false &&
+                                    k.ToLowerInvariant() == "barista_instanceslidingexpiration");
+                        if (instanceSlidingExpirationKey != null)
         {
-          var httpCookie = request.Cookies[cookieName];
-          if (httpCookie != null)
-            result.Cookies.Add(cookieName, httpCookie.Value);
+                            instanceSettings.InstanceSlidingExpiration =
+                                TimeSpan.Parse(Headers[instanceSlidingExpirationKey].FirstOrDefault());
         }
+
       }
 
-      foreach (var headerName in request.Headers.AllKeys.Where(k => k != null))
+                    isSet = true;
+      }
+      }
+
+            if (QueryString != null && !isSet)
       {
-        if (result.Headers.ContainsKey(headerName) == false)
-          result.Headers.Add(headerName, request.Headers[headerName]);
-      }
+                instanceInitializationCodeKey =
+                    QueryString.Keys.FirstOrDefault(
+                        k =>
+                            k.IsNullOrWhiteSpace() == false &&
+                            k.ToLowerInvariant() == "barista_instanceinitializationcode");
 
-      foreach (var formFieldName in request.Form.AllKeys.Where(k => k != null))
+                if (instanceInitializationCodeKey != null)
       {
-        if (result.Form.ContainsKey(formFieldName) == false)
-          result.Form.Add(formFieldName, request.Form[formFieldName]);
+                    instanceSettings.InstanceInitializationCode = QueryString[instanceInitializationCodeKey];
       }
 
-      foreach (var paramName in request.Params.AllKeys.Where(k => k != null))
-      {
-        if (result.Params.ContainsKey(paramName) == false)
-          result.Params.Add(paramName, request.Form[paramName]);
-      }
-
-      foreach (var queryStringName in request.QueryString.AllKeys.Where(k => k != null))
-      {
-        if (result.QueryString.ContainsKey(queryStringName) == false)
-          result.QueryString.Add(queryStringName, request.QueryString[queryStringName]);
-      }
-
-      foreach (var serverVariableName in request.ServerVariables.AllKeys.Where(k => k != null))
-      {
-        if (result.ServerVariables.ContainsKey(serverVariableName) == false)
-          result.ServerVariables.Add(serverVariableName, request.ServerVariables[serverVariableName]);
-      }
-
-      if (request.QueryString.AllKeys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_forcestrict") ||
-          request.Headers.AllKeys.Any(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_forcestrict"))
-      {
-        result.ForceStrict = true;
-      }
-
-      //InstanceMode
-      string instanceModeKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
-      string instanceNameKey;
-      string instanceAbsoluteExpirationKey;
-      string instanceSlidingExpirationKey;
+                instanceModeKey = QueryString.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
       if (instanceModeKey != null)
       {
         BaristaInstanceMode instanceMode;
-        if (request.Headers[instanceModeKey].TryParseEnum(true, out instanceMode))
-          result.InstanceMode = instanceMode;
+                    if (QueryString[instanceModeKey].TryParseEnum(true, out instanceMode))
+                        instanceSettings.InstanceMode = instanceMode;
         else
-          throw new InvalidOperationException("Unable to determine the instance mode from the request header. Possible instance modes are PerSession, PerCall, and Single. " + request.Headers[instanceModeKey]);
+                        throw new InvalidOperationException("Unable to determine the instance mode from the query string. Possible instance modes are PerSession, PerCall, and Single. " + QueryString[instanceModeKey]);
 
-        if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
+                    if (instanceMode == BaristaInstanceMode.Single || instanceMode == BaristaInstanceMode.PerSession)
         {
-          instanceNameKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
+                        instanceNameKey = QueryString.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
+
           if (instanceNameKey == null)
             throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
 
-          result.InstanceName = request.Headers[instanceNameKey];
+                        instanceSettings.InstanceName = QueryString[instanceNameKey];
 
-          instanceAbsoluteExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
+                        instanceAbsoluteExpirationKey = QueryString.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
           if (instanceAbsoluteExpirationKey != null)
           {
-            result.InstanceAbsoluteExpiration = DateTime.Parse(request.Headers[instanceAbsoluteExpirationKey]);
+                            instanceSettings.InstanceAbsoluteExpiration = DateTime.Parse(QueryString[instanceAbsoluteExpirationKey]);
           }
 
-          instanceSlidingExpirationKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceslidingexpiration");
+                        instanceSlidingExpirationKey = QueryString.Keys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceslidingexpiration");
           if (instanceSlidingExpirationKey != null)
           {
-            result.InstanceSlidingExpiration = TimeSpan.Parse(request.Headers[instanceSlidingExpirationKey]);
+                            instanceSettings.InstanceSlidingExpiration = TimeSpan.Parse(QueryString[instanceSlidingExpirationKey]);
+                        }
+                    }
+                }
           }
 
-        }
+            return instanceSettings;
       }
-      else
-      {
-        instanceModeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancemode");
-        if (instanceModeKey != null)
-        {
-          BaristaInstanceMode instanceMode;
-          if (request.QueryString[instanceModeKey].TryParseEnum(true, out instanceMode))
-            result.InstanceMode = instanceMode;
-          else
-            throw new InvalidOperationException("Unable to determine the instance mode from the query string. Possible instance modes are PerSession, PerCall, and Single. " + request.QueryString[instanceModeKey]);
 
-          if (result.InstanceMode == BaristaInstanceMode.Single || result.InstanceMode == BaristaInstanceMode.PerSession)
+        public void Dispose()
           {
-            instanceNameKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instancename");
-
-            if (instanceNameKey == null)
-              throw new InvalidOperationException("If a Barista Instance Mode of Single or Per-Sesson is specified, an Instance Name must also be specified.");
-
-            result.InstanceName = request.QueryString[instanceNameKey];
-
-            instanceAbsoluteExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceabsoluteexpiration");
-            if (instanceAbsoluteExpirationKey != null)
-            {
-              result.InstanceAbsoluteExpiration = DateTime.Parse(request.QueryString[instanceAbsoluteExpirationKey]);
-            }
-
-            instanceSlidingExpirationKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceslidingexpiration");
-            if (instanceSlidingExpirationKey != null)
-            {
-              result.InstanceSlidingExpiration = TimeSpan.Parse(request.QueryString[instanceSlidingExpirationKey]);
-            }
-          }
+            if (m_bodyStream != null)
+                ((IDisposable)m_bodyStream).Dispose();
         }
-      }
 
-      //Instance Initialization Code
-      string instanceInitializationCodeKey = request.Headers.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceinitializationcode");
-      if (instanceInitializationCodeKey != null)
-      {
-        result.InstanceInitializationCode = request.Headers[instanceInitializationCodeKey];
-      }
-      else
-      {
-        instanceInitializationCodeKey = request.QueryString.AllKeys.FirstOrDefault(k => k.IsNullOrWhiteSpace() == false && k.ToLowerInvariant() == "barista_instanceinitializationcode");
-        if (instanceInitializationCodeKey != null)
+        #region Static Methods
+
+        public static BrewRequest CreateServiceApplicationRequestFromHttpRequest(HttpRequest request)
         {
-          result.InstanceInitializationCode = request.QueryString[instanceInitializationCodeKey];
-        }
+
+            var result = new BrewRequest
+            {
+                Method = request.HttpMethod,
+                Url = request.Url,
+                QueryString = request.Url.Query.AsQueryDictionary(),
+                Body = request.InputStream.ToByteArray(),
+                Headers = new BrewRequestHeaders(request.Headers.ToDictionary2()),
+                UserHostAddress = request.UserHostAddress
+            };
+
+            return result;
+            }
+
+        public static BrewRequest CreateBrewRequestFromIncomingWebRequest(IncomingWebRequestContext webRequest, Stream requestBody, OperationContext context)
+            {
+            string ip = null;
+
+            object remoteEndpointProperty;
+            if (OperationContext.Current.IncomingMessageProperties.TryGetValue(RemoteEndpointMessageProperty.Name, out remoteEndpointProperty))
+      {
+                ip = ((RemoteEndpointMessageProperty)remoteEndpointProperty).Address;
       }
 
-      return result;
+            var request = new BrewRequest
+        {
+                Method = webRequest.Method,
+                Url = webRequest.UriTemplateMatch.RequestUri,
+                QueryString = webRequest.UriTemplateMatch.RequestUri.Query.AsQueryDictionary(),
+                Body = requestBody.ToByteArray(),
+                Headers = new BrewRequestHeaders(webRequest.Headers.ToDictionary2()),
+                UserHostAddress = ip
+            };
+
+            return request;
     }
     #endregion
   }

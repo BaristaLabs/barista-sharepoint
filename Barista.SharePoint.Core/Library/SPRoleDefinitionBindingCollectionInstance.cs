@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPRoleDefinitionBindingCollectionInstance Construct()
     {
-      return new SPRoleDefinitionBindingCollectionInstance(this.InstancePrototype);
+      return new SPRoleDefinitionBindingCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPRoleDefinitionBindingCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPRoleDefinitionBindingCollectionInstance(ObjectInstance prototype, SPRoleDefinitionBindingCollection roleDefinitionBindingCollection)
@@ -102,12 +102,13 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPRoleDefinition]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var roleDefinition in m_roleDefinitionBindingCollection.OfType<SPRoleDefinition>())
       {
-        ArrayInstance.Push(result, new SPRoleDefinitionInstance(this.Engine.Object.InstancePrototype, roleDefinition));
+        ArrayInstance.Push(result, new SPRoleDefinitionInstance(Engine.Object.InstancePrototype, roleDefinition));
       }
       return result;
     }

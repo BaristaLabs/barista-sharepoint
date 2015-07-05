@@ -90,6 +90,7 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPRecycleBinItem]")]
     public ArrayInstance ToArray()
     {
       var result = this.Engine.Array.Construct();

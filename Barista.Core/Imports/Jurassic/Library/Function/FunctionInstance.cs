@@ -72,14 +72,14 @@
         // Retrieve the value of the prototype property.
         //var prototype = this["prototype"] as ObjectInstance;
         ObjectInstance prototype;
-        if (this.m_cachedInstancePrototypeSchema == this.InlineCacheKey)
-          prototype = this.InlinePropertyValues[this.m_cachedInstancePrototypeIndex] as ObjectInstance;
+        if (m_cachedInstancePrototypeSchema == InlineCacheKey)
+          prototype = InlinePropertyValues[m_cachedInstancePrototypeIndex] as ObjectInstance;
         else
-          prototype = this.InlineGetPropertyValue("prototype", out this.m_cachedInstancePrototypeIndex, out this.m_cachedInstancePrototypeSchema) as ObjectInstance;
+          prototype = InlineGetPropertyValue("prototype", out m_cachedInstancePrototypeIndex, out m_cachedInstancePrototypeSchema) as ObjectInstance;
 
         // If the prototype property is not set to an object, use the Object prototype property instead.
-        if (prototype == null && this != this.Engine.Object)
-          return this.Engine.Object.InstancePrototype;
+        if (prototype == null && this != Engine.Object)
+          return Engine.Object.InstancePrototype;
 
         return prototype;
       }
@@ -101,7 +101,7 @@
     {
       get
       {
-        if (this.HasProperty("displayName"))
+        if (HasProperty("displayName"))
           return TypeConverter.ToString(this["displayName"]);
         var name = TypeConverter.ToString(this["name"]);
         if (name == string.Empty)
@@ -116,7 +116,7 @@
     public int Length
     {
       get { return TypeConverter.ToInteger(this["length"]); }
-      protected set { this.FastSetProperty("length", value, PropertyAttributes.Sealed, false); }
+      protected set { FastSetProperty("length", value, PropertyAttributes.Sealed, false); }
     }
 
 
@@ -138,7 +138,7 @@
         return false;
       object functionPrototype = this["prototype"];
       if ((functionPrototype is ObjectInstance) == false)
-        throw new JavaScriptException(this.Engine, "TypeError", "Function has non-object prototype in instanceof check");
+        throw new JavaScriptException(Engine, "TypeError", "Function has non-object prototype in instanceof check");
       var instancePrototype = ((ObjectInstance)instance).Prototype;
       while (instancePrototype != null)
       {
@@ -166,14 +166,14 @@
     /// <returns> The value that was returned from the function. </returns>
     internal object CallFromNative(string function, object thisObject, params object[] argumentValues)
     {
-      this.Engine.PushStackFrame("native", function, 0);
+      Engine.PushStackFrame("native", function, 0);
       try
       {
         return CallLateBound(thisObject, argumentValues);
       }
       finally
       {
-        this.Engine.PopStackFrame();
+        Engine.PopStackFrame();
       }
     }
 
@@ -188,14 +188,14 @@
     /// <returns> The value that was returned from the function. </returns>
     public object CallWithStackTrace(string path, string function, int line, object thisObject, object[] argumentValues)
     {
-      this.Engine.PushStackFrame(path, function, line);
+      Engine.PushStackFrame(path, function, line);
       try
       {
         return CallLateBound(thisObject, argumentValues);
       }
       finally
       {
-        this.Engine.PopStackFrame();
+        Engine.PopStackFrame();
       }
     }
 
@@ -207,7 +207,7 @@
     public virtual ObjectInstance ConstructLateBound(params object[] argumentValues)
     {
       // Create a new object and set the prototype to the instance prototype of the function.
-      var newObject = ObjectInstance.CreateRawObject(this.InstancePrototype);
+      var newObject = CreateRawObject(InstancePrototype);
 
       // Run the function, with the new object as the "this" keyword.
       var result = CallLateBound(newObject, argumentValues);
@@ -241,20 +241,20 @@
       else
       {
         if ((arguments is ObjectInstance) == false)
-          throw new JavaScriptException(this.Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
+          throw new JavaScriptException(Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
         ObjectInstance argumentsObject = (ObjectInstance)arguments;
         object arrayLengthObj = argumentsObject["length"];
         if (arrayLengthObj == null || arrayLengthObj == Undefined.Value || arrayLengthObj == Null.Value)
-          throw new JavaScriptException(this.Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
+          throw new JavaScriptException(Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
         uint arrayLength = TypeConverter.ToUint32(arrayLengthObj);
         if (Math.Abs(arrayLength - TypeConverter.ToNumber(arrayLengthObj)) > double.Epsilon)
-          throw new JavaScriptException(this.Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
+          throw new JavaScriptException(Engine, "TypeError", "The second parameter of apply() must be an array or an array-like object.");
         argumentsArray = new object[arrayLength];
         for (uint i = 0; i < arrayLength; i++)
           argumentsArray[i] = argumentsObject[i];
       }
 
-      return this.CallLateBound(thisObj, argumentsArray);
+      return CallLateBound(thisObj, argumentsArray);
     }
 
     /// <summary>
@@ -266,7 +266,7 @@
     [JSInternalFunction(Name = "call", Length = 1)]
     public object Call(object thisObj, params object[] arguments)
     {
-      return this.CallLateBound(thisObj, arguments);
+      return CallLateBound(thisObj, arguments);
     }
 
     /// <summary>
@@ -289,7 +289,7 @@
     [JSInternalFunction(Name = "toString")]
     public string ToStringJS()
     {
-      return this.ToString();
+      return ToString();
     }
   }
 }

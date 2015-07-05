@@ -976,6 +976,7 @@
         }
 
         [JSFunction(Name = "getAllWebs")]
+        [JSDoc("ternReturnType", "[+SPWeb]")]
         public ArrayInstance GetAllWebs()
         {
             var webs = new List<SPWeb>();
@@ -999,6 +1000,7 @@
         }
 
         [JSFunction(Name = "getFeatureDefinitions")]
+        [JSDoc("ternReturnType", "[+SPFeatureDefinition]")]
         public ArrayInstance GetFeatureDefinitions()
         {
             //SPSite.FeatureDefinitions always returns null... nice, SharePoint, nice...
@@ -1037,6 +1039,7 @@
         }
 
         [JSFunction(Name = "getWebTemplates")]
+        [JSDoc("ternReturnType", "[+SPWebTemplate]")]
         public ArrayInstance GetWebTemplates(object language)
         {
             var lcid = (uint)System.Threading.Thread.CurrentThread.CurrentCulture.LCID;

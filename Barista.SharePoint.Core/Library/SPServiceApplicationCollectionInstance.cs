@@ -18,7 +18,7 @@
     [JSConstructorFunction]
     public SPServiceApplicationCollectionInstance Construct()
     {
-      return new SPServiceApplicationCollectionInstance(this.InstancePrototype);
+      return new SPServiceApplicationCollectionInstance(InstancePrototype);
     }
   }
 
@@ -30,8 +30,8 @@
     public SPServiceApplicationCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPServiceApplicationCollectionInstance(ObjectInstance prototype, SPServiceApplicationCollection serviceApplicationCollection)
@@ -68,10 +68,10 @@
         return null;
 
       if (result is SPIisWebServiceApplication)
-        return new SPIisWebServiceApplicationInstance(this.Engine.Object.Prototype,
+        return new SPIisWebServiceApplicationInstance(Engine.Object.Prototype,
         (result as SPIisWebServiceApplication));
 
-      return new SPServiceApplicationInstance(this.Engine.Object.Prototype, result);
+      return new SPServiceApplicationInstance(Engine.Object.Prototype, result);
     }
 
     [JSFunction(Name = "getServiceApplicationByName")]
@@ -82,23 +82,23 @@
         return null;
 
       if (result is SPIisWebServiceApplication)
-        return new SPIisWebServiceApplicationInstance(this.Engine.Object.Prototype,
+        return new SPIisWebServiceApplicationInstance(Engine.Object.Prototype,
         (result as SPIisWebServiceApplication));
 
-      return new SPServiceApplicationInstance(this.Engine.Object.Prototype, result);
+      return new SPServiceApplicationInstance(Engine.Object.Prototype, result);
     }
 
     [JSFunction(Name = "toArray")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var serviceApplication in m_serviceApplicationCollection)
       {
         if (serviceApplication is SPIisWebServiceApplication)
-          ArrayInstance.Push(result, new SPIisWebServiceApplicationInstance(this.Engine.Object.Prototype, serviceApplication as SPIisWebServiceApplication));
+          ArrayInstance.Push(result, new SPIisWebServiceApplicationInstance(Engine.Object.Prototype, serviceApplication as SPIisWebServiceApplication));
         else
         {
-          ArrayInstance.Push(result, new SPServiceApplicationInstance(this.Engine.Object.InstancePrototype, serviceApplication));
+          ArrayInstance.Push(result, new SPServiceApplicationInstance(Engine.Object.InstancePrototype, serviceApplication));
         }
       }
       return result;

@@ -23,20 +23,20 @@
         //[JSConstructorFunction]
         public SPWorkflowAssociationCollectionInstance Construct()
         {
-            return new SPWorkflowAssociationCollectionInstance(this.InstancePrototype);
+            return new SPWorkflowAssociationCollectionInstance(InstancePrototype);
         }
 
         [JSFunction(Name = "getAssociationForListItemById")]
         public SPWorkflowAssociationInstance GetWorkflowAssociationByName(SPListItemInstance listItem, object id)
         {
             if (listItem == null)
-                throw new JavaScriptException(this.Engine, "Error", "ListItem must be specified as the first argument.");
+                throw new JavaScriptException(Engine, "Error", "ListItem must be specified as the first argument.");
 
             var guidId = GuidInstance.ConvertFromJsObjectToGuid(id);
             var result = SPWorkflowAssociationCollection.GetAssociationForListItemById(listItem.ListItem, guidId);
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
     }
 
@@ -48,8 +48,8 @@
         public SPWorkflowAssociationCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWorkflowAssociationCollectionInstance(ObjectInstance prototype, SPWorkflowAssociationCollection workflowAssociationCollection)
@@ -82,12 +82,12 @@
         public SPWorkflowAssociationInstance Add(SPWorkflowAssociationInstance workflowAssociation)
         {
             if (workflowAssociation == null)
-                throw new JavaScriptException(this.Engine, "Error", "Workflow Association must be supplied as first argument.");
+                throw new JavaScriptException(Engine, "Error", "Workflow Association must be supplied as first argument.");
 
             var result = m_workflowAssociationCollection.Add(workflowAssociation.SPWorkflowAssociation);
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getParentList")]
@@ -96,7 +96,7 @@
             var result = m_workflowAssociationCollection.ParentList;
             return result == null
                 ? null
-                : new SPListInstance(this.Engine, null, null, result);
+                : new SPListInstance(Engine, null, null, result);
         }
 
         [JSFunction(Name = "getParentSite")]
@@ -105,7 +105,7 @@
             var result = m_workflowAssociationCollection.ParentSite;
             return result == null
                 ? null
-                : new SPSiteInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPSiteInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getParentWeb")]
@@ -114,7 +114,7 @@
             var result = m_workflowAssociationCollection.ParentWeb;
             return result == null
                 ? null
-                : new SPWebInstance(this.Engine, result);
+                : new SPWebInstance(Engine, result);
         }
 
         [JSFunction(Name = "getSoapXml")]
@@ -130,7 +130,7 @@
             var result = m_workflowAssociationCollection.GetAssociationByBaseID(guidId);
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getWorkflowAssociationById")]
@@ -140,7 +140,7 @@
             var result = m_workflowAssociationCollection[guidId];
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getWorkflowAssociationByIndex")]
@@ -149,7 +149,7 @@
             var result = m_workflowAssociationCollection[index];
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getWorkflowAssociationByName")]
@@ -159,14 +159,14 @@
             var result = m_workflowAssociationCollection.GetAssociationByName(name, CultureInfo.CurrentCulture);
             return result == null
                 ? null
-                : new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "remove")]
         public void Remove(SPWorkflowAssociationInstance workflowAssociation)
         {
             if (workflowAssociation == null)
-                throw new JavaScriptException(this.Engine, "Error", "Workflow Association must be supplied as first argument.");
+                throw new JavaScriptException(Engine, "Error", "Workflow Association must be supplied as first argument.");
 
             m_workflowAssociationCollection.Remove(workflowAssociation.SPWorkflowAssociation);
         }
@@ -179,12 +179,13 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWorkflowAssociation]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var assoc in m_workflowAssociationCollection
                 .OfType<SPWorkflowAssociation>()
-                .Select(a => new SPWorkflowAssociationInstance(this.Engine.Object.InstancePrototype, a)))
+                .Select(a => new SPWorkflowAssociationInstance(Engine.Object.InstancePrototype, a)))
             {
                 ArrayInstance.Push(result, assoc);
             }
@@ -196,7 +197,7 @@
         public void Update(SPWorkflowAssociationInstance workflowAssociation)
         {
             if (workflowAssociation == null)
-                throw new JavaScriptException(this.Engine, "Error", "Workflow Association must be supplied as first argument.");
+                throw new JavaScriptException(Engine, "Error", "Workflow Association must be supplied as first argument.");
 
             m_workflowAssociationCollection.Update(workflowAssociation.SPWorkflowAssociation);
         }

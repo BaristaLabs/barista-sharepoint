@@ -50,5 +50,15 @@
                    .Select(s => new {Key = s, Value = source[s]})
                    .ToDictionary(p => p.Key, p => p.Value);
     }
+
+    /// <summary>
+    /// Converts a <see cref="NameValueCollection"/> to a <see cref="IDictionary{TKey,TValue}"/> instance.
+    /// </summary>
+    /// <param name="source">The <see cref="NameValueCollection"/> to convert.</param>
+    /// <returns>An <see cref="IDictionary{TKey,TValue}"/> instance.</returns>
+    public static IDictionary<string, IEnumerable<string>> ToDictionary2(this NameValueCollection source)
+    {
+        return source.AllKeys.ToDictionary<string, string, IEnumerable<string>>(key => key, source.GetValues);
+    }
   }
 }

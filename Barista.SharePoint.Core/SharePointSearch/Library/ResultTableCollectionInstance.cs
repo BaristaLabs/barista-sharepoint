@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public ResultTableCollectionInstance Construct()
         {
-            return new ResultTableCollectionInstance(this.InstancePrototype);
+            return new ResultTableCollectionInstance(InstancePrototype);
         }
     }
 
@@ -30,8 +30,8 @@
         public ResultTableCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public ResultTableCollectionInstance(ObjectInstance prototype, ResultTableCollection resultTableCollection)
@@ -81,6 +81,7 @@
         }
 
         [JSProperty(Name = "ignoredNoiseWords")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance IgnoredNoiseWords
         {
             get
@@ -88,7 +89,7 @@
                 return m_resultTableCollection.IgnoredNoiseWords == null
                     ? null
 // ReSharper disable once CoVariantArrayConversion
-                    : this.Engine.Array.Construct(m_resultTableCollection.IgnoredNoiseWords);
+                    : Engine.Array.Construct(m_resultTableCollection.IgnoredNoiseWords);
             }
         }
 
@@ -113,6 +114,7 @@
         }
 
         [JSProperty(Name = "queryTerms")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance QueryTerms
         {
             get
@@ -120,7 +122,7 @@
                 return m_resultTableCollection.IgnoredNoiseWords == null
                     ? null
                     // ReSharper disable once CoVariantArrayConversion
-                    : this.Engine.Array.Construct(m_resultTableCollection.QueryTerms);
+                    : Engine.Array.Construct(m_resultTableCollection.QueryTerms);
             }
         }
 
@@ -149,18 +151,19 @@
                 var result = m_resultTableCollection[rt];
                 return result == null
                     ? null
-                    : new ResultTableInstance(this.Engine.Object.InstancePrototype, result);
+                    : new ResultTableInstance(Engine.Object.InstancePrototype, result);
             }
 
             return null;
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+ResultTable]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var resultTable in m_resultTableCollection.OfType<ResultTable>())
-                ArrayInstance.Push(result, new ResultTableInstance(this.Engine.Object.InstancePrototype, resultTable));
+                ArrayInstance.Push(result, new ResultTableInstance(Engine.Object.InstancePrototype, resultTable));
 
             return result;
         }

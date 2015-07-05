@@ -45,6 +45,7 @@
     }
 
     [JSProperty(Name = "basePermissions")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance BasePermissions
     {
       get

@@ -18,7 +18,7 @@
     [JSConstructorFunction]
     public SPRoleAssignmentCollectionInstance Construct()
     {
-      return new SPRoleAssignmentCollectionInstance(this.InstancePrototype);
+      return new SPRoleAssignmentCollectionInstance(InstancePrototype);
     }
   }
 
@@ -30,8 +30,8 @@
     public SPRoleAssignmentCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPRoleAssignmentCollectionInstance(ObjectInstance prototype, SPRoleAssignmentCollection roleAssignmentCollection)
@@ -69,7 +69,7 @@
     {
       get
       {
-        return new GuidInstance(this.Engine.Object.InstancePrototype, m_roleAssignmentCollection.Id);
+        return new GuidInstance(Engine.Object.InstancePrototype, m_roleAssignmentCollection.Id);
       }
     }
 
@@ -107,13 +107,13 @@
         return null;
 
       var result = m_roleAssignmentCollection.GetAssignmentByPrincipal(principal.SPPrincipal);
-      return new SPRoleAssignmentInstance(this.Engine.Object.InstancePrototype, result);
+      return new SPRoleAssignmentInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getParentSecurableObject")]
     public SPSecurableObjectInstance GetParentSecurableObject()
     {
-      return new SPSecurableObjectInstance(this.Engine)
+      return new SPSecurableObjectInstance(Engine)
       {
         SecurableObject = m_roleAssignmentCollection.ParentSecurableObject
       };
@@ -123,7 +123,7 @@
     public SPRoleAssignmentInstance GetRoleAssignmentById(int index)
     {
       var result = m_roleAssignmentCollection[index];
-      return new SPRoleAssignmentInstance(this.Engine.Object.InstancePrototype, result);
+      return new SPRoleAssignmentInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getXml")]
@@ -163,12 +163,13 @@
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPRoleAssignment]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var roleAssignment in m_roleAssignmentCollection.OfType<SPRoleAssignment>())
       {
-        ArrayInstance.Push(result, new SPRoleAssignmentInstance(this.Engine.Object.InstancePrototype, roleAssignment));
+        ArrayInstance.Push(result, new SPRoleAssignmentInstance(Engine.Object.InstancePrototype, roleAssignment));
       }
       return result;
     }

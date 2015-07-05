@@ -1,9 +1,13 @@
 ﻿namespace Barista.SharePoint.Services
 {
+    using System.Collections.Generic;
+    using System.ServiceModel.Channels;
+    using Barista.Newtonsoft.Json;
     using Barista.SharePoint.Extensions;
     using Barista.Extensions;
     using Barista.Framework;
     using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Administration;
     using Microsoft.SharePoint.Client.Services;
     using Newtonsoft.Json.Linq;
     using System;
@@ -14,6 +18,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
@@ -24,112 +29,148 @@
       InstanceContextMode = InstanceContextMode.PerCall,
       ConcurrencyMode = ConcurrencyMode.Multiple)]
     [RawJsonRequestBehavior]
-    public class BaristaWebService : IBaristaWebService
+    public class BaristaWebService : IBaristaRestService
     {
         #region Service Operations
 
-        /// <summary>
-        /// Executes the specified script and does not return a result.
-        /// </summary>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public void Coffee()
+        public void Exec(Stream requestBody)
         {
-            if (WebOperationContext.Current == null)
-                throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
-
-            TakeOrder();
-
-            string codePath;
-            var code = Grind();
-
-            code = Tamp(code, out codePath);
-
-            Brew(code, codePath);
+            ExecWild(requestBody);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public void CoffeeWild()
-        {
-            Coffee();
-        }
-
-        /// <summary>
-        /// Overload for coffee to allow http POSTS.
-        /// </summary>
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public void CoffeeAuLait(Stream stream)
+        public void ExecWild(Stream requestBody)
         {
             TakeOrder();
 
             string codePath;
-            var code = Grind();
+            var code = Grind(requestBody);
 
             code = Tamp(code, out codePath);
 
-            Brew(code, codePath);
-        }
-
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public void CoffeeAuLaitWild(Stream stream)
-        {
-            CoffeeAuLait(stream);
-        }
-
-        /// <summary>
-        /// Evaluates the specified script.
-        /// </summary>
-        /// <returns></returns>
-        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType(RestOnly = true)]
-        public Stream Espresso()
-        {
-            if (WebOperationContext.Current == null)
-                throw new InvalidOperationException("This service operation is intended to be invoked only by REST clients.");
-
-            TakeOrder();
-
-            string codePath;
-            var code = Grind();
-
-            code = Tamp(code, out codePath);
-
-            return Pull(code, codePath);
+            Brew(code, codePath, requestBody);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Stream EspressoWild()
+        public Message Eval(Stream requestBody)
         {
-            return Espresso();
+            return EvalWild(requestBody);
         }
 
-        /// <summary>
-        /// Expresso overload to support having code contained in the body of a http POST.
-        /// </summary>
-        /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public Stream Latte(Stream stream)
+        [DynamicResponseType(RestOnly = true)]
+        public Message EvalWild(Stream requestBody)
         {
             TakeOrder();
 
             string codePath;
-            var code = Grind();
+            var code = Grind(requestBody);
 
             code = Tamp(code, out codePath);
 
-            return Pull(code, codePath);
+            return Pull(code, codePath, requestBody);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [DynamicResponseType]
-        public Stream LatteWild(Stream stream)
+        [DynamicResponseType(RestOnly = true)]
+        public Message Status()
         {
-            return Latte(stream);
+            var webContext = WebOperationContext.Current;
+
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var result = new JObject();
+
+            var environment = new JObject();
+            environment.Add("commandLine", Environment.CommandLine);
+            environment.Add("currentDirectory", Environment.CurrentDirectory);
+            environment.Add("machineName", Environment.MachineName);
+            environment.Add("newLine", Environment.NewLine);
+
+            var osVersion = new JObject
+            {
+                {"platform", Environment.OSVersion.Platform.ToString()},
+                {"servicePack", Environment.OSVersion.ServicePack},
+                {"version", Environment.OSVersion.Version.ToString()},
+                {"versionString", Environment.OSVersion.VersionString}
+            };
+
+            environment.Add("osVersion", osVersion);
+            environment.Add("processorCount", Environment.ProcessorCount);
+            environment.Add("systemDirectory", Environment.SystemDirectory);
+            environment.Add("tickCount", Environment.TickCount);
+            environment.Add("userDomainName", Environment.UserDomainName);
+            environment.Add("userInteractive", Environment.UserInteractive);
+            environment.Add("userName", Environment.UserName);
+            environment.Add("version", Environment.Version.ToString());
+            environment.Add("workingSet", Environment.WorkingSet);
+            
+            result.Add("environment", environment);
+
+            var sharepoint = new JObject();
+
+            var servers = new JArray();
+            foreach(var spServer in SPFarm.Local.Servers)
+            {
+                var server = new JObject
+                {
+                    {"id", spServer.Id},
+                    {"address", spServer.Address},
+                    {"name", spServer.Name},
+                    {"needsUpgrade", spServer.NeedsUpgrade},
+                    {"needsUpgradeIncludeChildren", spServer.NeedsUpgradeIncludeChildren},
+                    {"version", spServer.Version},
+                    {"role", spServer.Role.ToString()}
+                };
+
+                servers.Add(server);
+            }
+            sharepoint.Add("serversInFarm", servers);
+
+            var baristaService = BaristaHelper.GetBaristaService(SPFarm.Local);
+            sharepoint.Add("baristaService", GetSharePointServiceRepresentation(baristaService));
+
+            var baristaSearchService = BaristaHelper.GetBaristaSearchService(SPFarm.Local);
+            sharepoint.Add("baristaSearchService", GetSharePointServiceRepresentation(baristaSearchService));
+
+            result.Add("sharepoint", sharepoint);
+
+            
+            //trusted locations config
+
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    var js = new JsonSerializer
+                    {
+                        Formatting = Formatting.Indented
+                    };
+
+                    using(var sw = new StreamWriter(stream))
+                    {
+                        js.Serialize(sw, result);
+                    }
+                },
+                "application/json");
+        }
+
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [DynamicResponseType(RestOnly = true)]
+        public Message ListBundles()
+        {
+            throw new NotImplementedException();
+        }
+
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [DynamicResponseType(RestOnly = true)]
+        public Message DeployBundle(Stream requestBody)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -152,43 +193,36 @@
         /// <summary>
         /// Grinds the beans. E.g. Attempts to retrieve the code value from the request.
         /// </summary>
-        private static string Grind()
+        private static string Grind(Stream requestBody)
         {
             string code = null;
 
+            var webContext = WebOperationContext.Current;
+
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
             //If the request has a header named "X-Barista-Code" use that first.
-            if (WebOperationContext.Current != null)
-            {
-                var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-                var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code");
-                if (codeHeaderKey != null)
-                    code = requestHeaders[codeHeaderKey];
-            }
+            var requestHeaders = webContext.IncomingRequest.Headers;
+            var codeHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code");
+            if (codeHeaderKey != null)
+                code = requestHeaders[codeHeaderKey];
 
             //If the request has a query string parameter named "c" use that.
-            if (String.IsNullOrEmpty(code) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
+            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.UriTemplateMatch != null)
             {
-                var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+                var requestQueryParameters = webContext.IncomingRequest.UriTemplateMatch.QueryParameters;
 
                 var codeKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "c");
                 if (codeKey != null)
                     code = requestQueryParameters[codeKey];
             }
 
-            //If the request contains a form variable named "c" or "code" use that.
-            if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
-            {
-                var form = HttpContext.Current.Request.Form;
-                var formKey = form.AllKeys.FirstOrDefault(k => k != null && (k.ToLowerInvariant() == "c" || k.ToLowerInvariant() == "code"));
-                if (formKey != null)
-                    code = form[formKey];
-            }
-
             //If the request contains a Message header named "c" or "code in the appropriate namespace, use that.
-            if (String.IsNullOrEmpty(code) && OperationContext.Current != null)
+            if (String.IsNullOrEmpty(code))
             {
                 var headers = OperationContext.Current.IncomingMessageHeaders;
-
+                
                 if (headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "code"))
                     code = headers.GetHeader<string>("code", Barista.Constants.ServiceNamespace);
                 else if (String.IsNullOrEmpty(code) && headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "c"))
@@ -196,9 +230,9 @@
             }
 
             //Otherwise, use the body of the post as code.
-            if (String.IsNullOrEmpty(code) && HttpContext.Current.Request.HttpMethod == "POST")
+            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.Method == "POST")
             {
-                var body = HttpContext.Current.Request.InputStream.ToByteArray();
+                var body = requestBody.ToByteArray();
                 var bodyString = Encoding.UTF8.GetString(body);
 
                 if (bodyString.IsNullOrWhiteSpace() == false)
@@ -237,52 +271,18 @@
                 }
             }
 
+            //Last Chance: attempt to use everything after eval/ or exec/ in the url as the code
+            if (String.IsNullOrEmpty(code))
+            {
+                var url = webContext.IncomingRequest.UriTemplateMatch;
+
+                var firstWildcardPathSegment = url.WildcardPathSegments.FirstOrDefault();
+                if (!firstWildcardPathSegment.IsNullOrWhiteSpace())
+                    code = firstWildcardPathSegment;
+            }
+
             if (String.IsNullOrEmpty(code))
                 throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, through a 'c' or 'code' soap message header in the http://barista/services/v1 namespace, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
-
-
-            //Determine if a language is specified.
-            string language = null;
-
-            //If the request has a header named "X-Barista-Code-Language" use that first.
-            if (WebOperationContext.Current != null)
-            {
-                var requestHeaders = WebOperationContext.Current.IncomingRequest.Headers;
-                var languageHeaderKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Code-Language");
-                if (languageHeaderKey != null)
-                    language = requestHeaders[languageHeaderKey];
-            }
-
-            //If the request has a query string parameter named "lang" use that.
-            if (String.IsNullOrEmpty(language) && WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.UriTemplateMatch != null)
-            {
-                var requestQueryParameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-                var languageKey = requestQueryParameters.AllKeys.FirstOrDefault(k => k != null && k.ToLowerInvariant() == "lang");
-                if (languageKey != null)
-                    language = requestQueryParameters[languageKey];
-            }
-
-            //If the request contains a form variable named "lang" use that.
-            if (String.IsNullOrEmpty(language) && HttpContext.Current.Request.HttpMethod == "POST")
-            {
-                var form = HttpContext.Current.Request.Form;
-                var formKey = form.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "lang");
-                if (formKey != null)
-                    language = form[formKey];
-            }
-
-            if (String.IsNullOrEmpty(language) != true)
-            {
-                switch (language.ToLowerInvariant())
-                {
-                    case "typescript":
-                        //Call the command-line compiler and retrieve the javascript.
-
-                        //TODO: What about tsc.exe errors? Parse output? Must pass TSC.exe a temp folder location...
-                        throw new NotImplementedException();
-                }
-            }
 
             return code;
         }
@@ -308,15 +308,6 @@
                     String codeFromfile;
                     if (SPHelper.TryGetSPFileAsString(code, out scriptFilePath, out codeFromfile, out isHiveFile))
                     {
-                        if (isHiveFile == false)
-                        {
-                            var lockDownMode = SPContext.Current.Web.GetProperty("BaristaLockdownMode") as string;
-                            if (String.IsNullOrEmpty(lockDownMode) == false && lockDownMode.ToLowerInvariant() == "BaristaContentLibraryOnly")
-                            {
-                                //TODO: implement this.
-                            }
-                        }
-
                         scriptPath = scriptFilePath;
                         code = codeFromfile;
                     }
@@ -334,24 +325,30 @@
         /// </summary>
         /// <param name="code"></param>
         /// <param name="codePath"></param>
-        private static void Brew(string code, string codePath)
+        /// <param name="requestBody"></param>
+        private static void Brew(string code, string codePath, Stream requestBody)
         {
-            var client = new BaristaServiceClient(SPServiceContext.Current);
+            var webContext = WebOperationContext.Current;
 
-            var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var request = BrewRequest.CreateBrewRequestFromIncomingWebRequest(webContext.IncomingRequest, requestBody, OperationContext.Current);
             request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
             request.SetExtendedPropertiesFromCurrentSPContext();
-
+            var client = new BaristaServiceClient(SPServiceContext.Current);
             client.Exec(request);
 
             //abandon the session and set the ASP.net session cookie to nothing.
@@ -367,48 +364,121 @@
         /// </summary>
         /// <param name="code"></param>
         /// <param name="codePath"></param>
+        /// <param name="requestBody"></param>
         /// <returns></returns>
-        private static Stream Pull(string code, string codePath)
+        private static Message Pull(string code, string codePath, Stream requestBody)
         {
-            var client = new BaristaServiceClient(SPServiceContext.Current);
+            var webContext = WebOperationContext.Current;
 
-            var request = BrewRequest.CreateServiceApplicationRequestFromHttpRequest(HttpContext.Current.Request);
+            if (webContext == null)
+                throw new InvalidOperationException("Current WebOperationContext is null.");
+
+            var request = BrewRequest.CreateBrewRequestFromIncomingWebRequest(webContext.IncomingRequest, requestBody, OperationContext.Current);
             request.ScriptEngineFactory = "Barista.SharePoint.SPBaristaJurassicScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52";
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
             request.SetExtendedPropertiesFromCurrentSPContext();
 
+            //Make a call to the Barista Service application to handle the request.
+            var client = new BaristaServiceClient(SPServiceContext.Current);
             var result = client.Eval(request);
 
-            var setHeaders = true;
-            if (WebOperationContext.Current != null)
-            {
-                result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
-                setHeaders = false;
-            }
-
-            result.ModifyHttpResponse(HttpContext.Current.Response, setHeaders);
-
-            if (result.Content == null)
-                return null;
-
             //abandon the session and set the ASP.net session cookie to nothing.
-            if (HttpContext.Current != null && HttpContext.Current.Session != null)
-            {
-                HttpContext.Current.Session.Abandon();
-                HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
-            }
+            var cookies = new List<IBaristaCookie>();
+            cookies.AddRange(result.Cookies);
 
-            var resultStream = new MemoryStream(result.Content);
-            return resultStream;
+            var existingCookie = cookies.FirstOrDefault(c => c != null && c.Name == "ASP.NET_SessionId");
+            if (existingCookie != null)
+                cookies.Remove(existingCookie);
+            cookies.Add(new Biscotti("ASP.NET_SessionId", ""));
+            result.Cookies = cookies;
+
+            result.ModifyOutgoingWebResponse(webContext.OutgoingResponse);
+
+            
+            //if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            //{
+            //    HttpContext.Current.Session.Abandon();
+            //    HttpContext.Current.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+            //}
+
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    if (result.Content == null)
+                        return;
+
+                    using (var writer = new BinaryWriter(stream))
+                    {
+                        writer.Write(result.Content);
+                    }
+                },
+                result.ContentType ?? string.Empty);
+        }
+
+        private JObject GetSharePointServiceRepresentation(SPService service)
+        {
+            var objBaristaService = new JObject
+            {
+                {"displayName", service.DisplayName},
+                {"id", service.Id},
+                {"status", service.Status.ToString()}
+            };
+
+            var serviceApplications = new JArray();
+            foreach (var serviceApplication in service.Applications)
+            {
+                var objServiceApplication = new JObject
+                {
+                    {"displayName", serviceApplication.DisplayName},
+                    {"id", serviceApplication.Id},
+                    {"status", serviceApplication.Status.ToString()}
+                };
+
+                var serviceInstances = new JArray();
+                foreach (var serviceInstance in serviceApplication.ServiceInstances)
+                {
+                    var objServiceInstance = new JObject
+                    {
+                        {"id", serviceInstance.Id},
+                        {"serverAddress", serviceInstance.Server.Address},
+                        {"name", serviceInstance.Server.Name},
+                        {"status", serviceInstance.Status.ToString()}
+                    };
+
+                    serviceInstances.Add(objServiceInstance);
+                }
+
+                objServiceApplication.Add("serviceInstances", serviceInstances);
+                serviceApplications.Add(objServiceApplication);
+            }
+            objBaristaService.Add("serviceApplications", serviceApplications);
+
+            var localServiceInstances = new JArray();
+            foreach(var instance in service.Instances)
+            {
+                var objServiceInstance = new JObject
+                    {
+                        {"id", instance.Id},
+                        {"serverAddress", instance.Server.Address},
+                        {"name", instance.Server.Name},
+                        {"status", instance.Status.ToString()}
+                    };
+                localServiceInstances.Add(objServiceInstance);
+            }
+            objBaristaService.Add("serviceInstances", localServiceInstances);
+
+            return objBaristaService;
         }
         #endregion
     }

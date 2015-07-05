@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.Linq;
+    using Barista.Helpers;
     using Jurassic;
     using System;
     using System.Collections.Generic;
@@ -37,6 +38,35 @@
         {
             return !path.IsNullOrWhiteSpace() &&
                     path.IndexOfAny(Path.GetInvalidPathChars()) < 0;
+        }
+
+        /// <summary>
+        /// Gets a dynamic dictionary back from a Uri query string
+        /// </summary>
+        /// <param name="queryString">The query string to extract values from</param>
+        /// <returns>A dynamic dictionary containing the query string values</returns>
+        public static IDictionary<string, string> AsQueryDictionary(this string queryString)
+        {
+            var coll = HttpUtility.ParseQueryString(queryString);
+            var ret = new Dictionary<string, string>();
+
+            var found = 0;
+            foreach (var key in coll.AllKeys.Where(key => key != null))
+            {
+                if (ret.ContainsKey(key))
+                    continue;
+
+                ret.Add(key, coll[key]);
+
+                found++;
+
+                if (found >= 1000) //FIXME: Why 1000?
+                {
+                    break;
+                }
+            }
+
+            return ret;
         }
 
         public static string ReplaceFirstOccurence(this string inputstring, string searchText, string replacementText)

@@ -29,7 +29,7 @@
         /// </summary>
         public ArrayInstance New()
         {
-            return new ArrayInstance(this.InstancePrototype, 0, 10);
+            return new ArrayInstance(InstancePrototype, 0, 10);
         }
 
         /// <summary>
@@ -43,10 +43,10 @@
             {
                 var temp = new object[elements.Length];
                 Array.Copy(elements, temp, elements.Length);
-                return new ArrayInstance(this.InstancePrototype, elements);
+                return new ArrayInstance(InstancePrototype, elements);
             }
 
-            return new ArrayInstance(this.InstancePrototype, elements);
+            return new ArrayInstance(InstancePrototype, elements);
         }
 
 
@@ -69,26 +69,18 @@
         {
             if (elements.Count == 1)
             {
-                if (elements[0] is double)
+                if (TypeUtilities.IsNumeric(elements[0]))
                 {
-                    var length = (double)elements[0];
-                    var length32 = TypeConverter.ToUint32(length);
-                    if (Double.IsNaN(length) || Math.Abs(length - length32) > double.Epsilon)
-                        throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
-                    return new ArrayInstance(this.InstancePrototype, length32, length32);
-                }
-
-                if (elements[0] is int)
-                {
-                    var length = (int)elements[0];
-                    if (length < 0)
-                        throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
-                    return new ArrayInstance(this.InstancePrototype, (uint)length, (uint)length);
+                    var specifiedLength = TypeConverter.ToNumber(elements[0]);
+                    var actualLength = TypeConverter.ToUint32(elements[0]);
+                    if (Math.Abs(specifiedLength - actualLength) > Double.Epsilon)
+                        throw new JavaScriptException(Engine, "RangeError", "Invalid array length");
+                    return new ArrayInstance(InstancePrototype, actualLength, actualLength);
                 }
             }
 
             // Transform any nulls into undefined.
-            for (int i = 0; i < elements.Count; i++)
+            for (var i = 0; i < elements.Count; i++)
                 if (elements[i] == null)
                     elements[i] = Undefined.Value;
 
@@ -110,27 +102,27 @@
                     var length = (double)elements[0];
                     var length32 = TypeConverter.ToUint32(length);
                     if (Double.IsNaN(length) || Math.Abs(length - length32) > double.Epsilon)
-                        throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
-                    return new ArrayInstance(this.InstancePrototype, length32, length32);
+                        throw new JavaScriptException(Engine, "RangeError", "Invalid array length");
+                    return new ArrayInstance(InstancePrototype, length32, length32);
                 }
 
                 if (elements[0] is int)
                 {
                     var length = (int)elements[0];
                     if (length < 0)
-                        throw new JavaScriptException(this.Engine, "RangeError", "Invalid array length");
-                    return new ArrayInstance(this.InstancePrototype, (uint)length, (uint)length);
+                        throw new JavaScriptException(Engine, "RangeError", "Invalid array length");
+                    return new ArrayInstance(InstancePrototype, (uint)length, (uint)length);
                 }
 
                 if (elements[0] is uint)
                 {
                     var length = (uint)elements[0];
-                    return new ArrayInstance(this.InstancePrototype, length, length);
+                    return new ArrayInstance(InstancePrototype, length, length);
                 }
             }
 
             // Transform any nulls into undefined.
-            for (int i = 0; i < elements.Length; i++)
+            for (var i = 0; i < elements.Length; i++)
                 if (elements[i] == null)
                     elements[i] = Undefined.Value;
 

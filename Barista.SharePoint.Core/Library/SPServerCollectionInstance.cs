@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public SPServerCollectionInstance Construct()
     {
-      return new SPServerCollectionInstance(this.InstancePrototype);
+      return new SPServerCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public SPServerCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public SPServerCollectionInstance(ObjectInstance prototype, SPServerCollection serverCollection)
@@ -61,7 +61,7 @@
       var result = m_serverCollection[guid];
       return result == null
         ? null
-        : new SPServerInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPServerInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "getServerByName")]
@@ -70,16 +70,17 @@
       var result = m_serverCollection[name];
       return result == null
         ? null
-        : new SPServerInstance(this.Engine.Object.InstancePrototype, result);
+        : new SPServerInstance(Engine.Object.InstancePrototype, result);
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+SPServer]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var server in m_serverCollection)
       {
-        ArrayInstance.Push(result, new SPServerInstance(this.Engine.Object.InstancePrototype, server));
+        ArrayInstance.Push(result, new SPServerInstance(Engine.Object.InstancePrototype, server));
       }
       return result;
     }

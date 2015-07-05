@@ -14,6 +14,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
@@ -343,10 +344,12 @@
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
+                request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
                 request.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
@@ -377,11 +380,13 @@
             request.Code = code;
             request.CodePath = codePath;
 
-            if (String.IsNullOrEmpty(request.InstanceInitializationCode) == false)
+            var instanceSettings = request.ParseInstanceSettings();
+
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
-                request.InstanceInitializationCode = Tamp(request.InstanceInitializationCode, out instanceInitializationCodePath);
-                request.InstanceInitializationCodePath = instanceInitializationCodePath;
+                instanceSettings.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
+                instanceSettings.InstanceInitializationCodePath = instanceInitializationCodePath;
             }
 
             request.SetExtendedPropertiesFromCurrentSPContext();
@@ -391,7 +396,7 @@
             var setHeaders = true;
             if (WebOperationContext.Current != null)
             {
-                result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
+                result.ModifyOutgoingWebResponse(WebOperationContext.Current.OutgoingResponse);
                 setHeaders = false;
             }
 

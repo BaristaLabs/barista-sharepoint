@@ -149,6 +149,7 @@
         }
 
         [JSProperty(Name = "offlineTermStoreNames")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance OfflineTermStoreNames
         {
             get

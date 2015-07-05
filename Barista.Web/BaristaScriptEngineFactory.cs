@@ -20,7 +20,9 @@
 
             //Based on the instancing mode, either retrieve the ScriptEngine from the desired store, or create a new ScriptEngine instance.
             ScriptEngine engine;
-            switch (BaristaContext.Current.Request.InstanceMode)
+            var instanceSettings = BaristaContext.Current.Request.ParseInstanceSettings();
+
+            switch (instanceSettings.InstanceMode)
             {
                 case BaristaInstanceMode.PerCall:
                     //Always create a new instance of the script engine.
@@ -34,10 +36,10 @@
                 //  engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromSession(BaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
                 //  break;
                 default:
-                    throw new NotImplementedException("The instance mode of " + BaristaContext.Current.Request.InstanceMode + " is currently not supported.");
+                    throw new NotImplementedException("The instance mode of " + instanceSettings.InstanceMode + " is currently not supported.");
             }
 
-            if (BaristaContext.Current.Request.ForceStrict)
+            if (BaristaContext.Current.Request.ShouldForceStrict())
             {
                 engine.ForceStrictMode = true;
             }

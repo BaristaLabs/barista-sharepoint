@@ -17,13 +17,13 @@
     public SPCamlQueryBuilderConstructor(ScriptEngine engine)
       : base(engine.Function.InstancePrototype, "SPCamlQueryBuilder", new SPCamlQueryBuilderInstance(engine.Object.InstancePrototype))
     {
-      this.PopulateFunctions();
+      PopulateFunctions();
     }
 
     [JSConstructorFunction]
     public SPCamlQueryBuilderInstance Construct(object objectInstance)
     {
-      return new SPCamlQueryBuilderInstance(this.Engine.Object.InstancePrototype);
+      return new SPCamlQueryBuilderInstance(Engine.Object.InstancePrototype);
     }
 
     [JSFunction(Name="createCamlQueryFromODataQueryString")]
@@ -101,10 +101,10 @@
     public SPCamlQueryBuilderInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.Tree = new List<CamlHump>();
-      this.UnclosedTags = 0;
+      Tree = new List<CamlHump>();
+      UnclosedTags = 0;
 
-      this.PopulateFunctions();
+      PopulateFunctions();
     }
 
     #region Internal Properties
@@ -127,14 +127,14 @@
     {
       Tree.Add(new CamlHump { Element = CamlHumpElementType.Start, Name = "Where" });
       UnclosedTags++;
-      return new SPCamlQueryBuilder_Where(this.Engine.Object.InstancePrototype, this);
+      return new SPCamlQueryBuilder_Where(Engine.Object.InstancePrototype, this);
     }
 
     [JSFunction(Name = "GroupBy")]
     public SPCamlQueryBuilder_GroupedQuery GroupBy(string groupFieldName, bool collapse)
     {
       StartGroupBy(this, groupFieldName, collapse);
-      return new SPCamlQueryBuilder_GroupedQuery(this.Engine.Object.InstancePrototype, this);
+      return new SPCamlQueryBuilder_GroupedQuery(Engine.Object.InstancePrototype, this);
     }
 
     [JSFunction(Name = "OrderBy")]
@@ -142,7 +142,7 @@
     {
       StartOrderBy(this, overrideSort, useIndexForOrderBy);
       Tree.Add(new CamlHump { Element = CamlHumpElementType.FieldRef, Name = sortFieldName });
-      return new SPCamlQueryBuilder_OrderedQuery(this.Engine.Object.InstancePrototype, this);
+      return new SPCamlQueryBuilder_OrderedQuery(Engine.Object.InstancePrototype, this);
     }
 
     [JSFunction(Name = "OrderByDesc")]
@@ -150,7 +150,7 @@
     {
       StartOrderBy(this, overrideSort, useIndexForOrderBy);
       Tree.Add(new CamlHump { Element = CamlHumpElementType.FieldRef, Name = sortFieldName, IsDescending = true });
-      return new SPCamlQueryBuilder_OrderedQuery(this.Engine.Object.InstancePrototype, this);
+      return new SPCamlQueryBuilder_OrderedQuery(Engine.Object.InstancePrototype, this);
     }
     #endregion
 

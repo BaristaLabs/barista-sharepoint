@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public TermSetCollectionInstance Construct()
     {
-      return new TermSetCollectionInstance(this.InstancePrototype);
+      return new TermSetCollectionInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,8 @@
     public TermSetCollectionInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public TermSetCollectionInstance(ObjectInstance prototype, TermSetCollection termSetCollection)
@@ -62,7 +62,7 @@
       var termSet = m_termSetCollection[name];
       return termSet == null
         ? null
-        : new TermSetInstance(this.Engine.Object.InstancePrototype, termSet);
+        : new TermSetInstance(Engine.Object.InstancePrototype, termSet);
     }
 
     [JSFunction(Name = "getTermSetByIndex")]
@@ -71,7 +71,7 @@
       var termSet = m_termSetCollection[index];
       return termSet == null
         ? null
-        : new TermSetInstance(this.Engine.Object.InstancePrototype, termSet);
+        : new TermSetInstance(Engine.Object.InstancePrototype, termSet);
     }
 
     [JSFunction(Name = "getTermSetById")]
@@ -81,16 +81,17 @@
       var termSet = m_termSetCollection[guid];
       return termSet == null
         ? null
-        : new TermSetInstance(this.Engine.Object.InstancePrototype, termSet);
+        : new TermSetInstance(Engine.Object.InstancePrototype, termSet);
     }
 
     [JSFunction(Name = "toArray")]
+    [JSDoc("ternReturnType", "[+TermSet]")]
     public ArrayInstance ToArray()
     {
-      var result = this.Engine.Array.Construct();
+      var result = Engine.Array.Construct();
       foreach (var termSet in m_termSetCollection)
       {
-        ArrayInstance.Push(result, new TermSetInstance(this.Engine.Object.InstancePrototype, termSet));
+        ArrayInstance.Push(result, new TermSetInstance(Engine.Object.InstancePrototype, termSet));
       }
       return result;
     }

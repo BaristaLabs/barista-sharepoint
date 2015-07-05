@@ -19,7 +19,7 @@
         [JSConstructorFunction]
         public SPListItemCollectionInstance Construct()
         {
-            return new SPListItemCollectionInstance(this.InstancePrototype);
+            return new SPListItemCollectionInstance(InstancePrototype);
         }
     }
 
@@ -31,8 +31,8 @@
         public SPListItemCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPListItemCollectionInstance(ObjectInstance prototype, SPListItemCollection listItemCollection)
@@ -66,7 +66,7 @@
                 if (m_listItemCollection.Fields == null)
                     return null;
 
-                return new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_listItemCollection.Fields);
+                return new SPFieldCollectionInstance(Engine.Object.InstancePrototype, m_listItemCollection.Fields);
             }
         }
 
@@ -78,7 +78,7 @@
                 if (m_listItemCollection.ListItemCollectionPosition == null)
                     return null;
 
-                return new SPListItemCollectionPositionInstance(this.Engine.Object.InstancePrototype, m_listItemCollection.ListItemCollectionPosition);
+                return new SPListItemCollectionPositionInstance(Engine.Object.InstancePrototype, m_listItemCollection.ListItemCollectionPosition);
             }
         }
 
@@ -92,12 +92,13 @@
         }
 
         [JSProperty(Name = "queryFieldNames")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance QueryFieldNames
         {
             get
             {
 // ReSharper disable once CoVariantArrayConversion
-                var result = this.Engine.Array.Construct(m_listItemCollection.QueryFieldNames.OfType<string>().ToArray());
+                var result = Engine.Array.Construct(m_listItemCollection.QueryFieldNames.OfType<string>().ToArray());
                 return result;
             }
         }
@@ -110,7 +111,7 @@
             if (result == null)
                 return null;
 
-            return new SPListItemInstance(this.Engine, result);
+            return new SPListItemInstance(Engine, result);
         }
 
         [JSFunction(Name = "add2")]
@@ -128,7 +129,7 @@
                 if (result == null)
                     return null;
 
-                return new SPListItemInstance(this.Engine, result);
+                return new SPListItemInstance(Engine, result);
             }
             return null;
         }
@@ -167,7 +168,7 @@
 
             return listItem == null
                 ? null
-                : new SPListItemInstance(this.Engine, listItem);
+                : new SPListItemInstance(Engine, listItem);
         }
 
         [JSFunction(Name = "getItemByIndex")]
@@ -177,7 +178,7 @@
 
             return listItem == null
                 ? null
-                : new SPListItemInstance(this.Engine, listItem);
+                : new SPListItemInstance(Engine, listItem);
         }
 
         [JSFunction(Name = "getItemById")]
@@ -187,7 +188,7 @@
 
             return listItem == null
                 ? null
-                : new SPListItemInstance(this.Engine, listItem);
+                : new SPListItemInstance(Engine, listItem);
         }
 
         [JSFunction(Name = "getList")]
@@ -196,7 +197,7 @@
             if (m_listItemCollection.List == null)
                 return null;
 
-            return new SPListInstance(this.Engine, this.m_listItemCollection.List.ParentWeb.Site, this.m_listItemCollection.List.ParentWeb, this.m_listItemCollection.List);
+            return new SPListInstance(Engine, m_listItemCollection.List.ParentWeb.Site, m_listItemCollection.List.ParentWeb, m_listItemCollection.List);
         }
 
         [JSFunction(Name = "getXml")]
@@ -214,11 +215,12 @@
         //ReorderItems
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (SPListItem listItem in m_listItemCollection)
-                ArrayInstance.Push(result, new SPListItemInstance(this.Engine, listItem));
+                ArrayInstance.Push(result, new SPListItemInstance(Engine, listItem));
 
             return result;
         }

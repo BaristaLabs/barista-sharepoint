@@ -55,6 +55,7 @@
         public void Add(string addresses)
         {
             m_mailAddressCollection.Add(addresses);
+            
         }
 
         [JSFunction(Name = "toMailAddressString")]

@@ -33,9 +33,9 @@
             SPFolder folder;
 
             if (SPHelper.TryGetSPFolder(folderUrl, out site, out web, out folder) == false)
-                throw new JavaScriptException(this.Engine, "Error", "No folder is available at the specified url.");
+                throw new JavaScriptException(Engine, "Error", "No folder is available at the specified url.");
 
-            return new SPFolderInstance(this.InstancePrototype, site, web, folder);
+            return new SPFolderInstance(InstancePrototype, site, web, folder);
         }
 
         public SPFolderInstance Construct(SPFolder folder)
@@ -43,7 +43,7 @@
             if (folder == null)
                 throw new ArgumentNullException("folder");
 
-            return new SPFolderInstance(this.InstancePrototype, null, null, folder);
+            return new SPFolderInstance(InstancePrototype, null, null, folder);
         }
     }
 
@@ -57,24 +57,24 @@
         public SPFolderInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public SPFolderInstance(ObjectInstance prototype, SPSite site, SPWeb web, SPFolder folder)
             : this(prototype)
         {
-            this.m_folder = folder;
-            this.m_site = site;
-            this.m_web = web;
-            this.m_folder = folder;
+            m_folder = folder;
+            m_site = site;
+            m_web = web;
+            m_folder = folder;
 
             m_files = new Lazy<SPFileCollectionInstance>(() => m_folder.Files == null
                 ? null
-                : new SPFileCollectionInstance(this.Engine.Object.InstancePrototype, m_folder.Files));
+                : new SPFileCollectionInstance(Engine.Object.InstancePrototype, m_folder.Files));
 
             m_subFolders = new Lazy<SPFolderCollectionInstance>(() => m_folder.SubFolders == null
                 ? null
-                : new SPFolderCollectionInstance(this.Engine.Object.InstancePrototype, m_folder.SubFolders));
+                : new SPFolderCollectionInstance(Engine.Object.InstancePrototype, m_folder.SubFolders));
         }
 
         #region Properties
@@ -91,7 +91,7 @@
             {
                 return m_folder.Audit == null
                     ? null
-                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_folder.Audit);
+                    : new SPAuditInstance(Engine.Object.InstancePrototype, m_folder.Audit);
             }
         }
 
@@ -100,7 +100,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_folder.ContainingDocumentLibrary);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_folder.ContainingDocumentLibrary);
             }
         }
 
@@ -116,7 +116,7 @@
 
                     return m_folder.ContentTypeOrder == null
                         ? null
-                        : new SPContentTypeListInstance(this.Engine, m_folder.ContentTypeOrder);
+                        : new SPContentTypeListInstance(Engine, m_folder.ContentTypeOrder);
                 }
                 catch(Exception)
                 {
@@ -179,7 +179,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_folder.ParentListId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_folder.ParentListId);
             }
         }
 
@@ -208,7 +208,7 @@
                 {
                     return m_folder.Properties == null
                     ? null
-                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_folder.Properties);
+                    : new HashtableInstance(Engine.Object.InstancePrototype, m_folder.Properties);
                 }
                 catch (Exception)
                 {
@@ -225,7 +225,7 @@
             {
                 try
                 {
-                    var result = this.Engine.Object.Construct();
+                    var result = Engine.Object.Construct();
 
                     foreach (var key in m_folder.Properties.Keys)
                     {
@@ -237,7 +237,7 @@
 
                         var serializedValue = JsonConvert.SerializeObject(m_folder.Properties[key]);
 
-                        result.SetPropertyValue(serializedKey, JSONObject.Parse(this.Engine, serializedValue, null), false);
+                        result.SetPropertyValue(serializedKey, JSONObject.Parse(Engine, serializedValue, null), false);
                     }
 
                     return result;
@@ -290,7 +290,7 @@
 
                     return m_folder.UniqueContentTypeOrder == null
                         ? null
-                        : new SPContentTypeListInstance(this.Engine, m_folder.UniqueContentTypeOrder);
+                        : new SPContentTypeListInstance(Engine, m_folder.UniqueContentTypeOrder);
                 }
                 catch (Exception)
                 {
@@ -363,7 +363,7 @@
             var htProperties = SPHelper.GetFieldValuesHashtableFromPropertyObject(properties);
 
             var docSet = DocumentSet.Create(m_folder, name, contentTypeId, htProperties, provisionDefaultContent);
-            return new SPDocumentSetInstance(this.Engine.Object.InstancePrototype, null, null, docSet);
+            return new SPDocumentSetInstance(Engine.Object.InstancePrototype, null, null, docSet);
         }
 
         [JSFunction(Name = "addFile")]
@@ -374,7 +374,7 @@
             {
                 var byteArray = file as Base64EncodedByteArrayInstance;
                 if (String.IsNullOrEmpty(byteArray.FileName))
-                    throw new JavaScriptException(this.Engine, "Error", "The specified Base64EncodedByteArray did not specify a filename.");
+                    throw new JavaScriptException(Engine, "Error", "The specified Base64EncodedByteArray did not specify a filename.");
 
                 m_folder.ParentWeb.AllowUnsafeUpdates = true;
                 result = m_folder.Files.Add(m_folder.ServerRelativeUrl + "/" + byteArray.FileName, byteArray.Data, overwrite);
@@ -382,9 +382,9 @@
                 m_folder.ParentWeb.AllowUnsafeUpdates = false;
             }
             else
-                throw new JavaScriptException(this.Engine, "Error", "Unsupported type when adding a file: " + file.GetType());
+                throw new JavaScriptException(Engine, "Error", "Unsupported type when adding a file: " + file.GetType());
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPFileInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addFileByUrl")]
@@ -401,9 +401,9 @@
                 result = m_folder.Files.Add(url, Encoding.UTF8.GetBytes(data as string), overwrite);
             }
             else
-                throw new JavaScriptException(this.Engine, "Error", "Unable to create SPFile: Unsupported data type: " + data.GetType());
+                throw new JavaScriptException(Engine, "Error", "Unable to create SPFile: Unsupported data type: " + data.GetType());
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPFileInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "addProperty")]
@@ -416,7 +416,7 @@
         public SPFolderInstance AddSubFolder(string url)
         {
             var subFolder = m_folder.SubFolders.Add(url);
-            return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
+            return new SPFolderInstance(Engine.Object.InstancePrototype, null, null, subFolder);
         }
 
         [JSFunction(Name = "copyTo")]
@@ -435,7 +435,7 @@
         public DiffResultInstance Diff(SPFolderInstance targetFolder, object recursive)
         {
             if (targetFolder == null)
-                throw new JavaScriptException(this.Engine, "Error", "Target Folder must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Target Folder must be specified.");
 
             var bRecurse = true;
             if (recursive != Undefined.Value && recursive != Null.Value && recursive != null)
@@ -448,10 +448,10 @@
             itemsIterator.ProcessFilesInFolder(m_folder, bRecurse,
                                            spFile =>
                                            {
-                                               var fileInfo = new DiffInfoInstance(this.Engine)
+                                               var fileInfo = new DiffInfoInstance(Engine)
                                                {
                                                    Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(m_folder.Url, ""),
-                                                   TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                                                   TimeLastModified = JurassicHelper.ToDateInstance(Engine,
                                                        spFile.TimeLastModified)
                                                };
 
@@ -469,10 +469,10 @@
             itemsIterator.ProcessFilesInFolder(targetFolder.Folder, bRecurse,
                                            spFile =>
                                            {
-                                               var fileInfo = new DiffInfoInstance(this.Engine)
+                                               var fileInfo = new DiffInfoInstance(Engine)
                                                {
                                                    Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(targetFolder.Folder.Url, ""),
-                                                   TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                                                   TimeLastModified = JurassicHelper.ToDateInstance(Engine,
                                                        spFile.TimeLastModified)
                                                };
 
@@ -487,7 +487,7 @@
                                            },
                                            null);
 
-            var result = new DiffResultInstance(this.Engine);
+            var result = new DiffResultInstance(Engine);
             result.Process(sourceFolderInfo, targetFolderInfo);
             return result;
         }
@@ -511,7 +511,7 @@
                 if (SPHelper.TryGetSPFile(targetUrl, out file))
                     zipBytes = file.OpenBinary(SPOpenBinaryOptions.SkipVirusScan);
                 else
-                    throw new JavaScriptException(this.Engine, "Error",
+                    throw new JavaScriptException(Engine, "Error",
                         "A file was not found in the specified location: " + targetUrl);
             }
 
@@ -522,10 +522,10 @@
             itemsIterator.ProcessFilesInFolder(m_folder, true,
                 spFile =>
                 {
-                    var fileInfo = new DiffInfoInstance(this.Engine)
+                    var fileInfo = new DiffInfoInstance(Engine)
                     {
                         Url = spFile.Url.ReplaceFirstOccurenceIgnoreCase(m_folder.Url, ""),
-                        TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                        TimeLastModified = JurassicHelper.ToDateInstance(Engine,
                             spFile.TimeLastModified)
                     };
 
@@ -549,10 +549,10 @@
                         if (ze.IsDirectory)
                             continue;
 
-                        var fileInfo = new DiffInfoInstance(this.Engine)
+                        var fileInfo = new DiffInfoInstance(Engine)
                         {
                             Url = "/" + ze.Name,
-                            TimeLastModified = JurassicHelper.ToDateInstance(this.Engine,
+                            TimeLastModified = JurassicHelper.ToDateInstance(Engine,
                                 ze.DateTime)
                         };
 
@@ -570,7 +570,7 @@
                 }
             }
 
-            var result = new DiffResultInstance(this.Engine);
+            var result = new DiffResultInstance(Engine);
             result.Process(sourceFolderInfo, targetFolderInfo);
             return result;
         }
@@ -597,7 +597,7 @@
                 m_folder.ParentWeb.AllowUnsafeUpdates = false;
             }
 
-            return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, subFolder);
+            return new SPFolderInstance(Engine.Object.InstancePrototype, null, null, subFolder);
         }
 
         [JSFunction(Name = "getDocumentLibrary")]
@@ -605,7 +605,7 @@
         {
             return m_folder.DocumentLibrary == null
                 ? null
-                : new SPDocumentLibraryInstance(this.Engine, m_site, m_web, m_folder.DocumentLibrary);
+                : new SPDocumentLibraryInstance(Engine, m_site, m_web, m_folder.DocumentLibrary);
         }
 
         [JSFunction(Name = "getItem")]
@@ -613,7 +613,7 @@
         {
             return m_folder.Item == null
                 ? null
-                : new SPListItemInstance(this.Engine, m_folder.Item);
+                : new SPListItemInstance(Engine, m_folder.Item);
         }
 
         [JSFunction(Name = "getItems")]
@@ -645,32 +645,32 @@
             var allItems = parentList.GetItems(query);
             var allListItemInstances = allItems
                     .OfType<SPListItem>()
-                    .Select(li => new SPListItemInstance(this.Engine, li));
+                    .Select(li => new SPListItemInstance(Engine, li));
 
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(allListItemInstances.ToArray());
+            return Engine.Array.Construct(allListItemInstances.ToArray());
             // ReSharper restore CoVariantArrayConversion
         }
 
         [JSFunction(Name = "getParentFolder")]
         public SPFolderInstance GetParentFolder()
         {
-            return new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, m_folder.ParentFolder);
+            return new SPFolderInstance(Engine.Object.InstancePrototype, null, null, m_folder.ParentFolder);
         }
 
         [JSFunction(Name = "getParentWeb")]
         public SPWebInstance GetParentWeb()
         {
-            return new SPWebInstance(this.Engine, m_folder.ParentWeb);
+            return new SPWebInstance(Engine, m_folder.ParentWeb);
         }
 
 
         [JSFunction(Name = "getPermissions")]
         public SPSecurableObjectInstance GetPermissions()
         {
-            return new SPSecurableObjectInstance(this.Engine)
+            return new SPSecurableObjectInstance(Engine)
             {
-                SecurableObject = this.m_folder.Item
+                SecurableObject = m_folder.Item
             };
         }
 
@@ -688,20 +688,21 @@
         [JSFunction(Name = "getPropertyBagValue")]
         public object GetProperty(object key)
         {
-            return TypeConverter.ToObject(this.Engine, m_folder.GetProperty(key));
+            return TypeConverter.ToObject(Engine, m_folder.GetProperty(key));
         }
 
         [JSFunction(Name = "getFiles")]
+        [JSDoc("ternReturnType", "[+SPFile]")]
         public ArrayInstance GetFiles(object recursive)
         {
             if (recursive == Undefined.Value || TypeConverter.ToBoolean(recursive) == false)
             {
                 var listItemInstances = m_folder.Files
                     .OfType<SPFile>()
-                    .Select(file => new SPFileInstance(this.Engine.Object.InstancePrototype, file));
+                    .Select(file => new SPFileInstance(Engine.Object.InstancePrototype, file));
 
                 // ReSharper disable CoVariantArrayConversion
-                return this.Engine.Array.Construct(listItemInstances.ToArray());
+                return Engine.Array.Construct(listItemInstances.ToArray());
                 // ReSharper restore CoVariantArrayConversion
             }
 
@@ -715,20 +716,20 @@
             var allListItemInstances = allItems
                     .OfType<SPListItem>()
                     .Where(li => li.File != null && li.File.Exists)
-                    .Select(li => new SPFileInstance(this.Engine.Object.InstancePrototype, li.File));
+                    .Select(li => new SPFileInstance(Engine.Object.InstancePrototype, li.File));
 
             // ReSharper disable CoVariantArrayConversion
-            return this.Engine.Array.Construct(allListItemInstances.ToArray());
+            return Engine.Array.Construct(allListItemInstances.ToArray());
             // ReSharper restore CoVariantArrayConversion
         }
 
         [JSFunction(Name = "getSubFolders")]
         public ArrayInstance GetSubFolders()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var folder in m_folder.SubFolders.OfType<SPFolder>())
             {
-                ArrayInstance.Push(result, new SPFolderInstance(this.Engine.Object.InstancePrototype, null, null, folder));
+                ArrayInstance.Push(result, new SPFolderInstance(Engine.Object.InstancePrototype, null, null, folder));
             }
 
             return result;

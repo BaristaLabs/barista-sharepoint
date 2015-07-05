@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public SPUserCustomActionCollectionInstance Construct()
         {
-            return new SPUserCustomActionCollectionInstance(this.InstancePrototype);
+            return new SPUserCustomActionCollectionInstance(InstancePrototype);
         }
     }
 
@@ -30,8 +30,8 @@
         public SPUserCustomActionCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPUserCustomActionCollectionInstance(ObjectInstance prototype, SPUserCustomActionCollection userCustomActionCollection)
@@ -75,7 +75,7 @@
             var result = m_userCustomActionCollection.Add();
             return result == null
                 ? null
-                : new SPUserCustomActionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPUserCustomActionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "clear")]
@@ -91,15 +91,16 @@
             var result = m_userCustomActionCollection[guidId];
             return result == null
                 ? null
-                : new SPUserCustomActionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPUserCustomActionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPUserCustomAction]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var action in m_userCustomActionCollection
-                .Select(a => new SPUserCustomActionInstance(this.Engine.Object.InstancePrototype, a)))
+                .Select(a => new SPUserCustomActionInstance(Engine.Object.InstancePrototype, a)))
             {
                 ArrayInstance.Push(result, action);
             }

@@ -17,7 +17,7 @@
     [JSConstructorFunction]
     public HttpWebResponseInstance Construct()
     {
-      return new HttpWebResponseInstance(this.InstancePrototype);
+      return new HttpWebResponseInstance(InstancePrototype);
     }
   }
 
@@ -29,8 +29,7 @@
     public HttpWebResponseInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFunctions();
     }
 
     public HttpWebResponseInstance(ObjectInstance prototype, HttpWebResponse httpWebResponse)
@@ -72,6 +71,7 @@
     }
 
     [JSProperty(Name = "cookies")]
+    [JSDoc("ternPropertyType", "[+Cookie]")]
     public ArrayInstance Cookies
     {
       get
@@ -80,11 +80,11 @@
         for (var i = 0; i < m_httpWebResponse.Cookies.Count; i++)
         {
           var cookie = m_httpWebResponse.Cookies[i];
-          cookieInstances.Add(new CookieInstance(this.Engine.Object.InstancePrototype, cookie));
+          cookieInstances.Add(new CookieInstance(Engine.Object.InstancePrototype, cookie));
         }
 
 // ReSharper disable CoVariantArrayConversion
-        return this.Engine.Array.Construct(cookieInstances.ToArray());
+        return Engine.Array.Construct(cookieInstances.ToArray());
 // ReSharper restore CoVariantArrayConversion
       }
     }
@@ -94,7 +94,7 @@
     {
       get
       {
-        var result = this.Engine.Object.Construct();
+        var result = Engine.Object.Construct();
         foreach (var key in m_httpWebResponse.Headers.AllKeys)
         {
           result.SetPropertyValue(key, m_httpWebResponse.Headers[key], false);
@@ -112,7 +112,7 @@
     [JSProperty(Name = "lastModified")]
     public DateInstance LastModified
     {
-      get { return JurassicHelper.ToDateInstance(this.Engine, m_httpWebResponse.LastModified); }
+      get { return JurassicHelper.ToDateInstance(Engine, m_httpWebResponse.LastModified); }
     }
 
     [JSProperty(Name = "method")]
@@ -130,7 +130,7 @@
     [JSProperty(Name = "responseUri")]
     public UriInstance ResponseUri
     {
-      get { return new UriInstance(this.Engine.Object.InstancePrototype, m_httpWebResponse.ResponseUri); }
+      get { return new UriInstance(Engine.Object.InstancePrototype, m_httpWebResponse.ResponseUri); }
     }
 
     [JSProperty(Name = "server")]

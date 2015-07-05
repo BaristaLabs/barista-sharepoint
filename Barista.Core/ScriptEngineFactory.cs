@@ -153,7 +153,6 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
 
             response.StatusCode = HttpStatusCode.BadRequest;
             response.StatusDescription = message;
-            response.AutoDetectContentType = false;
             response.ContentType = "text/html";
 
             string exceptionName = exception.Name;
@@ -194,7 +193,6 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
 
             response.StatusCode = HttpStatusCode.BadRequest;
             response.StatusDescription = message;
-            response.AutoDetectContentType = false;
             response.ContentType = "text/html";
 
             var resultMessage = String.Format(ExceptionMessage, message, stack);
@@ -206,7 +204,6 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
             response.StatusCode = HttpStatusCode.BadRequest;
             response.StatusDescription =
               "The script being executed exceeded the maximum allowable timeout as set by an Administrator. ({0}ms).";
-            response.AutoDetectContentType = false;
             response.ContentType = "text/html";
 
             var resultMessage = String.Format(JavaScriptTimeoutMessage, executionTimeout);

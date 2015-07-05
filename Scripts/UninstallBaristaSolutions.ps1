@@ -59,7 +59,7 @@ $identity = "90fb8db4-2b5f-4de7-882b-6faba092942c";
 
 Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
 
-$args = @"
+						$args = @"
 Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
 Disable-SPFeature –Identity $($identity) -force -Confirm:0 -ErrorAction SilentlyContinue
 "@

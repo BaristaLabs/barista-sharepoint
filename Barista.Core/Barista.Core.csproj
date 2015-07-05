@@ -59,46 +59,33 @@
       <HintPath>..\Lib\Barista.Interop.ActiveDs.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.1.2\lib\net35\Common.Logging.dll</HintPath>
+    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="EPPlus, Version=4.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EPPlus.4.0.2\lib\net20\EPPlus.dll</HintPath>
+    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.0.4\lib\net20\EPPlus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="itextsharp, Version=5.3.3.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+    <Reference Include="itextsharp, Version=5.5.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.6\lib\itextsharp.dll</HintPath>
       <Private>True</Private>
-      <HintPath>..\packages\iTextSharp.5.3.3\lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET35\Lucene.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net.Contrib.Analyzers">
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Analyzers.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Core, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net.Contrib.FastVectorHighlighter, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.FastVectorHighlighter.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Highlighter, Version=2.3.2.1, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Highlighter.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.Memory">
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Memory.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.Queries">
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Queries.dll</HintPath>
@@ -112,13 +99,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net.Contrib.Snowball">
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Snowball.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Contrib.SpellChecker">
-      <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
@@ -127,8 +107,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Web.Administration\7.0.0.0__31bf3856ad364e35\Microsoft.Web.Administration.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz">
-      <HintPath>..\packages\Quartz.2.1.2\lib\net35\Quartz.dll</HintPath>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net35\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz, Version=2.3.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.2.3.2\lib\net40\Quartz.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -149,7 +133,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
     <Reference Include="wnvhtmlconvert, Version=7.0.0.0, Culture=neutral, PublicKeyToken=5b5f377bc08a4d32, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\wnvhtmlconvert.dll</HintPath>
@@ -169,9 +152,13 @@
     <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="Biscotti.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
     <Compile Include="BaristaInstanceMutexManager.cs" />
+    <Compile Include="BaristaResponseMessage.cs" />
+    <Compile Include="BrewRequestHeaders.cs" />
+    <Compile Include="BrewRequestInstanceSettings.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -228,6 +215,8 @@
     <Compile Include="Engine\IScriptSource.cs" />
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\WebOperationContextExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
     <Compile Include="Framework\NewtonsoftJsonClientFormatter.cs" />
@@ -238,6 +227,8 @@
     <Compile Include="Helpers\Device.cs" />
     <Compile Include="Helpers\DeviceParser.cs" />
     <Compile Include="Helpers\DevicePattern.cs" />
+    <Compile Include="Helpers\HttpEncoder.cs" />
+    <Compile Include="Helpers\HttpUtility.cs" />
     <Compile Include="Helpers\OS.cs" />
     <Compile Include="Helpers\OSParser.cs" />
     <Compile Include="Helpers\OSPattern.cs" />
@@ -246,6 +237,12 @@
     <Compile Include="Helpers\UserAgentParser.cs" />
     <Compile Include="Helpers\UserAgentPattern.cs" />
     <Compile Include="Helpers\YamlParsing.cs" />
+    <Compile Include="HttpFile.cs" />
+    <Compile Include="HttpMultipart.cs" />
+    <Compile Include="HttpMultipartBoundary.cs" />
+    <Compile Include="HttpMultipartBuffer.cs" />
+    <Compile Include="HttpMultipartSubStream.cs" />
+    <Compile Include="IBaristaCookie.cs" />
     <Compile Include="iCal\CalendarPropertyListInstance.cs" />
     <Compile Include="iCal\EventInstance.cs" />
     <Compile Include="iCal\iCalDateTimeInstance.cs" />
@@ -434,6 +431,7 @@
     <Compile Include="Imports\iCal\Utility\RecurrenceUtil.cs" />
     <Compile Include="Imports\iCal\Utility\SerializationUtil.cs" />
     <Compile Include="Imports\iCal\Utility\TextUtil.cs" />
+    <Compile Include="Imports\Jurassic\Core\CompiledScript.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -780,6 +778,51 @@
     <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
     <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\CropSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\FooterSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\GlobalSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\HeaderSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\HtmlToImageDocument.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\HtmlToPdfDocument.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\LoadSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\MarginSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\ObjectSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\PechkinPaperSize.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\PostItem.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\Unit.cs" />
+    <Compile Include="Imports\TuesPechkin\Document\WebSettings.cs" />
+    <Compile Include="Imports\TuesPechkin\EmbeddedDeployment.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\BeginEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\ErrorEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\FinishEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\PhaseChangeEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\ProgressChangeEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\EventArgs\WarningEventArgs.cs" />
+    <Compile Include="Imports\TuesPechkin\ImageToolset.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\IConverter.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\IDeployment.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\IDocument.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\IObject.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\ISettings.cs" />
+    <Compile Include="Imports\TuesPechkin\Interfaces\IToolset.cs" />
+    <Compile Include="Imports\TuesPechkin\NestingToolset.cs" />
+    <Compile Include="Imports\TuesPechkin\PdfToolset.cs" />
+    <Compile Include="Imports\TuesPechkin\RemotingToolset.cs" />
+    <Compile Include="Imports\TuesPechkin\StandardConverter.cs" />
+    <Compile Include="Imports\TuesPechkin\StaticDeployment.cs" />
+    <Compile Include="Imports\TuesPechkin\TempFolderDeployment.cs" />
+    <Compile Include="Imports\TuesPechkin\ThreadSafeConverter.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\DelegateRegistry.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\IntCallback.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\RetroDelegates.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\StringCallback.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\Tracer.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\UTF8Marshaller.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\VoidCallback.cs" />
+    <Compile Include="Imports\TuesPechkin\Util\WinApiHelper.cs" />
+    <Compile Include="Imports\TuesPechkin\BaristaDeployment.cs" />
+    <Compile Include="Imports\TuesPechkin\WkhtmltoxBindings.cs" />
+    <Compile Include="Imports\TuesPechkin\WkhtmltoxSettingAttribute.cs" />
     <Compile Include="Imports\V8.Net\Exceptions.cs" />
     <Compile Include="Imports\V8.Net\FunctionTemplate.cs" />
     <Compile Include="Imports\V8.Net\Handle.cs" />
@@ -800,6 +843,8 @@
     <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
     <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
     <Compile Include="Engine\IScriptEngine.cs" />
+    <Compile Include="Library\BaristaCookieInstance.cs" />
+    <Compile Include="Library\BaristaCookieListInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
     <Compile Include="Library\DiffInfoInstance.cs" />
     <Compile Include="Library\DiffResultInstance.cs" />
@@ -1313,6 +1358,7 @@
     <Compile Include="Search\Data Contracts\SearchResult.cs" />
     <Compile Include="Search\Data Contracts\JsonDocumentDto.cs" />
     <Compile Include="Search\Data Contracts\Term.cs" />
+    <Compile Include="ServiceContracts\IBaristaRestService.cs" />
     <Compile Include="ServiceContracts\IBaristaScheduler.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
@@ -1330,6 +1376,10 @@
     <Compile Include="Smtp\MailAddressInstance.cs" />
     <Compile Include="Smtp\MailMessageInstance.cs" />
     <Compile Include="Smtp\SmtpClientInstance.cs" />
+    <Compile Include="StreamBodyWriter.cs" />
+    <None Include="job_scheduling_data_2_0.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PrototypicalInheritanceExample.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="UuidType.cs" />
@@ -1396,6 +1446,21 @@
     <Compile Include="WebSockets\WebSocketServerInstance.cs" />
     <Compile Include="WebSockets\WebSocketServerOptions.cs" />
     <Compile Include="WebSockets\WebSocketServerState.cs" />
+    <Compile Include="WkHtmlToPdf\Library\ImageConverterInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\PdfConverterInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\CropSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\FooterSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\GlobalSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\HeaderSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\HtmlToImageDocumentInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\HtmlToPdfDocumentInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\LoadSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\MarginSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\ObjectSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\ObjectSettingsListInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\PaperSizeInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\WebSettingsInstance.cs" />
+    <Compile Include="WkHtmlToPdf\Library\WkHtmlToPdfBundle.cs" />
     <Compile Include="_Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

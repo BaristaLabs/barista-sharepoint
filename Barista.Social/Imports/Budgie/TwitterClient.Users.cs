@@ -2,8 +2,10 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Globalization;
   using System.Linq;
   using System.Threading.Tasks;
+  using Barista.Extensions;
   using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using Newtonsoft.Json;
@@ -47,7 +49,7 @@
       var page = 0;
       var pageSize = 99;
 
-      var content = "user_id=" + String.Join(",", ids.Take(pageSize)).ToRfc3986Encoded();
+      var content = "user_id=" + String.Join(",", ids.Take(pageSize).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToArray()).ToRfc3986Encoded();
 
       return HttpPostAsync("users/lookup.json", content).ContinueWith<ITwitterResponse<IEnumerable<TwitterUser>>>(t =>
       {
@@ -65,7 +67,7 @@
 
           if (count < page * 100) return result;
 
-          content = "user_id=" + String.Join(",", ids.Skip(page * pageSize).Take(pageSize)).ToRfc3986Encoded();
+          content = "user_id=" + String.Join(",", ids.Skip(page * pageSize).Take(pageSize).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToArray()).ToRfc3986Encoded();
           t = HttpPostAsync("users/lookup.json", content);
           t.Wait();
         }
@@ -74,7 +76,7 @@
 
     public Task<ITwitterResponse<TwitterUser>> GetUserAsync(string screenName)
     {
-      if (string.IsNullOrWhiteSpace(screenName)) throw new ArgumentException("screenName must be specified", "screenName");
+        if (screenName.IsNullOrWhiteSpace()) throw new ArgumentException("screenName must be specified", "screenName");
 
       return HttpGetAsync("users/show.json?screen_name=" + screenName.ToRfc3986Encoded()).RespondWith<TwitterUser>(content =>
           JsonConvert.DeserializeObject<JsonUser>(content, new TwitterizerDateConverter()));

@@ -1,11 +1,11 @@
 ﻿namespace Barista.Library
 {
     using Barista.Extensions;
+    using Barista.Newtonsoft.Json;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.IdentityModel.Claims;
     using Microsoft.IdentityModel.WindowsTokenService;
-    using Barista.Newtonsoft.Json;
     using System;
     using System.Collections;
     using System.IO;
@@ -20,6 +20,7 @@
     using System.Web.Caching;
     using System.Xml;
     using System.Xml.Linq;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     [Serializable]
     public abstract class WebInstanceBase : ObjectInstance
@@ -36,13 +37,14 @@
         /// Gets or sets the HttpRequestInstance associated with the web instance and the current context.
         /// </summary>
         [JSProperty(Name = "request")]
+        [JSDoc("Gets or sets the HttpRequestInstance associated with the web instance and the current context.")]
         public virtual HttpRequestInstance Request
         {
             get
             {
-                if (m_httpRequest == null || (m_httpRequest != null && Object.Equals(m_httpRequest.Request, BaristaContext.Current.Request) == false))
+                if (m_httpRequest == null || (m_httpRequest != null && Equals(m_httpRequest.Request, BaristaContext.Current.Request) == false))
                 {
-                    m_httpRequest = new HttpRequestInstance(this.Engine, BaristaContext.Current.Request);
+                    m_httpRequest = new HttpRequestInstance(Engine, BaristaContext.Current.Request);
                 }
 
                 return m_httpRequest;
@@ -54,13 +56,14 @@
         /// Gets or sets the HttpRequestInstance associated with the web instance and the current context.
         /// </summary>
         [JSProperty(Name = "response")]
+        [JSDoc("Gets or sets the HttpRequestInstance associated with the web instance and the current context.")]
         public virtual HttpResponseInstance Response
         {
             get
             {
-                if (m_httpResponse == null || (m_httpResponse != null && Object.Equals(m_httpResponse.Response, BaristaContext.Current.Response) == false))
+                if (m_httpResponse == null || (m_httpResponse != null && Equals(m_httpResponse.Response, BaristaContext.Current.Response) == false))
                 {
-                    m_httpResponse = new HttpResponseInstance(this.Engine, BaristaContext.Current.Response);
+                    m_httpResponse = new HttpResponseInstance(Engine, BaristaContext.Current.Response);
                 }
 
                 return m_httpResponse;
@@ -118,7 +121,7 @@
                 var dataType = AjaxDataType.Unknown;
 
                 //If a settings parameter is defined, coerce it and set properties on the request object.
-                var ajaxSettings = JurassicHelper.Coerce<AjaxSettingsInstance>(this.Engine, settings);
+                var ajaxSettings = JurassicHelper.Coerce<AjaxSettingsInstance>(Engine, settings);
                 if (ajaxSettings != null)
                 {
                     if (ajaxSettings.UseDefaultCredentials == false)
@@ -145,7 +148,7 @@
 
                     if (ajaxSettings.Proxy != null && ajaxSettings.Proxy != Undefined.Value && ajaxSettings.Proxy != Null.Value)
                     {
-                        var proxySettings = JurassicHelper.Coerce<ProxySettingsInstance>(this.Engine, ajaxSettings.Proxy);
+                        var proxySettings = JurassicHelper.Coerce<ProxySettingsInstance>(Engine, ajaxSettings.Proxy);
 
                         if (proxySettings != null)
                         {
@@ -286,7 +289,7 @@
                     }
                     catch (Exception exc) { tcs.SetException(exc); }
 
-                    return new DeferredInstance(this.Engine.Object.InstancePrototype, tcs.Task);
+                    return new DeferredInstance(Engine.Object.InstancePrototype, tcs.Task);
                 }
 
                 object result;
@@ -302,7 +305,7 @@
 
                     result = httpResponse == null
                       ? null
-                      : new HttpWebResponseInstance(this.Engine.Object.InstancePrototype, httpResponse);
+                      : new HttpWebResponseInstance(Engine.Object.InstancePrototype, httpResponse);
                 }
                 catch (Exception ex)
                 {
@@ -326,7 +329,7 @@
             if ((query is string) == false)
                 return Null.Value;
 
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             var dict = HttpUtility.ParseQueryString(query as string);
             foreach (var key in dict.AllKeys)
             {
@@ -356,7 +359,7 @@
                 return;
 
             if (item is ObjectInstance)
-                stringItem = JSONObject.Stringify(this.Engine, item, null, null);
+                stringItem = JSONObject.Stringify(Engine, item, null, null);
             else
                 stringItem = item.ToString();
 
@@ -389,7 +392,7 @@
         [JSFunction(Name = "getItemsInCache")]
         public object GetItemsInCache()
         {
-            var result = this.Engine.Object.Construct();
+            var result = Engine.Object.Construct();
             foreach (var item in HttpRuntime.Cache.OfType<DictionaryEntry>())
             {
                 var key = item.Key as string;
@@ -474,7 +477,7 @@
                         {
                             try
                             {
-                                resultObject = JSONObject.Parse(this.Engine, result, null);
+                                resultObject = JSONObject.Parse(Engine, result, null);
                                 success = true;
                             }
                             catch
@@ -500,7 +503,7 @@
                                     }
                                 }
                                 var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
-                                resultObject = JSONObject.Parse(this.Engine, jsonDocument, null);
+                                resultObject = JSONObject.Parse(Engine, jsonDocument, null);
                                 success = true;
                             }
                             catch
@@ -515,7 +518,7 @@
                         if (!success)
                         {
                             //If we couldn't convert as json or xml, use it as a byte array.
-                            resultObject = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, resultData);
+                            resultObject = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, resultData);
                         }
                     }
                 }

@@ -8,63 +8,128 @@
     <meta name="author" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=8" />
     <!-- Le styles -->
-    <link rel="shortcut icon" href="favicon.ico" >
-    <link href="./Styles/Bootstrap-2.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="Vendor/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
         html,
-        body
-        {
-            height:100%;
-            margin:0;
-            padding:0;
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            padding-top: 25px;
         }
-        html
-        {
-            overflow:hidden;
+
+        html {
+            overflow: hidden;
         }
-        .container-fluid
-        {
+
+        .container-fluid {
             padding-left: 0;
             padding-right: 0;
         }
-        .navbar-fixed-top 
-        {
+
+        .navbar-fixed-top {
             margin-bottom: 0;
         }
-        .CodeMirror 
-        {
+
+        .CodeMirror {
             border: 0;
         }
-        .CodeMirror-scroll
-        {
-            height: 100% 
+
+        .CodeMirror-scroll {
+            height: 100%;
+        }
+
+        #vertical {
+            height: 100%;
+            border: 0;
+            width: 100%;
+        }
+
+        #horizontal {
+            height: 100%;
+            border: 0;
+            width: 100%;
+        }
+
+        #bottom-pane {
+            background-color: #f5f5f5;
+            background-color: rgba(60, 70, 80, 0.15);
+        }
+
+        #left-pane {
+            background-color: #f5f5f5;
+            background-color: rgba(60, 70, 80, 0.05);
+        }
+
+        #center-pane {
+            background-color: #f5f5f5;
+            background-color: rgba(60, 70, 80, 0.05);
+        }
+
+        #right-pane {
+            background-color: #f5f5f5;
+            background-color: rgba(60, 70, 80, 0.05);
+        }
+
+        .pane-content {
+            padding: 0 0;
+        }
+
+        .navbar .divider-vertical {
+            height: 50px;
+            margin: 0 9px;
+            border-right: 1px solid #ffffff;
+            border-left: 1px solid #f2f2f2;
+        }
+
+        .navbar-inverse .divider-vertical {
+            border-right-color: #222222;
+            border-left-color: #111111;
+        }
+
+        @media (max-width: 767px) {
+            .navbar-collapse .nav > .divider-vertical {
+                display: none;
+            }
+        }
+
+        .CodeMirror-focused .cm-matchhighlight {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQI12NgYGBgkKzc8x9CMDAwAAAmhwSbidEoSQAAAABJRU5ErkJggg==);
+            background-position: bottom;
+            background-repeat: repeat-x;
         }
     </style>
-    <link href="./Scripts/Vendor/CodeMirror-2.37/lib/codemirror.css" rel="stylesheet" >
-    <link href="./Scripts/Vendor/CodeMirror-2.37/lib/util/simple-hint.css" rel="stylesheet">
-    <link href="./Scripts/Vendor/CodeMirror-2.37/theme/neat.css" rel="stylesheet">
-    <link href="./Scripts/Vendor/kendoui.web.2012.2.913/styles/kendo.common.min.css" rel="stylesheet" />
-    <link href="./Scripts/Vendor/kendoui.web.2012.2.913/styles/kendo.default.min.css" rel="stylesheet" />
+
+    <link href="Vendor/CodeMirror-5.3.0/lib/codemirror.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/dialog/dialog.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/hint/show-hint.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/lint/lint.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/fold/foldgutter.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/addon/tern/tern.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/theme/neat.css" rel="stylesheet">
+    <link href="Vendor/kendoui.professional.2015.1.429/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="Vendor/kendoui.professional.2015.1.429/styles/kendo.default.min.css" rel="stylesheet" />
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="../BaristaJS/html5.js"></script>
+      <script src="Vendor/html5shiv.js"></script>
     <![endif]-->
 </head>
 <body>
     <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <ul class="nav">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
                 <li>
                     <div>
-                        <a id="btnRun" class="btn btn-primary" href="#"><i class="icon-play icon-white"></i> Run</a>
+                        <a id="btnRun" class="btn btn-primary navbar-btn disabled" href="#"><i class="glyphicon glyphicon-play glyphicon-white"></i> Run</a>
                     </div>
                 </li>
                 <li class="divider-vertical" />
                 <li>
                     <div class="btn-group">
-                        <a id="btnOpen" class="btn" href="#"><i class="icon-folder-open icon-black"></i> Open</a>
-                        <a id="btnSave" class="btn" href="#"><i class="icon-edit icon-black"></i> Save</a>
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                        <a id="btnOpen" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-folder-open"></i> Open</a>
+                        <a id="btnSave" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-edit"></i> Save</a>
+                        <a class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                         <ul class="dropdown-menu" style="margin-left: 85px">
                             <li><a id="btnSaveAs" href="#"><i class="icon-share"></i> Save As...</a></li>
                         </ul>
@@ -73,10 +138,9 @@
                 <li class="divider-vertical" />
                 <li>
                     <div class="btn-group">
-                        <a id="btnTidyUp" class="btn" href="#"><i class="icon-align-left icon-black"></i> TidyUp</a>
-                        <a id="btnJSLint" class="btn" href="#"><i class="icon-check icon-black"></i> JSLint</a>
-                        <a id="btnUnitTest" class="btn" href="#"><i class="icon-list-alt icon-black"></i> Create Unit Test</a>
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                        <a id="btnTidyUp" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-align-left"></i> TidyUp</a>
+                        <a id="btnUnitTest" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-list-alt"></i> Create Unit Test</a>
+                        <a class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                         <ul class="dropdown-menu" style="margin-left: 175px">
                             <li><a id="btnGetEvalUrl" href="#"><i class="icon-share"></i> Get Eval Url...</a></li>
                         </ul>
@@ -85,8 +149,8 @@
                 <li class="divider-vertical" />
                 <li class="pull-right">
                     <div class="btn-group">
-                        <a id="btnSettings" class="btn" href="#"><i class="icon-wrench icon-black"></i> Settings</a>
-                        <a id="btnHelp" class="btn" href="#"><i class="icon-question-sign icon-black"></i> Help</a>
+                        <a id="btnSettings" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-wrench"></i> Settings</a>
+                        <a id="btnHelp" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-question-sign"></i> Help</a>
                     </div>
                 </li>
             </ul>
@@ -99,7 +163,6 @@
                     <div id="horizontal">
                         <div id="left-pane">
                             <div class="pane-content">
-                                <!--<div id="editor"></div>-->
                                 <textarea id="editor" name="editor"></textarea>
                             </div>
                         </div>
@@ -108,7 +171,7 @@
                                 <div id="resultLoading" class="alert alert-info" style="display: none;">
                                    Retrieving Result...
                                 </div>
-                                <pre id="result"></pre>
+                                <pre style="border: none;" id="result"></pre>
                                 <iframe id="htmlResult" style="display: none; width: 100%; height: 100%; border: none; background-color: White;"></iframe>
                             </div>
                         </div>
@@ -130,6 +193,8 @@
     <!-- /container -->
 
     <div class="modal" id="openDialog" tabindex="-1" role="dialog" aria-labelledby="openDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="openDialogLabel">Open</h3>
@@ -145,8 +210,12 @@
         <button id="openDialogOpenButton" class="btn btn-primary disabled">Open</button>
       </div>
     </div>
+        </div>
+    </div>
 
     <div class="modal" id="saveAlertsDialog" tabindex="-1" role="dialog" aria-labelledby="saveAlertsDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="saveAlertsDialogLabel">Saving...</h3>
@@ -187,8 +256,12 @@
         <button id="btnSaveAnyway" class="btn btn-primary disabled">Save Anyway</button>
       </div>
     </div>
+        </div>
+    </div>
 
     <div class="modal" id="saveAsDialog" tabindex="-1" role="dialog" aria-labelledby="saveAsDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="saveAsDialogLabel">Save As...</h3>
@@ -201,7 +274,7 @@
         <div>
             <input id="saveAsFileUrl" type="text" placeholder="Type the full path of the file to be saved..." style="width: 80%;" />
             <span class="help-block">Until the fancy tree view is implemented, type the full path of the file to be saved.</span>
-            <span class="help-block">E.g.: http://ofsdev/Lists/Scripts/myScript.js</span>
+                        <span class="help-block">E.g.: http://mysharepointsite/Lists/Scripts/myScript.js</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -209,22 +282,12 @@
         <button id="btnSaveAsSave" class="btn btn-primary">Save</button>
       </div>
     </div>
+      </div>
+      </div>
 
-    <div class="modal" id="jslintResultDialog" tabindex="-1" role="dialog" aria-labelledby="jsLintDialogLabel" aria-hidden="true" style="display: none">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="jsLintDialogLabel">JsLint Result</h3>
-      </div>
-      <div class="modal-body">
-        <div id="jslintResults"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal">OK</button>
-      </div>
-    </div>
-
-    
     <div class="modal" id="getEvalUrlDialog" tabindex="-1" role="dialog" aria-labelledby="getEvalUrlLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="getEvalUrlLabel">Eval Url</h3>
@@ -236,8 +299,12 @@
         <button class="btn btn-primary" data-dismiss="modal">OK</button>
       </div>
     </div>
+        </div>
+    </div>
 
     <div class="modal" id="unitTestDialog" tabindex="-1" role="dialog" aria-labelledby="unitTestDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="unitTestDialogLabel">Unit Test</h3>
@@ -249,17 +316,8 @@
         <button class="btn btn-primary" data-dismiss="modal">OK</button>
       </div>
     </div>
-
-    <script id="jsLintResultTemplate" type="text/x-kendo-template">
-        <ul>
-            # for (var i = 0; i < data.errors.length; i++) { #
-                # var jsResult = data.errors[i]; #
-                <li>Error: <br/>
-                Problem at line #= jsResult.line # character #= jsResult.character #: #= jsResult.reason #<br/>
-                <div style="background-color: \#FFFADB;">#= jsResult.evidence #</div></li>
-            # } #
-        </ul>
-    </script>
+        </div>
+    </div>
 
     <script id="unitTestTemplate" type="text/x-kendo-template">
 asyncTest("[Your Unit Test Title]", function () {
@@ -286,30 +344,67 @@ asyncTest("[Your Unit Test Title]", function () {
 });
     </script>
     
+    <div class="modal" id="helpDialog" tabindex="-1" role="dialog" aria-labelledby="helpDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="helpDialogLabel">Keyboard Shortcuts</h3>
+                </div>
+                <div class="modal-body">
+                    <kbd>"Ctrl-Enter"</kbd>: Run<br />
+                    <kbd>"Ctrl-Space"</kbd>: AutoComplete<br />
+                    <kbd>"Ctrl-I"</kbd>: Show Type<br />
+                    <kbd>"Ctrl-O"</kbd>: Show Docs<br />
+                    <kbd>"Alt-."</kbd>: Jump to Definition<br />
+                    <kbd>"Alt-,"</kbd>: Jump Back<br />
+                    <kbd>"Ctrl-Q"</kbd>: Rename<br />
+                    <kbd>"Ctrl-."</kbd>: Select Name<br />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Le javascript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./Scripts/Vendor/json2.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/store.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/jquery-1.8.2.min.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/jquery.ba-resize.min.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/jquery.hotkeys.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Styles/bootstrap-2.3.1/js/bootstrap.min.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/kendoui.web.2012.2.913/js/kendo.web.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./Scripts/Vendor/codemirror-2.37/lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./Scripts/Vendor/codemirror-2.37/lib/util/simple-hint.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./Scripts/Vendor/codemirror-2.37/lib/util/javascript-hint.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./Scripts/Vendor/codemirror-2.37/mode/javascript/javascript.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./Scripts/Vendor/beautify.js" type="text/javascript"
-            charset="utf-8"></script>
-    <script src="./Scripts/Vendor/jslint.js" type="text/javascript"
-            charset="utf-8"></script>
+    <script src="Vendor/storejson2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/beautify.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/jshint.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/kendoui.professional.2015.1.429/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/jquery.ba-resize.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/jquery.hotkeys.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/bootstrap-3.3.4-dist/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/kendoui.professional.2015.1.429/js/kendo.web.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/lint/lint.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/lint/javascript-lint.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/foldcode.js"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/foldgutter.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/brace-fold.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/fold/comment-fold.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/search/searchcursor.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/search/match-highlighter.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/selection/active-line.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/dialog/dialog.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/hint/show-hint.js" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/addon/tern/tern.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/codemirror-5.3.0/mode/javascript/javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Vendor/Acorn-1.2.2/acorn.js"></script>
+    <script src="Vendor/Acorn-1.2.2/acorn_loose.js"></script>
+    <script src="Vendor/Acorn-1.2.2/walk.js"></script>
+    <script src="Vendor/tern-0.10.0/polyfill.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/signal.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/tern.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/def.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/comment.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/infer.js"></script>
+    <script src="Vendor/tern-0.10.0/lib/condense.js"></script>
+    <script src="Vendor/tern-0.10.0/plugin/doc_comment.js"></script>
+    <script src="Vendor/tern-0.10.0/plugin/complete_strings.js"></script>
+    <script src="Vendor/tern-0.10.0/plugin/barista.js"></script>
     <script type="text/javascript">
         var editor = null;
         var currentUser = null;
@@ -324,31 +419,76 @@ asyncTest("[Your Unit Test Title]", function () {
         var baristaInstanceSlidingExpiration = null;
         var baristaInstanceInitializationCode = null;
 
-        var jsLintResultTemplate = kendo.template($("#jsLintResultTemplate").html());
         var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
 
         function setupEditor() {
 
-            CodeMirror.commands.run = function() {
+            CodeMirror.commands.run = function () {
                 executeCode();
             };
-            CodeMirror.commands.autocomplete = function (cm) {
-                CodeMirror.simpleHint(cm, CodeMirror.javascriptHint);
-            };
+
+            var server = null;
             editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 lineNumbers: true,
+                lineWrapping: true,
                 extraKeys: {
                     "Ctrl-Enter": "run",
-                    "Ctrl-Space": "autocomplete"
+                    "Ctrl-Space": function (cm) { if (server) server.complete(cm); },
+                    "Ctrl-I": function (cm) { if (server) server.showType(cm); },
+                    "Ctrl-O": function (cm) { if (server) server.showDocs(cm); },
+                    "Alt-.": function (cm) { if (server) server.jumpToDef(cm); },
+                    "Alt-,": function (cm) { if (server) server.jumpBack(cm); },
+                    "Ctrl-Q": function (cm) { if (server) server.rename(cm); },
+                    "Ctrl-.": function (cm) { if (server) server.selectName(cm); }
                     },
                 theme: "neat",
                 indentUnit: 4,
+                foldGutter: true,
+                gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+                lint: {
+                    options: {
+                        expr: true
+                    }
+                },
+                highlightSelectionMatches: { showToken: /\w/ },
+                styleActiveLine: true,
             });
 
+            editor.on("cursorActivity", function (cm) { if (server) server.updateArgHints(cm); });
+            editor.on('keyup', function (cm, e) {
+
+                if (e.keyCode === 190 && server) {
+                    server.complete(cm);
+                    return;
+                }
+
+                var cursorPos = cm.getCursor();
+                var line = cm.getLine(cursorPos.line);
+
+                if (line.match(/^.*require\(['|"]$/i))
+                    server.complete(cm);
+            });
             editor.setSize($("#left-pane").width(), $("#left-pane").height());
 
             $("#left-pane").resize(function () {
                 editor.setSize($("#left-pane").width(), $("#left-pane").height());
+            });
+
+            var request = jQuery.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "defs/ecma5.txt",
+                cache: false
+            });
+
+            request.done(function (data) {
+                server = new CodeMirror.TernServer({
+                    defs: [data],
+                    plugins: {
+                        "barista": {}
+                    }
+                });
             });
         }
 
@@ -381,7 +521,7 @@ asyncTest("[Your Unit Test Title]", function () {
                 scrollable: false,
                 columns: [
                                 { field: "Timestamp", format: "{0:MM/dd hh:mm:ss.fff}", width: "75px" },
-                                { field: "Area", title: "Area", width: "90px"},
+                                { field: "Area", title: "Area", width: "90px" },
                                 { field: "Category", title: "Category", width: "140px" },
                                 { field: "Level", title: "Level", width: "70px" },
                                 { field: "Message", title: "Message", width: "100%" }
@@ -390,7 +530,7 @@ asyncTest("[Your Unit Test Title]", function () {
         }
 
         function onOpenDialogNodeSelected(treeView, selectedNode) {
-            if (typeof(selectedNode) !== "undefined" && selectedNode != null) {
+            if (typeof (selectedNode) !== "undefined" && selectedNode != null) {
 
                 if (selectedNode.type == "file") {
                     var docLibData = selectedNode.parentNode();
@@ -420,14 +560,14 @@ asyncTest("[Your Unit Test Title]", function () {
 
             request.done(function (data) {
                 var current = $("#openDialogTreeView").data("kendoTreeView");
-                if (typeof(current) !== "undefined") {
+                if (typeof (current) !== "undefined") {
                     current.destroy();
                     $("#openDialogTreeView").removeData("kendoTreeView");
                 }
 
                 $("#openDialogTreeView").kendoTreeView({
                     dataSource: data,
-                    select: function(e) {
+                    select: function (e) {
                         var nodeData = this.dataItem(e.node);
                         onOpenDialogNodeSelected(this, nodeData);
                     }
@@ -554,19 +694,19 @@ asyncTest("[Your Unit Test Title]", function () {
         }
 
         function getCurrentUser() {
-            jQuery.ajax({
+            return jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.getCurrentUser()"),
                 cache: false,
-                success: function(data) {
+                success: function (data) {
                     currentUser = data;
                 }
             });
         }
 
         function getCurrentWebUrl() {
-            jQuery.ajax({
+            return jQuery.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=utf-8",
                 url: "_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("var sp=require(\"SharePoint\"); sp.getResponseUrl()"),
@@ -704,25 +844,49 @@ asyncTest("[Your Unit Test Title]", function () {
             });
         }
 
+        var baristaFiddleIsInitializing = true;
+
         function updateStoredSettings() {
-            var paneSizes = {
-                leftPaneSize: $("#left-pane").width(),
-                bottomPaneSize: $("#bottom-pane").height()
+
+            if (baristaFiddleIsInitializing === true)
+                return;
+
+            var verticalSplitter = $("#vertical").data("kendoSplitter");
+            var horizontalSplitter = $("#horizontal").data("kendoSplitter");
+
+            if (!verticalSplitter || !horizontalSplitter) {
+                return;
+            }
+
+            var paneSettings = {
+                horizontalSplitterOptions: horizontalSplitter.options,
+                verticalSplitterOptions: verticalSplitter.options
             };
 
-            store.set("Barista-Settings-PaneSizes", JSON.stringify(paneSizes));
+            store.set("Barista-Settings-PaneSettings", JSON.stringify(paneSettings));
         }
 
         $(document).ready(function () {
             var code = store.get("BaristaCode");
-            var paneSizeSettings = store.get("Barista-Settings-PaneSizes");
+            var paneSettings = store.get("Barista-Settings-PaneSettings");
 
-            var bottomPaneSize = "0px"; // Default to Hidden.
-            var leftPaneSize = "50%";
-            if (typeof (paneSizeSettings) != "undefined" && paneSizeSettings.length > 0) {
-                var paneSizes = JSON.parse(paneSizeSettings);
-                leftPaneSize = paneSizes.leftPaneSize + "px";
-                bottomPaneSize = paneSizes.bottomPaneSize + "px";
+            var horizontalSplitterPanes = [
+                            { collapsible: true, size: "50%" },
+                            { collapsible: true }
+            ];
+
+            var verticalSplitterPanes = [
+                            { collapsible: false },
+                            { collapsible: true, size: "15%", collapsed: true }
+            ];
+
+            var bottomPaneIsCollapsed = true;
+            if (paneSettings) {
+                paneSettings = JSON.parse(paneSettings);
+                if (paneSettings.horizontalSplitterOptions)
+                    horizontalSplitterPanes = paneSettings.horizontalSplitterOptions.panes;
+                if (paneSettings.verticalSplitterOptions)
+                    verticalSplitterPanes = paneSettings.verticalSplitterOptions.panes;
             }
 
             setupEditor();
@@ -731,49 +895,46 @@ asyncTest("[Your Unit Test Title]", function () {
                 setScriptValue(code);
             }
 
-            $("#vertical").kendoSplitter({
+            var getPane = function (splitter, index) {
+                index = Number(index);
+
+                var panes = splitter.element.children(".k-pane");
+
+                if (!isNaN(index) && index < panes.length) {
+                    return panes[index];
+            }
+            };
+
+            var verticalSplitter = $("#vertical").kendoSplitter({
                 orientation: "vertical",
-                panes: [
-                            { collapsible: false },
-                            { collapsible: true, size: bottomPaneSize }
-                        ]
-            });
-
-            $("#horizontal").kendoSplitter({
-                panes: [
-                            { collapsible: true, size: leftPaneSize },
-                            { collapsible: true }
-                        ]
-            });
-
-
-
-            getCurrentUser();
-            getCurrentWebUrl();
-        });
-
-        //Have the splitter respond to window resize events.
-        $(window).resize(function () {
-            if ($("#navbar").css("position") == "static") {
-                $("#mainContent").css("margin-top", "0px");
-            }
-            else {
-                $("#mainContent").css("margin-top", $("#navbar").height());
-            }
-            $('#vertical').height($('.row-fluid').height() - 40);
-            $("#vertical").data("kendoSplitter").trigger("resize");
-        });
-
-        $("#vertical").resize(function () {
-            $("#result").css("height", ($("#top-pane").height() - 31) + "px");
-            $("#htmlResult").css("height", ($("#top-pane").height() - 4) + "px");
+                panes: verticalSplitterPanes,
+                expand: function (e) {
+                    updateStoredSettings();
+                },
+                collapse: function (e) {
+                    updateStoredSettings();
+                },
+                resize: function (e) {
             updateStoredSettings();
-        });
+                }
+            }).data("kendoSplitter");
 
-        $("#horizontal").resize(function () {
-            $("#result").css("width", ($("#right-pane").width() - 21) + "px");
-            $("#htmlResult").css("width", $("#right-pane").width() + "px");
+            var horizontalSplitter = $("#horizontal").kendoSplitter({
+                panes: horizontalSplitterPanes,
+                resize: function (e) {
+                    $("#htmlResult").css("height", ($("#top-pane").height() - 3) + "px");
             updateStoredSettings();
+                }
+            }).data("kendoSplitter");
+
+            getCurrentUser()
+				.done(function () {
+				    return getCurrentWebUrl();
+				})
+				.done(function () {
+				    $("#btnRun").removeClass("disabled");
+				    baristaFiddleIsInitializing = false;
+				});
         });
 
         $("#btnRun").click(function () {
@@ -784,7 +945,7 @@ asyncTest("[Your Unit Test Title]", function () {
             openOpenDialog();
         });
 
-        $("#openDialogOpenButton").click(function() {
+        $("#openDialogOpenButton").click(function () {
             var selectedFile = $("#openDialogOpenButton").data("selectedFile");
             var selectedDocLib = $("#openDialogOpenButton").data("selectedDocLib");
 
@@ -794,7 +955,7 @@ asyncTest("[Your Unit Test Title]", function () {
                         contentType: "application/json; charset=utf-8",
                         url: selectedFile.fileUrl,
                         cache: false,
-                        complete: function(data) {
+                    complete: function (data) {
                             setScriptValue(data.responseText);
                             $('#openDialog').modal('hide');
                             currentFileInfo = selectedFile;
@@ -805,7 +966,7 @@ asyncTest("[Your Unit Test Title]", function () {
                                 placement: "bottom"
                             });
                         },
-                        error: function() {
+                    error: function () {
                             //do something...
                         }
                     });
@@ -833,7 +994,7 @@ asyncTest("[Your Unit Test Title]", function () {
                 url: currentWebUrl + "/_vti_bin/Barista/v1/Barista.svc/eval?c=" + encodeURIComponent("/_layouts/BaristaFiddle/CheckOutFile.js"),
                 cache: false,
                 data: { f: currentFileInfo.fileUrl },
-                success: function() {
+                success: function () {
                     validateSaveFile(currentFileInfo.fileUrl);
                     }
                 });
@@ -863,24 +1024,6 @@ asyncTest("[Your Unit Test Title]", function () {
             setScriptValue(sobeautiful);
         });
 
-        $("#btnJSLint").click(function () {
-            var code = getScriptValue();
-            JSLINT(code, {
-                sloppy: true
-            });
-
-            var jslintResults = JSLINT.data();
-
-            if (typeof (jslintResults.errors) == "undefined") {
-                $("#jslintResults").html("Your JS code is valid.");
-            }
-            else {
-                $("#jslintResults").html(jsLintResultTemplate(jslintResults));
-            }
-
-            $("#jslintResultDialog").modal("show");
-        });
-
         $("#btnUnitTest").click(function () {
             var code = getScriptValue();
             var escaped = code.replace(/\r\n\r\n/g, "\r\n").replace(/\n\n/g, "\n");
@@ -901,52 +1044,14 @@ asyncTest("[Your Unit Test Title]", function () {
             $("#getEvalUrlDialog").modal("show");
         });
 
-        $(document).bind('keydown', 'ctrl+return', function() {
+        $("#btnHelp").click(function () {
+            $("#helpDialog").modal("show");
+        });
+
+        $(document).bind('keydown', 'ctrl+return', function () {
             executeCode();
         });
 
     </script>
-    <style scoped>
-        #vertical
-        {
-            height: 100%;
-            border: 0;
-            width: 100%;
-        }
-        #horizontal
-        {
-            height: 100%;
-            border: 0;
-            width: 100%;
-        }
-        #bottom-pane {
-            background-color: #f5f5f5;
-            background-color: rgba(60, 70, 80, 0.15);
-        }
-
-        #left-pane {
-            background-color: #f5f5f5;
-            background-color: rgba(60, 70, 80, 0.05);
-        }
-
-        #center-pane {
-            background-color: #f5f5f5;
-            background-color: rgba(60, 70, 80, 0.05);
-        }
-
-        #right-pane {
-            background-color: #f5f5f5;
-            background-color: rgba(60, 70, 80, 0.05);
-        }
-
-        .pane-content
-        {
-            padding: 0 0;
-        }
-        
-        #openDialogTreeView .k-sprite {
-            background-image: url("/Styles/bootstrap-2.3.1/img/glyphicons-halflings.png");
-        }
-    </style>
 </body>
 </html>

@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public SPSiteCollectionInstance Construct()
         {
-            return new SPSiteCollectionInstance(this.InstancePrototype);
+            return new SPSiteCollectionInstance(InstancePrototype);
         }
     }
 
@@ -30,8 +30,8 @@
         public SPSiteCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPSiteCollectionInstance(ObjectInstance prototype, SPSiteCollection siteCollection)
@@ -58,12 +58,13 @@
         }
 
         [JSProperty(Name = "names")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Names
         {
             get
             {
                 object[] names = m_siteCollection.Names;
-                return this.Engine.Array.Construct(names);
+                return Engine.Array.Construct(names);
             }
         }
 
@@ -75,7 +76,7 @@
             var result = m_siteCollection.Add(siteUrl, ownerLogin, ownerEmail);
             return result == null
               ? null
-              : new SPSiteInstance(this.Engine.Object.InstancePrototype, result);
+              : new SPSiteInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "backup")]
@@ -110,7 +111,7 @@
             var site = m_siteCollection[name];
             return site == null
               ? null
-              : new SPSiteInstance(this.Engine.Object, site);
+              : new SPSiteInstance(Engine.Object, site);
         }
 
         [JSFunction(Name = "getSiteByIndex")]
@@ -119,20 +120,21 @@
             var site = m_siteCollection[index];
             return site == null
               ? null
-              : new SPSiteInstance(this.Engine.Object, site);
+              : new SPSiteInstance(Engine.Object, site);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPSite]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (SPSite site in m_siteCollection)
             {
                 try
                 {
                     //Test to see if the site is "good";
                     var allow = site.AllowDesigner;
-                    ArrayInstance.Push(result, new SPSiteInstance(this.Engine.Object.InstancePrototype, site));
+                    ArrayInstance.Push(result, new SPSiteInstance(Engine.Object.InstancePrototype, site));
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -147,7 +149,7 @@
             var wa = m_siteCollection.WebApplication;
             return wa == null
               ? null
-              : new SPWebApplicationInstance(this.Engine.Object, wa);
+              : new SPWebApplicationInstance(Engine.Object, wa);
         }
     }
 }

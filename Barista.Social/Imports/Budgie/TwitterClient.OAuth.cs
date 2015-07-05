@@ -1,6 +1,7 @@
 ﻿namespace Barista.Social.Imports.Budgie
 {
-  using Barista.Social.Imports.Budgie.Extensions;
+    using Barista.Extensions;
+    using Barista.Social.Imports.Budgie.Extensions;
   using Barista.Social.Imports.Budgie.Json;
   using Newtonsoft.Json;
   using System;
@@ -106,7 +107,7 @@
         if (response.StatusCode != HttpStatusCode.OK) return null;
 
         string responseString = response.GetContentString();
-        if (String.IsNullOrWhiteSpace(responseString)) return null;
+        if (responseString.IsNullOrWhiteSpace()) return null;
 
         var result = new TwitterRequestToken(BaseUri);
         foreach (var i in responseString.Split('&'))
@@ -165,7 +166,7 @@
     /// </summary>
     /// <param name="requestToken">An OAuth request token.</param>
     /// <param name="verifier">A verification PIN obtained by the user from Twitter.</param>
-    /// <returns>An instance of <see cref="Budgie.TwitterClient.TwitterAccessToken"/> with the tokens returned from Twitter.</returns>
+    /// <returns>An instance of <see cref="TwitterAccessToken"/> with the tokens returned from Twitter.</returns>
     public Task<TwitterAccessToken> AuthenticateAsync(TwitterRequestToken requestToken, string verifier)
     {
       return HttpPostAsync("/oauth/access_token", "oauth_verifier=" + verifier, requestToken).ContinueWith(t =>
@@ -176,7 +177,7 @@
         if (response.StatusCode != HttpStatusCode.OK) return null;
 
         string responseString = response.GetContentString();
-        if (String.IsNullOrWhiteSpace(responseString)) return null;
+        if (responseString.IsNullOrWhiteSpace()) return null;
 
         var result = new TwitterAccessToken();
         foreach (var i in responseString.Split('&'))

@@ -16,14 +16,14 @@
             : base(engine)
         {
 
-            this.CurrentUserLoginNameFactory = () =>
+            CurrentUserLoginNameFactory = () =>
             {
                 var currentWindowsIdentity = WindowsIdentity.GetCurrent();
                 return currentWindowsIdentity == null ? "" : currentWindowsIdentity.Name;
             };
 
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         /// <summary>
@@ -66,61 +66,61 @@
 
         [JSFunction(Name = "getADUser")]
         [JSDoc("Returns an object representating the specified user. If no login name is specified, returns the current user.")]
-        public object GetADUser(object loginName)
+        public ADUserInstance GetADUser(object loginName)
         {
             ADUser user;
             if (loginName == null || loginName == Undefined.Value || loginName == Null.Value ||
                 TypeConverter.ToString(loginName).IsNullOrWhiteSpace())
             {
-                user = ADHelper.GetADUser(CurrentUserLoginNameFactory(), this.LdapPath);
+                user = ADHelper.GetADUser(CurrentUserLoginNameFactory(), LdapPath);
             }
             else
-                user = ADHelper.GetADUser(TypeConverter.ToString(loginName), this.LdapPath);
+                user = ADHelper.GetADUser(TypeConverter.ToString(loginName), LdapPath);
 
             return user == null
               ? null
-              : new ADUserInstance(this.Engine.Object.InstancePrototype, user);
+              : new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath);
         }
 
         [JSFunction(Name = "getADUserByDistinguishedName")]
         [JSDoc("Returns an object representating the specified user.")]
-        public object GetADUserByDistinguishedName(object distinguishedName)
+        public ADUserInstance GetADUserByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||
                 TypeConverter.ToString(distinguishedName).IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "Distinguished name must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Distinguished name must be specified.");
             
-            var user = ADHelper.GetADUserByDistinguishedName(TypeConverter.ToString(distinguishedName), this.LdapPath);
+            var user = ADHelper.GetADUserByDistinguishedName(TypeConverter.ToString(distinguishedName), LdapPath);
 
             return user == null
               ? null
-              : new ADUserInstance(this.Engine.Object.InstancePrototype, user);
+              : new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath);
         }
 
         [JSFunction(Name = "getADGroup")]
         [JSDoc("Returns an object representating the specified group.")]
         public ADGroupInstance GetADGroup(string groupName)
         {
-            var group = ADHelper.GetADGroup(groupName, this.LdapPath);
+            var group = ADHelper.GetADGroup(groupName, LdapPath);
 
             return group == null
                 ? null
-                : new ADGroupInstance(this.Engine.Object.InstancePrototype, group);
+                : new ADGroupInstance(Engine.Object.InstancePrototype, group, LdapPath);
         }
 
         [JSFunction(Name = "getADGroupByDistinguishedName")]
         [JSDoc("Returns an object representating the specified group.")]
-        public object GetADGroupByDistinguishedName(object distinguishedName)
+        public ADGroupInstance GetADGroupByDistinguishedName(object distinguishedName)
         {
             if (distinguishedName == null || distinguishedName == Undefined.Value || distinguishedName == Null.Value ||
                 TypeConverter.ToString(distinguishedName).IsNullOrWhiteSpace())
-                throw new JavaScriptException(this.Engine, "Error", "Distinguished name must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Distinguished name must be specified.");
 
-            var @group = ADHelper.GetADGroupByDistinguishedName(TypeConverter.ToString(distinguishedName), this.LdapPath);
+            var @group = ADHelper.GetADGroupByDistinguishedName(TypeConverter.ToString(distinguishedName), LdapPath);
 
             return group == null
               ? null
-              : new ADGroupInstance(this.Engine.Object.InstancePrototype, group);
+              : new ADGroupInstance(Engine.Object.InstancePrototype, group, LdapPath);
         }
 
         [JSFunction(Name = "searchAllDirectoryEntries")]
@@ -131,19 +131,19 @@
             if (String.IsNullOrEmpty(principalType) == false)
                 principalTypeEnum = (PrincipalType)Enum.Parse(typeof(PrincipalType), principalType);
 
-            var entities = ADHelper.SearchAllDirectoryEntities(searchText, maxResults, principalTypeEnum, this.LdapPath);
+            var entities = ADHelper.SearchAllDirectoryEntities(searchText, maxResults, principalTypeEnum, LdapPath);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var entity in entities)
             {
                 if (entity is ADGroup)
                 {
-                    ArrayInstance.Push(result, new ADGroupInstance(this.Engine.Object.InstancePrototype, entity as ADGroup));
+                    ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, entity as ADGroup, LdapPath));
                 }
                 else if (entity is ADUser)
                 {
-                    ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, entity as ADUser));
+                    ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, entity as ADUser, LdapPath));
                 }
             }
 
@@ -152,42 +152,45 @@
 
         [JSFunction(Name = "searchAllGroups")]
         [JSDoc("Searches all groups for the specified search text, optionally indicating a maximium number of results.")]
+        [JSDoc("ternReturnType", "[+ADGroup]")]
         public ArrayInstance SearchAllGroups(string searchText, int maxResults)
         {
-            var groups = ADHelper.SearchAllGroups(searchText, maxResults, this.LdapPath);
+            var groups = ADHelper.SearchAllGroups(searchText, maxResults, LdapPath);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var group in groups)
             {
-                ArrayInstance.Push(result, new ADGroupInstance(this.Engine.Object.InstancePrototype, group, this.LdapPath));
+                ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, group, LdapPath));
             }
             return result;
         }
 
         [JSFunction(Name = "searchAllUsers")]
         [JSDoc("Searches all users for the specified search text contained within a user's firstname, lastname, displayname, email or logon name. Optionally indicating a maximium number of results.")]
+        [JSDoc("ternReturnType", "[+ADUser]")]
         public ArrayInstance SearchAllUsers(string searchText, int maxResults)
         {
-            var users = ADHelper.SearchAllUsers(searchText, maxResults, this.LdapPath);
+            var users = ADHelper.SearchAllUsers(searchText, maxResults, LdapPath);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var user in users)
             {
-                ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath));
             }
             return result;
         }
 
         [JSFunction(Name = "searchAllUsersByLogonAndEmail")]
         [JSDoc("Searches all users for the specified search text contained within a user's email or logon. Optionally indicating a maximium number of results.")]
+        [JSDoc("ternReturnTyep", "[+ADUser]")]
         public ArrayInstance SearchAllUsersByLogonAndEmail(string searchText, int maxResults)
         {
-            var users = ADHelper.SearchAllUsersByLogonAndEmail(searchText, maxResults, this.LdapPath);
+            var users = ADHelper.SearchAllUsersByLogonAndEmail(searchText, maxResults, LdapPath);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var user in users)
             {
-                ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, LdapPath));
             }
             return result;
         }

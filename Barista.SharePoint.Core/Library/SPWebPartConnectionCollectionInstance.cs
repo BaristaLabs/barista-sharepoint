@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public SPWebPartConnectionCollectionInstance Construct()
         {
-            return new SPWebPartConnectionCollectionInstance(this.InstancePrototype);
+            return new SPWebPartConnectionCollectionInstance(InstancePrototype);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPWebPartConnectionCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWebPartConnectionCollectionInstance(ObjectInstance prototype, SPWebPartConnectionCollection webPartConnectionCollection)
@@ -72,7 +72,7 @@
         public int Add(SPWebPartConnectionInstance value)
         {
             if (value == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web part connection must be specified as the first argument");
+                throw new JavaScriptException(Engine, "Error", "A web part connection must be specified as the first argument");
 
             return m_webPartConnectionCollection.Add(value.SPWebPartConnection);
         }
@@ -81,7 +81,7 @@
         public bool Contains(SPWebPartConnectionInstance value)
         {
             if (value == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web part connection must be specified as the first argument");
+                throw new JavaScriptException(Engine, "Error", "A web part connection must be specified as the first argument");
 
             return m_webPartConnectionCollection.Contains(value.SPWebPartConnection);
         }
@@ -98,7 +98,7 @@
             var result = m_webPartConnectionCollection[id];
             return result == null
                 ? null
-                : new SPWebPartConnectionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWebPartConnectionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getConnectionByIndex")]
@@ -107,14 +107,14 @@
             var result = m_webPartConnectionCollection[index];
             return result == null
                 ? null
-                : new SPWebPartConnectionInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWebPartConnectionInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "indexOf")]
         public int IndexOf(SPWebPartConnectionInstance value)
         {
             if (value == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web part connection must be specified as the first argument");
+                throw new JavaScriptException(Engine, "Error", "A web part connection must be specified as the first argument");
 
             return m_webPartConnectionCollection.IndexOf(value.SPWebPartConnection);
         }
@@ -123,7 +123,7 @@
         public void Insert(int index, SPWebPartConnectionInstance value)
         {
             if (value == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web part connection must be specified as the first argument");
+                throw new JavaScriptException(Engine, "Error", "A web part connection must be specified as the first argument");
 
             m_webPartConnectionCollection.Insert(index, value.SPWebPartConnection);
         }
@@ -132,7 +132,7 @@
         public void Remove(SPWebPartConnectionInstance value)
         {
             if (value == null)
-                throw new JavaScriptException(this.Engine, "Error", "A web part connection must be specified as the first argument");
+                throw new JavaScriptException(Engine, "Error", "A web part connection must be specified as the first argument");
 
             m_webPartConnectionCollection.Remove(value.SPWebPartConnection);
         }
@@ -144,13 +144,14 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWebPartConnection]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var conn in m_webPartConnectionCollection.OfType<SPWebPartConnection>())
             {
-                ArrayInstance.Push(result, new SPWebPartConnectionInstance(this.Engine.Object.InstancePrototype, conn));
+                ArrayInstance.Push(result, new SPWebPartConnectionInstance(Engine.Object.InstancePrototype, conn));
             }
 
             return result;

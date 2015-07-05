@@ -1,6 +1,7 @@
 ﻿namespace Barista.Library
 {
     using System;
+    using System.Linq;
     using Jurassic;
     using Jurassic.Library;
     using Barista.DirectoryServices;
@@ -16,9 +17,9 @@
         [JSConstructorFunction]
         public ADUserInstance Construct()
         {
-            ADUser user = new ADUser();
+            var user = new ADUser();
 
-            return new ADUserInstance(this.InstancePrototype, user);
+            return new ADUserInstance(InstancePrototype, user);
         }
 
         public ADUserInstance Construct(ADUser user)
@@ -26,7 +27,7 @@
             if (user == null)
                 throw new ArgumentNullException("user");
 
-            return new ADUserInstance(this.InstancePrototype, user);
+            return new ADUserInstance(InstancePrototype, user);
         }
     }
 
@@ -34,12 +35,13 @@
     public class ADUserInstance : ObjectInstance
     {
         private readonly ADUser m_user;
+        private readonly string m_ldap;
 
         public ADUserInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public ADUserInstance(ObjectInstance prototype, ADUser user)
@@ -48,7 +50,13 @@
             if (user == null)
                 throw new ArgumentNullException("user");
 
-            this.m_user = user;
+            m_user = user;
+        }
+
+        public ADUserInstance(ObjectInstance prototype, ADUser user, string ldap)
+            : this(prototype, user)
+        {
+            m_ldap = ldap;
         }
 
         #region General
@@ -204,25 +212,25 @@
         [JSProperty(Name = "passwordLastSet")]
         public DateInstance PasswordLastSet
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.PasswordLastSet); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.PasswordLastSet); }
         }
 
         [JSProperty(Name = "lastLogon")]
         public DateInstance LastLogon
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogon); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.LastLogon); }
         }
 
         [JSProperty(Name = "lastLogoff")]
         public DateInstance LastLogoff
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastLogoff); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.LastLogoff); }
         }
 
         [JSProperty(Name = "badPasswordTime")]
         public DateInstance BadPasswordTime
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.BadPasswordTime); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.BadPasswordTime); }
         }
 
         [JSProperty(Name = "badPasswordCount")]
@@ -234,13 +242,13 @@
         [JSProperty(Name = "lastSuccessfulInteractiveLogonTime")]
         public DateInstance LastSuccessfulInteractiveLogonTime
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastSuccessfulInteractiveLogonTime); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.LastSuccessfulInteractiveLogonTime); }
         }
 
         [JSProperty(Name = "lastFailedInteractiveLogonTime")]
         public DateInstance LastFailedInteractiveLogonTime
         {
-            get { return JurassicHelper.ToDateInstance(this.Engine, m_user.LastFailedInteractiveLogonTime); }
+            get { return JurassicHelper.ToDateInstance(Engine, m_user.LastFailedInteractiveLogonTime); }
         }
 
         [JSProperty(Name = "failedInteractiveLogonCount")]
@@ -327,5 +335,39 @@
             get { return m_user.ManagerName; }
         }
         #endregion
+
+        [JSProperty(Name = "groups")]
+        [JSDoc("ternPropertyType", "[string]")]
+        public ArrayInstance Groups
+        {
+            get
+            {
+                var result = Engine.Array.Construct();
+
+                foreach (var group in m_user.Groups)
+                {
+                    ArrayInstance.Push(result, group);
+                }
+
+                return result;
+            }
+        }
+
+        [JSFunction(Name = "expandGroups")]
+        [JSDoc("ternReturnType", "[+ADGroup]")]
+        public ArrayInstance ExpandGroups()
+        {
+            var result = Engine.Array.Construct();
+
+            foreach (var group in m_user.Groups.Select(memberLogonName => ADHelper.GetADGroupByDistinguishedName(memberLogonName, m_ldap)))
+            {
+                if (group == null)
+                    continue;
+
+                ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, group));
+            }
+
+            return result;
+        }
     }
 }

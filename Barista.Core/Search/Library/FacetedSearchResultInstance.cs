@@ -16,7 +16,7 @@
     [JSConstructorFunction]
     public FacetedSearchResultInstance Construct()
     {
-      return new FacetedSearchResultInstance(this.InstancePrototype);
+      return new FacetedSearchResultInstance(InstancePrototype);
     }
   }
 
@@ -28,8 +28,8 @@
     public FacetedSearchResultInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     public FacetedSearchResultInstance(ObjectInstance prototype, FacetedSearchResult facetedSearchResult)
@@ -61,13 +61,14 @@
     }
 
     [JSProperty(Name = "documents")]
+    [JSDoc("ternPropertyType", "[+SearchResult]")]
     public ArrayInstance Documents
     {
       get
       {
-        var docs = m_facetedSearchResult.Documents.Select(d => new SearchResultInstance(this.Engine, d));
+        var docs = m_facetedSearchResult.Documents.Select(d => new SearchResultInstance(Engine, d));
 // ReSharper disable CoVariantArrayConversion
-        return this.Engine.Array.Construct(docs.ToArray());
+        return Engine.Array.Construct(docs.ToArray());
 // ReSharper restore CoVariantArrayConversion
       }
       set

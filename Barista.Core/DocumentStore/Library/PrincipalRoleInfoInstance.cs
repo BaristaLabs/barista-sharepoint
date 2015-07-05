@@ -18,12 +18,12 @@
       if (principalRoleInfo == null)
         throw new ArgumentNullException("principalRoleInfo");
 
-      m_principalInstance = new PrincipalInstance(this.Engine, principalRoleInfo.Principal);
+      m_principalInstance = new PrincipalInstance(Engine, principalRoleInfo.Principal);
 
-      m_roles = this.Engine.Array.Construct(principalRoleInfo.Roles.Select( r => new RoleInstance(this.Engine, r)));
+      m_roles = Engine.Array.Construct(principalRoleInfo.Roles.Select( r => new RoleInstance(Engine, r)));
 
-      this.PopulateFields();
-      this.PopulateFunctions();
+      PopulateFields();
+      PopulateFunctions();
     }
 
     [JSProperty(Name = "principal")]
@@ -34,6 +34,7 @@
     }
 
     [JSProperty(Name = "roles")]
+    [JSDoc("ternPropertyType", "[+Role]")]
     public ArrayInstance Roles
     {
       get { return m_roles; }

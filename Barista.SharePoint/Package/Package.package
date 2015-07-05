@@ -3,27 +3,7 @@
   <assemblies>
     <projectOutputAssembly location="Barista.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.Core\Barista.Core.csproj" />
     <projectOutputAssembly location="Barista.SharePoint.Core.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.Core\Barista.SharePoint.Core.csproj" />
-    <customAssembly location="wnvhtmlconvert.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\wnvhtmlconvert.dll" />
-    <customAssembly location="itextsharp.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\iTextSharp.5.3.3\lib\itextsharp.dll" />
-    <customAssembly location="Barista.Interop.ActiveDs.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\Barista.Interop.ActiveDs.dll" />
-    <customAssembly location="Lucene.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.3.0.3\lib\NET35\Lucene.Net.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Core.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Highlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Highlighter.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Analyzers.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Analyzers.dll" />
-    <customAssembly location="Lucene.Net.Contrib.FastVectorHighlighter.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.FastVectorHighlighter.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Memory.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Memory.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Queries.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Queries.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Regex.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Regex.dll" />
-    <customAssembly location="Lucene.Net.Contrib.SimpleFacetedSearch.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SimpleFacetedSearch.dll" />
-    <customAssembly location="Lucene.Net.Contrib.Snowball.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.Snowball.dll" />
-    <customAssembly location="Lucene.Net.Contrib.SpellChecker.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SpellChecker.dll" />
-    <customAssembly location="ICSharpCode.SharpZipLib.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll" />
-    <customAssembly location="antlr.runtime.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\Lib\antlr.runtime.dll" />
     <projectOutputAssembly location="Barista.SharePoint.PowerShell.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\Barista.SharePoint.PowerShell\Barista.SharePoint.PowerShell.csproj" />
-    <customAssembly location="YamlDotNet.Core.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\YamlDotNet.Core.2.2.0\lib\net35\YamlDotNet.Core.dll" />
-    <customAssembly location="YamlDotNet.RepresentationModel.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\YamlDotNet.RepresentationModel.2.2.0\lib\net35\YamlDotNet.RepresentationModel.dll" />
-    <customAssembly location="HtmlAgilityPack.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll" />
-    <customAssembly location="EPPlus.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\EPPlus.4.0.2\lib\net20\EPPlus.dll" />
   </assemblies>
   <features>
     <featureReference itemId="97f9fbf1-67c8-423f-a528-22589d2a3bec" />

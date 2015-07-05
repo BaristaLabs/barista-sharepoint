@@ -19,7 +19,7 @@
         [JSConstructorFunction]
         public SPCheckedOutFilesListInstance Construct()
         {
-            return new SPCheckedOutFilesListInstance(this.Engine, null);
+            return new SPCheckedOutFilesListInstance(Engine, null);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPCheckedOutFilesListInstance(ScriptEngine engine, IList<SPCheckedOutFile> checkedOutFilesList)
             : base(new ListInstance<SPCheckedOutFilesListInstance, SPCheckedOutFile>(engine))
         {
-            this.List = checkedOutFilesList;
-            this.PopulateFunctions(this.GetType(),
+            List = checkedOutFilesList;
+            PopulateFunctions(GetType(),
                 BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
@@ -38,7 +38,7 @@
         {
             return sPCheckedOutFile == null
                 ? null
-                : new SPCheckedOutFileInstance(this.Engine.Object.InstancePrototype, sPCheckedOutFile);
+                : new SPCheckedOutFileInstance(Engine.Object.InstancePrototype, sPCheckedOutFile);
         }
 
         protected override SPCheckedOutFile Unwrap(SPCheckedOutFileInstance sPCheckedOutFileInstance)

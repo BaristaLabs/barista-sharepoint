@@ -50,9 +50,9 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus, Version=4.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EPPlus.4.0.2\lib\net20\EPPlus.dll</HintPath>
+    <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.0.4\lib\net20\EPPlus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -381,7 +381,6 @@
     <Compile Include="Services\BaristaServiceInstance.cs" />
     <Compile Include="Services\BaristaServiceProxy.cs" />
     <Compile Include="Services\BaristaTestService.cs" />
-    <Compile Include="Services\BaristaWcfService.cs" />
     <Compile Include="Services\BaristaV8WebService.cs" />
     <Compile Include="Services\BaristaWebService.cs" />
     <Compile Include="SharePointSearch\Library\ScopeCollectionInstance.cs" />

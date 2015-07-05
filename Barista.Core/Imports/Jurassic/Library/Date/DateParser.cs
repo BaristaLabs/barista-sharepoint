@@ -16,42 +16,44 @@
     /// <returns> A date. </returns>
     internal static DateTime Parse(string input)
     {
-      /* Regex tested using http://derekslager.com/blog/posts/2007/09/a-better-dotnet-regular-expression-tester.ashx
-       * These should succeed:
-       * 2010
-       * 2010-03
-       * 2010-02-07
-       * 2010T12:34
-       * 2010-02T12:34:56
-       * 2010-02-07T12:34:56.012
-       * 2010T12:34Z
-       * 2010-02T12:34:56Z
-       * 2010-02-07T12:34:56.012Z
-       * 2010T12:34+09:00
-       * 2010-02T12:34:56+09:00
-       * 2010-02-07T12:34:56.012-09:00
-       * 2010-02-05T12:34:56.012
-       * 
-       * And these should fail:
-       * 201
-       * 2010-1
-       * T12:34
-       * 12:34
-       * 2010-02T1:34:56
-       * 2010-02T12:3:56
-       * 2010-02T12:53:1
-       * 2010-02T12:53:12.1
-       * 2010-02T12:53:12.12
-       */
+        /* Regex tested using http://derekslager.com/blog/posts/2007/09/a-better-dotnet-regular-expression-tester.ashx
+         * These should succeed:
+         * 2010
+         * 2010-03
+         * 2010-02-07
+         * 2010T12:34
+         * 2010-02T12:34:56
+         * 2010-02-07T12:34:56.012
+         * 2010T12:34Z
+         * 2010-02T12:34:56Z
+         * 2010-02-07T12:34:56.012Z
+         * 2010T12:34+09:00
+         * 2010-02T12:34:56+09:00
+         * 2010-02-07T12:34:56.012-09:00
+         * 2010-02-05T12:34:56.012
+         * 2010-02-05T12:34:56.1
+         * 2010-02-05T12:34:56.123456
+         * 
+         * And these should fail:
+         * 201
+         * 2010-1
+         * T12:34
+         * 12:34
+         * 2010-02T1:34:56
+         * 2010-02T12:3:56
+         * 2010-02T12:53:1
+         * 2010-02T12:53:12.1
+         * 2010-02T12:53:12.12
+         */
 
-      var regex = new Regex(
+        var regex = new Regex(
           @"^(  (?<year> [0-9]{4} )
                    (- (?<month> [0-9]{2} )
                    (- (?<day> [0-9]{2} ))?)?)
                    (T (?<hour> [0-9]{2} )
                     : (?<minute> [0-9]{2} )
                    (: (?<second> [0-9]{2} )
-                  (\. (?<millisecond> [0-9]{3} ))?)?
+                   (\. (?<millisecond> [0-9]{1,3} ) [0-9]* )?)?
                       (?<zone> Z | (?<zoneHours> [+-][0-9]{2} ) : (?<zoneMinutes> [0-9]{2} ) )?)?$",
           RegexOptions.ExplicitCapture | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
 
@@ -71,6 +73,12 @@
         int.TryParse(match.Groups["minute"].Value, out minute);
         int.TryParse(match.Groups["second"].Value, out second);
         int.TryParse(match.Groups["millisecond"].Value, out millisecond);
+
+        // Milliseconds can be any number of digits, but any digits after the first three are not captured.
+        if (match.Groups["millisecond"].Value.Length == 1)
+            millisecond *= 100;
+        if (match.Groups["millisecond"].Value.Length == 2)
+            millisecond *= 10;
 
         // Validate the components.
         if (month < 1 || month > 12)

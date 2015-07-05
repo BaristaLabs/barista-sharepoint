@@ -4,6 +4,7 @@
   using System.Collections.Specialized;
   using System.Text;
   using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
   /// <summary>
   /// A chainable query string helper class.
@@ -99,11 +100,11 @@
     {
       string existingValue = base[name];
       if (string.IsNullOrEmpty(existingValue))
-          base.Add(name, HttpUtility.UrlEncode(value));
+                base.Add(name, HttpUtility.UrlEncodeUnicode(value));
       else if (isUnique)
-        base[name] = HttpUtility.UrlEncode(value);
+                base[name] = HttpUtility.UrlEncodeUnicode(value);
       else
-          base[name] += "," + HttpUtility.UrlEncode(value);
+                base[name] += "," + HttpUtility.UrlEncodeUnicode(value);
       return this;
     }
 
@@ -174,13 +175,13 @@
     /// <returns>the encoded querystring as it would appear in a browser</returns>
     public override string ToString()
     {
-      StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
       for (var i = 0; i < base.Keys.Count; i++)
       {
         if (!string.IsNullOrEmpty(base.Keys[i]))
         {
           foreach (string val in base[base.Keys[i]].Split(','))
-              builder.Append((builder.Length == 0) ? "?" : "&").Append(HttpUtility.UrlEncode(base.Keys[i])).Append("=").Append(val);
+                        builder.Append((builder.Length == 0) ? "?" : "&").Append(HttpUtility.UrlEncodeUnicode(base.Keys[i])).Append("=").Append(val);
         }
       }
       return builder.ToString();

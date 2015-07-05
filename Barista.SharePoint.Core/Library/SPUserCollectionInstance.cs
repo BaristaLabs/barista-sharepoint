@@ -17,7 +17,7 @@
         [JSConstructorFunction]
         public SPUserCollectionInstance Construct()
         {
-            return new SPUserCollectionInstance(this.InstancePrototype);
+            return new SPUserCollectionInstance(InstancePrototype);
         }
     }
 
@@ -29,8 +29,8 @@
         public SPUserCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPUserCollectionInstance(ObjectInstance prototype, SPUserCollection userCollection)
@@ -75,7 +75,7 @@
             var result = m_userCollection.GetByEmail(emailAddress);
             return result == null
               ? null
-              : new SPUserInstance(this.Engine, result);
+              : new SPUserInstance(Engine, result);
         }
 
         [JSFunction(Name = "getUserById")]
@@ -84,7 +84,7 @@
             var result = m_userCollection.GetByID(id);
             return result == null
               ? null
-              : new SPUserInstance(this.Engine, result);
+              : new SPUserInstance(Engine, result);
         }
 
         [JSFunction(Name = "getUserByIndex")]
@@ -93,7 +93,7 @@
             var result = m_userCollection[index];
             return result == null
               ? null
-              : new SPUserInstance(this.Engine, result);
+              : new SPUserInstance(Engine, result);
         }
 
         [JSFunction(Name = "getUserByLogonName")]
@@ -102,7 +102,7 @@
             var result = m_userCollection[loginName];
             return result == null
               ? null
-              : new SPUserInstance(this.Engine, result);
+              : new SPUserInstance(Engine, result);
         }
 
         [JSFunction(Name = "getUsersByLogonName")]
@@ -115,7 +115,7 @@
             var users = m_userCollection.GetCollection(strLoginNames.ToArray());
             return users == null
                 ? null
-                : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, users);
+                : new SPUserCollectionInstance(Engine.Object.InstancePrototype, users);
         }
 
         [JSFunction(Name = "remove")]
@@ -147,13 +147,14 @@
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPUser]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var user in m_userCollection.OfType<SPUser>())
             {
-                ArrayInstance.Push(result, new SPUserInstance(this.Engine, user));
+                ArrayInstance.Push(result, new SPUserInstance(Engine, user));
             }
             return result;
         }

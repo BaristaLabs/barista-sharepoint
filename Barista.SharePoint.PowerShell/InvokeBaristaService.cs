@@ -1,6 +1,7 @@
 ﻿namespace Barista.SharePoint
 {
   using System;
+    using System.Collections.Generic;
   using System.Management.Automation;
   using System.Text;
   using Microsoft.SharePoint.PowerShell;
@@ -83,10 +84,16 @@
 
       var client = new BaristaServiceClient(serviceContext);
 
-      var request = new BrewRequest {
-        ContentType = "application/json", //default to application/json.
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                {"Content-Type", new[] {"application/json"}}
+            };
+
+            var request = new BrewRequest
+            {
         Code = m_code,
-        ScriptEngineFactory = m_scriptEngineFactory
+                Headers = new BrewRequestHeaders(headers),
+                ScriptEngineFactory = m_scriptEngineFactory
       };
 
       if (m_isEval)

@@ -18,7 +18,7 @@
         {
             m_scopeCollection = scopeCollection;
 
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected ScopeCollectionInstance(ObjectInstance prototype, ScopeCollection scopeCollection)
@@ -53,7 +53,7 @@
             var result = m_scopeCollection[index];
             return result == null
                 ? null
-                : new ScopeInstance(this.Engine, result);
+                : new ScopeInstance(Engine, result);
         }
 
         [JSFunction(Name = "create")]
@@ -65,15 +65,16 @@
             var result = m_scopeCollection.Create(name, description, owningSiteUrl.Uri, displayInAdminUI, alternateResultsPage, type, filter);
             return result == null
                 ? null
-                : new ScopeInstance(this.Engine, result);
+                : new ScopeInstance(Engine, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+Scope]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in m_scopeCollection.OfType<Scope>())
-                ArrayInstance.Push(result, new ScopeInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeInstance(Engine, scope));
 
             return result;
         }

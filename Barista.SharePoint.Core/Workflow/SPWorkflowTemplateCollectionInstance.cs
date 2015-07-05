@@ -21,7 +21,7 @@
         [JSConstructorFunction]
         public SPWorkflowTemplateCollectionInstance Construct()
         {
-            return new SPWorkflowTemplateCollectionInstance(this.InstancePrototype);
+            return new SPWorkflowTemplateCollectionInstance(InstancePrototype);
         }
     }
 
@@ -33,8 +33,8 @@
         public SPWorkflowTemplateCollectionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPWorkflowTemplateCollectionInstance(ObjectInstance prototype, SPWorkflowTemplateCollection workflowTemplateCollection)
@@ -70,7 +70,7 @@
             var result = m_workflowTemplateCollection.GetTemplateByBaseID(guidId);
             return result == null
                 ? null
-                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getTemplateById")]
@@ -80,7 +80,7 @@
             var result = m_workflowTemplateCollection[guidId];
             return result == null
                 ? null
-                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getTemplateByIndex")]
@@ -89,7 +89,7 @@
             var result = m_workflowTemplateCollection[index];
             return result == null
                 ? null
-                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getTemplateByName")]
@@ -99,16 +99,17 @@
             var result = m_workflowTemplateCollection.GetTemplateByName(name, CultureInfo.CurrentCulture);
             return result == null
                 ? null
-                : new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, result);
+                : new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+SPWorkflowTemplate]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var wft in m_workflowTemplateCollection
                 .OfType<SPWorkflowTemplate>()
-                .Select(a => new SPWorkflowTemplateInstance(this.Engine.Object.InstancePrototype, a)))
+                .Select(a => new SPWorkflowTemplateInstance(Engine.Object.InstancePrototype, a)))
             {
                 ArrayInstance.Push(result, wft);
             }

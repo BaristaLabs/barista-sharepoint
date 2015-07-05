@@ -11,19 +11,19 @@
         public PerformanceCounterCategoryConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "PerformanceCounterCategory", new PerformanceCounterCategoryInstance(engine))
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         [JSConstructorFunction]
         public PerformanceCounterCategoryInstance Construct(object categoryName, object machineName)
         {
             if (categoryName != Undefined.Value && categoryName != Null.Value && machineName != Undefined.Value && machineName != Null.Value)
-                return new PerformanceCounterCategoryInstance(this.Engine, new PerformanceCounterCategory(TypeConverter.ToString(categoryName), TypeConverter.ToString(machineName)));
+                return new PerformanceCounterCategoryInstance(Engine, new PerformanceCounterCategory(TypeConverter.ToString(categoryName), TypeConverter.ToString(machineName)));
             
             if (categoryName != Undefined.Value && categoryName != Null.Value)
-                return new PerformanceCounterCategoryInstance(this.Engine, new PerformanceCounterCategory(TypeConverter.ToString(categoryName)));
+                return new PerformanceCounterCategoryInstance(Engine, new PerformanceCounterCategory(TypeConverter.ToString(categoryName)));
             
-            return new PerformanceCounterCategoryInstance(this.Engine, new PerformanceCounterCategory());
+            return new PerformanceCounterCategoryInstance(Engine, new PerformanceCounterCategory());
         }
 
         [JSFunction(Name = "counterExists")]
@@ -53,6 +53,7 @@
         }
 
         [JSFunction(Name = "getCategories")]
+        [JSDoc("ternReturnType", "[+PerformanceCounterCategory]")]
         public ArrayInstance GetCategories(object machineName)
         {
 
@@ -64,9 +65,9 @@
                 ? PerformanceCounterCategory.GetCategories()
                 : PerformanceCounterCategory.GetCategories(strMachineName);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var category in categories)
-                ArrayInstance.Push(result, new PerformanceCounterCategoryInstance(this.Engine, category));
+                ArrayInstance.Push(result, new PerformanceCounterCategoryInstance(Engine, category));
 
             return result;
         }
@@ -92,7 +93,7 @@
         internal PerformanceCounterCategoryInstance(ScriptEngine engine)
             : base(engine)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public PerformanceCounterCategoryInstance(ScriptEngine engine, PerformanceCounterCategory performanceCounterCategory)
@@ -164,6 +165,7 @@
         }
 
         [JSFunction(Name = "getCounters")]
+        [JSDoc("ternReturnType", "[+PerformanceCounter]")]
         public ArrayInstance GetCounters(object instanceName)
         {
             string strInstanceName = null;
@@ -176,18 +178,19 @@
                 : m_performanceCounterCategory.GetCounters(strInstanceName);
 
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var counter in counters)
-                ArrayInstance.Push(result, new PerformanceCounterInstance(this.Engine, counter));
+                ArrayInstance.Push(result, new PerformanceCounterInstance(Engine, counter));
 
             return result;
         }
 
         [JSFunction(Name = "getInstanceNames")]
+        [JSDoc("ternReturnType", "[string]")]
         public ArrayInstance GetInstanceNames()
         {
             var instanceNames = m_performanceCounterCategory.GetInstanceNames();
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var name in instanceNames)
                 ArrayInstance.Push(result, name);
 

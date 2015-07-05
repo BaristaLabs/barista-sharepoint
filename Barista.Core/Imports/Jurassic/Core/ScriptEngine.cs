@@ -43,82 +43,82 @@
         public ScriptEngine()
         {
             // Create the initial hidden class schema.  This must be done first.
-            this.m_emptySchema = HiddenClassSchema.CreateEmptySchema();
+            m_emptySchema = HiddenClassSchema.CreateEmptySchema();
 
             // Create the base of the prototype chain.
             var baseObject = ObjectInstance.CreateRootObject(this);
 
             // Create the global object.
-            this.m_globalObject = new GlobalObject(baseObject);
+            m_globalObject = new GlobalObject(baseObject);
 
             // Create the function object that second to last in the prototype chain.
             var baseFunction = UserDefinedFunction.CreateEmptyFunction(baseObject);
 
             // Object must be created first, then function.
-            this.m_objectConstructor = new ObjectConstructor(baseFunction, baseObject);
-            this.m_functionConstructor = new FunctionConstructor(baseFunction, baseFunction);
+            m_objectConstructor = new ObjectConstructor(baseFunction, baseObject);
+            m_functionConstructor = new FunctionConstructor(baseFunction, baseFunction);
 
             // Create all the built-in objects.
-            this.m_mathObject = new MathObject(baseObject);
-            this.m_jsonObject = new JSONObject(baseObject);
+            m_mathObject = new MathObject(baseObject);
+            m_jsonObject = new JSONObject(baseObject);
 
             // Create all the built-in functions.
-            this.m_arrayConstructor = new ArrayConstructor(baseFunction);
-            this.m_booleanConstructor = new BooleanConstructor(baseFunction);
-            this.m_dateConstructor = new DateConstructor(baseFunction);
-            this.m_numberConstructor = new NumberConstructor(baseFunction);
-            this.m_regExpConstructor = new RegExpConstructor(baseFunction);
-            this.m_stringConstructor = new StringConstructor(baseFunction);
+            m_arrayConstructor = new ArrayConstructor(baseFunction);
+            m_booleanConstructor = new BooleanConstructor(baseFunction);
+            m_dateConstructor = new DateConstructor(baseFunction);
+            m_numberConstructor = new NumberConstructor(baseFunction);
+            m_regExpConstructor = new RegExpConstructor(baseFunction);
+            m_stringConstructor = new StringConstructor(baseFunction);
 
             // Create the error functions.
-            this.m_errorConstructor = new ErrorConstructor(baseFunction, "Error");
-            this.m_rangeErrorConstructor = new ErrorConstructor(baseFunction, "RangeError");
-            this.m_typeErrorConstructor = new ErrorConstructor(baseFunction, "TypeError");
-            this.m_syntaxErrorConstructor = new ErrorConstructor(baseFunction, "SyntaxError");
-            this.m_uriErrorConstructor = new ErrorConstructor(baseFunction, "URIError");
-            this.m_evalErrorConstructor = new ErrorConstructor(baseFunction, "EvalError");
-            this.m_referenceErrorConstructor = new ErrorConstructor(baseFunction, "ReferenceError");
+            m_errorConstructor = new ErrorConstructor(baseFunction, "Error");
+            m_rangeErrorConstructor = new ErrorConstructor(baseFunction, "RangeError");
+            m_typeErrorConstructor = new ErrorConstructor(baseFunction, "TypeError");
+            m_syntaxErrorConstructor = new ErrorConstructor(baseFunction, "SyntaxError");
+            m_uriErrorConstructor = new ErrorConstructor(baseFunction, "URIError");
+            m_evalErrorConstructor = new ErrorConstructor(baseFunction, "EvalError");
+            m_referenceErrorConstructor = new ErrorConstructor(baseFunction, "ReferenceError");
 
             // Populate the instance prototypes (TODO: optimize this, currently takes about 15ms).
-            this.m_globalObject.PopulateFunctions();
-            this.m_objectConstructor.PopulateFunctions();
-            this.m_objectConstructor.InstancePrototype.PopulateFunctions();
-            this.m_functionConstructor.InstancePrototype.PopulateFunctions(typeof(FunctionInstance));
-            this.m_mathObject.PopulateFunctions();
-            this.m_mathObject.PopulateFields();
-            this.m_jsonObject.PopulateFunctions();
-            this.m_arrayConstructor.PopulateFunctions();
-            this.m_arrayConstructor.InstancePrototype.PopulateFunctions();
-            this.m_booleanConstructor.InstancePrototype.PopulateFunctions();
-            this.m_dateConstructor.PopulateFunctions();
-            this.m_dateConstructor.InstancePrototype.PopulateFunctions();
-            this.m_numberConstructor.InstancePrototype.PopulateFunctions();
-            this.m_numberConstructor.PopulateFields();
-            this.m_regExpConstructor.InstancePrototype.PopulateFunctions();
-            this.m_stringConstructor.PopulateFunctions();
-            this.m_stringConstructor.InstancePrototype.PopulateFunctions();
-            this.m_errorConstructor.InstancePrototype.PopulateFunctions();
+            m_globalObject.PopulateFunctions();
+            m_objectConstructor.PopulateFunctions();
+            m_objectConstructor.InstancePrototype.PopulateFunctions();
+            m_functionConstructor.InstancePrototype.PopulateFunctions(typeof(FunctionInstance));
+            m_mathObject.PopulateFunctions();
+            m_mathObject.PopulateFields();
+            m_jsonObject.PopulateFunctions();
+            m_arrayConstructor.PopulateFunctions();
+            m_arrayConstructor.InstancePrototype.PopulateFunctions();
+            m_booleanConstructor.InstancePrototype.PopulateFunctions();
+            m_dateConstructor.PopulateFunctions();
+            m_dateConstructor.InstancePrototype.PopulateFunctions();
+            m_numberConstructor.InstancePrototype.PopulateFunctions();
+            m_numberConstructor.PopulateFields();
+            m_regExpConstructor.InstancePrototype.PopulateFunctions();
+            m_stringConstructor.PopulateFunctions();
+            m_stringConstructor.InstancePrototype.PopulateFunctions();
+            m_errorConstructor.InstancePrototype.PopulateFunctions();
 
             // Add them as JavaScript-accessible properties of the global instance.
-            this.m_globalObject.FastSetProperty("Array", this.m_arrayConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Boolean", this.m_booleanConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Date", this.m_dateConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Function", this.m_functionConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("JSON", this.m_jsonObject, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Math", this.m_mathObject, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Number", this.m_numberConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("Object", this.m_objectConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("RegExp", this.m_regExpConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("String", this.m_stringConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Array", m_arrayConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Boolean", m_booleanConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Date", m_dateConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Function", m_functionConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("JSON", m_jsonObject, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Math", m_mathObject, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Number", m_numberConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Object", m_objectConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("RegExp", m_regExpConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("String", m_stringConstructor, PropertyAttributes.NonEnumerable, false);
 
             // And the errors.
-            this.m_globalObject.FastSetProperty("Error", this.m_errorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("RangeError", this.m_rangeErrorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("TypeError", this.m_typeErrorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("SyntaxError", this.m_syntaxErrorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("URIError", this.m_uriErrorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("EvalError", this.m_evalErrorConstructor, PropertyAttributes.NonEnumerable, false);
-            this.m_globalObject.FastSetProperty("ReferenceError", this.m_referenceErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("Error", m_errorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("RangeError", m_rangeErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("TypeError", m_typeErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("SyntaxError", m_syntaxErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("URIError", m_uriErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("EvalError", m_evalErrorConstructor, PropertyAttributes.NonEnumerable, false);
+            m_globalObject.FastSetProperty("ReferenceError", m_referenceErrorConstructor, PropertyAttributes.NonEnumerable, false);
         }
 
 
@@ -135,38 +135,38 @@
         private ScriptEngine(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
             // Set the DeserializationEnvironment to this script engine.
-            ScriptEngine.DeserializationEnvironment = this;
+            DeserializationEnvironment = this;
 
             // Create the initial hidden class schema.  This must be done first.
-            this.m_emptySchema = HiddenClassSchema.CreateEmptySchema();
+            m_emptySchema = HiddenClassSchema.CreateEmptySchema();
 
             // Deserialize the compatibility mode.
-            this.m_compatibilityMode = (CompatibilityMode)info.GetInt32("compatibilityMode");
+            m_compatibilityMode = (CompatibilityMode)info.GetInt32("compatibilityMode");
 
             // Deserialize the ForceStrictMode flag.
-            this.ForceStrictMode = info.GetBoolean("forceStrictMode");
+            ForceStrictMode = info.GetBoolean("forceStrictMode");
 
             // Deserialize the built-in objects.
-            this.m_globalObject = (GlobalObject)info.GetValue("globalObject", typeof(GlobalObject));
-            this.m_arrayConstructor = (ArrayConstructor)info.GetValue("arrayConstructor", typeof(ArrayConstructor));
-            this.m_booleanConstructor = (BooleanConstructor)info.GetValue("booleanConstructor", typeof(BooleanConstructor));
-            this.m_dateConstructor = (DateConstructor)info.GetValue("dateConstructor", typeof(DateConstructor));
-            this.m_functionConstructor = (FunctionConstructor)info.GetValue("functionConstructor", typeof(FunctionConstructor));
-            this.m_jsonObject = (JSONObject)info.GetValue("jsonObject", typeof(JSONObject));
-            this.m_mathObject = (MathObject)info.GetValue("mathObject", typeof(MathObject));
-            this.m_numberConstructor = (NumberConstructor)info.GetValue("numberConstructor", typeof(NumberConstructor));
-            this.m_objectConstructor = (ObjectConstructor)info.GetValue("objectConstructor", typeof(ObjectConstructor));
-            this.m_regExpConstructor = (RegExpConstructor)info.GetValue("regExpConstructor", typeof(RegExpConstructor));
-            this.m_stringConstructor = (StringConstructor)info.GetValue("stringConstructor", typeof(StringConstructor));
+            m_globalObject = (GlobalObject)info.GetValue("globalObject", typeof(GlobalObject));
+            m_arrayConstructor = (ArrayConstructor)info.GetValue("arrayConstructor", typeof(ArrayConstructor));
+            m_booleanConstructor = (BooleanConstructor)info.GetValue("booleanConstructor", typeof(BooleanConstructor));
+            m_dateConstructor = (DateConstructor)info.GetValue("dateConstructor", typeof(DateConstructor));
+            m_functionConstructor = (FunctionConstructor)info.GetValue("functionConstructor", typeof(FunctionConstructor));
+            m_jsonObject = (JSONObject)info.GetValue("jsonObject", typeof(JSONObject));
+            m_mathObject = (MathObject)info.GetValue("mathObject", typeof(MathObject));
+            m_numberConstructor = (NumberConstructor)info.GetValue("numberConstructor", typeof(NumberConstructor));
+            m_objectConstructor = (ObjectConstructor)info.GetValue("objectConstructor", typeof(ObjectConstructor));
+            m_regExpConstructor = (RegExpConstructor)info.GetValue("regExpConstructor", typeof(RegExpConstructor));
+            m_stringConstructor = (StringConstructor)info.GetValue("stringConstructor", typeof(StringConstructor));
 
             // Deserialize the built-in error objects.
-            this.m_errorConstructor = (ErrorConstructor)info.GetValue("errorConstructor", typeof(ErrorConstructor));
-            this.m_rangeErrorConstructor = (ErrorConstructor)info.GetValue("rangeErrorConstructor", typeof(ErrorConstructor));
-            this.m_typeErrorConstructor = (ErrorConstructor)info.GetValue("typeErrorConstructor", typeof(ErrorConstructor));
-            this.m_syntaxErrorConstructor = (ErrorConstructor)info.GetValue("syntaxErrorConstructor", typeof(ErrorConstructor));
-            this.m_uriErrorConstructor = (ErrorConstructor)info.GetValue("uriErrorConstructor", typeof(ErrorConstructor));
-            this.m_evalErrorConstructor = (ErrorConstructor)info.GetValue("evalErrorConstructor", typeof(ErrorConstructor));
-            this.m_referenceErrorConstructor = (ErrorConstructor)info.GetValue("referenceErrorConstructor", typeof(ErrorConstructor));
+            m_errorConstructor = (ErrorConstructor)info.GetValue("errorConstructor", typeof(ErrorConstructor));
+            m_rangeErrorConstructor = (ErrorConstructor)info.GetValue("rangeErrorConstructor", typeof(ErrorConstructor));
+            m_typeErrorConstructor = (ErrorConstructor)info.GetValue("typeErrorConstructor", typeof(ErrorConstructor));
+            m_syntaxErrorConstructor = (ErrorConstructor)info.GetValue("syntaxErrorConstructor", typeof(ErrorConstructor));
+            m_uriErrorConstructor = (ErrorConstructor)info.GetValue("uriErrorConstructor", typeof(ErrorConstructor));
+            m_evalErrorConstructor = (ErrorConstructor)info.GetValue("evalErrorConstructor", typeof(ErrorConstructor));
+            m_referenceErrorConstructor = (ErrorConstructor)info.GetValue("referenceErrorConstructor", typeof(ErrorConstructor));
         }
 
         /// <summary>
@@ -179,32 +179,32 @@
         public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
             // Serialize the compatibility mode.
-            info.AddValue("compatibilityMode", (int)this.m_compatibilityMode);
+            info.AddValue("compatibilityMode", (int)m_compatibilityMode);
 
             // Serialize the ForceStrictMode flag.
-            info.AddValue("forceStrictMode", this.ForceStrictMode);
+            info.AddValue("forceStrictMode", ForceStrictMode);
 
             // Serialize the built-in objects.
-            info.AddValue("globalObject", this.m_globalObject);
-            info.AddValue("arrayConstructor", this.m_arrayConstructor);
-            info.AddValue("booleanConstructor", this.m_booleanConstructor);
-            info.AddValue("dateConstructor", this.m_dateConstructor);
-            info.AddValue("functionConstructor", this.m_functionConstructor);
-            info.AddValue("jsonObject", this.m_jsonObject);
-            info.AddValue("mathObject", this.m_mathObject);
-            info.AddValue("numberConstructor", this.m_numberConstructor);
-            info.AddValue("objectConstructor", this.m_objectConstructor);
-            info.AddValue("regExpConstructor", this.m_regExpConstructor);
-            info.AddValue("stringConstructor", this.m_stringConstructor);
+            info.AddValue("globalObject", m_globalObject);
+            info.AddValue("arrayConstructor", m_arrayConstructor);
+            info.AddValue("booleanConstructor", m_booleanConstructor);
+            info.AddValue("dateConstructor", m_dateConstructor);
+            info.AddValue("functionConstructor", m_functionConstructor);
+            info.AddValue("jsonObject", m_jsonObject);
+            info.AddValue("mathObject", m_mathObject);
+            info.AddValue("numberConstructor", m_numberConstructor);
+            info.AddValue("objectConstructor", m_objectConstructor);
+            info.AddValue("regExpConstructor", m_regExpConstructor);
+            info.AddValue("stringConstructor", m_stringConstructor);
 
             // Serialize the built-in error objects.
-            info.AddValue("errorConstructor", this.m_errorConstructor);
-            info.AddValue("rangeErrorConstructor", this.m_rangeErrorConstructor);
-            info.AddValue("typeErrorConstructor", this.m_typeErrorConstructor);
-            info.AddValue("syntaxErrorConstructor", this.m_syntaxErrorConstructor);
-            info.AddValue("uriErrorConstructor", this.m_uriErrorConstructor);
-            info.AddValue("evalErrorConstructor", this.m_evalErrorConstructor);
-            info.AddValue("referenceErrorConstructor", this.m_referenceErrorConstructor);
+            info.AddValue("errorConstructor", m_errorConstructor);
+            info.AddValue("rangeErrorConstructor", m_rangeErrorConstructor);
+            info.AddValue("typeErrorConstructor", m_typeErrorConstructor);
+            info.AddValue("syntaxErrorConstructor", m_syntaxErrorConstructor);
+            info.AddValue("uriErrorConstructor", m_uriErrorConstructor);
+            info.AddValue("evalErrorConstructor", m_evalErrorConstructor);
+            info.AddValue("referenceErrorConstructor", m_referenceErrorConstructor);
         }
 
         //     PROPERTIES
@@ -227,18 +227,18 @@
         /// </summary>
         public CompatibilityMode CompatibilityMode
         {
-            get { return this.m_compatibilityMode; }
+            get { return m_compatibilityMode; }
             set
             {
-                this.m_compatibilityMode = value;
+                m_compatibilityMode = value;
 
                 // Infinity, NaN and undefined are writable in ECMAScript 3 and read-only in ECMAScript 5.
                 var attributes = PropertyAttributes.Sealed;
-                if (this.CompatibilityMode == CompatibilityMode.ECMAScript3)
+                if (CompatibilityMode == CompatibilityMode.ECMAScript3)
                     attributes = PropertyAttributes.Writable;
-                this.Global.FastSetProperty("Infinity", double.PositiveInfinity, attributes, true);
-                this.Global.FastSetProperty("NaN", double.NaN, attributes, true);
-                this.Global.FastSetProperty("undefined", Undefined.Value, attributes, true);
+                Global.FastSetProperty("Infinity", double.PositiveInfinity, attributes, true);
+                Global.FastSetProperty("NaN", double.NaN, attributes, true);
+                Global.FastSetProperty("undefined", Undefined.Value, attributes, true);
             }
         }
 
@@ -301,7 +301,7 @@
         /// </summary>
         public GlobalObject Global
         {
-            get { return this.m_globalObject; }
+            get { return m_globalObject; }
         }
 
         /// <summary>
@@ -309,7 +309,7 @@
         /// </summary>
         public ArrayConstructor Array
         {
-            get { return this.m_arrayConstructor; }
+            get { return m_arrayConstructor; }
         }
 
         /// <summary>
@@ -317,7 +317,7 @@
         /// </summary>
         public BooleanConstructor Boolean
         {
-            get { return this.m_booleanConstructor; }
+            get { return m_booleanConstructor; }
         }
 
         /// <summary>
@@ -325,7 +325,7 @@
         /// </summary>
         public DateConstructor Date
         {
-            get { return this.m_dateConstructor; }
+            get { return m_dateConstructor; }
         }
 
         /// <summary>
@@ -333,7 +333,7 @@
         /// </summary>
         public FunctionConstructor Function
         {
-            get { return this.m_functionConstructor; }
+            get { return m_functionConstructor; }
         }
 
         /// <summary>
@@ -341,7 +341,7 @@
         /// </summary>
         public MathObject Math
         {
-            get { return this.m_mathObject; }
+            get { return m_mathObject; }
         }
 
         /// <summary>
@@ -349,7 +349,7 @@
         /// </summary>
         public NumberConstructor Number
         {
-            get { return this.m_numberConstructor; }
+            get { return m_numberConstructor; }
         }
 
         /// <summary>
@@ -357,7 +357,7 @@
         /// </summary>
         public ObjectConstructor Object
         {
-            get { return this.m_objectConstructor; }
+            get { return m_objectConstructor; }
         }
 
         /// <summary>
@@ -365,7 +365,7 @@
         /// </summary>
         public RegExpConstructor RegExp
         {
-            get { return this.m_regExpConstructor; }
+            get { return m_regExpConstructor; }
         }
 
         /// <summary>
@@ -373,7 +373,7 @@
         /// </summary>
         public StringConstructor String
         {
-            get { return this.m_stringConstructor; }
+            get { return m_stringConstructor; }
         }
 
 
@@ -382,7 +382,7 @@
         /// </summary>
         public ErrorConstructor Error
         {
-            get { return this.m_errorConstructor; }
+            get { return m_errorConstructor; }
         }
 
         /// <summary>
@@ -390,7 +390,7 @@
         /// </summary>
         public ErrorConstructor RangeError
         {
-            get { return this.m_rangeErrorConstructor; }
+            get { return m_rangeErrorConstructor; }
         }
 
         /// <summary>
@@ -398,7 +398,7 @@
         /// </summary>
         public ErrorConstructor TypeError
         {
-            get { return this.m_typeErrorConstructor; }
+            get { return m_typeErrorConstructor; }
         }
 
         /// <summary>
@@ -406,7 +406,7 @@
         /// </summary>
         public ErrorConstructor SyntaxError
         {
-            get { return this.m_syntaxErrorConstructor; }
+            get { return m_syntaxErrorConstructor; }
         }
 
         /// <summary>
@@ -414,7 +414,7 @@
         /// </summary>
         public ErrorConstructor URIError
         {
-            get { return this.m_uriErrorConstructor; }
+            get { return m_uriErrorConstructor; }
         }
 
         /// <summary>
@@ -422,7 +422,7 @@
         /// </summary>
         public ErrorConstructor EvalError
         {
-            get { return this.m_evalErrorConstructor; }
+            get { return m_evalErrorConstructor; }
         }
 
         /// <summary>
@@ -430,7 +430,7 @@
         /// </summary>
         public ErrorConstructor ReferenceError
         {
-            get { return this.m_referenceErrorConstructor; }
+            get { return m_referenceErrorConstructor; }
         }
 
 
@@ -470,6 +470,38 @@
             public System.Reflection.Emit.AssemblyBuilder AssemblyBuilder;
             public System.Reflection.Emit.ModuleBuilder ModuleBuilder;
             public int TypeCount;
+        }
+
+        /// <summary>
+        /// Compiles the given source code and returns it in a form that can be executed many
+        /// times.
+        /// </summary>
+        /// <param name="source"> The javascript source code to execute. </param>
+        /// <returns> A CompiledScript instance, which can be executed as many times as needed. </returns>
+        public CompiledScript Compile(ScriptSource source)
+        {
+            var methodGen = new Jurassic.Compiler.GlobalMethodGenerator(
+                this,                               // The script engine
+                source,                             // The source code.
+                CreateOptions());                   // The compiler options.
+
+            // Parse
+            if (ParsingStarted != null)
+                ParsingStarted(this, EventArgs.Empty);
+            methodGen.Parse();
+
+            // Optimize
+            if (OptimizationStarted != null)
+                OptimizationStarted(this, EventArgs.Empty);
+            methodGen.Optimize();
+
+            // Generate code
+            if (CodeGenerationStarted != null)
+                CodeGenerationStarted(this, EventArgs.Empty);
+            methodGen.GenerateCode();
+            VerifyGeneratedCode();
+
+            return new CompiledScript(methodGen);
         }
 
         /// <summary>
@@ -514,30 +546,30 @@
         {
             var methodGen = new Jurassic.Compiler.EvalMethodGenerator(
                 this,                               // The script engine
-                this.CreateGlobalScope(),           // The variable scope.
+                CreateGlobalScope(),           // The variable scope.
                 source,                             // The source code.
                 CreateOptions(),                    // The compiler options.
-                this.Global);                       // The value of the "this" keyword.
+                Global);                       // The value of the "this" keyword.
 
             // Parse
-            if (this.ParsingStarted != null)
-                this.ParsingStarted(this, EventArgs.Empty);
+            if (ParsingStarted != null)
+                ParsingStarted(this, EventArgs.Empty);
             methodGen.Parse();
 
             // Optimize
-            if (this.OptimizationStarted != null)
-                this.OptimizationStarted(this, EventArgs.Empty);
+            if (OptimizationStarted != null)
+                OptimizationStarted(this, EventArgs.Empty);
             methodGen.Optimize();
 
             // Generate code
-            if (this.CodeGenerationStarted != null)
-                this.CodeGenerationStarted(this, EventArgs.Empty);
+            if (CodeGenerationStarted != null)
+                CodeGenerationStarted(this, EventArgs.Empty);
             methodGen.GenerateCode();
             VerifyGeneratedCode();
 
             // Execute
-            if (this.ExecutionStarted != null)
-                this.ExecutionStarted(this, EventArgs.Empty);
+            if (ExecutionStarted != null)
+                ExecutionStarted(this, EventArgs.Empty);
             var result = methodGen.Execute();
 
             // Normalize the result (convert null to Undefined, double to int, etc).
@@ -549,7 +581,7 @@
             using (var x = script.GetReader())
             {
                 var code = x.ReadToEnd();
-                return this.Evaluate(code);
+                return Evaluate(code);
             }
         }
 
@@ -612,31 +644,14 @@
         /// <exception cref="ArgumentNullException"> <paramref name="source"/> is a <c>null</c> reference. </exception>
         public void Execute(ScriptSource source)
         {
-            var methodGen = new Jurassic.Compiler.GlobalMethodGenerator(
-                this,                               // The script engine
-                source,                             // The source code.
-                CreateOptions());                   // The compiler options.
+            // Compile the script.
+            var compiledScript = Compile(source);
 
-            // Parse
-            if (this.ParsingStarted != null)
-                this.ParsingStarted(this, EventArgs.Empty);
-            methodGen.Parse();
+            // ...and execute it.
+            if (ExecutionStarted != null)
+                ExecutionStarted(this, EventArgs.Empty);
 
-            // Optimize
-            if (this.OptimizationStarted != null)
-                this.OptimizationStarted(this, EventArgs.Empty);
-            methodGen.Optimize();
-
-            // Generate code
-            if (this.CodeGenerationStarted != null)
-                this.CodeGenerationStarted(this, EventArgs.Empty);
-            methodGen.GenerateCode();
-            VerifyGeneratedCode();
-
-            // Execute
-            if (this.ExecutionStarted != null)
-                this.ExecutionStarted(this, EventArgs.Empty);
-            methodGen.Execute();
+            compiledScript.Execute();
         }
 
         /// <summary>
@@ -690,8 +705,8 @@
         {
             return new Compiler.CompilerOptions
             {
-                ForceStrictMode = this.ForceStrictMode,
-                EnableDebugging = this.EnableDebugging
+                ForceStrictMode = ForceStrictMode,
+                EnableDebugging = EnableDebugging
             };
         }
 
@@ -711,7 +726,7 @@
         {
             if (variableName == null)
                 throw new ArgumentNullException("variableName");
-            return this.Global.HasProperty(variableName);
+            return Global.HasProperty(variableName);
         }
 
         /// <summary>
@@ -723,7 +738,7 @@
         {
             if (variableName == null)
                 throw new ArgumentNullException("variableName");
-            return TypeUtilities.NormalizeValue(this.Global.GetPropertyValue(variableName));
+            return TypeUtilities.NormalizeValue(Global.GetPropertyValue(variableName));
         }
 
         /// <summary>
@@ -740,7 +755,7 @@
         {
             if (variableName == null)
                 throw new ArgumentNullException("variableName");
-            return TypeConverter.ConvertTo<T>(this, TypeUtilities.NormalizeValue(this.Global.GetPropertyValue(variableName)));
+            return TypeConverter.ConvertTo<T>(this, TypeUtilities.NormalizeValue(Global.GetPropertyValue(variableName)));
         }
 
         /// <summary>
@@ -809,7 +824,7 @@
                     throw new ArgumentException(string.Format("Cannot store value of type {0}.", value.GetType()), "value");
             }
 
-            this.Global.SetPropertyValue(variableName, value, true);
+            Global.SetPropertyValue(variableName, value, true);
         }
 
         /// <summary>
@@ -824,7 +839,7 @@
                 throw new ArgumentNullException("functionName");
             if (argumentValues == null)
                 throw new ArgumentNullException("argumentValues");
-            var value = this.Global.GetPropertyValue(functionName);
+            var value = Global.GetPropertyValue(functionName);
             if ((value is FunctionInstance) == false)
                 throw new InvalidOperationException(string.Format("'{0}' is not a function.", functionName));
             return ((FunctionInstance)value).CallLateBound(null, argumentValues);
@@ -858,7 +873,7 @@
                 throw new ArgumentNullException("functionName");
             if (functionDelegate == null)
                 throw new ArgumentNullException("functionDelegate");
-            SetGlobalValue(functionName, new ClrFunction(this.Function.InstancePrototype, functionDelegate, functionName, -1));
+            SetGlobalValue(functionName, new ClrFunction(Function.InstancePrototype, functionDelegate, functionName, -1));
         }
 
 
@@ -898,7 +913,7 @@
         /// <returns> A new global scope, with no declared variables. </returns>
         internal Compiler.ObjectScope CreateGlobalScope()
         {
-            return Compiler.ObjectScope.CreateGlobalScope(this.Global);
+            return Compiler.ObjectScope.CreateGlobalScope(Global);
         }
 
 
@@ -911,7 +926,7 @@
         /// </summary>
         internal HiddenClassSchema EmptySchema
         {
-            get { return this.m_emptySchema; }
+            get { return m_emptySchema; }
         }
 
 
@@ -1090,7 +1105,7 @@
         /// <param name="line"> The line number of the function call. </param>
         internal void PushStackFrame(string path, string function, int line)
         {
-            this.m_stackFrames.Push(new StackFrame { Path = path, Function = function, Line = line });
+            m_stackFrames.Push(new StackFrame { Path = path, Function = function, Line = line });
         }
 
         /// <summary>
@@ -1098,7 +1113,7 @@
         /// </summary>
         internal void PopStackFrame()
         {
-            this.m_stackFrames.Pop();
+            m_stackFrames.Pop();
         }
 
 
@@ -1115,8 +1130,8 @@
         {
             get
             {
-                return this.m_instanceTypeWrapperCache ??
-                       (this.m_instanceTypeWrapperCache = new Dictionary<Type, ClrInstanceTypeWrapper>());
+                return m_instanceTypeWrapperCache ??
+                       (m_instanceTypeWrapperCache = new Dictionary<Type, ClrInstanceTypeWrapper>());
             }
         }
 
@@ -1127,8 +1142,8 @@
         {
             get
             {
-                return this.m_staticTypeWrapperCache ??
-                       (this.m_staticTypeWrapperCache = new Dictionary<Type, ClrStaticTypeWrapper>());
+                return m_staticTypeWrapperCache ??
+                       (m_staticTypeWrapperCache = new Dictionary<Type, ClrStaticTypeWrapper>());
             }
         }
     }

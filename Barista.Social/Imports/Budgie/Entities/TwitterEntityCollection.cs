@@ -17,10 +17,10 @@
     {
       get
       {
-        return Media.AsEnumerable<TwitterEntity>()
-            .Concat(Urls)
-            .Concat(Mentions)
-            .Concat(Hashtags)
+        return Media.Select(e => (TwitterEntity)e).AsEnumerable()
+            .Concat(Urls.Select(e => (TwitterEntity)e))
+            .Concat(Mentions.Select(e => (TwitterEntity)e))
+            .Concat(Hashtags.Select(e => (TwitterEntity)e))
             .OrderBy(e => e.Indices.Item1)
             .GetEnumerator();
       }

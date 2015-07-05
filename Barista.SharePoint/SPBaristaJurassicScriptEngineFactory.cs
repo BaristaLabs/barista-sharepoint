@@ -1,5 +1,6 @@
 ﻿namespace Barista.SharePoint
 {
+    using System.IO;
     using Barista.Bundles;
     using Barista.Engine;
     using Barista.Library;
@@ -10,6 +11,9 @@
     using Jurassic;
     using Jurassic.Library;
     using System;
+    using System.Web;
+    using Ninject;
+    using Ninject.Extensions.Conventions;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
@@ -23,8 +27,10 @@
             errorInInitialization = false;
 
             //Based on the instancing mode, either retrieve the ScriptEngine from the desired store, or create a new ScriptEngine instance.
+            var instanceSettings = SPBaristaContext.Current.Request.ParseInstanceSettings();
+
             ScriptEngine engine;
-            switch (SPBaristaContext.Current.Request.InstanceMode)
+            switch (instanceSettings.InstanceMode)
             {
                 case BaristaInstanceMode.PerCall:
                     //Always create a new instance of the script engine.
@@ -32,16 +38,16 @@
                     isNewScriptEngineInstance = true;
                     break;
                 case BaristaInstanceMode.Single:
-                    engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromRuntimeCache(SPBaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
+                    engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromRuntimeCache(instanceSettings.InstanceName, out isNewScriptEngineInstance);
                     break;
                 case BaristaInstanceMode.PerSession:
-                    engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromSession(SPBaristaContext.Current.Request.InstanceName, out isNewScriptEngineInstance);
+                    engine = BaristaSharePointGlobal.GetOrCreateScriptEngineInstanceFromSession(instanceSettings.InstanceName, out isNewScriptEngineInstance);
                     break;
                 default:
-                    throw new NotImplementedException("The instance mode of " + SPBaristaContext.Current.Request.InstanceMode + " is currently not supported.");
+                    throw new NotImplementedException("The instance mode of " + instanceSettings.InstanceMode + " is currently not supported.");
             }
 
-            if (SPBaristaContext.Current.Request.ForceStrict)
+            if (SPBaristaContext.Current.Request.ShouldForceStrict())
             {
                 engine.ForceStrictMode = true;
             }
@@ -58,6 +64,10 @@
 
                 if (webBundle != null)
                     instance.Common.RegisterBundle(webBundle);
+
+                var binDirectory = "";
+                if (HttpRuntime.AppDomainAppId != null)
+                    binDirectory = HttpRuntime.BinDirectory;
 
                 instance.Common.RegisterBundle(new StringBundle());
                 instance.Common.RegisterBundle(new SugarBundle());
@@ -91,6 +101,21 @@
                 instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
                 instance.Common.RegisterBundle(new WebAdministrationBundle());
                 //instance.Common.RegisterBundle(new UnitTestingBundle());
+                instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
+
+                //Let's do some DI
+                var kernel = new StandardKernel();
+                kernel.Bind(x => x
+                    .FromAssembliesInPath(Path.Combine(binDirectory, "Bundles"))
+                    .SelectAllClasses()
+                    .InheritedFrom<IBundle>()
+                    .BindAllInterfaces()
+                    );
+
+                foreach (var bundle in kernel.GetAll<IBundle>())
+                {
+                    instance.Common.RegisterBundle(bundle);
+                }
 
                 //Global Types
                 engine.SetGlobalValue("barista", instance);
@@ -107,6 +132,7 @@
 
                 engine.SetGlobalValue("console", console);
 
+                
                 //If we came from the Barista event receiver, set the appropriate context.
                 if (
                   SPBaristaContext.Current.Request != null &&
@@ -129,12 +155,11 @@ var define = function() { return barista.common.define(arguments[0], arguments[1
 var include = function(scriptUrl) { return barista.include(scriptUrl); };");
 
                 //Execute any instance initialization code.
-                if (String.IsNullOrEmpty(SPBaristaContext.Current.Request.InstanceInitializationCode))
+                if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode))
                     return engine;
 
                 var initializationScriptSource =
-                    new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode,
-                        SPBaristaContext.Current.Request.InstanceInitializationCodePath);
+                    new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode, SPBaristaContext.Current.Request.InstanceInitializationCodePath);
 
                 try
                 {
@@ -147,15 +172,15 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                     UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
                     errorInInitialization = true;
 
-                    switch (SPBaristaContext.Current.Request.InstanceMode)
+                    switch (instanceSettings.InstanceMode)
                     {
                         case BaristaInstanceMode.Single:
                             BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                SPBaristaContext.Current.Request.InstanceName);
+                                instanceSettings.InstanceName);
                             break;
                         case BaristaInstanceMode.PerSession:
                             BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                SPBaristaContext.Current.Request.InstanceName);
+                                instanceSettings.InstanceName);
                             break;
                     }
                 }
@@ -164,15 +189,15 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                     BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
                         "An internal error occured while evaluating script: ");
                     errorInInitialization = true;
-                    switch (SPBaristaContext.Current.Request.InstanceMode)
+                    switch (instanceSettings.InstanceMode)
                     {
                         case BaristaInstanceMode.Single:
                             BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                SPBaristaContext.Current.Request.InstanceName);
+                                instanceSettings.InstanceName);
                             break;
                         case BaristaInstanceMode.PerSession:
                             BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                SPBaristaContext.Current.Request.InstanceName);
+                                instanceSettings.InstanceName);
                             break;
                     }
                     throw;

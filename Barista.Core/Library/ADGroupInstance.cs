@@ -19,7 +19,7 @@
         {
             var group = new ADGroup();
 
-            return new ADGroupInstance(this.InstancePrototype, group);
+            return new ADGroupInstance(InstancePrototype, group);
         }
 
         public ADGroupInstance Construct(ADGroup group)
@@ -27,7 +27,7 @@
             if (group == null)
                 throw new ArgumentNullException("group");
 
-            return new ADGroupInstance(this.InstancePrototype, group);
+            return new ADGroupInstance(InstancePrototype, group);
         }
     }
 
@@ -40,19 +40,19 @@
         public ADGroupInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public ADGroupInstance(ObjectInstance prototype, ADGroup group)
             : this(prototype)
         {
-            this.m_group = group;
+            m_group = group;
         }
 
         public ADGroupInstance(ObjectInstance prototype, ADGroup group, string ldap)
             : this(prototype, group)
         {
-            this.m_ldap = ldap;
+            m_ldap = ldap;
         }
 
         #region Properties
@@ -85,11 +85,12 @@
         }
 
         [JSProperty(Name = "members")]
+        [JSDoc("ternPropertyType", "[string]")]
         public ArrayInstance Members
         {
             get
             {
-                var result = this.Engine.Array.Construct();
+                var result = Engine.Array.Construct();
 
                 foreach (var user in m_group.Members)
                 {
@@ -103,32 +104,34 @@
         #endregion
 
         [JSFunction(Name = "expandUsers")]
+        [JSDoc("ternReturnTYpe", "[+ADUser]")]
         public ArrayInstance ExpandUsers()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var user in m_group.Members.Select(memberLogonName => ADHelper.GetADUserByDistinguishedName(memberLogonName, m_ldap)))
             {
                 if (user == null)
                     continue;
 
-                ArrayInstance.Push(result, new ADUserInstance(this.Engine.Object.InstancePrototype, user));
+                ArrayInstance.Push(result, new ADUserInstance(Engine.Object.InstancePrototype, user, m_ldap));
             }
 
             return result;
         }
 
         [JSFunction(Name = "expandGroups")]
+        [JSDoc("ternReturnType", "[+ADGroup]")]
         public ArrayInstance ExpandGroups()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
 
             foreach (var group in m_group.Members.Select(memberLogonName => ADHelper.GetADGroupByDistinguishedName(memberLogonName, m_ldap)))
             {
                 if (group == null)
                     continue;
 
-                ArrayInstance.Push(result, new ADGroupInstance(this.Engine.Object.InstancePrototype, group));
+                ArrayInstance.Push(result, new ADGroupInstance(Engine.Object.InstancePrototype, group, m_ldap));
             }
 
             return result;

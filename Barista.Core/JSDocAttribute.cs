@@ -7,14 +7,14 @@
   {
     public JSDocAttribute(string tag, string text)
     {
-      this.Tag = tag;
-      this.Text = text;
+      Tag = tag;
+      Text = text;
     }
 
     public JSDocAttribute(string text)
     {
-      this.Tag = null;
-      this.Text = text;
+      Tag = null;
+      Text = text;
     }
 
     public string Tag

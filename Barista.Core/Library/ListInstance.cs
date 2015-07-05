@@ -13,7 +13,7 @@
         public ListInstance(ScriptEngine engine)
             : base(engine)
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected ListInstance(ObjectInstance prototype)
@@ -32,37 +32,37 @@
         {
             get
             {
-                return this.List.Count;
+                return List.Count;
             }
         }
 
         [JSFunction(Name = "add")]
-        public void Add(TItemInstance item)
+        public virtual void Add(TItemInstance item)
         {
             var obj = Unwrap(item);
-            this.List.Add(obj);
+            List.Add(obj);
         }
 
         //AsReadOnly
         //Binarysearch
 
         [JSFunction(Name = "clear")]
-        public void Clear()
+        public virtual void Clear()
         {
-            this.List.Clear();
+            List.Clear();
         }
 
         [JSFunction(Name = "contains")]
         public bool Contains(TItemInstance item)
         {
             var obj = Unwrap(item);
-            return this.List.Contains(obj);
+            return List.Contains(obj);
         }
 
         [JSFunction(Name = "getItemByIndex")]
         public TItemInstance GetItemByIndex(int index)
         {
-            var item = this.List[index];
+            var item = List[index];
             var wrapped = Wrap(item);
             return wrapped;
         }
@@ -71,53 +71,53 @@
         public int IndexOf(TItemInstance item)
         {
             var obj = Unwrap(item);
-            return this.List.IndexOf(obj);
+            return List.IndexOf(obj);
         }
 
         [JSFunction(Name = "insert")]
         public void Insert(int index, TItemInstance item)
         {
             var obj = Unwrap(item);
-            this.List.Insert(index, obj);
+            List.Insert(index, obj);
         }
 
         [JSFunction(Name = "remove")]
         public bool Remove(TItemInstance item)
         {
             var obj = Unwrap(item);
-            return this.List.Remove(obj);
+            return List.Remove(obj);
         }
 
         [JSFunction(Name = "removeAt")]
         public void RemoveAt(int index)
         {
-            this.List.RemoveAt(index);
+            List.RemoveAt(index);
         }
 
         [JSFunction(Name = "reverse")]
         public void Reverse()
         {
 // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            this.List.Reverse();
+            List.Reverse();
         }
 
         [JSFunction(Name = "setItemByIndex")]
         public void SetItemByIndex(int index, TItemInstance item)
         {
             if (item == null)
-                this.List[index] = default(T);
+                List[index] = default(T);
             else
             {
                 var obj = Unwrap(item);
-                this.List[index] = obj;
+                List[index] = obj;
             }
         }
 
         [JSFunction(Name = "toArray")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
-            foreach (var i in this.List)
+            var result = Engine.Array.Construct();
+            foreach (var i in List)
                 ArrayInstance.Push(result, Wrap(i));
 
             return result;

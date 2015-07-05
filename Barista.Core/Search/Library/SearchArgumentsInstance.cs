@@ -52,6 +52,7 @@
 
     [JSProperty(Name = "groupByFields")]
     [JsonProperty("groupByFields")]
+    [JSDoc("ternPropertyType", "[string]")]
     public ArrayInstance GroupByFields
     {
       get;

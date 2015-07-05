@@ -13,7 +13,6 @@
     using System.Runtime.InteropServices;
     using System.ServiceModel;
     using System.Threading;
-    using System.Web;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -117,16 +116,17 @@
 
             var response = new BrewResponse
             {
-                ContentType = request.ContentType
+                ContentType = request.Headers.ContentType
             };
 
             SPBaristaContext.Current = new SPBaristaContext(request, response);
+            var instanceSettings = SPBaristaContext.Current.Request.ParseInstanceSettings();
 
             Mutex syncRoot = null;
 
-            if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+            if (instanceSettings.InstanceMode != BaristaInstanceMode.PerCall)
             {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
+                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + instanceSettings.InstanceName);
             }
 
             var webBundle = new SPWebBundle();
@@ -183,14 +183,14 @@
                         if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
                         {
                             var br = BrowserUserAgentParser.GetDefault();
-                            var clientInfo = br.Parse(request.UserAgent);
+                            var clientInfo = br.Parse(request.Headers.UserAgent);
 
                             if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
-                                response.Headers.Add("Content-Disposition", "attachment; filename=" + HttpUtility.UrlEncode(arrayResult.FileName));
+                                response.Headers.Add("Content-Disposition", "attachment; filename=" + Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName));
                             else if (clientInfo.UserAgent.Family == "Safari")
                                 response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
                             else
-                                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
+                                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
                         }
                     }
 
@@ -262,17 +262,18 @@
 
             var response = new BrewResponse
             {
-                ContentType = request.ContentType
+                ContentType = request.Headers.ContentType
             };
 
             //Set the current context with information from the current request and response.
             SPBaristaContext.Current = new SPBaristaContext(request, response);
+            var instanceSettings = SPBaristaContext.Current.Request.ParseInstanceSettings();
 
             //If we're not executing with Per-Call instancing, create a mutex to synchronize against.
             Mutex syncRoot = null;
-            if (SPBaristaContext.Current.Request.InstanceMode != BaristaInstanceMode.PerCall)
+            if (instanceSettings.InstanceMode != BaristaInstanceMode.PerCall)
             {
-                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + SPBaristaContext.Current.Request.InstanceName);
+                syncRoot = new Mutex(false, "Barista_ScriptEngineInstance_" + instanceSettings.InstanceName);
             }
 
             SPBaristaContext.Current.WebBundle = new SPWebBundle();
@@ -286,13 +287,11 @@
                 bool isNewScriptEngineInstance;
                 bool errorInInitialization;
 
-                if (request.ScriptEngineFactory.IsNullOrWhiteSpace())
-                    throw new InvalidOperationException("A ScriptEngineFactory must be specified as part of a BrewRequest.");
-
-                var baristaScriptEngineFactoryType = Type.GetType(request.ScriptEngineFactory, true);
+                var baristaScriptEngineFactoryType = Type.GetType("Barista.SharePoint.SPBaristaScriptEngineFactory, Barista.SharePoint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2d8064cb9226f52",
+                    true);
 
                 if (baristaScriptEngineFactoryType == null)
-                    throw new InvalidOperationException("Unable to locate the specified ScriptEngineFactory: " + request.ScriptEngineFactory);
+                    throw new InvalidOperationException("Unable to locate the SPBaristaScriptEngineFactory");
 
                 var scriptEngineFactory =
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
@@ -301,7 +300,7 @@
                     out errorInInitialization);
 
                 if (engine == null)
-                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
+                    throw new InvalidOperationException("Unable to obtain an instance of a Script Engine.");
 
                 if (errorInInitialization)
                     return;

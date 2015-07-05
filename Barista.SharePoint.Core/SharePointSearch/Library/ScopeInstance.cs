@@ -17,7 +17,7 @@
             : base(engine)
         {
             m_scope = scope;
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected ScopeInstance(ObjectInstance prototype, Scope scope)
@@ -142,7 +142,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_scope.LastCompilationTime);
+                return JurassicHelper.ToDateInstance(Engine, m_scope.LastCompilationTime);
             }
         }
 
@@ -160,7 +160,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_scope.LastModifiedTime);
+                return JurassicHelper.ToDateInstance(Engine, m_scope.LastModifiedTime);
             }
         }
 
@@ -181,22 +181,23 @@
                 var site = m_scope.OwningSite;
                 return site == null
                     ? null
-                    : new SPSiteInstance(this.Engine.Object.InstancePrototype, site);
+                    : new SPSiteInstance(Engine.Object.InstancePrototype, site);
             }
         }
 
         //Rules
 
         [JSFunction(Name = "getContainingDisplayGroups")]
+        [JSDoc("ternReturnType", "[+ScopeDisplayGroup]")]
         public ArrayInstance GetContainingDisplayGroups()
         {
             var groups = m_scope.ContainingDisplayGroups;
             if (groups == null)
                 return null;
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var g in groups.OfType<ScopeDisplayGroup>())
-                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(this.Engine, g));
+                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(Engine, g));
             
             return result;
         }

@@ -17,7 +17,7 @@
         {
             m_scopeDisplayGroupCollection = scopeDisplayGroupCollection;
 
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         protected ScopeDisplayGroupCollectionInstance(ObjectInstance prototype, ScopeDisplayGroupCollection scopeDisplayGroupCollection)
@@ -49,7 +49,7 @@
             var result = m_scopeDisplayGroupCollection[index];
             return result == null
                 ? null
-                : new ScopeDisplayGroupInstance(this.Engine, result);
+                : new ScopeDisplayGroupInstance(Engine, result);
         }
 
         [JSFunction(Name = "create")]
@@ -58,15 +58,16 @@
             var result = m_scopeDisplayGroupCollection.Create(name, description, owningSiteUrl.Uri, displayInAdminUI);
             return result == null
                 ? null
-                : new ScopeDisplayGroupInstance(this.Engine, result);
+                : new ScopeDisplayGroupInstance(Engine, result);
         }
 
         [JSFunction(Name = "toArray")]
+        [JSDoc("ternReturnType", "[+ScopeDisplayGroup]")]
         public ArrayInstance ToArray()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var scope in m_scopeDisplayGroupCollection.OfType<ScopeDisplayGroup>())
-                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(this.Engine, scope));
+                ArrayInstance.Push(result, new ScopeDisplayGroupInstance(Engine, scope));
 
             return result;
         }

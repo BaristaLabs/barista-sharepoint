@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.Runtime.InteropServices;
     using System.Security.Principal;
+    using System.Text;
     using Microsoft.SharePoint;
     using System.IO;
     using System.Web;
@@ -530,8 +531,29 @@
                             throw new InvalidOperationException("The specified script url is invalid.");
 
                         filePath = fileUri.ToString();
-                        fileContents = sourceWeb.GetFileAsString(fileUri.ToString());
-                        return true;
+                        var file = sourceWeb.GetFile(fileUri.ToString());
+                        if (file != null && file.Exists)
+                        {
+                            Encoding encoding;
+                            var content = file.OpenBinary();
+                            if (content[0] == '\x00EF' && content[1] == '\x00BB' && content[2] == '\x00BF')
+                                encoding = Encoding.UTF8;
+                            else if (content[0] == '\x00FF' && content[1] == '\x00FE')
+                                encoding = Encoding.Unicode;
+                            else if (content[0] == '\x00FE' && content[1] == '\x00FF')
+                                encoding = Encoding.BigEndianUnicode;
+                            else
+                                encoding = Encoding.ASCII;
+
+                            fileContents = encoding.GetString(content);
+
+                            //Yank out preamble, if it exists.
+                            var byteOrderMark = encoding.GetString(encoding.GetPreamble());
+                            if (fileContents.StartsWith(fileContents))
+                                fileContents = fileContents.Remove(0, byteOrderMark.Length);
+
+                            return true;
+                        }
                     }
                 }
             }
@@ -540,8 +562,8 @@
             //Attempt to get the script from a relative path to the requesting url.
             Uri referrer = null;
 
-            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.UrlReferrer != null)
-                referrer = SPBaristaContext.Current.Request.UrlReferrer;
+            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.Headers.Referrer != null)
+                referrer = new Uri(SPBaristaContext.Current.Request.Headers.Referrer, UriKind.Absolute);
             else if (HttpContext.Current != null)
                 referrer = HttpContext.Current.Request.UrlReferrer;
 
@@ -560,8 +582,14 @@
                                 throw new InvalidOperationException("The specified script url is invalid.");
 
                             filePath = url.ToString(CultureInfo.InvariantCulture);
-                            fileContents = sourceWeb.GetFileAsString(url.ToString(CultureInfo.InvariantCulture));
-                            return true;
+
+                            var file = sourceWeb.GetFile(filePath);
+                            if (file != null && file.Exists)
+                            {
+                                var content = file.OpenBinary();
+                                fileContents = System.Text.Encoding.UTF8.GetString(content);
+                                return true;
+                            }
                         }
                     }
                 }
