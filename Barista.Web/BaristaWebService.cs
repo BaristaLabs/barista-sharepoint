@@ -374,7 +374,7 @@
             var setHeader = true;
             if (WebOperationContext.Current != null)
             {
-                result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
+                result.ModifyOutgoingWebResponse(WebOperationContext.Current.OutgoingResponse);
                 setHeader = false;
             }
 
