@@ -87,12 +87,12 @@ namespace Barista.Raven.Library
       }
     }
 
-    [JSProperty(Name = "indexEtag")]
-    public GuidInstance IndexEtag
-    {
-      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_queryResult.IndexEtag); }
-      set { m_queryResult.IndexEtag = value == null ? default(Guid) : value.Value; }
-    }
+    //[JSProperty(Name = "indexEtag")]
+    //public GuidInstance IndexEtag
+    //{
+    //  get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_queryResult.IndexEtag as Guid); }
+    //  set { m_queryResult.IndexEtag = value == null ? default(Guid) : value.Value; }
+    //}
 
     [JSProperty(Name = "indexName")]
     public string IndexName
@@ -129,12 +129,12 @@ namespace Barista.Raven.Library
       set { m_queryResult.NonAuthoritativeInformation = value; }
     }
 
-    [JSProperty(Name = "resultEtag")]
-    public GuidInstance ResultEtag
-    {
-      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_queryResult.ResultEtag); }
-      set { m_queryResult.ResultEtag = value == null ? default(Guid) : value.Value; }
-    }
+    //[JSProperty(Name = "resultEtag")]
+    //public GuidInstance ResultEtag
+    //{
+    //  get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_queryResult.ResultEtag); }
+    //  set { m_queryResult.ResultEtag = value == null ? default(Guid) : value.Value; }
+    //}
 
     [JSProperty(Name = "results")]
     public object Results

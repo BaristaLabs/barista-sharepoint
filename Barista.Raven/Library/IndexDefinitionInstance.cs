@@ -96,13 +96,6 @@ namespace Barista.Raven.Library
       get { return m_indexDefinition.IsMapReduce; }
     }
 
-    [JSProperty(Name = "isTemp")]
-    [JsonIgnore]
-    public bool IsTemp
-    {
-      get { return m_indexDefinition.IsTemp; }
-    }
-
     [JSProperty(Name = "name")]
     [JsonProperty("name")]
     public string Name

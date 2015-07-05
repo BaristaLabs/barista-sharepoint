@@ -63,14 +63,14 @@ namespace Barista.Raven.Library
       }
     }
 
-    [JSProperty(Name = "eTag")]
-    public GuidInstance Etag
-    {
-      get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_attachment.Etag); }
-      set {
-        m_attachment.Etag = value == null ? default(Guid) : value.Value;
-      }
-    }
+    //[JSProperty(Name = "eTag")]
+    //public GuidInstance Etag
+    //{
+    //  get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_attachment.Etag); }
+    //  set {
+    //    m_attachment.Etag = value == null ? default(Guid) : value.Value;
+    //  }
+    //}
 
     [JSProperty(Name = "key")]
     public string Key

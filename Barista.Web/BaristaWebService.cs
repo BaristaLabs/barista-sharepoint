@@ -375,7 +375,7 @@
             var setHeader = true;
             if (WebOperationContext.Current != null)
             {
-                result.ModifyWebOperationContext(WebOperationContext.Current.OutgoingResponse);
+                result.ModifyOutgoingWebResponse(WebOperationContext.Current.OutgoingResponse);
                 setHeader = false;
             }
 
@@ -422,10 +422,10 @@
                 bool errorInInitialization;
 
                 var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
 
                 if (engine == null)
-                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
+                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
 
                 if (errorInInitialization)
                     return response;
@@ -528,10 +528,10 @@
                 bool errorInInitialization;
 
                 var scriptEngineFactory = new BaristaScriptEngineFactory();
-                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization) as Jurassic.ScriptEngine;
+                var engine = scriptEngineFactory.GetScriptEngine(webBundle, out isNewScriptEngineInstance, out errorInInitialization);
 
                 if (engine == null)
-                    throw new InvalidOperationException("Unable to obtain an instance of a Jurassic Script Engine.");
+                    throw new InvalidOperationException("Unable to obtain a script engine instance.");
 
                 if (errorInInitialization)
                     return;

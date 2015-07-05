@@ -76,6 +76,7 @@
     <Compile Include="FSDocumentStore_Entity.cs" />
     <Compile Include="FSDocumentStore_Folder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="app.config" />
     <None Include="WindowsPropertyKeys.cs" />
   </ItemGroup>
   <ItemGroup>

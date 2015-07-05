@@ -78,6 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Features\BaristaWorkflowActivities\BaristaWorkflowActivities.feature">
       <FeatureId>{002e34c2-7361-4131-b349-d3225b97c475}</FeatureId>
     </None>

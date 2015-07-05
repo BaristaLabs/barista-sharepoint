@@ -359,6 +359,7 @@
     <Compile Include="Library\SPServerCollectionInstance.cs" />
     <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
     <Compile Include="Library\SPServiceCollectionInstance.cs" />
+    <Compile Include="Library\SPServiceInstanceDependencyCollectionInstance.cs" />
     <Compile Include="Library\SPUserCustomActionCollectionInstance.cs" />
     <Compile Include="Library\SPUserCustomActionInstance.cs" />
     <Compile Include="Library\SPUserSolutionCollection.cs" />
@@ -530,7 +531,6 @@
     <Compile Include="ServiceManagement\BaristaWebSocketsServiceInstance.cs" />
     <Compile Include="SPFileScriptSource.cs" />
     <Compile Include="Library\SPSiteCollectionInstance.cs" />
-    <Compile Include="SPServiceInstanceDependencyCollectionInstance.cs" />
     <Compile Include="Taxonomy\Library\TaxonomySessionInstance.cs" />
     <Compile Include="Taxonomy\Library\TermCollection.cs" />
     <Compile Include="Taxonomy\Library\TermGroupInstance.cs" />

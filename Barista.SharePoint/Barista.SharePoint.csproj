@@ -395,7 +395,6 @@
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.Contrib.Snowball.dll" />
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.Contrib.SpellChecker.dll" />
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.dll" />
-    <Content Include="ISAPI\BaristaServices\Search\System.Threading.dll" />
     <Content Include="Layouts\BaristaFiddle\Vendor\Acorn-1.2.2\acorn.js" />
     <Content Include="Layouts\BaristaFiddle\Vendor\Acorn-1.2.2\acorn_csp.js" />
     <Content Include="Layouts\BaristaFiddle\Vendor\Acorn-1.2.2\acorn_loose.js" />
@@ -1496,7 +1495,6 @@
     <Content Include="WebServices\Barista\bin\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     <Content Include="WebServices\Barista\bin\Ninject.dll" />
     <Content Include="WebServices\Barista\bin\Ninject.Extensions.Conventions.dll" />
-    <Content Include="WebServices\Barista\bin\System.Threading.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.dll" />
     <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.dll" />

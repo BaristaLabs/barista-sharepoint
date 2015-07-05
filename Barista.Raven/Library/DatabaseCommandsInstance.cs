@@ -63,30 +63,30 @@ namespace Barista.Raven.Library
       m_databaseCommands.Delete(strKey, guidETag);
     }
 
-    [JSFunction(Name = "deleteAttachment")]
-    [JSDoc("Deletes the attachment with the specified key.")]
-    public void DeleteAttachment(object key, object eTag)
-    {
-      if (key == null || key == Undefined.Value || key == Null.Value)
-        throw new JavaScriptException(this.Engine, "Error", "The first argument must contain a key.");
+    //[JSFunction(Name = "deleteAttachment")]
+    //[JSDoc("Deletes the attachment with the specified key.")]
+    //public void DeleteAttachment(object key, object eTag)
+    //{
+    //  if (key == null || key == Undefined.Value || key == Null.Value)
+    //    throw new JavaScriptException(this.Engine, "Error", "The first argument must contain a key.");
 
-      var strKey = TypeConverter.ToString(key);
-      var guidETag = GetETagValue(eTag);
-      m_databaseCommands.DeleteAttachment(strKey, guidETag);
-    }
+    //  var strKey = TypeConverter.ToString(key);
+    //  var guidETag = GetETagValue(eTag);
+    //  m_databaseCommands.DeleteAttachment(strKey, guidETag);
+    //}
 
-    [JSFunction(Name = "deleteByIndex")]
-    [JSDoc("Performs a set-based delete using the specified index.")]
-    public void DeleteByIndex(string indexName, IndexQueryInstance queryToDelete, object allowStale)
-    {
-      if (queryToDelete == null)
-        throw new JavaScriptException(this.Engine, "Error", "A delete query must be specified as the second argument.");
+    //[JSFunction(Name = "deleteByIndex")]
+    //[JSDoc("Performs a set-based delete using the specified index.")]
+    //public void DeleteByIndex(string indexName, IndexQueryInstance queryToDelete, object allowStale)
+    //{
+    //  if (queryToDelete == null)
+    //    throw new JavaScriptException(this.Engine, "Error", "A delete query must be specified as the second argument.");
 
-      if (allowStale != null && allowStale != Null.Value && allowStale != Undefined.Value)
-        m_databaseCommands.DeleteByIndex(indexName, queryToDelete.IndexQuery, TypeConverter.ToBoolean(allowStale));
-      else
-        m_databaseCommands.DeleteByIndex(indexName, queryToDelete.IndexQuery);
-    }
+    //  if (allowStale != null && allowStale != Null.Value && allowStale != Undefined.Value)
+    //    m_databaseCommands.DeleteByIndex(indexName, queryToDelete.IndexQuery, TypeConverter.ToBoolean(allowStale));
+    //  else
+    //    m_databaseCommands.DeleteByIndex(indexName, queryToDelete.IndexQuery);
+    //}
 
     [JSFunction(Name = "deleteIndex")]
     [JSDoc("Deletes the specified index.")]
@@ -148,25 +148,25 @@ namespace Barista.Raven.Library
       // ReSharper restore CoVariantArrayConversion
     }
 
-    [JSFunction(Name = "getDatabaseNames")]
-    [JSDoc("Retrieves the names of all tenant databases on the RavenDB server.")]
-    public ArrayInstance GetDatabaseNames(int pageSize, object start)
-    {
-      string[] databaseNames;
-      if (start != null && start != Null.Value && start != Undefined.Value)
-      {
-        var intStart = TypeConverter.ToInteger(start);
-        databaseNames = m_databaseCommands.GetDatabaseNames(pageSize, intStart);
-      }
-      else
-      {
-        databaseNames = m_databaseCommands.GetDatabaseNames(pageSize);
-      }
+    //[JSFunction(Name = "getDatabaseNames")]
+    //[JSDoc("Retrieves the names of all tenant databases on the RavenDB server.")]
+    //public ArrayInstance GetDatabaseNames(int pageSize, object start)
+    //{
+    //  string[] databaseNames;
+    //  if (start != null && start != Null.Value && start != Undefined.Value)
+    //  {
+    //    var intStart = TypeConverter.ToInteger(start);
+    //    databaseNames = m_databaseCommands.GetDatabaseNames(pageSize, intStart);
+    //  }
+    //  else
+    //  {
+    //    databaseNames = m_databaseCommands.GetDatabaseNames(pageSize);
+    //  }
 
 // ReSharper disable CoVariantArrayConversion
-      return this.Engine.Array.Construct(databaseNames);
+    //  return this.Engine.Array.Construct(databaseNames);
 // ReSharper restore CoVariantArrayConversion
-    }
+    //}
 
     [JSFunction(Name = "getIndex")]
     [JSDoc("Retrieves the index with the specified key.")]
@@ -356,22 +356,22 @@ namespace Barista.Raven.Library
       m_databaseCommands.ResetIndex(name);
     }
 
-    [JSFunction(Name = "startsWith")]
-    [JSDoc("Retrieves documents for the specified key prefix.")]
-    public ArrayInstance StartsWith(string keyPrefix, string matches, int start, int pageSize, object metadataOnly)
-    {
-      var bMetadataOnly = false;
+    //[JSFunction(Name = "startsWith")]
+    //[JSDoc("Retrieves documents for the specified key prefix.")]
+    //public ArrayInstance StartsWith(string keyPrefix, string matches, int start, int pageSize, object metadataOnly)
+    //{
+    //  var bMetadataOnly = false;
 
-      if (metadataOnly == null || metadataOnly == Null.Value || metadataOnly == Undefined.Value)
-        bMetadataOnly = TypeConverter.ToBoolean(metadataOnly);
+    //  if (metadataOnly == null || metadataOnly == Null.Value || metadataOnly == Undefined.Value)
+    //    bMetadataOnly = TypeConverter.ToBoolean(metadataOnly);
 
-      var results = m_databaseCommands.StartsWith(keyPrefix, matches, start, pageSize, bMetadataOnly);
-      return
-        this.Engine.Array.Construct(
-        // ReSharper disable CoVariantArrayConversion
-          results.Select(r => new JsonDocumentInstance(this.Engine.Object.InstancePrototype, r)).ToArray());
-      // ReSharper restore CoVariantArrayConversion
-    }
+    //  var results = m_databaseCommands.StartsWith(keyPrefix, matches, start, pageSize, bMetadataOnly);
+    //  return
+    //    this.Engine.Array.Construct(
+    //    // ReSharper disable CoVariantArrayConversion
+    //      results.Select(r => new JsonDocumentInstance(this.Engine.Object.InstancePrototype, r)).ToArray());
+    //  // ReSharper restore CoVariantArrayConversion
+    //}
 
     [JSFunction(Name = "urlFor")]
     [JSDoc("Returns the full url for the specified document.")]

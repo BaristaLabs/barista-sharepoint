@@ -59,12 +59,12 @@
       <HintPath>..\Lib\Barista.Interop.ActiveDs.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+    <Reference Include="Common.Logging, Version=3.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.2.0\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    <Reference Include="Common.Logging.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
@@ -688,6 +688,7 @@
     <Compile Include="Imports\SuperSocket\SocketBase\Logging\ConsoleLogFactory.cs" />
     <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILog.cs" />
     <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILogFactory.cs" />
+    <None Include="app.config" />
     <None Include="Imports\iCal\Serialization\iCalendar\iCal.g" />
     <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLog.cs" />
     <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLogFactory.cs" />

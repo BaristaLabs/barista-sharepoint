@@ -52,19 +52,6 @@ namespace Barista.Raven.Library
     }
 
     #region Properties
-    [JSProperty(Name = "aggregationOption")]
-    [JSDoc("Gets or sets the aggregation option for the query. (None, Count, Dynamic, Distinct)")]
-    public string AggregationOption
-    {
-      get { return m_indexQuery.AggregationOperation.ToString(); }
-      set
-      {
-        RavenDB.Abstractions.Data.AggregationOperation aggregationOperation;
-
-        if (value.TryParseEnum(true, out aggregationOperation))
-          m_indexQuery.AggregationOperation = aggregationOperation;
-      }
-    }
 
     [JSProperty(Name = "cutoff")]
     [JSDoc("Gets or sets the cutoff date for the query")]
@@ -86,25 +73,25 @@ namespace Barista.Raven.Library
       }
     }
 
-    [JSProperty(Name = "cutoffEtag")]
-    [JSDoc("Gets or sets the cutoff eTag for the query")]
-    public object CutoffEtag
-    {
-      get
-      {
-        if (m_indexQuery.CutoffEtag.HasValue == false)
-          return Null.Value;
+    //[JSProperty(Name = "cutoffEtag")]
+    //[JSDoc("Gets or sets the cutoff eTag for the query")]
+    //public object CutoffEtag
+    //{
+    //  get
+    //  {
+    //    if (m_indexQuery.CutoffEtag.HasValue == false)
+    //      return Null.Value;
 
-        return new GuidInstance(this.Engine.Object.InstancePrototype, m_indexQuery.CutoffEtag.Value);
-      }
-      set
-      {
-        if (value == null || value == Null.Value || value == Undefined.Value)
-          m_indexQuery.CutoffEtag = null;
-        else
-          m_indexQuery.CutoffEtag = GuidInstance.ConvertFromJsObjectToGuid(value);
-      }
-    }
+    //    return new GuidInstance(this.Engine.Object.InstancePrototype, m_indexQuery.CutoffEtag.Value);
+    //  }
+    //  set
+    //  {
+    //    if (value == null || value == Null.Value || value == Undefined.Value)
+    //      m_indexQuery.CutoffEtag = null;
+    //    else
+    //      m_indexQuery.CutoffEtag = GuidInstance.ConvertFromJsObjectToGuid(value);
+    //  }
+    //}
 
     [JSProperty(Name = "defaultField")]
     [JSDoc("Gets or sets the default field to use when querying directly on the lucene index.")]
@@ -149,25 +136,25 @@ namespace Barista.Raven.Library
       }
     }
 
-    [JSProperty(Name = "groupBy")]
-    [JSDoc("Gets or sets the fields to group the query by.")]
-    public ArrayInstance GroupBy
-    {
-// ReSharper disable CoVariantArrayConversion
-      get { return this.Engine.Array.Construct(m_indexQuery.GroupBy); }
-// ReSharper restore CoVariantArrayConversion
-      set
-      {
-        if (value == null)
-          m_indexQuery.GroupBy = null;
-        else
-        {
-          m_indexQuery.GroupBy = value.ElementValues
-            .Select(TypeConverter.ToString)
-            .ToArray();
-        }
-      }
-    }
+//    [JSProperty(Name = "groupBy")]
+//    [JSDoc("Gets or sets the fields to group the query by.")]
+//    public ArrayInstance GroupBy
+//    {
+//// ReSharper disable CoVariantArrayConversion
+//      get { return this.Engine.Array.Construct(m_indexQuery.GroupBy); }
+//// ReSharper restore CoVariantArrayConversion
+//      set
+//      {
+//        if (value == null)
+//          m_indexQuery.GroupBy = null;
+//        else
+//        {
+//          m_indexQuery.GroupBy = value.ElementValues
+//            .Select(TypeConverter.ToString)
+//            .ToArray();
+//        }
+//      }
+//    }
 
     //TODO: Highlighted-*
 
@@ -187,13 +174,13 @@ namespace Barista.Raven.Library
       set { m_indexQuery.Query = value; }
     }
 
-    [JSProperty(Name = "skipTransformResults")]
-    [JSDoc("If set to true, raven won't execute the transform results function returning just the raw results instead.")]
-    public bool SkipTransformResults
-    {
-      get { return m_indexQuery.SkipTransformResults; }
-      set { m_indexQuery.SkipTransformResults = value; }
-    }
+    //[JSProperty(Name = "skipTransformResults")]
+    //[JSDoc("If set to true, raven won't execute the transform results function returning just the raw results instead.")]
+    //public bool SkipTransformResults
+    //{
+    //  get { return m_indexQuery.SkipTransformResults; }
+    //  set { m_indexQuery.SkipTransformResults = value; }
+    //}
 
     //TODO: SortedFields
 

@@ -49,28 +49,28 @@ namespace Barista.Raven.Library
       get { return m_jsonDocumentMetadata; }
     }
 
-    [JSProperty(Name = "eTag")]
-    public object ETag
-    {
-      get
-      {
-        if (m_jsonDocumentMetadata.Etag.HasValue)
-          return new GuidInstance(this.Engine.Object, m_jsonDocumentMetadata.Etag.Value);
-        return Null.Value;
-      }
-      set
-      {
-        Guid tmpGuid;
-        if (value == null || value == Null.Value || value == Undefined.Value)
-          m_jsonDocumentMetadata.Etag = null;
-        else if (value is GuidInstance)
-          m_jsonDocumentMetadata.Etag = (value as GuidInstance).Value;
-        else if (Guid.TryParse(TypeConverter.ToString(value), out tmpGuid))
-          m_jsonDocumentMetadata.Etag = tmpGuid;
-        else
-          m_jsonDocumentMetadata.Etag = null;
-      }
-    }
+    //[JSProperty(Name = "eTag")]
+    //public object ETag
+    //{
+    //  get
+    //  {
+    //    if (m_jsonDocumentMetadata.Etag)
+    //      return new GuidInstance(this.Engine.Object, m_jsonDocumentMetadata.Etag);
+    //    return Null.Value;
+    //  }
+    //  set
+    //  {
+    //    Guid tmpGuid;
+    //    if (value == null || value == Null.Value || value == Undefined.Value)
+    //      m_jsonDocumentMetadata.Etag = null;
+    //    else if (value is GuidInstance)
+    //      m_jsonDocumentMetadata.Etag = (value as GuidInstance).Value;
+    //    else if (Guid.TryParse(TypeConverter.ToString(value), out tmpGuid))
+    //      m_jsonDocumentMetadata.Etag = tmpGuid;
+    //    else
+    //      m_jsonDocumentMetadata.Etag = null;
+    //  }
+    //}
 
     [JSProperty(Name = "key")]
     public string Key
