@@ -44,10 +44,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.dll</HintPath>
+      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Powershell, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.SharePoint.PowerShell\v4.0_15.0.0.0__71e9bce111e9429c\Microsoft.SharePoint.Powershell.dll</HintPath>
+      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.Powershell.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
