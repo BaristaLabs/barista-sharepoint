@@ -61,17 +61,18 @@
             }
         }
 
+        private BaristaCookieListInstance m_cookieList;
         [JSProperty(Name = "cookies")]
-        public string Cookies
+        public BaristaCookieListInstance Cookies
         {
             get
             {
-                return Response.ContentType;
-            }
-            set
-            {
-                AutoDetectContentType = false;
-                Response.ContentType = value;
+                if (m_cookieList == null && Response.Cookies != null)
+                {
+                    m_cookieList = new BaristaCookieListInstance(Engine, Response.Cookies);
+                }
+
+                return m_cookieList;
             }
         }
 

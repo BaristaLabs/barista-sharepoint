@@ -1,11 +1,11 @@
 ﻿namespace Barista.Library
 {
     using Barista.Extensions;
+    using Barista.Newtonsoft.Json;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.IdentityModel.Claims;
     using Microsoft.IdentityModel.WindowsTokenService;
-    using Barista.Newtonsoft.Json;
     using System;
     using System.Collections;
     using System.IO;
@@ -20,6 +20,7 @@
     using System.Web.Caching;
     using System.Xml;
     using System.Xml.Linq;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     [Serializable]
     public abstract class WebInstanceBase : ObjectInstance

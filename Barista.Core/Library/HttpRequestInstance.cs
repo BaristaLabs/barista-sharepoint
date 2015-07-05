@@ -68,44 +68,20 @@
             }
         }
 
-        private ObjectInstance m_cookies;
-
-        [JSProperty(Name = "cookies", IsEnumerable = true)]
-        public ObjectInstance Cookies
+        private BaristaCookieListInstance m_cookieList;
+        [JSProperty(Name = "cookies")]
+        public BaristaCookieListInstance Cookies
         {
             get
             {
-                if (m_cookies == null)
+                if (m_cookieList == null && Request.Headers.Cookies != null)
                 {
-                    var cookies = this.Request.Headers.Cookie;
-
-                    m_cookies = Engine.Array.Construct();
-
-                    if (cookies != null)
-                    {
-                        foreach (var cookie in cookies)
-                        {
-                            var objCookie = Engine.Object.Construct();
-                            objCookie.SetPropertyValue("domain", cookie.Domain, false);
-                            objCookie.SetPropertyValue("encodedName", cookie.EncodedName, false);
-                            objCookie.SetPropertyValue("encodedValue", cookie.EncodedValue, false);
-                            if (cookie.Expires.HasValue)
-                                objCookie.SetPropertyValue("expires", JurassicHelper.ToDateInstance(this.Engine, cookie.Expires.Value), false);
-                            objCookie.SetPropertyValue("httpOnly", cookie.HttpOnly, false);
-                            objCookie.SetPropertyValue("name", cookie.Name, false);
-                            objCookie.SetPropertyValue("path", cookie.Path, false);
-                            objCookie.SetPropertyValue("secure", cookie.Secure, false);
-                            objCookie.SetPropertyValue("value", cookie.Value, false);
-
-                            ArrayInstance.Push(m_cookies, objCookie);
-                        }
-                    }
+                    m_cookieList = new BaristaCookieListInstance(Engine, Request.Headers.Cookies);
                 }
 
-                return m_cookies;
+                return m_cookieList;
             }
         }
-
 
         [JSProperty(Name = "files", IsEnumerable = true)]
         public ObjectInstance Files
@@ -113,7 +89,7 @@
             get
             {
                 EnsureParsedFormData();
-                if (m_files == null)
+                if (m_files == null && m_httpFiles != null)
                 {
                     m_files = Engine.Object.Construct();
 

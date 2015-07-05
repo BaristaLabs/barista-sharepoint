@@ -847,6 +847,8 @@
     <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
     <Compile Include="Engine\IScriptEngine.cs" />
     <Compile Include="Library\AssertInstance.cs" />
+    <Compile Include="Library\BaristaCookieInstance.cs" />
+    <Compile Include="Library\BaristaCookieListInstance.cs" />
     <Compile Include="Library\CollectionInstance.cs" />
     <Compile Include="Library\DiffInfoInstance.cs" />
     <Compile Include="Library\DiffResultInstance.cs" />

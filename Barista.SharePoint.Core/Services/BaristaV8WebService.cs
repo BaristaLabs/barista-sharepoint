@@ -14,6 +14,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.

@@ -18,6 +18,7 @@ namespace Barista
 
     [DataContract(Namespace = Constants.ServiceNamespace)]
     [Serializable]
+    [KnownType(typeof(Biscotti))]
     public class BrewResponse : IExtensibleDataObject
     {
         public BrewResponse()

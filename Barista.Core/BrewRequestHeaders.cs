@@ -99,7 +99,7 @@
         /// </summary>
         /// <value>An <see cref="IEnumerable{T}"/> that contains <see cref="IBaristaCookie"/> instances if they are available; otherwise it will be empty.</value>
         [IgnoreDataMember]
-        public IEnumerable<IBaristaCookie> Cookie
+        public IList<IBaristaCookie> Cookies
         {
             get { return this.GetValue("Cookie", x => GetBaristaCookies(x)); }
         }
@@ -373,13 +373,14 @@
                 null;
         }
 
-        private static IEnumerable<IBaristaCookie> GetBaristaCookies(IEnumerable<string> cookies)
+        private static IList<IBaristaCookie> GetBaristaCookies(IEnumerable<string> cookies)
         {
             if (cookies == null)
             {
-                yield break;
+                return null;
             }
 
+            var result = new List<IBaristaCookie>();
             foreach (var cookie in cookies)
             {
                 var cookieStrings = cookie.Split(';');
@@ -388,10 +389,12 @@
                     var equalPos = cookieString.IndexOf('=');
                     if (equalPos >= 0)
                     {
-                        yield return new Biscotti(cookieString.Substring(0, equalPos).TrimStart(), cookieString.Substring(equalPos + 1).TrimEnd());
+                        result.Add(new Biscotti(cookieString.Substring(0, equalPos).TrimStart(), cookieString.Substring(equalPos + 1).TrimEnd()));
                     }
                 }
             }
+
+            return result;
         }
 
         private IEnumerable<string> GetValue(string name)

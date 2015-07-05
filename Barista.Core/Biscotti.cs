@@ -13,6 +13,11 @@
     [Serializable]
     public class Biscotti : IBaristaCookie
     {
+        public Biscotti()
+            : this(String.Empty, String.Empty, false)
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Biscotti"/> class.
         /// </summary>
@@ -91,7 +96,7 @@
         /// The name of the cookie
         /// </summary>
         [DataMember]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets the encoded name of the cookie
@@ -115,7 +120,7 @@
         /// The value of the cookie
         /// </summary>
         [DataMember]
-        public string Value { get; private set; }
+        public string Value { get; set; }
 
         /// <summary>
         /// Gets the encoded value of the cookie
@@ -133,13 +138,13 @@
         /// Whether the cookie is http only
         /// </summary>
         [DataMember]
-        public bool HttpOnly { get; private set; }
+        public bool HttpOnly { get; set; }
 
         /// <summary>
         /// Whether the cookie is secure (i.e. HTTPS only)
         /// </summary>
         [DataMember]
-        public bool Secure { get; private set; }
+        public bool Secure { get; set; }
 
         public override string ToString()
         {

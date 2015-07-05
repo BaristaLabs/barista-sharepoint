@@ -53,10 +53,10 @@
         Message ListBundles();
 
         /// <summary>
-        /// Installs a bundle
+        /// Deploys a bundle to the hosting environment
         /// </summary>
         [OperationContract(Name = "InstallBundle")]
         [WebInvoke(Method = "POST", UriTemplate = "installBundle")]
-        Message InstallBundle(Stream stream);
+        Message DeployBundle(Stream stream);
     }
 }

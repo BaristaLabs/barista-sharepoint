@@ -18,6 +18,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using HttpUtility = Barista.Helpers.HttpUtility;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
@@ -167,7 +168,7 @@
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Message InstallBundle(Stream requestBody)
+        public Message DeployBundle(Stream requestBody)
         {
             throw new NotImplementedException();
         }
@@ -396,7 +397,7 @@
             var cookies = new List<IBaristaCookie>();
             cookies.AddRange(result.Cookies);
 
-            var existingCookie = cookies.FirstOrDefault(c => c.Name == "ASP.NET_SessionId");
+            var existingCookie = cookies.FirstOrDefault(c => c != null && c.Name == "ASP.NET_SessionId");
             if (existingCookie != null)
                 cookies.Remove(existingCookie);
             cookies.Add(new Biscotti("ASP.NET_SessionId", ""));
