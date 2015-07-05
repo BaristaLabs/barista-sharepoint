@@ -1139,10 +1139,10 @@
                     "!type": "fn(?)",
                     "prototype": {
                         "globalSettings": {
-                            "!type": "+GlobalSettings"
+                            "!type": "+WkHtmlToPdf.GlobalSettings"
                         },
                         "objects": {
-                            "!type": "+ObjectSettingsList"
+                            "!type": "+WkHtmlToPdf.ObjectSettingsList"
                         },
                         "toLocaleString": {
                             "!type": "fn() -> string"
@@ -1183,7 +1183,7 @@
                             "!type": "number?"
                         },
                         "margins": {
-                            "!type": "+MarginSettings?"
+                            "!type": "+WkHtmlToPdf.MarginSettings?"
                         },
                         "orientation": {
                             "!type": "string"
@@ -1201,13 +1201,60 @@
                             "!type": "number?"
                         },
                         "paperSize": {
-                            "!type": "+PaperSize"
+                            "!type": "+WkHtmlToPdf.PaperSize"
                         },
                         "produceOutline": {
                             "!type": "bool?"
                         },
                         "useCompression": {
                             "!type": "bool?"
+                        },
+                        "toLocaleString": {
+                            "!type": "fn() -> string"
+                        },
+                        "valueOf": {
+                            "!type": "fn() -> ?"
+                        }
+                    }
+                },
+                "ObjectSettingsList": {
+                    "!type": "fn(?)",
+                    "prototype": {
+                        "count": {
+                            "!type": "number"
+                        },
+                        "add": {
+                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings)"
+                        },
+                        "clear": {
+                            "!type": "fn()"
+                        },
+                        "contains": {
+                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings) -> bool"
+                        },
+                        "getItemByIndex": {
+                            "!type": "fn(index: number) -> +WkHtmlToPdf.ObjectSettings"
+                        },
+                        "indexOf": {
+                            "!type": "fn(item: +ObjectSettings) -> number"
+                        },
+                        "insert": {
+                            "!type": "fn(index: number, item: +WkHtmlToPdf.ObjectSettings)"
+                        },
+                        "remove": {
+                            "!type": "fn(item: +WkHtmlToPdf.ObjectSettings) -> bool"
+                        },
+                        "removeAt": {
+                            "!type": "fn(index: number)"
+                        },
+                        "reverse": {
+                            "!type": "fn()"
+                        },
+                        "setItemByIndex": {
+                            "!type": "fn(index: number, item: +WkHtmlToPdf.ObjectSettings)"
+                        },
+                        "toArray": {
+                            "!type": "fn() -> [+WkHtmlToPdf.ObjectSettings]"
                         },
                         "toLocaleString": {
                             "!type": "fn() -> string"
@@ -2005,6 +2052,53 @@
                 }
             }
         },
+        "BaristaCookieList": {
+            "!type": "fn(?)",
+            "prototype": {
+                "count": {
+                    "!type": "number"
+                },
+                "add": {
+                    "!type": "fn(item: ?)"
+                },
+                "clear": {
+                    "!type": "fn()"
+                },
+                "contains": {
+                    "!type": "fn(item: ?) -> bool"
+                },
+                "getItemByIndex": {
+                    "!type": "fn(index: number) -> ?"
+                },
+                "indexOf": {
+                    "!type": "fn(item: ?) -> number"
+                },
+                "insert": {
+                    "!type": "fn(index: number, item: ?)"
+                },
+                "remove": {
+                    "!type": "fn(item: ?) -> bool"
+                },
+                "removeAt": {
+                    "!type": "fn(index: number)"
+                },
+                "reverse": {
+                    "!type": "fn()"
+                },
+                "setItemByIndex": {
+                    "!type": "fn(index: number, item: ?)"
+                },
+                "toArray": {
+                    "!type": "fn() -> [?]"
+                },
+                "toLocaleString": {
+                    "!type": "fn() -> string"
+                },
+                "valueOf": {
+                    "!type": "fn() -> ?"
+                }
+            }
+        },
         "BooleanQuery": {
             "!type": "fn(?)",
             "prototype": {
@@ -2525,6 +2619,9 @@
                 "contentType": {
                     "!type": "string"
                 },
+                "cookies": {
+                    "!type": "+BaristaCookieList"
+                },
                 "extendedProperties": {
                     "!type": "+Hashtable"
                 },
@@ -2548,9 +2645,6 @@
                 },
                 "queryString": {
                     "!type": "?"
-                },
-                "rawUrl": {
-                    "!type": "string"
                 },
                 "referrer": {
                     "!type": "string"
@@ -2593,8 +2687,11 @@
                 "contentType": {
                     "!type": "string"
                 },
+                "cookies": {
+                    "!type": "+BaristaCookieList"
+                },
                 "expires": {
-                    "!type": "number"
+                    "!type": "+Date"
                 },
                 "isRaw": {
                     "!type": "bool"
