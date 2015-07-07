@@ -55,8 +55,8 @@
         /// <summary>
         /// Deploys a bundle to the hosting environment
         /// </summary>
-        [OperationContract(Name = "InstallBundle")]
-        [WebInvoke(Method = "POST", UriTemplate = "installBundle")]
+        [OperationContract(Name = "DeployBundle")]
+        [WebInvoke(Method = "POST", UriTemplate = "deployBundle")]
         Message DeployBundle(Stream stream);
     }
 }

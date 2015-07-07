@@ -244,6 +244,38 @@ namespace Barista.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///	&quot;$schema&quot;: &quot;http://json-schema.org/draft-04/schema&quot;,
+        ///	&quot;id&quot;: &quot;lib://package.json&quot;,
+        ///	&quot;title&quot;: &quot;package.json-schema&quot;,
+        ///	&quot;description&quot;: &quot;JSON Schema for node/npm package.json&quot;,
+        ///	&quot;$ref&quot;: &quot;lib://package.json#/definitions/standard&quot;,
+        ///	&quot;definitions&quot;: {
+        ///		&quot;minimal&quot;: {
+        ///			&quot;allOf&quot;: [
+        ///				{
+        ///					&quot;$ref&quot;: &quot;lib://package.json#/definitions/structure&quot;
+        ///				},
+        ///				{
+        ///					&quot;required&quot;: [
+        ///						&quot;name&quot;,
+        ///						&quot;version&quot;
+        ///					]
+        ///				}
+        ///			]
+        ///		},
+        ///		&quot;standard&quot;: {
+        ///			&quot;allOf&quot;: [
+        ///				{
+        ///					&quot;$ref&quot;: &quot;lib://package.js [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string package {
+            get {
+                return ResourceManager.GetString("package", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (function(b){var a={VERSION:&quot;2.2.0&quot;,Result:{SUCCEEDED:1,NOTRANSITION:2,CANCELLED:3,ASYNC:4},Error:{INVALID_TRANSITION:100,PENDING_TRANSITION:200,INVALID_CALLBACK:300},WILDCARD:&quot;*&quot;,ASYNC:&quot;async&quot;,create:function(g,h){var j=(typeof g.initial==&quot;string&quot;)?{state:g.initial}:g.initial;var f=h||g.target||{};var l=g.events||[];var i=g.callbacks||{};var d={};var k=function(m){var p=(m.from instanceof Array)?m.from:(m.from?[m.from]:[a.WILDCARD]);d[m.name]=d[m.name]||{};for(var o=0;o&lt;p.length;o++){d[m.name][p[o]]=m.to|| [rest of string was truncated]&quot;;.
         /// </summary>
         public static string stateMachine {

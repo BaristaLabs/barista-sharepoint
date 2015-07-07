@@ -13,7 +13,7 @@
     using System;
     using System.Web;
     using Ninject;
-    using Ninject.Extensions.Conventions;
+    using Barista.Extensions;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {

@@ -130,11 +130,17 @@
         /// </summary>
         public static void EnsureExecutionInTrustedLocation()
         {
+            //CA is always trusted.
+            if (SPAdministrationWebApplication.Local.Id == SPContext.Current.Site.WebApplication.Id)
+                return;
+
             var currentUri = new Uri(SPContext.Current.Web.Url.ToLowerInvariant().EnsureEndsWith("/"));
 
-            //CA is always trusted.
             if (SPAdministrationWebApplication.Local.AlternateUrls.Any(u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
                 return;
+
+
+            //TODO: Get configuration from the BaristaServiceApplicationInstance associated with whatever we're doing...
 
             var trustedLocations = Utilities.GetFarmKeyValue("BaristaTrustedLocations");
             

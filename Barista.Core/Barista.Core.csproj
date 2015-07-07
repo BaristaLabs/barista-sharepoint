@@ -116,6 +116,9 @@
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net35\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.Extensions.Conventions">
+      <HintPath>..\packages\Ninject.Extensions.Conventions.3.2.0.0\lib\net35\Ninject.Extensions.Conventions.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\RestSharp.dll</HintPath>
@@ -148,6 +151,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllDirectoriesAssemblyFinder.cs" />
     <Compile Include="ArraySegmentEx.cs" />
     <Compile Include="ArraySegmentList.cs" />
     <Compile Include="AssemblyUtil.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="BaristaResponseMessage.cs" />
     <Compile Include="BrewRequestHeaders.cs" />
     <Compile Include="BrewRequestInstanceSettings.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -219,6 +224,9 @@
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\FileSystemExtensions.cs" />
+    <Compile Include="Extensions\IKernelExtensions.cs" />
+    <Compile Include="Extensions\NativeWin32.cs" />
     <Compile Include="Extensions\WebOperationContextExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
@@ -1485,6 +1493,7 @@
     <Folder Include="DocumentStore\SharpKit\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\package.json" />
     <None Include="Resources\jsonDataHandler.js" />
   </ItemGroup>
   <ItemGroup>

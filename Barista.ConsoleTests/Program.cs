@@ -3,27 +3,23 @@
     using System;
     using Barista.Properties;
     using Barista.V8.Net;
+    using Barista.Extensions;
+    using System.IO;
+    using System.Linq;
+    using Barista.Newtonsoft.Json.Linq;
 
     class Program
     {
         static void Main(string[] args)
         {
-            var engine = new V8Engine();
-            engine.Execute(Resources.uglifyjs);
+            
+            var jo = new JObject();
+            jo["name"] = "foooo";
+            jo["version"] = "5.6.43.1.6";
+            Package.IsValidPackage(jo);
 
-            var res = engine.Execute("'hello' + ' ' + 'world!'");
-            Console.WriteLine(res.AsString);
-            engine.GlobalObject.SetProperty("code", @"(function (fallback) {
-                fallback = fallback || function () { };
-            })(null);");
-
-            engine.Execute(@"var ast = UglifyJS.parse(code);
-ast.figure_out_scope();
-compressor = UglifyJS.Compressor();
-ast = ast.transform(compressor);
-var result = ast.print_to_string();");
-
-            Console.WriteLine(engine.GlobalObject.GetProperty("result").ToString());
+            //Console.WriteLine(results);
+            //Console.WriteLine(engine.GlobalObject.GetProperty("result").ToString());
 
             Console.ReadLine();
         }

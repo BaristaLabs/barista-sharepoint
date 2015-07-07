@@ -86,30 +86,32 @@
 
             var result = new JObject();
 
-            var environment = new JObject();
-            environment.Add("commandLine", Environment.CommandLine);
-            environment.Add("currentDirectory", Environment.CurrentDirectory);
-            environment.Add("machineName", Environment.MachineName);
-            environment.Add("newLine", Environment.NewLine);
-
-            var osVersion = new JObject
+            var environment = new JObject
             {
-                {"platform", Environment.OSVersion.Platform.ToString()},
-                {"servicePack", Environment.OSVersion.ServicePack},
-                {"version", Environment.OSVersion.Version.ToString()},
-                {"versionString", Environment.OSVersion.VersionString}
+                {"commandLine", Environment.CommandLine},
+                {"currentDirectory", Environment.CurrentDirectory},
+                {"machineName", Environment.MachineName},
+                {"newLine", Environment.NewLine},
+                {
+                    "osVersion", new JObject
+                    {
+                        {"platform", Environment.OSVersion.Platform.ToString()},
+                        {"servicePack", Environment.OSVersion.ServicePack},
+                        {"version", Environment.OSVersion.Version.ToString()},
+                        {"versionString", Environment.OSVersion.VersionString}
+                    }
+                },
+                {"processorCount", Environment.ProcessorCount},
+                {"systemDirectory", Environment.SystemDirectory},
+                {"tickCount", Environment.TickCount},
+                {"userDomainName", Environment.UserDomainName},
+                {"userInteractive", Environment.UserInteractive},
+                {"userName", Environment.UserName},
+                {"version", Environment.Version.ToString()},
+                {"workingSet", Environment.WorkingSet}
             };
 
-            environment.Add("osVersion", osVersion);
-            environment.Add("processorCount", Environment.ProcessorCount);
-            environment.Add("systemDirectory", Environment.SystemDirectory);
-            environment.Add("tickCount", Environment.TickCount);
-            environment.Add("userDomainName", Environment.UserDomainName);
-            environment.Add("userInteractive", Environment.UserInteractive);
-            environment.Add("userName", Environment.UserName);
-            environment.Add("version", Environment.Version.ToString());
-            environment.Add("workingSet", Environment.WorkingSet);
-            
+
             result.Add("environment", environment);
 
             var sharepoint = new JObject();
@@ -163,14 +165,70 @@
         [DynamicResponseType(RestOnly = true)]
         public Message ListBundles()
         {
-            throw new NotImplementedException();
+            var webContext = WebOperationContext.Current;
+            var baristaProxies =
+                SPServiceContext.Current.GetProxies(typeof(BaristaServiceApplicationProxy))
+                    .OfType<BaristaServiceApplicationProxy>();
+
+            var objResult = new JArray();
+            foreach (var proxy in baristaProxies)
+            {
+                using (new SPServiceContextScope(SPServiceContext.Current))
+                {
+                    var result = proxy.ListBundles();
+                    objResult.Add(JToken.Parse(result));
+                }
+            }
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    var js = new JsonSerializer
+                    {
+                        Formatting = Formatting.Indented
+                    };
+
+                    using (var sw = new StreamWriter(stream))
+                    {
+                        js.Serialize(sw, objResult);
+                    }
+                },
+                "application/json");
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
         public Message DeployBundle(Stream requestBody)
         {
-            throw new NotImplementedException();
+            var webContext = WebOperationContext.Current;
+            var baristaProxies =
+                SPServiceContext.Current.GetProxies(typeof (BaristaServiceApplicationProxy))
+                    .OfType<BaristaServiceApplicationProxy>();
+
+            var objResult = new JArray();
+            foreach(var proxy in baristaProxies)
+            {
+                using (new SPServiceContextScope(SPServiceContext.Current))
+                {
+                    var result = proxy.DeployBundle(requestBody.ToByteArray());
+                    objResult.Add(JToken.Parse(result));
+                }
+            }
+
+            return webContext.CreateStreamResponse(
+                stream =>
+                {
+                    var js = new JsonSerializer
+                    {
+                        Formatting = Formatting.Indented
+                    };
+
+                    using (var sw = new StreamWriter(stream))
+                    {
+                        js.Serialize(sw, objResult);
+                    }
+
+                },
+                "application/json");
         }
         #endregion
 
@@ -275,6 +333,9 @@
             if (String.IsNullOrEmpty(code))
             {
                 var url = webContext.IncomingRequest.UriTemplateMatch;
+
+                if (url == null)
+                    throw new InvalidOperationException("UriTemplateMatch of the incoming request was null.");
 
                 var firstWildcardPathSegment = url.WildcardPathSegments.FirstOrDefault();
                 if (!firstWildcardPathSegment.IsNullOrWhiteSpace())
@@ -455,7 +516,7 @@
                         {"name", serviceInstance.Server.Name},
                         {"status", serviceInstance.Status.ToString()}
                     };
-
+                    
                     serviceInstances.Add(objServiceInstance);
                 }
 
