@@ -14,6 +14,7 @@
     using System.IO;
     using System.Linq;
     using System.ServiceModel.Security;
+    using Microsoft.SharePoint.Utilities;
 
     /// <summary>
     /// Contains various helper methods involving barista configuration stored in SharePoint.
@@ -44,6 +45,41 @@
             return farm.ServiceProxies.GetValue<BaristaServiceProxy>(BaristaServiceProxy.ProxyName) ??
                    farm.ServiceProxies.GetValue<BaristaServiceProxy>();
         }
+
+        public static string GetBaristaWebServicesInstallPath()
+        {
+            //FIXME: In SP2013 this method is deprecated.
+            return SPUtility.GetGenericSetupPath(@"WebServices\Barista");
+        }
+
+        /// <summary>
+        /// Returns a JObject that contains a listing of custom bundles installed on the currently executing server. 
+        /// </summary>
+        /// <returns></returns>
+        public static JObject ListCustomBundles()
+        {
+            var objResult = new JObject
+            {
+                {"!machineName", Environment.MachineName}
+            };
+
+            //Get all files named "package.json" and return the contents.
+            foreach (var file in EnumeratePackageFiles())
+            {
+                using (var streamReader = file.OpenText())
+                {
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        var objPackage = JObject.Load(jsonReader);
+                        if (file.Directory != null)
+                            objResult.Add(file.Directory.Name, objPackage);
+                    }
+                }
+            }
+
+            return objResult;
+        }
+
         /// <summary>
         /// For the given index name, obtains the directory object as defined in the farm property bag. If no directory with the given name has been defined, returns null.
         /// </summary>
@@ -188,6 +224,14 @@
                   "Cannot execute Barista: Barista Trusted Location settings was defined, but empty. Please contact your farm administrator to set Barista Trusted Locations.");
 
             AssertTrustedLocation(trustedLocationsString, currentUri);
+        }
+
+        private static IEnumerable<FileInfo> EnumeratePackageFiles()
+        {
+            var installPath = GetBaristaWebServicesInstallPath();
+            var bundlePath = Path.Combine(installPath, "bin/bundles");
+            var di = new DirectoryInfo(bundlePath);
+            return di.EnumerateAllFiles().Where(f => String.Equals("package.json", f.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         private static void AssertTrustedLocation(string trustedLocations, Uri currentUri)

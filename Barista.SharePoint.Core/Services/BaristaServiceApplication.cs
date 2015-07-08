@@ -8,7 +8,6 @@
     using Microsoft.SharePoint.Administration;
     using Microsoft.SharePoint.Utilities;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -371,24 +370,7 @@
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public string ListBundles()
         {
-            var objResult = new JObject
-            {
-                {"machineName", Environment.MachineName}
-            };
-
-            //Get all files named "package.json" and return the contents.
-            foreach(var file in EnumeratePackageFiles())
-            {
-                using(var streamReader = file.OpenText())
-                {
-                    using(var jsonReader = new JsonTextReader(streamReader))
-                    {
-                        var objPackage = JObject.Load(jsonReader);
-                        if (file.Directory != null)
-                            objResult.Add(file.Directory.Name, objPackage);
-                    }
-                }
-            }
+            var objResult = BaristaHelper.ListCustomBundles();
 
             return objResult.ToString(Formatting.Indented);
         }
@@ -406,7 +388,7 @@
         {
             var objResult = new JObject
             {
-                {"machineName", Environment.MachineName}
+                {"!machineName", Environment.MachineName}
             };
 
             //Get the name/version of the bundle
@@ -443,13 +425,6 @@
             }
         }
         #endregion
-
-        private IEnumerable<FileInfo> EnumeratePackageFiles()
-        {
-            var bundlePath = Path.Combine(InstallPath, "bin/bundles");
-            var di = new DirectoryInfo(bundlePath);
-            return di.EnumerateAllFiles().Where(f => String.Equals("package.json", f.Name, StringComparison.OrdinalIgnoreCase));
-        }
 
         /// <summary>
         /// Returns the package file (package.json) in the archive. If an error or no package.json file exists, null is returned.

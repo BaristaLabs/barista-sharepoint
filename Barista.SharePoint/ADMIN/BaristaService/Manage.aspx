@@ -57,11 +57,14 @@
 <asp:Content ID="Main" ContentPlaceHolderID="PlaceHolderMain" runat="server">
     <div style="padding:5px;" data-ng-app="managebarista" data-ng-controller="ManageMainCtrl">
         <div data-tabset="">
-            <div data-tab="" heading="General" style="cursor: pointer;" style="height: 37px;">
+            <div data-tab="" heading="General" style="cursor: pointer;>
 				<div data-ng-include="'/_admin/BaristaService/Views/General.html'" data-ng-controller="ManageGeneralCtrl"></div>
             </div>
 			<div data-tab="" heading="Indexes" style="cursor: pointer;">
 				<div data-ng-include="'/_admin/BaristaService/Views/Indexes.html'" data-ng-controller="ManageIndexesCtrl"></div>
+            </div>
+            <div data-tab="" heading="Indexes" style="cursor: pointer;">
+				<div data-ng-include="'/_admin/BaristaService/Views/Bundles.html'" data-ng-controller="ManageBundlesCtrl"></div>
             </div>
         </div>
     </div>
@@ -78,6 +81,7 @@
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js"></script>
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageGeneralCtrl.js"></script>
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageBundlesCtrl.js"></script>
     
     <script type="text/javascript">
         $(document).ready(function () {

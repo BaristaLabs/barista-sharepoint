@@ -56,7 +56,7 @@
         [JSFunction(Name = "clearCurrentInstance")]
         public bool ClearCurrentInstance()
         {
-            bool result = true;
+            var result = true;
             var instanceSettings = SPBaristaContext.Current.Request.ParseInstanceSettings();
 
             switch (instanceSettings.InstanceMode)
@@ -70,6 +70,16 @@
             }
 
             return result;
+        }
+
+        [JSFunction(Name = "listCustomBundles")]
+        public object ListCustomBundles()
+        {
+            var objBundles = BaristaHelper.ListCustomBundles();
+
+            var bundlesString = objBundles.ToString();
+
+            return JSONObject.Parse(Engine, bundlesString, null);
         }
 
         #region Internal Functions

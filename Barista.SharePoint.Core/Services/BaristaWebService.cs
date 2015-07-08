@@ -179,6 +179,7 @@
                     objResult.Add(JToken.Parse(result));
                 }
             }
+
             return webContext.CreateStreamResponse(
                 stream =>
                 {
