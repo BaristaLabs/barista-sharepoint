@@ -1,5 +1,5 @@
-﻿manageBarista.controller('ManageIndexesCtrl', ['$scope', '$http', '$modal',
-	function ($scope, $http, $modal) {
+﻿manageBarista.controller('ManageIndexesCtrl', ['$scope', '$http', '$location', '$modal',
+	function ($scope, $http, $location, $modal) {
 
 	    $scope.indexes = null;
 
@@ -50,20 +50,27 @@
 	            templateUrl: "confirmRemoveIndex.html"
 	        });
 
-	        msgbox.result.then(function (result) {
+	        msgbox.result.then(function(result) {
 	            toastr.info('Removing Index...');
-	            $http.post($scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteSearchIndex.js', index)
-					.success(function (index) {
-					    toastr.success("Removed Index!");
-					    $scope.getIndexes();
-					})
-					.error(function (index) {
-					    toastr.error("Unable to remove Index :(");
-					});
+	            $http({
+	                    method: "POST",
+	                    url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteSearchIndex.js',
+	                    params: {
+	                        serviceApplicationId: $location.search()["appid"]
+	                    },
+	                    data: index
+	                })
+	                .success(function(index) {
+	                    toastr.success("Removed Index!");
+	                    $scope.getIndexes();
+	                })
+	                .error(function(index) {
+	                    toastr.error("Unable to remove Index :(<br/>" + $(index).children(".intro").text());
+	                });
 	        });
 	    };
 
-	    $scope.getIndexes = function () {
+	    $scope.getIndexes = function() {
 	        toastr.options = {
 	            "debug": false,
 	            "positionClass": "toast-bottom-right",
@@ -75,20 +82,26 @@
 	        };
 
 	        toastr.info('Loading Indexes...');
-	        $http.get($scope.baristaBaseUrl + '/_admin/BaristaService/API/GetSearchIndexes.js')
-                .success(function (indexes) {
+	        $http({
+	                method: "GET",
+	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/GetSearchIndexes.js',
+	                params: {
+	                    serviceApplicationId: $location.search()["appid"]
+	                },
+	            })
+	            .success(function(indexes) {
 
-                    toastr.success("Loaded!");
-                    toastr.clear();
+	                toastr.success("Loaded!");
+	                toastr.clear();
 
-                    $scope.indexes = indexes;
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
-                })
-                .error(function (indexes) {
-                    toastr.error("Unable to load Indexes :(");
-                });
+	                $scope.indexes = indexes;
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function(indexes) {
+	                toastr.error("Unable to load Indexes :(<br/>" + $(index).children(".intro").text());
+	            });
 	    };
 
 	    $scope.getIndexes();
@@ -107,8 +120,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
-	function ($scope, $http, $modalInstance, baristaBaseUrl, index, isNew) {
+manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
+	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, index, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.index = index;
 
@@ -120,20 +133,27 @@ manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance
 	            toastr.info('Adding Index...');
 	        else
 	            toastr.info('Updating Index...');
-	        $http.post(baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js', $scope.index)
-                .success(function (index) {
-                    if ($scope.isNew)
-                        toastr.success('Added Index!');
-                    else
-                        toastr.success('Updated Index!');
-                    $modalInstance.close(index);
-                })
-                .error(function (index) {
-                    if ($scope.isNew)
-                        toastr.error("Unable to add Index :(");
-                    else
-                        toastr.error("Unable to update Index :(");
-                });
+	        $http({
+	                method: "POST",
+	                url: baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js',
+	                params: {
+	                    serviceApplicationId: $location.search()["appid"]
+	                },
+	                data: $scope.index
+	            })
+	            .success(function(index) {
+	                if ($scope.isNew)
+	                    toastr.success('Added Index!');
+	                else
+	                    toastr.success('Updated Index!');
+	                $modalInstance.close(index);
+	            })
+	            .error(function(index) {
+	                if ($scope.isNew)
+	                    toastr.error("Unable to add Index :(<br/>" + $(index).children(".intro").text());
+	                else
+	                    toastr.error("Unable to update Index :(<br/>" + $(index).children(".intro").text());
+	            });
 	    };
 
 	    $scope.cancel = function () {

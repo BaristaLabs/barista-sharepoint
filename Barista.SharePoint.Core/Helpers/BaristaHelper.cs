@@ -54,7 +54,27 @@
             if (indexName.IsNullOrWhiteSpace())
                 throw new ArgumentNullException("indexName", @"A directory name must be specified.");
 
-            var indexDefinitions = Utilities.GetFarmKeyValue("BaristaSearchIndexDefinitions");
+            var baristaServiceApplicationProxy =
+                SPServiceContext.Current.GetDefaultProxy(typeof(BaristaServiceApplicationProxy)) as
+                    BaristaServiceApplicationProxy;
+
+            if (baristaServiceApplicationProxy == null)
+                throw new InvalidOperationException("Internal Error: Unable to obtain default Barista service application proxy.");
+
+            var uri = baristaServiceApplicationProxy.ServiceEndpointUri;
+            var serviceApplicationIdString = uri.LocalPath.Split(':').Last();
+            Guid serviceApplicationId;
+            if (!serviceApplicationIdString.TryParseGuid(out serviceApplicationId))
+                throw new SecurityAccessDeniedException(
+                    "Cannot execute Barista: Unable to determine Barista Service Application Id from current service context.");
+
+            var baristaServiceApplication =
+                SPFarm.Local.Services.GetValue<BaristaServiceApplication>(serviceApplicationId);
+
+            if (!baristaServiceApplication.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
+                return null;
+
+            var indexDefinitions = Convert.ToString(baristaServiceApplication.Properties["BaristaSearchIndexDefinitions"]);
             if (indexDefinitions.IsNullOrWhiteSpace())
                 return null;
 
@@ -135,38 +155,76 @@
                 return;
 
             var currentUri = new Uri(SPContext.Current.Web.Url.ToLowerInvariant().EnsureEndsWith("/"));
-
             if (SPAdministrationWebApplication.Local.AlternateUrls.Any(u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
                 return;
 
 
-            //TODO: Get configuration from the BaristaServiceApplicationInstance associated with whatever we're doing...
+            //Get configuration from the barista service application associated with the current context.
+            var baristaServiceApplicationProxy =
+                SPServiceContext.Current.GetDefaultProxy(typeof (BaristaServiceApplicationProxy)) as
+                    BaristaServiceApplicationProxy;
 
-            var trustedLocations = Utilities.GetFarmKeyValue("BaristaTrustedLocations");
-            
-            if (String.IsNullOrEmpty(trustedLocations))
+            if (baristaServiceApplicationProxy == null)
+                throw new InvalidOperationException("Internal Error: Unable to obtain default Barista service application proxy.");
+
+            var uri = baristaServiceApplicationProxy.ServiceEndpointUri;
+            var serviceApplicationIdString = uri.LocalPath.Split(':').Last();
+            Guid serviceApplicationId;
+            if (!serviceApplicationIdString.TryParseGuid(out serviceApplicationId))
                 throw new SecurityAccessDeniedException(
-                  "Cannot execute Barista: Unable to read Farm Property Bag Settings to determine trusted location.");
+                    "Cannot execute Barista: Unable to determine Barista Service Application Id from current service context.");
 
-            var trustedLocationsJsonArray = JArray.Parse(trustedLocations);
-            var trustedLocationsCollection = trustedLocationsJsonArray.OfType<JObject>().Select(trustedLocation =>
+            var baristaServiceApplication =
+                SPFarm.Local.Services.GetValue<BaristaServiceApplication>(serviceApplicationId);
+
+            if (!baristaServiceApplication.Properties.ContainsKey("BaristaTrustedLocations"))
+                throw new SecurityAccessDeniedException(
+                    "Cannot execute Barista: Barista Trusted Location settings are not defined on the service application. Please contact your farm administrator to define Barista Trusted Locations.");
+
+            var trustedLocationsString = Convert.ToString(baristaServiceApplication.Properties["BaristaTrustedLocations"]);
+
+            if (string.IsNullOrEmpty(trustedLocationsString))
+                throw new SecurityAccessDeniedException(
+                  "Cannot execute Barista: Barista Trusted Location settings was defined, but empty. Please contact your farm administrator to set Barista Trusted Locations.");
+
+            AssertTrustedLocation(trustedLocationsString, currentUri);
+        }
+
+        private static void AssertTrustedLocation(string trustedLocations, Uri currentUri)
+        {
+            bool trusted;
+
+            try
             {
-                var trustedLocationUrl = new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"),
-                  UriKind.Absolute);
-
-                var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
-
-                return new
+                var trustedLocationsJsonArray = JArray.Parse(trustedLocations);
+                var trustedLocationsCollection = trustedLocationsJsonArray.OfType<JObject>().Select(trustedLocation =>
                 {
-                    trustedLocationUrl,
-                    trustChildren
-                };
-            });
+                    var trustedLocationUrl =
+                        new Uri(trustedLocation["Url"].ToString().ToLowerInvariant().EnsureEndsWith("/"),
+                            UriKind.Absolute);
 
-            var trusted = trustedLocationsCollection.Any(trustedLocation => trustedLocation.trustChildren && trustedLocation.trustedLocationUrl.IsBaseOf(currentUri) || trustedLocation.trustedLocationUrl.Equals(currentUri));
+                    var trustChildren = trustedLocation["TrustChildren"].ToObject<Boolean>();
+
+                    return new
+                    {
+                        trustedLocationUrl,
+                        trustChildren
+                    };
+                });
+
+                trusted =
+                    trustedLocationsCollection.Any(
+                        trustedLocation =>
+                            trustedLocation.trustChildren && trustedLocation.trustedLocationUrl.IsBaseOf(currentUri) ||
+                            trustedLocation.trustedLocationUrl.Equals(currentUri));
+            }
+            catch(Exception ex)
+            {
+                throw new SecurityAccessDeniedException(string.Format("Cannot execute Barista: Error parsing trusted locations ({0}). Please relay this information to your farm administrator.", ex.Message));
+            }
 
             if (trusted == false)
-                throw new SecurityAccessDeniedException(String.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));
+                throw new SecurityAccessDeniedException(string.Format("Cannot execute Barista: The current location is not trusted ({0}). Contact your farm administrator to add the current location to the trusted Urls in the management section of the Barista service application.", currentUri));
         }
     }
 }

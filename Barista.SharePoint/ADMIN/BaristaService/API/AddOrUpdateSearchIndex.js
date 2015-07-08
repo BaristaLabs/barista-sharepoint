@@ -2,6 +2,10 @@
 var sp = require("SharePoint");
 require("Linq");
 
+var serviceApplicationId = web.request.queryString.serviceApplicationId;
+if (!serviceApplicationId)
+    throw "A Service Application Id must be specified in the query string.";
+
 var newSearchIndex = web.request.getBodyObject();
 
 //Validation
@@ -38,11 +42,18 @@ if (searchIndexType == null)
 if (typeof (newSearchIndex.indexStoragePath) === "undefined")
     newSearchIndex.indexStoragePath = "";
 
-var searchIndexes = sp.farm.getFarmKeyValue("BaristaSearchIndexDefinitions");
+var serviceApplication = sp.farm.getServiceApplicationById(serviceApplicationId);
+if (!serviceApplication)
+    throw "A service application with the specified id could not be located. " + serviceApplicationId;
 
-if (typeof(searchIndexes) === "undefined")
+var searchIndexes;
+if (serviceApplication.propertyBag.containsKey("BaristaSearchIndexDefinitions")) {
+    searchIndexes = serviceApplication.propertyBag.getValueByKey("BaristaSearchIndexDefinitions");
+    searchIndexes = JSON.parse(searchIndexes);
+}
+else {
     searchIndexes = [];
-
+}
 
 var currentSearchIndex = Enumerable.From(searchIndexes)
                            .Where(function (searchIndex) {
@@ -71,5 +82,6 @@ else {
     result = true;
 }
 
-sp.farm.setFarmKeyValue("BaristaSearchIndexDefinitions", searchIndexes);
+serviceApplication.propertyBag.setValueByKey("BaristaSearchIndexDefinitions", JSON.stringify(searchIndexes));
+serviceApplication.update();
 result;

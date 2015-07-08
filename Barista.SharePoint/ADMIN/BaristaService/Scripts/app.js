@@ -1,4 +1,7 @@
 ﻿var manageBarista = angular.module('managebarista', ['ui.bootstrap', 'ngGrid']);
+manageBarista.config(['$locationProvider', function($locationProvider) {
+    $locationProvider.html5Mode(true);
+}]);
 
 //Main Controller
 manageBarista.controller("ManageMainCtrl", ['$scope', '$http', '$modal',

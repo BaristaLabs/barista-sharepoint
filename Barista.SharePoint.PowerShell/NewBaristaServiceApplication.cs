@@ -85,11 +85,17 @@
       // provision the service app
       serviceApp.Provision();
 
-      //Check for and copy a property bag setting
+      //Check for and copy farm default property bag settings to the service app.
       if (farm.Properties.ContainsKey("BaristaTrustedLocations"))
       {
         serviceApp.Properties.Add("BaristaTrustedLocations", farm.Properties["BaristaTrustedLocations"]);
         serviceApp.Update();
+      }
+
+      if (farm.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
+      {
+          serviceApp.Properties.Add("BaristaSearchIndexDefinitions", farm.Properties["BaristaSearchIndexDefinitions"]);
+          serviceApp.Update();
       }
 
       // pass service app back to the PowerShell
