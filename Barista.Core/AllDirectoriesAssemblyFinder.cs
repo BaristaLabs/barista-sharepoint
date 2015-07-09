@@ -35,7 +35,7 @@
         public IEnumerable<string> FindAssembliesInPath(string path)
         {
             var root = new DirectoryInfo (path);
-            return root.EnumerateAllFiles().Where(IsAssemblyFile).Select(f => f.Name);
+            return root.EnumerateAllFiles().Where(IsAssemblyFile).Select(f => f.FullName);
         }
 
         public IEnumerable<string> FindAssembliesMatching(IEnumerable<string> patterns)

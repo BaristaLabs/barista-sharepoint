@@ -35,23 +35,23 @@
       );
     }
 
-    public string ListBundles()
+    public string ListPackages()
     {
         string result = string.Empty;
         BaristaServiceApplicationProxy.Invoke(
             m_serviceContext,
-            proxy => result = proxy.ListBundles()
+            proxy => result = proxy.ListPackages()
             );
 
         return result;
     }
 
-    public string DeployBundle(byte[] bundlePackage)
+    public string AddPackage(byte[] bundlePackage)
     {
         string result = string.Empty;
         BaristaServiceApplicationProxy.Invoke(
             m_serviceContext,
-            proxy => result = proxy.DeployBundle(bundlePackage)
+            proxy => result = proxy.AddPackage(bundlePackage)
             );
 
         return result;

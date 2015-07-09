@@ -373,9 +373,12 @@
     <None Include="Layouts\BaristaFiddle\Vendor\kendoui.professional.2015.1.429\styles\fonts\DejaVu\DejaVuSerif.ttf" />
     <None Include="Layouts\BaristaFiddle\Vendor\kendoui.professional.2015.1.429\styles\images\kendoui.ttf" />
     <None Include="Layouts\BaristaFiddle\Vendor\kendoui.professional.2015.1.429\styles\images\kendoui.woff" />
-    <Content Include="ADMIN\BaristaService\API\GetBundlesWithApproval.js" />
-    <Content Include="ADMIN\BaristaService\API\UpdateBundleApproval.js" />
-    <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManageBundlesCtrl.js" />
+    <Content Include="ADMIN\BaristaService\API\GetPackagesWithApproval.js" />
+    <Content Include="ADMIN\BaristaService\API\UpdatePackageApproval.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManagePackagesCtrl.js" />
+    <Content Include="ADMIN\BaristaService\Scripts\Vendor\lodash.js" />
+    <Content Include="ADMIN\BaristaService\Views\editpackageapprovaldialog.html" />
+    <Content Include="ADMIN\BaristaService\Views\packages.html" />
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.Contrib.Analyzers.dll" />
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.Contrib.Core.dll" />
     <Content Include="ISAPI\BaristaServices\Search\Lucene.Net.Contrib.FastVectorHighlighter.dll" />

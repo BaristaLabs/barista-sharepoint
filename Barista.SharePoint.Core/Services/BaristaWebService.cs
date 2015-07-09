@@ -163,7 +163,7 @@
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Message ListBundles()
+        public Message ListPackages()
         {
             var webContext = WebOperationContext.Current;
             var baristaProxies =
@@ -175,7 +175,7 @@
             {
                 using (new SPServiceContextScope(SPServiceContext.Current))
                 {
-                    var result = proxy.ListBundles();
+                    var result = proxy.ListPackages();
                     objResult.Add(JToken.Parse(result));
                 }
             }
@@ -198,7 +198,7 @@
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [DynamicResponseType(RestOnly = true)]
-        public Message DeployBundle(Stream requestBody)
+        public Message DeployPackage(Stream requestBody)
         {
             var webContext = WebOperationContext.Current;
             var baristaProxies =
@@ -210,7 +210,7 @@
             {
                 using (new SPServiceContextScope(SPServiceContext.Current))
                 {
-                    var result = proxy.DeployBundle(requestBody.ToByteArray());
+                    var result = proxy.AddPackage(requestBody.ToByteArray());
                     objResult.Add(JToken.Parse(result));
                 }
             }

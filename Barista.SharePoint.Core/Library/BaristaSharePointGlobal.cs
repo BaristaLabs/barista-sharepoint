@@ -72,10 +72,10 @@
             return result;
         }
 
-        [JSFunction(Name = "listCustomBundles")]
-        public object ListCustomBundles()
+        [JSFunction(Name = "listPackages")]
+        public object ListPackages()
         {
-            var objBundles = BaristaHelper.ListCustomBundles();
+            var objBundles = BaristaHelper.ListPackages();
 
             var bundlesString = objBundles.ToString();
 

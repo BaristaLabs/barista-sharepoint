@@ -91,7 +91,7 @@
 	            })
 	            .success(function(trustedLocations) {
 
-	                toastr.success("Loaded!");
+	                toastr.success("Loaded Trusted Locations!");
 	                toastr.clear();
 
 	                $scope.trustedLocations = trustedLocations;

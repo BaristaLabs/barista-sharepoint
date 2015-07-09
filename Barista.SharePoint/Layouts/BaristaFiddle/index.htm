@@ -418,6 +418,7 @@
         var baristaInstanceAbsoluteExpiration = null;
         var baristaInstanceSlidingExpiration = null;
         var baristaInstanceInitializationCode = null;
+        var baristaFiddleIsInitializing = true;
 
         var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
 
@@ -718,6 +719,9 @@
         }
 
         function executeCode() {
+            if (baristaFiddleIsInitializing)
+                return;
+
             var code = getScriptValue();
             store.set("BaristaCode", code);
             $("#result").hide();
@@ -843,8 +847,6 @@
                 }
             });
         }
-
-        var baristaFiddleIsInitializing = true;
 
         function updateStoredSettings() {
 

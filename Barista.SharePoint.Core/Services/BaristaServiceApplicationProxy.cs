@@ -193,22 +193,22 @@
             ExecuteOnChannel(channel => channel.Exec(request));
         }
 
-        public string ListBundles()
+        public string ListPackages()
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             //execute the call against the service app
-            ExecuteOnChannel(channel => result = channel.ListBundles());
+            ExecuteOnChannel(channel => result = channel.ListPackages());
 
             return result;
         }
 
-        public string DeployBundle(byte[] bundlePackage)
+        public string AddPackage(byte[] bundlePackage)
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             //execute the call against the service app
-            ExecuteOnChannel(channel => result = channel.DeployBundle(bundlePackage));
+            ExecuteOnChannel(channel => result = channel.AddPackage(bundlePackage));
 
             return result;
         }

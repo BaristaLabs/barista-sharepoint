@@ -91,7 +91,7 @@
 	            })
 	            .success(function(indexes) {
 
-	                toastr.success("Loaded!");
+	                toastr.success("Loaded Indexes!");
 	                toastr.clear();
 
 	                $scope.indexes = indexes;
@@ -100,7 +100,7 @@
 	                }
 	            })
 	            .error(function(indexes) {
-	                toastr.error("Unable to load Indexes :(<br/>" + $(index).children(".intro").text());
+	                toastr.error("Unable to load Indexes :(<br/>" + $(indexes).children(".intro").text());
 	            });
 	    };
 

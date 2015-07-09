@@ -53,10 +53,10 @@
         }
 
         /// <summary>
-        /// Returns a JObject that contains a listing of custom bundles installed on the currently executing server. 
+        /// Returns a JObject that contains a listing of barista packages installed on the currently executing server. 
         /// </summary>
         /// <returns></returns>
-        public static JObject ListCustomBundles()
+        public static JObject ListPackages()
         {
             var objResult = new JObject
             {

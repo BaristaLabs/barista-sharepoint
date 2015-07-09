@@ -16,9 +16,9 @@
         void Exec(BrewRequest request);
 
         [OperationContract]
-        string ListBundles();
+        string ListPackages();
 
         [OperationContract]
-        string DeployBundle(byte[] bundlePackage);
+        string AddPackage(byte[] package);
     }
 }

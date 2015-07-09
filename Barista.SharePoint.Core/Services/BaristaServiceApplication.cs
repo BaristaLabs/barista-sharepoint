@@ -368,9 +368,9 @@
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public string ListBundles()
+        public string ListPackages()
         {
-            var objResult = BaristaHelper.ListCustomBundles();
+            var objResult = BaristaHelper.ListPackages();
 
             return objResult.ToString(Formatting.Indented);
         }
@@ -384,7 +384,7 @@
         /// <param name="bundlePackage"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public string DeployBundle(byte[] bundlePackage)
+        public string AddPackage(byte[] bundlePackage)
         {
             var objResult = new JObject
             {

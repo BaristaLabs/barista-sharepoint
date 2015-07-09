@@ -1,0 +1,36 @@
+﻿<div class="editor form-horizontal" style="margin: 25px;">
+    <div class="modal-header clearfix">
+        <h4 class="modal-title pull-left">Package Approval</h4>
+        <div class="btn btn-xs pull-right" data-ng-click="$dismiss()"><i class="fa fa-times"></i></div>
+    </div>
+    <form name="form" class="modal-body" novalidate>
+        <div class="form-group">
+            <label>Package Name:&nbsp;</label>{{baristaPackage.name}}
+        </div>
+        <div class="form-group">
+            <label>Package Version:&nbsp;</label>{{baristaPackage.version}}
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" rows="3" data-ng-model="baristaPackage.description" disabled="disabled" placeholder="No Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Approval Level </label>
+            <select name="approvalLevel" data-ng-model="baristaPackage.approval.approvalLevel" required>
+                <option value="notApproved" selected="selected">Not Approved</option>
+                <option value="approved">Approved</option>
+            </select>
+            <div data-ng-show="form.approvalLevel.$invalid">
+                Invalid:
+                <span data-ng-show="form.approvalLevel.$error.required">An approval level must be selected.</span>
+            </div>
+        </div>
+        <div class="btn-group" style="float:right">
+            <div class="btn btn-primary" data-ng-click="update()" data-ng-disabled="form.$invalid">
+                <div>Update</div>
+            </div>
+            <div class="btn btn-default" data-ng-click="cancel()">Cancel</div>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>

@@ -46,17 +46,17 @@
         Message Status();
 
         /// <summary>
-        /// Gets a list of all installed bundles
+        /// Gets a list of all installed packages
         /// </summary>
-        [OperationContract(Name = "ListBundles")]
-        [WebInvoke(Method = "GET", UriTemplate = "listBundles")]
-        Message ListBundles();
+        [OperationContract(Name = "ListPackages")]
+        [WebInvoke(Method = "GET", UriTemplate = "listPackages")]
+        Message ListPackages();
 
         /// <summary>
         /// Deploys a bundle to the hosting environment
         /// </summary>
-        [OperationContract(Name = "DeployBundle")]
-        [WebInvoke(Method = "POST", UriTemplate = "deployBundle")]
-        Message DeployBundle(Stream stream);
+        [OperationContract(Name = "DeployPackage")]
+        [WebInvoke(Method = "POST", UriTemplate = "deployPackage")]
+        Message DeployPackage(Stream stream);
     }
 }
