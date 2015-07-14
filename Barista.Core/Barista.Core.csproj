@@ -157,6 +157,7 @@
     <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaIndexDefinition.cs" />
     <Compile Include="Biscotti.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />

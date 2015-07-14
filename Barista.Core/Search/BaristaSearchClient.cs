@@ -32,79 +32,79 @@
         {
         }
 
-        public ICollection<string> GetFieldNames(string indexName)
+        public ICollection<string> GetFieldNames(BaristaIndexDefinition indexDefinition)
         {
-            return Channel.GetFieldNames(indexName);
+            return Channel.GetFieldNames(indexDefinition);
         }
 
-        public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
+        public string Highlight(BaristaIndexDefinition indexDefinition, Query query, int documentId, string fieldName, int fragCharSize)
         {
-            return Channel.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+            return Channel.Highlight(indexDefinition, query, documentId, fieldName, fragCharSize);
         }
 
-        public void IndexDocument(string indexName, string documentId, DocumentDto document)
+        public void IndexDocument(BaristaIndexDefinition indexDefinition, string documentId, DocumentDto document)
         {
-            Channel.IndexDocument(indexName, documentId, document);
+            Channel.IndexDocument(indexDefinition, documentId, document);
         }
 
-        public void IndexJsonDocument(string indexName, JsonDocumentDto document)
+        public void IndexJsonDocument(BaristaIndexDefinition indexDefinition, JsonDocumentDto document)
         {
-            Channel.IndexJsonDocument(indexName, document);
+            Channel.IndexJsonDocument(indexDefinition, document);
         }
 
-        public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
+        public void IndexJsonDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<JsonDocumentDto> documents)
         {
-            Channel.IndexJsonDocuments(indexName, documents);
+            Channel.IndexJsonDocuments(indexDefinition, documents);
         }
 
-        public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
+        public void DeleteDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<string> documentIds)
         {
-            Channel.DeleteDocuments(indexName, documentIds);
+            Channel.DeleteDocuments(indexDefinition, documentIds);
         }
 
-        public void DeleteAllDocuments(string indexName)
+        public void DeleteAllDocuments(BaristaIndexDefinition indexDefinition)
         {
-            Channel.DeleteAllDocuments(indexName);
+            Channel.DeleteAllDocuments(indexDefinition);
         }
 
-        public bool DoesIndexExist(string indexName)
+        public bool DoesIndexExist(BaristaIndexDefinition indexDefinition)
         {
-            return Channel.DoesIndexExist(indexName);
+            return Channel.DoesIndexExist(indexDefinition);
         }
 
-        public Explanation Explain(string indexName, Query query, int documentId)
+        public Explanation Explain(BaristaIndexDefinition indexDefinition, Query query, int documentId)
         {
-            return Channel.Explain(indexName, query, documentId);
+            return Channel.Explain(indexDefinition, query, documentId);
         }
 
-        public JsonDocumentDto Retrieve(string indexName, string documentId)
+        public JsonDocumentDto Retrieve(BaristaIndexDefinition indexDefinition, string documentId)
         {
-            return Channel.Retrieve(indexName, documentId);
+            return Channel.Retrieve(indexDefinition, documentId);
         }
 
-        public IList<SearchResult> Search(string indexName, SearchArguments arguments)
+        public IList<SearchResult> Search(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
-            return Channel.Search(indexName, arguments);
+            return Channel.Search(indexDefinition, arguments);
         }
 
-        public int SearchResultCount(string indexName, SearchArguments arguments)
+        public int SearchResultCount(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
-            return Channel.SearchResultCount(indexName, arguments);
+            return Channel.SearchResultCount(indexDefinition, arguments);
         }
 
-        public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
+        public IList<FacetedSearchResult> FacetedSearch(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
-            return Channel.FacetedSearch(indexName, arguments);
+            return Channel.FacetedSearch(indexDefinition, arguments);
         }
 
-        public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+        public void SetFieldOptions(BaristaIndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
         {
-            Channel.SetFieldOptions(indexName, fieldOptions);
+            Channel.SetFieldOptions(indexDefinition, fieldOptions);
         }
 
-        public void Shutdown(string indexName)
+        public void Shutdown(BaristaIndexDefinition indexDefinition)
         {
-            Channel.Shutdown(indexName);
+            Channel.Shutdown(indexDefinition);
         }
     }
 }

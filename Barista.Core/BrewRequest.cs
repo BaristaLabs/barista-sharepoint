@@ -20,12 +20,12 @@
     {
         public BrewRequest()
         {
-            this.Body = new byte[0];
-            this.CodePath = String.Empty;
-            this.ExecutionTimeout = 110000;
-            this.Headers = new BrewRequestHeaders(new Dictionary<string, IEnumerable<string>>());
+            Body = new byte[0];
+            CodePath = String.Empty;
+            ExecutionTimeout = 110000;
+            Headers = new BrewRequestHeaders(new Dictionary<string, IEnumerable<string>>());
 
-            this.ExtendedProperties = new Dictionary<string, string>();
+            ExtendedProperties = new Dictionary<string, string>();
         }
 
         #region Properties
@@ -154,18 +154,18 @@
         {
             files = new List<HttpFile>();
 
-            if (string.IsNullOrEmpty(this.Headers.ContentType))
+            if (string.IsNullOrEmpty(Headers.ContentType))
             {
                 return null;
             }
 
             IDictionary<string, string> formData = new Dictionary<string, string>();
 
-            var contentType = this.Headers.ContentType;
+            var contentType = Headers.ContentType;
             var mimeType = contentType.Split(';').First();
             if (mimeType.Equals("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
             {
-                formData = Encoding.UTF8.GetString(this.Body).AsQueryDictionary();
+                formData = Encoding.UTF8.GetString(Body).AsQueryDictionary();
             }
 
             if (!mimeType.Equals("multipart/form-data", StringComparison.OrdinalIgnoreCase))
@@ -176,7 +176,7 @@
             var boundary = Regex.Match(contentType, @"boundary=""?(?<token>[^\n\;\"" ]*)").Groups["token"].Value;
             
             if (m_bodyStream == null)
-                m_bodyStream = new MemoryStream(this.Body);
+                m_bodyStream = new MemoryStream(Body);
 
             var multipart = new HttpMultipart(m_bodyStream, boundary);
 
