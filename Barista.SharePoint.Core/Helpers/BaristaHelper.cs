@@ -80,16 +80,8 @@
             return objResult;
         }
 
-        /// <summary>
-        /// For the given index name, obtains the directory object as defined in the farm property bag. If no directory with the given name has been defined, returns null.
-        /// </summary>
-        /// <param name="indexName"></param>
-        /// <returns></returns>
-        public static Lucene.Net.Store.Directory GetDirectoryFromIndexName(string indexName)
+        public static BaristaServiceApplication GetCurrentServiceApplication()
         {
-            if (indexName.IsNullOrWhiteSpace())
-                throw new ArgumentNullException("indexName", @"A directory name must be specified.");
-
             var baristaServiceApplicationProxy =
                 SPServiceContext.Current.GetDefaultProxy(typeof(BaristaServiceApplicationProxy)) as
                     BaristaServiceApplicationProxy;
@@ -101,11 +93,26 @@
             var serviceApplicationIdString = uri.LocalPath.Split(':').Last();
             Guid serviceApplicationId;
             if (!serviceApplicationIdString.TryParseGuid(out serviceApplicationId))
-                throw new SecurityAccessDeniedException(
+                throw new InvalidOperationException(
                     "Cannot execute Barista: Unable to determine Barista Service Application Id from current service context.");
 
             var baristaServiceApplication =
                 SPFarm.Local.Services.GetValue<BaristaServiceApplication>(serviceApplicationId);
+
+            return baristaServiceApplication;
+        }
+
+        /// <summary>
+        /// For the given index name, obtains the directory object as defined in the farm property bag. If no directory with the given name has been defined, returns null.
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <returns></returns>
+        public static Lucene.Net.Store.Directory GetDirectoryFromIndexName(string indexName)
+        {
+            if (indexName.IsNullOrWhiteSpace())
+                throw new ArgumentNullException("indexName", @"A directory name must be specified.");
+
+            var baristaServiceApplication = GetCurrentServiceApplication();
 
             if (!baristaServiceApplication.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
                 return null;
@@ -117,7 +124,7 @@
             var indexDefinitionCollection = JsonConvert.DeserializeObject<IList<IndexDefinition>>(indexDefinitions);
             var indexDefinitionToUse =
               indexDefinitionCollection.FirstOrDefault(
-                id => String.Equals(id.IndexName, indexName, StringComparison.InvariantCultureIgnoreCase));
+                id => string.Equals(id.IndexName, indexName, StringComparison.InvariantCultureIgnoreCase));
 
             if (indexDefinitionToUse == null)
                 return null;
@@ -126,12 +133,12 @@
             var directoryType = Type.GetType(indexDefinitionToUse.TypeName, false, true);
             if (directoryType == null)
                 throw new InvalidOperationException(
-                  String.Format("An index definition named {0} was located, however, the type {1} could not be found.",
+                  string.Format("An index definition named {0} was located, however, the type {1} could not be found.",
                                 indexName, indexDefinitionToUse.TypeName));
 
             if (typeof(Lucene.Net.Store.Directory).IsAssignableFrom(directoryType) == false)
                 throw new InvalidOperationException(
-                  String.Format("An index definition named {0} was located, however, the type {1} is not a directory type.",
+                  string.Format("An index definition named {0} was located, however, the type {1} is not a directory type.",
                                 indexName, indexDefinitionToUse.TypeName));
 
             //I know, I know, we went to all the trouble of doing DI, only to hard code the types...
@@ -194,24 +201,8 @@
             if (SPAdministrationWebApplication.Local.AlternateUrls.Any(u => u != null && u.Uri != null && u.Uri.IsBaseOf(currentUri)))
                 return;
 
-
             //Get configuration from the barista service application associated with the current context.
-            var baristaServiceApplicationProxy =
-                SPServiceContext.Current.GetDefaultProxy(typeof (BaristaServiceApplicationProxy)) as
-                    BaristaServiceApplicationProxy;
-
-            if (baristaServiceApplicationProxy == null)
-                throw new InvalidOperationException("Internal Error: Unable to obtain default Barista service application proxy.");
-
-            var uri = baristaServiceApplicationProxy.ServiceEndpointUri;
-            var serviceApplicationIdString = uri.LocalPath.Split(':').Last();
-            Guid serviceApplicationId;
-            if (!serviceApplicationIdString.TryParseGuid(out serviceApplicationId))
-                throw new SecurityAccessDeniedException(
-                    "Cannot execute Barista: Unable to determine Barista Service Application Id from current service context.");
-
-            var baristaServiceApplication =
-                SPFarm.Local.Services.GetValue<BaristaServiceApplication>(serviceApplicationId);
+            var baristaServiceApplication = GetCurrentServiceApplication();
 
             if (!baristaServiceApplication.Properties.ContainsKey("BaristaTrustedLocations"))
                 throw new SecurityAccessDeniedException(
