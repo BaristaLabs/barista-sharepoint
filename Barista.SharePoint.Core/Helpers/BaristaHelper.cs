@@ -22,6 +22,10 @@
     public static class BaristaHelper
     {
 
+        public const string BaristaTrustedLocationsPropertyBagKey = "BaristaTrustedLocations";
+        public const string BaristaSearchIndexDefinitionsPropertyBagKey = "BaristaSearchIndexDefinitions";
+        public const string BaristaPackageApprovalsPropertyBagKey = "BaristaPackageApprovals";
+
         public static BaristaService GetBaristaService(SPFarm farm)
         {
             return farm.Services.GetValue<BaristaService>(BaristaService.ServiceName) ??
@@ -114,10 +118,10 @@
 
             var baristaServiceApplication = GetCurrentServiceApplication();
 
-            if (!baristaServiceApplication.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
+            if (!baristaServiceApplication.Properties.ContainsKey(BaristaSearchIndexDefinitionsPropertyBagKey))
                 return null;
 
-            var indexDefinitions = Convert.ToString(baristaServiceApplication.Properties["BaristaSearchIndexDefinitions"]);
+            var indexDefinitions = Convert.ToString(baristaServiceApplication.Properties[BaristaSearchIndexDefinitionsPropertyBagKey]);
             if (indexDefinitions.IsNullOrWhiteSpace())
                 return null;
 
@@ -204,11 +208,11 @@
             //Get configuration from the barista service application associated with the current context.
             var baristaServiceApplication = GetCurrentServiceApplication();
 
-            if (!baristaServiceApplication.Properties.ContainsKey("BaristaTrustedLocations"))
+            if (!baristaServiceApplication.Properties.ContainsKey(BaristaTrustedLocationsPropertyBagKey))
                 throw new SecurityAccessDeniedException(
                     "Cannot execute Barista: Barista Trusted Location settings are not defined on the service application. Please contact your farm administrator to define Barista Trusted Locations.");
 
-            var trustedLocationsString = Convert.ToString(baristaServiceApplication.Properties["BaristaTrustedLocations"]);
+            var trustedLocationsString = Convert.ToString(baristaServiceApplication.Properties[BaristaTrustedLocationsPropertyBagKey]);
 
             if (string.IsNullOrEmpty(trustedLocationsString))
                 throw new SecurityAccessDeniedException(
@@ -222,7 +226,7 @@
             var installPath = GetBaristaWebServicesInstallPath();
             var bundlePath = Path.Combine(installPath, "bin/bundles");
             var di = new DirectoryInfo(bundlePath);
-            return di.EnumerateAllFiles().Where(f => String.Equals("package.json", f.Name, StringComparison.OrdinalIgnoreCase));
+            return di.EnumerateAllFiles().Where(f => string.Equals("package.json", f.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         private static void AssertTrustedLocation(string trustedLocations, Uri currentUri)

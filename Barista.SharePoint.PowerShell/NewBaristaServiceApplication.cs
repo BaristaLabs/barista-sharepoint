@@ -86,19 +86,25 @@
             serviceApp.Provision();
 
             //Check for and copy farm default property bag settings to the service app.
-            if (farm.Properties.ContainsKey("BaristaTrustedLocations"))
+            if (farm.Properties.ContainsKey(BaristaHelper.BaristaTrustedLocationsPropertyBagKey))
             {
-                serviceApp.Properties.Add("BaristaTrustedLocations", farm.Properties["BaristaTrustedLocations"]);
+                serviceApp.Properties.Add(BaristaHelper.BaristaTrustedLocationsPropertyBagKey, farm.Properties[BaristaHelper.BaristaTrustedLocationsPropertyBagKey]);
                 serviceApp.Update();
             }
 
-            if (farm.Properties.ContainsKey("BaristaSearchIndexDefinitions"))
+            if (farm.Properties.ContainsKey(BaristaHelper.BaristaSearchIndexDefinitionsPropertyBagKey))
             {
-                serviceApp.Properties.Add("BaristaSearchIndexDefinitions", farm.Properties["BaristaSearchIndexDefinitions"]);
+                serviceApp.Properties.Add(BaristaHelper.BaristaSearchIndexDefinitionsPropertyBagKey, farm.Properties[BaristaHelper.BaristaSearchIndexDefinitionsPropertyBagKey]);
                 serviceApp.Update();
             }
 
-            // pass service app back to the PowerShell
+            if (farm.Properties.ContainsKey(BaristaHelper.BaristaPackageApprovalsPropertyBagKey))
+            {
+                serviceApp.Properties.Add(BaristaHelper.BaristaPackageApprovalsPropertyBagKey, farm.Properties[BaristaHelper.BaristaPackageApprovalsPropertyBagKey]);
+                serviceApp.Update();
+            }
+
+            // pass service app back to PowerShell
             WriteObject(serviceApp);
         }
     }
