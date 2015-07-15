@@ -1,3 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- "SuppressMessage":{"rule":"SPC062111:DoNotDeployEmptyElementManifests","justification":"This event receiver is dynamically applied."} -->
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
 </Elements>

@@ -1,4 +1,5 @@
-﻿namespace Barista.SharePoint.Library
+﻿#define CODE_ANALYSIS
+namespace Barista.SharePoint.Library
 {
   using System.Linq;
   using Barista.Jurassic;
@@ -6,8 +7,10 @@
   using Barista.Library;
   using Microsoft.SharePoint.Administration;
   using System;
+  using System.Diagnostics.CodeAnalysis;
 
   [Serializable]
+  [SuppressMessage("SPCAF.Rules.SupportabilityGroup", "SPC030221:DoNotModifyWebAppSettings", Justification = "Provides interaction with SPWebApplication.")]
   public class SPWebApplicationConstructor : ClrFunction
   {
     public SPWebApplicationConstructor(ScriptEngine engine)

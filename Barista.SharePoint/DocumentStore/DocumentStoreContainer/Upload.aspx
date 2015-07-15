@@ -356,6 +356,7 @@ function GetTreeColor()
 </script>
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
+    <SharePoint:FormDigest ID="FormDigest1" runat="server" />
 		<WebPartPages:WebPartZone runat="server" FrameType="None" ID="Main" Title="loc:Main" />
 	<input type="hidden" name="VTI-GROUP" value="0"/>
 </asp:Content>

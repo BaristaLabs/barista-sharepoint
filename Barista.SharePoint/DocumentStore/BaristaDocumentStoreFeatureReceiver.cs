@@ -123,7 +123,9 @@
         {
             //Create the EntityPart ContentType.
             var documentStoreEntityPartContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityPartContentTypeId);
-            var documentStoreEntityPartContentType = web.ContentTypes[documentStoreEntityPartContentTypeId];
+            var documentStoreEntityPartContentTypeBestMatchId =
+                web.ContentTypes.BestMatch(documentStoreEntityPartContentTypeId);
+            var documentStoreEntityPartContentType = web.ContentTypes[documentStoreEntityPartContentTypeBestMatchId];
             if (documentStoreEntityPartContentType == null)
             {
                 documentStoreEntityPartContentType = new SPContentType(documentStoreEntityPartContentTypeId, web.ContentTypes, "Document Store Entity Part")
@@ -168,7 +170,9 @@
 
             //Create the Document Store Attachment ContentType.
             var documentStoreAttachmentContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityAttachmentContentTypeId);
-            var documentStoreAttachmentContentType = web.ContentTypes[documentStoreAttachmentContentTypeId];
+            var documentStoreAttachmentContentTypeBestMatchId =
+                web.ContentTypes.BestMatch(documentStoreAttachmentContentTypeId);
+            var documentStoreAttachmentContentType = web.ContentTypes[documentStoreAttachmentContentTypeBestMatchId];
             if (documentStoreAttachmentContentType == null)
             {
                 documentStoreAttachmentContentType = new SPContentType(documentStoreAttachmentContentTypeId, web.ContentTypes, "Document Store Attachment")
@@ -221,7 +225,8 @@
 
             //Finally, create the DocumentStoreEntity ContentType which subclasses Document Set.
             var documentStoreEntityContentTypeId = new SPContentTypeId(Constants.DocumentStoreEntityContentTypeId);
-            var documentStoreEntityContentType = web.ContentTypes[documentStoreEntityContentTypeId];
+            var documentStoreEntityContentTypeBestMatchId = web.ContentTypes.BestMatch(documentStoreEntityContentTypeId);
+            var documentStoreEntityContentType = web.ContentTypes[documentStoreEntityContentTypeBestMatchId];
             if (documentStoreEntityContentType == null)
             {
                 documentStoreEntityContentType = new SPContentType(documentStoreEntityContentTypeId,

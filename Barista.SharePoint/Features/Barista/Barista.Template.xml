@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Hidden="TRUE">
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Hidden="TRUE" Version="1.0.0.0">
 </Feature>

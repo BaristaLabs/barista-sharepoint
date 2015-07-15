@@ -1,4 +1,5 @@
-﻿#region Copyright(c) Alexey Sadomov, Vladimir Timashkov. All Rights Reserved.
+﻿#define CODE_ANALYSIS
+#region Copyright(c) Alexey Sadomov, Vladimir Timashkov. All Rights Reserved.
 // -----------------------------------------------------------------------------
 // Copyright(c) 2010 Alexey Sadomov, Vladimir Timashkov. All Rights Reserved.
 //
@@ -24,16 +25,16 @@
 // fitness for a particular purpose and non-infringement.
 // -----------------------------------------------------------------------------
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Barista.Imports.CamlexNET
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+
     internal static class ReflectionHelper
     {
         public const string QueryMethodName = "Query";
@@ -68,6 +69,7 @@ namespace Barista.Imports.CamlexNET
 //            return result;
 //        }
 
+        [SuppressMessage("SPCAF.Rules.SupportabilityGroup", "SPC030202:DoNotUseReflectionToAccessSharePointAPI", Justification = "Enumerating available SharePoint extension methods.")]
         public static IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly,
             Type extendedType)
         {

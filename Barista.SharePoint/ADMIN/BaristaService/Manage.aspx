@@ -55,6 +55,7 @@
 </asp:Content>
 
 <asp:Content ID="Main" ContentPlaceHolderID="PlaceHolderMain" runat="server">
+    <SharePoint:FormDigest ID="FormDigest1" runat="server" />
     <div style="padding:5px;" data-ng-app="managebarista" data-ng-controller="ManageMainCtrl">
         <div data-tabset="">
             <div data-tab="" data-heading="General" style="cursor: pointer;">

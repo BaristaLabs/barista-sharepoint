@@ -1,4 +1,5 @@
-﻿namespace Barista.SharePoint.Library
+﻿#define CODE_ANALYSIS
+namespace Barista.SharePoint.Library
 {
     using System.Text;
     using Barista.Extensions;
@@ -13,6 +14,7 @@
     using Microsoft.SharePoint.Taxonomy;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using Microsoft.SharePoint.Utilities;
@@ -32,9 +34,9 @@
             SPSite site;
 
             if (SPHelper.TryGetSPSite(siteUrl, out site) == false)
-                throw new JavaScriptException(this.Engine, "Error", "A site is not available at the specified url.");
+                throw new JavaScriptException(Engine, "Error", "A site is not available at the specified url.");
 
-            return new SPSiteInstance(this.InstancePrototype, site);
+            return new SPSiteInstance(InstancePrototype, site);
         }
 
         public SPSiteInstance Construct(SPSite site)
@@ -42,7 +44,7 @@
             if (site == null)
                 throw new ArgumentNullException("site");
 
-            return new SPSiteInstance(this.InstancePrototype, site);
+            return new SPSiteInstance(InstancePrototype, site);
         }
 
         [JSFunction(Name = "getSiteFromGuid")]
@@ -65,7 +67,7 @@
                 ? new SPSite(guidId)
                 : new SPSite(guidId, spUserToken);
 
-            return new SPSiteInstance(this.Engine.Object.InstancePrototype, site);
+            return new SPSiteInstance(Engine.Object.InstancePrototype, site);
         }
 
         [JSFunction(Name = "exists")]
@@ -110,14 +112,14 @@
         public SPSiteInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPSiteInstance(ObjectInstance prototype, SPSite site)
             : this(prototype)
         {
-            this.m_site = site;
+            m_site = site;
         }
 
         internal SPSite Site
@@ -171,11 +173,11 @@
                 try
                 {
                     //checking m_site.allwebs.count will load the collection. This allows us to capture the exception before it would otherwise occur.
-// ReSharper disable once UnusedVariable
+                    // ReSharper disable once UnusedVariable
                     var count = m_site.AllWebs.Count;
                     return m_site.AllWebs == null
                         ? null
-                        : new SPWebCollectionInstance(this.Engine.Object.InstancePrototype, m_site.AllWebs);
+                        : new SPWebCollectionInstance(Engine.Object.InstancePrototype, m_site.AllWebs);
                 }
                 catch
                 {
@@ -193,7 +195,7 @@
             {
                 return m_site.Audit == null
                     ? null
-                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_site.Audit);
+                    : new SPAuditInstance(Engine.Object.InstancePrototype, m_site.Audit);
             }
         }
 
@@ -244,6 +246,7 @@
         //Cache
 
         [JSProperty(Name = "catchAccessDeniedException")]
+        [SuppressMessage("SPCAF.Rules.CorrectnessGroup", "SPC010212:DoNotCallSPSiteCatchAccessDeniedException", Justification = "Providing this as an accessor.")]
         public bool CatchAccessDeniedException
         {
             get
@@ -261,7 +264,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_site.CertificationDate);
+                return JurassicHelper.ToDateInstance(Engine, m_site.CertificationDate);
             }
         }
 
@@ -272,7 +275,7 @@
             {
                 return m_site.ContentDatabase == null
                     ? null
-                    : new SPContentDatabaseInstance(this.Engine.Object.InstancePrototype, m_site.ContentDatabase);
+                    : new SPContentDatabaseInstance(Engine.Object.InstancePrototype, m_site.ContentDatabase);
             }
         }
 
@@ -303,7 +306,7 @@
             {
                 return m_site.EventReceivers == null
                     ? null
-                    : new SPEventReceiverDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_site.EventReceivers);
+                    : new SPEventReceiverDefinitionCollectionInstance(Engine.Object.InstancePrototype, m_site.EventReceivers);
             }
         }
 
@@ -316,7 +319,7 @@
             {
                 return m_site.FeatureDefinitions == null
                     ? null
-                    : new SPFeatureDefinitionCollectionInstance(this.Engine.Object.InstancePrototype, m_site.FeatureDefinitions);
+                    : new SPFeatureDefinitionCollectionInstance(Engine.Object.InstancePrototype, m_site.FeatureDefinitions);
             }
         }
 
@@ -327,7 +330,7 @@
             {
                 return m_site.Features == null
                     ? null
-                    : new SPFeatureCollectionInstance(this.Engine.Object.InstancePrototype, m_site.Features);
+                    : new SPFeatureCollectionInstance(Engine.Object.InstancePrototype, m_site.Features);
             }
         }
 
@@ -354,7 +357,7 @@
         [JSProperty(Name = "id")]
         public GuidInstance Id
         {
-            get { return new GuidInstance(this.Engine.Object.InstancePrototype, m_site.ID); }
+            get { return new GuidInstance(Engine.Object.InstancePrototype, m_site.ID); }
         }
 
         [JSProperty(Name = "iisAllowsAnonymous")]
@@ -380,7 +383,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_site.LastContentModifiedDate);
+                return JurassicHelper.ToDateInstance(Engine, m_site.LastContentModifiedDate);
             }
         }
 
@@ -389,7 +392,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_site.LastSecurityModifiedDate);
+                return JurassicHelper.ToDateInstance(Engine, m_site.LastSecurityModifiedDate);
             }
         }
 
@@ -415,9 +418,9 @@
                 {
                     return m_site.Owner == null
                         ? null
-                        : new SPUserInstance(this.Engine, m_site.Owner);
+                        : new SPUserInstance(Engine, m_site.Owner);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return Undefined.Value;
                 }
@@ -494,7 +497,7 @@
             {
                 return m_site.Quota == null
                     ? null
-                    : new SPQuotaInstance(this.Engine.Object.InstancePrototype, m_site.Quota);
+                    : new SPQuotaInstance(Engine.Object.InstancePrototype, m_site.Quota);
             }
             set
             {
@@ -530,14 +533,14 @@
             }
         }
 
-        [JSProperty(Name="recycleBin")]
+        [JSProperty(Name = "recycleBin")]
         public SPRecycleBinItemCollectionInstance RecycleBin
         {
             get
             {
                 return m_site.RecycleBin == null
                     ? null
-                    : new SPRecycleBinItemCollectionInstance(this.Engine.Object.InstancePrototype, m_site.RecycleBin);
+                    : new SPRecycleBinItemCollectionInstance(Engine.Object.InstancePrototype, m_site.RecycleBin);
             }
         }
 
@@ -571,7 +574,7 @@
         [JSProperty(Name = "rootWeb")]
         public SPWebInstance RootWeb
         {
-            get { return new SPWebInstance(this.Engine, m_site.RootWeb); }
+            get { return new SPWebInstance(Engine, m_site.RootWeb); }
         }
 
         [JSProperty(Name = "searchServiceInstance")]
@@ -581,7 +584,7 @@
             {
                 return m_site.SearchServiceInstance == null
                     ? null
-                    : new SPServiceInstanceInstance(this.Engine.Object.InstancePrototype, m_site.SearchServiceInstance);
+                    : new SPServiceInstanceInstance(Engine.Object.InstancePrototype, m_site.SearchServiceInstance);
             }
         }
 
@@ -594,7 +597,7 @@
                 {
                     return m_site.SecondaryContact == null
                         ? null
-                        : new SPUserInstance(this.Engine, m_site.SecondaryContact);
+                        : new SPUserInstance(Engine, m_site.SecondaryContact);
                 }
                 catch (Exception)
                 {
@@ -638,7 +641,7 @@
             {
                 return m_site.Solutions == null
                     ? null
-                    : new SPUserSolutionCollectionInstance(this.Engine.Object.InstancePrototype, m_site.Solutions);
+                    : new SPUserSolutionCollectionInstance(Engine.Object.InstancePrototype, m_site.Solutions);
             }
         }
 
@@ -662,7 +665,7 @@
             {
                 return m_site.SystemAccount == null
                     ? null
-                    : new SPUserInstance(this.Engine, m_site.SystemAccount);
+                    : new SPUserInstance(Engine, m_site.SystemAccount);
             }
         }
 
@@ -692,16 +695,16 @@
             get { return m_site.Url; }
         }
 
-        [JSProperty(Name="usage")]
+        [JSProperty(Name = "usage")]
         public object UsageInfo
         {
             get
             {
                 try
                 {
-                    return new UsageInfoInstance(this.Engine.Object.InstancePrototype, m_site.Usage);
+                    return new UsageInfoInstance(Engine.Object.InstancePrototype, m_site.Usage);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return Undefined.Value;
                 }
@@ -717,11 +720,11 @@
                 {
                     return m_site.UserCodeEnabled;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return Undefined.Value;
                 }
-                
+
             }
         }
 
@@ -732,7 +735,7 @@
             {
                 return m_site.UserCustomActions == null
                     ? null
-                    : new SPUserCustomActionCollectionInstance(this.Engine.Object.InstancePrototype, m_site.UserCustomActions);
+                    : new SPUserCustomActionCollectionInstance(Engine.Object.InstancePrototype, m_site.UserCustomActions);
             }
         }
 
@@ -756,7 +759,7 @@
             {
                 return m_site.UserToken == null
                     ? null
-                    : new SPUserTokenInstance(this.Engine.Object.InstancePrototype, m_site.UserToken);
+                    : new SPUserTokenInstance(Engine.Object.InstancePrototype, m_site.UserToken);
             }
         }
 
@@ -776,7 +779,7 @@
             {
                 return m_site.WorkflowManager == null
                 ? null
-                : new SPWorkflowManagerInstance(this.Engine.Object.InstancePrototype, m_site.WorkflowManager);
+                : new SPWorkflowManagerInstance(Engine.Object.InstancePrototype, m_site.WorkflowManager);
             }
         }
 
@@ -798,7 +801,7 @@
         {
             get
             {
-                var result = this.Engine.Array.Construct();
+                var result = Engine.Array.Construct();
 
                 foreach (var zone in m_site.Zone.GetIndividualFlags())
                 {
@@ -838,10 +841,10 @@
             if (featureId == Guid.Empty)
                 return null;
 
-            var forceValue = JurassicHelper.GetTypedArgumentValue(this.Engine, force, false);
+            var forceValue = JurassicHelper.GetTypedArgumentValue(Engine, force, false);
 
             var activatedFeature = m_site.Features.Add(featureId, forceValue);
-            return new SPFeatureInstance(this.Engine.Object.InstancePrototype, activatedFeature);
+            return new SPFeatureInstance(Engine.Object.InstancePrototype, activatedFeature);
         }
 
         //BypassUseRemoteApis
@@ -863,7 +866,7 @@
                 createdWeb = m_site.AllWebs.Add(webCreationInfo as string);
             else
             {
-                var creationInfo = JurassicHelper.Coerce<SPWebCreationInformation>(this.Engine, webCreationInfo);
+                var creationInfo = JurassicHelper.Coerce<SPWebCreationInformation>(Engine, webCreationInfo);
 
                 if (creationInfo.WebTemplate is string)
                     createdWeb = m_site.AllWebs.Add(creationInfo.Url, creationInfo.Title, creationInfo.Description, (uint)creationInfo.Language, creationInfo.WebTemplate as string, !creationInfo.UseSamePermissionsAsParentSite, creationInfo.ConvertIfThere);
@@ -872,17 +875,17 @@
                     //attempt to get an instance of a web template from the original object.
                     var webCreationInstance = webCreationInfo as ObjectInstance;
                     if (webCreationInstance == null)
-                        throw new JavaScriptException(this.Engine, "Error", "Unable to create a web from the specified template. Could not determine the value of the web template.");
+                        throw new JavaScriptException(Engine, "Error", "Unable to create a web from the specified template. Could not determine the value of the web template.");
 
                     if (webCreationInstance.HasProperty("webTemplate") == false)
-                        throw new JavaScriptException(this.Engine, "Error", "Unable to create a web from the specified template. Web Template property was null.");
+                        throw new JavaScriptException(Engine, "Error", "Unable to create a web from the specified template. Web Template property was null.");
 
-                    var webTemplate = JurassicHelper.Coerce<SPWebTemplateInstance>(this.Engine, webCreationInstance.GetPropertyValue("webTemplate"));
+                    var webTemplate = JurassicHelper.Coerce<SPWebTemplateInstance>(Engine, webCreationInstance.GetPropertyValue("webTemplate"));
                     createdWeb = m_site.AllWebs.Add(creationInfo.Url, creationInfo.Title, creationInfo.Description, (uint)creationInfo.Language, webTemplate.WebTemplate, !creationInfo.UseSamePermissionsAsParentSite, creationInfo.ConvertIfThere);
                 }
             }
 
-            return new SPWebInstance(this.Engine, createdWeb);
+            return new SPWebInstance(Engine, createdWeb);
         }
 
         [JSFunction(Name = "delete")]
@@ -912,12 +915,12 @@
         {
             SPListTemplateType listTemplateType;
             if (!typeCatalog.TryParseEnum(true, out listTemplateType))
-                throw new JavaScriptException(this.Engine, "Error", "Type Catalog must be specified.");
+                throw new JavaScriptException(Engine, "Error", "Type Catalog must be specified.");
 
             var result = m_site.GetCatalog(listTemplateType);
             return result == null
                 ? null
-                : new SPListInstance(this.Engine, m_site, result.ParentWeb, result);
+                : new SPListInstance(Engine, m_site, result.ParentWeb, result);
         }
 
         //GetChanges
@@ -935,7 +938,7 @@
         [JSFunction(Name = "getWebApplication")]
         public SPWebApplicationInstance GetWebApplication()
         {
-            return new SPWebApplicationInstance(this.Engine.Object.InstancePrototype, m_site.WebApplication);
+            return new SPWebApplicationInstance(Engine.Object.InstancePrototype, m_site.WebApplication);
         }
 
         [JSFunction(Name = "deactivateFeature")]
@@ -985,10 +988,10 @@
             ci.ProcessSite(m_site, true, webs.Add,
               (web, ex) => false);
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var web in webs)
             {
-                ArrayInstance.Push(result, new SPWebInstance(this.Engine, web));
+                ArrayInstance.Push(result, new SPWebInstance(Engine, web));
             }
             return result;
         }
@@ -996,7 +999,7 @@
         [JSFunction(Name = "getContentDatabase")]
         public SPContentDatabaseInstance GetContentDatabase()
         {
-            return new SPContentDatabaseInstance(this.Engine.Object.InstancePrototype, m_site.ContentDatabase);
+            return new SPContentDatabaseInstance(Engine.Object.InstancePrototype, m_site.ContentDatabase);
         }
 
         [JSFunction(Name = "getFeatureDefinitions")]
@@ -1005,12 +1008,12 @@
         {
             //SPSite.FeatureDefinitions always returns null... nice, SharePoint, nice...
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var featureDefinition in SPFarm.Local.FeatureDefinitions)
             {
                 if (featureDefinition.Scope == SPFeatureScope.Site)
                 {
-                    ArrayInstance.Push(result, new SPFeatureDefinitionInstance(this.Engine.Object.InstancePrototype, featureDefinition));
+                    ArrayInstance.Push(result, new SPFeatureDefinitionInstance(Engine.Object.InstancePrototype, featureDefinition));
                 }
             }
             return result;
@@ -1019,7 +1022,7 @@
         [JSFunction(Name = "getPermissions")]
         public SPSecurableObjectInstance GetPermissions()
         {
-            return new SPSecurableObjectInstance(this.Engine)
+            return new SPSecurableObjectInstance(Engine)
             {
                 SecurableObject = m_site.RootWeb
             };
@@ -1028,14 +1031,14 @@
         [JSFunction(Name = "getRecycleBin")]
         public SPRecycleBinItemCollectionInstance GetRecycleBin()
         {
-            return new SPRecycleBinItemCollectionInstance(this.Engine.Object.InstancePrototype, m_site.RecycleBin);
+            return new SPRecycleBinItemCollectionInstance(Engine.Object.InstancePrototype, m_site.RecycleBin);
         }
 
         [JSFunction(Name = "getTaxonomySession")]
         public TaxonomySessionInstance GetTaxonomySession()
         {
             var session = new TaxonomySession(m_site);
-            return new TaxonomySessionInstance(this.Engine.Object.InstancePrototype, session);
+            return new TaxonomySessionInstance(Engine.Object.InstancePrototype, session);
         }
 
         [JSFunction(Name = "getWebTemplates")]
@@ -1049,11 +1052,11 @@
                 lcid = (uint)language;
             // ReSharper restore PossibleInvalidCastException
 
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             var webTemplates = m_site.GetWebTemplates(lcid).OfType<SPWebTemplate>();
             foreach (var webTemplate in webTemplates)
             {
-                ArrayInstance.Push(result, new SPWebTemplateInstance(this.Engine.Object.InstancePrototype, webTemplate));
+                ArrayInstance.Push(result, new SPWebTemplateInstance(Engine.Object.InstancePrototype, webTemplate));
             }
             return result;
         }
@@ -1061,7 +1064,7 @@
         [JSFunction(Name = "getUsageInfo")]
         public UsageInfoInstance GetUsage()
         {
-            return new UsageInfoInstance(this.Engine.Object.InstancePrototype, m_site.Usage);
+            return new UsageInfoInstance(Engine.Object.InstancePrototype, m_site.Usage);
         }
 
         [JSDoc("Loads the file at the specified url as a byte array.")]
@@ -1072,10 +1075,10 @@
             if (Uri.IsWellFormedUriString(fileUrl, UriKind.Relative))
                 fileUrl = SPUtility.ConcatUrls(m_site.Url, fileUrl);
             if (!SPHelper.TryGetSPFile(fileUrl, out file))
-                throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+                throw new JavaScriptException(Engine, "Error", "Could not locate the specified file:  " + fileUrl);
 
             var data = file.OpenBinary(SPOpenBinaryOptions.None);
-            var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, data)
+            var result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, data)
             {
                 FileName = file.SourceLeafName.IsNullOrWhiteSpace() ? file.Name : file.SourceLeafName
             };
@@ -1094,7 +1097,7 @@
             if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
                 return fileContents;
 
-            throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+            throw new JavaScriptException(Engine, "Error", "Could not locate the specified file:  " + fileUrl);
         }
 
         [JSFunction(Name = "makeFullUrl")]
@@ -1116,7 +1119,7 @@
 
             return web == null
                 ? null
-                : new SPWebInstance(this.Engine, web);
+                : new SPWebInstance(Engine, web);
         }
 
         [JSFunction(Name = "openWebById")]
@@ -1124,7 +1127,7 @@
         {
             var webId = GuidInstance.ConvertFromJsObjectToGuid(guid);
 
-            return new SPWebInstance(this.Engine, m_site.OpenWeb(webId));
+            return new SPWebInstance(Engine, m_site.OpenWeb(webId));
         }
 
         //QueryFeatures
@@ -1184,7 +1187,7 @@
             else if (contents is StringInstance || contents is string)
                 data = Encoding.UTF8.GetBytes((string)contents);
             else if (contents is ObjectInstance)
-                data = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, contents, null, null));
+                data = Encoding.UTF8.GetBytes(JSONObject.Stringify(Engine, contents, null, null));
             else
                 data = Encoding.UTF8.GetBytes(contents.ToString());
 
@@ -1201,7 +1204,7 @@
                 }
                 else
                 {
-                    throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified web:  " + fileUrl);
+                    throw new JavaScriptException(Engine, "Error", "Could not locate the specified web:  " + fileUrl);
                 }
             }
             else
@@ -1209,7 +1212,7 @@
                 result.SaveBinary(data);
             }
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPFileInstance(Engine.Object.InstancePrototype, result);
         }
         #endregion
     }

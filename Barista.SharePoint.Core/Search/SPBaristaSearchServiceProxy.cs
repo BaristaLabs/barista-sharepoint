@@ -1,4 +1,5 @@
-﻿namespace Barista.SharePoint.Search
+﻿#define CODE_ANALYSIS
+namespace Barista.SharePoint.Search
 {
     using System.Reflection;
     using Barista.Extensions;
@@ -6,6 +7,7 @@
     using Microsoft.SharePoint.Administration;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.ServiceModel;
     using Barista.Newtonsoft.Json;
@@ -21,6 +23,7 @@
             TypeNameHandling = TypeNameHandling.Auto
         };
 
+        [SuppressMessage("SPCAF.Rules.SupportabilityGroup", "SPC030202:DoNotUseReflectionToAccessSharePointAPI", Justification = "UPNName not exposed via SP2010 API. ")]
         public SPBaristaSearchServiceProxy()
         {
             var farm = SPFarm.Local;

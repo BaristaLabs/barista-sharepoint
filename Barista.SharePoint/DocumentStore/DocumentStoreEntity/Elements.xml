@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
   <!-- Parent ContentType: Document Set (0x0120D520) -->
-  <ContentType ID="0x0120D520009156b84f06ea4f2f96e34101e1e1b1a8" Name="Document Store Entity" Group="Document Store Content Types" Description="Represents a document, attachments and associated metadata in a NoSql/Document-oriented database style model." Version="0" ProgId="SharePoint.DocumentSet" PushDownChangedResourceFilesOnly="TRUE" Inherits="FALSE">
+  <ContentType ID="0x0120D520009156B84F06EA4F2F96E34101E1E1B1A8" Name="Document Store Entity" Group="Document Store Content Types" Description="Represents a document, attachments and associated metadata in a NoSql/Document-oriented database style model." Version="0" ProgId="SharePoint.DocumentSet" PushDownChangedResourceFilesOnly="TRUE" Inherits="FALSE">
     <Folder TargetName="_cts/Document Store Entity" />
     <FieldRefs>
       <!--OOB fields -->
@@ -32,9 +32,9 @@
           <!-- Link to a Document -->
           <AllowedContentType id="0x01010A" />
           <!-- Document Store Entity Part -->
-          <AllowedContentType id="0x010100c85948cf1fa64eed9d29eaa2a1078fd6" />
+          <AllowedContentType id="0x010100C85948CF1FA64EED9D29EAA2A1078FD6" />
           <!-- Document Store Attachment -->
-          <AllowedContentType id="0x010100d1f6bb0d78094ba3acabd9118f81b0c5" />
+          <AllowedContentType id="0x010100D1F6BB0D78094BA3ACABD9118F81B0C5" />
         </act:AllowedContentTypes>
       </XmlDocument>
       <!-- List of all fields [site columns] that should appear on welcome page. -->

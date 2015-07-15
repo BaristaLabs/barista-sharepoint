@@ -502,10 +502,11 @@
 
             var listsIterator = new ContentIterator();
             listsIterator.ProcessLists(web.Lists, currentList =>
-              {
-                  if (currentList is SPDocumentLibrary && currentList.TemplateFeatureId == Constants.DocumentContainerFeatureId)
-                      result.Add(currentList as SPDocumentLibrary);
-              }, null);
+            {
+                var item = currentList as SPDocumentLibrary;
+                if (item != null && item.TemplateFeatureId == Constants.DocumentContainerFeatureId)
+                      result.Add(item);
+            }, null);
 
             return result;
         }
@@ -515,7 +516,7 @@
 
         {
             SPList list;
-            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            if (!TryGetListForContainer(web, containerTitle, out list))
             {
                 entityDocumentSet = null;
                 return false;
@@ -546,7 +547,7 @@
             out SPFile entityPartFile)
         {
             SPList list;
-            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            if (!TryGetListForContainer(web, containerTitle, out list))
             {
                 entityPartFile = null;
                 return false;
@@ -584,7 +585,7 @@
             out SPFile attachment)
         {
             SPList list;
-            if (!SPDocumentStoreHelper.TryGetListForContainer(web, containerTitle, out list))
+            if (!TryGetListForContainer(web, containerTitle, out list))
             {
                 attachment = null;
                 return false;
@@ -735,7 +736,7 @@
         public static bool TryGetDocumentStoreEntityDocumentSet(SPList list, SPFolder folder, Guid id,
                                                                 out DocumentSet entityDocumentSet)
         {
-            entityDocumentSet = SPDocumentStoreHelper.GetDocumentStoreEntityDocumentSet(list, folder, id);
+            entityDocumentSet = GetDocumentStoreEntityDocumentSet(list, folder, id);
             return entityDocumentSet != null;
         }
 
@@ -904,7 +905,7 @@
                   }
               });
 
-            task.Start();
+            task.Start(TaskScheduler.Default);
             return task;
         }
 
@@ -920,11 +921,11 @@
         {
             SPList list;
             SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            if (TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
                 return null;
 
             SPFile defaultEntityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==
+            if (TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) ==
                 false)
                 return null;
 
@@ -943,11 +944,11 @@
         {
             SPList list;
             SPFolder folder;
-            if (SPDocumentStoreHelper.TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
+            if (TryGetFolderFromPath(web, containerTitle, out list, out folder, String.Empty) == false)
                 return null;
 
             SPFile entityPart;
-            if (SPDocumentStoreHelper.TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
+            if (TryGetDocumentStoreEntityPart(list, folder, entityId, partName, out entityPart) == false)
                 return null;
 
             var result = entityPart.ETag;
@@ -1154,12 +1155,12 @@
                                                                f.Name != Constants.DocumentStoreDefaultEntityPartFileName &&
                                                                f.Name != Constants.DocumentStoreEntityContentsPartFileName &&
                                                                (updatedEntityPart == null || f.Name != updatedEntityPart.Name + Constants.DocumentSetEntityPartExtension))
-                                                   .Select(f => SPDocumentStoreHelper.MapEntityPartFromSPFile(f, null))
+                                                   .Select(f => MapEntityPartFromSPFile(f, null))
                                                    .ToList();
 
                 entityContents = new EntityContents
                   {
-                      Entity = SPDocumentStoreHelper.MapEntityFromDocumentSet(documentSet, null),
+                      Entity = MapEntityFromDocumentSet(documentSet, null),
                       EntityParts = entityParts.ToDictionary(entityPart => entityPart.Name)
                   };
             }

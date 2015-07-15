@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
   <!-- Parent ContentType: Document (0x0101) -->
-  <ContentType ID="0x010100d1f6bb0d78094ba3acabd9118f81b0c5"
+  <ContentType ID="0x010100D1F6BB0D78094BA3ACABD9118F81B0C5"
                Name="Document Store Attachment"
                Group="Document Store Content Types"
                Description="Represents a document that is contained within a Document Store Entity."

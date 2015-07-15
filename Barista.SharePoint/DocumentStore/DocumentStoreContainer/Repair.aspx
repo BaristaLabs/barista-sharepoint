@@ -23,6 +23,7 @@
  <div height="100%" class="ms-pagemargin"><img src="/_layouts/images/blank.gif" width='6' height='1' alt="" /></div>
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
+        <SharePoint:FormDigest ID="FormDigest1" runat="server" />
 		<WebPartPages:WebPartZone runat="server" FrameType="None" ID="Main" Title="loc:Main" />
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderBodyAreaClass" runat="server">
