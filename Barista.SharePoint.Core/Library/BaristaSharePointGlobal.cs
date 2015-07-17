@@ -82,6 +82,16 @@
             return JSONObject.Parse(Engine, bundlesString, null);
         }
 
+        [JSFunction(Name = "getPackageInfo")]
+        public object GetPackageInfo(string packageId)
+        {
+            var objBundles = BaristaHelper.GetPackageInfo(packageId);
+
+            var bundlesString = objBundles.ToString();
+
+            return JSONObject.Parse(Engine, bundlesString, null);
+        }
+
         #region Internal Functions
 
         /// <summary>

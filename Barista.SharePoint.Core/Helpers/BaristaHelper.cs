@@ -12,8 +12,10 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Security.Policy;
     using System.ServiceModel.Security;
     using Microsoft.SharePoint.Utilities;
+    using Ninject;
 
     /// <summary>
     /// Contains various helper methods involving barista configuration stored in SharePoint.
@@ -81,6 +83,108 @@
             }
 
             return objResult;
+        }
+
+        public static void BindBaristaBundles(IKernel kernel, string bundlesDirectory)
+        {
+            if (kernel == null)
+                kernel = new StandardKernel();
+
+            var bundlesDirectoryUri = new Uri("file://" + bundlesDirectory);
+
+            kernel.Bind(x => x
+                .FromAssembliesInPath(bundlesDirectory)
+                .SelectAllClasses()
+                .InheritedFrom<IBundle>()
+                .BindAllInterfaces()
+                .Configure((c, bundleType) =>
+                {
+                    var bundleInfo = GetBundleInfo(bundleType, bundlesDirectoryUri);
+                    foreach (var info in bundleInfo.Properties())
+                        c.WithMetadata(info.Name, info.Value.ToString());
+                })
+                );
+
+        }
+
+        public static JObject GetBundleInfo(Type bundleType, Uri bundlesDirectoryUri)
+        {
+            var result = new JObject();
+
+            //Codebase should contain the location (in uri format) of the assembly on disk.
+            var codeBase = bundleType.Assembly.CodeBase;
+            if (string.IsNullOrEmpty(codeBase))
+                return result;
+
+            try
+            {
+                var codeBaseUri = new Uri(codeBase);
+                if (!bundlesDirectoryUri.IsBaseOf(codeBaseUri))
+                    return result;
+
+                var packageId = codeBaseUri.Segments.ElementAtOrDefault(bundlesDirectoryUri.Segments.Length);
+                var assemblyPath = String.Join(char.ToString(Path.DirectorySeparatorChar), codeBaseUri.Segments.Skip(bundlesDirectoryUri.Segments.Length + 1).ToArray());
+                if (string.IsNullOrEmpty(packageId))
+                    return result;
+
+                packageId = packageId.TrimEnd('/');
+                result.Add("baristaPackageId", packageId);
+
+                result.Add("bundleTypeFullName", bundleType.FullName);
+                result.Add("assemblyPath", assemblyPath);
+                result.Add("assemblyFullName", bundleType.Assembly.FullName);
+                result.Add("assemblyImageRuntimeVersion", bundleType.Assembly.ImageRuntimeVersion);
+
+                var assemblyHash = bundleType.Assembly.Evidence.OfType<Hash>().FirstOrDefault();
+                if (assemblyHash == null)
+                    return result;
+
+                result.Add("assemblyHash", Convert.ToBase64String(assemblyHash.MD5));
+            }
+            catch (Exception)
+            {
+                //Do nothing!
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// For the given package id, returns an object that describes the bundles contained in the package.
+        /// </summary>
+        /// <param name="packageId"></param>
+        /// <returns></returns>
+        public static JObject GetPackageInfo(string packageId)
+        {
+            var installPath = GetBaristaWebServicesInstallPath();
+            var packagesPath = Path.Combine(installPath, "bin" + Path.DirectorySeparatorChar + "bundles");
+            var packagePath = Path.Combine(packagesPath, packageId);
+
+            if (!Directory.Exists(packagePath))
+                return null;
+
+            var bundlesDirectoryUri = new Uri("file://" + packagesPath);
+            var packageDirectory = new DirectoryInfo(packagePath);
+
+            var result = new JObject
+            {
+                {"!machineName", Environment.MachineName},
+                {"packageCreationTime", packageDirectory.CreationTimeUtc},
+                {"packageModificationTime", packageDirectory.LastWriteTimeUtc}
+            };
+
+            var bundleInfos = new JArray();
+
+            var kernel = new StandardKernel();
+            BindBaristaBundles(kernel, packagePath);
+
+            var bundles = kernel.GetAll<IBundle>();
+            foreach (var bundle in bundles)
+            {
+                bundleInfos.Add(GetBundleInfo(bundle.GetType(), bundlesDirectoryUri));
+            }
+            result.Add("bundles", bundleInfos);
+
+            return result;
         }
 
         public static BaristaServiceApplication GetCurrentServiceApplication()
@@ -270,7 +374,7 @@
                             trustedLocation.trustChildren && trustedLocation.trustedLocationUrl.IsBaseOf(currentUri) ||
                             trustedLocation.trustedLocationUrl.Equals(currentUri));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new SecurityAccessDeniedException(string.Format("Cannot execute Barista: Error parsing trusted locations ({0}). Please relay this information to your farm administrator.", ex.Message));
             }

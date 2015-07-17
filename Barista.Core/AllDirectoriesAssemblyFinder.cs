@@ -29,18 +29,18 @@
         {
             return m_assemblyNameRetriever
                 .GetAssemblyNames(assemblies, filter)
-                .Select<AssemblyName, Assembly>(Assembly.Load);
+                .Select(Assembly.Load);
         }
 
         public IEnumerable<string> FindAssembliesInPath(string path)
         {
-            var root = new DirectoryInfo (path);
+            var root = new DirectoryInfo(path);
             return root.EnumerateAllFiles().Where(IsAssemblyFile).Select(f => f.FullName);
         }
 
         public IEnumerable<string> FindAssembliesMatching(IEnumerable<string> patterns)
         {
-            return patterns.SelectMany<string, string>(GetFilesMatchingPattern).Where(IsAssemblyFile);
+            return patterns.SelectMany(GetFilesMatchingPattern).Where(IsAssemblyFile);
         }
 
         private static bool IsAssemblyFile(FileInfo file)
@@ -57,9 +57,8 @@
 
         private static bool HasAssemblyExtension(string extension)
         {
-            const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
-            return string.Equals(extension, ".dll", comparison) ||
-                   string.Equals(extension, ".exe", comparison);
+            return string.Equals(extension, ".dll", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(extension, ".exe", StringComparison.OrdinalIgnoreCase);
         }
 
         private static IEnumerable<string> GetFilesMatchingPattern(string pattern)
@@ -85,8 +84,8 @@
 
         private static string GetBaseDirectory()
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string searchPath = AppDomain.CurrentDomain.RelativeSearchPath;
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var searchPath = AppDomain.CurrentDomain.RelativeSearchPath;
 
             return string.IsNullOrEmpty(searchPath) ? baseDirectory : Path.Combine(baseDirectory, searchPath);
         }

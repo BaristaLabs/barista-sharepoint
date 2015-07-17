@@ -34,14 +34,18 @@ var result = false;
 if (!currentPackageApproval) {
     var newApproval = {
         "approvalLevel": packageApproval.approval.approvalLevel,
-        "lastDateModified": new Date()
-    };
+        "lastDateModified": new Date(),
+        "lastUserModified": sp.currentContext.web.currentUser,
+        "packageInfo": barista.getPackageInfo(packageApproval.id)
+};
     approvals[packageApproval.id] = newApproval;
     result = true;
 }
 else {
     currentPackageApproval.approvalLevel = packageApproval.approval.approvalLevel;
     currentPackageApproval.lastDateModified = new Date();
+    currentPackageApproval.lastUserModified = sp.currentContext.web.currentUser;
+    currentPackageApproval.packageInfo = barista.getPackageInfo(packageApproval.id)
     result = true;
 }
 

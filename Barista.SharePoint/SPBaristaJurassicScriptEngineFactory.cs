@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint
 {
-    using System.IO;
     using Barista.Bundles;
     using Barista.Engine;
     using Barista.Library;
@@ -12,11 +11,15 @@
     using Jurassic.Library;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Web;
+    using Barista.DDay.iCal;
     using Ninject;
     using Barista.Extensions;
     using Barista.Newtonsoft.Json.Linq;
+    using Barista.SharePoint.Annotations;
+    using Ninject.Planning.Bindings;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
@@ -109,38 +112,10 @@
 
             //Let's do some DI
             var kernel = new StandardKernel();
-            kernel.Bind(x => x
-                .FromAssembliesInPath(Path.Combine(binDirectory, "Bundles"))
-                .SelectAllClasses()
-                .InheritedFrom<IBundle>()
-                .BindAllInterfaces()
-                .Configure((c, bundleType) =>
-                {
-                    //Codebase should contain the location (in uri format) of the assembly on disk.
-                    var codeBase = bundleType.Assembly.CodeBase;
-                    if (string.IsNullOrEmpty(codeBase))
-                        return;
+            BaristaHelper.BindBaristaBundles(kernel, Path.Combine(binDirectory, "bundles"));
 
-                    try
-                    {
-                        var codeBaseUri = new Uri(codeBase);
-                        var packageId = codeBaseUri.Segments.ElementAtOrDefault(codeBaseUri.Segments.Length - 2);
-
-                        if (string.IsNullOrEmpty(packageId))
-                            return;
-
-                        packageId = packageId.TrimEnd('/');
-                        c.WithMetadata("BaristaPackageId", packageId);
-                    }
-                    catch(Exception)
-                    {
-                        //Do nothing!
-                    }
-                })
-                );
-
-            //Let's get the ids of the approved bundles
-            var approvedPackageIds = new List<string>();
+            //Let's get information about the approved packages
+            var approvedPackages = new Dictionary<string, IList<ApprovedBundleInfo>>();
             try
             {
                 var baristaServiceApplication = BaristaHelper.GetCurrentServiceApplication();
@@ -150,20 +125,7 @@
                         Convert.ToString(baristaServiceApplication.Properties["BaristaPackageApprovals"]);
                     if (!packageApprovals.IsNullOrWhiteSpace())
                     {
-                        var approvals = JObject.Parse(packageApprovals);
-                        foreach (var prop in approvals.Properties().Where(p => p.Value is JObject))
-                        {
-                            var value = prop.Value as JObject;
-                            if (value == null)
-                                continue;
-
-                            JToken approvalLevel;
-                            if (!value.TryGetValue("approvalLevel", out approvalLevel))
-                                continue;
-
-                            if (approvalLevel.ToString() == "approved")
-                                approvedPackageIds.Add(prop.Name);
-                        }
+                        approvedPackages = GetApprovedPackages(JObject.Parse(packageApprovals));
                     }
                 }
             }
@@ -172,7 +134,7 @@
                 //Do Nothing...
             }
 
-            foreach (var bundle in kernel.GetAll<IBundle>(f => approvedPackageIds.Any( id => String.Equals(f.Get<string>("BaristaPackageId"), id, StringComparison.OrdinalIgnoreCase))))
+            foreach (var bundle in kernel.GetAll<IBundle>(m => IsApprovedPackage(m, approvedPackages)))
             {
                 instance.Common.RegisterBundle(bundle);
             }
@@ -264,6 +226,91 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
             }
 
             return engine;
+        }
+
+        private static bool IsApprovedPackage(IBindingMetadata m, Dictionary<string, IList<ApprovedBundleInfo>> approvedPackages)
+        {
+            var packageId = m.Get<string>("baristaPackageId");
+            if (!approvedPackages.ContainsKey(packageId))
+                return false;
+
+            var bundleInfo = approvedPackages[packageId];
+
+            var bundleTypeFullName = m.Get<string>("bundleTypeFullName");
+            var assemblyPath =  m.Get<string>("assemblyPath");
+            var assemblyFullName =  m.Get<string>("assemblyFullName");
+            var assemblyHash = m.Get<string>("assemblyHash");
+
+            return
+                bundleInfo.Any(
+                    bi => string.Equals(bundleTypeFullName, bi.FullTypeName, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyPath, bi.AssemblyPath, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyFullName, bi.AssemblyFullName, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyHash, bi.AssemblyHash, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static Dictionary<string, IList<ApprovedBundleInfo>> GetApprovedPackages(JObject approvedPackages)
+        {
+            var result = new Dictionary<string, IList<ApprovedBundleInfo>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var prop in approvedPackages.Properties().Where(p => p.Value is JObject))
+            {
+                var value = prop.Value as JObject;
+                if (value == null)
+                    continue;
+
+                JToken approvalLevel;
+                if (!value.TryGetValue("approvalLevel", out approvalLevel))
+                    continue;
+
+                if (!string.Equals(approvalLevel.ToString(), "approved", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                JToken bundles;
+                if (!value.TryGetValue("bundles", out bundles))
+                    continue;
+
+                var approvedBundleInfo = bundles.Value<IList<ApprovedBundleInfo>>();
+
+                if (result.ContainsKey(prop.Name))
+                    result[prop.Name].AddRange(approvedBundleInfo);
+                else
+                    result.Add(prop.Name, approvedBundleInfo);
+            }
+
+            return result;
+        }
+
+        [UsedImplicitly]
+        private class ApprovedBundleInfo
+        {
+            [JsonProperty("bundleTypeFullName")]
+            public string FullTypeName
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyPath")]
+            public string AssemblyPath
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyFullName")]
+            public string AssemblyFullName
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyHash")]
+            public string AssemblyHash
+            {
+                get;
+                set;
+            }
         }
     }
 }
