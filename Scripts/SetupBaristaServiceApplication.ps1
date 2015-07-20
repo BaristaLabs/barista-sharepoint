@@ -117,7 +117,9 @@ if ($localServiceInstance.Status -eq 'Provisioning') {
 if ($localServiceInstance.Status -eq 'Unprovisioning') {
 	$tj = Get-SPTimerJob | where { $_.Title -like "Disabling Barista Service*" }
 	if ($tj -ne $null) {
+		$tj.Unprovision()
 		$tj.Delete()
+		$tj.Uncache()
 	}
 	$localServiceInstance.Unprovision()
 }
