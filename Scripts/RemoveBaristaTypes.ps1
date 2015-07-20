@@ -20,10 +20,10 @@ param(
 	$flags = [Reflection.BindingFlags] "Static,NonPublic,Instance,Public"
 
 	#Create Instance collection of sppersisted objects
-	$instance = [Activator]::CreateInstance($type,$flags,$null,$farm, [System.Globalization.CultureInfo]::CurrentCulture);
+	$instance = [Activator]::CreateInstance($type, $flags, $null, $farm, [System.Globalization.CultureInfo]::CurrentCulture);
 
 	#Filter objects by script parameter SPObjectType
-	$filterObjs = $instance | Select * | Where {$_.TypeName -ieq $typeName}
+	$filteredObjs = $instance | Select * | Where {$_.TypeName -ieq $typeName}
 
 	return $filteredObjs
 }
@@ -41,8 +41,19 @@ param(
 
 	foreach($fObj in $objs)
 	{
-		$fObj.Delete()
-		$fObj.Unprovision()
+		if ($fObj.Delete) {
+			$fObj.Delete()
+		}
+
+		if ($fObj.Unprovision) {
+			$fObj.Unprovision()
+		}
+
+		if ($fObj.Uncache) {
+			$fObj.Uncache()
+		}
+
+		$fObj = $null
 	}
 }
 

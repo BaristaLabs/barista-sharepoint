@@ -37,35 +37,32 @@ function RetractSolution($solution) {
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution retracted" -PercentComplete 25
 	}
 
-	#Delete the solution
-	Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
-	Get-SPSolution $name | Remove-SPSolution -Confirm:$false
-	Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
+	if ($solution.Added) {
+		#Delete the solution
+		Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
+		Get-SPSolution $name | Remove-SPSolution -Confirm:$false
+		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
+	}
 }
 
 write-host 
 LoadSharePointPowerShellEnvironment
 
+#Retract/Remove any associated solutions that may have dependencies on Barista.
 $solution = Get-SPSolution "OFS.AMS.SharePoint.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);
-$solution = Get-SPSolution "OFS.CAT.SharePoint.Core.wsp" -ErrorAction SilentlyContinue
-RetractSolution($solution);
-$solution = Get-SPSolution "Barista.SharePoint.WorkflowActivities.wsp" -ErrorAction SilentlyContinue
-RetractSolution($solution);
+
 $solution = Get-SPSolution "Barista.SharePoint.WebParts.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);
 
-$identity = "90fb8db4-2b5f-4de7-882b-6faba092942c";
+$solution = Get-SPSolution "Barista.SharePoint.WorkflowActivities.wsp" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
-Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
-						$args = @"
-Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
-Disable-SPFeature –Identity $($identity) -force -Confirm:0 -ErrorAction SilentlyContinue
-"@
+$solution = Get-SPSolution "OFS.CAT.SharePoint.Core.wsp" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
-& powershell.exe -Version 2 $args
-Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
-
+$solution = Get-SPSolution -id "90fb8db4-2b5f-4de7-882b-6faba092942c" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
 $solution = Get-SPSolution "Barista.SharePoint.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);

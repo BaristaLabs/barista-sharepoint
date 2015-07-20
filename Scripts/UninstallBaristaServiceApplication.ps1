@@ -96,7 +96,9 @@ if ($localServiceInstance -ne $null){
 		$tj.Delete()
 	}
 
+	$localServiceInstance.Unprovision()
 	$localServiceInstance.Delete()
+	$localServiceInstance.Uncache()
 	write-host "Barista Service Application instance removed." -foregroundcolor Green
 }
 
@@ -119,6 +121,7 @@ if ($serviceAppProxy -ne $null)
 
 	$serviceAppProxy.Unprovision()
 	$serviceAppProxy.Delete()
+	$serviceAppProxy.Uncache()
 	write-host 
 }
 
@@ -139,6 +142,7 @@ if ($serviceApp -ne $null) {
 
 	$serviceApp.Unprovision()
 	$serviceApp.Delete()
+	$serviceApp.Uncache()
 	#Remove-SPServiceApplication $serviceApp -RemoveData -Confirm:$false
 
 	write-host 

@@ -29,7 +29,9 @@ write-host
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'" -ComputerName $env:COMPUTERNAME | out-null
 if ($searchService -ne $null) 
 { 
+	$searchService.Unprovision()
 	$searchService.Delete()
+	$searchService.Uncache()
 	& $serviceLocation stop --sudo
     & $serviceLocation uninstall --sudo
 	write-host 
