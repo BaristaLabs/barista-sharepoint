@@ -3,19 +3,20 @@
 
 	    $scope.packages = null;
 
-	    $scope.editPackageApproval = function (baristaPackage) {
+	    $scope.editPackageApproval = function(baristaPackage) {
 
 	        var modalInstance = $modal.open(
-                {
-                    templateUrl: "Views/editPackageapprovaldialog.html",
-                    controller: "EditPackageApprovalCtrl",
-                    modalFade: true,
-                    dialogFade: true,
-                    resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
-                        baristaPackage: function () { return angular.copy(baristaPackage); }
-                    }
-                });
+	        {
+	            templateUrl: "Views/editPackageapprovaldialog.html",
+	            controller: "EditPackageApprovalCtrl",
+	            modalFade: true,
+	            dialogFade: true,
+	            resolve: {
+	                baristaBaseUrl: function() { return $scope.baristaBaseUrl; },
+	                baristaPackage: function() { return angular.copy(baristaPackage); },
+	                doesBaristaPackageMatchApproval: function() { return $scope.doesBaristaPackageMatchApproval; }
+	            }
+	        });
 
 	        modalInstance.result
                 .then(function (result) {
@@ -53,15 +54,50 @@
 	                }
 	            })
 	            .error(function (packages) {
-	                toastr.error("Unable to load Packages :(<br/>" + $(packages).children(".intro").text());
+	                toastr.error("Unable to load Packages :(<br/>" + $(packages).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 
-	    $scope.getPackages();
+	    $scope.doesBaristaPackageMatchApproval = function(baristaPackage) {
+	        if (!baristaPackage.packageInfo || !baristaPackage.approval.packageInfo)
+	            return false;
+
+	        if (!baristaPackage.packageInfo.bundles || !baristaPackage.approval.packageInfo.bundles)
+	            return false;
+
+	        if (!angular.isArray(baristaPackage.packageInfo.bundles) || !angular.isArray(baristaPackage.approval.packageInfo.bundles))
+	            return false;
+
+	        if (baristaPackage.packageInfo.bundles.length !== baristaPackage.approval.packageInfo.bundles.length)
+	            return false;
+
+	        var bundlesMatch = true;
+
+	        _.forEach(baristaPackage.packageInfo.bundles, function(bundle) {
+	            var foundApprovedBundle = _.find(baristaPackage.approval.packageInfo.bundles, function(approvedBundle) {
+	                return (bundle.bundleTypeFullName.toUpperCase() === approvedBundle.bundleTypeFullName.toUpperCase() &&
+                            bundle.assemblyPath.toUpperCase() === approvedBundle.assemblyPath.toUpperCase() &&
+                            bundle.assemblyFullName.toUpperCase() === approvedBundle.assemblyFullName.toUpperCase() &&
+                            bundle.assemblyHash === approvedBundle.assemblyHash)
+
+	            });
+
+	            if (!foundApprovedBundle)
+	                bundlesMatch = false;
+	        });
+
+	        return bundlesMatch;
+	    };
 
 	    $scope.getPackageBackgroundColor = function (baristaPackage) {
-	        if (baristaPackage.approval.approvalLevel === 'approved')
-	            return "#DFF0D8";
+	        if (baristaPackage.approval.approvalLevel.toUpperCase() === 'approved'.toUpperCase()) {
+
+	            if ($scope.doesBaristaPackageMatchApproval(baristaPackage))
+	                return "#DFF0D8";
+                else
+	                return "#FCF8E3";
+	        }
+	            
 	        return "#F2DEDE";
 	    };
 
@@ -76,11 +112,18 @@
 	        ],
 	        rowTemplate: '<div ng-style="{\'cursor\': row.cursor, \'z-index\': col.zIndex(), \'background-color\': getPackageBackgroundColor(row.entity)}" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell {{col.cellClass}}" ng-cell></div>'
 	    };
+
+
+	    $scope.getPackages();
 	}]);
 
-manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'baristaPackage',
-	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, baristaPackage) {
+manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'baristaPackage', 'doesBaristaPackageMatchApproval',
+	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, baristaPackage, doesBaristaPackageMatchApproval) {
 	    $scope.baristaPackage = baristaPackage;
+
+	    $scope.doesCurrentBaristaPackageMatchApproval = function() {
+	        return doesBaristaPackageMatchApproval($scope.baristaPackage);
+	    };
 
 	    $scope.update = function () {
 	        toastr.info('Updating Package Approval...');
@@ -97,7 +140,7 @@ manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$locati
 	                $modalInstance.close(baristaPackage);
 	            })
 	            .error(function (baristaPackage) {
-	                toastr.error("Unable to update baristaPackage Approval  :(<br/>" + $(baristaPackage).children(".intro").text());
+	                toastr.error("Unable to update baristaPackage Approval  :(<br/>" + $(baristaPackage).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 

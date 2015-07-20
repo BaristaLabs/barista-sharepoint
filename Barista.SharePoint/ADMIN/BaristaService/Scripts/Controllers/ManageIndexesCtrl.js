@@ -65,7 +65,7 @@
 	                    $scope.getIndexes();
 	                })
 	                .error(function(index) {
-	                    toastr.error("Unable to remove Index :(<br/>" + $(index).children(".intro").text());
+	                    toastr.error("Unable to remove Index :(<br/>" + $(index).children(".intro").text(), null, { timeOut: 0 });
 	                });
 	        });
 	    };
@@ -100,7 +100,7 @@
 	                }
 	            })
 	            .error(function(indexes) {
-	                toastr.error("Unable to load Indexes :(<br/>" + $(indexes).children(".intro").text());
+	                toastr.error("Unable to load Indexes :(<br/>" + $(indexes).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 
@@ -150,9 +150,9 @@ manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$location', '$
 	            })
 	            .error(function(index) {
 	                if ($scope.isNew)
-	                    toastr.error("Unable to add Index :(<br/>" + $(index).children(".intro").text());
+	                    toastr.error("Unable to add Index :(<br/>" + $(index).children(".intro").text(), null, { timeOut: 0 });
 	                else
-	                    toastr.error("Unable to update Index :(<br/>" + $(index).children(".intro").text());
+	                    toastr.error("Unable to update Index :(<br/>" + $(index).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 

@@ -159,18 +159,19 @@
             var packagesPath = Path.Combine(installPath, "bin" + Path.DirectorySeparatorChar + "bundles");
             var packagePath = Path.Combine(packagesPath, packageId);
 
+            var result = new JObject
+            {
+                {"!machineName", Environment.MachineName}
+            };
+
             if (!Directory.Exists(packagePath))
-                return null;
+                return result;
 
             var bundlesDirectoryUri = new Uri("file://" + packagesPath);
             var packageDirectory = new DirectoryInfo(packagePath);
 
-            var result = new JObject
-            {
-                {"!machineName", Environment.MachineName},
-                {"packageCreationTime", packageDirectory.CreationTimeUtc},
-                {"packageModificationTime", packageDirectory.LastWriteTimeUtc}
-            };
+            result.Add("packageCreationTime", packageDirectory.CreationTimeUtc);
+            result.Add("packageModificationTime", packageDirectory.LastWriteTimeUtc);
 
             var bundleInfos = new JArray();
 

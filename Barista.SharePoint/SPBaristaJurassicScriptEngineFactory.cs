@@ -228,7 +228,7 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
             return engine;
         }
 
-        private static bool IsApprovedPackage(IBindingMetadata m, Dictionary<string, IList<ApprovedBundleInfo>> approvedPackages)
+        private static bool IsApprovedPackage(IBindingMetadata m, IDictionary<string, IList<ApprovedBundleInfo>> approvedPackages)
         {
             var packageId = m.Get<string>("baristaPackageId");
             if (!approvedPackages.ContainsKey(packageId))

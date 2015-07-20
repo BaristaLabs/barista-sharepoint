@@ -28,6 +28,8 @@ keys.forEach(function (key) {
     else
         packages[key].approval = { approvalLevel: "notApproved" };
 
+    packages[key].packageInfo = barista.getPackageInfo(key);
+
     if (!key.startsWith("!")) {
         var def = packages[key];
         def.id = key;

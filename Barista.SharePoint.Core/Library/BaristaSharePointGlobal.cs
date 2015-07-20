@@ -87,6 +87,9 @@
         {
             var objBundles = BaristaHelper.GetPackageInfo(packageId);
 
+            if (objBundles == null)
+                return Undefined.Value;
+
             var bundlesString = objBundles.ToString();
 
             return JSONObject.Parse(Engine, bundlesString, null);

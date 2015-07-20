@@ -65,7 +65,7 @@
 	                    $scope.getTrustedLocations();
 	                })
 	                .error(function(trustedLocations) {
-	                    toastr.error("Unable to remove Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text());
+	                    toastr.error("Unable to remove Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
 	                });
 	        });
 	    };
@@ -100,7 +100,7 @@
 	                }
 	            })
 	            .error(function(trustedLocations) {
-	                toastr.error("Unable to load Trusted Locations :(<br/>" + $(trustedLocations).children(".intro").text());
+	                toastr.error("Unable to load Trusted Locations :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 
@@ -149,9 +149,9 @@ manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$loc
 	            })
 	            .error(function(trustedLocations) {
 	                if ($scope.isNew)
-	                    toastr.error("Unable to add Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text());
+	                    toastr.error("Unable to add Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
 	                else
-	                    toastr.error("Unable to update Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text());
+	                    toastr.error("Unable to update Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
 	            });
 	    };
 
