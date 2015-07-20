@@ -266,11 +266,19 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                 if (!string.Equals(approvalLevel.ToString(), "approved", StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                JToken bundles;
-                if (!value.TryGetValue("bundles", out bundles))
+                JToken packageInfo;
+                if (!value.TryGetValue("packageInfo", out packageInfo))
                     continue;
 
-                var approvedBundleInfo = bundles.Value<IList<ApprovedBundleInfo>>();
+                var packageInfoObj = packageInfo as JObject;
+                if (packageInfoObj == null)
+                    continue;
+
+                JToken bundles;
+                if (!packageInfoObj.TryGetValue("bundles", out bundles))
+                    continue;
+
+                var approvedBundleInfo = bundles.ToObject<IList<ApprovedBundleInfo>>();
 
                 if (result.ContainsKey(prop.Name))
                     result[prop.Name].AddRange(approvedBundleInfo);

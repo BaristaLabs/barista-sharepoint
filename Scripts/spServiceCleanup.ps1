@@ -35,8 +35,6 @@
     Use to list matching objects that have been orphaned or are not the active service application
   .PARAMETER removeOrphans
     Will remove orphaned objects that match the active service application parameters
-  .PARAMETER removeIISWebSvc
-    Will remove the corresponding IIS Web Service to the managed service application or object
   .PARAMETER showActiveService
     Use to show the active service application
 #>
@@ -49,7 +47,6 @@ param(
   [switch] $listOrphans,
   [switch] $listObjectTypes,
   [switch] $removeOrphans,
-  [switch] $removeIISWebSvc,
   [switch] $showActiveService,
   [string] $logFilePath = ".",
   [string] $reportFilePath = "."
