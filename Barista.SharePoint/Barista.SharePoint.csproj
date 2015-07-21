@@ -375,6 +375,9 @@
     <None Include="Layouts\BaristaFiddle\Vendor\kendoui.professional.2015.1.429\styles\images\kendoui.ttf" />
     <None Include="Layouts\BaristaFiddle\Vendor\kendoui.professional.2015.1.429\styles\images\kendoui.woff" />
     <Content Include="ADMIN\BaristaService\API\GetPackagesWithApproval.js" />
+    <Content Include="ADMIN\BaristaService\API\SavePackageApprovalsAsDefault.js" />
+    <Content Include="ADMIN\BaristaService\API\SaveTrustedLocationsAsDefault.js" />
+    <Content Include="ADMIN\BaristaService\API\SaveIndexSettingsAsDefault.js" />
     <Content Include="ADMIN\BaristaService\API\UpdatePackageApproval.js" />
     <Content Include="ADMIN\BaristaService\Scripts\Controllers\ManagePackagesCtrl.js" />
     <Content Include="ADMIN\BaristaService\Scripts\Vendor\lodash.js" />

@@ -8,7 +8,7 @@ param (
 ## delete existing service
 # have to use WMI for much of this, native cmdlets are incomplete
 write-host 
-write-host "[[STEP]] Removing existing Search Service" -foregroundcolor Yellow
+write-host "[[STEP]] Removing existing Barista Search Service" -foregroundcolor Yellow
 write-host 
 
 $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGenericSetupPath("ISAPI")) "BaristaServices\Search\SPBaristaSearchService.exe"
@@ -36,14 +36,14 @@ if ($searchService -ne $null)
 		# Do Nothing...
 	}
 	write-host 
-	write-host "Search Service Removed..." -foregroundcolor Green
+	write-host "Barista Search Service Removed..." -foregroundcolor Green
 	write-host 
 }
 
 ## run installutil
 # 'frameworkdir' env var apparently isn't present on Win2003...
 write-host 
-write-host "[[STEP]] Installing Search Service" -foregroundcolor Yellow
+write-host "[[STEP]] Installing Barista Search Service" -foregroundcolor Yellow
 write-host 
 
 & netsh http add urlacl url=http://+:8500/Barista user=$ManagedAccount | out-null

@@ -19,12 +19,12 @@ if (Get-Command "Remove-BaristaSearchService" -errorAction SilentlyContinue) {
 		Remove-BaristaSearchService -ErrorAction SilentlyContinue
 	}
 	catch [System.Management.Automation.CommandNotFoundException] {
-	  write-host 'Search Service Not Installed.' -foregroundcolor Yellow
+	  write-host 'Barista Search Service Not Installed.' -foregroundcolor Yellow
 	}
 }
 
 write-host 
-write-host "[[STEP]] Removing existing Search Service" -foregroundcolor Yellow
+write-host "[[STEP]] Removing existing Barista Search Service" -foregroundcolor Yellow
 write-host 
 $searchService = Get-WmiObject -Class Win32_Service -Filter "Name = 'BaristaSearchWindowsService'" -ComputerName $env:COMPUTERNAME | out-null
 if ($searchService -ne $null) 
@@ -35,7 +35,7 @@ if ($searchService -ne $null)
 	& $serviceLocation stop --sudo
     & $serviceLocation uninstall --sudo
 	write-host 
-	write-host "Search Service Removed..." -foregroundcolor Green
+	write-host "Barista Search Service Removed..." -foregroundcolor Green
 	write-host 
 }
 
