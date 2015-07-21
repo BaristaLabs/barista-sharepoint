@@ -1193,6 +1193,9 @@
 
             //Perform the update.
 
+            if (SPBaristaContext.Current.Web.CurrentUser == null)
+                throw new InvalidOperationException("User is not authenticated.");
+
             if (documentSetFolder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficient Permissions.");
 

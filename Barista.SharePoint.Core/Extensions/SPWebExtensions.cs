@@ -13,9 +13,7 @@
             }
 
             if (web.CurrentUser == null)
-            {
                 return false;
-            }
 
             return string.Equals(web.CurrentUser.LoginName, web.Site.SystemAccount.LoginName,
               StringComparison.InvariantCultureIgnoreCase);

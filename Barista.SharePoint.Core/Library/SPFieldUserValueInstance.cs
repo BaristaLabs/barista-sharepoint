@@ -77,7 +77,7 @@
             {
                 return m_fieldUserValue.User == null
                     ? null
-                    : new SPUserInstance(this.Engine, m_fieldUserValue.User);
+                    : new SPUserInstance(Engine, m_fieldUserValue.User);
             }
         }
 

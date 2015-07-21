@@ -18,7 +18,7 @@
         [JSConstructorFunction]
         public SPListItemVersionInstance Construct()
         {
-            return new SPListItemVersionInstance(this.InstancePrototype);
+            return new SPListItemVersionInstance(InstancePrototype);
         }
     }
 
@@ -31,8 +31,8 @@
         public SPListItemVersionInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public SPListItemVersionInstance(ObjectInstance prototype, SPListItemVersion listItemVersion)
@@ -54,7 +54,7 @@
         {
             get
             {
-                return JurassicHelper.ToDateInstance(this.Engine, m_listItemVersion.Created);
+                return JurassicHelper.ToDateInstance(Engine, m_listItemVersion.Created);
             }
         }
 
@@ -67,7 +67,7 @@
                 if (user == null)
                     return null;
 
-                return new SPUserInstance(this.Engine, user);
+                return new SPUserInstance(Engine, user);
             }
         }
 
@@ -79,7 +79,7 @@
                 if (m_listItemVersion.Fields == null)
                     return null;
 
-                return new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_listItemVersion.Fields);
+                return new SPFieldCollectionInstance(Engine.Object.InstancePrototype, m_listItemVersion.Fields);
             }
         }
 
@@ -140,7 +140,7 @@
             if (m_listItemVersion.ListItem == null)
                 return null;
 
-            return new SPListItemInstance(this.Engine, m_listItemVersion.ListItem);
+            return new SPListItemInstance(Engine, m_listItemVersion.ListItem);
         }
 
         [JSFunction(Name = "getFieldValueByFieldName")]
@@ -148,7 +148,7 @@
         {
             var field = m_listItemVersion.Fields[index];
             return field != null
-                ? GetListItemVersionObject(this.Engine, m_listItemVersion, field)
+                ? GetListItemVersionObject(Engine, m_listItemVersion, field)
                 : null;
         }
 
@@ -157,7 +157,7 @@
         {
             var field = m_listItemVersion.Fields[fieldName];
             return field != null
-                ? GetListItemVersionObject(this.Engine, m_listItemVersion, field)
+                ? GetListItemVersionObject(Engine, m_listItemVersion, field)
                 : null;
         }
 
@@ -264,9 +264,10 @@
                             if (!version.TryGetSPFieldValue(field.InternalName, out fieldValue))
                                 return null;
 
-                            if (fieldValue is SPFieldUrlValue)
+                            var fieldUrlValue = fieldValue as SPFieldUrlValue;
+                            if (fieldUrlValue != null)
                             {
-                                var urlValue = fieldValue as SPFieldUrlValue;
+                                var urlValue = fieldUrlValue;
                                 var item = engine.Object.Construct();
                                 item.SetPropertyValue("description", urlValue.Description, false);
                                 item.SetPropertyValue("url", urlValue.Url, false);
@@ -280,10 +281,11 @@
                                 return JurassicHelper.ToDateInstance(engine,
                                     new DateTime(value.Ticks, DateTimeKind.Local));
                             }
-                            
-                            if (fieldValue is SPFieldUserValue)
+
+                            var userValue = fieldValue as SPFieldUserValue;
+                            if (userValue != null)
                             {
-                                var fieldUserValue = (SPFieldUserValue)fieldValue;
+                                var fieldUserValue = userValue;
                                 var userInstance = new SPUserInstance(engine, fieldUserValue.User);
                                 return userInstance;
                             }
@@ -294,29 +296,28 @@
                                 var guidInstance = new GuidInstance(engine.Object.InstancePrototype, guidValue);
                                 return guidInstance;
                             }
-                            
-                            if (fieldValue is string)
+
+                            var s = fieldValue as string;
+                            if (s == null)
+                                return fieldValue;
+
+                            //Attempt to create a new SPFieldLookupValue from the string
+                            if (!DigitRegex.IsMatch(s, 0))
+                                return fieldValue;
+
+                            try
                             {
-                                //Attempt to create a new SPFieldLookupValue from the string
-                                if (!DigitRegex.IsMatch((string) fieldValue, 0))
-                                    return fieldValue;
+                                var lookupValue = new SPFieldLookupValue(s);
 
-                                try
-                                {
-                                    var lookupValue = new SPFieldLookupValue((string)fieldValue);
-
-                                    var item = engine.Object.Construct();
-                                    item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
-                                    item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
-                                    return item;
-                                }
-                                catch (ArgumentException)
-                                {
-                                    return fieldValue;
-                                }
+                                var item = engine.Object.Construct();
+                                item.SetPropertyValue("lookupId", lookupValue.LookupId, false);
+                                item.SetPropertyValue("lookupValue", lookupValue.LookupValue, false);
+                                return item;
                             }
-
-                            return fieldValue;
+                            catch (ArgumentException)
+                            {
+                                return fieldValue;
+                            }
                         }
                     }
                 default:

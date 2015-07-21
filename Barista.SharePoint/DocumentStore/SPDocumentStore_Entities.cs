@@ -67,6 +67,9 @@
             web.AllowUnsafeUpdates = true;
             try
             {
+                if (SPBaristaContext.Current.Web.CurrentUser == null)
+                    throw new InvalidOperationException("User is not authenticated.");
+
                 if ((folder.Item == null && list.RootFolder == folder && list.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false) ||
                     (folder.Item != null && (folder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false)))
                     throw new InvalidOperationException("Insufficient Permissions.");
@@ -304,6 +307,9 @@
             if (SPDocumentStoreHelper.TryGetDocumentStoreEntityDocumentSet(list, folder, entityId, out documentSet) == false)
                 return null;
 
+            if (SPBaristaContext.Current.Web.CurrentUser == null)
+                throw new InvalidOperationException("User is not authenticated.");
+
             if (documentSet.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficent Permissions.");
 
@@ -383,6 +389,9 @@
             SPFile defaultEntityPart;
             if (SPDocumentStoreHelper.TryGetDocumentStoreDefaultEntityPart(list, folder, entityId, out defaultEntityPart) == false)
                 return null;
+
+            if (SPBaristaContext.Current.Web.CurrentUser == null)
+                throw new InvalidOperationException("User is not authenticated.");
 
             if (defaultEntityPart.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                 throw new InvalidOperationException("Insufficent Permissions.");

@@ -372,7 +372,12 @@
         [JSProperty(Name = "currentUser")]
         public SPUserInstance CurrentUser
         {
-            get { return new SPUserInstance(Engine, m_web.CurrentUser); }
+            get
+            {
+                return m_web.CurrentUser == null
+                    ? null
+                    : new SPUserInstance(Engine, m_web.CurrentUser);
+            }
         }
 
         [JSProperty(Name = "customJavaScriptFileUrl")]

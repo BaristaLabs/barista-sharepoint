@@ -24,12 +24,12 @@
         public SPInstance(ScriptEngine engine, SPBaristaContext context, SPFarm farmContext, SPServer serverContext)
             : base(engine)
         {
-            m_context = new SPContextInstance(this.Engine, context);
-            m_farm = new SPFarmInstance(this.Engine.Object.InstancePrototype, farmContext);
-            m_server = new SPServerInstance(this.Engine.Object.InstancePrototype, serverContext);
-            m_secureStore = new SPSecureStoreInstance(this.Engine.Object.InstancePrototype);
-            this.PopulateFields();
-            this.PopulateFunctions();
+            m_context = new SPContextInstance(Engine, context);
+            m_farm = new SPFarmInstance(Engine.Object.InstancePrototype, farmContext);
+            m_server = new SPServerInstance(Engine.Object.InstancePrototype, serverContext);
+            m_secureStore = new SPSecureStoreInstance(Engine.Object.InstancePrototype);
+            PopulateFields();
+            PopulateFunctions();
         }
 
         #region Properties
@@ -82,10 +82,10 @@
         {
             SPFile file;
             if (!SPHelper.TryGetSPFile(fileUrl, out file))
-                throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+                throw new JavaScriptException(Engine, "Error", "Could not locate the specified file:  " + fileUrl);
 
             var data = file.OpenBinary(SPOpenBinaryOptions.None);
-            var result = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, data)
+            var result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, data)
             {
                 FileName = file.SourceLeafName.IsNullOrWhiteSpace() ? file.Name : file.SourceLeafName
             };
@@ -102,7 +102,7 @@
             if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
                 return fileContents;
 
-            throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+            throw new JavaScriptException(Engine, "Error", "Could not locate the specified file:  " + fileUrl);
         }
 
         [JSDoc("Loads the file at the specified url as a JSON Object.")]
@@ -114,17 +114,19 @@
             string fileContents;
             if (SPHelper.TryGetSPFileAsString(fileUrl, out path, out fileContents, out isHiveFile))
             {
-                return JSONObject.Parse(this.Engine, fileContents, null);
+                return JSONObject.Parse(Engine, fileContents, null);
             }
 
-            throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified file:  " + fileUrl);
+            throw new JavaScriptException(Engine, "Error", "Could not locate the specified file:  " + fileUrl);
         }
 
-        [JSDoc("Gets the current user. Equivalent to SPContext.Current.Web.CurrentUser")]
+        [JSDoc("Gets the current user. Equivalent to SPContext.Current.Web.CurrentUser. If Anonymous access is enabled, returns null.")]
         [JSFunction(Name = "getCurrentUser")]
         public SPUserInstance GetCurrentSPUser()
         {
-            return new SPUserInstance(this.Engine, SPBaristaContext.Current.Web.CurrentUser);
+            return SPBaristaContext.Current.Web.CurrentUser == null
+                ? null
+                : new SPUserInstance(Engine, SPBaristaContext.Current.Web.CurrentUser);
         }
 
         [JSDoc("Gets the url that corresponds to the incoming request for the current zone.")]
@@ -168,7 +170,7 @@
             else if (contents is StringInstance || contents is string)
                 data = Encoding.UTF8.GetBytes((string)contents);
             else if (contents is ObjectInstance)
-                data = Encoding.UTF8.GetBytes(JSONObject.Stringify(this.Engine, contents, null, null));
+                data = Encoding.UTF8.GetBytes(JSONObject.Stringify(Engine, contents, null, null));
             else
                 data = Encoding.UTF8.GetBytes(contents.ToString());
 
@@ -182,7 +184,7 @@
                 }
                 else
                 {
-                    throw new JavaScriptException(this.Engine, "Error", "Could not locate the specified web:  " + fileUrl);
+                    throw new JavaScriptException(Engine, "Error", "Could not locate the specified web:  " + fileUrl);
                 }
             }
             else
@@ -190,7 +192,7 @@
                 result.SaveBinary(data);
             }
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, result);
+            return new SPFileInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSDoc("Starts a new monitored scope that can be used to profile script executino.")]
@@ -198,7 +200,7 @@
         public SPMonitoredScopeInstance BeginMonitoredScope(string name)
         {
             var monitoredScope = new SPMonitoredScope(name, 11000, new SPExecutionTimeCounter(), new SPCriticalTraceCounter());
-            return new SPMonitoredScopeInstance(this.Engine.Object.Prototype, monitoredScope);
+            return new SPMonitoredScopeInstance(Engine.Object.Prototype, monitoredScope);
         }
 
         [JSDoc("Ends a previously created monitored scope that can be used to profile script execution.")]
@@ -220,12 +222,12 @@
         {
             public void CustomDisableEventFiring()
             {
-                this.EventFiringEnabled = false;
+                EventFiringEnabled = false;
             }
 
             public void CustomEnableEventFiring()
             {
-                this.EventFiringEnabled = true;
+                EventFiringEnabled = true;
             }
         }
         #endregion

@@ -18,9 +18,10 @@
         [JSConstructorFunction]
         public SPGroupInstance Construct(object arg1)
         {
-            if (arg1 is SPGroupInstance)
+            var instance = arg1 as SPGroupInstance;
+            if (instance != null)
             {
-                return new SPGroupInstance(this.InstancePrototype, (arg1 as SPGroupInstance).Group);
+                return new SPGroupInstance(InstancePrototype, instance.Group);
             }
 
             var groupName = TypeConverter.ToString(arg1);
@@ -28,10 +29,10 @@
             SPGroup group;
             if (SPHelper.TryGetSPGroupFromGroupName(groupName, out group) == false)
             {
-                throw new JavaScriptException(this.Engine, "Error", "No group with the specified name exists in the current context.");
+                throw new JavaScriptException(Engine, "Error", "No group with the specified name exists in the current context.");
             }
 
-            return new SPGroupInstance(this.InstancePrototype, group);
+            return new SPGroupInstance(InstancePrototype, group);
         }
     }
 
@@ -43,14 +44,14 @@
         public SPGroupInstance(ScriptEngine engine, SPGroup group)
             : base(new SPPrincipalInstance(engine, group), group)
         {
-            this.m_group = group;
-            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            m_group = group;
+            PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         public SPGroupInstance(ObjectInstance prototype, SPGroup group)
             : base(prototype, group)
         {
-            this.m_group = group;
+            m_group = group;
         }
 
         internal SPGroup Group
@@ -156,7 +157,7 @@
             {
                 return m_group.Users == null
                   ? null
-                  : new SPUserCollectionInstance(this.Engine.Object.InstancePrototype, m_group.Users);
+                  : new SPUserCollectionInstance(Engine.Object.InstancePrototype, m_group.Users);
             }
         }
         #endregion
@@ -165,9 +166,10 @@
         [JSFunction(Name = "addUser")]
         public void AddUser(object user)
         {
-            if (user is SPUserInstance)
+            var instance = user as SPUserInstance;
+            if (instance != null)
             {
-                var spUser = user as SPUserInstance;
+                var spUser = instance;
                 m_group.AddUser(spUser.User);
             }
             else
@@ -175,7 +177,7 @@
                 var loginName = TypeConverter.ToString(user);
                 SPUser spUser;
                 if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
-                    throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+                    throw new JavaScriptException(Engine, "Error", "A user with the specified login name does not exist.");
                 m_group.AddUser(spUser);
             }
         }
@@ -201,10 +203,10 @@
         [JSFunction(Name = "getDistributionGroupArchives")]
         public ArrayInstance GetDistributionGroupArchives()
         {
-            var result = this.Engine.Array.Construct();
+            var result = Engine.Array.Construct();
             foreach (var list in m_group.GetDistributionGroupArchives(null))
             {
-                ArrayInstance.Push(result, new SPListInstance(this.Engine, null, null, list));
+                ArrayInstance.Push(result, new SPListInstance(Engine, null, null, list));
             }
             return result;
         }
@@ -217,11 +219,11 @@
             var owner = m_group.Owner;
             if (owner is SPUser)
             {
-                result = new SPUserInstance(this.Engine, (owner as SPUser));
+                result = new SPUserInstance(Engine, (owner as SPUser));
             }
             else if (owner is SPGroup)
             {
-                result = new SPGroupInstance(this.Engine.Object.InstancePrototype, (owner as SPGroup));
+                result = new SPGroupInstance(Engine, (owner as SPGroup));
             }
 
             return result;
@@ -231,16 +233,17 @@
         public bool IsUserMemberOfGroup(object user)
         {
             SPUser spUser;
-            if (user is SPUserInstance)
+            var instance = user as SPUserInstance;
+            if (instance != null)
             {
-                var ui = user as SPUserInstance;
+                var ui = instance;
                 spUser = ui.User;
             }
             else
             {
                 var loginName = TypeConverter.ToString(user);
                 if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
-                    throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+                    throw new JavaScriptException(Engine, "Error", "A user with the specified login name does not exist.");
             }
 
             return spUser.Groups.OfType<SPGroup>()
@@ -250,9 +253,10 @@
         [JSFunction(Name = "removeUser")]
         public void RemoveUser(object user)
         {
-            if (user is SPUserInstance)
+            var instance = user as SPUserInstance;
+            if (instance != null)
             {
-                var spUser = user as SPUserInstance;
+                var spUser = instance;
                 m_group.RemoveUser(spUser.User);
             }
             else
@@ -260,7 +264,7 @@
                 SPUser spUser;
                 var loginName = TypeConverter.ToString(user);
                 if (SPHelper.TryGetSPUserFromLoginName(loginName, out spUser) == false)
-                    throw new JavaScriptException(this.Engine, "Error", "A user with the specified login name does not exist.");
+                    throw new JavaScriptException(Engine, "Error", "A user with the specified login name does not exist.");
                 m_group.RemoveUser(spUser);
             }
         }

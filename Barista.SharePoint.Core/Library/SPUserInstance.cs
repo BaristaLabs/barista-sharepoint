@@ -1,10 +1,10 @@
 ﻿namespace Barista.SharePoint.Library
 {
-    using System.Reflection;
     using Jurassic;
     using Jurassic.Library;
     using Microsoft.SharePoint;
     using System;
+    using System.Reflection;
 
     [Serializable]
     public class SPUserConstructor : ClrFunction
@@ -12,26 +12,26 @@
         public SPUserConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "SPUser", new SPUserInstance(engine, null))
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         [JSConstructorFunction]
         public SPUserInstance Construct(object arg1)
         {
-            if (arg1 is SPUserInstance)
+            var instance = arg1 as SPUserInstance;
+            if (instance != null)
             {
-                return new SPUserInstance(this.InstancePrototype, (arg1 as SPUserInstance).User);
+                return new SPUserInstance(InstancePrototype, instance.User);
             }
 
             var loginName = TypeConverter.ToString(arg1);
-            
             SPUser user;
             if (SPHelper.TryGetSPUserFromLoginName(loginName, out user) == false)
             {
-                throw new JavaScriptException(this.Engine, "Error", "User cannot be found.");
+                throw new JavaScriptException(Engine, "Error", "User cannot be found.");
             }
 
-            return new SPUserInstance(this.InstancePrototype, user);
+            return new SPUserInstance(InstancePrototype, user);
         }
 
         [JSFunction(Name = "doesUserExist")]
@@ -44,21 +44,21 @@
     }
 
     [Serializable]
-    public class SPUserInstance : SPPrincipalInstance
+    public sealed class SPUserInstance : SPPrincipalInstance
     {
         private readonly SPUser m_user;
 
         public SPUserInstance(ScriptEngine engine, SPUser user)
             : base(new SPPrincipalInstance(engine, user), user)
         {
-            this.m_user = user;
-            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            m_user = user;
+            PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         public SPUserInstance(ObjectInstance prototype, SPUser user)
             : base(prototype, user)
         {
-            this.m_user = user;
+            m_user = user;
         }
 
         internal SPUser User
@@ -73,7 +73,7 @@
             {
                 return m_user.Alerts == null
                     ? null
-                    : new SPAlertCollectionInstance(this.Engine.Object.InstancePrototype, m_user.Alerts);
+                    : new SPAlertCollectionInstance(Engine.Object.InstancePrototype, m_user.Alerts);
             }
         }
 
@@ -90,7 +90,7 @@
             {
                 return m_user.Groups == null
                   ? null
-                  : new SPGroupCollectionInstance(this.Engine.Object.InstancePrototype, m_user.Groups);
+                  : new SPGroupCollectionInstance(Engine.Object.InstancePrototype, m_user.Groups);
             }
         }
 
@@ -137,7 +137,7 @@
             {
                 return m_user.UserToken == null
                     ? null
-                    : new SPUserTokenInstance(this.Engine.Object.InstancePrototype, m_user.UserToken);
+                    : new SPUserTokenInstance(Engine.Object.InstancePrototype, m_user.UserToken);
             }
         }
 
