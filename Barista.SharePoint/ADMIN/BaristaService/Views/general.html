@@ -2,11 +2,16 @@
     <tr>
         <td style="padding-top: 10px">
             <b>Trusted Barista Locations:</b>
-            <div class="toolbar">
+            <div class="toolbar clearfix">
                 <div class="btn-group">
-                    <a id="btnNewLocation" class="btn btn-primary" data-ng-click="addNewLocation()">
+                    <btn id="btnNewLocation" class="btn btn-primary" data-ng-click="addNewLocation()">
                         <img src="/_layouts/images/newitem.gif" alt="New" /><span style="color: white;"> New Location</span>
-                    </a>
+                    </btn>
+                </div>
+                <div class="btn-group btn-group-xs pull-right">
+                    <btn id="btnSaveLocationsAsDefault" class="btn btn-danger" data-ng-click="saveLocationsAsDefault()">
+                        <img src="/_layouts/images/saveitem.gif" alt="Save" /><span style="color: white;"> Save Trusted Locations as Default</span>
+                    </btn>
                 </div>
             </div>
             <div class="gridStyle" data-ng-grid="gridOptions"></div>

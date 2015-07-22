@@ -104,6 +104,29 @@
 	            });
 	    };
 
+	    $scope.saveIndexesAsDefault = function () {
+	        toastr.info('Saving current Indexes as default for new service applications...');
+	        $http({
+	                method: "GET",
+	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SaveIndexSettingsAsDefault.js',
+	                params: {
+	                    serviceApplicationId: $location.search()["appid"]
+	                }
+	            })
+	            .success(function() {
+
+	                toastr.success("Saved Index Settings as default!");
+	                toastr.clear();
+
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function(result) {
+	                toastr.error("Unable to save Index Settings as default:(<br/>" + $(result).children(".intro").text(), null, { timeOut: 0 });
+	            });
+	    };
+
 	    $scope.getIndexes();
 
 	    $scope.gridOptions = {

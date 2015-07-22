@@ -58,6 +58,29 @@
 	            });
 	    };
 
+	    $scope.savePackagesAsDefault = function () {
+	        toastr.info('Saving current Package Approvals as default for new service applications...');
+	        $http({
+	            method: "GET",
+	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SavePackageApprovalsAsDefault.js',
+	            params: {
+	                serviceApplicationId: $location.search()["appid"]
+	            }
+	        })
+	            .success(function () {
+
+	                toastr.success("Saved Package Approvals as default!");
+	                toastr.clear();
+
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function (result) {
+	                toastr.error("Unable to save Package Approvals as default:(<br/>" + $(result).children(".intro").text(), null, { timeOut: 0 });
+	            });
+	    };
+
 	    $scope.doesBaristaPackageMatchApproval = function(baristaPackage) {
 	        if (!baristaPackage.packageInfo || !baristaPackage.approval.packageInfo)
 	            return false;

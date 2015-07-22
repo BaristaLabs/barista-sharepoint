@@ -104,6 +104,29 @@
 	            });
 	    };
 
+	    $scope.saveLocationsAsDefault = function() {
+	        toastr.info('Saving current Trusted Locations as default for new service applications...');
+	        $http({
+	            method: "GET",
+	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SaveTrustedLocationsAsDefault.js',
+	            params: {
+	                serviceApplicationId: $location.search()["appid"]
+	            }
+	        })
+	            .success(function (trustedLocations) {
+
+	                toastr.success("Saved Trusted Locations as default!");
+	                toastr.clear();
+
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function (result) {
+	                toastr.error("Unable to save Trusted Locations as default:(<br/>" + $(result).children(".intro").text(), null, { timeOut: 0 });
+	            });
+	    };
+
 	    $scope.getTrustedLocations();
 
 	    $scope.gridOptions = {

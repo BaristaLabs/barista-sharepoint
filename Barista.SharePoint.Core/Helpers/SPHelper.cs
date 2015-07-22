@@ -531,7 +531,8 @@
                             throw new InvalidOperationException("The specified script url is invalid.");
 
                         filePath = fileUri.ToString();
-                        var file = sourceWeb.GetFile(fileUri.ToString());
+                        var fileOrFolder = sourceWeb.GetFileOrFolderObject(fileUri.ToString());
+                        var file = fileOrFolder as SPFile;
                         if (file != null && file.Exists)
                         {
                             Encoding encoding;
@@ -583,7 +584,9 @@
 
                             filePath = url.ToString(CultureInfo.InvariantCulture);
 
-                            var file = sourceWeb.GetFile(filePath);
+                            var fileOrFolder = sourceWeb.GetFileOrFolderObject(fileUri.ToString());
+                            var file = fileOrFolder as SPFile;
+
                             if (file != null && file.Exists)
                             {
                                 var content = file.OpenBinary();

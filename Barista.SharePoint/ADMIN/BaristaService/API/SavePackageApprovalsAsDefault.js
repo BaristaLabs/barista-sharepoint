@@ -9,13 +9,13 @@ var serviceApplication = sp.farm.getServiceApplicationById(serviceApplicationId)
 if (!serviceApplication)
     throw "A service application with the specified id could not be located. " + serviceApplicationId;
 
-var trustedLocations;
+var packageApprovals;
 if (serviceApplication.propertyBag.containsKey("BaristaPackageApprovals")) {
-    trustedLocations = serviceApplication.propertyBag.getValueByKey("BaristaPackageApprovals");
-    trustedLocations = JSON.parse(trustedLocations);
+    packageApprovals = serviceApplication.propertyBag.getValueByKey("BaristaPackageApprovals");
+    packageApprovals = JSON.parse(packageApprovals);
 }
 else {
-    trustedLocations = [];
+    packageApprovals = [];
 }
 
-sp.farm.setFarmKeyValue("BaristaPackageApprovals", trustedLocations);
+sp.farm.setFarmKeyValue("BaristaPackageApprovals", packageApprovals);
