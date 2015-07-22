@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="form-group" data-ng-if="form.approvalLevel.$pristine && (baristaPackage.approval.approvalLevel.toUpperCase() === 'APPROVED' && !doesCurrentBaristaPackageMatchApproval())">
-            <strong>This package was previously approved, however it's contents have since changed and re-approval is necessary.</strong>
+            <strong>This package was previously approved, however its contents have since changed and re-approval is necessary.</strong>
         </div>
         <div class="form-group" data-ng-if="baristaPackage.approval.lastUserModified && form.approvalLevel.$pristine">
             <label>Last Modified By:&nbsp;</label>{{baristaPackage.approval.lastUserModified.name}} on {{baristaPackage.approval.lastDateModified | date:'medium'}}

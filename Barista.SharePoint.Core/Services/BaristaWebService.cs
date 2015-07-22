@@ -268,7 +268,7 @@
                 code = requestHeaders[codeHeaderKey];
 
             //If the request has a query string parameter named "c" use that.
-            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.UriTemplateMatch != null)
+            if (string.IsNullOrEmpty(code) && webContext.IncomingRequest.UriTemplateMatch != null)
             {
                 var requestQueryParameters = webContext.IncomingRequest.UriTemplateMatch.QueryParameters;
 
@@ -278,18 +278,18 @@
             }
 
             //If the request contains a Message header named "c" or "code in the appropriate namespace, use that.
-            if (String.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(code))
             {
                 var headers = OperationContext.Current.IncomingMessageHeaders;
                 
                 if (headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "code"))
                     code = headers.GetHeader<string>("code", Barista.Constants.ServiceNamespace);
-                else if (String.IsNullOrEmpty(code) && headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "c"))
+                else if (string.IsNullOrEmpty(code) && headers.Any(h => h.Namespace == Barista.Constants.ServiceNamespace && h.Name == "c"))
                     code = headers.GetHeader<string>("c", Barista.Constants.ServiceNamespace);
             }
 
             //Otherwise, use the body of the post as code.
-            if (String.IsNullOrEmpty(code) && webContext.IncomingRequest.Method == "POST")
+            if (string.IsNullOrEmpty(code) && webContext.IncomingRequest.Method == "POST")
             {
                 var body = requestBody.ToByteArray();
                 var bodyString = Encoding.UTF8.GetString(body);
@@ -312,7 +312,7 @@
                     }
 
                     //Try using form encoding
-                    if (String.IsNullOrEmpty(code))
+                    if (string.IsNullOrEmpty(code))
                     {
                         try
                         {
@@ -331,7 +331,7 @@
             }
 
             //Last Chance: attempt to use everything after eval/ or exec/ in the url as the code
-            if (String.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(code))
             {
                 var url = webContext.IncomingRequest.UriTemplateMatch;
 
@@ -343,7 +343,7 @@
                     code = firstWildcardPathSegment;
             }
 
-            if (String.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(code))
                 throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, through a 'c' or 'code' soap message header in the http://barista/services/v1 namespace, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
 
             return code;
@@ -357,17 +357,19 @@
         /// <returns></returns>
         private static string Tamp(string code, out string scriptPath)
         {
-            scriptPath = String.Empty;
+            scriptPath = string.Empty;
 
-            //If the code looks like a uri, attempt to retrieve a code file and use the contents of that file as the code.
-            if (Uri.IsWellFormedUriString(code, UriKind.RelativeOrAbsolute))
+            //If the code looks like a uri to a .js or .jsx file, attempt to retrieve a code file and use the contents of that file as the code.
+            if (code.Length < 2048 &&
+                (code.EndsWith(".js", StringComparison.OrdinalIgnoreCase) || code.EndsWith(".jsx", StringComparison.OrdinalIgnoreCase)) &&
+                Uri.IsWellFormedUriString(code, UriKind.RelativeOrAbsolute))
             {
                 Uri codeUri;
                 if (Uri.TryCreate(code, UriKind.RelativeOrAbsolute, out codeUri))
                 {
                     string scriptFilePath;
                     bool isHiveFile;
-                    String codeFromfile;
+                    string codeFromfile;
                     if (SPHelper.TryGetSPFileAsString(code, out scriptFilePath, out codeFromfile, out isHiveFile))
                     {
                         scriptPath = scriptFilePath;
@@ -376,8 +378,21 @@
                 }
             }
 
-            //Replace any tokens in the code.
-            code = SPHelper.ReplaceTokens(SPContext.Current, code);
+            //If the request has a header named "X-Barista-ReplaceSPTokensInCode" then replace.
+            var webContext = WebOperationContext.Current;
+
+            if (webContext != null)
+            {
+                var requestHeaders = webContext.IncomingRequest.Headers;
+                var codeHeaderKey =
+                    requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-ReplaceSPTokensInCode");
+
+                //If the header exists, replace any tokens in the code.
+                if (!codeHeaderKey.IsNullOrWhiteSpace())
+                {
+                    code = SPHelper.ReplaceTokens(SPContext.Current, code);
+                }
+            }
 
             return code;
         }
@@ -402,7 +417,7 @@
 
             var instanceSettings = request.ParseInstanceSettings();
 
-            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
+            if (string.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
                 request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
@@ -442,7 +457,7 @@
 
             var instanceSettings = request.ParseInstanceSettings();
 
-            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
+            if (string.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)
             {
                 string instanceInitializationCodePath;
                 request.InstanceInitializationCode = Tamp(instanceSettings.InstanceInitializationCode, out instanceInitializationCodePath);
