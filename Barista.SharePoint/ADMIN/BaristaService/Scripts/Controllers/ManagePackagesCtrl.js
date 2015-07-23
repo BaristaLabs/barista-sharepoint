@@ -1,5 +1,5 @@
-﻿manageBarista.controller('ManagePackagesCtrl', ['$scope', '$http', '$location', '$modal',
-	function ($scope, $http, $location, $modal) {
+﻿manageBarista.controller('ManagePackagesCtrl', ['$scope', '$http', '$modal',
+	function ($scope, $http, $modal) {
 
 	    $scope.packages = null;
 
@@ -40,7 +40,7 @@
 	            method: "GET",
 	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/GetPackagesWithApproval.js',
 	            params: {
-	                serviceApplicationId: $location.search()["appid"]
+	                serviceApplicationId: $scope.getQueryVariable("appid")
 	            },
 	        })
 	            .success(function (packages) {
@@ -64,7 +64,7 @@
 	            method: "GET",
 	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SavePackageApprovalsAsDefault.js',
 	            params: {
-	                serviceApplicationId: $location.search()["appid"]
+	                serviceApplicationId: $scope.getQueryVariable("appid")
 	            }
 	        })
 	            .success(function () {
@@ -140,8 +140,8 @@
 	    $scope.getPackages();
 	}]);
 
-manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'baristaPackage', 'doesBaristaPackageMatchApproval',
-	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, baristaPackage, doesBaristaPackageMatchApproval) {
+manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'baristaPackage', 'doesBaristaPackageMatchApproval',
+	function ($scope, $http, $modalInstance, baristaBaseUrl, baristaPackage, doesBaristaPackageMatchApproval) {
 	    $scope.baristaPackage = baristaPackage;
 
 	    $scope.doesCurrentBaristaPackageMatchApproval = function() {
@@ -154,7 +154,7 @@ manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$locati
 	            method: "POST",
 	            url: baristaBaseUrl + '/_admin/BaristaService/API/UpdatePackageApproval.js',
 	            params: {
-	                serviceApplicationId: $location.search()["appid"]
+	                serviceApplicationId: $scope.getQueryVariable("appid")
 	            },
 	            data: $scope.baristaPackage
 	        })

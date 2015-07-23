@@ -1,5 +1,5 @@
-﻿manageBarista.controller("ManageGeneralCtrl", ['$scope', '$http', '$location', '$modal',
-	function ($scope, $http, $location, $modal) {
+﻿manageBarista.controller("ManageGeneralCtrl", ['$scope', '$http', '$modal',
+	function ($scope, $http, $modal) {
 
 	    $scope.trustedLocations = null;
 
@@ -56,7 +56,7 @@
 	                    method: "POST",
 	                    url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteTrustedLocation.js',
 	                    params: {
-	                        serviceApplicationId: $location.search()["appid"]
+	                        serviceApplicationId: $scope.getQueryVariable("appid")
 	                    },
 	                    data: trustedLocation
 	                })
@@ -86,7 +86,7 @@
 	                method: "GET",
 	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/GetTrustedLocations.js',
 	                params: {
-	                    serviceApplicationId: $location.search()["appid"]
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
 	                }
 	            })
 	            .success(function(trustedLocations) {
@@ -110,7 +110,7 @@
 	            method: "GET",
 	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SaveTrustedLocationsAsDefault.js',
 	            params: {
-	                serviceApplicationId: $location.search()["appid"]
+	                serviceApplicationId: $scope.getQueryVariable("appid")
 	            }
 	        })
 	            .success(function (trustedLocations) {
@@ -142,8 +142,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'trustedLocation', 'isNew',
-	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, trustedLocation, isNew) {
+manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'trustedLocation', 'isNew',
+	function ($scope, $http, $modalInstance, baristaBaseUrl, trustedLocation, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.trustedLocation = trustedLocation;
 
@@ -159,7 +159,7 @@ manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$loc
 	                method: "POST",
 	                url: baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js',
 	                params: {
-	                    serviceApplicationId: $location.search()["appid"]
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
 	                },
 	                data: $scope.trustedLocation
 	            })

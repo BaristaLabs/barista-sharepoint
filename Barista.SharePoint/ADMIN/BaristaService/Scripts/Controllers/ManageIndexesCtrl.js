@@ -1,5 +1,5 @@
-﻿manageBarista.controller('ManageIndexesCtrl', ['$scope', '$http', '$location', '$modal',
-	function ($scope, $http, $location, $modal) {
+﻿manageBarista.controller('ManageIndexesCtrl', ['$scope', '$http', '$modal',
+	function ($scope, $http, $modal) {
 
 	    $scope.indexes = null;
 
@@ -56,7 +56,7 @@
 	                    method: "POST",
 	                    url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteSearchIndex.js',
 	                    params: {
-	                        serviceApplicationId: $location.search()["appid"]
+	                        serviceApplicationId: $scope.getQueryVariable("appid")
 	                    },
 	                    data: index
 	                })
@@ -86,7 +86,7 @@
 	                method: "GET",
 	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/GetSearchIndexes.js',
 	                params: {
-	                    serviceApplicationId: $location.search()["appid"]
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
 	                },
 	            })
 	            .success(function(indexes) {
@@ -110,7 +110,7 @@
 	                method: "GET",
 	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SaveIndexSettingsAsDefault.js',
 	                params: {
-	                    serviceApplicationId: $location.search()["appid"]
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
 	                }
 	            })
 	            .success(function() {
@@ -143,8 +143,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$location', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
-	function ($scope, $http, $location, $modalInstance, baristaBaseUrl, index, isNew) {
+manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
+	function ($scope, $http, $modalInstance, baristaBaseUrl, index, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.index = index;
 
@@ -160,7 +160,7 @@ manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$location', '$
 	                method: "POST",
 	                url: baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js',
 	                params: {
-	                    serviceApplicationId: $location.search()["appid"]
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
 	                },
 	                data: $scope.index
 	            })
