@@ -140,8 +140,8 @@
 	    $scope.getPackages();
 	}]);
 
-manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'baristaPackage', 'doesBaristaPackageMatchApproval',
-	function ($scope, $http, $modalInstance, baristaBaseUrl, baristaPackage, doesBaristaPackageMatchApproval) {
+manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$rootScope', '$http', '$modalInstance', 'baristaPackage', 'doesBaristaPackageMatchApproval',
+	function ($scope, $rootScope, $http, $modalInstance, baristaPackage, doesBaristaPackageMatchApproval) {
 	    $scope.baristaPackage = baristaPackage;
 
 	    $scope.doesCurrentBaristaPackageMatchApproval = function() {
@@ -152,9 +152,9 @@ manageBarista.controller('EditPackageApprovalCtrl', ['$scope', '$http', '$modalI
 	        toastr.info('Updating Package Approval...');
 	        $http({
 	            method: "POST",
-	            url: baristaBaseUrl + '/_admin/BaristaService/API/UpdatePackageApproval.js',
+	            url: $rootScope.baristaBaseUrl + '/_admin/BaristaService/API/UpdatePackageApproval.js',
 	            params: {
-	                serviceApplicationId: $scope.getQueryVariable("appid")
+	                serviceApplicationId: $rootScope.getQueryVariable("appid")
 	            },
 	            data: $scope.baristaPackage
 	        })

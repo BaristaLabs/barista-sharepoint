@@ -61,7 +61,7 @@ if ($searchService -eq $null)
 
 # activate in SharePoint
 write-host 
-write-host "[[STEP]] Creating Barista Service Hooks." -foregroundcolor Yellow
+write-host "[[STEP]] Creating Barista Search Service Hooks." -foregroundcolor Yellow
 write-host 
 New-BaristaSearchService -ManagedAccount $ManagedAccount -ErrorAction SilentlyContinue | out-null
 New-BaristaSearchServiceInstance -ErrorAction SilentlyContinue | out-null

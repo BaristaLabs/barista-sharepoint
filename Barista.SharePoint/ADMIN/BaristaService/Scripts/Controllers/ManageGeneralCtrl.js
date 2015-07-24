@@ -12,7 +12,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         trustedLocation: function () { return null; },
                         isNew: function () { return true; }
                     }
@@ -33,7 +32,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         trustedLocation: function () { return trustedLocation; },
                         isNew: function () { return false; }
                     }
@@ -142,8 +140,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'trustedLocation', 'isNew',
-	function ($scope, $http, $modalInstance, baristaBaseUrl, trustedLocation, isNew) {
+manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$rootScope', '$http', '$modalInstance', 'trustedLocation', 'isNew',
+	function ($scope, $rootScope, $http, $modalInstance, trustedLocation, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.trustedLocation = trustedLocation;
 
@@ -157,9 +155,9 @@ manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$mod
 	            toastr.info('Updating Trusted Location...');
 	        $http({
 	                method: "POST",
-	                url: baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js',
+	                url: $rootScope.baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js',
 	                params: {
-	                    serviceApplicationId: $scope.getQueryVariable("appid")
+	                    serviceApplicationId: $rootScope.getQueryVariable("appid")
 	                },
 	                data: $scope.trustedLocation
 	            })

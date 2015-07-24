@@ -5,10 +5,10 @@ manageBarista.config(['$locationProvider', function($locationProvider) {
 }]);
 
 //Main Controller
-manageBarista.controller("ManageMainCtrl", ['$scope', '$http', '$modal', '$window',
-	function ($scope, $http, $modal, $window) {
+manageBarista.controller("ManageMainCtrl", ['$rootScope', '$window',
+	function ($rootScope, $window) {
 
-	    $scope.getQueryVariable = function (variable) {
+	    $rootScope.getQueryVariable = function (variable) {
 	        var query = $window.location.search.substring(1);
 	        var vars = query.split('&');
 	        for (var i = 0; i < vars.length; i++) {
@@ -19,6 +19,6 @@ manageBarista.controller("ManageMainCtrl", ['$scope', '$http', '$modal', '$windo
 	        }
 	    }
 
-	    $scope.baristaBaseUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
+	    $rootScope.baristaBaseUrl = "/_vti_bin/Barista/v1/Barista.svc/eval?c=";
 
 	}]);

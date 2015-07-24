@@ -12,7 +12,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         index: function () { return null; },
                         isNew: function () { return true; }
                     }
@@ -33,7 +32,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         index: function () { return index; },
                         isNew: function () { return false; }
                     }
@@ -143,8 +141,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'index', 'isNew',
-	function ($scope, $http, $modalInstance, baristaBaseUrl, index, isNew) {
+manageBarista.controller('AddEditIndexCtrl', ['$scope', '$rootScope', '$http', '$modalInstance', 'index', 'isNew',
+	function ($scope, $rootScope, $http, $modalInstance, index, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.index = index;
 
@@ -158,9 +156,9 @@ manageBarista.controller('AddEditIndexCtrl', ['$scope', '$http', '$modalInstance
 	            toastr.info('Updating Index...');
 	        $http({
 	                method: "POST",
-	                url: baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js',
+	                url: $rootScope.baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateSearchIndex.js',
 	                params: {
-	                    serviceApplicationId: $scope.getQueryVariable("appid")
+	                    serviceApplicationId: $rootScope.getQueryVariable("appid")
 	                },
 	                data: $scope.index
 	            })

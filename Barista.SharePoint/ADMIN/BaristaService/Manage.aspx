@@ -80,10 +80,10 @@
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
     <script type="text/javascript" src="/_admin/BaristaService/Scripts/Vendor/ng-grid/ng-grid-2.0.11.min.js"></script>
     
-    <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js"></script>
-    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageGeneralCtrl.js"></script>
-    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js"></script>
-    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManagePackagesCtrl.js"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/app.js?v=20150724"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageGeneralCtrl.js?v=20150724"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManageIndexesCtrl.js?v=20150724"></script>
+    <script type="text/javascript" src="/_admin/BaristaService/Scripts/Controllers/ManagePackagesCtrl.js?v=20150724"></script>
     
     <script type="text/javascript">
         $(document).ready(function () {
