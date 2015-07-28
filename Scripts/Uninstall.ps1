@@ -1,4 +1,11 @@
-﻿
+﻿[CmdletBinding(DefaultParameterSetName="FileOrDirectory")]
+param (
+
+	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
+	[ValidateNotNullOrEmpty()]
+	[string]$SPApplicationPoolName = "Barista Application Pool"
+)
+
 Write-Host "                    Barista Uninstaller Script v0.1             " -foregroundcolor Green
 Write-Host "===============================================================" -foregroundcolor Green
 
@@ -12,7 +19,7 @@ if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyCo
 Write-Host "Uninstalling Barista from from $env:COMPUTERNAME"
 
 & powershell.exe -Version 2 "& .\UninstallBaristaSearchService.ps1"
-& powershell.exe -Version 2 "& .\UninstallBaristaServiceApplication.ps1"
+& powershell.exe -Version 2 "& .\UninstallBaristaServiceApplication.ps1 '$SPApplicationPoolName'"
 & powershell.exe -Version 2 "& .\UninstallBaristaSolutions.ps1"
 
 #Cleanup
