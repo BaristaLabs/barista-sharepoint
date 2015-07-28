@@ -70,6 +70,14 @@ Write-Host "Ensuring all instances of 'Barista Service Application' are removed.
 $objects = GetPersistedObjectsForType("Barista Service Application");
 CleanUpPersistedObjects($objects);
 
+Write-Host "Ensuring all instances of 'Barista Service Application Proxy' are removed."
+$objects = GetPersistedObjectsForType("Barista Service Application Proxy");
+CleanUpPersistedObjects($objects);
+
+Write-Host "Ensuring all instances of 'Barista.SharePoint.Services.BaristaServiceProxy' are removed."
+$objects = GetPersistedObjectsForType("Barista.SharePoint.Services.BaristaServiceProxy");
+CleanUpPersistedObjects($objects);
+
 Write-Host "Ensuring all instances of 'Barista.SharePoint.Services.BaristaService' are removed."
 $objects = GetPersistedObjectsForType("Barista.SharePoint.Services.BaristaService");
 CleanUpPersistedObjects($objects);
