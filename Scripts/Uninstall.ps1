@@ -5,6 +5,7 @@ Write-Host "===============================================================" -fo
 if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -ne $null )
 {
     Write-Error "This deployment script must be executed from a Windows Powershell, NOT a SharePoint 2010 Management Shell."
+	Write-Error "If this is a Windows Powershell window, please close this window and run this script from a new Windows Powershell window."
     return
 }
 

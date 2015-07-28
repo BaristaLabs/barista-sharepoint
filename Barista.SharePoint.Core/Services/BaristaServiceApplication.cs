@@ -367,6 +367,10 @@
             }
         }
 
+        /// <summary>
+        /// Lists the packages installed in the /WebServices/Barista/bin/Bundles folder
+        /// </summary>
+        /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public string ListPackages()
         {
@@ -376,7 +380,7 @@
         }
 
         /// <summary>
-        /// Expand the specified bundle package to the [hive]/WebServices/Barista/Bundles folder.
+        /// Expand the specified bundle package to the [hive]/WebServices/Barista/bin/Bundles folder.
         /// </summary>
         /// <remarks>
         ///  The caller should take care of calling this on each application server in the farm.
