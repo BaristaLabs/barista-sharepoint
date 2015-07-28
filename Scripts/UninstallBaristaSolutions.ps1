@@ -24,6 +24,8 @@ function RetractSolution($solution) {
 		return;
 	}
 
+	[string]$name = $solution.Name
+
 	#Retract the solution
 	if ($solution.Deployed) {
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Retracting $name" -PercentComplete 0
@@ -37,12 +39,10 @@ function RetractSolution($solution) {
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution retracted" -PercentComplete 25
 	}
 
-	if ($solution.Added) {
-		#Delete the solution
-		Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
-		Get-SPSolution $name | Remove-SPSolution -Confirm:$false
-		Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
-	}
+	#Delete the solution
+	Write-Progress -Activity "Uninstalling solution $name" -Status "Removing $name" -PercentComplete 30
+	Get-SPSolution $name | Remove-SPSolution -Confirm:$false
+	Write-Progress -Activity "Uninstalling solution $name" -Status "Solution removed" -PercentComplete 50
 }
 
 write-host 

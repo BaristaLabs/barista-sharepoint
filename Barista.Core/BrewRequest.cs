@@ -22,7 +22,7 @@
         {
             Body = new byte[0];
             CodePath = String.Empty;
-            ExecutionTimeout = 110000;
+            ExecutionTimeout = 0;
             Headers = new BrewRequestHeaders(new Dictionary<string, IEnumerable<string>>());
 
             ExtendedProperties = new Dictionary<string, string>();
@@ -81,7 +81,7 @@
         }
 
         [DataMember]
-        public int ExecutionTimeout
+        public uint ExecutionTimeout
         {
             get;
             set;

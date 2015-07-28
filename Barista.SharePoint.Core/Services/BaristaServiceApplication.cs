@@ -166,13 +166,31 @@
 
                 try
                 {
-                    object result;
-                    using (new SPMonitoredScope("Barista Script Eval", 110000,
+                    //Default execution timeout to be 60 seconds.
+                    if (request.ExecutionTimeout <= 0)
+                        request.ExecutionTimeout = 60 * 1000;
+
+                    object result = null;
+                    using (new SPMonitoredScope("Barista Script Eval", request.ExecutionTimeout,
                               new SPCriticalTraceCounter(),
-                              new SPExecutionTimeCounter(11000),
+                              new SPExecutionTimeCounter(request.ExecutionTimeout),
                               new SPRequestUsageCounter(),
                               new SPSqlQueryCounter()))
                     {
+                        //var mre = new ManualResetEvent(false);
+
+                        //var scopeEngine = engine;
+                        //var actionThread = new Thread(() =>
+                        //{
+                        //    result = scopeEngine.Evaluate(source); //always call endinvoke
+                        //    mre.Set();
+                        //});
+
+                        //actionThread.Start();
+                        //mre.WaitOne(TimeSpan.FromMilliseconds(request.ExecutionTimeout));
+                        //if (actionThread.IsAlive)
+                        //    actionThread.Abort();
+
                         result = engine.Evaluate(source);
                     }
 
