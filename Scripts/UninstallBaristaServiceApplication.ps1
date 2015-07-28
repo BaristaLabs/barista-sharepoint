@@ -161,7 +161,7 @@ if ($appPool -ne $null) {
 	Remove-SPServiceApplicationPool $appPool -Confirm:$false
 	#$serviceApp.Unprovision()
 	#$serviceApp.Delete()
-	$serviceApp.Uncache()
+	$appPool.Uncache()
 
 	write-host 
 }
