@@ -12,7 +12,10 @@ if ( (Get-PSSnapin -Name  Microsoft.SharePoint.PowerShell -ErrorAction SilentlyC
 }
 
 $serviceLocation = Join-Path ([Microsoft.SharePoint.Utilities.SPUtility]::GetGenericSetupPath("ISAPI")) "BaristaServices\Search\SPBaristaSearchService.exe"
-& $serviceLocation stop --sudo
+
+if (Test-Path $serviceLocation) {
+	& $serviceLocation stop --sudo
+}
 
 # deactivate in SharePoint
 if (Get-Command "Remove-BaristaSearchService" -errorAction SilentlyContinue) {
@@ -38,7 +41,9 @@ if ($searchService -ne $null)
 	write-host 
 }
 
-& $serviceLocation uninstall --sudo
+if (Test-Path $serviceLocation) {
+	& $serviceLocation uninstall --sudo
+}
 
 write-host 
 write-host "Successfully uninstalled service $($searchService.name)" -foregroundcolor Green
