@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InvokeBaristaService.cs" />
+    <Compile Include="DeployBaristaPackage.cs" />
     <Compile Include="NewBaristaSearchService.cs" />
     <Compile Include="NewBaristaSearchServiceInstance.cs" />
     <Compile Include="NewBaristaServiceApplication.cs" />

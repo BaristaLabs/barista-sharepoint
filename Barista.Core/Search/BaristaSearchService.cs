@@ -19,11 +19,11 @@
     using System.ServiceModel.Web;
 
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
-    public abstract class BaristaSearchService : IBaristaSearch, IDisposable
+    public class BaristaSearchService : IBaristaSearch, IDisposable
     {
         private const string IndexVersion = "1.0.0.0";
         private static readonly Analyzer DummyAnalyzer = new SimpleAnalyzer();
-        private static readonly ConcurrentDictionary<string, Index> Indexes = new ConcurrentDictionary<string, Index>();
+        private static readonly ConcurrentDictionary<BaristaIndexDefinition, Index> Indexes = new ConcurrentDictionary<BaristaIndexDefinition, Index>();
 
         private static readonly ILog Log = LogManager.GetCurrentClassLogger();
         private static readonly ILog StartupLog = LogManager.GetLogger(typeof(BaristaSearchService).FullName + ".Startup");
@@ -31,15 +31,15 @@
         /// <summary>
         /// Deletes the documents that have the specified document ids
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="keys"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void DeleteDocuments(string indexName, IEnumerable<string> keys)
+        public void DeleteDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<string> keys)
         {
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
 
                 try
                 {
@@ -48,7 +48,7 @@
                 }
                 catch (OutOfMemoryException)
                 {
-                    CloseIndexWriter(indexName, false);
+                    CloseIndexWriter(indexDefinition, false);
                 }
             }
             catch (Exception ex)
@@ -60,24 +60,24 @@
         /// <summary>
         /// Deletes all documents from the specified index.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [WebInvoke(Method = "POST")]
-        public void DeleteAllDocuments(string indexName)
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        public void DeleteAllDocuments(BaristaIndexDefinition indexDefinition)
         {
-            if (String.IsNullOrEmpty(indexName))
-                throw new ArgumentNullException("indexName");
+            if (indexDefinition == null)
+                throw new ArgumentNullException("indexDefinition");
 
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
                 try
                 {
                     index.DeleteAll();
                 }
                 catch (OutOfMemoryException)
                 {
-                    CloseIndexWriter(indexName, false);
+                    CloseIndexWriter(indexDefinition, false);
                 }
             }
             catch (Exception ex)
@@ -89,13 +89,13 @@
         /// <summary>
         /// Returns a value that indicates if an index with the specified name exists.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json)]
-        public bool DoesIndexExist(string indexName)
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
+        public bool DoesIndexExist(BaristaIndexDefinition indexDefinition)
         {
-            var directory = GetLuceneDirectoryFromIndexName(indexName);
+            var directory = GetLuceneDirectoryFromIndexDefinition(indexDefinition);
 
             return directory != null;
         }
@@ -103,18 +103,18 @@
         /// <summary>
         /// Returns an explanation for a particular result in a search query.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="query"></param>
         /// <param name="docId"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public Explanation Explain(string indexName, Barista.Search.Query query, int docId)
+        public Explanation Explain(BaristaIndexDefinition indexDefinition, Barista.Search.Query query, int docId)
         {
             var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
             Explanation explanation;
 
-            var index = GetOrAddIndex(indexName, true);
+            var index = GetOrAddIndex(indexDefinition, true);
             IndexSearcher indexSearcher;
             using (index.GetSearcher(out indexSearcher))
             {
@@ -126,10 +126,10 @@
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public ICollection<string> GetFieldNames(string indexName)
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
+        public ICollection<string> GetFieldNames(BaristaIndexDefinition indexDefinition)
         {
-            var index = GetOrAddIndex(indexName, true);
+            var index = GetOrAddIndex(indexDefinition, true);
             IndexSearcher indexSearcher;
             using (index.GetSearcher(out indexSearcher))
             {
@@ -141,7 +141,7 @@
         /// <summary>
         /// Returns a highlighted string for the specified query, results doc id, fieldname and fragment size.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="query"></param>
         /// <param name="docId"></param>
         /// <param name="fieldName"></param>
@@ -149,7 +149,7 @@
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public string Highlight(string indexName, Barista.Search.Query query, int docId, string fieldName, int fragCharSize)
+        public string Highlight(BaristaIndexDefinition indexDefinition, Barista.Search.Query query, int docId, string fieldName, int fragCharSize)
         {
             var highlighter = GetFastVectorHighlighter();
             var lQuery = Barista.Search.Query.ConvertQueryToLuceneQuery(query);
@@ -157,7 +157,7 @@
             var fieldQuery = highlighter.GetFieldQuery(lQuery);
             string highlightedResult;
 
-            var index = GetOrAddIndex(indexName, true);
+            var index = GetOrAddIndex(indexDefinition, true);
             IndexSearcher indexSearcher;
             using (index.GetSearcher(out indexSearcher))
             {
@@ -173,12 +173,12 @@
         /// <summary>
         /// Indexes the specified document.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="documentId"></param>
         /// <param name="document"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void IndexDocument(string indexName, string documentId, DocumentDto document)
+        public void IndexDocument(BaristaIndexDefinition indexDefinition, string documentId, DocumentDto document)
         {
             try
             {
@@ -188,7 +188,7 @@
                 if (document == null)
                     throw new ArgumentNullException("document", @"A document must be specified.");
 
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
 
                 try
                 {
@@ -207,7 +207,7 @@
                 }
                 catch (OutOfMemoryException)
                 {
-                    CloseIndexWriter(indexName, false);
+                    CloseIndexWriter(indexDefinition, false);
                 }
             }
             catch (Exception ex)
@@ -219,11 +219,11 @@
         /// <summary>
         /// Indexes the specified document.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="document"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void IndexJsonDocument(string indexName, JsonDocumentDto document)
+        public void IndexJsonDocument(BaristaIndexDefinition indexDefinition, JsonDocumentDto document)
         {
             try
             {
@@ -233,7 +233,7 @@
                 if (document.DocumentId.IsNullOrWhiteSpace())
                     throw new InvalidOperationException(@"The json document must specify a document id.");
 
-                IndexJsonDocuments(indexName, new List<JsonDocumentDto> { document });
+                IndexJsonDocuments(indexDefinition, new List<JsonDocumentDto> { document });
             }
             catch (Exception ex)
             {
@@ -244,11 +244,11 @@
         /// <summary>
         /// Indexes the specified documents.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="documents"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
+        public void IndexJsonDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<JsonDocumentDto> documents)
         {
             try
             {
@@ -260,7 +260,7 @@
                 if (jsonDocuments.Any() == false)
                     throw new ArgumentNullException("documents", @"At least one document must be contained within the collection.");
 
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
 
                 try
                 {
@@ -296,7 +296,7 @@
                 }
                 catch (OutOfMemoryException)
                 {
-                    CloseIndexWriter(indexName, false);
+                    CloseIndexWriter(indexDefinition, false);
                 }
             }
             catch (Exception ex)
@@ -308,19 +308,19 @@
         /// <summary>
         /// Retrieves the document with the corresponding document id.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="documentId"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        [WebGet(ResponseFormat = WebMessageFormat.Json)]
-        public JsonDocumentDto Retrieve(string indexName, string documentId)
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        public JsonDocumentDto Retrieve(BaristaIndexDefinition indexDefinition, string documentId)
         {
             if (documentId.IsNullOrWhiteSpace())
                 throw new ArgumentNullException("documentId", @"A document Id must be specified.");
 
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
                 IndexSearcher indexSearcher;
                 using (index.GetSearcher(out indexSearcher))
                 {
@@ -349,19 +349,19 @@
         /// <summary>
         /// Returns documents that match the specified lucene query, limiting to the specified number of items.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public IList<SearchResult> Search(string indexName, SearchArguments arguments)
+        public IList<SearchResult> Search(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             if (arguments == null)
                 arguments = new SearchArguments();
 
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
                 var searchParams = GetLuceneSearchParams(arguments);
 
                 IndexSearcher indexSearcher;
@@ -391,19 +391,19 @@
         /// <summary>
         /// Returns a value that indicates the number of documents that match the specified lucene query.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public int SearchResultCount(string indexName, SearchArguments arguments)
+        public int SearchResultCount(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             if (arguments == null)
                 arguments = new SearchArguments();
 
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
                 var searchParams = GetLuceneSearchParams(arguments);
 
                 IndexSearcher indexSearcher;
@@ -433,19 +433,19 @@
         /// <summary>
         /// Performs a faceted search with the specified search arguments using the specified index.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest, ResponseFormat = WebMessageFormat.Json)]
-        public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
+        public IList<FacetedSearchResult> FacetedSearch(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             if (arguments == null)
                 arguments = new SearchArguments();
 
             try
             {
-                var index = GetOrAddIndex(indexName, true);
+                var index = GetOrAddIndex(indexDefinition, true);
                 var searchParams = GetLuceneSearchParams(arguments);
 
                 IndexSearcher indexSearcher;
@@ -475,16 +475,16 @@
         /// <summary>
         /// Sets field options
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="fieldOptions"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+        public void SetFieldOptions(BaristaIndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
         {
             try
             {
-                var index = GetOrAddIndex(indexName, true);
-                var indexDefinition = index.IndexDefinition;
+                var index = GetOrAddIndex(indexDefinition, true);
+                var luceneIndexDefinition = index.IndexDefinition;
                 foreach (var fieldOption in fieldOptions)
                 {
                     if (fieldOption.FieldName.IsNullOrWhiteSpace())
@@ -494,30 +494,30 @@
                     {
                         var fieldIndexingType = MapFieldIndexTypeToFieldIndexing(fieldOption.Index.Value);
 
-                        if (indexDefinition.Indexes.ContainsKey(fieldOption.FieldName))
-                            indexDefinition.Indexes[fieldOption.FieldName] = fieldIndexingType;
+                        if (luceneIndexDefinition.Indexes.ContainsKey(fieldOption.FieldName))
+                            luceneIndexDefinition.Indexes[fieldOption.FieldName] = fieldIndexingType;
                         else
-                            indexDefinition.Indexes.Add(fieldOption.FieldName, fieldIndexingType);
+                            luceneIndexDefinition.Indexes.Add(fieldOption.FieldName, fieldIndexingType);
                     }
 
                     if (fieldOption.Storage.HasValue)
                     {
                         var fieldStorageType = MapFieldStorageTypeToFieldStorage(fieldOption.Storage.Value);
 
-                        if (indexDefinition.Stores.ContainsKey(fieldOption.FieldName))
-                            indexDefinition.Stores[fieldOption.FieldName] = fieldStorageType;
+                        if (luceneIndexDefinition.Stores.ContainsKey(fieldOption.FieldName))
+                            luceneIndexDefinition.Stores[fieldOption.FieldName] = fieldStorageType;
                         else
-                            indexDefinition.Stores.Add(fieldOption.FieldName, fieldStorageType);
+                            luceneIndexDefinition.Stores.Add(fieldOption.FieldName, fieldStorageType);
                     }
 
                     if (fieldOption.TermVectorType.HasValue)
                     {
                         var fieldTermVector = MapFieldTermVectorTypeToFieldTermVector(fieldOption.TermVectorType.Value);
 
-                        if (indexDefinition.TermVectors.ContainsKey(fieldOption.FieldName))
-                            indexDefinition.TermVectors[fieldOption.FieldName] = fieldTermVector;
+                        if (luceneIndexDefinition.TermVectors.ContainsKey(fieldOption.FieldName))
+                            luceneIndexDefinition.TermVectors[fieldOption.FieldName] = fieldTermVector;
                         else
-                            indexDefinition.TermVectors.Add(fieldOption.FieldName, fieldTermVector);
+                            luceneIndexDefinition.TermVectors.Add(fieldOption.FieldName, fieldTermVector);
                     }
 
                 }
@@ -531,14 +531,14 @@
         /// <summary>
         /// Shutsdown (flushes and closes) the specified index.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        public void Shutdown(string indexName)
+        public void Shutdown(BaristaIndexDefinition indexDefinition)
         {
             try
             {
-                CloseIndexWriter(indexName, true);
+                CloseIndexWriter(indexDefinition, true);
             }
             catch (Exception ex)
             {
@@ -546,14 +546,47 @@
             }
         }
 
-        /// <summary>
-        /// When implemented in a concrete class, returns the lucene directory that corresponds to the specified name.
-        /// </summary>
-        /// <param name="indexName"></param>
-        /// <returns></returns>
-        protected abstract Lucene.Net.Store.Directory GetLuceneDirectoryFromIndexName(string indexName);
+        protected virtual Lucene.Net.Store.Directory GetLuceneDirectoryImplementationFromType(Type directoryType, BaristaIndexDefinition indexDefinition)
+        {
+            //TODO: Use Ninject here...
 
-        private void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
+            if (directoryType == typeof(Lucene.Net.Store.SimpleFSDirectory))
+            {
+                var di = new DirectoryInfo(indexDefinition.IndexStoragePath);
+                if (di.Exists == false)
+                    di.Create();
+
+                return new Lucene.Net.Store.SimpleFSDirectory(di);
+            }
+
+            if (directoryType == typeof(Lucene.Net.Store.RAMDirectory))
+            {
+                return new Lucene.Net.Store.RAMDirectory();
+            }
+
+            //A little bit of extensibility...
+            var directory = (Lucene.Net.Store.Directory)Activator.CreateInstance(directoryType, indexDefinition.IndexStoragePath);
+            return directory;
+        }
+
+        protected virtual Lucene.Net.Store.Directory GetLuceneDirectoryFromIndexDefinition(BaristaIndexDefinition indexDefinition)
+        {
+            //Lets create the Directory object from the index definition!!
+            var directoryType = Type.GetType(indexDefinition.TypeName, false, true);
+            if (directoryType == null)
+                throw new InvalidOperationException(
+                  string.Format("An index definition named {0} was located, however, the type {1} could not be found.",
+                                indexDefinition.IndexName, indexDefinition.TypeName));
+
+            if (typeof(Lucene.Net.Store.Directory).IsAssignableFrom(directoryType) == false)
+                throw new InvalidOperationException(
+                  string.Format("An index definition named {0} was located, however, the type {1} is not a directory type.",
+                                indexDefinition.IndexName, indexDefinition.TypeName));
+
+            return GetLuceneDirectoryImplementationFromType(directoryType, indexDefinition);
+        }
+
+        private static void UpdateIndexDefinitionFromFieldOptions(IndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
         {
             if (fieldOptions == null)
                 return;
@@ -593,19 +626,19 @@
         /// <summary>
         /// Utility method to retrieve the specifed index, optionally creating the index if it is missing.
         /// </summary>
-        /// <param name="indexName"></param>
+        /// <param name="indexDefinition"></param>
         /// <param name="createIfMissing"></param>
         /// <returns></returns>
-        protected Index GetOrAddIndex(string indexName, bool createIfMissing)
+        protected Index GetOrAddIndex(BaristaIndexDefinition indexDefinition, bool createIfMissing)
         {
             //Index name is case insensitive.
-            indexName = indexName.ToLowerInvariant();
+            indexDefinition.IndexName = indexDefinition.IndexName.ToLowerInvariant();
 
-            return Indexes.GetOrAdd(indexName, key =>
+            return Indexes.GetOrAdd(indexDefinition, key =>
               {
-                  var targetDirectory = GetLuceneDirectoryFromIndexName(indexName);
+                  var targetDirectory = GetLuceneDirectoryFromIndexDefinition(indexDefinition);
 
-                  var indexDefinition = new IndexDefinition();
+                  var luceneIndexDefinition = new IndexDefinition();
 
                   if (!IndexReader.IndexExists(targetDirectory))
                   {
@@ -619,9 +652,9 @@
                   }
                   else
                   {
-                      if (!EnsureIndexVersionMatches(indexDefinition.Name, targetDirectory))
+                      if (!EnsureIndexVersionMatches(luceneIndexDefinition.Name, targetDirectory))
                       {
-                          CheckIndexAndRecover(targetDirectory, indexName);
+                          CheckIndexAndRecover(targetDirectory, indexDefinition.IndexName);
                           targetDirectory.DeleteFile("writing-to-index.lock");
                           WriteIndexVersion(targetDirectory);
                       }
@@ -638,12 +671,12 @@
                           //if (configuration.ResetIndexOnUncleanShutdown)
                           //  throw new InvalidOperationException("Rude shutdown detected on: " + indexDirectory);
 
-                          CheckIndexAndRecover(targetDirectory, indexName);
+                          CheckIndexAndRecover(targetDirectory, indexDefinition.IndexName);
                           targetDirectory.DeleteFile("writing-to-index.lock");
                       }
                   }
 
-                  var simpleIndex = new SimpleIndex(targetDirectory, "DefaultIndex", indexDefinition);
+                  var simpleIndex = new SimpleIndex(targetDirectory, "DefaultIndex", luceneIndexDefinition);
                   return simpleIndex;
               });
         }
@@ -668,9 +701,10 @@
                 arguments.Query = new MatchAllDocsQuery();
 
             //Special Behavior for OData Queries since OData queries potentially specify the query/filter/skip/take all in one.
-            if (arguments.Query is ODataQuery)
+            var query = arguments.Query as ODataQuery;
+            if (query != null)
             {
-                var oDataQuery = arguments.Query as ODataQuery;
+                var oDataQuery = query;
                 var parser = new ODataQueryParser();
                 var modelFilter = parser.ParseQuery(oDataQuery.DefaultField, oDataQuery.Query);
 
@@ -704,9 +738,7 @@
                 if (arguments.Skip.HasValue)
                     result.Skip = arguments.Skip.Value;
 
-                result.MaxResults = arguments.Take.HasValue
-                  ? arguments.Take.Value
-                  : 1000;
+                result.MaxResults = arguments.Take ?? 1000;
             }
 
             return result;
@@ -793,6 +825,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Attempts to check and recover the specified Lucene Directory.
+        /// </summary>
+        /// <param name="directory">The directory to check and recover.</param>
+        /// <param name="indexName">Name of the index -- Only used for logging.</param>
         private static void CheckIndexAndRecover(Lucene.Net.Store.Directory directory, string indexName)
         {
             StartupLog.Warn("Unclean shutdown detected on {0}, checking the index for errors. This may take a while.", indexName);
@@ -908,11 +945,10 @@
             }
         }
 
-        public static void CloseIndexWriter(string indexName, bool waitForMerges)
+        public static void CloseIndexWriter(BaristaIndexDefinition indexDefinition, bool waitForMerges)
         {
-            indexName = indexName.ToLowerInvariant();
             Index index;
-            if (Indexes.TryRemove(indexName, out index))
+            if (Indexes.TryRemove(indexDefinition, out index))
             {
                 index.Dispose();
             }
@@ -929,8 +965,8 @@
         {
             public LuceneParams()
             {
-                this.MaxResults = 10000;
-                this.Skip = null;
+                MaxResults = 10000;
+                Skip = null;
             }
 
             public Lucene.Net.Search.Query Query

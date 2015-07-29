@@ -5,6 +5,9 @@ namespace Barista.SharePoint.Features.BaristaServiceInstaller
     using Microsoft.SharePoint.Administration;
     using System.Runtime.InteropServices;
 
+    /// <summary>
+    /// Feature Receiver that contains behavior to install instances of the Barista Service, Service Proxy and service instance in the local farm.
+    /// </summary>
     [Guid("08c45199-e04f-4033-80bb-16e015f096f8")]
     public class BaristaServiceInstallerEventReceiver : SPFeatureReceiver
     {

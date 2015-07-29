@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://vswebessentials.com/schemas/v1/bundle.xsd">
+  <settings>
+    <!--Determines if the bundle file should be automatically optimized after creation/update.-->
+    <minify>true</minify>
+    <!--Determine whether to generate/re-generate this bundle on building the solution.-->
+    <runOnBuild>true</runOnBuild>
+    <!--Specifies a custom subfolder to save files to. By default, compiled output will be placed in the same folder and nested under the original file.-->
+    <outputDirectory />
+  </settings>
+  <!--The order of the <file> elements determines the order of the files in the bundle.-->
+  <files>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/json2.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/store.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/beautify.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/jshint.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/jquery.ba-resize.min.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/jquery.hotkeys.js</file>
+    
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/lib/codemirror.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/lint/lint.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/lint/javascript-lint.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/fold/foldcode.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/fold/foldgutter.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/fold/brace-fold.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/fold/comment-fold.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/search/searchcursor.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/search/match-highlighter.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/selection/active-line.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/dialog/dialog.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/hint/show-hint.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/addon/tern/tern.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/codemirror-5.3.0/mode/javascript/javascript.js</file>
+    
+    <file>/Layouts_Source/BaristaFiddle/Vendor/Acorn-1.2.2/acorn.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/Acorn-1.2.2/acorn_loose.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/Acorn-1.2.2/walk.js</file>
+    
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/polyfill.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/signal.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/tern.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/def.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/comment.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/infer.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/lib/condense.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/plugin/doc_comment.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/plugin/complete_strings.js</file>
+    <file>/Layouts_Source/BaristaFiddle/Vendor/tern-0.10.0/plugin/barista.js</file>
+  </files>
+</bundle>

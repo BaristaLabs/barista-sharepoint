@@ -6,24 +6,24 @@
 
   <MetaData>
     <ContentTypes>
-      <ContentTypeRef ID="0x0120D520009156b84f06ea4f2f96e34101e1e1b1a8">
+      <ContentTypeRef ID="0x0120D520009156B84F06EA4F2F96E34101E1E1B1A8">
         <Folder TargetName="Forms/Document Store Entity" />
       </ContentTypeRef>
       <ContentTypeRef ID="0x0101" />
       <ContentTypeRef ID="0x0120" />
       <ContentTypeRef ID="0x01010A" />
-      <ContentTypeRef ID="0x010100c85948cf1fa64eed9d29eaa2a1078fd6">
+      <ContentTypeRef ID="0x010100C85948CF1FA64EED9D29EAA2A1078FD6">
         <Folder TargetName="Forms/Document Store Entity Part"/>
       </ContentTypeRef>
-      <ContentTypeRef ID="0x010100d1f6bb0d78094ba3acabd9118f81b0c5">
+      <ContentTypeRef ID="0x010100D1F6BB0D78094BA3ACABD9118F81B0C5">
         <Folder TargetName="Forms/Document Store Attachment"/>
       </ContentTypeRef>
     </ContentTypes>
     <Fields>
       <Field ID="{fa564e0f-0c70-4ab9-b863-0177e6ddd247}" Type="Text" Name="Title" ShowInNewForm="FALSE" ShowInFileDlg="FALSE" DisplayName="$Resources:core,Title;" Sealed="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title"></Field>
-      <Field ID="{4b1bf6c6-4f39-45ac-acd5-16fe7a214e5e}" Type="Text" Name="TemplateUrl" DisplaceOnUpgrade="TRUE" DisplayName="$Resources:core,Template_Link;" XName="TemplateUrl" Filterable="TRUE" Sortable="TRUE" Hidden="TRUE" FromBaseType="TRUE" PITarget="mso-infoPathSolution" PIAttribute="href" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="TemplateUrl"></Field>
-      <Field ID="{cd1ecb9f-dd4e-4f29-ab9e-e9ff40048d64}" Type="Text" Name="xd_ProgID" DisplaceOnUpgrade="TRUE" DisplayName="$Resources:core,Html_File_Link;" XName="ProgID" Filterable="TRUE" Sortable="TRUE" Hidden="TRUE" FromBaseType="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="xd_ProgID"></Field>
-      <Field ID="{fbf29b2d-cae5-49aa-8e0a-29955b540122}" Type="Boolean" Group="_Hidden" Name="xd_Signature" DisplaceOnUpgrade="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="xd_Signature" DisplayName="$Resources:core,Xml_signed;" XName="{FBF29B2D-CAE5-49aa-8E0A-29955B540122}" Filterable="TRUE" Sortable="TRUE" Sealed="TRUE" Hidden="TRUE" FromBaseType="TRUE" ReadOnly="TRUE"></Field>
+      <Field ID="{4b1bf6c6-4f39-45ac-acd5-16fe7a214e5e}" Type="Text" Name="TemplateUrl" DisplaceOnUpgrade="TRUE" DisplayName="$Resources:core,Template_Link;" XName="TemplateUrl" Filterable="TRUE" Sortable="TRUE" Hidden="TRUE" PITarget="mso-infoPathSolution" PIAttribute="href" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="TemplateUrl"></Field>
+      <Field ID="{cd1ecb9f-dd4e-4f29-ab9e-e9ff40048d64}" Type="Text" Name="xd_ProgID" DisplaceOnUpgrade="TRUE" DisplayName="$Resources:core,Html_File_Link;" XName="ProgID" Filterable="TRUE" Sortable="TRUE" Hidden="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="xd_ProgID"></Field>
+      <Field ID="{fbf29b2d-cae5-49aa-8e0a-29955b540122}" Type="Boolean" Group="_Hidden" Name="xd_Signature" DisplaceOnUpgrade="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="xd_Signature" DisplayName="$Resources:core,Xml_signed;" XName="{FBF29B2D-CAE5-49aa-8E0A-29955B540122}" Filterable="TRUE" Sortable="TRUE" Sealed="TRUE" Hidden="TRUE" ReadOnly="TRUE"></Field>
       <Field ID="{e52012a0-51eb-4c0c-8dfb-9b8a0ebedcb6}" ReadOnly="TRUE" Type="Computed" Name="Combine" DisplaceOnUpgrade="TRUE" DisplayName="$Resources:core,Merge;" Filterable="FALSE" Sortable="FALSE" Hidden="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Combine">
         <FieldRefs>
           <FieldRef Name="FSObjType" Key="Primary" />

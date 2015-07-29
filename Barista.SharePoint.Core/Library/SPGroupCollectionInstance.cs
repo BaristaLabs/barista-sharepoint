@@ -59,7 +59,7 @@
       var result = m_groupCollection.GetByID(id);
       return result == null
         ? null
-        : new SPGroupInstance(this.Engine, result);
+        : new SPGroupInstance(Engine, result);
     }
 
     [JSFunction(Name = "getGroupByIndex")]
@@ -68,7 +68,7 @@
       var result = m_groupCollection[index];
       return result == null
         ? null
-        : new SPGroupInstance(this.Engine, result);
+        : new SPGroupInstance(Engine, result);
     }
 
     [JSFunction(Name = "getGroupByName")]
@@ -77,7 +77,7 @@
       var result = m_groupCollection[name];
       return result == null
         ? null
-        : new SPGroupInstance(this.Engine, result);
+        : new SPGroupInstance(Engine, result);
     }
 
     [JSFunction(Name = "toArray")]
@@ -87,7 +87,7 @@
 
       foreach (var group in m_groupCollection.OfType<SPGroup>())
       {
-        ArrayInstance.Push(result, new SPGroupInstance(this.Engine, group));
+          ArrayInstance.Push(result, new SPGroupInstance(Engine, group));
       }
       return result;
     }

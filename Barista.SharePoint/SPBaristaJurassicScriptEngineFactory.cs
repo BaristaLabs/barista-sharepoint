@@ -1,6 +1,5 @@
 ﻿namespace Barista.SharePoint
 {
-    using System.IO;
     using Barista.Bundles;
     using Barista.Engine;
     using Barista.Library;
@@ -11,9 +10,16 @@
     using Jurassic;
     using Jurassic.Library;
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Web;
+    using Barista.DDay.iCal;
     using Ninject;
-    using Ninject.Extensions.Conventions;
+    using Barista.Extensions;
+    using Barista.Newtonsoft.Json.Linq;
+    using Barista.SharePoint.Annotations;
+    using Ninject.Planning.Bindings;
 
     public class SPBaristaJurassicScriptEngineFactory : ScriptEngineFactory
     {
@@ -52,8 +58,9 @@
                 engine.ForceStrictMode = true;
             }
 
-            if (isNewScriptEngineInstance)
-            {
+            if (!isNewScriptEngineInstance)
+                return engine;
+
                 var console = new FirebugConsole(engine)
                 {
                     Output = new SPBaristaConsoleOutput(engine)
@@ -105,14 +112,29 @@
 
                 //Let's do some DI
                 var kernel = new StandardKernel();
-                kernel.Bind(x => x
-                    .FromAssembliesInPath(Path.Combine(binDirectory, "Bundles"))
-                    .SelectAllClasses()
-                    .InheritedFrom<IBundle>()
-                    .BindAllInterfaces()
-                    );
+            BaristaHelper.BindBaristaBundles(kernel, Path.Combine(binDirectory, "bundles"));
 
-                foreach (var bundle in kernel.GetAll<IBundle>())
+            //Let's get information about the approved packages
+            var approvedPackages = new Dictionary<string, IList<ApprovedBundleInfo>>();
+            try
+            {
+                var baristaServiceApplication = BaristaHelper.GetCurrentServiceApplication();
+                if (baristaServiceApplication.Properties.ContainsKey("BaristaPackageApprovals"))
+                {
+                    var packageApprovals =
+                        Convert.ToString(baristaServiceApplication.Properties["BaristaPackageApprovals"]);
+                    if (!packageApprovals.IsNullOrWhiteSpace())
+                    {
+                        approvedPackages = GetApprovedPackages(JObject.Parse(packageApprovals));
+                    }
+                }
+            }
+            catch(Exception)
+            {
+                //Do Nothing...
+            }
+
+            foreach (var bundle in kernel.GetAll<IBundle>(m => IsApprovedPackage(m, approvedPackages)))
                 {
                     instance.Common.RegisterBundle(bundle);
                 }
@@ -202,9 +224,101 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
                     }
                     throw;
                 }
-            }
 
             return engine;
+        }
+
+        private static bool IsApprovedPackage(IBindingMetadata m, IDictionary<string, IList<ApprovedBundleInfo>> approvedPackages)
+        {
+            var packageId = m.Get<string>("baristaPackageId");
+            if (!approvedPackages.ContainsKey(packageId))
+                return false;
+
+            var bundleInfo = approvedPackages[packageId];
+
+            var bundleTypeFullName = m.Get<string>("bundleTypeFullName");
+            var assemblyPath =  m.Get<string>("assemblyPath");
+            var assemblyFullName =  m.Get<string>("assemblyFullName");
+            var assemblyHash = m.Get<string>("assemblyHash");
+
+            return
+                bundleInfo.Any(
+                    bi => string.Equals(bundleTypeFullName, bi.FullTypeName, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyPath, bi.AssemblyPath, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyFullName, bi.AssemblyFullName, StringComparison.OrdinalIgnoreCase) &&
+                          string.Equals(assemblyHash, bi.AssemblyHash, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static Dictionary<string, IList<ApprovedBundleInfo>> GetApprovedPackages(JObject approvedPackages)
+        {
+            var result = new Dictionary<string, IList<ApprovedBundleInfo>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var prop in approvedPackages.Properties().Where(p => p.Value is JObject))
+            {
+                var value = prop.Value as JObject;
+                if (value == null)
+                    continue;
+
+                JToken approvalLevel;
+                if (!value.TryGetValue("approvalLevel", out approvalLevel))
+                    continue;
+
+                if (!string.Equals(approvalLevel.ToString(), "approved", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                JToken packageInfo;
+                if (!value.TryGetValue("packageInfo", out packageInfo))
+                    continue;
+
+                var packageInfoObj = packageInfo as JObject;
+                if (packageInfoObj == null)
+                    continue;
+
+                JToken bundles;
+                if (!packageInfoObj.TryGetValue("bundles", out bundles))
+                    continue;
+
+                var approvedBundleInfo = bundles.ToObject<IList<ApprovedBundleInfo>>();
+
+                if (result.ContainsKey(prop.Name))
+                    result[prop.Name].AddRange(approvedBundleInfo);
+                else
+                    result.Add(prop.Name, approvedBundleInfo);
+            }
+
+            return result;
+        }
+
+        [UsedImplicitly]
+        private class ApprovedBundleInfo
+        {
+            [JsonProperty("bundleTypeFullName")]
+            public string FullTypeName
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyPath")]
+            public string AssemblyPath
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyFullName")]
+            public string AssemblyFullName
+            {
+                get;
+                set;
+            }
+
+            [JsonProperty("assemblyHash")]
+            public string AssemblyHash
+            {
+                get;
+                set;
+            }
         }
     }
 }

@@ -1,0 +1,23 @@
+﻿<table border="0" cellspacing="0" cellpadding="0" width="90%" style="margin: 5px;">
+    <tr>
+        <td style="padding-top: 10px">
+            <b>Barista Packages:</b>
+            <div class="toolbar clearfix">
+                <!--<div class="btn-group">
+                    <a id="btnNewIndex" class="btn btn-primary" data-ng-click="uploadBundle()">
+                        <img src="/_layouts/images/newitem.gif" alt="New"/><span style="color: white;"> Upload Bundle</span>
+                    </a>
+                </div>-->
+                <div class="btn-group btn-group-xs pull-right">
+                    <a id="btnSavePackagesAsDefault" class="btn btn-danger" data-ng-click="savePackagesAsDefault()">
+                        <img src="/_layouts/images/saveitem.gif" alt="Save" /><span style="color: white;"> Save Packages as Default</span>
+                    </a>
+                </div>
+            </div>
+            <div data-ng-if="packages.length > 0" class="gridStyle" data-ng-grid="gridOptions"></div>
+            <div data-ng-if="packages.length <= 0">
+                <i>No packages have been added.</i>
+            </div>
+        </td>
+    </tr>
+</table>

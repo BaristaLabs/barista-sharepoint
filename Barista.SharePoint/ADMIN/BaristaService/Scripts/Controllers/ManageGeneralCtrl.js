@@ -12,7 +12,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         trustedLocation: function () { return null; },
                         isNew: function () { return true; }
                     }
@@ -33,7 +32,6 @@
                     modalFade: true,
                     dialogFade: true,
                     resolve: {
-                        baristaBaseUrl: function () { return $scope.baristaBaseUrl; },
                         trustedLocation: function () { return trustedLocation; },
                         isNew: function () { return false; }
                     }
@@ -50,20 +48,27 @@
 	            templateUrl: "confirmRemoveLocation.html"
 	        });
 
-	        msgbox.result.then(function (result) {
+	        msgbox.result.then(function(result) {
 	            toastr.info('Removing Trusted Location...');
-	            $http.post($scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteTrustedLocation.js', trustedLocation)
-					.success(function (trustedLocations) {
-					    toastr.success("Removed Trusted Location!");
-					    $scope.getTrustedLocations();
-					})
-					.error(function (trustedLocations) {
-					    toastr.error("Unable to remove Trusted Location :(");
-					});
+	            $http({
+	                    method: "POST",
+	                    url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/DeleteTrustedLocation.js',
+	                    params: {
+	                        serviceApplicationId: $scope.getQueryVariable("appid")
+	                    },
+	                    data: trustedLocation
+	                })
+	                .success(function(trustedLocations) {
+	                    toastr.success("Removed Trusted Location!");
+	                    $scope.getTrustedLocations();
+	                })
+	                .error(function(trustedLocations) {
+	                    toastr.error("Unable to remove Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
+	                });
 	        });
 	    };
 
-	    $scope.getTrustedLocations = function () {
+	    $scope.getTrustedLocations = function() {
 	        toastr.options = {
 	            "debug": false,
 	            "positionClass": "toast-bottom-right",
@@ -75,20 +80,49 @@
 	        };
 
 	        toastr.info('Loading Trusted Locations...');
-	        $http.get($scope.baristaBaseUrl + '/_admin/BaristaService/API/GetTrustedLocations.js')
-                .success(function (trustedLocations) {
+	        $http({
+	                method: "GET",
+	                url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/GetTrustedLocations.js',
+	                params: {
+	                    serviceApplicationId: $scope.getQueryVariable("appid")
+	                }
+	            })
+	            .success(function(trustedLocations) {
 
-                    toastr.success("Loaded!");
-                    toastr.clear();
+	                toastr.success("Loaded Trusted Locations!");
+	                toastr.clear();
 
-                    $scope.trustedLocations = trustedLocations;
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
-                })
-                .error(function (trustedLocations) {
-                    toastr.error("Unable to load Trusted Locations :(");
-                });
+	                $scope.trustedLocations = trustedLocations;
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function(trustedLocations) {
+	                toastr.error("Unable to load Trusted Locations :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
+	            });
+	    };
+
+	    $scope.saveLocationsAsDefault = function() {
+	        toastr.info('Saving current Trusted Locations as default for new service applications...');
+	        $http({
+	            method: "GET",
+	            url: $scope.baristaBaseUrl + '/_admin/BaristaService/API/SaveTrustedLocationsAsDefault.js',
+	            params: {
+	                serviceApplicationId: $scope.getQueryVariable("appid")
+	            }
+	        })
+	            .success(function (trustedLocations) {
+
+	                toastr.success("Saved Trusted Locations as default!");
+	                toastr.clear();
+
+	                if (!$scope.$$phase) {
+	                    $scope.$apply();
+	                }
+	            })
+	            .error(function (result) {
+	                toastr.error("Unable to save Trusted Locations as default:(<br/>" + $(result).children(".intro").text(), null, { timeOut: 0 });
+	            });
 	    };
 
 	    $scope.getTrustedLocations();
@@ -106,8 +140,8 @@
 	    };
 	}]);
 
-manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$modalInstance', 'baristaBaseUrl', 'trustedLocation', 'isNew',
-	function ($scope, $http, $modalInstance, baristaBaseUrl, trustedLocation, isNew) {
+manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$rootScope', '$http', '$modalInstance', 'trustedLocation', 'isNew',
+	function ($scope, $rootScope, $http, $modalInstance, trustedLocation, isNew) {
 	    $scope.isNew = isNew;
 	    $scope.trustedLocation = trustedLocation;
 
@@ -119,20 +153,27 @@ manageBarista.controller('AddEditTrustedLocationCtrl', ['$scope', '$http', '$mod
 	            toastr.info('Adding Trusted Location...');
 	        else
 	            toastr.info('Updating Trusted Location...');
-	        $http.post(baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js', $scope.trustedLocation)
-                .success(function (trustedLocations) {
-                    if ($scope.isNew)
-                        toastr.success('Added Trusted Location!');
-                    else
-                        toastr.success('Updated Trusted Location!');
-                    $modalInstance.close(trustedLocations);
-                })
-                .error(function (trustedLocations) {
-                    if ($scope.isNew)
-                        toastr.error("Unable to add Trusted Location :(");
-                    else
-                        toastr.error("Unable to update Trusted Location :(");
-                });
+	        $http({
+	                method: "POST",
+	                url: $rootScope.baristaBaseUrl + '/_admin/BaristaService/API/AddOrUpdateTrustedLocation.js',
+	                params: {
+	                    serviceApplicationId: $rootScope.getQueryVariable("appid")
+	                },
+	                data: $scope.trustedLocation
+	            })
+	            .success(function(trustedLocations) {
+	                if ($scope.isNew)
+	                    toastr.success('Added Trusted Location!');
+	                else
+	                    toastr.success('Updated Trusted Location!');
+	                $modalInstance.close(trustedLocations);
+	            })
+	            .error(function(trustedLocations) {
+	                if ($scope.isNew)
+	                    toastr.error("Unable to add Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
+	                else
+	                    toastr.error("Unable to update Trusted Location :(<br/>" + $(trustedLocations).children(".intro").text(), null, { timeOut: 0 });
+	            });
 	    };
 
 	    $scope.cancel = function () {

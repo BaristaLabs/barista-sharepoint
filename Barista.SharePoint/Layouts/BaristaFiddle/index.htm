@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <meta http-equiv="X-UA-Compatible" content="IE=8" />
+    <meta http-equiv="X-UA-Compatible" content="edge" />
     <!-- Le styles -->
     <link rel="shortcut icon" href="favicon.ico">
     <link href="Vendor/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -101,18 +101,18 @@
         }
     </style>
 
-    <link href="Vendor/CodeMirror-5.3.0/lib/codemirror.css" rel="stylesheet">
-    <link href="Vendor/CodeMirror-5.3.0/addon/dialog/dialog.css" rel="stylesheet">
-    <link href="Vendor/CodeMirror-5.3.0/addon/hint/show-hint.css" rel="stylesheet">
-    <link href="Vendor/CodeMirror-5.3.0/addon/lint/lint.css" rel="stylesheet">
-    <link href="Vendor/CodeMirror-5.3.0/addon/fold/foldgutter.css" rel="stylesheet">
-    <link href="Vendor/CodeMirror-5.3.0/addon/tern/tern.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/codemirror.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/dialog.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/show-hint.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/lint.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/foldgutter.css" rel="stylesheet">
+    <link href="Vendor/CodeMirror-5.3.0/tern.css" rel="stylesheet">
     <link href="Vendor/CodeMirror-5.3.0/theme/neat.css" rel="stylesheet">
     <link href="Vendor/kendoui.professional.2015.1.429/styles/kendo.common.min.css" rel="stylesheet" />
     <link href="Vendor/kendoui.professional.2015.1.429/styles/kendo.default.min.css" rel="stylesheet" />
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="Vendor/html5shiv.js"></script>
+      <script src="Vendor/html5shiv.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -124,7 +124,7 @@
                         <a id="btnRun" class="btn btn-primary navbar-btn disabled" href="#"><i class="glyphicon glyphicon-play glyphicon-white"></i> Run</a>
                     </div>
                 </li>
-                <li class="divider-vertical" />
+                <li class="divider-vertical"></li>
                 <li>
                     <div class="btn-group">
                         <a id="btnOpen" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-folder-open"></i> Open</a>
@@ -135,7 +135,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="divider-vertical" />
+                <li class="divider-vertical"></li>
                 <li>
                     <div class="btn-group">
                         <a id="btnTidyUp" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-align-left"></i> TidyUp</a>
@@ -146,7 +146,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="divider-vertical" />
+                <li class="divider-vertical"></li>
                 <li class="pull-right">
                     <div class="btn-group">
                         <a id="btnSettings" class="btn btn-default navbar-btn" href="#"><i class="glyphicon glyphicon-wrench"></i> Settings</a>
@@ -169,7 +169,7 @@
                         <div id="right-pane">
                             <div class="pane-content">
                                 <div id="resultLoading" class="alert alert-info" style="display: none;">
-                                   Retrieving Result...
+                                    Retrieving Result...
                                 </div>
                                 <pre style="border: none;" id="result"></pre>
                                 <iframe id="htmlResult" style="display: none; width: 100%; height: 100%; border: none; background-color: White;"></iframe>
@@ -180,7 +180,7 @@
                 <div id="bottom-pane">
                     <div class="pane-content">
                         <div id="ulsLogLoading" class="alert alert-info" style="display: none;">
-                           Retrieving Uls Log Result...
+                            Retrieving Uls Log Result...
                         </div>
                         <div id="gridContainer" style="height: 100%; padding-bottom: 40px;">
                             <div id="ulsGrid"></div>
@@ -195,155 +195,155 @@
     <div class="modal" id="openDialog" tabindex="-1" role="dialog" aria-labelledby="openDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="openDialogLabel">Open</h3>
-      </div>
-      <div class="modal-body">
-        <div id="openDialogRetrievingFolders" class="alert alert-info" style="display: none">
-            Retrieving Files...
-        </div>
-        <div id="openDialogTreeView"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button id="openDialogOpenButton" class="btn btn-primary disabled">Open</button>
-      </div>
-    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="openDialogLabel">Open</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="openDialogRetrievingFolders" class="alert alert-info" style="display: none">
+                        Retrieving Files...
+                    </div>
+                    <div id="openDialogTreeView"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button id="openDialogOpenButton" class="btn btn-primary disabled">Open</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="modal" id="saveAlertsDialog" tabindex="-1" role="dialog" aria-labelledby="saveAlertsDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="saveAlertsDialogLabel">Saving...</h3>
-      </div>
-      <div class="modal-body">
-        <div id="saveAlertsDialogRetrievingFile" class="alert alert-info" style="display: none">
-            Retrieving target file info...
-        </div>
-        <div id="saveAlertsDialogAlertArea">
-            <div id="docLibDoesNotExistAlert" class="alert alert-error" style="display: none">
-              <strong>Error!</strong> The specified Document Library does not exist.
-                <p>
-                    <a id="A1" class="btn disabled" href="#">Create the document library</a>
-                </p>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="saveAlertsDialogLabel">Saving...</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="saveAlertsDialogRetrievingFile" class="alert alert-info" style="display: none">
+                        Retrieving target file info...
+                    </div>
+                    <div id="saveAlertsDialogAlertArea">
+                        <div id="docLibDoesNotExistAlert" class="alert alert-error" style="display: none">
+                            <strong>Error!</strong> The specified Document Library does not exist.
+                            <p>
+                                <a id="A1" class="btn disabled" href="#">Create the document library</a>
+                            </p>
+                        </div>
+                        <div id="requiresCheckoutNotCheckedOutAlert" class="alert alert-error" style="display: none">
+                            <strong>Error!</strong> Check out is required and the file is not checked out.
+                            <p>
+                                <a id="btnSaveAlertsDialogCheckout" class="btn" href="#">Check out file</a>
+                            </p>
+                        </div>
+                        <div id="checkedOutToAnotherUserAlert" class="alert alert-error" style="display: none">
+                            <strong>Error!</strong> File is checked out to another user.
+                        </div>
+                        <div id="fileContentsHaveChangedAlert" class="alert" style="display: none">
+                            <strong>Warning!</strong> File contents have been changed since last load.
+                        </div>
+                        <div id="moderationNotEnabledAlert" class="alert" style="display: none">
+                            <strong>Warning!</strong> Moderation is not enabled on the target document library, your changes will take effect once the file has been checked in.
+                        </div>
+                        <div id="versioningNotEnabledAlert" class="alert" style="display: none">
+                            <strong>Warning!</strong> Versioning is not enabled on the target document library, file history will not be preserved.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button id="btnSaveAnyway" class="btn btn-primary disabled">Save Anyway</button>
+                </div>
             </div>
-            <div id="requiresCheckoutNotCheckedOutAlert" class="alert alert-error" style="display: none">
-              <strong>Error!</strong> Check out is required and the file is not checked out.
-                <p>
-                    <a id="btnSaveAlertsDialogCheckout" class="btn" href="#">Check out file</a>
-                </p>
-            </div>
-            <div id="checkedOutToAnotherUserAlert" class="alert alert-error" style="display: none">
-              <strong>Error!</strong> File is checked out to another user.
-            </div>
-            <div id="fileContentsHaveChangedAlert" class="alert" style="display: none">
-              <strong>Warning!</strong> File contents have been changed since last load.
-            </div>
-            <div id="moderationNotEnabledAlert" class="alert" style="display: none">
-              <strong>Warning!</strong> Moderation is not enabled on the target document library, your changes will take effect once the file has been checked in.
-            </div>
-            <div id="versioningNotEnabledAlert" class="alert" style="display: none">
-              <strong>Warning!</strong> Versioning is not enabled on the target document library, file history will not be preserved.
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button id="btnSaveAnyway" class="btn btn-primary disabled">Save Anyway</button>
-      </div>
-    </div>
         </div>
     </div>
 
     <div class="modal" id="saveAsDialog" tabindex="-1" role="dialog" aria-labelledby="saveAsDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="saveAsDialogLabel">Save As...</h3>
-      </div>
-      <div class="modal-body">
-        <div id="saveAsDialogRetrievingFolders" class="alert alert-info">
-            TODO: Implement a treeview that displays a drill-down of all Document Libraries/Folders/JS Files on the current web.
-        </div>
-        <div id="saveAsDialogTreeView"></div>
-        <div>
-            <input id="saveAsFileUrl" type="text" placeholder="Type the full path of the file to be saved..." style="width: 80%;" />
-            <span class="help-block">Until the fancy tree view is implemented, type the full path of the file to be saved.</span>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="saveAsDialogLabel">Save As...</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="saveAsDialogRetrievingFolders" class="alert alert-info">
+                        TODO: Implement a treeview that displays a drill-down of all Document Libraries/Folders/JS Files on the current web.
+                    </div>
+                    <div id="saveAsDialogTreeView"></div>
+                    <div>
+                        <input id="saveAsFileUrl" type="text" placeholder="Type the full path of the file to be saved..." style="width: 80%;" />
+                        <span class="help-block">Until the fancy tree view is implemented, type the full path of the file to be saved.</span>
                         <span class="help-block">E.g.: http://mysharepointsite/Lists/Scripts/myScript.js</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button id="btnSaveAsSave" class="btn btn-primary">Save</button>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button id="btnSaveAsSave" class="btn btn-primary">Save</button>
-      </div>
     </div>
-      </div>
-      </div>
 
     <div class="modal" id="getEvalUrlDialog" tabindex="-1" role="dialog" aria-labelledby="getEvalUrlLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="getEvalUrlLabel">Eval Url</h3>
-      </div>
-      <div class="modal-body">
-        <pre id="evalUrl"></pre>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal">OK</button>
-      </div>
-    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="getEvalUrlLabel">Eval Url</h3>
+                </div>
+                <div class="modal-body">
+                    <pre id="evalUrl"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="modal" id="unitTestDialog" tabindex="-1" role="dialog" aria-labelledby="unitTestDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="unitTestDialogLabel">Unit Test</h3>
-      </div>
-      <div class="modal-body">
-        <pre id="unitTestCode"></pre>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal">OK</button>
-      </div>
-    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="unitTestDialogLabel">Unit Test</h3>
+                </div>
+                <div class="modal-body">
+                    <pre id="unitTestCode"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script id="unitTestTemplate" type="text/x-kendo-template">
-asyncTest("[Your Unit Test Title]", function () {
-    expect(1);
+        asyncTest("[Your Unit Test Title]", function () {
+        expect(1);
 
-    var code = "#= data #";
+        var code = "#= data #";
 
-    var request = jQuery.ajax({
+        var request = jQuery.ajax({
         type: 'POST',
         contentType: "application/json; charset=utf-8",
         url: getDomain() + "/_vti_bin/Barista/v1/Barista.svc/eval",
         data: JSON.stringify({ code: code })
-    });
+        });
 
-    request.done(function (data, textStatus, jqXHR) {
+        request.done(function (data, textStatus, jqXHR) {
         ok(1 == 0, "Define your test case(s) here.");
         start();
-    });
+        });
 
-    request.fail(function () {
+        request.fail(function () {
         ok(1 == 0, "Call to service failed.");
         start();
-    });
-});
+        });
+        });
     </script>
-    
+
     <div class="modal" id="helpDialog" tabindex="-1" role="dialog" aria-labelledby="helpDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -370,41 +370,10 @@ asyncTest("[Your Unit Test Title]", function () {
 
     <!-- Le javascript
     ================================================== -->
-    <script src="Vendor/storejson2.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/beautify.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/jshint.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/kendoui.professional.2015.1.429/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/jquery.ba-resize.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/jquery.hotkeys.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/bootstrap-3.3.4-dist/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="Vendor/kendoui.professional.2015.1.429/js/kendo.web.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/lib/codemirror.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/lint/lint.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/lint/javascript-lint.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/fold/foldcode.js"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/fold/foldgutter.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/fold/brace-fold.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/fold/comment-fold.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/search/searchcursor.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/search/match-highlighter.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/selection/active-line.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/dialog/dialog.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/hint/show-hint.js" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/addon/tern/tern.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/codemirror-5.3.0/mode/javascript/javascript.js" type="text/javascript" charset="utf-8"></script>
-    <script src="Vendor/Acorn-1.2.2/acorn.js"></script>
-    <script src="Vendor/Acorn-1.2.2/acorn_loose.js"></script>
-    <script src="Vendor/Acorn-1.2.2/walk.js"></script>
-    <script src="Vendor/tern-0.10.0/polyfill.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/signal.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/tern.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/def.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/comment.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/infer.js"></script>
-    <script src="Vendor/tern-0.10.0/lib/condense.js"></script>
-    <script src="Vendor/tern-0.10.0/plugin/doc_comment.js"></script>
-    <script src="Vendor/tern-0.10.0/plugin/complete_strings.js"></script>
-    <script src="Vendor/tern-0.10.0/plugin/barista.js"></script>
+    <script src="BaristaFiddle.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         var editor = null;
         var currentUser = null;
@@ -418,6 +387,7 @@ asyncTest("[Your Unit Test Title]", function () {
         var baristaInstanceAbsoluteExpiration = null;
         var baristaInstanceSlidingExpiration = null;
         var baristaInstanceInitializationCode = null;
+        var baristaFiddleIsInitializing = true;
 
         var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
 
@@ -440,7 +410,7 @@ asyncTest("[Your Unit Test Title]", function () {
                     "Alt-,": function (cm) { if (server) server.jumpBack(cm); },
                     "Ctrl-Q": function (cm) { if (server) server.rename(cm); },
                     "Ctrl-.": function (cm) { if (server) server.selectName(cm); }
-                    },
+                },
                 theme: "neat",
                 indentUnit: 4,
                 foldGutter: true,
@@ -525,7 +495,7 @@ asyncTest("[Your Unit Test Title]", function () {
                                 { field: "Category", title: "Category", width: "140px" },
                                 { field: "Level", title: "Level", width: "70px" },
                                 { field: "Message", title: "Message", width: "100%" }
-                            ]
+                ]
             });
         }
 
@@ -718,6 +688,9 @@ asyncTest("[Your Unit Test Title]", function () {
         }
 
         function executeCode() {
+            if (baristaFiddleIsInitializing)
+                return;
+
             var code = getScriptValue();
             store.set("BaristaCode", code);
             $("#result").hide();
@@ -844,8 +817,6 @@ asyncTest("[Your Unit Test Title]", function () {
             });
         }
 
-        var baristaFiddleIsInitializing = true;
-
         function updateStoredSettings() {
 
             if (baristaFiddleIsInitializing === true)
@@ -902,7 +873,7 @@ asyncTest("[Your Unit Test Title]", function () {
 
                 if (!isNaN(index) && index < panes.length) {
                     return panes[index];
-            }
+                }
             };
 
             var verticalSplitter = $("#vertical").kendoSplitter({
@@ -915,7 +886,7 @@ asyncTest("[Your Unit Test Title]", function () {
                     updateStoredSettings();
                 },
                 resize: function (e) {
-            updateStoredSettings();
+                    updateStoredSettings();
                 }
             }).data("kendoSplitter");
 
@@ -923,7 +894,7 @@ asyncTest("[Your Unit Test Title]", function () {
                 panes: horizontalSplitterPanes,
                 resize: function (e) {
                     $("#htmlResult").css("height", ($("#top-pane").height() - 3) + "px");
-            updateStoredSettings();
+                    updateStoredSettings();
                 }
             }).data("kendoSplitter");
 
@@ -951,25 +922,25 @@ asyncTest("[Your Unit Test Title]", function () {
 
             if (selectedFile != null) {
                 jQuery.ajax({
-                        type: 'GET',
-                        contentType: "application/json; charset=utf-8",
-                        url: selectedFile.fileUrl,
-                        cache: false,
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    url: selectedFile.fileUrl,
+                    cache: false,
                     complete: function (data) {
-                            setScriptValue(data.responseText);
-                            $('#openDialog').modal('hide');
-                            currentFileInfo = selectedFile;
-                            currentDocLibInfo = selectedDocLib;
-                            $('#btnSave').tooltip('destroy');
-                            $('#btnSave').tooltip({
-                                title: selectedFile.fileUrl,
-                                placement: "bottom"
-                            });
-                        },
+                        setScriptValue(data.responseText);
+                        $('#openDialog').modal('hide');
+                        currentFileInfo = selectedFile;
+                        currentDocLibInfo = selectedDocLib;
+                        $('#btnSave').tooltip('destroy');
+                        $('#btnSave').tooltip({
+                            title: selectedFile.fileUrl,
+                            placement: "bottom"
+                        });
+                    },
                     error: function () {
-                            //do something...
-                        }
-                    });
+                        //do something...
+                    }
+                });
             }
         });
 
@@ -996,8 +967,8 @@ asyncTest("[Your Unit Test Title]", function () {
                 data: { f: currentFileInfo.fileUrl },
                 success: function () {
                     validateSaveFile(currentFileInfo.fileUrl);
-                    }
-                });
+                }
+            });
         });
 
         $('#btnSaveAnyway').tooltip({

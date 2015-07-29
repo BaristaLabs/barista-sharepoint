@@ -1052,7 +1052,7 @@
             if (bestMatch == SPContentTypeId.Empty)
                 return null;
 
-            SPContentType spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
+            var spContentType = m_list.ContentTypes.Add(m_list.ParentWeb.AvailableContentTypes[bestMatch]);
 
             return new SPContentTypeInstance(Engine.Object.InstancePrototype, spContentType);
         }

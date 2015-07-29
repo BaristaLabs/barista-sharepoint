@@ -1,7 +1,6 @@
-﻿using System.Globalization;
-
-namespace Barista
+﻿namespace Barista
 {
+    using System.Globalization;
     using Barista.Engine;
     using Barista.Extensions;
     using Barista.Library;
@@ -23,14 +22,14 @@ namespace Barista
     {
         public BrewResponse()
         {
-            this.Cookies = new List<IBaristaCookie>(2);
-            this.ContentLength = 0;
-            this.ContentType = "application/json";
-            this.Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            this.StatusCode = HttpStatusCode.OK;
-            this.StatusDescription = "OK";
-            this.SuppressContent = false;
-            this.ExtendedProperties = new Dictionary<string, string>();
+            Cookies = new List<IBaristaCookie>(2);
+            ContentLength = 0;
+            ContentType = "application/json";
+            Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            StatusCode = HttpStatusCode.OK;
+            StatusDescription = "OK";
+            SuppressContent = false;
+            ExtendedProperties = new Dictionary<string, string>();
         }
 
         [DataMember]
@@ -60,8 +59,8 @@ namespace Barista
         [IgnoreDataMember]
         public string ContentType
         {
-            get { return Headers.ContainsKey("content-type") ? Headers["content-type"] : this.m_contentType; }
-            set { this.m_contentType = value; }
+            get { return Headers.ContainsKey("content-type") ? Headers["content-type"] : m_contentType; }
+            set { m_contentType = value; }
         }
 
         [DataMember]
@@ -112,8 +111,8 @@ namespace Barista
         {
             SetHttpResponseHeaders(webResponse);
 
-            webResponse.ContentLength = this.ContentLength;
-            webResponse.ContentType = this.ContentType;
+            webResponse.ContentLength = ContentLength;
+            webResponse.ContentType = ContentType;
 
             if (ContentType != null)
             {
@@ -145,16 +144,16 @@ namespace Barista
         {
             if (setHeaders)
             {
-                foreach (var header in this.Headers.Keys)
+                foreach (var header in Headers.Keys)
                 {
                     if (response.Headers.AllKeys.Any(k => k == header))
-                        response.Headers.Set(header, this.Headers[header]);
+                        response.Headers.Set(header, Headers[header]);
                     else
-                        response.Headers.Add(header, this.Headers[header]);
+                        response.Headers.Add(header, Headers[header]);
                 }
             }
 
-            foreach (var cookie in this.Cookies)
+            foreach (var cookie in Cookies)
             {
                 if (response.Cookies.AllKeys.Any(k => k == cookie.Name))
                     response.Cookies.Set(new HttpCookie(cookie.Name, cookie.ToString()));
@@ -162,13 +161,13 @@ namespace Barista
                     response.Cookies.Add(new HttpCookie(cookie.Name, cookie.ToString()));
             }
 
-            response.ContentType = this.ContentType;
+            response.ContentType = ContentType;
 
             if (setHeaders)
-                response.StatusDescription = this.StatusDescription;
+                response.StatusDescription = StatusDescription;
 
-            response.StatusCode = (int)this.StatusCode;
-            response.SuppressContent = this.SuppressContent;
+            response.StatusCode = (int)StatusCode;
+            response.SuppressContent = SuppressContent;
         }
 
         /// <summary>
@@ -183,9 +182,10 @@ namespace Barista
             byte[] byteArray;
             if (isRaw)
             {
-                if (result is Base64EncodedByteArrayInstance)
+                var instance = result as Base64EncodedByteArrayInstance;
+                if (instance != null)
                 {
-                    byteArray = (result as Base64EncodedByteArrayInstance).Data;
+                    byteArray = instance.Data;
                 }
                 else if (result is StringInstance || result is string)
                 {
@@ -198,31 +198,35 @@ namespace Barista
                     byteArray = StringHelper.StringToByteArray(result.ToString());
                 }
             }
-            else if (result is Base64EncodedByteArrayInstance)
-            {
-                var arrayResult = result as Base64EncodedByteArrayInstance;
-                byteArray = arrayResult.Data;
-            }
-            else if (TypeUtilities.IsString(result))
-            {
-                var stringResult = TypeConverter.ToString(result) ?? String.Empty;
-                byteArray = Encoding.UTF8.GetBytes(stringResult);
-            }
             else
             {
-                //Obtain the script result and stringify it -- e.g. convert it to a json object.
-                var stringResult = engine.Stringify(result, null, null);
-                if (String.IsNullOrEmpty(stringResult) || (String.IsNullOrEmpty(stringResult.Trim())))
+                var instance = result as Base64EncodedByteArrayInstance;
+                if (instance != null)
                 {
-                    byteArray = new byte[0];
+                    var arrayResult = instance;
+                    byteArray = arrayResult.Data;
+                }
+                else if (TypeUtilities.IsString(result))
+                {
+                    var stringResult = TypeConverter.ToString(result) ?? String.Empty;
+                    byteArray = Encoding.UTF8.GetBytes(stringResult);
                 }
                 else
                 {
-                    byteArray = Encoding.UTF8.GetBytes(stringResult.ToString(CultureInfo.InvariantCulture));
+                    //Obtain the script result and stringify it -- e.g. convert it to a json object.
+                    var stringResult = engine.Stringify(result, null, null);
+                    if (String.IsNullOrEmpty(stringResult) || (String.IsNullOrEmpty(stringResult.Trim())))
+                    {
+                        byteArray = new byte[0];
+                    }
+                    else
+                    {
+                        byteArray = Encoding.UTF8.GetBytes(stringResult.ToString(CultureInfo.InvariantCulture));
+                    }
                 }
             }
 
-            this.Content = byteArray;
+            Content = byteArray;
         }
 
 
@@ -240,9 +244,10 @@ namespace Barista
                 contentType = "application/json";
             }
 
-            if (result is Base64EncodedByteArrayInstance)
+            var array = result as Base64EncodedByteArrayInstance;
+            if (array != null)
             {
-                var base64EncodedByteArray = result as Base64EncodedByteArrayInstance;
+                var base64EncodedByteArray = array;
                 contentType = base64EncodedByteArray.MimeType;
             }
             else if (TypeUtilities.IsString(result))

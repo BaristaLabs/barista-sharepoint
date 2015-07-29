@@ -56,7 +56,7 @@
         [JSFunction(Name = "clearCurrentInstance")]
         public bool ClearCurrentInstance()
         {
-            bool result = true;
+            var result = true;
             var instanceSettings = SPBaristaContext.Current.Request.ParseInstanceSettings();
 
             switch (instanceSettings.InstanceMode)
@@ -70,6 +70,29 @@
             }
 
             return result;
+        }
+
+        [JSFunction(Name = "listPackages")]
+        public object ListPackages()
+        {
+            var objBundles = BaristaHelper.ListPackages();
+
+            var bundlesString = objBundles.ToString();
+
+            return JSONObject.Parse(Engine, bundlesString, null);
+        }
+
+        [JSFunction(Name = "getPackageInfo")]
+        public object GetPackageInfo(string packageId)
+        {
+            var objBundles = BaristaHelper.GetPackageInfo(packageId);
+
+            if (objBundles == null)
+                return Undefined.Value;
+
+            var bundlesString = objBundles.ToString();
+
+            return JSONObject.Parse(Engine, bundlesString, null);
         }
 
         #region Internal Functions

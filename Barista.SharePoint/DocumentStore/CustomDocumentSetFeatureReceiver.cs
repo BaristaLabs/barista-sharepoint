@@ -92,7 +92,7 @@
         throw new ArgumentNullException("receiver");
       }
 
-      this.AddEventHandler(contentType, name, receiver.Assembly.FullName, receiver.FullName, type, sequence, sync);
+            AddEventHandler(contentType, name, receiver.Assembly.FullName, receiver.FullName, type, sequence, sync);
     }
 
     /// <summary> 
@@ -141,10 +141,10 @@
     /// </param> 
     public override void FeatureActivated(SPFeatureReceiverProperties properties)
     {
-      this.EnsureContext(properties);
-      foreach (SPContentTypeId id in this.ContentTypeIds)
+            EnsureContext(properties);
+            foreach (SPContentTypeId id in ContentTypeIds)
       {
-        this.ProvisionDocumentSet(id);
+                ProvisionDocumentSet(id);
       }
     }
 
@@ -167,19 +167,19 @@
         throw new ArgumentNullException("manager");
       }
 
-      if (this.Web == null)
+            if (Web == null)
       {
         throw new InvalidOperationException("You must call EnsureContext method before calling this method.");
       }
 
-      string data = this.Web.GetFileAsString(definition);
+            string data = Web.GetFileAsString(definition);
       if (data != null)
       {
         WebPart webPart;
-        using (StringReader reader = new StringReader(data))
+                using (var reader = new StringReader(data))
         {
           string errorMessage;
-          XmlTextReader xmlTextReader = new XmlTextReader(reader);
+                    var xmlTextReader = new XmlTextReader(reader);
           webPart = manager.ImportWebPart(xmlTextReader, out errorMessage);
           if (webPart == null)
           {
@@ -204,7 +204,7 @@
         throw new ArgumentNullException("file");
       }
 
-      return this.Web.GetLimitedWebPartManager(file.Url, PersonalizationScope.Shared);
+            return Web.GetLimitedWebPartManager(file.Url, PersonalizationScope.Shared);
     }
 
     /// <summary> 
@@ -309,12 +309,12 @@
         return false;
       }
 
-      if (this.EnsureWebParts)
+            if (EnsureWebParts)
       {
         return false;
       }
 
-      return this.GetWelcomePageWebPartmanager(GetWelcomePage(contentType)).WebParts.Count > 1;
+            return GetWelcomePageWebPartmanager(GetWelcomePage(contentType)).WebParts.Count > 1;
     }
 
     /// <summary> 
@@ -329,15 +329,15 @@
         throw new ArgumentNullException("properties");
       }
 
-      this.Properties = properties;
-      this.Scope = properties.Definition.Scope;
-      switch (this.Scope)
+            Properties = properties;
+            Scope = properties.Definition.Scope;
+            switch (Scope)
       {
         case SPFeatureScope.Site:
-          this.SetContextSite(properties.Feature.Parent as SPSite);
+                    SetContextSite(properties.Feature.Parent as SPSite);
           break;
         case SPFeatureScope.Web:
-          this.SetContextWeb(properties.Feature.Parent as SPWeb);
+                    SetContextWeb(properties.Feature.Parent as SPWeb);
           break;
       }
     }
@@ -348,13 +348,14 @@
     /// <param name="contentTypeId">The conten type id.</param> 
     private void ProvisionDocumentSet(SPContentTypeId contentTypeId)
     {
-      SPContentType contentType = this.Site.RootWeb.ContentTypes[contentTypeId];
-      if (this.Deployed(contentType))
+            var bestMatchContentTypeId = Site.RootWeb.ContentTypes.BestMatch(contentTypeId);
+            var contentType = Site.RootWeb.ContentTypes[bestMatchContentTypeId];
+            if (Deployed(contentType))
       {
         return;
       }
 
-      this.ProvisionDocumentSet(contentType);
+            ProvisionDocumentSet(contentType);
     }
 
     /// <summary> 
@@ -363,11 +364,11 @@
     /// <param name="contentType">Type of the content.</param> 
     private void ProvisionDocumentSet(SPContentType contentType)
     {
-      this.ProvisionEventHandler(contentType);
+            ProvisionEventHandler(contentType);
       SPFile file = ProvisionWelcomePage(contentType);
-      using (SPLimitedWebPartManager manager = this.GetWelcomePageWebPartmanager(file))
+            using (SPLimitedWebPartManager manager = GetWelcomePageWebPartmanager(file))
       {
-        if (this.EnsureWebParts)
+                if (EnsureWebParts)
         {
           if (manager.WebParts != null)
           {
@@ -379,7 +380,7 @@
           }
         }
 
-        this.ProvisionWebParts(manager);
+                ProvisionWebParts(manager);
       }
     }
 
@@ -389,7 +390,7 @@
     /// <param name="contentType">The content type.</param> 
     private void ProvisionEventHandler(SPContentType contentType)
     {
-      this.AddEventHandler(
+            AddEventHandler(
           contentType,
           "DocumentSet ItemUpdated",
           "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
@@ -398,7 +399,7 @@
           100,
           SPEventReceiverSynchronization.Synchronous);
 
-      this.AddEventHandler(
+            AddEventHandler(
           contentType,
           "DocumentSet ItemAdded",
           "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
@@ -420,8 +421,8 @@
         throw new ArgumentNullException("site");
       }
 
-      this.Site = site;
-      this.Web = site.RootWeb;
+            Site = site;
+            Web = site.RootWeb;
     }
 
     /// <summary> 
@@ -436,8 +437,8 @@
         throw new ArgumentNullException("web");
       }
 
-      this.Web = web;
-      this.Site = web.Site;
+            Web = web;
+            Site = web.Site;
     }
 
     #endregion

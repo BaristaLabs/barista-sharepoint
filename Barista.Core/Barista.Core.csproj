@@ -110,8 +110,8 @@
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net35\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz, Version=2.3.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quartz.2.3.2\lib\net40\Quartz.dll</HintPath>
+    <Reference Include="Ninject.Extensions.Conventions, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Conventions.3.2.0.0\lib\net45-full\Ninject.Extensions.Conventions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, PublicKeyToken=42bc9a5dd52bbc2c, processorArchitecture=MSIL">
@@ -147,11 +147,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllDirectoriesAssemblyFinder.cs" />
     <Compile Include="ArraySegmentEx.cs" />
     <Compile Include="ArraySegmentList.cs" />
     <Compile Include="AssemblyUtil.cs" />
     <Compile Include="BaristaConsoleOutput.cs" />
     <Compile Include="BaristaContext.cs" />
+    <Compile Include="BaristaIndexDefinition.cs" />
     <Compile Include="Biscotti.cs" />
     <Compile Include="BaristaException.cs" />
     <Compile Include="BaristaInstanceMode.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="BaristaResponseMessage.cs" />
     <Compile Include="BrewRequestHeaders.cs" />
     <Compile Include="BrewRequestInstanceSettings.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
     <Compile Include="BufferManager.cs" />
@@ -216,6 +219,9 @@
     <Compile Include="Etag.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\FileSystemExtensions.cs" />
+    <Compile Include="Extensions\IKernelExtensions.cs" />
+    <Compile Include="Extensions\NativeWin32.cs" />
     <Compile Include="Extensions\WebOperationContextExtensions.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehavior.cs" />
     <Compile Include="Framework\NewtonsoftJsonBehaviorExtension.cs" />
@@ -1467,7 +1473,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DocumentStore\FileSystem\" />
@@ -1476,6 +1484,7 @@
     <Folder Include="DocumentStore\SharpKit\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\package.json" />
     <None Include="Resources\jsonDataHandler.js" />
   </ItemGroup>
   <ItemGroup>

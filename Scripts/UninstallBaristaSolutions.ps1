@@ -24,6 +24,8 @@ function RetractSolution($solution) {
 		return;
 	}
 
+	[string]$name = $solution.Name
+
 	#Retract the solution
 	if ($solution.Deployed) {
 		Write-Progress -Activity "Uninstalling solution $name" -Status "Retracting $name" -PercentComplete 0
@@ -46,27 +48,21 @@ function RetractSolution($solution) {
 write-host 
 LoadSharePointPowerShellEnvironment
 
+#Retract/Remove any associated solutions that may have dependencies on Barista.
 $solution = Get-SPSolution "OFS.AMS.SharePoint.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);
-$solution = Get-SPSolution "OFS.CAT.SharePoint.Core.wsp" -ErrorAction SilentlyContinue
-RetractSolution($solution);
-$solution = Get-SPSolution "Barista.SharePoint.WorkflowActivities.wsp" -ErrorAction SilentlyContinue
-RetractSolution($solution);
+
 $solution = Get-SPSolution "Barista.SharePoint.WebParts.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);
 
-$identity = "90fb8db4-2b5f-4de7-882b-6faba092942c";
+$solution = Get-SPSolution "Barista.SharePoint.WorkflowActivities.wsp" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
-Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabling $identity" -PercentComplete -1
+$solution = Get-SPSolution "OFS.CAT.SharePoint.Core.wsp" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
-						$args = @"
-Add-PSSnapin "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue
-Disable-SPFeature –Identity $($identity) -force -Confirm:0 -ErrorAction SilentlyContinue
-"@
-
-& powershell.exe -Version 3 $args
-Write-Progress -Activity "Disabling Farm Feature $identity" -Status "Disabled" -Completed
-
+$solution = Get-SPSolution -id "90fb8db4-2b5f-4de7-882b-6faba092942c" -ErrorAction SilentlyContinue
+RetractSolution($solution);
 
 $solution = Get-SPSolution "Barista.SharePoint.wsp" -ErrorAction SilentlyContinue
 RetractSolution($solution);

@@ -81,6 +81,13 @@ write-host "  Granting $user 'FULL CONTROL' to service application..." -foregrou
 Grant-SPObjectSecurity $security $userClaim -Rights "Full Control"
 Set-SPServiceApplicationSecurity $serviceApp $security
 
+write-host "  Creating new claim for $user..." -foregroundcolor Gray
+$userClaim = New-SPClaimsPrincipal -Identity $ManagedAccount -IdentityType WindowsSamAccountName
+
+write-host "  Granting $ManagedAccount 'FULL CONTROL' to service application..." -foregroundcolor Gray
+Grant-SPObjectSecurity $security $userClaim -Rights "Full Control"
+Set-SPServiceApplicationSecurity $serviceApp $security
+
 write-host "Barista Service Application permissions set." -foregroundcolor Green
 
 # [[[[[[[[STEP]]]]]]]]
@@ -117,7 +124,9 @@ if ($localServiceInstance.Status -eq 'Provisioning') {
 if ($localServiceInstance.Status -eq 'Unprovisioning') {
 	$tj = Get-SPTimerJob | where { $_.Title -like "Disabling Barista Service*" }
 	if ($tj -ne $null) {
+		$tj.Unprovision()
 		$tj.Delete()
+		$tj.Uncache()
 	}
 	$localServiceInstance.Unprovision()
 }

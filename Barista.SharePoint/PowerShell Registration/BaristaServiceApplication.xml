@@ -47,5 +47,10 @@
       <ps:ClassName>Barista.SharePoint.InvokeBaristaService</ps:ClassName>
       <ps:HelpFile />
     </ps:Cmdlet>
+    <ps:Cmdlet>
+      <ps:VerbName>Deploy-BaristaPackage</ps:VerbName>
+      <ps:ClassName>Barista.SharePoint.DeployBaristaPackage</ps:ClassName>
+      <ps:HelpFile />
+    </ps:Cmdlet>
   </ps:Assembly>
 </ps:Config>

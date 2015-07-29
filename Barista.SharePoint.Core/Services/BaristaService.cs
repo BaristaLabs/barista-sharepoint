@@ -30,7 +30,7 @@
                 throw new ArgumentNullException("provisioningContext");
 
             // if the service doesn't already exist, create it
-            var serviceApp = this.Farm.GetObject(name, this.Id, serviceApplicationType) as BaristaServiceApplication ??
+            var serviceApp = Farm.GetObject(name, Id, serviceApplicationType) as BaristaServiceApplication ??
                                                    BaristaServiceApplication.Create(name, this, provisioningContext.IisWebServiceApplicationPool);
 
             return serviceApp;
@@ -45,7 +45,7 @@
                 throw new ArgumentNullException("serviceApplication");
 
             // verify the service proxy exists
-            var serviceProxy = (BaristaServiceProxy)this.Farm.GetObject(name, this.Farm.Id, typeof(BaristaServiceProxy));
+            var serviceProxy = (BaristaServiceProxy)Farm.GetObject(name, Farm.Id, typeof(BaristaServiceProxy));
             if (serviceProxy == null)
                 throw new InvalidOperationException("BaristaServiceProxy does not exist in the farm.");
 

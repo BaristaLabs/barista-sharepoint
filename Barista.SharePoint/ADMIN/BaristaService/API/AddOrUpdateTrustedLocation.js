@@ -2,6 +2,10 @@
 var sp = require("SharePoint");
 require("Linq");
 
+var serviceApplicationId = web.request.queryString.serviceApplicationId;
+if (!serviceApplicationId)
+    throw "A Service Application Id must be specified in the query string.";
+
 var newTrustedLocation = web.request.getBodyObject();
 
 //Validation
@@ -20,10 +24,18 @@ if (typeof(newTrustedLocation.LocationType) === "undefined")
 if (typeof(newTrustedLocation.TrustChildren) === "undefined")
     newTrustedLocation.TrustChildren = false;
 
-var trustedLocations = sp.farm.getFarmKeyValue("BaristaTrustedLocations");
+var serviceApplication = sp.farm.getServiceApplicationById(serviceApplicationId);
+if (!serviceApplication)
+    throw "A service application with the specified id could not be located. " + serviceApplicationId;
 
-if (typeof(trustedLocations) === "undefined")
+var trustedLocations;
+if (serviceApplication.propertyBag.containsKey("BaristaTrustedLocations")) {
+    trustedLocations = serviceApplication.propertyBag.getValueByKey("BaristaTrustedLocations");
+    trustedLocations = JSON.parse(trustedLocations);
+}
+else {
     trustedLocations = [];
+}
 
 var currentUrl = Enumerable.From(trustedLocations)
                            .Where(function (trustedLocation) {
@@ -52,5 +64,6 @@ else {
     result = true;
 }
 
-sp.farm.setFarmKeyValue("BaristaTrustedLocations", trustedLocations);
+serviceApplication.propertyBag.setValueByKey("BaristaTrustedLocations", JSON.stringify(trustedLocations));
+serviceApplication.update();
 result;

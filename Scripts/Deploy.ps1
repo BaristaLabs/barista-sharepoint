@@ -26,6 +26,7 @@ Write-Host "===============================================================" -fo
 if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -ne $null )
 {
     Write-Error "This deployment script must be executed from a Windows Powershell, NOT a SharePoint 2010 Management Shell."
+	Write-Error "If this is a Windows Powershell window, please close this window and run this script from a new Windows Powershell window."
     return
 }
 
@@ -33,7 +34,7 @@ Write-Host "Please ensure the following before continuing with this deployment:"
 Write-Host "`t1) Ensure that all users are logged out of all servers in the farm." -foregroundcolor Yellow
 Write-Host "`t2) Please close any other instances of the SharePoint 2013 Management Shell on all servers in the farm" -foregroundcolor Yellow
 Write-Host "" -foregroundcolor Yellow
-Write-Host "If your are certain that these prerequisites have been met, please press enter to proceed." -foregroundcolor Yellow
+Write-Host "If you are certain that these prerequisites have been met, please press enter to proceed." -foregroundcolor Yellow
 $a = Read-Host
 
 if ($restartServices -eq $true) {

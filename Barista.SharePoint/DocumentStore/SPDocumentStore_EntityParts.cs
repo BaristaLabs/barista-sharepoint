@@ -75,6 +75,9 @@
             web.AllowUnsafeUpdates = true;
             try
             {
+                if (SPBaristaContext.Current.Web.CurrentUser == null)
+                    throw new InvalidOperationException("User is not authenticated.");
+
                 if (documentSet.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.AddListItems) == false)
                     throw new InvalidOperationException("Insufficent Permissions.");
 
@@ -260,6 +263,9 @@
                 web.AllowUnsafeUpdates = true;
                 try
                 {
+                    if (SPBaristaContext.Current.Web.CurrentUser == null)
+                        throw new InvalidOperationException("User is not authenticated.");
+
                     if (entityPartFile.ParentFolder.Item.DoesUserHavePermissions(SPBaristaContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems) == false)
                         throw new InvalidOperationException("Insufficent Permissions.");
 

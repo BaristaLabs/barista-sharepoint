@@ -2,8 +2,9 @@
 {
   using Microsoft.SharePoint;
   using System;
+  using System.Collections.Generic;
 
-  public sealed class BaristaServiceClient
+    public sealed class BaristaServiceClient : IBaristaServiceApplication
   {
     private readonly SPServiceContext m_serviceContext;
 
@@ -32,6 +33,28 @@
         m_serviceContext,
         proxy => proxy.Exec(request)
       );
+    }
+
+    public string ListPackages()
+    {
+        string result = string.Empty;
+        BaristaServiceApplicationProxy.Invoke(
+            m_serviceContext,
+            proxy => result = proxy.ListPackages()
+            );
+
+        return result;
+    }
+
+    public string AddPackage(byte[] bundlePackage)
+    {
+        string result = string.Empty;
+        BaristaServiceApplicationProxy.Invoke(
+            m_serviceContext,
+            proxy => result = proxy.AddPackage(bundlePackage)
+            );
+
+        return result;
     }
   }
 }

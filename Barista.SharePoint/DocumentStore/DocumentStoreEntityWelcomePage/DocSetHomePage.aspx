@@ -19,6 +19,7 @@
 	<span id="idDocsetName">&#160;</span>
 </asp:Content>
 <asp:Content ContentPlaceholderID="PlaceHolderMain" runat="server">
+    <SharePoint:FormDigest ID="FormDigest1" runat="server" />
 	<OfficeServer:DocSetWelcomePageControl runat="server" ID="idDocSet" />
 	<table width="100%">
 		<tr>

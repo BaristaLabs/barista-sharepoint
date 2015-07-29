@@ -20,7 +20,7 @@
         public SPListItemConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "SPList", new SPListItemInstance(engine, null))
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         [JSConstructorFunction]
@@ -28,9 +28,9 @@
         {
             SPListItem listItem;
             if (SPHelper.TryGetSPListItem(listItemUrl, out listItem))
-                return new SPListItemInstance(this.Engine, listItem);
+                return new SPListItemInstance(Engine, listItem);
 
-            throw new JavaScriptException(this.Engine, "Error", "A list at the specified url was not found.");
+            throw new JavaScriptException(Engine, "Error", "A list at the specified url was not found.");
         }
 
         [JSFunction(Name = "copy")]
@@ -44,7 +44,7 @@
             if (listItem == null)
                 throw new ArgumentNullException("listItem");
 
-            return new SPListItemInstance(this.Engine, listItem);
+            return new SPListItemInstance(Engine, listItem);
         }
     }
 
@@ -58,10 +58,10 @@
         public SPListItemInstance(ScriptEngine engine, SPListItem listItem)
             : base(new SPSecurableObjectInstance(engine))
         {
-            this.m_listItem = listItem;
-            SecurableObject = this.m_listItem;
+            m_listItem = listItem;
+            SecurableObject = m_listItem;
 
-            this.PopulateFunctions(this.GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         }
 
         protected SPListItemInstance(ObjectInstance prototype)
@@ -92,7 +92,7 @@
                 {
                     return m_listItem.Attachments == null
                         ? null
-                        : new SPAttachmentCollectionInstance(this.Engine.Object.InstancePrototype,
+                        : new SPAttachmentCollectionInstance(Engine.Object.InstancePrototype,
                             m_listItem.Attachments);
                 }
                 catch// Occurs when the list is a Document Library.
@@ -109,7 +109,7 @@
             {
                 return m_listItem.Audit == null
                     ? null
-                    : new SPAuditInstance(this.Engine.Object.InstancePrototype, m_listItem.Audit);
+                    : new SPAuditInstance(Engine.Object.InstancePrototype, m_listItem.Audit);
             }
         }
 
@@ -119,7 +119,7 @@
         [JSProperty(Name = "contentTypeId")]
         public SPContentTypeIdInstance ContentTypeId
         {
-            get { return new SPContentTypeIdInstance(this.Engine.Object.InstancePrototype, m_listItem.ContentTypeId); }
+            get { return new SPContentTypeIdInstance(Engine.Object.InstancePrototype, m_listItem.ContentTypeId); }
         }
 
         //CopyDestinations
@@ -157,7 +157,7 @@
         {
             get
             {
-                return new SPFieldCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Fields);
+                return new SPFieldCollectionInstance(Engine.Object.InstancePrototype, m_listItem.Fields);
             }
         }
 
@@ -166,7 +166,7 @@
         {
             get
             {
-                return GetFieldValuesAsObject(this.Engine, m_listItem);
+                return GetFieldValuesAsObject(Engine, m_listItem);
             }
         }
 
@@ -175,7 +175,7 @@
         {
             get
             {
-                return GetFieldValuesAsHtml(this.Engine, m_listItem);
+                return GetFieldValuesAsHtml(Engine, m_listItem);
             }
         }
 
@@ -184,7 +184,7 @@
         {
             get
             {
-                return GetFieldValuesAsText(this.Engine, m_listItem);
+                return GetFieldValuesAsText(Engine, m_listItem);
             }
         }
 
@@ -193,7 +193,7 @@
         {
             get
             {
-                return GetFieldValuesForEdit(this.Engine, m_listItem);
+                return GetFieldValuesForEdit(Engine, m_listItem);
             }
         }
 
@@ -258,7 +258,7 @@
                 if (m_listItem.ModerationInformation == null)
                     return null;
 
-                return new SPModerationInformationInstance(this.Engine.Object.InstancePrototype,
+                return new SPModerationInformationInstance(Engine.Object.InstancePrototype,
                                                            m_listItem.ModerationInformation);
             }
         }
@@ -292,7 +292,7 @@
             {
                 return m_listItem.Properties == null
                     ? null
-                    : new HashtableInstance(this.Engine.Object.InstancePrototype, m_listItem.Properties);
+                    : new HashtableInstance(Engine.Object.InstancePrototype, m_listItem.Properties);
             }
         }
 
@@ -336,7 +336,7 @@
             {
                 return m_listItem.Tasks == null
                     ? null
-                    : new SPWorkflowTaskCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Tasks);
+                    : new SPWorkflowTaskCollectionInstance(Engine.Object.InstancePrototype, m_listItem.Tasks);
             }
         }
 
@@ -354,7 +354,7 @@
         {
             get
             {
-                return new GuidInstance(this.Engine.Object.InstancePrototype, m_listItem.UniqueId);
+                return new GuidInstance(Engine.Object.InstancePrototype, m_listItem.UniqueId);
             }
         }
 
@@ -374,7 +374,7 @@
             {
                 return m_listItem.Workflows == null
                     ? null
-                    : new SPWorkflowCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Workflows);
+                    : new SPWorkflowCollectionInstance(Engine.Object.InstancePrototype, m_listItem.Workflows);
             }
         }
 
@@ -419,11 +419,14 @@
         [JSFunction(Name = "getContentType")]
         public SPContentTypeInstance GetContentType()
         {
-            var contentType = this.m_listItem.ContentType;
-            if (this.m_listItem.ContentType == null)
-                contentType = m_listItem.ParentList.ContentTypes[m_listItem.ContentTypeId];
+            var contentType = m_listItem.ContentType;
+            if (m_listItem.ContentType == null)
+            {
+                var contentTypeBestMatchId = m_listItem.ParentList.ContentTypes.BestMatch(m_listItem.ContentTypeId);
+                contentType = m_listItem.ParentList.ContentTypes[contentTypeBestMatchId];
+            }
 
-            return new SPContentTypeInstance(this.Engine.Object.InstancePrototype, contentType);
+            return new SPContentTypeInstance(Engine.Object.InstancePrototype, contentType);
         }
 
         //GetFieldValueByGuid
@@ -436,7 +439,7 @@
             if (m_listItem.File == null)
                 return null;
 
-            return new SPFileInstance(this.Engine.Object.InstancePrototype, m_listItem.File);
+            return new SPFileInstance(Engine.Object.InstancePrototype, m_listItem.File);
         }
 
         [JSFunction(Name = "getFileContentsAsJson")]
@@ -446,7 +449,7 @@
                 return null;
 
             var fileContents = m_listItem.File.OpenBinary(SPOpenBinaryOptions.None);
-            return JSONObject.Parse(this.Engine, Encoding.UTF8.GetString(fileContents), null);
+            return JSONObject.Parse(Engine, Encoding.UTF8.GetString(fileContents), null);
         }
 
         [JSFunction(Name = "getFolder")]
@@ -455,7 +458,7 @@
             if (m_listItem.Folder == null)
                 return null;
 
-            return new SPFolderInstance(this.Engine.Object.InstancePrototype, m_listItem.Folder.ParentWeb.Site, m_listItem.Folder.ParentWeb, m_listItem.Folder);
+            return new SPFolderInstance(Engine.Object.InstancePrototype, m_listItem.Folder.ParentWeb.Site, m_listItem.Folder.ParentWeb, m_listItem.Folder);
         }
 
         [JSFunction(Name = "getListItems")]
@@ -464,20 +467,20 @@
             if (m_listItem.ListItems == null)
                 return null;
 
-            return new SPListItemCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.ListItems);
+            return new SPListItemCollectionInstance(Engine.Object.InstancePrototype, m_listItem.ListItems);
         }
 
         [JSFunction(Name = "getParentList")]
         public SPListInstance GetParentList()
         {
-            return new SPListInstance(this.Engine, null, null, m_listItem.ParentList);
+            return new SPListInstance(Engine, null, null, m_listItem.ParentList);
         }
 
         [JSFunction(Name = "getProperty")]
         public object GetProperty(string key)
         {
             if (!m_listItem.Properties.ContainsKey(key))
-                throw new JavaScriptException(this.Engine, "Error", "A property with the specified key does not exist.");
+                throw new JavaScriptException(Engine, "Error", "A property with the specified key does not exist.");
 
             return m_listItem.Properties[key];
         }
@@ -488,13 +491,13 @@
             if (m_listItem.Versions == null)
                 return null;
 
-            return new SPListItemVersionCollectionInstance(this.Engine.Object.InstancePrototype, m_listItem.Versions);
+            return new SPListItemVersionCollectionInstance(Engine.Object.InstancePrototype, m_listItem.Versions);
         }
 
         [JSFunction(Name = "getWeb")]
         public SPWebInstance GetWeb()
         {
-            return new SPWebInstance(this.Engine, m_listItem.Web);
+            return new SPWebInstance(Engine, m_listItem.Web);
         }
 
         [JSFunction(Name = "getXml")]

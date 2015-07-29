@@ -20,7 +20,7 @@
             base.OnInit(e);
 
             // get reference to OK button on dialog master page & wire up handler to it's OK button
-            var dialogMaster = (DialogMaster)this.Page.Master;
+            var dialogMaster = (DialogMaster)Page.Master;
 
             if (dialogMaster != null)
                 dialogMaster.OkButton.Click += OkButton_Click;
@@ -92,7 +92,7 @@
             var serviceProxy = BaristaHelper.GetBaristaServiceProxy(SPFarm.Local);
 
             // create service app proxy
-            BaristaServiceApplicationProxy serviceAppProxy = new BaristaServiceApplicationProxy(
+            var serviceAppProxy = new BaristaServiceApplicationProxy(
                 ServiceAppName.Text + " Proxy",
                 serviceProxy,
                 serviceApp.Uri);
@@ -108,21 +108,21 @@
             serviceAppProxy.Update(true);
 
             // add the proxy to the default group if selected
-            if (DefaultServiceApp.Checked)
-            {
-                SPServiceApplicationProxyGroup defaultGroup = SPServiceApplicationProxyGroup.Default;
-                defaultGroup.Add(serviceAppProxy);
-                defaultGroup.Update(true);
-            }
+            if (!DefaultServiceApp.Checked)
+                return;
+
+            var defaultGroup = SPServiceApplicationProxyGroup.Default;
+            defaultGroup.Add(serviceAppProxy);
+            defaultGroup.Update(true);
         }
 
         private static void StartServiceInstances()
         {
             // loop through all service instances on the current server and see if the one for
             //      this service app is running/not
-            foreach (SPServiceInstance serviceInstance in SPServer.Local.ServiceInstances)
+            foreach (var serviceInstance in SPServer.Local.ServiceInstances)
             {
-                BaristaServiceInstance baristaServiceInstance = serviceInstance as BaristaServiceInstance;
+                var baristaServiceInstance = serviceInstance as BaristaServiceInstance;
 
                 // if this one isn't running, start it up
                 if ((baristaServiceInstance != null) &&

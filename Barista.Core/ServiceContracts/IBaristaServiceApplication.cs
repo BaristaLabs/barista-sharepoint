@@ -1,18 +1,24 @@
 ﻿namespace Barista
 {
-  using System.ServiceModel;
-  using System.Text;
+    using System.ServiceModel;
+    using System.Text;
 
-  [ServiceContract(Namespace = Constants.ServiceNamespace)]
-  [ServiceKnownType(typeof(UTF8Encoding))]
-  [ServiceKnownType(typeof(EncoderReplacementFallback))]
-  [ServiceKnownType(typeof(DecoderReplacementFallback))]
-  public interface IBaristaServiceApplication
-  {
-    [OperationContract]
-    BrewResponse Eval(BrewRequest request);
+    [ServiceContract(Namespace = Constants.ServiceNamespace)]
+    [ServiceKnownType(typeof(UTF8Encoding))]
+    [ServiceKnownType(typeof(EncoderReplacementFallback))]
+    [ServiceKnownType(typeof(DecoderReplacementFallback))]
+    public interface IBaristaServiceApplication
+    {
+        [OperationContract]
+        BrewResponse Eval(BrewRequest request);
 
-    [OperationContract]
-    void Exec(BrewRequest request);
-  }
+        [OperationContract]
+        void Exec(BrewRequest request);
+
+        [OperationContract]
+        string ListPackages();
+
+        [OperationContract]
+        string AddPackage(byte[] package);
+    }
 }

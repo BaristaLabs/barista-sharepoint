@@ -13,9 +13,8 @@
         public SPPrincipalInstance(ScriptEngine engine, SPPrincipal principal)
             : base(engine, engine.Object.InstancePrototype)
         {
-            this.m_principal = principal;
-
-            this.PopulateFunctions();
+            m_principal = principal;
+            PopulateFunctions();
         }
 
         protected SPPrincipalInstance(ObjectInstance prototype, SPPrincipal principal)
@@ -61,7 +60,7 @@
         {
             return m_principal.ParentWeb == null
                  ? null
-                 : new SPWebInstance(this.Engine, m_principal.ParentWeb);
+                 : new SPWebInstance(Engine, m_principal.ParentWeb);
         }
 
         //Roles Property is Deprecated.

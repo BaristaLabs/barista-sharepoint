@@ -8,48 +8,48 @@
     public interface IBaristaSearch
     {
         [OperationContract]
-        void DeleteDocuments(string indexName, IEnumerable<string> documentIds);
+        void DeleteDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<string> documentIds);
 
         [OperationContract]
-        void DeleteAllDocuments(string indexName);
+        void DeleteAllDocuments(BaristaIndexDefinition indexDefinition);
 
         [OperationContract]
-        bool DoesIndexExist(string indexName);
+        bool DoesIndexExist(BaristaIndexDefinition indexDefinition);
 
         [OperationContract]
-        Explanation Explain(string indexName, Barista.Search.Query query, int documentId);
+        Explanation Explain(BaristaIndexDefinition indexDefinition, Barista.Search.Query query, int documentId);
 
         [OperationContract]
-        ICollection<string> GetFieldNames(string indexName);
+        ICollection<string> GetFieldNames(BaristaIndexDefinition indexDefinition);
 
         [OperationContract]
-        string Highlight(string indexName, Barista.Search.Query query, int documentId, string fieldName, int fragCharSize);
+        string Highlight(BaristaIndexDefinition indexDefinition, Barista.Search.Query query, int documentId, string fieldName, int fragCharSize);
 
         [OperationContract]
-        void IndexDocument(string indexName, string documentId, DocumentDto document);
+        void IndexDocument(BaristaIndexDefinition indexDefinition, string documentId, DocumentDto document);
 
         [OperationContract]
-        void IndexJsonDocument(string indexName, JsonDocumentDto document);
+        void IndexJsonDocument(BaristaIndexDefinition indexDefinition, JsonDocumentDto document);
 
         [OperationContract]
-        void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents);
+        void IndexJsonDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<JsonDocumentDto> documents);
 
         [OperationContract]
-        JsonDocumentDto Retrieve(string indexName, string documentId);
+        JsonDocumentDto Retrieve(BaristaIndexDefinition indexDefinition, string documentId);
 
         [OperationContract]
-        IList<SearchResult> Search(string indexName, SearchArguments arguments);
+        IList<SearchResult> Search(BaristaIndexDefinition indexDefinition, SearchArguments arguments);
 
         [OperationContract]
-        int SearchResultCount(string indexName, SearchArguments arguments);
+        int SearchResultCount(BaristaIndexDefinition indexDefinition, SearchArguments arguments);
 
         [OperationContract]
-        IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments);
+        IList<FacetedSearchResult> FacetedSearch(BaristaIndexDefinition indexDefinition, SearchArguments arguments);
 
         [OperationContract]
-        void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions);
+        void SetFieldOptions(BaristaIndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions);
 
         [OperationContract]
-        void Shutdown(string indexName);
+        void Shutdown(BaristaIndexDefinition indexDefinition);
     }
 }

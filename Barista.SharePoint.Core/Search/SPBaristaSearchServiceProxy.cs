@@ -1,4 +1,5 @@
-﻿namespace Barista.SharePoint.Search
+﻿#define CODE_ANALYSIS
+namespace Barista.SharePoint.Search
 {
     using System.Reflection;
     using Barista.Extensions;
@@ -6,6 +7,7 @@
     using Microsoft.SharePoint.Administration;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.ServiceModel;
     using Barista.Newtonsoft.Json;
@@ -21,6 +23,7 @@
             TypeNameHandling = TypeNameHandling.Auto
         };
 
+        [SuppressMessage("SPCAF.Rules.SupportabilityGroup", "SPC030202:DoNotUseReflectionToAccessSharePointAPI", Justification = "UPNName not exposed via SP2010 API. ")]
         public SPBaristaSearchServiceProxy()
         {
             var farm = SPFarm.Local;
@@ -145,13 +148,13 @@
             return client;
         }
 
-        public bool DoesIndexExist(string indexName)
+        public bool DoesIndexExist(BaristaIndexDefinition indexDefinition)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.DoesIndexExist(indexName);
+                    return searchClient.DoesIndexExist(indexDefinition);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -162,13 +165,13 @@
             }
         }
 
-        public void DeleteDocuments(string indexName, IEnumerable<string> documentIds)
+        public void DeleteDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<string> documentIds)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.DeleteDocuments(indexName, documentIds);
+                    searchClient.DeleteDocuments(indexDefinition, documentIds);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -179,13 +182,13 @@
             }
         }
 
-        public void DeleteAllDocuments(string indexName)
+        public void DeleteAllDocuments(BaristaIndexDefinition indexDefinition)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.DeleteAllDocuments(indexName);
+                    searchClient.DeleteAllDocuments(indexDefinition);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -196,13 +199,13 @@
             }
         }
 
-        public ICollection<string> GetFieldNames(string indexName)
+        public ICollection<string> GetFieldNames(BaristaIndexDefinition indexDefinition)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.GetFieldNames(indexName);
+                    return searchClient.GetFieldNames(indexDefinition);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -213,13 +216,13 @@
             }
         }
 
-        public Explanation Explain(string indexName, Query query, int documentId)
+        public Explanation Explain(BaristaIndexDefinition indexDefinition, Query query, int documentId)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.Explain(indexName, query, documentId);
+                    return searchClient.Explain(indexDefinition, query, documentId);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -230,13 +233,13 @@
             }
         }
 
-        public string Highlight(string indexName, Query query, int documentId, string fieldName, int fragCharSize)
+        public string Highlight(BaristaIndexDefinition indexDefinition, Query query, int documentId, string fieldName, int fragCharSize)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.Highlight(indexName, query, documentId, fieldName, fragCharSize);
+                    return searchClient.Highlight(indexDefinition, query, documentId, fieldName, fragCharSize);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -248,13 +251,13 @@
 
         }
 
-        public void IndexDocument(string indexName, string documentId, DocumentDto document)
+        public void IndexDocument(BaristaIndexDefinition indexDefinition, string documentId, DocumentDto document)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.IndexDocument(indexName, documentId, document);
+                    searchClient.IndexDocument(indexDefinition, documentId, document);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -265,7 +268,7 @@
             }
         }
 
-        public void IndexJsonDocument(string indexName, string documentId, object docObject, object metadata, IEnumerable<FieldOptions> fieldOptions)
+        public void IndexJsonDocument(BaristaIndexDefinition indexDefinition, string documentId, object docObject, object metadata, IEnumerable<FieldOptions> fieldOptions)
         {
             try
             {
@@ -283,7 +286,7 @@
                     if (fieldOptions != null)
                         document.FieldOptions = fieldOptions;
 
-                    searchClient.IndexJsonDocument(indexName, document);
+                    searchClient.IndexJsonDocument(indexDefinition, document);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -294,13 +297,13 @@
             }
         }
 
-        public void IndexJsonDocument(string indexName, JsonDocumentDto document)
+        public void IndexJsonDocument(BaristaIndexDefinition indexDefinition, JsonDocumentDto document)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.IndexJsonDocument(indexName, document);
+                    searchClient.IndexJsonDocument(indexDefinition, document);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -311,13 +314,13 @@
             }
         }
 
-        public void IndexJsonDocuments(string indexName, IEnumerable<JsonDocumentDto> documents)
+        public void IndexJsonDocuments(BaristaIndexDefinition indexDefinition, IEnumerable<JsonDocumentDto> documents)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.IndexJsonDocuments(indexName, documents);
+                    searchClient.IndexJsonDocuments(indexDefinition, documents);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -329,13 +332,13 @@
         }
 
         public
-          JsonDocumentDto Retrieve(string indexName, string documentId)
+          JsonDocumentDto Retrieve(BaristaIndexDefinition indexDefinition, string documentId)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.Retrieve(indexName, documentId);
+                    return searchClient.Retrieve(indexDefinition, documentId);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -346,31 +349,13 @@
             }
         }
 
-        public IList<SearchResult> Search(string indexName, SearchArguments arguments)
+        public IList<SearchResult> Search(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.Search(indexName, arguments);
-
-                }
-            }
-            catch (CommunicationObjectFaultedException ex)
-            {
-                if (ex.InnerException != null)
-                    throw ex.InnerException;
-                throw;
-            }
-        }
-
-        public int SearchResultCount(string indexName, SearchArguments arguments)
-        {
-            try
-            {
-                using (var searchClient = GetSearchClient())
-                {
-                    return searchClient.SearchResultCount(indexName, arguments);
+                    return searchClient.Search(indexDefinition, arguments);
 
                 }
             }
@@ -382,13 +367,14 @@
             }
         }
 
-        public IList<FacetedSearchResult> FacetedSearch(string indexName, SearchArguments arguments)
+        public int SearchResultCount(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    return searchClient.FacetedSearch(indexName, arguments);
+                    return searchClient.SearchResultCount(indexDefinition, arguments);
+
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -399,13 +385,13 @@
             }
         }
 
-        public void SetFieldOptions(string indexName, IEnumerable<FieldOptions> fieldOptions)
+        public IList<FacetedSearchResult> FacetedSearch(BaristaIndexDefinition indexDefinition, SearchArguments arguments)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.SetFieldOptions(indexName, fieldOptions);
+                    return searchClient.FacetedSearch(indexDefinition, arguments);
                 }
             }
             catch (CommunicationObjectFaultedException ex)
@@ -416,13 +402,30 @@
             }
         }
 
-        public void Shutdown(string indexName)
+        public void SetFieldOptions(BaristaIndexDefinition indexDefinition, IEnumerable<FieldOptions> fieldOptions)
         {
             try
             {
                 using (var searchClient = GetSearchClient())
                 {
-                    searchClient.Shutdown(indexName);
+                    searchClient.SetFieldOptions(indexDefinition, fieldOptions);
+                }
+            }
+            catch (CommunicationObjectFaultedException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+                throw;
+            }
+        }
+
+        public void Shutdown(BaristaIndexDefinition indexDefinition)
+        {
+            try
+            {
+                using (var searchClient = GetSearchClient())
+                {
+                    searchClient.Shutdown(indexDefinition);
                 }
             }
             catch (CommunicationObjectFaultedException ex)

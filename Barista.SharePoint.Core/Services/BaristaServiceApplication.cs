@@ -10,9 +10,14 @@
     using Microsoft.SharePoint.Utilities;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.ServiceModel;
     using System.Threading;
+    using Barista.Newtonsoft.Json;
+    using ICSharpCode.SharpZipLib.Core;
+    using ICSharpCode.SharpZipLib.Zip;
+    using Barista.Newtonsoft.Json.Linq;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -162,13 +167,31 @@
 
                 try
                 {
-                    object result;
-                    using (new SPMonitoredScope("Barista Script Eval", 110000,
+                    //Default execution timeout to be 60 seconds.
+                    if (request.ExecutionTimeout <= 0)
+                        request.ExecutionTimeout = 60 * 1000;
+
+                    object result = null;
+                    using (new SPMonitoredScope("Barista Script Eval", request.ExecutionTimeout,
                               new SPCriticalTraceCounter(),
-                              new SPExecutionTimeCounter(11000),
+                              new SPExecutionTimeCounter(request.ExecutionTimeout),
                               new SPRequestUsageCounter(),
                               new SPSqlQueryCounter()))
                     {
+                        //var mre = new ManualResetEvent(false);
+
+                        //var scopeEngine = engine;
+                        //var actionThread = new Thread(() =>
+                        //{
+                        //    result = scopeEngine.Evaluate(source); //always call endinvoke
+                        //    mre.Set();
+                        //});
+
+                        //actionThread.Start();
+                        //mre.WaitOne(TimeSpan.FromMilliseconds(request.ExecutionTimeout));
+                        //if (actionThread.IsAlive)
+                        //    actionThread.Abort();
+
                         result = engine.Evaluate(source);
                     }
 
@@ -297,7 +320,7 @@
                     (ScriptEngineFactory)Activator.CreateInstance(baristaScriptEngineFactoryType);
 
                 var engine = scriptEngineFactory.GetScriptEngine(SPBaristaContext.Current.WebBundle, out isNewScriptEngineInstance,
-                    out errorInInitialization);
+                                                                 out errorInInitialization);
 
                 if (engine == null)
                     throw new InvalidOperationException("Unable to obtain an instance of a Script Engine.");
@@ -362,6 +385,168 @@
                     syncRoot.ReleaseMutex();
             }
         }
+
+        /// <summary>
+        /// Lists the packages installed in the /WebServices/Barista/bin/Bundles folder
+        /// </summary>
+        /// <returns></returns>
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        public string ListPackages()
+        {
+            var objResult = BaristaHelper.ListPackages();
+
+            return objResult.ToString(Formatting.Indented);
+        }
+
+        /// <summary>
+        /// Expand the specified bundle package to the [hive]/WebServices/Barista/bin/Bundles folder.
+        /// </summary>
+        /// <remarks>
+        ///  The caller should take care of calling this on each application server in the farm.
+        /// </remarks>
+        /// <param name="bundlePackage"></param>
+        /// <returns></returns>
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        public string AddPackage(byte[] bundlePackage)
+        {
+            var objResult = new JObject
+            {
+                {"!machineName", Environment.MachineName}
+            };
+
+            //Get the name/version of the bundle
+            using(var ms = new MemoryStream(bundlePackage))
+            {
+                var package = GetPackageFileInPackage(ms);
+
+                if (package == null)
+                    throw new InvalidOperationException("Unable to locate a package.json file within the bundle package. The package.json file must be located at the root of the zip file and be valid Json.");
+
+                if (!Package.IsValidPackage(package))
+                    throw new InvalidOperationException("The bundle package contained an invalid package.json file.");
+
+                var pkg = package.ToObject<Package>();
+                var bundlePath = Path.Combine(InstallPath, "bin/Bundles");
+                var pkgPath = Path.Combine(bundlePath, pkg.Name + "_" + pkg.Version);
+
+                try
+                {
+                    var packageDirectory = new DirectoryInfo(pkgPath);
+                    if (packageDirectory.Exists)
+                        packageDirectory.Delete(true);
+
+                    packageDirectory.Create();
+                    ExtractZipFile(ms, packageDirectory.ToString());
+                    objResult.Add(packageDirectory.Name, JToken.FromObject(pkg));
+                }
+                catch(Exception ex)
+                {
+                    objResult.Add("error", JToken.FromObject(ex));
+                }
+
+                return objResult.ToString();
+            }
+        }
         #endregion
+
+        /// <summary>
+        /// Returns the package file (package.json) in the archive. If an error or no package.json file exists, null is returned.
+        /// </summary>
+        /// <param name="archiveIn"></param>
+        /// <returns></returns>
+        private static JObject GetPackageFileInPackage(Stream archiveIn)
+        {
+            ZipFile zf = null;
+            try
+            {
+                zf = new ZipFile(archiveIn);
+
+                foreach (var zipEntry in zf.OfType<ZipEntry>().Where(zipEntry => zipEntry.IsFile && string.Equals("package.json", zipEntry.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    using (var zipEntryStream = zf.GetInputStream(zipEntry))
+                    {
+                        using (var sr = new StreamReader(zipEntryStream))
+                        {
+                            using (var jr = new JsonTextReader(sr))
+                            {
+                                try
+                                {
+                                    var result = JObject.Load(jr);
+                                    return result;
+                                }
+                                catch
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (zf != null)
+                {
+                    zf.IsStreamOwner = false;
+                    zf.Close(); // Ensure we release resources
+                }
+
+                archiveIn.Position = 0;
+            }
+
+            return null;
+        }
+
+        private static void ExtractZipFile(Stream archiveIn, string outFolder)
+        {
+            ZipFile zf = null;
+            try
+            {
+                zf = new ZipFile(archiveIn);
+
+                foreach (ZipEntry zipEntry in zf)
+                {
+                    if (!zipEntry.IsFile)
+                    {
+                        continue;           // Ignore directories
+                    }
+
+                    var entryFileName = zipEntry.Name;
+                    // to remove the folder from the entry:- entryFileName = Path.GetFileName(entryFileName);
+                    // Optionally match entrynames against a selection list here to skip as desired.
+                    // The unpacked length is available in the zipEntry.Size property.
+
+                    var buffer = new byte[4096];     // 4K is optimum
+                    var zipStream = zf.GetInputStream(zipEntry);
+
+                    // Manipulate the output filename here as desired.
+                    var fullZipToPath = System.IO.Path.Combine(outFolder, entryFileName);
+                    var directoryName = System.IO.Path.GetDirectoryName(fullZipToPath);
+                    if (directoryName == null)
+                        throw new InvalidOperationException("Unable to obtain the directory.");
+
+                    if (directoryName.Length > 0)
+                        Directory.CreateDirectory(directoryName);
+
+                    // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
+                    // of the file, but does not waste memory.
+                    // The "using" will close the stream even if an exception occurs.
+                    using (var streamWriter = File.Create(fullZipToPath))
+                    {
+                        StreamUtils.Copy(zipStream, streamWriter, buffer);
+                    }
+                }
+            }
+            finally
+            {
+                if (zf != null)
+                {
+                    zf.IsStreamOwner = false;
+                    zf.Close(); // Ensure we release resources
+                }
+
+                archiveIn.Position = 0;
+            }
+        }
     }
 }

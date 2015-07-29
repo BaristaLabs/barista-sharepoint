@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
   <!-- Parent ContentType: Document (0x0101) -->
-  <ContentType ID="0x010100c85948cf1fa64eed9d29eaa2a1078fd6"
+  <ContentType ID="0x010100C85948CF1FA64EED9D29EAA2A1078FD6"
                Name="Document Store Entity Part"
                Group="Document Store Content Types"
                Description="Represents additional data that is contained within a Document Store Entity."

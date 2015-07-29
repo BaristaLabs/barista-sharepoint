@@ -39,13 +39,19 @@
 
             if (SPBaristaContext.HasCurrentContext)
             {
-                this.DocumentStoreUrl = SPUtility.ConcatUrls(SPBaristaContext.Current.Site.Url, SPBaristaContext.Current.Web.ServerRelativeUrl);
-                this.CurrentUserLoginName = SPBaristaContext.Current.Web.CurrentUser.LoginName;
+                if (SPBaristaContext.Current.Web.CurrentUser == null)
+                    throw new InvalidOperationException("User is not authenticated.");
+
+                DocumentStoreUrl = SPUtility.ConcatUrls(SPBaristaContext.Current.Site.Url, SPBaristaContext.Current.Web.ServerRelativeUrl);
+                CurrentUserLoginName = SPBaristaContext.Current.Web.CurrentUser.LoginName;
             }
             else if (SPContext.Current != null)
             {
-                this.DocumentStoreUrl = SPUtility.ConcatUrls(SPContext.Current.Site.Url, SPContext.Current.Web.ServerRelativeUrl);
-                this.CurrentUserLoginName = SPContext.Current.Web.CurrentUser.LoginName;
+                if (SPContext.Current.Web.CurrentUser == null)
+                    throw new InvalidOperationException("User is not authenticated.");
+
+                DocumentStoreUrl = SPUtility.ConcatUrls(SPContext.Current.Site.Url, SPContext.Current.Web.ServerRelativeUrl);
+                CurrentUserLoginName = SPContext.Current.Web.CurrentUser.LoginName;
             }
             else
             {
@@ -60,7 +66,7 @@
             if (web == null)
                 throw new ArgumentNullException("web");
 
-            this.DocumentStoreUrl = SPUtility.ConcatUrls(web.Site.Url, web.ServerRelativeUrl);
+            DocumentStoreUrl = SPUtility.ConcatUrls(web.Site.Url, web.ServerRelativeUrl);
         }
 
         #endregion
@@ -273,7 +279,7 @@
                     {
                         if (m_elevatedDocumentStoreWeb == null)
                         {
-                            m_elevatedDocumentStoreSite = new SPSite(this.DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
+                            m_elevatedDocumentStoreSite = new SPSite(DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
                             m_elevatedDocumentStoreWeb = m_elevatedDocumentStoreSite.OpenWeb();
                         }
                     }
@@ -288,7 +294,7 @@
                 {
                     if (m_documentStoreWeb == null)
                     {
-                        m_documentStoreSite = new SPSite(this.DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
+                        m_documentStoreSite = new SPSite(DocumentStoreUrl, SPBaristaContext.Current.Site.UserToken);
                         m_documentStoreWeb = m_documentStoreSite.OpenWeb();
                     }
                 }
@@ -307,7 +313,7 @@
         private SPFile GetDefaultEntityPart(string containerTitle, string path, Guid entityId)
         {
             //Get a new web in case we're executing in elevated permissions.
-            using (var site = new SPSite(this.DocumentStoreUrl))
+            using (var site = new SPSite(DocumentStoreUrl))
             {
                 using (var web = site.OpenWeb())
                 {
@@ -325,7 +331,7 @@
             }
         }
 
-// ReSharper disable once UnusedParameter.Local
+        // ReSharper disable once UnusedParameter.Local
         private void CheckIfFileNameIsReserved(string fileName)
         {
             if (fileName == Constants.DocumentStoreDefaultEntityPartFileName ||
