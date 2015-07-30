@@ -51575,6 +51575,9 @@ G=function(b,c,a){a=F(b,c,a);a===e?delete b[c]:b[c]=a},F=function(b,c,a){var d=b
                 "id": {
                     "!type": "+SPContentTypeId"
                 },
+                "jsLink": {
+                    "!type": "string"
+                },
                 "mobileDisplayFormUrl": {
                     "!type": "string"
                 },
@@ -52706,6 +52709,9 @@ G=function(b,c,a){a=F(b,c,a);a===e?delete b[c]:b[c]=a},F=function(b,c,a){var d=b
                     "!type": "bool"
                 },
                 "internalName": {
+                    "!type": "string"
+                },
+                "jsLink": {
                     "!type": "string"
                 },
                 "jumpToField": {
@@ -56293,6 +56299,9 @@ G=function(b,c,a){a=F(b,c,a);a===e?delete b[c]:b[c]=a},F=function(b,c,a){var d=b
                 "includeRootFolder": {
                     "!type": "bool"
                 },
+                "jsLink": {
+                    "!type": "string"
+                },
                 "method": {
                     "!type": "string"
                 },
@@ -57183,6 +57192,9 @@ G=function(b,c,a){a=F(b,c,a);a===e?delete b[c]:b[c]=a},F=function(b,c,a){var d=b
                 },
                 "isStatic": {
                     "!type": "bool"
+                },
+                "jsLink": {
+                    "!type": "string"
                 },
                 "subtitle": {
                     "!type": "string"

@@ -325,7 +325,7 @@
             }
 
             //Replace any tokens in the code.
-            code = SPHelper.ReplaceTokens(SPContext.Current, code);
+            //code = SPHelper.ReplaceTokens(SPContext.Current, code);
 
             return code;
         }

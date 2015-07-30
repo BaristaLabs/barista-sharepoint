@@ -23,7 +23,7 @@
             var newField = arg2 == Undefined.Value
               ? new SPField(fieldCollection.SPFieldCollection, arg1)
               : new SPField(fieldCollection.SPFieldCollection, arg1, TypeConverter.ToString(arg2));
-
+            
             return new SPFieldInstance(this.Engine, newField);
         }
     }
@@ -366,6 +366,19 @@
             get
             {
                 return m_field.InternalName;
+            }
+        }
+
+        [JSProperty(Name = "jsLink")]
+        public string JSLink
+        {
+            get
+            {
+                return m_field.JSLink;
+            }
+            set
+            {
+                m_field.JSLink = value;
             }
         }
 

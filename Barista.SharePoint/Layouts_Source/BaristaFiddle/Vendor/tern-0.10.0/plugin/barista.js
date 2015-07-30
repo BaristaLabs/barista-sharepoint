@@ -3879,6 +3879,9 @@
                 "id": {
                     "!type": "+SPContentTypeId"
                 },
+                "jsLink": {
+                    "!type": "string"
+                },
                 "mobileDisplayFormUrl": {
                     "!type": "string"
                 },
@@ -5010,6 +5013,9 @@
                     "!type": "bool"
                 },
                 "internalName": {
+                    "!type": "string"
+                },
+                "jsLink": {
                     "!type": "string"
                 },
                 "jumpToField": {
@@ -8597,6 +8603,9 @@
                 "includeRootFolder": {
                     "!type": "bool"
                 },
+                "jsLink": {
+                    "!type": "string"
+                },
                 "method": {
                     "!type": "string"
                 },
@@ -9487,6 +9496,9 @@
                 },
                 "isStatic": {
                     "!type": "bool"
+                },
+                "jsLink": {
+                    "!type": "string"
                 },
                 "subtitle": {
                     "!type": "string"

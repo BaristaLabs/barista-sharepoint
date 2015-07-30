@@ -69,10 +69,6 @@ RetractSolution($solution);
 
 Write-Progress -Activity "Checking for and removing orphaned features" -PercentComplete -1
 
-$args = @"
 Get-SPFeature | ? { $_.Scope -eq $null -and $_.DisplayName.StartsWith("Barista") } | % { $_.Delete() }
-"@
-
-& powershell.exe -Version 3 $args
 
 Write-Progress -Activity "Checking for and removing orphaned features" -Completed

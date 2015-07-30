@@ -6,6 +6,7 @@
     using Barista.Jurassic.Library;
     using System;
     using WebPart = Microsoft.SharePoint.WebPartPages.WebPart;
+    using Microsoft.SharePoint.WebPartPages;
 
     [Serializable]
     public class SPWebPartConstructor : ClrFunction
@@ -349,6 +350,23 @@
             get
             {
                 return m_webPart.IsStatic;
+            }
+        }
+
+        [JSProperty(Name = "jsLink")]
+        public object JSLink
+        {
+            get
+            {
+                if (m_webPart is ListFormWebPart)
+                    return ((ListFormWebPart)m_webPart).JSLink;
+
+                return Undefined.Value;
+            }
+            set
+            {
+                if (m_webPart is ListFormWebPart && value != Undefined.Value)
+                    ((ListFormWebPart)m_webPart).JSLink = TypeConverter.ToString(value);
             }
         }
 

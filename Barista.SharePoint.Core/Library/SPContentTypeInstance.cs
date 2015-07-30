@@ -182,6 +182,19 @@
             get { return new SPContentTypeIdInstance(this.Engine.Object.InstancePrototype, m_contentType.Id); }
         }
 
+        [JSProperty(Name = "jsLink")]
+        public string JSLink
+        {
+            get
+            {
+                return m_contentType.JSLink;
+            }
+            set
+            {
+                m_contentType.JSLink = value;
+            }
+        }
+
         [JSProperty(Name = "mobileDisplayFormUrl")]
         public string MobileDisplayFormUrl
         {

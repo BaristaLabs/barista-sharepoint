@@ -204,6 +204,19 @@
       }
     }
 
+    [JSProperty(Name = "jsLink")]
+    public string JSLink
+    {
+        get
+        {
+            return m_view.JSLink;
+        }
+        set
+        {
+            m_view.JSLink = value;
+        }
+    }
+
     [JSProperty(Name = "method")]
     public string Method
     {

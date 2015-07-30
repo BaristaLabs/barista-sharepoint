@@ -59,7 +59,7 @@
             m_site = site;
             m_web = web;
             m_list = list;
-
+            
             SecurableObject = m_list;
 
             PopulateFunctions(GetType(), BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
