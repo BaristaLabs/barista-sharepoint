@@ -6,7 +6,7 @@ param (
 	[string]$SPApplicationPoolName = "Barista Application Pool"
 )
 
-Write-Host "                    Barista Uninstaller Script v1.2 (SP2013)   " -foregroundcolor Green
+Write-Host "                    Barista Uninstaller Script v1.3 (SP2013)   " -foregroundcolor Green
 Write-Host "===============================================================" -foregroundcolor Green
 
 if ( (Get-PSSnapin -Name Microsoft.SharePoint.PowerShell -ErrorAction SilentlyContinue) -ne $null )

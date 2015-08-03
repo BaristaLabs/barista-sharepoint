@@ -55,23 +55,22 @@ function WaitForJobToFinish([string]$JobTitle)
 	return $job;
 }
 
-write-host 
 LoadSharePointPowerShellEnvironment
 
 #
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Unprovision service app proxy
+# Unprovision service app proxies
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
 
 write-host 
-write-host "[[STEP]] Uninstalling Barista Service Application Proxy." -foregroundcolor Yellow
+write-host "[[STEP]] Uninstalling Barista Service Application Proxies." -foregroundcolor Yellow
 write-host 
 
-$serviceAppProxy = Get-SPServiceApplicationProxy | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplicationProxy" -and $_.Name -eq "Barista Service Application Proxy" }
-if ($serviceAppProxy -ne $null)
+$serviceAppProxies = Get-SPServiceApplicationProxy | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplicationProxy"}
+foreach ($serviceAppProxy in $serviceAppProxies)
 {
-	write-host "Unprovisioning service application proxy..." -foregroundcolor Gray
+	write-host "Unprovisioning service application proxy" $serviceAppProxy.DisplayName "..." -foregroundcolor Gray
 
 	Remove-SPServiceApplicationProxy $serviceAppProxy -Confirm:$false
 	#$serviceAppProxy.Unprovision()
@@ -80,31 +79,33 @@ if ($serviceAppProxy -ne $null)
 	write-host 
 }
 
+write-host "[[[[ Barista Service Application Proxies removed. ]]]]" -foregroundcolor Green
+
 # [[[[[[[[STEP]]]]]]]]
 
 write-host 
-write-host "[[STEP]] Stopping Barista Service Application instance on local server." -foregroundcolor Yellow
+write-host "[[STEP]] Uninstalling Barista Service Application Instances." -foregroundcolor Yellow
 write-host 
 
-write-host "Stopping the service on  $env:COMPUTERNAME..." -foregroundcolor Gray
-$localServiceInstance = Get-SPServiceInstance -Server $env:COMPUTERNAME | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "" }
-if ($localServiceInstance -ne $null){
+# Wait for any provisioning timer jobs to complete.
+$tj = WaitForJobToFinish("Provisioning Barista Service*")
+if ($tj -ne $null) {
+	$tj.Delete()
+}
 
-	$tj = WaitForJobToFinish("Provisioning Barista Service*")
-	if ($tj -ne $null) {
-		$tj.Delete()
-	}
+$tj = WaitForJobToFinish("Disabling Barista Service*")
+if ($tj -ne $null) {
+	$tj.Delete()
+}
 
-	$tj = WaitForJobToFinish("Disabling Barista Service*")
-	if ($tj -ne $null) {
-		$tj.Delete()
-	}
+$serviceInstances = Get-SPServiceInstance | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" }
+foreach ($serviceInstance in $serviceInstances) {
 
-	write-host "Stopping service instance on server $env:COMPUTERNAME..." -foregroundcolor Gray
-	Stop-SPServiceInstance $localServiceInstance -Confirm:$false
+	write-host "Stopping service instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "..." -foregroundcolor Gray
+	Stop-SPServiceInstance $serviceInstance -Confirm:$false
 	write-host "Barista Service Application instance stopped." -foregroundcolor Green
 
-	$localServiceInstance.Unprovision()
+	$serviceInstance.Unprovision()
 	write-host "Barista Service Application instance unprovisioned." -foregroundcolor Green
 
 	$tj = WaitForJobToFinish("Provisioning Barista Service*")
@@ -117,45 +118,42 @@ if ($localServiceInstance -ne $null){
 		$tj.Delete()
 	}
 
-	$localServiceInstance.Unprovision()
-	$localServiceInstance.Delete()
-	$localServiceInstance.Uncache()
-	write-host "Barista Service Application instance removed." -foregroundcolor Green
+	$serviceInstance.Unprovision()
+	$serviceInstance.Delete()
+	$serviceInstance.Uncache()
+	write-host "Barista Service Application instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "removed." -foregroundcolor Green
 }
 
-write-host "[[[[ Barista Service Application stopped. ]]]]" -foregroundcolor Green
+write-host "[[[[ Barista Service Application instances removed. ]]]]" -foregroundcolor Green
 
 #
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Unprovision service app
+# Unprovision service apps
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #
 
 write-host 
-write-host "[[STEP]] Uninstalling Barista Service Application." -foregroundcolor Yellow
+write-host "[[STEP]] Uninstalling Barista Service Applications." -foregroundcolor Yellow
 write-host 
 
-write-host "Ensure service application is removed..." -foregroundcolor Gray
-$serviceApp = Get-SPServiceApplication | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplication" -and $_.Name -eq "Barista Service Application" }
-if ($serviceApp -ne $null) {
-	write-host "Unprovisioning service application..." -foregroundcolor Gray
+$serviceApps = Get-SPServiceApplication | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplication" }
+foreach ($serviceApp in $serviceApps) {
+		write-host "Unprovisioning service application" $serviceApp.DisplayName "..." -foregroundcolor Gray
 
-	Remove-SPServiceApplication $serviceApp -RemoveData -Confirm:$false
-	#$serviceApp.Unprovision()
-	#$serviceApp.Delete()
-	$serviceApp.Uncache()
-
-	write-host 
+		Remove-SPServiceApplication $serviceApp -RemoveData -Confirm:$false
+		#$serviceApp.Unprovision()
+		#$serviceApp.Delete()
+		$serviceApp.Uncache()
+		write-host 
 }
 
 
-write-host "[[[[ Barista Service Application uninstalled. ]]]]" -foregroundcolor Green
+write-host "[[[[ Barista Service Applications uninstalled. ]]]]" -foregroundcolor Green
 
 write-host 
-write-host "[[STEP]] Uninstalling Barista Service Application." -foregroundcolor Yellow
+write-host "[[STEP]] Uninstalling Barista Service Application Pool" -foregroundcolor Yellow
 write-host 
 
-write-host "Ensure application pool is removed..." -foregroundcolor Gray
 $appPool = Get-SPServiceApplicationPool | Where {$_.Name -eq $SPApplicationPoolName}
 if ($appPool -ne $null) {
 	Remove-SPServiceApplicationPool $appPool -Confirm:$false
