@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
 EndProject
@@ -99,8 +99,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 		Scripts\Deploy.bat = Scripts\Deploy.bat
 		Scripts\Deploy.ps1 = Scripts\Deploy.ps1
 		Scripts\DeployLatestNightlyBuild.ps1 = Scripts\DeployLatestNightlyBuild.ps1
-		Scripts\RemoveBaristaTypes.ps1 = Scripts\RemoveBaristaTypes.ps1
 		Scripts\exportPersistedObjects.ps1 = Scripts\exportPersistedObjects.ps1
+		Scripts\RemoveApplicationPoolDependencies.ps1 = Scripts\RemoveApplicationPoolDependencies.ps1
+		Scripts\RemoveBaristaTypes.ps1 = Scripts\RemoveBaristaTypes.ps1
 		Scripts\RemoveOrphanedBaristaEndpoints.ps1 = Scripts\RemoveOrphanedBaristaEndpoints.ps1
 		Scripts\RestartSharePointServices.ps1 = Scripts\RestartSharePointServices.ps1
 		Scripts\SetupBaristaSearchService.ps1 = Scripts\SetupBaristaSearchService.ps1
