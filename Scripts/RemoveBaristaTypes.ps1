@@ -23,7 +23,7 @@ param(
 	$instance = [Activator]::CreateInstance($type, $flags, $null, $farm, [System.Globalization.CultureInfo]::CurrentCulture);
 
 	#Filter objects by script parameter SPObjectType
-	$filteredObjs = $instance | Select * | Where {$_.GetType().FullName -ieq $typeName}
+	$filteredObjs = $instance | Select * | Where {$_.TypeName -ieq $typeName}
 
 	return $filteredObjs
 }
