@@ -42,7 +42,9 @@ param(
 LoadSharePointPowerShellEnvironment
 $farm = [Microsoft.SharePoint.Administration.SPFarm]::Local
 
+Write-Host "Retrieving Service Application..."
 $appPool = Get-SPServiceApplicationPool | Where {$_.Name -eq $SPApplicationPoolName}
+Write-Host "Located Service Application; Locating Dependencies."
 $deps = GetPersistedObjectDependencies $appPool.Id
 if ($deps -eq $null) {
 	Write-Host "No Dependencies Detected."
@@ -51,7 +53,9 @@ else {
 	Write-Host $deps
 	
 	if ($remove) {
+		Write-Host "Removing dependencies..."
 		foreach ($dep in $deps) {
+			Write-Host "Removing $dep.Name $dep.Id"
 			$dep.Unprovision()
 			$dep.Delete()
 			$dep.Uncache()
