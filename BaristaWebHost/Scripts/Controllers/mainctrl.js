@@ -134,7 +134,7 @@ baristaFiddle.controller("MainCtrl", function ($scope, $window, $timeout, $http,
                 });
             }
         },
-        theme: "neat",
+        theme: "neat"
     };
 
     $scope.resultOptions = {
