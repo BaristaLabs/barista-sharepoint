@@ -68,15 +68,17 @@ write-host "[[STEP]] Uninstalling Barista Service Application Proxies." -foregro
 write-host 
 
 $serviceAppProxies = Get-SPServiceApplicationProxy | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplicationProxy"}
-foreach ($serviceAppProxy in $serviceAppProxies)
-{
-	write-host "Unprovisioning service application proxy" $serviceAppProxy.DisplayName "..." -foregroundcolor Gray
+if ($serviceAppProxy -ne $null) {
+	foreach ($serviceAppProxy in $serviceAppProxies)
+	{
+		write-host "Unprovisioning service application proxy" $serviceAppProxy.DisplayName "..." -foregroundcolor Gray
 
-	Remove-SPServiceApplicationProxy $serviceAppProxy -Confirm:$false
-	#$serviceAppProxy.Unprovision()
-	#$serviceAppProxy.Delete()
-	$serviceAppProxy.Uncache()
-	write-host 
+		Remove-SPServiceApplicationProxy $serviceAppProxy -Confirm:$false
+		#$serviceAppProxy.Unprovision()
+		#$serviceAppProxy.Delete()
+		$serviceAppProxy.Uncache()
+		write-host 
+	}
 }
 
 write-host "[[[[ Barista Service Application Proxies removed. ]]]]" -foregroundcolor Green
@@ -99,29 +101,31 @@ if ($tj -ne $null) {
 }
 
 $serviceInstances = Get-SPServiceInstance | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" }
-foreach ($serviceInstance in $serviceInstances) {
+if ($serviceInstances -ne $null) {
+	foreach ($serviceInstance in $serviceInstances) {
 
-	write-host "Stopping service instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "..." -foregroundcolor Gray
-	Stop-SPServiceInstance $serviceInstance -Confirm:$false
-	write-host "Barista Service Application instance stopped." -foregroundcolor Green
+		write-host "Stopping service instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "..." -foregroundcolor Gray
+		Stop-SPServiceInstance $serviceInstance -Confirm:$false
+		write-host "Barista Service Application instance stopped." -foregroundcolor Green
 
-	$serviceInstance.Unprovision()
-	write-host "Barista Service Application instance unprovisioned." -foregroundcolor Green
+		$serviceInstance.Unprovision()
+		write-host "Barista Service Application instance unprovisioned." -foregroundcolor Green
 
-	$tj = WaitForJobToFinish("Provisioning Barista Service*")
-	if ($tj -ne $null) {
-		$tj.Delete()
+		$tj = WaitForJobToFinish("Provisioning Barista Service*")
+		if ($tj -ne $null) {
+			$tj.Delete()
+		}
+
+		$tj = WaitForJobToFinish("Disabling Barista Service*")
+		if ($tj -ne $null) {
+			$tj.Delete()
+		}
+
+		$serviceInstance.Unprovision()
+		$serviceInstance.Delete()
+		$serviceInstance.Uncache()
+		write-host "Barista Service Application instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "removed." -foregroundcolor Green
 	}
-
-	$tj = WaitForJobToFinish("Disabling Barista Service*")
-	if ($tj -ne $null) {
-		$tj.Delete()
-	}
-
-	$serviceInstance.Unprovision()
-	$serviceInstance.Delete()
-	$serviceInstance.Uncache()
-	write-host "Barista Service Application instance" $serviceInstance.DisplayName "on" $serviceInstance.Server.Address "removed." -foregroundcolor Green
 }
 
 write-host "[[[[ Barista Service Application instances removed. ]]]]" -foregroundcolor Green
@@ -137,14 +141,16 @@ write-host "[[STEP]] Uninstalling Barista Service Applications." -foregroundcolo
 write-host 
 
 $serviceApps = Get-SPServiceApplication | Where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceApplication" }
-foreach ($serviceApp in $serviceApps) {
-		write-host "Unprovisioning service application" $serviceApp.DisplayName "..." -foregroundcolor Gray
+if ($serviceApps -ne $null) {
+	foreach ($serviceApp in $serviceApps) {
+			write-host "Unprovisioning service application" $serviceApp.DisplayName "..." -foregroundcolor Gray
 
-		Remove-SPServiceApplication $serviceApp -RemoveData -Confirm:$false
-		#$serviceApp.Unprovision()
-		#$serviceApp.Delete()
-		$serviceApp.Uncache()
-		write-host 
+			Remove-SPServiceApplication $serviceApp -RemoveData -Confirm:$false
+			#$serviceApp.Unprovision()
+			#$serviceApp.Delete()
+			$serviceApp.Uncache()
+			write-host 
+	}
 }
 
 
