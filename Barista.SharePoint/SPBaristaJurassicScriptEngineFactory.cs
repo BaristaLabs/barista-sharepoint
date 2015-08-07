@@ -129,7 +129,7 @@
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //Do Nothing...
             }
@@ -154,7 +154,7 @@
 
             engine.SetGlobalValue("console", console);
 
-                
+
             //If we came from the Barista event receiver, set the appropriate context.
             if (
                 SPBaristaContext.Current.Request != null &&
@@ -171,7 +171,7 @@
 
             //Map Barista functions to global functions.
             engine.Execute(@"var help = function(obj) { return barista.help(obj); };
-var require = function(name) { return barista.common.require(name); };
+var require = function(name, assemblyName) { return barista.common.require(name, assemblyName); };
 var listBundles = function() { return barista.common.listBundles(); };
 var define = function() { return barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3]); };
 var include = function(scriptUrl) { return barista.include(scriptUrl); };");
@@ -237,8 +237,8 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
             var bundleInfo = approvedPackages[packageId];
 
             var bundleTypeFullName = m.Get<string>("bundleTypeFullName");
-            var assemblyPath =  m.Get<string>("assemblyPath");
-            var assemblyFullName =  m.Get<string>("assemblyFullName");
+            var assemblyPath = m.Get<string>("assemblyPath");
+            var assemblyFullName = m.Get<string>("assemblyFullName");
             var assemblyHash = m.Get<string>("assemblyHash");
 
             return

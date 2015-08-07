@@ -86,16 +86,16 @@
                 foreach (var val in Common.RegisteredBundles.OrderBy(b => b.Key))
                 {
                     
-                    var bundleResult = Common.Require(val.Value.BundleName);
+                    var bundleResult = Common.Require(val.Value.BundleName, null);
 
                     if (bundleResult is ObjectInstance)
                     {
                         var broi = bundleResult as ObjectInstance;
                         IDictionary<string, ObjectInstance> globals;
-                        var definition = GetTernObjectDefinition(Engine, broi, val.Key, out globals);
+                        var definition = GetTernObjectDefinition(Engine, broi, val.Key.BundleName, out globals);
                         definition.SetPropertyValue("!doc", val.Key, false);
 
-                        define.SetPropertyValue(val.Key, definition, false);
+                        define.SetPropertyValue(val.Key.BundleName, definition, false);
 
                         foreach (var global in globals.Where(global => !allGlobals.ContainsKey(global.Key)))
                             allGlobals.Add(global.Key, global.Value);
@@ -107,7 +107,7 @@
                         var emptyDefinition = Engine.Object.Construct();
                         emptyDefinition.SetPropertyValue("!doc", val.Value.BundleDescription, false);
 
-                        define.SetPropertyValue(val.Key, emptyDefinition, false);
+                        define.SetPropertyValue(val.Key.BundleName, emptyDefinition, false);
                     }
                 }
 

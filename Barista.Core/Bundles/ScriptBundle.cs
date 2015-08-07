@@ -58,7 +58,7 @@
       //Require all dependencies..
       foreach (var dependency in m_dependencies)
       {
-        var result = baristaInstance.Common.Require(dependency.Key);
+        var result = baristaInstance.Common.Require(dependency.Key, null);
         dependencyResultObj.SetPropertyValue(dependency.Value, result, false);
       }
 
