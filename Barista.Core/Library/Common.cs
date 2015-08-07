@@ -52,7 +52,7 @@
         public object Require(string name, object assemblyName)
         {
             string strAssemblyName = null;
-            if (assemblyName != Undefined.Value && assemblyName != Null.Value)
+            if (assemblyName != Undefined.Value && assemblyName != Null.Value && assemblyName != null)
                 strAssemblyName = TypeConverter.ToString(assemblyName);
 
             var bundle = GetBundle(name, strAssemblyName);
@@ -62,7 +62,7 @@
             {
                 var type = Type.GetType(name, false, true);
                 if (type == null)
-                    throw new JavaScriptException(Engine, "Error", "The specified bundle does not exist: " + name);
+                    throw new JavaScriptException(Engine, "Error", String.Format("The specified bundle does not exist: {0} {1}", name, assemblyName));
 
                 bundle = Activator.CreateInstance(type) as IBundle;
                 RegisterBundle(bundle);
