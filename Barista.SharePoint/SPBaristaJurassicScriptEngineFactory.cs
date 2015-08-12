@@ -61,57 +61,57 @@
             if (!isNewScriptEngineInstance)
                 return engine;
 
-                var console = new FirebugConsole(engine)
-                {
-                    Output = new SPBaristaConsoleOutput(engine)
-                };
+            var console = new FirebugConsole(engine)
+            {
+                Output = new SPBaristaConsoleOutput(engine)
+            };
 
-                //Register Bundles.
-                var instance = new BaristaSharePointGlobal(engine);
+            //Register Bundles.
+            var instance = new BaristaSharePointGlobal(engine);
 
-                if (webBundle != null)
-                    instance.Common.RegisterBundle(webBundle);
+            if (webBundle != null)
+                instance.Common.RegisterBundle(webBundle);
 
-                var binDirectory = "";
-                if (HttpRuntime.AppDomainAppId != null)
-                    binDirectory = HttpRuntime.BinDirectory;
+            var binDirectory = "";
+            if (HttpRuntime.AppDomainAppId != null)
+                binDirectory = HttpRuntime.BinDirectory;
 
-                instance.Common.RegisterBundle(new StringBundle());
-                instance.Common.RegisterBundle(new SugarBundle());
-                instance.Common.RegisterBundle(new SucraloseBundle());
-                instance.Common.RegisterBundle(new LoDashBundle());
-                instance.Common.RegisterBundle(new SPWebOptimizationBundle());
-                instance.Common.RegisterBundle(new MomentBundle());
-                instance.Common.RegisterBundle(new MustacheBundle());
-                instance.Common.RegisterBundle(new LinqBundle());
-                instance.Common.RegisterBundle(new JsonDataBundle());
-                instance.Common.RegisterBundle(new SharePointBundle());
-                instance.Common.RegisterBundle(new SharePointSearchBundle());
-                instance.Common.RegisterBundle(new SharePointPublishingBundle());
-                instance.Common.RegisterBundle(new SharePointContentMigrationBundle());
-                instance.Common.RegisterBundle(new SharePointTaxonomyBundle());
-                instance.Common.RegisterBundle(new SharePointWorkflowBundle());
-                instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
-                instance.Common.RegisterBundle(new SPDocumentBundle());
-                instance.Common.RegisterBundle(new DiagnosticsBundle());
-                instance.Common.RegisterBundle(new iCalBundle());
-                instance.Common.RegisterBundle(new SmtpBundle());
-                instance.Common.RegisterBundle(new K2Bundle());
-                instance.Common.RegisterBundle(new UtilityBundle());
-                instance.Common.RegisterBundle(new UlsLogBundle());
-                instance.Common.RegisterBundle(new DocumentStoreBundle());
-                instance.Common.RegisterBundle(new SimpleInheritanceBundle());
-                instance.Common.RegisterBundle(new SqlDataBundle());
-                instance.Common.RegisterBundle(new StateMachineBundle());
-                instance.Common.RegisterBundle(new DeferredBundle());
+            instance.Common.RegisterBundle(new StringBundle());
+            instance.Common.RegisterBundle(new SugarBundle());
+            instance.Common.RegisterBundle(new SucraloseBundle());
+            instance.Common.RegisterBundle(new LoDashBundle());
+            instance.Common.RegisterBundle(new SPWebOptimizationBundle());
+            instance.Common.RegisterBundle(new MomentBundle());
+            instance.Common.RegisterBundle(new MustacheBundle());
+            instance.Common.RegisterBundle(new LinqBundle());
+            instance.Common.RegisterBundle(new JsonDataBundle());
+            instance.Common.RegisterBundle(new SharePointBundle());
+            instance.Common.RegisterBundle(new SharePointSearchBundle());
+            instance.Common.RegisterBundle(new SharePointPublishingBundle());
+            instance.Common.RegisterBundle(new SharePointContentMigrationBundle());
+            instance.Common.RegisterBundle(new SharePointTaxonomyBundle());
+            instance.Common.RegisterBundle(new SharePointWorkflowBundle());
+            instance.Common.RegisterBundle(new SPActiveDirectoryBundle());
+            instance.Common.RegisterBundle(new SPDocumentBundle());
+            instance.Common.RegisterBundle(new DiagnosticsBundle());
+            instance.Common.RegisterBundle(new iCalBundle());
+            instance.Common.RegisterBundle(new SmtpBundle());
+            instance.Common.RegisterBundle(new K2Bundle());
+            instance.Common.RegisterBundle(new UtilityBundle());
+            instance.Common.RegisterBundle(new UlsLogBundle());
+            instance.Common.RegisterBundle(new DocumentStoreBundle());
+            instance.Common.RegisterBundle(new SimpleInheritanceBundle());
+            instance.Common.RegisterBundle(new SqlDataBundle());
+            instance.Common.RegisterBundle(new StateMachineBundle());
+            instance.Common.RegisterBundle(new DeferredBundle());
                 //instance.Common.RegisterBundle(new TfsBundle());
-                instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
-                instance.Common.RegisterBundle(new WebAdministrationBundle());
+            instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
+            instance.Common.RegisterBundle(new WebAdministrationBundle());
                 //instance.Common.RegisterBundle(new UnitTestingBundle());
-                instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
+            instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
 
-                //Let's do some DI
-                var kernel = new StandardKernel();
+            //Let's do some DI
+            var kernel = new StandardKernel();
             BaristaHelper.BindBaristaBundles(kernel, Path.Combine(binDirectory, "bundles"));
 
             //Let's get information about the approved packages
@@ -129,101 +129,101 @@
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //Do Nothing...
             }
 
             foreach (var bundle in kernel.GetAll<IBundle>(m => IsApprovedPackage(m, approvedPackages)))
-                {
-                    instance.Common.RegisterBundle(bundle);
-                }
+            {
+                instance.Common.RegisterBundle(bundle);
+            }
 
-                //Global Types
-                engine.SetGlobalValue("barista", instance);
+            //Global Types
+            engine.SetGlobalValue("barista", instance);
 
-                //engine.SetGlobalValue("file", new FileSystemInstance(engine));
+            //engine.SetGlobalValue("file", new FileSystemInstance(engine));
 
-                engine.SetGlobalValue("Guid", new GuidConstructor(engine));
-                engine.SetGlobalValue("HashTable", new HashtableConstructor(engine));
-                engine.SetGlobalValue("Uri", new UriConstructor(engine));
-                engine.SetGlobalValue("Encoding", new EncodingInstance(engine.Object.InstancePrototype));
+            engine.SetGlobalValue("Guid", new GuidConstructor(engine));
+            engine.SetGlobalValue("HashTable", new HashtableConstructor(engine));
+            engine.SetGlobalValue("Uri", new UriConstructor(engine));
+            engine.SetGlobalValue("Encoding", new EncodingInstance(engine.Object.InstancePrototype));
 
-                engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
-                engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
+            engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
+            engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));
 
-                engine.SetGlobalValue("console", console);
+            engine.SetGlobalValue("console", console);
 
                 
-                //If we came from the Barista event receiver, set the appropriate context.
-                if (
-                  SPBaristaContext.Current.Request != null &&
-                  SPBaristaContext.Current.Request.ExtendedProperties != null &&
-                  SPBaristaContext.Current.Request.ExtendedProperties.ContainsKey("SPItemEventProperties"))
-                {
-                    var properties =
-                      SPBaristaContext.Current.Request.ExtendedProperties["SPItemEventProperties"];
+            //If we came from the Barista event receiver, set the appropriate context.
+            if (
+                SPBaristaContext.Current.Request != null &&
+                SPBaristaContext.Current.Request.ExtendedProperties != null &&
+                SPBaristaContext.Current.Request.ExtendedProperties.ContainsKey("SPItemEventProperties"))
+            {
+                var properties =
+                    SPBaristaContext.Current.Request.ExtendedProperties["SPItemEventProperties"];
 
-                    var itemEventProperties = JsonConvert.DeserializeObject<BaristaItemEventProperties>(properties);
-                    engine.SetGlobalValue("CurrentItemEventProperties",
-                      new BaristaItemEventPropertiesInstance(engine.Object.InstancePrototype, itemEventProperties));
-                }
+                var itemEventProperties = JsonConvert.DeserializeObject<BaristaItemEventProperties>(properties);
+                engine.SetGlobalValue("CurrentItemEventProperties",
+                    new BaristaItemEventPropertiesInstance(engine.Object.InstancePrototype, itemEventProperties));
+            }
 
-                //Map Barista functions to global functions.
-                engine.Execute(@"var help = function(obj) { return barista.help(obj); };
-var require = function(name) { return barista.common.require(name); };
+            //Map Barista functions to global functions.
+            engine.Execute(@"var help = function(obj) { return barista.help(obj); };
+var require = function(name, assemblyName) { return barista.common.require(name, assemblyName); };
 var listBundles = function() { return barista.common.listBundles(); };
 var define = function() { return barista.common.define(arguments[0], arguments[1], arguments[2], arguments[3]); };
 var include = function(scriptUrl) { return barista.include(scriptUrl); };");
 
-                //Execute any instance initialization code.
-                if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode))
-                    return engine;
+            //Execute any instance initialization code.
+            if (String.IsNullOrEmpty(instanceSettings.InstanceInitializationCode))
+                return engine;
 
-                var initializationScriptSource =
-                    new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode, SPBaristaContext.Current.Request.InstanceInitializationCodePath);
+            var initializationScriptSource =
+                new StringScriptSource(SPBaristaContext.Current.Request.InstanceInitializationCode, SPBaristaContext.Current.Request.InstanceInitializationCodePath);
 
-                try
-                {
-                    engine.Execute(initializationScriptSource);
-                }
-                catch (JavaScriptException ex)
-                {
-                    BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
-                        "A JavaScript exception was thrown while evaluating script: ");
-                    UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
-                    errorInInitialization = true;
+            try
+            {
+                engine.Execute(initializationScriptSource);
+            }
+            catch (JavaScriptException ex)
+            {
+                BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.JavaScriptException,
+                    "A JavaScript exception was thrown while evaluating script: ");
+                UpdateResponseWithJavaScriptExceptionDetails(engine, ex, SPBaristaContext.Current.Response);
+                errorInInitialization = true;
 
-                    switch (instanceSettings.InstanceMode)
-                    {
-                        case BaristaInstanceMode.Single:
-                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                instanceSettings.InstanceName);
-                            break;
-                        case BaristaInstanceMode.PerSession:
-                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                instanceSettings.InstanceName);
-                            break;
-                    }
-                }
-                catch (Exception ex)
+                switch (instanceSettings.InstanceMode)
                 {
-                    BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
-                        "An internal error occured while evaluating script: ");
-                    errorInInitialization = true;
-                    switch (instanceSettings.InstanceMode)
-                    {
-                        case BaristaInstanceMode.Single:
-                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                instanceSettings.InstanceName);
-                            break;
-                        case BaristaInstanceMode.PerSession:
-                            BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
-                                instanceSettings.InstanceName);
-                            break;
-                    }
-                    throw;
+                    case BaristaInstanceMode.Single:
+                        BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                            instanceSettings.InstanceName);
+                        break;
+                    case BaristaInstanceMode.PerSession:
+                        BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                            instanceSettings.InstanceName);
+                        break;
                 }
+            }
+            catch (Exception ex)
+            {
+                BaristaDiagnosticsService.Local.LogException(ex, BaristaDiagnosticCategory.Runtime,
+                    "An internal error occured while evaluating script: ");
+                errorInInitialization = true;
+                switch (instanceSettings.InstanceMode)
+                {
+                    case BaristaInstanceMode.Single:
+                        BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                            instanceSettings.InstanceName);
+                        break;
+                    case BaristaInstanceMode.PerSession:
+                        BaristaSharePointGlobal.RemoveScriptEngineInstanceFromRuntimeCache(
+                            instanceSettings.InstanceName);
+                        break;
+                }
+                throw;
+            }
 
             return engine;
         }
@@ -237,8 +237,8 @@ var include = function(scriptUrl) { return barista.include(scriptUrl); };");
             var bundleInfo = approvedPackages[packageId];
 
             var bundleTypeFullName = m.Get<string>("bundleTypeFullName");
-            var assemblyPath =  m.Get<string>("assemblyPath");
-            var assemblyFullName =  m.Get<string>("assemblyFullName");
+            var assemblyPath = m.Get<string>("assemblyPath");
+            var assemblyFullName = m.Get<string>("assemblyFullName");
             var assemblyHash = m.Get<string>("assemblyHash");
 
             return
