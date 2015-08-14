@@ -119,26 +119,56 @@
             var servers = new JArray();
             foreach(var spServer in SPFarm.Local.Servers)
             {
-                var server = new JObject
+                JObject server;
+                try
                 {
-                    {"id", spServer.Id},
-                    {"address", spServer.Address},
-                    {"name", spServer.Name},
-                    {"needsUpgrade", spServer.NeedsUpgrade},
-                    {"needsUpgradeIncludeChildren", spServer.NeedsUpgradeIncludeChildren},
-                    {"version", spServer.Version},
-                    {"role", spServer.Role.ToString()}
-                };
+                    server = new JObject
+                    {
+                        {"id", spServer.Id},
+                        {"address", spServer.Address},
+                        {"name", spServer.Name},
+                        {"needsUpgrade", spServer.NeedsUpgrade},
+                        {"needsUpgradeIncludeChildren", spServer.NeedsUpgradeIncludeChildren},
+                        {"version", spServer.Version},
+                        {"role", spServer.Role.ToString()}
+                    };
+                }
+                catch (Exception ex)
+                {
+                    server = new JObject
+                    {
+                        {"id", spServer.Id},
+                        {"address", spServer.Address},
+                        {"name", spServer.Name},
+                        {"exception", ex.Message},
+                        {"stackTrace", ex.StackTrace}
+                    };
+                }
 
                 servers.Add(server);
             }
+
             sharepoint.Add("serversInFarm", servers);
 
-            var baristaService = BaristaHelper.GetBaristaService(SPFarm.Local);
-            sharepoint.Add("baristaService", GetSharePointServiceRepresentation(baristaService));
+            try
+            {
+                var baristaService = BaristaHelper.GetBaristaService(SPFarm.Local);
+                sharepoint.Add("baristaService", GetSharePointServiceRepresentation(baristaService));
+            }
+            catch
+            {
+                //Do Nothing
+            }
 
-            var baristaSearchService = BaristaHelper.GetBaristaSearchService(SPFarm.Local);
-            sharepoint.Add("baristaSearchService", GetSharePointServiceRepresentation(baristaSearchService));
+            try
+            {
+                var baristaSearchService = BaristaHelper.GetBaristaSearchService(SPFarm.Local);
+                sharepoint.Add("baristaSearchService", GetSharePointServiceRepresentation(baristaSearchService));
+            }
+            catch
+            {
+                //Do Nothing
+            }
 
             result.Add("sharepoint", sharepoint);
 
