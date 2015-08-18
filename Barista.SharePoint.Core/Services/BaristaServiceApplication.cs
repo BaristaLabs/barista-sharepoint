@@ -170,7 +170,7 @@
                     if (request.ExecutionTimeout <= 0)
                         request.ExecutionTimeout = 60 * 1000;
 
-                    object result = null;
+                    object result;
                     using (new SPMonitoredScope("Barista Script Eval", request.ExecutionTimeout,
                               new SPCriticalTraceCounter(),
                               new SPExecutionTimeCounter(request.ExecutionTimeout),
@@ -202,17 +202,34 @@
                         response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
 
                         var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
-                        if (arrayResult != null && arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("Content-Disposition") == false)
+                        if (arrayResult != null)
                         {
-                            var br = BrowserUserAgentParser.GetDefault();
-                            var clientInfo = br.Parse(request.Headers.UserAgent);
+                            if (arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null &&
+                                response.Headers.ContainsKey("Content-Disposition") == false)
+                            {
+                                var br = BrowserUserAgentParser.GetDefault();
+                                var clientInfo = br.Parse(request.Headers.UserAgent);
 
-                            if (clientInfo.UserAgent.Family == "IE" && (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
-                                response.Headers.Add("Content-Disposition", "attachment; filename=" + Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName));
-                            else if (clientInfo.UserAgent.Family == "Safari")
-                                response.Headers.Add("Content-Disposition", "attachment; filename=" + arrayResult.FileName);
-                            else
-                                response.Headers.Add("Content-Disposition", "attachment; filename=\"" + Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
+                                if (clientInfo.UserAgent.Family == "IE" &&
+                                    (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+                                    response.Headers.Add("Content-Disposition",
+                                        "attachment; filename=" +
+                                        Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName));
+                                else if (clientInfo.UserAgent.Family == "Safari")
+                                    response.Headers.Add("Content-Disposition",
+                                        "attachment; filename=" + arrayResult.FileName);
+                                else
+                                    response.Headers.Add("Content-Disposition",
+                                        "attachment; filename=\"" +
+                                        Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
+                            }
+
+                            //Set the ETag on the response if the Base64EncodedByteArrayInstance defines an ETag and one has not already been set.
+                            if (arrayResult.ETag.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("ETag") == false)
+                            {
+                                response.Headers.Add("ETag", arrayResult.ETag);
+                            }
+
                         }
                     }
 

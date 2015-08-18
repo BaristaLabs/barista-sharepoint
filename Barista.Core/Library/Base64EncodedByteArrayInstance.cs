@@ -20,24 +20,24 @@
         public Base64EncodedByteArrayInstance Construct(string base64EncodedData)
         {
             return String.IsNullOrEmpty(base64EncodedData)
-              ? new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null)
-              : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
+              ? new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, null)
+              : new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
         }
 
         [JSFunction(Name = "createFromString")]
         public Base64EncodedByteArrayInstance CreateFromString(string data)
         {
             return String.IsNullOrEmpty(data)
-              ? new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null)
-              : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(data));
+              ? new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, null)
+              : new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, Encoding.UTF8.GetBytes(data));
         }
 
         [JSFunction(Name = "fromBase64String")]
         public Base64EncodedByteArrayInstance FromBase64String(string data)
         {
             return String.IsNullOrEmpty(data)
-              ? new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, null)
-              : new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, Convert.FromBase64String(data));
+              ? new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, null)
+              : new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, Convert.FromBase64String(data));
         }
     }
 
@@ -49,16 +49,16 @@
         public Base64EncodedByteArrayInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.MimeType = "application/octet-stream";
-            this.PopulateFields();
-            this.PopulateFunctions();
+            MimeType = "application/octet-stream";
+            PopulateFields();
+            PopulateFunctions();
         }
 
         public Base64EncodedByteArrayInstance(ObjectInstance prototype, byte[] data)
             : this(prototype)
         {
             if (data != null && data.Length > 0)
-                this.m_data = new List<byte>(data);
+                m_data = new List<byte>(data);
         }
 
         public byte[] Data
@@ -72,12 +72,19 @@
         /// <param name="data"></param>
         public void Copy(byte[] data)
         {
-            this.m_data.Clear();
+            m_data.Clear();
             m_data.AddRange(data);
         }
 
         [JSProperty(Name = "mimeType")]
         public string MimeType
+        {
+            get;
+            set;
+        }
+
+        [JSProperty(Name = "eTag")]
+        public string ETag
         {
             get;
             set;
