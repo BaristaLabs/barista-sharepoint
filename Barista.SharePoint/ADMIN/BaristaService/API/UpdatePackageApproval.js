@@ -35,7 +35,7 @@ if (!currentPackageApproval) {
     var newApproval = {
         "approvalLevel": packageApproval.approval.approvalLevel,
         "lastDateModified": new Date(),
-        "lastUserModified": sp.currentContext.web.currentUser,
+        "lastUserModified": sp.currentContext.web.currentUser.loginName,
         "packageInfo": barista.getPackageInfo(packageApproval.id)
 };
     approvals[packageApproval.id] = newApproval;
@@ -44,7 +44,7 @@ if (!currentPackageApproval) {
 else {
     currentPackageApproval.approvalLevel = packageApproval.approval.approvalLevel;
     currentPackageApproval.lastDateModified = new Date();
-    currentPackageApproval.lastUserModified = sp.currentContext.web.currentUser;
+    currentPackageApproval.lastUserModified = sp.currentContext.web.currentUser.loginName;
     currentPackageApproval.packageInfo = barista.getPackageInfo(packageApproval.id)
     result = true;
 }
