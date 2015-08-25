@@ -17,11 +17,11 @@
         }
 
         [JSConstructorFunction]
-        public Base64EncodedByteArrayInstance Construct(string base64EncodedData)
+        public Base64EncodedByteArrayInstance Construct(object base64EncodedData)
         {
-            return String.IsNullOrEmpty(base64EncodedData)
+            return (base64EncodedData == Null.Value || base64EncodedData == Undefined.Value || base64EncodedData == null)
               ? new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, null)
-              : new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, StringHelper.StringToByteArray(base64EncodedData));
+              : new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, StringHelper.StringToByteArray(TypeConverter.ToString(base64EncodedData)));
         }
 
         [JSFunction(Name = "createFromString")]
@@ -50,7 +50,6 @@
             : base(prototype)
         {
             MimeType = "application/octet-stream";
-            PopulateFields();
             PopulateFunctions();
         }
 
@@ -107,6 +106,15 @@
         public void Append(string data)
         {
             m_data.AddRange(StringHelper.StringToByteArray(data));
+        }
+
+        [JSFunction(Name = "subarray")]
+        public Base64EncodedByteArrayInstance SubArray(int index, object count)
+        {
+            if (count == Null.Value || count == Undefined.Value || count == null)
+                return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_data.Skip(index).ToArray());
+
+            return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_data.Skip(index).Take(TypeConverter.ToInteger(count)).ToArray());
         }
 
         [JSFunction(Name = "getByteAt")]

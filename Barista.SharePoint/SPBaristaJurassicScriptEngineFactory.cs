@@ -147,7 +147,7 @@
             engine.SetGlobalValue("Guid", new GuidConstructor(engine));
             engine.SetGlobalValue("HashTable", new HashtableConstructor(engine));
             engine.SetGlobalValue("Uri", new UriConstructor(engine));
-            engine.SetGlobalValue("Encoding", new EncodingInstance(engine.Object.InstancePrototype));
+            engine.SetGlobalValue("Encoding", new EncodingConstructor(engine));
 
             engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
             engine.SetGlobalValue("Base64EncodedByteArray", new Base64EncodedByteArrayConstructor(engine));

@@ -92,7 +92,7 @@
 
                 engine.SetGlobalValue("Guid", new GuidConstructor(engine));
                 engine.SetGlobalValue("Uri", new UriConstructor(engine));
-                engine.SetGlobalValue("Encoding", new EncodingInstance(engine.Object.InstancePrototype));
+                engine.SetGlobalValue("Encoding", new EncodingConstructor(engine));
                 engine.SetGlobalValue("Size", new SizeConstructor(engine));
                 engine.SetGlobalValue("Point", new PointConstructor(engine));
                 engine.SetGlobalValue("NetworkCredential", new NetworkCredentialConstructor(engine));
