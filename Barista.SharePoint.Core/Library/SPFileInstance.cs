@@ -8,6 +8,7 @@
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Utilities;
     using System;
+    using System.IO;
     using System.Linq;
     using System.Web.UI.WebControls.WebParts;
 
@@ -868,6 +869,7 @@
                 result = new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_file.OpenBinary(openOptionsValue));
             }
 
+            result.ETag = m_file.ETag;
             result.FileName = m_file.Name;
             result.MimeType = StringHelper.GetMimeTypeFromFileName(m_file.Name);
             return result;
@@ -882,9 +884,38 @@
 
         [JSFunction(Name = "saveBinary")]
         [JSDoc("Updates the file with the contents of the specified argument.")]
-        public void SaveBinary(Base64EncodedByteArrayInstance data)
+        public void SaveBinary(Base64EncodedByteArrayInstance data, object saveBinaryParameters)
         {
-            m_file.SaveBinary(data.Data);
+            if (saveBinaryParameters != null && saveBinaryParameters != Undefined.Value && saveBinaryParameters != Null.Value)
+            {
+                var p = new SPFileSaveBinaryParameters();
+                if (data.ETag.IsNullOrWhiteSpace() == false)
+                    p.ETagMatch = data.ETag;
+
+                var objSaveBinaryParameters = saveBinaryParameters as ObjectInstance;
+                if (objSaveBinaryParameters != null)
+                {
+                    
+                    //TODO: Finish this...
+
+                    if (objSaveBinaryParameters.HasProperty("checkInComment"))
+                        p.CheckInComment = TypeConverter.ToString(objSaveBinaryParameters.GetPropertyValue("CheckInComment"));
+
+                    if (objSaveBinaryParameters.HasProperty("eTagMatch"))
+                        p.ETagMatch = TypeConverter.ToString(objSaveBinaryParameters.GetPropertyValue("eTagMatch"));
+                    
+                        
+                }
+
+                using(var stream = new MemoryStream(data.Data))
+                {
+                    m_file.SaveBinary(stream, p);
+                }
+            }
+            else
+            {
+                m_file.SaveBinary(data.Data);
+            }
         }
 
         [JSFunction(Name = "recycle")]

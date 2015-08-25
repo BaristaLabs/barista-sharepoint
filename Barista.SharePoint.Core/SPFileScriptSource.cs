@@ -23,7 +23,7 @@
             if (SPHelper.TryGetSPFileAsString(scriptUrl, out filePath, out code, out isHiveFile))
             {
                 m_codePath = filePath;
-                //m_code = SPHelper.ReplaceTokens(code);
+                m_code = code;
             }
             else
             {

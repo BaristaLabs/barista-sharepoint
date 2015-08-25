@@ -11,55 +11,55 @@
         public EncodingConstructor(ScriptEngine engine)
             : base(engine.Function.InstancePrototype, "Encoding", new EncodingInstance(engine.Object.InstancePrototype))
         {
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         [JSConstructorFunction]
         public EncodingInstance Construct()
         {
-            return new EncodingInstance(this.InstancePrototype);
+            return new EncodingInstance(InstancePrototype);
         }
 
         [JSProperty(Name = "ASCII")]
         public EncodingInstance Ascii
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.ASCII); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.ASCII); }
         }
 
         [JSProperty(Name = "BigEndianUnicode")]
         public EncodingInstance BigEndianUnicode
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.BigEndianUnicode); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.BigEndianUnicode); }
         }
 
         [JSProperty(Name = "Default")]
         public EncodingInstance Default
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.Default); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.Default); }
         }
 
         [JSProperty(Name = "UTF32")]
         public EncodingInstance Utf32
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.UTF32); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.UTF32); }
         }
 
         [JSProperty(Name = "UTF7")]
         public EncodingInstance Utf7
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.UTF7); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.UTF7); }
         }
 
         [JSProperty(Name = "UTF8")]
         public EncodingInstance Utf8
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.UTF8); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.UTF8); }
         }
 
         [JSProperty(Name = "Unicode")]
         public EncodingInstance Unicode
         {
-            get { return new EncodingInstance(this.Engine.Object.InstancePrototype, Encoding.Unicode); }
+            get { return new EncodingInstance(Engine.Object.InstancePrototype, Encoding.Unicode); }
         }
 
         [JSFunction(Name = "getEncoding")]
@@ -67,7 +67,7 @@
         {
             var result = Encoding.GetEncoding(name);
 
-            return new EncodingInstance(this.Engine.Object.InstancePrototype, result);
+            return new EncodingInstance(Engine.Object.InstancePrototype, result);
         }
     }
 
@@ -79,8 +79,7 @@
         public EncodingInstance(ObjectInstance prototype)
             : base(prototype)
         {
-            this.PopulateFields();
-            this.PopulateFunctions();
+            PopulateFunctions();
         }
 
         public EncodingInstance(ObjectInstance prototype, Encoding encoding)
@@ -201,7 +200,7 @@
         {
             var result = m_encoding.GetBytes(s);
 
-            return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result);
+            return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getPreamble")]
@@ -209,7 +208,7 @@
         {
             var result = m_encoding.GetPreamble();
 
-            return new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result);
+            return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, result);
         }
 
         [JSFunction(Name = "getString")]

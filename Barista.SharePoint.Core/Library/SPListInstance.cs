@@ -1036,17 +1036,20 @@
         {
             SPContentTypeId bestMatch = SPContentTypeId.Empty;
 
-            if (contentType is string)
-            {
-                bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch(new SPContentTypeId(contentType as string));
-            }
-            else if (contentType is SPContentTypeIdInstance)
+
+            if (contentType is SPContentTypeIdInstance)
             {
                 bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
             }
             else if (contentType is SPContentTypeInstance)
             {
                 bestMatch = m_list.ParentWeb.AvailableContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+            }
+            else if (TypeUtilities.IsString(contentType))
+            {
+                bestMatch =
+                    m_list.ParentWeb.AvailableContentTypes.BestMatch(
+                        new SPContentTypeId(TypeConverter.ToString(contentType)));
             }
 
             if (bestMatch == SPContentTypeId.Empty)
@@ -1071,19 +1074,19 @@
         [JSFunction(Name = "ensureContentType")]
         public SPContentTypeInstance EnsureContentType(object contentType)
         {
-            SPContentTypeId contentTypeIdToFind = SPContentTypeId.Empty;
+            var contentTypeIdToFind = SPContentTypeId.Empty;
 
-            if (contentType is string)
-            {
-                contentTypeIdToFind = new SPContentTypeId(contentType as string);
-            }
-            else if (contentType is SPContentTypeIdInstance)
+            if (contentType is SPContentTypeIdInstance)
             {
                 contentTypeIdToFind = (contentType as SPContentTypeIdInstance).ContentTypeId;
             }
             else if (contentType is SPContentTypeInstance)
             {
                 contentTypeIdToFind = (contentType as SPContentTypeInstance).ContentType.Id;
+            }
+            else if (TypeUtilities.IsString(contentType))
+            {
+                contentTypeIdToFind = new SPContentTypeId(TypeConverter.ToString(contentType));
             }
 
             if (contentTypeIdToFind == SPContentTypeId.Empty)
@@ -1129,7 +1132,7 @@
                 QueryThrottleMode = SPQueryThrottleOption.Override
             };
 
-            var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+            var items = m_list.GetItems(query).OfType<SPListItem>().ToList();
 
             var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
@@ -1158,16 +1161,12 @@
         [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance GetItemsByQuery(object query)
         {
+            if (query == Null.Value || query == Undefined.Value || query == null)
+                throw new JavaScriptException(Engine, "Error", "A query parameter must be supplied that contains either a string or an instance of a SPCamlQuery or SPCamlQueryBuilder");
+            
             SPQuery camlQuery;
 
-            if (query is string)
-            {
-                camlQuery = new SPQuery
-                {
-                    Query = query as string
-                };
-            }
-            else if (query is SPCamlQueryInstance)
+            if (query is SPCamlQueryInstance)
             {
                 var queryInstance = query as SPCamlQueryInstance;
                 camlQuery = queryInstance.SPQuery;
@@ -1177,6 +1176,13 @@
                 camlQuery = new SPQuery
                 {
                     Query = query.ToString()
+                };
+            }
+            else if (TypeUtilities.IsString(query))
+            {
+                camlQuery = new SPQuery
+                {
+                    Query = TypeConverter.ToString(query)
                 };
             }
             else
@@ -1195,7 +1201,7 @@
             //  });
             camlQuery.QueryThrottleMode = SPQueryThrottleOption.Override;
 
-            var items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList<SPListItem>();
+            var items = m_list.GetItems(camlQuery).OfType<SPListItem>().ToList();
 
             var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
@@ -1210,21 +1216,22 @@
         [JSDoc("ternReturnType", "[+SPListItem]")]
         public ArrayInstance GetItemsByView(object view)
         {
+            if (view == Null.Value || view == Undefined.Value || view == null)
+                throw new JavaScriptException(Engine, "Error", "A view name must be supplied as the first parameter.");
+            
             SPView selectedView;
 
-            if (view is string)
-            {
-                selectedView = m_list.Views[view as string];
-            }
-            else if (view is SPViewInstance)
+            if (view is SPViewInstance)
             {
                 var viewInstance = view as SPViewInstance;
                 selectedView = m_list.Views[viewInstance.Title];
             }
-            else
+            else if (TypeUtilities.IsString(view))
             {
-                return null;
+                selectedView = m_list.Views[TypeConverter.ToString(view)];
             }
+            else
+                return null;
 
             SPQuery query = new SPQuery(selectedView)
             {
@@ -1248,7 +1255,7 @@
             //  ArrayInstance.Push(result, instance);
             //}
 
-            var items = m_list.GetItems(query).OfType<SPListItem>().ToList<SPListItem>();
+            var items = m_list.GetItems(query).OfType<SPListItem>().ToList();
 
             var listItemInstances = items.Select(item => new SPListItemInstance(Engine, item));
 
@@ -1282,17 +1289,17 @@
         {
             var bestMatch = SPContentTypeId.Empty;
 
-            if (contentType is string)
-            {
-                bestMatch = m_list.ContentTypes.BestMatch(new SPContentTypeId(contentType as string));
-            }
-            else if (contentType is SPContentTypeIdInstance)
+            if (contentType is SPContentTypeIdInstance)
             {
                 bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
             }
             else if (contentType is SPContentTypeInstance)
             {
                 bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+            }
+            else if (TypeUtilities.IsString(contentType))
+            {
+                m_list.ContentTypes.BestMatch(new SPContentTypeId(TypeConverter.ToString(contentType)));
             }
 
             if (bestMatch == SPContentTypeId.Empty)
@@ -1339,17 +1346,17 @@
         {
             var bestMatch = SPContentTypeId.Empty;
 
-            if (contentType is string)
-            {
-                bestMatch = m_list.ContentTypes.BestMatch(new SPContentTypeId(contentType as string));
-            }
-            else if (contentType is SPContentTypeIdInstance)
+            if (contentType is SPContentTypeIdInstance)
             {
                 bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeIdInstance).ContentTypeId);
             }
             else if (contentType is SPContentTypeInstance)
             {
                 bestMatch = m_list.ContentTypes.BestMatch((contentType as SPContentTypeInstance).ContentType.Id);
+            }
+            else if (TypeUtilities.IsString(contentType))
+            {
+                bestMatch = m_list.ContentTypes.BestMatch(new SPContentTypeId(TypeConverter.ToString(contentType)));
             }
 
             if (bestMatch == SPContentTypeId.Empty)

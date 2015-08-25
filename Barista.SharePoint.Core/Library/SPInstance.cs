@@ -28,7 +28,6 @@
             m_farm = new SPFarmInstance(Engine.Object.InstancePrototype, farmContext);
             m_server = new SPServerInstance(Engine.Object.InstancePrototype, serverContext);
             m_secureStore = new SPSecureStoreInstance(Engine.Object.InstancePrototype);
-            PopulateFields();
             PopulateFunctions();
         }
 
