@@ -268,6 +268,12 @@ namespace Barista.SharePoint.Library
             }
         }
 
+        [JSProperty(Name = "compatibilityLevel")]
+        public int CompatibilityLevel
+        {
+            get { return m_site.CompatibilityLevel; }
+        }
+
         [JSProperty(Name = "contentDatabase")]
         public SPContentDatabaseInstance ContentDatabase
         {

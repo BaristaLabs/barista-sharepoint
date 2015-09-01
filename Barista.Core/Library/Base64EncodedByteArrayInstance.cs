@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text;
     using Jurassic;
     using Jurassic.Library;
@@ -115,6 +116,26 @@
                 return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_data.Skip(index).ToArray());
 
             return new Base64EncodedByteArrayInstance(Engine.Object.InstancePrototype, m_data.Skip(index).Take(TypeConverter.ToInteger(count)).ToArray());
+        }
+
+        [JSFunction(Name = "getMD5Hash")]
+        [JSDoc("Returns a MD5 hash of the contents of the Base64Encoded Byte Array Instance")]
+        public string GetMD5Hash(int index)
+        {
+            using (var md5 = MD5.Create())
+            {
+                return Convert.ToBase64String(md5.ComputeHash(m_data.ToArray()));
+            }
+        }
+
+        [JSFunction(Name = "getSHA1Hash")]
+        [JSDoc("Returns a SHA1 hash of the contents of the Base64Encoded Byte Array Instance")]
+        public string GetSHA1Hash(int index)
+        {
+            using (var sha1 = SHA1.Create())
+            {
+                return Convert.ToBase64String(sha1.ComputeHash(m_data.ToArray()));
+            }
         }
 
         [JSFunction(Name = "getByteAt")]
