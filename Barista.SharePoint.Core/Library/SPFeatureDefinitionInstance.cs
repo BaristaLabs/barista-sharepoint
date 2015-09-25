@@ -208,14 +208,14 @@
         [JSFunction(Name = "getTitle")]
         public string GetTitle()
         {
-            m_featureDefinition.GetTitle(System.Threading.Thread.CurrentContext.CurrentCulture);
+            return m_featureDefinition.GetTitle(System.Threading.Thread.CurrentThread.CurrentCulture);
         }
 
         [JSFunction(Name = "getXmlDefinition")]
         public string GetXmlDefinition()
         {
-            var result = m_featureDefinition.GetXmlDefinition(System.Threading.Thread.CurrentContext.CurrentCulture);
-            result.ToString();
+            var result = m_featureDefinition.GetXmlDefinition(System.Threading.Thread.CurrentThread.CurrentCulture);
+            return result.ToString();
         }
 
         [JSFunction(Name = "provision")]
@@ -225,13 +225,13 @@
         }
 
         [JSFunction(Name = "uncache")]
-        public string Uncache()
+        public void Uncache()
         {
             m_featureDefinition.Uncache();
         }
 
         [JSFunction(Name = "unprovision")]
-        public string Unprovision()
+        public void Unprovision()
         {
             m_featureDefinition.Unprovision();
         }
