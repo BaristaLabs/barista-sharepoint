@@ -16,7 +16,7 @@
         {
             this.EntityFilterCriteria = new EntityFilterCriteria();
 
-            this.PopulateFields();
+            this.PopulateFunctions();
         }
 
         public EntityFilterCriteria EntityFilterCriteria

@@ -14,8 +14,8 @@
       this.DocumentTemplateType = "100";
       this.QuickLaunchOption = SPListTemplate.QuickLaunchOptions.Default.ToString();
 
-      this.PopulateFields();
-      //this.PopulateFunctions();
+      //this.PopulateFields();
+      this.PopulateFunctions();
     }
 
     [JSProperty(Name = "customSchemaXml")]

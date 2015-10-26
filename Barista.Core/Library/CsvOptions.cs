@@ -8,7 +8,7 @@
     public CsvOptions(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
+      this.PopulateFunctions();
       this.HasHeader = false;
       this.PreserveLeadingWhiteSpace = false;
       this.PreserveTrailingWhiteSpace = false;

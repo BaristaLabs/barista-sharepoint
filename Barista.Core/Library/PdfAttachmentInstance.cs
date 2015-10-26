@@ -26,7 +26,7 @@
     public PdfAttachmentInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
+      this.PopulateFunctions();
     }
 
     [JSProperty(Name = "fileName")]

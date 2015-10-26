@@ -32,8 +32,8 @@
         {
             this.Async = false;
 
-            this.PopulateFields();
-            //this.PopulateFunctions();
+            //this.PopulateFields();
+            this.PopulateFunctions();
         }
 
         [JSProperty(Name = "accept")]

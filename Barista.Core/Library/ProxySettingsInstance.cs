@@ -26,8 +26,7 @@
     public ProxySettingsInstance(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      //this.PopulateFunctions();
+        this.PopulateFunctions();
     }
 
     [JSProperty(Name = "address")]

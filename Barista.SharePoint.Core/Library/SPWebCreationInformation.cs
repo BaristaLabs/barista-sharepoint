@@ -10,8 +10,8 @@
     public SPWebCreationInformation(ObjectInstance prototype)
       : base(prototype)
     {
-      this.PopulateFields();
-      //this.PopulateFunctions();
+      //this.PopulateFields();
+      this.PopulateFunctions();
     }
 
     [JSProperty(Name = "convertIfThere")]

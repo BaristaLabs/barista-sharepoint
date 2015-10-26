@@ -746,7 +746,7 @@
         this.Columns = "*";
         this.Args = new object[0];
 
-        this.PopulateFields();
+        this.PopulateFunctions();
       }
 
       [JSProperty(Name = "where")]
@@ -798,7 +798,7 @@
         this.TableName = "";
         this.Where = "";
 
-        this.PopulateFields();
+        this.PopulateFunctions();
       }
 
       [JSProperty(Name = "tableName")]
@@ -832,7 +832,7 @@
         this.PageSize = 20;
         this.Args = new object[0];
 
-        this.PopulateFields();
+        this.PopulateFunctions();
       }
 
       [JSProperty(Name = "where")]
@@ -909,7 +909,7 @@
         this.Key = null;
         this.Args = new object[0];
 
-        this.PopulateFields();
+        this.PopulateFunctions();
       }
 
       [JSProperty(Name = "where")]
