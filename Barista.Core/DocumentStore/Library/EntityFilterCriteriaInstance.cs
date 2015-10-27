@@ -66,26 +66,53 @@
 
         [JSProperty(Name = "queryPairs")]
         [JsonProperty("queryPairs")]
-        public IDictionary<string, string> QueryPairs
+        public object QueryPairs
         {
-            get { return EntityFilterCriteria.QueryPairs; }
-            set { EntityFilterCriteria.QueryPairs = value; }
+            get
+            {
+                var pairs = this.Engine.Object.Construct();
+                foreach (var key in EntityFilterCriteria.QueryPairs.Keys)
+                {
+                    pairs.SetPropertyValue(key, EntityFilterCriteria.QueryPairs[key], false);
+                }
+
+                return pairs;
+            }
+            set
+            {
+                var jsObject = value as ObjectInstance;
+                if (value == Undefined.Value || value == Null.Value || value == null || jsObject == null)
+                {
+                    EntityFilterCriteria.QueryPairs = null;
+                    return;
+                }
+                
+                var pairs = new Dictionary<string, string>();
+                foreach (var property in jsObject.Properties)
+                {
+                    if (!pairs.ContainsKey(property.Name))
+                        pairs.Add(property.Name, TypeConverter.ToString(property.Value));
+                }
+
+                EntityFilterCriteria.QueryPairs = pairs;
+            }
         }
 
         [JSProperty(Name = "skip")]
         [JsonProperty("skip")]
-        public int? Skip
+        public object Skip
         {
             get
             {
-                if (EntityFilterCriteria.Skip != null)
-                    return (int)EntityFilterCriteria.Skip;
-                return null;
+                if (EntityFilterCriteria.Skip.HasValue)
+                    return EntityFilterCriteria.Skip.Value;
+
+                return Null.Value;
             }
             set
             {
-                if (value != null)
-                    EntityFilterCriteria.Skip = (uint)value;
+                if (value != Undefined.Value && value != Null.Value && value != null)
+                    EntityFilterCriteria.Skip = TypeConverter.ToUint32(value);
                 else
                     EntityFilterCriteria.Skip = null;
             }
@@ -93,18 +120,19 @@
 
         [JSProperty(Name = "top")]
         [JsonProperty("top")]
-        public int? Top
+        public object Top
         {
             get
             {
-                if (EntityFilterCriteria.Top != null)
-                    return (int)EntityFilterCriteria.Top;
-                return null;
+                if (EntityFilterCriteria.Top.HasValue)
+                    return EntityFilterCriteria.Top.Value;
+
+                return Null.Value;
             }
             set
             {
-                if (value != null)
-                    EntityFilterCriteria.Top = (uint)value;
+                if (value != Undefined.Value && value != Null.Value && value != null)
+                    EntityFilterCriteria.Top = TypeConverter.ToUint32(value);
                 else
                     EntityFilterCriteria.Top = null;
             }

@@ -195,7 +195,7 @@
         }
 
         /// <summary>
-        /// Gets a value that indicates if a current Barista context is available.
+        /// Gets a value that indicates if a current Barista context has been created.
         /// </summary>
         public new static bool HasCurrentContext
         {

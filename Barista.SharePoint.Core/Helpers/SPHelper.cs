@@ -117,14 +117,14 @@
                 return true;
             }
 
-            if (SPBaristaContext.HasCurrentContext && Uri.TryCreate(SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
+            if (SPBaristaContext.Current != null && SPBaristaContext.Current.Web != null && Uri.TryCreate(SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
             {
                 uri = finalUri;
                 return true;
             }
 
 
-            if (SPContext.Current != null && Uri.TryCreate(SPUtility.ConcatUrls(SPContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
+            if (SPContext.Current != null && SPContext.Current.Web != null && Uri.TryCreate(SPUtility.ConcatUrls(SPContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
             {
                 uri = finalUri;
                 return true;
