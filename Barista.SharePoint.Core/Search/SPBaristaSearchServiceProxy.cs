@@ -100,10 +100,10 @@ namespace Barista.SharePoint.Search
             var binding = new WSHttpBinding
               {
                   AllowCookies = true,
-                  ReceiveTimeout = TimeSpan.FromHours(1),
+                  ReceiveTimeout = TimeSpan.FromMinutes(20),
                   SendTimeout = TimeSpan.FromHours(1),
-                  OpenTimeout = TimeSpan.FromHours(1),
-                  CloseTimeout = TimeSpan.FromHours(1),
+                  OpenTimeout = TimeSpan.FromHours(20),
+                  CloseTimeout = TimeSpan.FromHours(20),
                   MaxReceivedMessageSize = int.MaxValue,
                   ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
                     {

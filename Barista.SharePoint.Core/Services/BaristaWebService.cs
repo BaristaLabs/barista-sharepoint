@@ -19,6 +19,7 @@
     using System.Text;
     using System.Web;
     using HttpUtility = Barista.Helpers.HttpUtility;
+    using System.Diagnostics;
 
     /// <summary>
     /// Represents the Barista WCF service endpoint that responds to REST requests.
@@ -111,6 +112,28 @@
                 {"workingSet", Environment.WorkingSet}
             };
 
+            //try
+            //{
+            //    var cpuCounter = new PerformanceCounter
+            //    {
+            //        CategoryName = "Processor",
+            //        CounterName = "% Processor Time",
+            //        InstanceName = "_Total"
+            //    };
+
+            //    var firstValue = cpuCounter.NextValue();
+            //    System.Threading.Thread.Sleep(1000);
+            //    environment.Add("processorPct", cpuCounter.NextValue());
+
+            //    PerformanceCounter memoryCounter = new PerformanceCounter
+            //    {
+            //        CategoryName = "Memory",
+            //        CounterName = "Available MBytes"
+            //    };
+
+            //    environment.Add("availableMBytes", memoryCounter.NextValue());
+            //}
+            //catch {/* Do Nothing */}
 
             result.Add("environment", environment);
 

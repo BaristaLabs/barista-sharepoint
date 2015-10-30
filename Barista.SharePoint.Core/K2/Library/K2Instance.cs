@@ -21,10 +21,10 @@
       m_k2Binding = new BasicHttpBinding
         {
         AllowCookies = true,
-        ReceiveTimeout = TimeSpan.FromHours(1),
-        SendTimeout = TimeSpan.FromHours(1),
-        OpenTimeout = TimeSpan.FromHours(1),
-        CloseTimeout = TimeSpan.FromHours(1),
+        ReceiveTimeout = TimeSpan.FromMinutes(5),
+        SendTimeout = TimeSpan.FromMinutes(5),
+        OpenTimeout = TimeSpan.FromMinutes(5),
+        CloseTimeout = TimeSpan.FromMinutes(5),
         MaxReceivedMessageSize = int.MaxValue,
         ReaderQuotas = new System.Xml.XmlDictionaryReaderQuotas
           {
