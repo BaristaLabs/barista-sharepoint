@@ -2,7 +2,6 @@
 {
     using System;
     using Barista.Properties;
-    using Barista.V8.Net;
     using Barista.Extensions;
     using System.IO;
     using System.Linq;

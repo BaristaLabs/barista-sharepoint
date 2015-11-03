@@ -2,8 +2,7 @@
 {
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using Barista.Properties;
-    using Barista.V8.Net;
+    using EdgeJs;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -12,6 +11,7 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using System.Xml;
 
     [Serializable]
@@ -170,41 +170,57 @@
             return result;
         }
 
+        private static async Task<object> MinifyCssAsync(string css)
+        {
+            var cssoFunc = Edge.Func(@"
+var csso = require(""csso"");
+return function(data, callback) {
+    var result = csso.minify(data, {fromString: true});
+    callback(null, result);
+};");
+
+            var res = await cssoFunc(css);
+            return res;
+        }
+
         [JSFunction(Name = "minifyCss")]
         [JSDoc("Returns a minified representation of the css string passed as the first argument.")]
         public string MinifyCss(string css)
         {
-            using (var engine = new V8Engine())
-            {
-                engine.Execute(Resources.csso_web, "cssoWeb", true);
+            var cssTask = Task.Run<object>(() => MinifyCssAsync(css));
+            cssTask.Wait();
 
-                engine.GlobalObject.SetProperty("css", css);
+            if (cssTask.Result == null)
+                return String.Empty;
 
-                var result = engine.Execute(@"var compressor = new CSSOCompressor(), translator = new CSSOTranslator();
-translator.translate(cleanInfo(compressor.compress(srcToCSSP(css, 'stylesheet', true))));
-");
-                return result.AsString;
-            }
+            return cssTask.Result.ToString();
+        }
+
+        private static async Task<object> MinifyJsAsync(string javascript)
+        {
+            var uglifyFunc = Edge.Func(@"
+var UglifyJS = require(""uglify-js"");
+return function(data, callback) {
+    var result = UglifyJS.minify(data, {fromString: true});
+    callback(null, result);
+};");
+
+            var res = await uglifyFunc(javascript);
+            return res;
         }
 
         [JSFunction(Name = "minifyJs")]
         [JSDoc("Returns a minified representation of the javascript string passed as the first argument.")]
         public string MinifyJs(string javascript)
         {
-            using (var engine = new V8Engine())
-            {
-                engine.Execute(Resources.uglifyjs, "uglifyjs", true);
-                
-                engine.GlobalObject.SetProperty("code", javascript);
+            var uglifyTask = Task.Run<object>(() => MinifyJsAsync(javascript));
+            uglifyTask.Wait();
 
-                var result = engine.Execute(@"var ast = UglifyJS.parse(code);
-ast.figure_out_scope();
-compressor = UglifyJS.Compressor();
-ast = ast.transform(compressor);
-ast.print_to_string();");
+            if (uglifyTask.Result == null)
+                return String.Empty;
 
-                return result.AsString;
-            }
+            dynamic result = uglifyTask.Result;
+            return result.code.ToString();
         }
 
         [JSFunction(Name = "replaceRelativeUrlsWithAbsoluteInCss")]

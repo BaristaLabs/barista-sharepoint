@@ -3,7 +3,6 @@
     using System;
     using System.Configuration;
     using Barista.Newtonsoft.Json;
-    using Barista.SuperSocket.Common;
 
     /// <summary>
     /// Represents an index definition app.config configuration element.

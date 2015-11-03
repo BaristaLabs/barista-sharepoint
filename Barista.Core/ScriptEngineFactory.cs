@@ -170,6 +170,11 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
             response.ExtendedProperties.Add("Exception_StackTrace", rawStack);
         }
 
+        /// <summary>
+        /// Updates the response with details from the specified exception. If the exception is an aggregate exception, the inner exceptions are reported.
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <param name="response"></param>
         public virtual void UpdateResponseWithExceptionDetails(Exception exception, BrewResponse response)
         {
             if (exception == null)
@@ -187,6 +192,19 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
             }
 
             var message = exception.Message;
+
+            if (message.StartsWith("EvalError:") ||
+                message.StartsWith("InternalError:") ||
+                message.StartsWith("RangeError:") ||
+                message.StartsWith("ReferenceError:") ||
+                message.StartsWith("EvalError:") ||
+                message.StartsWith("SyntaxError:") ||
+                message.StartsWith("TypeError:") ||
+                message.StartsWith("URIError:")) {
+                
+                message = message.Replace("at ", "at<br/>");
+            }
+
             var stack = exception.StackTrace;
             if (String.IsNullOrEmpty(stack) == false)
                 stack = stack.Replace("at ", "at<br/>");

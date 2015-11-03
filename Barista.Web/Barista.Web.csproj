@@ -109,7 +109,6 @@
     <Compile Include="BaristaScriptEngineFactory.cs" />
     <Compile Include="BaristaWebSearchService.cs" />
     <Compile Include="BaristaWebService.cs" />
-    <Compile Include="BaristaWebWebSocketsService.cs" />
     <Compile Include="Bundles\BaristaSearchIndexBundle.cs" />
     <Compile Include="Bundles\BaristaWebBundle.cs" />
     <Compile Include="Bundles\DocumentStoreBundle.cs" />

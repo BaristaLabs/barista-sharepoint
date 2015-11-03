@@ -1,8 +1,8 @@
 ﻿namespace Barista.SharePoint.Library
 {
+    using Barista.Extensions;
     using Barista.Jurassic;
     using Barista.Jurassic.Library;
-    using Barista.SuperSocket.Common;
     using Microsoft.SharePoint;
     using System;
 

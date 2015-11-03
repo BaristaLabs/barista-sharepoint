@@ -14,6 +14,7 @@
     using System.ServiceModel.Web;
     using System.Text;
     using System.Web;
+    using System.Text.RegularExpressions;
 
     [DataContract(Namespace = Constants.ServiceNamespace)]
     [Serializable]
@@ -121,7 +122,9 @@
 
             if (StatusDescription != null)
             {
-                webResponse.StatusDescription = StatusDescription;
+                //Undefined things happen when the description.length > 512
+                var description = Regex.Replace(StatusDescription, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+                webResponse.StatusDescription = description.Truncate(512);
             }
 
             webResponse.StatusCode = StatusCode;
@@ -164,7 +167,10 @@
             response.ContentType = ContentType;
 
             if (setHeaders)
-                response.StatusDescription = StatusDescription;
+            {
+                var description = Regex.Replace(StatusDescription, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+                response.StatusDescription = description.Truncate(512);
+            }
 
             response.StatusCode = (int)StatusCode;
             response.SuppressContent = SuppressContent;

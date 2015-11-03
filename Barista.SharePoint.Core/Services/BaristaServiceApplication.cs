@@ -266,6 +266,7 @@
                     {
                         //Do Nothing...
                     }
+
                     scriptEngineFactory.UpdateResponseWithExceptionDetails(ex, response);
                 }
                 finally

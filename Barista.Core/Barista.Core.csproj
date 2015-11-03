@@ -67,6 +67,9 @@
       <HintPath>..\packages\Common.Logging.Core.3.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EdgeJs">
+      <HintPath>..\Lib\EdgeJs.dll</HintPath>
+    </Reference>
     <Reference Include="EPPlus, Version=4.0.4.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.0.4\lib\net20\EPPlus.dll</HintPath>
       <Private>True</Private>
@@ -99,6 +102,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net35\Lucene.Net.Contrib.SimpleFacetedSearch.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.IdentityModel.dll</HintPath>
@@ -161,6 +165,9 @@
     <Compile Include="BaristaResponseMessage.cs" />
     <Compile Include="BrewRequestHeaders.cs" />
     <Compile Include="BrewRequestInstanceSettings.cs" />
+    <Compile Include="Configuration\ConfigurationElementBase.cs" />
+    <Compile Include="Configuration\GenericConfigurationElementCollection.cs" />
+    <Compile Include="EdgeJSScriptEngine.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Engine\BaristaScriptSource.cs" />
     <Compile Include="BinaryUtil.cs" />
@@ -626,165 +633,8 @@
     <Compile Include="Imports\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
     <Compile Include="Imports\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="Imports\Newtonsoft.Json\WriteState.cs" />
-    <Compile Include="Imports\SuperSocket\Common\ArraySegmentEx.cs" />
-    <Compile Include="Imports\SuperSocket\Common\ArraySegmentList.cs" />
-    <Compile Include="Imports\SuperSocket\Common\AssemblyUtil.cs" />
-    <Compile Include="Imports\SuperSocket\Common\BinaryUtil.cs" />
-    <Compile Include="Imports\SuperSocket\Common\BufferManager.cs" />
-    <Compile Include="Imports\SuperSocket\Common\ConfigurationElementBase.cs" />
-    <Compile Include="Imports\SuperSocket\Common\ConfigurationExtension.cs" />
-    <Compile Include="Imports\SuperSocket\Common\DictionaryExtension.cs" />
-    <Compile Include="Imports\SuperSocket\Common\ErrorEventArgs.cs" />
-    <Compile Include="Imports\SuperSocket\Common\GenericConfigurationElementCollection.cs" />
-    <Compile Include="Imports\SuperSocket\Common\Platform.cs" />
-    <Compile Include="Imports\SuperSocket\Common\SearchMarkState.cs" />
-    <Compile Include="Imports\SuperSocket\Common\SendingQueue.cs" />
-    <Compile Include="Imports\SuperSocket\Common\SmartPool.cs" />
-    <Compile Include="Imports\SuperSocket\Common\SocketEx.cs" />
-    <Compile Include="Imports\SuperSocket\Common\StringExtension.cs" />
-    <Compile Include="Imports\SuperSocket\Common\StringExtension.NET35.cs" />
-    <Compile Include="Imports\SuperSocket\Common\TheadPoolEx.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\AppServer.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\AppServerBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\AppSession.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Async.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\CommandExecutingContext.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\CommandFilterAttribute.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandLoaderBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandUpdateEventArgs.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\CommandUpdateInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\ICommand.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\ICommandLoader.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\ReflectCommandLoader.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Command\StringCommandBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\CertificateConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\CommandAssemblyConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ConfigurationSource.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ICertificateConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ICommandAssemblyConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\IConfigurationSource.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\IListenerConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\IRootConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\IServerConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ITypeProvider.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ListenerConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\RootConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\ServerConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProvider.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProviderCollection.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Config\TypeProviderConfig.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\DisplayAttribute.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Extensions.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IAppServer.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IAppSession.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IBootstrap.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IConnectionFilter.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ILoggerProvider.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ISessionBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ISocketServer.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ISocketServerFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ISocketSession.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IsolationMode.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\IWorkItem.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ListenerInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\LoggerExtension.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ConsoleLog.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ConsoleLogFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILog.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Logging\ILogFactory.cs" />
     <None Include="app.config" />
     <None Include="Imports\iCal\Serialization\iCalendar\iCal.g" />
-    <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLog.cs" />
-    <None Include="Imports\SuperSocket\SocketBase\Logging\Log4NetLogFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Logging\LogFactoryBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\NodeSummary.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\BasicRequestInfoParser.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\BinaryRequestInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\CommandLineReceiveFilterFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\DefaultReceiveFilterFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\FilterState.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IOffsetAdapter.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilter.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilterFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IReceiveFilterInitializer.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IRequestInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\IRequestInfoParser.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\ReceiveFilterBase.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\RequestInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\StringRequestInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\TerminatorReceiveFilter.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\TerminatorReceiveFilterFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Protocol\UdpRequestInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ExportFactory.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ProviderFactoryInfo.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Provider\ProviderKey.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\RequestHandler.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\Security\CertificateManager.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ServerState.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\ServerSummary.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\SessionHandler.cs" />
-    <Compile Include="Imports\SuperSocket\SocketBase\SocketMode.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Binary.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Close.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Continuation.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\FragmentCommand.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\HandShake.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Ping.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Plain.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Pong.cs" />
-    <Compile Include="Imports\SuperWebSocket\Command\Text.cs" />
-    <Compile Include="Imports\SuperWebSocket\Config\CommandConfig.cs" />
-    <Compile Include="Imports\SuperWebSocket\Config\CommandConfigCollection.cs" />
-    <Compile Include="Imports\SuperWebSocket\Config\SubProtocolConfig.cs" />
-    <Compile Include="Imports\SuperWebSocket\Config\SubProtocolConfigCollection.cs" />
-    <Compile Include="Imports\SuperWebSocket\Extensions.cs" />
-    <Compile Include="Imports\SuperWebSocket\IBinaryDataConverter.cs" />
-    <Compile Include="Imports\SuperWebSocket\JsonWebSocketSession.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\CloseStatusCodeHybi10.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\CloseStatusCodeRfc6455.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\DraftHybi00Processor.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\DraftHybi10Processor.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\DataFramePartReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\ExtendedLenghtReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\FixPartReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\IDataFramePartReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\MaskKeyReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\FramePartReader\PayloadDataReader.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\HandshakeRequest.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\ICloseStatusCode.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\IProtocolProcessor.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\IWebSocketFragment.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\MultipleProtocolSwitchProcessor.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\OpCode.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\PlainFragment.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\ProtocolProcessorBase..cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\Rfc6455Processor.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataFrame.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataFrameReceiveFilter.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketDataReceiveFilter.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketHeaderReceiveFilter.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketReceiveFilterBase.cs" />
-    <Compile Include="Imports\SuperWebSocket\Protocol\WebSocketSecKey3ReceiveFilter.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\AsyncJsonSubCommand.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\BasicSubCommandParser.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\BasicSubProtocol.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubCommand.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubCommandFilterLoader.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubProtocol.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\ISubRequestInfo.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\JsonSubCommand.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\JsonSubCommandBase.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubCommandBase.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubCommandFilterAttribute.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubProtocolBase.cs" />
-    <Compile Include="Imports\SuperWebSocket\SubProtocol\SubRequestInfo.cs" />
-    <Compile Include="Imports\SuperWebSocket\TextEncodingBinaryDataConverter.cs" />
-    <Compile Include="Imports\SuperWebSocket\WebSocketConst.cs" />
-    <Compile Include="Imports\SuperWebSocket\WebSocketProtocol.cs" />
-    <Compile Include="Imports\SuperWebSocket\WebSocketServer.cs" />
-    <Compile Include="Imports\SuperWebSocket\WebSocketSession.cs" />
     <Compile Include="Imports\TuesPechkin\Document\CropSettings.cs" />
     <Compile Include="Imports\TuesPechkin\Document\FooterSettings.cs" />
     <Compile Include="Imports\TuesPechkin\Document\GlobalSettings.cs" />
@@ -830,25 +680,6 @@
     <Compile Include="Imports\TuesPechkin\BaristaDeployment.cs" />
     <Compile Include="Imports\TuesPechkin\WkhtmltoxBindings.cs" />
     <Compile Include="Imports\TuesPechkin\WkhtmltoxSettingAttribute.cs" />
-    <Compile Include="Imports\V8.Net\Exceptions.cs" />
-    <Compile Include="Imports\V8.Net\FunctionTemplate.cs" />
-    <Compile Include="Imports\V8.Net\Handle.cs" />
-    <Compile Include="Imports\V8.Net\IndexedObjectList.cs" />
-    <Compile Include="Imports\V8.Net\InternalHandle.cs" />
-    <Compile Include="Imports\V8.Net\JSProperty.cs" />
-    <Compile Include="Imports\V8.Net\ObjectTemplate.cs" />
-    <Compile Include="Imports\V8.Net\Utilities\Exceptions.cs" />
-    <Compile Include="Imports\V8.Net\Utilities\ObservableWeakReference.cs" />
-    <Compile Include="Imports\V8.Net\Utilities\Utilities.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine_Binding.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine_Handles.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine_Objects.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine_Tests.cs" />
-    <Compile Include="Imports\V8.Net\V8Engine_Worker.cs" />
-    <Compile Include="Imports\V8.Net\V8Function.cs" />
-    <Compile Include="Imports\V8.Net\V8ManagedObject.cs" />
-    <Compile Include="Imports\V8.Net\V8NativeObject.cs" />
     <Compile Include="Engine\IScriptEngine.cs" />
     <Compile Include="Library\BaristaCookieInstance.cs" />
     <Compile Include="Library\BaristaCookieListInstance.cs" />
@@ -1369,7 +1200,6 @@
     <Compile Include="ServiceContracts\IBaristaScheduler.cs" />
     <Compile Include="ServiceContracts\IBaristaSearch.cs" />
     <Compile Include="ServiceContracts\IBaristaWebService.cs" />
-    <Compile Include="ServiceContracts\IBaristaWebSockets.cs" />
     <Compile Include="Search\BaristaSearchService.cs" />
     <Compile Include="Smtp\AlternateViewCollectionInstance.cs" />
     <Compile Include="Smtp\AlternateViewInstance.cs" />
@@ -1390,7 +1220,6 @@
     <None Include="PrototypicalInheritanceExample.cs" />
     <Compile Include="Threading\LimitedConcurrencyTaskScheduler.cs" />
     <Compile Include="UuidType.cs" />
-    <Compile Include="WebSockets\BaristaWebSocketsService.cs" />
     <Compile Include="SmartPool.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
     <Compile Include="Stateless\DynamicTriggerBehaviour.cs" />
@@ -1447,12 +1276,6 @@
     <Compile Include="ValidationResult.cs" />
     <None Include="Validator.cs" />
     <Compile Include="ServiceContracts\IBaristaServiceApplication.cs" />
-    <Compile Include="WebSockets\WebSocketEventScript.cs" />
-    <Compile Include="WebSockets\BaristaWebSocketsServiceConfiguration.cs" />
-    <Compile Include="WebSockets\WebSocketServerDetails.cs" />
-    <Compile Include="WebSockets\WebSocketServerInstance.cs" />
-    <Compile Include="WebSockets\WebSocketServerOptions.cs" />
-    <Compile Include="WebSockets\WebSocketServerState.cs" />
     <Compile Include="WkHtmlToPdf\Library\ImageConverterInstance.cs" />
     <Compile Include="WkHtmlToPdf\Library\PdfConverterInstance.cs" />
     <Compile Include="WkHtmlToPdf\Library\CropSettingsInstance.cs" />
@@ -1505,31 +1328,16 @@
     <Content Include="Imports\iCal\Serialization\iCalendar\iCalParserTokenTypes.txt" />
     <Content Include="Imports\Jurassic\Compiler\Emit\Optimizations.txt" />
     <Content Include="Imports\Newtonsoft.Json\readme.txt" />
-    <Content Include="Imports\SuperSocket\readme.txt" />
-    <Content Include="Imports\SuperWebSocket\readme.txt" />
     <Content Include="Resources\Automapper.js" />
     <Content Include="Resources\chance.js" />
-    <Content Include="Resources\csso.web.js" />
     <Content Include="Resources\lodash.min.js" />
     <Content Include="Resources\moment.min.js" />
     <Content Include="Resources\uaregexes.yaml" />
-    <Content Include="Resources\uglifyjs.js" />
     <None Include="Resources\sugar-1.3.9-custom.min.js" />
     <None Include="Resources\string.js" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Barista.V8.Net-ProxyInterface\Barista.V8.Net-ProxyInterface.csproj">
-      <Project>{b283c79c-9821-45eb-8999-88eb4299a20c}</Project>
-      <Name>Barista.V8.Net-ProxyInterface</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Barista.V8.Net-SharedTypes\Barista.V8.Net-SharedTypes.csproj">
-      <Project>{55f72a43-2cd2-4a33-ac80-7d9c65b9a57d}</Project>
-      <Name>Barista.V8.Net-SharedTypes</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

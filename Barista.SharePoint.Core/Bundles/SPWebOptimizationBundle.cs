@@ -6,14 +6,11 @@
     using Barista.Library;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Utilities;
-    using Barista.V8.Net;
 
     public class SPWebOptimizationBundle : WebOptimizationBundle
     {
         public override object InstallBundle(ScriptEngine engine)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += V8Engine.Resolver;
-
             var bundlerInstance = new WebOptimizationInstance(engine)
             {
                 FileKeyPrefix = () => SPBaristaContext.Current.Web.Url,

@@ -197,7 +197,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SPBaristaV8ScriptEngineFactory.cs" />
+    <Compile Include="SPBaristaEdgeJSScriptEngineFactory.cs" />
     <Compile Include="SPBaristaJurassicScriptEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -497,9 +497,77 @@
       <SharePointProjectItemId>{d8d6b1da-c4f5-4de6-9f01-8efb9458bc48}</SharePointProjectItemId>
     </None>
     <None Include="WebServices\Barista\bin\Bundles\readme.md" />
-    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.exp" />
-    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.lib" />
-    <None Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.map" />
+    <None Include="WebServices\Barista\bin\edge\x64\edge.node">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="WebServices\Barista\bin\edge\x86\edge.node">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="WebServices\Barista\bin\node_modules\csso\bin\csso" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\dist\.npmignore" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\HISTORY.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\LICENSE" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\ansi-styles\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\ansi-styles\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\ansi-styles\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\escape-string-regexp\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\escape-string-regexp\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\escape-string-regexp\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\node_modules\ansi-regex\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\node_modules\ansi-regex\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\node_modules\ansi-regex\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\node_modules\ansi-regex\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\node_modules\ansi-regex\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\node_modules\ansi-regex\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\supports-color\license" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\supports-color\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\supports-color\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\csso\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\bin\uglifyjs" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\LICENSE" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\async\component.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\async\LICENSE" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\async\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\async\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\dist\source-map.min.js.map" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\.npmignore" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\.travis.yml" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\LICENSE" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\completion.sh.hbs" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\LICENSE" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\camelcase\license" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\camelcase\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\camelcase\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\decamelize\license" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\decamelize\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\decamelize\readme.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\window-size\LICENSE-MIT" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\window-size\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\window-size\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\.npmignore" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\README.markdown" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\package.json" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\README.md" />
+    <None Include="WebServices\Barista\bin\node_modules\uglify-js\tools\domprops.json" />
     <None Include="WebServices\Barista\bin\wkhtmltopdf\wkhtmltopdf.zip" />
     <None Include="WebServices\Barista\web.config" />
     <None Include="WebServices\SharePointProjectItem.spdata">
@@ -1472,7 +1540,19 @@
     <Content Include="WebServices\Barista\Barista.svc" />
     <Content Include="WebServices\Barista\bin\antlr.runtime.dll" />
     <Content Include="WebServices\Barista\bin\Barista.Interop.ActiveDs.dll" />
-    <Content Include="WebServices\Barista\bin\Barista.V8.Net.SharedTypes.dll" />
+    <Content Include="WebServices\Barista\bin\EdgeJs.dll" />
+    <Content Include="WebServices\Barista\bin\edge\double_edge.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebServices\Barista\bin\edge\edge.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebServices\Barista\bin\edge\x64\node.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="WebServices\Barista\bin\edge\x86\node.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebServices\Barista\bin\EPPlus.dll" />
     <Content Include="WebServices\Barista\bin\HtmlAgilityPack.dll" />
     <Content Include="WebServices\Barista\bin\ICSharpCode.SharpZipLib.dll" />
@@ -1480,9 +1560,74 @@
     <Content Include="WebServices\Barista\bin\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     <Content Include="WebServices\Barista\bin\Ninject.dll" />
     <Content Include="WebServices\Barista\bin\Ninject.Extensions.Conventions.dll" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\Barista.V8.Net.Proxy.Interface.x64.dll" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\v8-x64.dll" />
-    <Content Include="WebServices\Barista\bin\V8.NET\x64\V8_Net_Proxy_x64.dll" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\cli.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\color.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\const.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\rules.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\trbl.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\compressor\utils.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\parser\const.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\parser\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\parser\tokenize.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\utils\cleanInfo.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\utils\stringify.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\lib\utils\translate.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\ansi-styles\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\escape-string-regexp\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\has-ansi\node_modules\ansi-regex\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\strip-ansi\node_modules\ansi-regex\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\csso\node_modules\clap\node_modules\chalk\node_modules\supports-color\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\bin\extract-props.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\ast.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\compress.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\mozilla-ast.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\output.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\parse.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\propmangle.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\scope.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\sourcemap.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\transform.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\lib\utils.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\async\lib\async.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\dist\source-map.debug.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\dist\source-map.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\dist\source-map.min.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\array-set.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\base64-vlq.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\base64.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\binary-search.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\mapping-list.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\quick-sort.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\source-map-consumer.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\source-map-generator.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\source-node.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\lib\util.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\source-map\source-map.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\uglify-to-browserify\test\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\lib\completion.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\lib\parser.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\lib\usage.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\lib\validation.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\camelcase\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\decamelize\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\window-size\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\example\center.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\example\meat.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\index.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\test\break.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\test\idleness.txt" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\node_modules\yargs\node_modules\wordwrap\test\wrap.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\tools\exports.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\tools\node.js" />
+    <Content Include="WebServices\Barista\bin\node_modules\uglify-js\tools\props.html" />
     <Content Include="WebServices\Barista\bin\wnvhtmlconvert.dll" />
     <Content Include="WebServices\Barista\bin\YamlDotNet.Core.dll" />
     <Content Include="WebServices\Barista\bin\YamlDotNet.RepresentationModel.dll" />
