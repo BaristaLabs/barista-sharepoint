@@ -67,10 +67,10 @@ for (var i = 0; i < expose.length; i++) {
 
 return function(data, callback) {
     try {
-        vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
-        callback(null, sandbox);
+        var result = vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
+        callback(null, result);
     } catch (e) {
-        callback(e.stack, sandbox);
+        callback(e.stack, result);
     }
 };");
 
