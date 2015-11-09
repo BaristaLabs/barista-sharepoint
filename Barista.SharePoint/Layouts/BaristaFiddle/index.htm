@@ -344,6 +344,40 @@
         });
     </script>
 
+    <div class="modal" id="settingsDialog" tabindex="-1" role="dialog" aria-labelledby="settingsDialogLabel" aria-hidden="true" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="settingsDialogLabel">Barista Fiddle Settings</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="settingsForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="wordwrapSetting" class="col-sm-4 control-label">Word Wrap</label>
+                            <div class="col-sm-8">
+                                <input id="wordWrapSetting" class="checkbox" type="checkbox" value="true">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-sm-4 control-label">Target Service Endpoint</label>
+                            <div class="col-sm-8">
+                                <select class="form-control">
+                                    <option value="1" default="default">Barista Service v1</option>
+                                    <option value="2">Barista Service v2</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="btnSaveSettingsChanges" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="helpDialog" tabindex="-1" role="dialog" aria-labelledby="helpDialogLabel" aria-hidden="true" style="display: none">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -388,6 +422,10 @@
         var baristaInstanceSlidingExpiration = null;
         var baristaInstanceInitializationCode = null;
         var baristaFiddleIsInitializing = true;
+        var baristaFiddleSettings = {
+            wordwrap: true,
+            serviceVersion: 1
+        };
 
         var unitTestTemplate = kendo.template($("#unitTestTemplate").html());
 
@@ -698,7 +736,18 @@
             $("#ulsGrid").hide();
             $("#resultLoading").show();
 
-            var url = currentWebUrl + "_vti_bin/Barista/v1/Barista.svc/eval";
+            var url;
+
+            switch (baristaFiddleSettings.serviceVersion) {
+                case 1:
+                    url = currentWebUrl + "_vti_bin/Barista/v1/Barista.svc/eval";
+                    break;
+                case 2:
+                    url = currentWebUrl + "_vti_bin/Barista/v2/Barista.svc/eval";
+                    break;
+                default:
+                    url = "";
+            }
 
             var seperator = "?";
 
@@ -817,7 +866,8 @@
             });
         }
 
-        function updateStoredSettings() {
+        //Updates the settings persisted to local storage associated with panes
+        function updateStoredPaneSettings() {
 
             if (baristaFiddleIsInitializing === true)
                 return;
@@ -837,10 +887,28 @@
             store.set("Barista-Settings-PaneSettings", JSON.stringify(paneSettings));
         }
 
+        //Updates the settings persisted to local storage associated with fiddle settings
+        function updateStoredFiddleSettings() {
+            store.set("Barista-Settings-FiddleSettings", JSON.stringify(baristaFiddleSettings));
+        };
+
         $(document).ready(function () {
             var code = store.get("BaristaCode");
-            var paneSettings = store.get("Barista-Settings-PaneSettings");
+            //Retrieve general settings and update accordingly.
+            var fiddleSettings = store.get("Barista-Settings-FiddleSettings");
+            if (!fiddleSettings) {
+                fiddleSettings = {
+                    wordWrap: true,
+                    serviceVersion: 1
+                };
+            } else {
+                fiddleSettings = JSON.parse(fiddleSettings);
+            }
 
+            baristaFiddleSettings = fiddleSettings;
+
+            //Retrieve the Pane Settings and set the pane sizes acordingly.
+            var paneSettings = store.get("Barista-Settings-PaneSettings");
             var horizontalSplitterPanes = [
                             { collapsible: true, size: "50%" },
                             { collapsible: true }
@@ -880,13 +948,13 @@
                 orientation: "vertical",
                 panes: verticalSplitterPanes,
                 expand: function (e) {
-                    updateStoredSettings();
+                    updateStoredPaneSettings();
                 },
                 collapse: function (e) {
-                    updateStoredSettings();
+                    updateStoredPaneSettings();
                 },
                 resize: function (e) {
-                    updateStoredSettings();
+                    updateStoredPaneSettings();
                 }
             }).data("kendoSplitter");
 
@@ -894,7 +962,7 @@
                 panes: horizontalSplitterPanes,
                 resize: function (e) {
                     $("#htmlResult").css("height", ($("#top-pane").height() - 3) + "px");
-                    updateStoredSettings();
+                    updateStoredPaneSettings();
                 }
             }).data("kendoSplitter");
 
@@ -1014,6 +1082,20 @@
             }
             $("#getEvalUrlDialog").modal("show");
         });
+
+        $("#btnSettings").click(function () {
+            $("#settingsDialog").modal("show");
+        });
+
+        $("#btnSaveSettingsChanges").click(function () {
+
+            updateStoredFiddleSettings();
+
+            //Set wordwrap settings
+            editor.setOption("lineWrapping", false)
+
+            //Set service endpoint.
+        })
 
         $("#btnHelp").click(function () {
             $("#helpDialog").modal("show");

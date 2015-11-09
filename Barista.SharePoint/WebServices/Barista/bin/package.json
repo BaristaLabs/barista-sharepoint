@@ -1,0 +1,21 @@
+{
+  "name": "barista-edge",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "async": "^1.5.0",
+    "csso": "^1.4.1",
+    "linq": "^3.0.5",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "q": "^1.4.1",
+    "uglify-js": "^2.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

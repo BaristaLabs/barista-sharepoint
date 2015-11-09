@@ -117,7 +117,9 @@
                 return true;
             }
 
-            if (SPBaristaContext.Current != null && SPBaristaContext.Current.Web != null && Uri.TryCreate(SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
+            //If a context hasn't already been created, don't create a new one.
+            //Not having a context created indicates that the call came from the service call, not the service application.
+            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Web != null && Uri.TryCreate(SPUtility.ConcatUrls(SPBaristaContext.Current.Web.Url, uriString), UriKind.Absolute, out finalUri))
             {
                 uri = finalUri;
                 return true;
@@ -523,7 +525,14 @@
             //Attempt to retrieve the file from the specified SPSite.
             try
             {
-                using (var sourceSite = new SPSite(fileUri.ToString(), SPBaristaContext.Current.Site.UserToken))
+                SPUserToken userToken;
+
+                if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Site != null && SPBaristaContext.Current.Site.UserToken != null)
+                    userToken = SPBaristaContext.Current.Site.UserToken;
+                else
+                    userToken = SPContext.Current.Site.UserToken;
+
+                using (var sourceSite = new SPSite(fileUri.ToString(), userToken))
                 {
                     using (var sourceWeb = sourceSite.OpenWeb())
                     {
@@ -563,7 +572,7 @@
             //Attempt to get the script from a relative path to the requesting url.
             Uri referrer = null;
 
-            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.Headers.Referrer != null)
+            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.Headers.Referrer != null)
                 referrer = new Uri(SPBaristaContext.Current.Request.Headers.Referrer, UriKind.Absolute);
             else if (HttpContext.Current != null)
                 referrer = HttpContext.Current.Request.UrlReferrer;
@@ -575,7 +584,14 @@
                 {
                     var url = SPUtility.ConcatUrls(SPUtility.GetUrlDirectory(referrer.ToString()), fileUrl);
 
-                    using (var sourceSite = new SPSite(url, SPBaristaContext.Current.Site.UserToken))
+                    SPUserToken userToken;
+
+                    if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Site != null && SPBaristaContext.Current.Site.UserToken != null)
+                        userToken = SPBaristaContext.Current.Site.UserToken;
+                    else
+                        userToken = SPContext.Current.Site.UserToken;
+
+                    using (var sourceSite = new SPSite(url, userToken))
                     {
                         using (var sourceWeb = sourceSite.OpenWeb())
                         {

@@ -184,6 +184,7 @@
     <Compile Include="Bundles\SharePointWorkflowBundle.cs" />
     <Compile Include="Bundles\SPWebOptimizationBundle.cs" />
     <Compile Include="Extensions\SPWebExtensions.cs" />
+    <Compile Include="Services\BaristaServiceRequestPipeline.cs" />
     <Compile Include="Imports\Camlex.NET\Attributes.cs" />
     <Compile Include="Imports\Camlex.NET\Camlex.cs" />
     <Compile Include="Imports\Camlex.NET\DataTypes.cs" />

@@ -151,11 +151,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.PowerShe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.ConsoleTests", "Barista.ConsoleTests\Barista.ConsoleTests.csproj", "{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bundles", "Bundles", "{9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.EdgeJs.SharePoint", "Barista.EdgeJs.SharePoint\Barista.EdgeJs.SharePoint.csproj", "{3FD8C109-CC16-490B-94E0-A7014BB20F49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.EdgeJs.EPPlus", "Barista.EdgeJs.EPPlus\Barista.EdgeJs.EPPlus.csproj", "{41A06596-0B32-4F81-A9E5-1BA07392C185}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 25
+		SccNumberOfProjects = 27
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -255,6 +259,14 @@ Global
 		SccProjectTopLevelParentUniqueName24 = Barista.sln
 		SccProjectName24 = Barista.ConsoleTests
 		SccLocalPath24 = Barista.ConsoleTests
+		SccProjectUniqueName25 = Barista.EdgeJs.SharePoint\\Barista.EdgeJs.SharePoint.csproj
+		SccProjectTopLevelParentUniqueName25 = Barista.sln
+		SccProjectName25 = Barista.EdgeJs.SharePoint
+		SccLocalPath25 = Barista.EdgeJs.SharePoint
+		SccProjectUniqueName26 = Barista.EdgeJs.EPPlus\\Barista.EdgeJs.EPPlus.csproj
+		SccProjectTopLevelParentUniqueName26 = Barista.sln
+		SccProjectName26 = Barista.EdgeJs.EPPlus
+		SccLocalPath26 = Barista.EdgeJs.EPPlus
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -363,6 +375,14 @@ Global
 		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FD8C109-CC16-490B-94E0-A7014BB20F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD8C109-CC16-490B-94E0-A7014BB20F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD8C109-CC16-490B-94E0-A7014BB20F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD8C109-CC16-490B-94E0-A7014BB20F49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41A06596-0B32-4F81-A9E5-1BA07392C185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41A06596-0B32-4F81-A9E5-1BA07392C185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41A06596-0B32-4F81-A9E5-1BA07392C185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41A06596-0B32-4F81-A9E5-1BA07392C185}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -396,5 +416,7 @@ Global
 		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
+		{3FD8C109-CC16-490B-94E0-A7014BB20F49} = {9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}
+		{41A06596-0B32-4F81-A9E5-1BA07392C185} = {9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}
 	EndGlobalSection
 EndGlobal
