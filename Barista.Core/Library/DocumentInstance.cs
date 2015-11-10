@@ -62,6 +62,28 @@
             return byteResult;
         }
 
+        [JSFunction(Name = "concatenatePdfDocs")]
+        public Base64EncodedByteArrayInstance ConcatenatePdfDocuments(string html, object pdfsToAppend)
+        {
+            IEnumerable<Base64EncodedByteArrayInstance> pdfsToAppendInstances = null;
+            if (pdfsToAppend != null && pdfsToAppend != Undefined.Value && pdfsToAppend != Null.Value &&
+                pdfsToAppend is ArrayInstance)
+                pdfsToAppendInstances = (pdfsToAppend as ArrayInstance).ElementValues.OfType<Base64EncodedByteArrayInstance>();
+
+            IList<byte[]> pdfsToAppendData = null;
+            if (pdfsToAppendInstances != null)
+            {
+                pdfsToAppendData = pdfsToAppendInstances.Select(p => p.Data)
+                  .ToList();
+            }
+            var result = HtmlConverterHelper.MergeFiles(html, pdfsToAppendData, this.WinnovativeHtmlToPdfConverterLicenseKey);
+            var byteResult = new Base64EncodedByteArrayInstance(this.Engine.Object.InstancePrototype, result)
+            {
+                MimeType = "application/pdf"
+            };
+            return byteResult;
+        }
+
         [JSFunction(Name = "csv2Json")]
         public object Csv2Json(object csv, object csvOptions)
         {
