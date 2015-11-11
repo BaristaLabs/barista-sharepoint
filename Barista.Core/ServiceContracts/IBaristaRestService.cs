@@ -42,7 +42,7 @@
         /// Gets status about the current environment
         /// </summary>
         [OperationContract(Name = "Status")]
-        [WebInvoke(Method = "GET", UriTemplate = "status")]
+        [WebInvoke(Method = "GET", UriTemplate = "status/*")]
         Message Status();
 
         /// <summary>

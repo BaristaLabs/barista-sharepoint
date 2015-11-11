@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Barista.Jurassic;
 using Barista.Jurassic.Library;
+using System.Collections.Generic;
 
 namespace Barista.UnitTests.Jurassic
 {
@@ -410,6 +411,13 @@ namespace Barista.UnitTests.Jurassic
 
         private class TestScriptSource : ScriptSource
         {
+            private readonly Dictionary<string, string> m_flags = new Dictionary<string, string>();
+
+            public override IDictionary<string, string> Flags
+            {
+                get { return m_flags; }
+            }
+
             public override string Path
             {
                 get { return "test"; }

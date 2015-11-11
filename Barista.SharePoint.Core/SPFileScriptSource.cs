@@ -4,11 +4,13 @@
     using System;
     using System.IO;
     using Microsoft.SharePoint.Utilities;
+    using System.Collections.Generic;
 
     public class SPFileScriptSource : ScriptSource
     {
         private readonly string m_code;
         private readonly string m_codePath;
+        private readonly Dictionary<string, string> m_flags;
 
         public SPFileScriptSource(ScriptEngine engine, string scriptUrl)
         {
@@ -24,6 +26,7 @@
             {
                 m_codePath = filePath;
                 m_code = code;
+                m_flags = new Dictionary<string, string>();
             }
             else
             {
@@ -31,14 +34,19 @@
             }
         }
 
-        public override TextReader GetReader()
-        {
-            return new StringReader(m_code);
-        }
-
         public override string Path
         {
             get { return m_codePath; }
+        }
+
+        public override IDictionary<string, string> Flags
+        {
+            get { return m_flags; }
+        }
+
+        public override TextReader GetReader()
+        {
+            return new StringReader(m_code);
         }
     }
 }

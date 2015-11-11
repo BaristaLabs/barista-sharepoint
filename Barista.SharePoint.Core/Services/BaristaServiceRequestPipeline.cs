@@ -33,7 +33,7 @@
         /// <summary>
         /// Grinds the beans. E.g. Attempts to retrieve the code value from the request.
         /// </summary>
-        public static string Grind(Stream requestBody)
+        public static string Grind(Stream requestBody, bool shouldThrowIfNotFound = true)
         {
             string code = null;
 
@@ -70,7 +70,7 @@
             }
 
             //Otherwise, use the body of the post as code.
-            if (string.IsNullOrEmpty(code) && webContext.IncomingRequest.Method == "POST")
+            if (string.IsNullOrEmpty(code) && requestBody != null && webContext.IncomingRequest.Method == "POST")
             {
                 var body = requestBody.ToByteArray();
                 var bodyString = Encoding.UTF8.GetString(body);
@@ -119,12 +119,12 @@
                 if (url == null)
                     throw new InvalidOperationException("UriTemplateMatch of the incoming request was null.");
 
-                var firstWildcardPathSegment = url.WildcardPathSegments.FirstOrDefault();
+                var firstWildcardPathSegment = url.WildcardPathSegments.Join("/");
                 if (!firstWildcardPathSegment.IsNullOrWhiteSpace())
                     code = firstWildcardPathSegment;
             }
 
-            if (string.IsNullOrEmpty(code))
+            if (shouldThrowIfNotFound && string.IsNullOrEmpty(code))
                 throw new InvalidOperationException("Code must be specified either through the 'X-Barista-Code' header, through a 'c' or 'code' soap message header in the http://barista/services/v1 namespace, a 'c' query string parameter or the 'code' or 'c' form field that contains either a literal script declaration or a relative or absolute path to a script file.");
 
             return code;
@@ -140,6 +140,8 @@
         public static string Tamp(string code, out string scriptPath)
         {
             scriptPath = string.Empty;
+            if (String.IsNullOrWhiteSpace(code))
+                return String.Empty;
 
             //If the code looks like a uri to a .js or .jsx file, attempt to retrieve a code file and use the contents of that file as the code.
             if (code.Length < 2048 &&

@@ -103,7 +103,8 @@
                 {"userInteractive", Environment.UserInteractive},
                 {"userName", Environment.UserName},
                 {"version", Environment.Version.ToString()},
-                {"workingSet", Environment.WorkingSet}
+                {"workingSet", Environment.WorkingSet},
+                {"currentThreadId", System.Threading.Thread.CurrentThread.ManagedThreadId }
             };
 
             //try
@@ -130,6 +131,22 @@
             //catch {/* Do Nothing */}
 
             result.Add("environment", environment);
+
+            var webContextObject = new JObject();
+
+            var queryParameters = new JObject();
+            var requestQueryParameters = webContext.IncomingRequest.UriTemplateMatch.QueryParameters;
+            foreach (var key in requestQueryParameters.AllKeys)
+                queryParameters.Add(key, requestQueryParameters[key]);
+            webContextObject.Add("queryParameters", queryParameters);
+
+            var headers = new JObject();
+            var requestHeaders = webContext.IncomingRequest.Headers;
+            foreach (var key in requestHeaders.AllKeys)
+                headers.Add(key, requestHeaders[key]);
+            webContextObject.Add("headers", headers);
+
+            result.Add("webContext", webContextObject);
 
             var sharepoint = new JObject();
 
@@ -192,6 +209,14 @@
 
             
             //trusted locations config
+
+            var codeValue = BaristaServiceRequestPipeline.Grind(null, false);
+            string scriptPath;
+            var whatIf = new JObject();
+            whatIf.Add("codeValue", codeValue);
+            whatIf.Add("codeContents", BaristaServiceRequestPipeline.Tamp(codeValue, out scriptPath));
+            whatIf.Add("finalScriptPath", scriptPath);
+            result.Add("whatIf", whatIf);
 
             return webContext.CreateStreamResponse(
                 stream =>

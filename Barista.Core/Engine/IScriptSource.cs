@@ -1,5 +1,6 @@
 ﻿namespace Barista.Engine
 {
+    using System.Collections.Generic;
     using System.IO;
 
     /// <summary>
@@ -13,6 +14,17 @@
         /// can be <c>null</c> if no path is available.
         /// </summary>
         string Path
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets a collection of flags that will be passed to the script engine implementation.
+        /// </summary>
+        /// <remarks>
+        /// The available flags and their purpose varies by script engine implementation.
+        /// </remarks>
+        IDictionary<string, string> Flags
         {
             get;
         }
