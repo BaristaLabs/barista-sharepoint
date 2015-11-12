@@ -31,6 +31,16 @@
         #region Properties
 
         /// <summary>
+        /// Gets or sets the bootstrapper.
+        /// </summary>
+        [DataMember]
+        public string Bootstrapper
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the original body of the request.
         /// </summary>
         [DataMember]

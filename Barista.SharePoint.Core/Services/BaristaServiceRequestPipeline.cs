@@ -199,6 +199,16 @@
             request.Code = code;
             request.CodePath = codePath;
 
+            //If the request has a header named "X-Barista-Bootstrapper" define it on the request.
+            var requestHeaders = webContext.IncomingRequest.Headers;
+            var bootstrapperKey = requestHeaders.AllKeys.FirstOrDefault(k => k.ToLowerInvariant() == "X-Barista-Bootstrapper".ToLowerInvariant());
+            if (!String.IsNullOrWhiteSpace(bootstrapperKey))
+            {
+                var bootstrapperValue = requestHeaders[bootstrapperKey];
+                if (!String.IsNullOrWhiteSpace(bootstrapperValue))
+                    request.Bootstrapper = bootstrapperValue;
+            }
+
             var instanceSettings = request.ParseInstanceSettings();
 
             if (string.IsNullOrEmpty(instanceSettings.InstanceInitializationCode) == false)

@@ -19,6 +19,7 @@
     using ICSharpCode.SharpZipLib.Zip;
     using Barista.Newtonsoft.Json.Linq;
     using System.Configuration;
+    using System.Runtime.Serialization;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -113,16 +114,27 @@
 
         #endregion
 
-
-        private static string GetAssemblyPath(Type t)
+        private static void SetBaristaV2Flags(IScriptSource source, BrewRequest request, BrewResponse response)
         {
-            string codeBase = System.Reflection.Assembly.GetAssembly(t).CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
-            return Path.GetDirectoryName(path);
+            if (String.IsNullOrWhiteSpace(request.Bootstrapper))
+                source.Flags["bootstrapperPath"] = ConfigurationManager.AppSettings.GetValue("Barista_v2_Bootstrapper", "./../lib/BaristaBootstrapper_v1.js");
+            else
+                source.Flags["bootstrapperPath"] = request.Bootstrapper;
+
+            var dcs = new DataContractSerializer(typeof(BrewRequest));
+
+            source.Flags["request_xml"] = BaristaHelper.SerializeXml(request);
+            source.Flags["response_xml"] = BaristaHelper.SerializeXml(response);
+            source.Flags["request"] = JsonConvert.SerializeObject(request);
+            source.Flags["response"] = JsonConvert.SerializeObject(response);
+
+            source.Flags["environment"] = JsonConvert.SerializeObject(new {
+                baristaWebServiceBinFolder = SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista\bin", SPUtility.CompatibilityLevel15),
+                baristaAssembly = BaristaHelper.GetAssemblyPath(typeof(Barista.Library.BaristaGlobal)) + "\\Barista.Core.dll",
+                baristaSharePointAssembly = BaristaHelper.GetAssemblyPath(typeof(Barista.SharePoint.Library.BaristaSharePointGlobal)) + "\\Barista.SharePoint.Core.dll",
+                sharePointAssembly = BaristaHelper.GetAssemblyPath(typeof(Microsoft.SharePoint.SPContext)) + "\\Microsoft.SharePoint.dll"
+            });
         }
-
-
         #region IBaristaServiceApplication implementation
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public BrewResponse Eval(BrewRequest request)
@@ -147,17 +159,7 @@
 
             var webBundle = new SPWebBundle();
             var source = new BaristaScriptSource(request.Code, request.CodePath);
-            var bootstrapperPath = ConfigurationManager.AppSettings.GetValue("Barista_v2_Bootstrapper", "./../lib/BaristaBootstrapper_v1.js");
-            source.Flags["bootstrapperPath"] = bootstrapperPath;
-            source.Flags["request"] = JsonConvert.SerializeObject(request);
-
-            source.Flags["environment"] = JsonConvert.SerializeObject(new {
-                baristaWebServiceBinFolder = SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista\bin", SPUtility.CompatibilityLevel15),
-                baristaAssembly = GetAssemblyPath(typeof(Barista.Library.BaristaGlobal)) + "\\Barista.Core.dll",
-                baristaSharePointAssembly = GetAssemblyPath(typeof(Barista.SharePoint.Library.BaristaSharePointGlobal)) + "\\Barista.SharePoint.Core.dll",
-                sharePointAssembly = GetAssemblyPath(typeof(Microsoft.SharePoint.SPContext)) + "\\Microsoft.SharePoint.dll"
-            });
-
+ 
             if (syncRoot != null)
                 syncRoot.WaitOne();
 
@@ -185,6 +187,9 @@
 
                 if (errorInInitialization)
                     return response;
+
+                if (engine is EdgeJSScriptEngine)
+                    SetBaristaV2Flags(source, request, response);
 
                 try
                 {

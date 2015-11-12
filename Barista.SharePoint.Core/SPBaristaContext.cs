@@ -6,6 +6,7 @@
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
     using System;
+    using Barista.Newtonsoft.Json;
 
     [Serializable]
     public sealed class SPBaristaContext : BaristaContext
@@ -200,6 +201,19 @@
         public new static bool HasCurrentContext
         {
             get { return s_currentContext != null; }
+        }
+
+        /// <summary>
+        /// Given DataContract serialized BrewRequest/BrewResponse objects, deserialize and return a new context.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        public static SPBaristaContext CreateContextFromXmlRequestResponse(string request, string response)
+        {
+            var brewRequest = BaristaHelper.DeserializeXml<BrewRequest>(request);
+            var brewResponse = BaristaHelper.DeserializeXml<BrewResponse>(response);
+            return new SPBaristaContext(brewRequest, brewResponse);
         }
 
         /// <summary>

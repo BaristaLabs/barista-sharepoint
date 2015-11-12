@@ -16,6 +16,7 @@
     using System.ServiceModel.Security;
     using Microsoft.SharePoint.Utilities;
     using Ninject;
+    using System.Runtime.Serialization;
 
     /// <summary>
     /// Contains various helper methods involving barista configuration stored in SharePoint.
@@ -53,8 +54,55 @@
 
         public static string GetBaristaWebServicesInstallPath()
         {
-            //FIXME: In SP2013 this method is deprecated.
-            return SPUtility.GetGenericSetupPath(@"WebServices\Barista");
+            return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.CompatibilityLevel15);
+        }
+
+        /// <summary>
+        /// Gets the path to the assembly that defines the specified type.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string GetAssemblyPath(Type t)
+        {
+            string codeBase = System.Reflection.Assembly.GetAssembly(t).CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
+        }
+
+        /// <summary>
+        /// Serializes the specified object to XML
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string SerializeXml(object obj)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            using (StreamReader reader = new StreamReader(memoryStream))
+            {
+                DataContractSerializer serializer = new DataContractSerializer(obj.GetType());
+                serializer.WriteObject(memoryStream, obj);
+                memoryStream.Position = 0;
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the specified object from xml.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        public static T DeserializeXml<T>(string xml)
+        {
+            using (Stream stream = new MemoryStream())
+            {
+                byte[] data = System.Text.Encoding.UTF8.GetBytes(xml);
+                stream.Write(data, 0, data.Length);
+                stream.Position = 0;
+                DataContractSerializer deserializer = new DataContractSerializer(typeof(T));
+                return (T)deserializer.ReadObject(stream);
+            }
         }
 
         /// <summary>
