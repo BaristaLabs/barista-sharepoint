@@ -183,11 +183,10 @@ PRE{{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1p
             if (response == null)
                 throw new ArgumentNullException("response");
 
-            if (exception is AggregateException)
+            while (exception is AggregateException)
             {
                 var exceptions = (exception as AggregateException).InnerExceptions;
 
-                //TODO: Make this better.
                 exception = exceptions.First();
             }
 

@@ -13,6 +13,7 @@
     using System.Collections;
     using Jurassic.Library;
     using Jurassic;
+    using Barista.Extensions;
 
     /// <summary>
     /// Contains various helper methods for interacting with SharePoint.
@@ -616,19 +617,20 @@
             }
 
             //Attempt to get the file relative to the sharepoint hive.
-            try
+            if (fileUrl.StartsWith("/_layouts/", StringComparison.InvariantCultureIgnoreCase))
             {
-                var hiveFileContents = String.Empty;
-                var hiveFileResult = false;
-                if (HttpContext.Current != null)
+                try
                 {
-                    var path = HttpContext.Current.Request.MapPath(fileUrl);
+                    var hiveFileContents = String.Empty;
+                    var hiveFileResult = false;
+                
+                    var path = SPUtility.GetVersionedGenericSetupPath("TEMPLATE\\LAYOUTS", SPUtility.CompatibilityLevel15);
+                    path = Path.GetFullPath(Path.Combine(path, fileUrl.ReplaceFirstOccurenceIgnoreCase("/_layouts/", "")));
                     if (File.Exists(path))
                     {
                         hiveFileContents = File.ReadAllText(path);
                         hiveFileResult = true;
                     }
-
 
                     if (hiveFileResult)
                     {
@@ -638,8 +640,8 @@
                         return true;
                     }
                 }
+                catch { /* Do Nothing... */ }
             }
-            catch { /* Do Nothing... */ }
 
             filePath = null;
             fileContents = null;

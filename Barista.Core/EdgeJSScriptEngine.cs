@@ -2,6 +2,10 @@
 {
     using Barista.Engine;
     using EdgeJs;
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
     using System.Threading.Tasks;
 
     public sealed class EdgeJSScriptEngine : IScriptEngine
@@ -12,7 +16,11 @@
             {
                 var code = x.ReadToEnd();
 
-                var evaluateTask = Task.Run<object>(() => ExecuteAsync(code, script.Path));
+                var bootstrapperPath = String.Empty;
+                if (script.Flags.ContainsKey("bootstrapperPath"))
+                    bootstrapperPath = script.Flags["bootstrapperPath"];
+
+                var evaluateTask = Task.Run<object>(() => ExecuteAsync(bootstrapperPath, code, script.Path, script.Flags));
                 evaluateTask.Wait();
 
                 return evaluateTask.Result;
@@ -48,85 +56,27 @@ return function(data, callback) {
             return res;
         }
 
-        private static async Task<object> ExecuteAsync(string code, string path)
+        private static async Task<object> ExecuteAsync(string bootstrapperPath, string code, string path, IDictionary<string, string> flags)
         {
-            var executeFunc = Edge.Func(@"
-var vm = require('vm');
-var _ = require('lodash');
-var util = require('util');
+            if (String.IsNullOrWhiteSpace(bootstrapperPath))
+                throw new ArgumentNullException(bootstrapperPath);
 
-var sandbox = {};
-var expose = [
-    'barista',
-    'setTimeout',
-    'setInterval',
-    'clearTimeout',
-    'clearInterval'
-];
+            var executeFunc = Edge.Func(@"return require('" + bootstrapperPath + "')");
 
-var defaultRequireWhitelist = [
-    'buffer',
-    'cluster',
-    'crypto',
-    'dns',
-    'errors',
-    'events',
-    'os',
-    'path',
-    'process',
-    'punycode',
-    'querystring',
-    'stream',
-    'string_decoder',
-    'url',
-    'util',
-    'v8',
-    'vm',
-    'zlib',
-    
-    'async',
-    'csso',
-    'edge',
-    'edge-cs',
-    'linq',
-    'lodash',
-    'moment',
-    'q',
-    'uglify-js'
-];
+            dynamic baristaContext = new ExpandoObject();
+            var dict = baristaContext as IDictionary<string, Object>;
+            if (flags != null)
+            {
+                foreach (var key in flags.Keys)
+                {
+                    dict.Add(key, flags[key]);
+                }
+            }
 
-for (var i = 0; i < expose.length; i++) {
-    sandbox[expose[i]] = global[expose[i]];
-}
-
-return function(data, callback) {
-
-    var whitelist = defaultRequireWhitelist;
-    if (data.requireWhitelist && util.isArray(data.requireWhitelist)) {
-        whitelist = data.requireWhitelist;
-    }
-
-    //Define the require remap.
-    sandbox.require = function(id) {
-        
-        if (_.includes(whitelist, id)) {
-            return require(id);
-        }
-
-        //TODO: load files from incoming barista context...
-        return undefined;
-    };
-
-    try {
-        var result = vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
-        callback(null, result);
-    } catch (e) {
-        callback(e.stack, result);
-    }
-};");
             var data = new {
                 code = code,
-                path = path
+                path = path,
+                context = baristaContext
             };
 
             var res = await executeFunc(data);

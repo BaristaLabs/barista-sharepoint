@@ -641,6 +641,9 @@
     <None Include="WebServices\Barista\bin\node_modules\uglify-js\package.json" />
     <None Include="WebServices\Barista\bin\node_modules\uglify-js\README.md" />
     <None Include="WebServices\Barista\bin\node_modules\uglify-js\tools\domprops.json" />
+    <Content Include="WebServices\Barista\bin\lib\BaristaBootstrapper_v1.js" />
+    <Content Include="WebServices\Barista\bin\lib\SharePoint_Require_v1.js" />
+    <Content Include="WebServices\Barista\bin\lib\SharePoint_v1.js" />
     <Content Include="WebServices\Barista\bin\node_modules\edge-cs\lib\edge-cs.dll" />
     <Content Include="WebServices\Barista\bin\node_modules\edge-cs\lib\edge-cs.js" />
     <Content Include="WebServices\Barista\bin\node_modules\edge-cs\LICENSE.txt" />
