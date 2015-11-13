@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var util = require('util');
 var edge = require('edge');
+var Handlebars = require('handlebars');
 
 var expose = [
 	'Buffer',
@@ -35,6 +36,7 @@ var defaultRequireWhitelist = [
     'csso',
     'edge',
     'edge-cs',
+    'handlebars',
     'linq',
     'lodash',
     'moment',
@@ -42,6 +44,28 @@ var defaultRequireWhitelist = [
     'uglify-js'
 ];
 
+var templates = {};
+
+templates.javascriptExceptionWithStackTrace = Handlebars.compile("<?xml version=\"1.0\" encoding=\"utf-8\"?>\
+<HTML><HEAD>\
+<STYLE type=\"text/css\">\
+#content{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}\
+BODY{MARGIN-TOP: 0px; MARGIN-LEFT: 0px; COLOR: #000000; FONT-FAMILY: Verdana; BACKGROUND-COLOR: white}\
+P{MARGIN-TOP: 0px; MARGIN-BOTTOM: 12px; COLOR: #000000; FONT-FAMILY: Verdana}\
+PRE{BORDER-RIGHT: #f0f0e0 1px solid; PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1px solid; MARGIN-TOP: -5px; PADDING-LEFT: 5px; FONT-SIZE: 1.2em; PADDING-BOTTOM: 5px; BORDER-LEFT: #f0f0e0 1px solid; PADDING-TOP: 5px; BORDER-BOTTOM: #f0f0e0 1px solid; FONT-FAMILY: Courier New; BACKGROUND-COLOR: #e5e5cc}\
+.heading1{MARGIN-TOP: 0px; PADDING-LEFT: 15px; FONT-WEIGHT: normal; FONT-SIZE: 26px; PADDING-BOTTOM: 3px; COLOR: #ffffff; PADDING-TOP: 10px; FONT-FAMILY: Tahoma; BACKGROUND-COLOR: #492B29}\
+.intro{MARGIN-LEFT: -15px}</STYLE>\
+<TITLE>JavaScript Error</TITLE></HEAD><BODY>\
+<P class=\"heading1\">JavaScript Error</P>\
+<DIV id=\"content\">\
+<BR/>\
+<P class=\"intro\">The JavaScript being executed on the server threw an exception ({{name}}). The exception message is '{{message}}'.</P>\
+<P class=\"intro\"/>\
+<P class=\"intro\">The exception stack trace is:</P>\
+<P class=\"intro stackTrace\">{{{stack}}}</P>\
+</DIV>\
+</BODY></HTML>\
+");
 
 module.exports = function (data, callback) {
 
@@ -66,7 +90,14 @@ module.exports = function (data, callback) {
         isNumber: util.isNumber,
         isObject: util.isObject,
         isString: util.isString,
-        isUndefined: util.isUndefined
+        isUndefined: util.isUndefined,
+        str2buf: function (str) {
+            var buf = new Buffer(str.length);
+            for (var i = 0; i <= str.length; i++) {
+                buf[i] = str.charCodeAt(i);
+            }
+            return buf;
+        }
     };
 
     var baristaContext = {
@@ -129,9 +160,49 @@ module.exports = function (data, callback) {
             response: baristaContext.response_xml
         });
 
-        var result = vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
-        callback(null, result);
-    } catch (e) {
-        callback(e.stack, result);
+        var executionResult = vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
+
+        if (_.isNull(baristaContext.response.content) || _.isUndefined(baristaContext.response.content))
+            baristaContext.response.content = executionResult;
+
+        if (Buffer.isBuffer(baristaContext.response.content)) {
+            if (!baristaContext.response.contentType)
+                baristaContext.response.contentType = "application/octet-stream";
+            baristaContext.response.content = baristaContext.response.content.toString('base64');
+        }
+        else {
+            if (!baristaContext.response.contentType)
+                baristaContext.response.contentType = "application/json";
+
+            var resultString = JSON.stringify(baristaContext.response.content);
+            if (_.isUndefined(resultString))
+                resultString = "\"undefined\"";
+
+            baristaContext.response.content = sandbox.barista.str2buf(resultString).toString('base64');
+        }
+
+        var resultData = {
+            response: JSON.stringify(baristaContext.response),
+        };
+
+        callback(null, resultData);
+    } catch (ex) {
+        //When a javascript error occurs, output a purty message.
+        baristaContext.response.statusCode = 400;
+        baristaContext.response.contentType = "text/html";
+
+        if (!_.isError(ex)) {
+            ex = new Error(ex);
+        } else {
+            ex.stack = ex.stack.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        }
+
+        baristaContext.response.content = sandbox.barista.str2buf(templates.javascriptExceptionWithStackTrace(ex)).toString('base64');
+
+        var resultData = {
+            response: JSON.stringify(baristaContext.response),
+        };
+
+        callback(null, resultData);
     }
 };

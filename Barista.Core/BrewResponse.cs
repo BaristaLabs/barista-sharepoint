@@ -15,6 +15,7 @@
     using System.Text;
     using System.Web;
     using System.Text.RegularExpressions;
+    using Barista.Newtonsoft.Json;
 
     [DataContract(Namespace = Constants.ServiceNamespace)]
     [Serializable]
@@ -34,6 +35,7 @@
         }
 
         [DataMember]
+        [JsonProperty("cookies")]
         public IList<IBaristaCookie> Cookies
         {
             get;
@@ -41,6 +43,7 @@
         }
 
         [DataMember]
+        [JsonProperty("content")]
         public Byte[] Content
         {
             get;
@@ -48,6 +51,7 @@
         }
 
         [DataMember]
+        [JsonProperty("contentLength")]
         public long ContentLength
         {
             get;
@@ -55,6 +59,7 @@
         }
 
         [DataMember]
+        [JsonProperty("contentType")]
         private string m_contentType;
 
         [IgnoreDataMember]
@@ -65,6 +70,7 @@
         }
 
         [DataMember]
+        [JsonProperty("headers")]
         public IDictionary<string, string> Headers
         {
             get;
@@ -72,6 +78,7 @@
         }
 
         [DataMember]
+        [JsonProperty("statusCode")]
         public HttpStatusCode StatusCode
         {
             get;
@@ -79,6 +86,7 @@
         }
 
         [DataMember]
+        [JsonProperty("suppressContent")]
         public bool SuppressContent
         {
             get;
@@ -86,6 +94,7 @@
         }
 
         [DataMember]
+        [JsonProperty("statusDescription")]
         public string StatusDescription
         {
             get;
@@ -93,6 +102,7 @@
         }
 
         [DataMember]
+        [JsonProperty("extendedProperties")]
         public IDictionary<string, string> ExtendedProperties
         {
             get;

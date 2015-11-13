@@ -16,6 +16,28 @@ var SharePoint = (function () {
 			this.m_baristaContext.environment.baristaSharePointAssembly
         ];
 
+        this.__loadFileAsBuffer = edge.func({
+            source: function () {/*
+
+			using Microsoft.SharePoint;
+			using Barista.SharePoint;
+			using System.Threading.Tasks;
+
+			public class Startup
+			{
+				public async Task<object> Invoke(string fileUrl)
+				{
+					SPFile file;
+					if (!SPHelper.TryGetSPFile(fileUrl, out file))
+						throw new System.Exception("Could not locate the specified file:  " + fileUrl);
+
+					return file.OpenBinary(SPOpenBinaryOptions.None);
+				}
+			}
+		*/},
+            references: this.__baristaSharePointReferences
+        });
+
         this.__loadFileAsString = edge.func({
             source: function () {/*
 
@@ -36,6 +58,10 @@ var SharePoint = (function () {
 		*/},
             references: this.__baristaSharePointReferences
         });
+    };
+
+    SharePoint.prototype.loadFileAsBuffer = function (fileUrl) {
+        return this.__loadFileAsBuffer(fileUrl, true);
     };
 
     SharePoint.prototype.loadFileAsString = function (fileUrl) {

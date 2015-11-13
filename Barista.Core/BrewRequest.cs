@@ -1,17 +1,19 @@
 ﻿namespace Barista
 {
+    using Barista.Extensions;
+    using Barista.Jurassic.Library;
+    using Barista.Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Web;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Barista.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Serialization;
     using System.Web;
 
     [DataContract(Namespace = Constants.ServiceNamespace)]
@@ -34,6 +36,7 @@
         /// Gets or sets the bootstrapper.
         /// </summary>
         [DataMember]
+        [JsonProperty("bootstrapper")]
         public string Bootstrapper
         {
             get;
@@ -44,6 +47,7 @@
         /// Gets or sets the original body of the request.
         /// </summary>
         [DataMember]
+        [JsonProperty("body")]
         public byte[] Body
         {
             get;
@@ -54,6 +58,7 @@
         /// Gets or sets the code that will be executed by the service.
         /// </summary>
         [DataMember]
+        [JsonProperty("code")]
         public string Code
         {
             get;
@@ -64,6 +69,7 @@
         /// Gets or sets the path to the code (used for indicating source location if an exception is thrown during processing)
         /// </summary>
         [DataMember]
+        [JsonProperty("codePath")]
         public string CodePath
         {
             get;
@@ -74,6 +80,7 @@
         /// Gets or sets the code that will be executed by the service.
         /// </summary>
         [DataMember]
+        [JsonProperty("instanceInitializationCode")]
         public string InstanceInitializationCode
         {
             get;
@@ -84,6 +91,7 @@
         /// Gets or sets the path to the code (used for indicating source location if an exception is thrown during processing)
         /// </summary>
         [DataMember]
+        [JsonProperty("instanceInitializationCodePath")]
         public string InstanceInitializationCodePath
         {
             get;
@@ -91,6 +99,7 @@
         }
 
         [DataMember]
+        [JsonProperty("executionTimeout")]
         public uint ExecutionTimeout
         {
             get;
@@ -98,6 +107,8 @@
         }
 
         [DataMember]
+        [JsonProperty("headers")]
+        [JsonConverter(typeof(BrewRequestHeadersJsonConverter))]
         public BrewRequestHeaders Headers
         {
             get;
@@ -108,6 +119,7 @@
         /// Gets the originating http request method (GET/POST/PUT/DELETE etc...)
         /// </summary>
         [DataMember]
+        [JsonProperty("method")]
         public string Method
         {
             get;
@@ -115,6 +127,7 @@
         }
 
         [DataMember]
+        [JsonProperty("queryString")]
         public IDictionary<string, string> QueryString
         {
             get;
@@ -122,6 +135,7 @@
         }
 
         [DataMember]
+        [JsonProperty("scriptEngineFactory")]
         public string ScriptEngineFactory
         {
             get;
@@ -129,6 +143,7 @@
         }
 
         [DataMember]
+        [JsonProperty("url")]
         public Uri Url
         {
             get;
@@ -136,6 +151,7 @@
         }
 
         [DataMember]
+        [JsonProperty("userHostAddress")]
         public string UserHostAddress
         {
             get;
@@ -143,6 +159,7 @@
         }
 
         [DataMember]
+        [JsonProperty("extendedProperties")]
         public IDictionary<string, string> ExtendedProperties
         {
             get;

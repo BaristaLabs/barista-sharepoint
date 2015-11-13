@@ -164,6 +164,7 @@
     <Compile Include="BaristaInstanceMutexManager.cs" />
     <Compile Include="BaristaResponseMessage.cs" />
     <Compile Include="BrewRequestHeaders.cs" />
+    <Compile Include="BrewRequestHeadersJsonConverter.cs" />
     <Compile Include="BrewRequestInstanceSettings.cs" />
     <Compile Include="Configuration\ConfigurationElementBase.cs" />
     <Compile Include="Configuration\GenericConfigurationElementCollection.cs" />

@@ -20,6 +20,7 @@
     using Barista.Newtonsoft.Json.Linq;
     using System.Configuration;
     using System.Runtime.Serialization;
+    using System.Text;
 
     [Guid("9B4C0B5C-8A42-401A-9ACB-42EA6246E960")]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple, IncludeExceptionDetailInFaults = true)]
@@ -221,51 +222,63 @@
                         result = engine.Evaluate(source);
                     }
 
-                    var isRaw = false;
-
-                    //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
-                    if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+                    if (engine is EdgeJSScriptEngine)
                     {
-                        response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
-
-                        var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
-                        if (arrayResult != null)
+                        //EdgeJSScriptEngine takes care of itself, just need to set the response as the response object.
+                        if (result != null)
                         {
-                            if (arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null &&
-                                response.Headers.ContainsKey("Content-Disposition") == false)
-                            {
-                                var br = BrowserUserAgentParser.GetDefault();
-                                var clientInfo = br.Parse(request.Headers.UserAgent);
-
-                                if (clientInfo.UserAgent.Family == "IE" &&
-                                    (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
-                                    response.Headers.Add("Content-Disposition",
-                                        "attachment; filename=" +
-                                        Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName));
-                                else if (clientInfo.UserAgent.Family == "Safari")
-                                    response.Headers.Add("Content-Disposition",
-                                        "attachment; filename=" + arrayResult.FileName);
-                                else
-                                    response.Headers.Add("Content-Disposition",
-                                        "attachment; filename=\"" +
-                                        Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
-                            }
-
-                            //Set the ETag on the response if the Base64EncodedByteArrayInstance defines an ETag and one has not already been set.
-                            if (arrayResult.ETag.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("ETag") == false)
-                            {
-                                response.Headers.Add("ETag", arrayResult.ETag);
-                            }
-
+                            var resultData = (dynamic)result;
+                            response = JsonConvert.DeserializeObject<BrewResponse>((string)resultData.response);
                         }
                     }
-
-                    if (webBundle.WebInstance != null)
+                    else
                     {
-                        isRaw = webBundle.WebInstance.Response.IsRaw;
-                    }
+                        var isRaw = false;
 
-                    response.SetContentsFromResultObject(engine, result, isRaw);
+                        //If the web instance has been initialized on the web bundle, use the value set via script, otherwise use defaults.
+                        if (webBundle.WebInstance == null || webBundle.WebInstance.Response.AutoDetectContentType)
+                        {
+                            response.ContentType = BrewResponse.AutoDetectContentTypeFromResult(result, response.ContentType);
+
+                            var arrayResult = result as Barista.Library.Base64EncodedByteArrayInstance;
+                            if (arrayResult != null)
+                            {
+                                if (arrayResult.FileName.IsNullOrWhiteSpace() == false && response.Headers != null &&
+                                    response.Headers.ContainsKey("Content-Disposition") == false)
+                                {
+                                    var br = BrowserUserAgentParser.GetDefault();
+                                    var clientInfo = br.Parse(request.Headers.UserAgent);
+
+                                    if (clientInfo.UserAgent.Family == "IE" &&
+                                        (clientInfo.UserAgent.Major == "7" || clientInfo.UserAgent.Major == "8"))
+                                        response.Headers.Add("Content-Disposition",
+                                            "attachment; filename=" +
+                                            Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName));
+                                    else if (clientInfo.UserAgent.Family == "Safari")
+                                        response.Headers.Add("Content-Disposition",
+                                            "attachment; filename=" + arrayResult.FileName);
+                                    else
+                                        response.Headers.Add("Content-Disposition",
+                                            "attachment; filename=\"" +
+                                            Barista.Helpers.HttpUtility.UrlEncode(arrayResult.FileName) + "\"");
+                                }
+
+                                //Set the ETag on the response if the Base64EncodedByteArrayInstance defines an ETag and one has not already been set.
+                                if (arrayResult.ETag.IsNullOrWhiteSpace() == false && response.Headers != null && response.Headers.ContainsKey("ETag") == false)
+                                {
+                                    response.Headers.Add("ETag", arrayResult.ETag);
+                                }
+
+                            }
+                        }
+
+                        if (webBundle.WebInstance != null)
+                        {
+                            isRaw = webBundle.WebInstance.Response.IsRaw;
+                        }
+
+                        response.SetContentsFromResultObject(engine, result, isRaw);
+                    }
                 }
                 catch (JavaScriptException ex)
                 {
