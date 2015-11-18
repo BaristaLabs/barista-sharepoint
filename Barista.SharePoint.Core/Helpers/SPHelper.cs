@@ -784,7 +784,7 @@
             return htProperties;
         }
 
-        private static void CopyDirectory(string sourcePath, SPFolder destinationFolder)
+        public static void CopyDirectory(string sourcePath, SPFolder destinationFolder)
         {
             if (!destinationFolder.Exists)
             {

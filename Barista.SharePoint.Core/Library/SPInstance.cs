@@ -68,19 +68,19 @@
         public void CopyFilesFromHiveToFolder(string sourceHivePath, Barista.SharePoint.Library.SPFolderInstance targetFolder, object desiredPathVersion)
         {
             if (string.IsNullOrWhiteSpace(sourceHivePath))
-                throw new JavaScriptException("sourceHivePath must be specified.");
+                throw new JavaScriptException(this.Engine, "Error", "sourceHivePath must be specified.");
 
             if (targetFolder == null)
-                throw new JavaScriptException("targetFolder must be specified.");
+                throw new JavaScriptException(this.Engine, "Error", "targetFolder must be specified.");
 
             var iDesiredPathVersion = SPUtility.CompatibilityLevel15;
 
             if (desiredPathVersion != Null.Value && desiredPathVersion != Undefined.Value && desiredPathVersion != null)
                 iDesiredPathVersion = TypeConverter.ToInt32(desiredPathVersion);
 
-            var sourcePath = SPUtility.GetVersionedGenericSetupPath(hivePath, iDesiredPathVersion);
+            var sourcePath = SPUtility.GetVersionedGenericSetupPath(sourceHivePath, iDesiredPathVersion);
 
-            SPHelper.CopyDirectory(sourceHivePath, targetFolder.Folder);
+            SPHelper.CopyDirectory(sourcePath, targetFolder.Folder);
         }
 
         [JSDoc("Returns a value that indicates if a file exists at the specified url.")]
