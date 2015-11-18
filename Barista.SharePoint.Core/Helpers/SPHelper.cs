@@ -617,15 +617,15 @@
             }
 
             //Attempt to get the file relative to the sharepoint hive.
-            if (fileUrl.StartsWith("/_layouts/", StringComparison.InvariantCultureIgnoreCase))
+            if (fileUrl.StartsWith("/_", StringComparison.InvariantCultureIgnoreCase))
             {
                 try
                 {
                     var hiveFileContents = String.Empty;
                     var hiveFileResult = false;
                 
-                    var path = SPUtility.GetVersionedGenericSetupPath("TEMPLATE\\LAYOUTS", SPUtility.CompatibilityLevel15);
-                    path = Path.GetFullPath(Path.Combine(path, fileUrl.ReplaceFirstOccurenceIgnoreCase("/_layouts/", "")));
+                    var path = SPUtility.GetVersionedGenericSetupPath("TEMPLATE", SPUtility.CompatibilityLevel15);
+                    path = Path.GetFullPath(Path.Combine(path, fileUrl.ReplaceFirstOccurenceIgnoreCase("/_", "")));
                     if (File.Exists(path))
                     {
                         hiveFileContents = File.ReadAllText(path);
@@ -782,6 +782,30 @@
             }
 
             return htProperties;
+        }
+
+        private static void CopyDirectory(string sourcePath, SPFolder destinationFolder)
+        {
+            if (!destinationFolder.Exists)
+            {
+                destinationFolder.ParentFolder.SubFolders.Add(destinationFolder.Url);
+            }
+
+            foreach (var file in Directory.GetFiles(sourcePath))
+            {
+                using (var fs = File.OpenRead(file))
+                {
+                    var fi = new FileInfo(file);
+                    destinationFolder.Files.Add(fi.Name, fs, true);
+                }
+            }
+
+            foreach (var folder in Directory.GetDirectories(sourcePath))
+            {
+                var di = new DirectoryInfo(folder);
+                var subFolder = destinationFolder.ParentWeb.GetFolder(SPUtility.ConcatUrls(destinationFolder.Url, di.Name));
+                CopyDirectory(folder, subFolder);
+            }
         }
     }
 }

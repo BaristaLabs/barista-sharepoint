@@ -162,8 +162,16 @@ module.exports = function (data, callback) {
 
         var executionResult = vm.runInNewContext(data.code, vm.createContext(sandbox), data.path);
 
-        if (_.isNull(baristaContext.response.content) || _.isUndefined(baristaContext.response.content))
-            baristaContext.response.content = executionResult;
+        var skipStringify = false;
+
+        if (_.isNull(baristaContext.response.content) || _.isUndefined(baristaContext.response.content)) {
+            if (executionResult === baristaContext) {
+                skipStringify = true;
+                baristaContext.response.content = JSON.stringify(baristaContext);
+            }
+            else
+                baristaContext.response.content = executionResult;
+        }
 
         if (Buffer.isBuffer(baristaContext.response.content)) {
             if (!baristaContext.response.contentType)
@@ -174,7 +182,12 @@ module.exports = function (data, callback) {
             if (!baristaContext.response.contentType)
                 baristaContext.response.contentType = "application/json";
 
-            var resultString = JSON.stringify(baristaContext.response.content);
+            var resultString;
+            if (!skipStringify)
+                resultString = JSON.stringify(baristaContext.response.content);
+            else
+                resultString = baristaContext.response.content;
+
             if (_.isUndefined(resultString))
                 resultString = "\"undefined\"";
 

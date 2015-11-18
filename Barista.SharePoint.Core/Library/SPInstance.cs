@@ -62,6 +62,27 @@
         #endregion
 
         #region Functions
+
+        [JSDoc("Copies files from the hive to the specified SharePoint folder.")]
+        [JSFunction(Name = "copyFilesFromHiveToFolder")]
+        public void CopyFilesFromHiveToFolder(string sourceHivePath, Barista.SharePoint.Library.SPFolderInstance targetFolder, object desiredPathVersion)
+        {
+            if (string.IsNullOrWhiteSpace(sourceHivePath))
+                throw new JavaScriptException("sourceHivePath must be specified.");
+
+            if (targetFolder == null)
+                throw new JavaScriptException("targetFolder must be specified.");
+
+            var iDesiredPathVersion = SPUtility.CompatibilityLevel15;
+
+            if (desiredPathVersion != Null.Value && desiredPathVersion != Undefined.Value && desiredPathVersion != null)
+                iDesiredPathVersion = TypeConverter.ToInt32(desiredPathVersion);
+
+            var sourcePath = SPUtility.GetVersionedGenericSetupPath(hivePath, iDesiredPathVersion);
+
+            SPHelper.CopyDirectory(sourceHivePath, targetFolder.Folder);
+        }
+
         [JSDoc("Returns a value that indicates if a file exists at the specified url.")]
         [JSFunction(Name = "exists")]
         public bool Exists(string fileUrl)
