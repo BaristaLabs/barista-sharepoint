@@ -675,7 +675,7 @@
                 (byte) priority, peopleToAlert, sendACopy, synchronous, out guidWorkItemId);
 
             var result = Engine.Object.Construct();
-            result.SetPropertyValue("workItemId", guidWorkItemId, false);
+            result.SetPropertyValue("workItemId", new GuidInstance(this.Engine.Object.InstancePrototype, guidWorkItemId), false);
             result.SetPropertyValue("conversionResult", conversionResult.ToString(), false);
             return result;
         }

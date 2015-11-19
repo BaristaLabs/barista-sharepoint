@@ -338,6 +338,21 @@ namespace Barista.SharePoint.Library
       }
     }
 
+    [JSProperty(Name = "documentConverters")]
+    public string DocumentConverters
+    {
+        get
+        {
+            
+            var converters = m_webApplication.DocumentConverters;
+            var result = "";
+            foreach (var converter in converters)
+                result += converter.Id + " " + converter.Name + converter.Status + converter.TypeName + converter.DisplayName + "\r\n";
+
+            return result;
+        }
+    }
+
     [JSProperty(Name = "id")]
     public GuidInstance Id
     {
