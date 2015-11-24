@@ -216,14 +216,24 @@
             if (xml == null || xml == Null.Value || xml == Undefined.Value)
                 return null;
 
-            string xmlString;
+            XDocument result;
             if (xml is Base64EncodedByteArrayInstance)
-                xmlString = (xml as Base64EncodedByteArrayInstance).ToUtf8String();
+            {
+                using (MemoryStream oStream = new MemoryStream((xml as Base64EncodedByteArrayInstance).Data)
+                {
+                    using (XmlTextReader oReader = new XmlTextReader(oStream))
+                    {
+                        result = XDocument.Load(oReader);
+                    }
+                }
+            }
             else
-                xmlString = TypeConverter.ToString(xml);
+            {
+                var xmlString = TypeConverter.ToString(xml);
+                result = XDocument.Parse(xmlString);
+            }
 
-            var doc = XDocument.Parse(xmlString);
-            var jsonDocument = JsonConvert.SerializeXmlNode(doc.Root.GetXmlNode());
+            var jsonDocument = JsonConvert.SerializeXmlNode(result.Root.GetXmlNode());
             return JSONObject.Parse(this.Engine, jsonDocument, null);
         }
 
