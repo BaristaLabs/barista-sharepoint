@@ -149,6 +149,7 @@
       <DependentUpon>Manage.aspx.cs</DependentUpon>
     </Compile>
     <Compile Include="Bundles\DocumentStoreBundle.cs" />
+    <None Include="DistributedCacheManager.cs" />
     <Compile Include="DocumentStore\BaristaDocumentStoreFeatureReceiver.cs" />
     <Compile Include="DocumentStore\DocumentStoreContainerEventReceiver\DocumentStoreContainerEventReceiver.cs" />
     <Compile Include="DocumentStore\EntityContents.cs" />
@@ -200,6 +201,7 @@
     </Compile>
     <Compile Include="SPBaristaEdgeJSScriptEngineFactory.cs" />
     <Compile Include="SPBaristaJurassicScriptEngineFactory.cs" />
+    <Compile Include="SPSecurityContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ADMIN\BaristaService\Styles\bootstrap-theme.css.map" />

@@ -11,6 +11,7 @@
     using System.Collections.Generic;
     using System.Xml.Linq;
     using System.Text;
+    using System.Xml;
 
     [Serializable]
     public class DocumentInstance : ObjectInstance
@@ -219,7 +220,7 @@
             XDocument result;
             if (xml is Base64EncodedByteArrayInstance)
             {
-                using (MemoryStream oStream = new MemoryStream((xml as Base64EncodedByteArrayInstance).Data)
+                using (MemoryStream oStream = new MemoryStream((xml as Base64EncodedByteArrayInstance).Data))
                 {
                     using (XmlTextReader oReader = new XmlTextReader(oStream))
                     {
