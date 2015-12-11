@@ -104,10 +104,9 @@
             instance.Common.RegisterBundle(new SqlDataBundle());
             instance.Common.RegisterBundle(new StateMachineBundle());
             instance.Common.RegisterBundle(new DeferredBundle());
-                //instance.Common.RegisterBundle(new TfsBundle());
             instance.Common.RegisterBundle(new BaristaSearchIndexBundle());
             instance.Common.RegisterBundle(new WebAdministrationBundle());
-                //instance.Common.RegisterBundle(new UnitTestingBundle());
+            //instance.Common.RegisterBundle(new UnitTestingBundle());
             instance.Common.RegisterBundle(new WkHtmlToPdf.Library.WkHtmlToPdfBundle(binDirectory));
 
             //Let's do some DI
