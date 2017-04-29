@@ -103,48 +103,48 @@
     </Reference>
     <Reference Include="Microsoft.BusinessData, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.BusinessData.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.BusinessData.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.Office.DocumentManagement.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.Office.DocumentManagement.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.SecureStoreService, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.Office.SecureStoreService.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.Office.SecureStoreService.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.Office.Server.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.Office.Server.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.Office.Server.Search.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.Office.Server.Search.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.SharePoint.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Client.ServerRuntime, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.SharePoint.Client.ServerRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Powershell, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.Powershell.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.SharePoint.Powershell.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\ISAPI\Microsoft.SharePoint.Publishing.dll</HintPath>
+      <HintPath>..\Lib_SP2016\ISAPI\Microsoft.SharePoint.Publishing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
+      <HintPath>..\Lib_SP2016\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy.Intl, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib_SP2013\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.SharePoint.Taxonomy.Intl.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>

@@ -1,23 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint", "Barista.SharePoint\Barista.SharePoint.csproj", "{77BC7214-5D7D-472C-88C5-7D022D93C231}"
-	ProjectSection(ProjectDependencies) = postProject
-		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {0FA2C498-92DD-453A-8502-D192AD536E5C}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WorkflowActivities", "Barista.SharePoint.WorkflowActivities\Barista.SharePoint.WorkflowActivities.csproj", "{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A745E621-0AC3-4826-896F-DD46BEE2CA0B}"
 	ProjectSection(SolutionItems) = preProject
 		acknowledgments.txt = acknowledgments.txt
 		Barista.sln.DotSettings = Barista.sln.DotSettings
+		Z:\Downloads\config-AutoSPInstaller.xml = Z:\Downloads\config-AutoSPInstaller.xml
 		license.txt = license.txt
 		Performance1.psess = Performance1.psess
 		Performance2.psess = Performance2.psess
@@ -73,24 +63,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fody", "Fody", "{C74F12B1-7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.Jurassic", "Barista.UnitTests.Jurassic\Barista.UnitTests.Jurassic.csproj", "{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.Core", "Barista.SharePoint.Core\Barista.SharePoint.Core.csproj", "{17B92DC5-9402-44DF-B03C-4687E99FEF61}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{BC15B32B-BEA4-495E-B9BE-F085F7BA081C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Server", "Server\Barista.Server\Barista.Server.csproj", "{21C96F8A-5665-4EEC-8691-ADC1B08EB269}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{7DB948B6-8410-4DB1-8C29-0310F6D2047F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebSocketsService", "Barista.SharePoint.WebSocketsService\Barista.SharePoint.WebSocketsService.csproj", "{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.SearchService", "Barista.SharePoint.SearchService\Barista.SharePoint.SearchService.csproj", "{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", "{C2439767-5A7B-4D56-93B6-A5FBA91FECB0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2E77D-5F2F-4B96-88C0-A42845185B92}"
 	ProjectSection(SolutionItems) = preProject
+		Scripts\AddDevTrustedLocations.ps1 = Scripts\AddDevTrustedLocations.ps1
 		Scripts\AddECMTrustedLocations.ps1 = Scripts\AddECMTrustedLocations.ps1
 		Scripts\cleanupECM.ps1 = Scripts\cleanupECM.ps1
 		Scripts\Deploy-PostSolutionDeployment.ps1 = Scripts\Deploy-PostSolutionDeployment.ps1
@@ -119,6 +100,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{E2F2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{615E6A1D-60F6-4320-8CE8-A38EFBB5B584}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Core", "Barista.Core\Barista.Core.csproj", "{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint", "Barista.SharePoint\Barista.SharePoint.csproj", "{77BC7214-5D7D-472C-88C5-7D022D93C231}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0FA2C498-92DD-453A-8502-D192AD536E5C} = {0FA2C498-92DD-453A-8502-D192AD536E5C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebParts", "Barista.SharePoint.WebParts\Barista.SharePoint.WebParts.csproj", "{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WorkflowActivities", "Barista.SharePoint.WorkflowActivities\Barista.SharePoint.WorkflowActivities.csproj", "{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.UnitTests.Jurassic", "Barista.UnitTests.Jurassic\Barista.UnitTests.Jurassic.csproj", "{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.Core", "Barista.SharePoint.Core\Barista.SharePoint.Core.csproj", "{17B92DC5-9402-44DF-B03C-4687E99FEF61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Server", "Server\Barista.Server\Barista.Server.csproj", "{21C96F8A-5665-4EEC-8691-ADC1B08EB269}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.WebSocketsService", "Barista.SharePoint.WebSocketsService\Barista.SharePoint.WebSocketsService.csproj", "{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.SearchService", "Barista.SharePoint.SearchService\Barista.SharePoint.SearchService.csproj", "{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Web", "Barista.Web\Barista.Web.csproj", "{83078881-2C80-47E3-9BED-A87FB429F347}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaWebHost", "BaristaWebHost\BaristaWebHost.csproj", "{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA}"
@@ -135,8 +141,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Automation", "Baris
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.Web.Mvc", "Barista.Web.Mvc\Barista.Web.Mvc.csproj", "{465F6D30-4322-495B-97D1-EFD80E0C5F22}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{615E6A1D-60F6-4320-8CE8-A38EFBB5B584}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaristaAutomationClient", "BaristaAutomationClient\BaristaAutomationClient.csproj", "{4A18440E-D225-4FB4-B781-950598372798}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.SchedulerService", "Barista.SharePoint.SchedulerService\Barista.SharePoint.SchedulerService.csproj", "{76859B84-236A-4E5D-B47B-4F94118C342D}"
@@ -151,123 +155,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.SharePoint.PowerShe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.ConsoleTests", "Barista.ConsoleTests\Barista.ConsoleTests.csproj", "{23FEE8B6-D1C2-4E45-988B-0A5E7F0DACE3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{9DEFB8A9-7E8F-4C49-A4FF-FC9BFBF69056}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.EdgeJs.SharePoint", "Barista.EdgeJs.SharePoint\Barista.EdgeJs.SharePoint.csproj", "{3FD8C109-CC16-490B-94E0-A7014BB20F49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barista.EdgeJs.EPPlus", "Barista.EdgeJs.EPPlus\Barista.EdgeJs.EPPlus.csproj", "{41A06596-0B32-4F81-A9E5-1BA07392C185}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 27
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://sixconcepts.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Barista.Core\\Barista.Core.csproj
-		SccProjectTopLevelParentUniqueName1 = Barista.sln
-		SccProjectName1 = Barista.Core
-		SccLocalPath1 = Barista.Core
-		SccProjectUniqueName2 = Barista.SharePoint.WebParts\\Barista.SharePoint.WebParts.csproj
-		SccProjectTopLevelParentUniqueName2 = Barista.sln
-		SccProjectName2 = Barista.SharePoint.WebParts
-		SccLocalPath2 = Barista.SharePoint.WebParts
-		SccProjectUniqueName3 = Barista.SharePoint\\Barista.SharePoint.csproj
-		SccProjectTopLevelParentUniqueName3 = Barista.sln
-		SccProjectName3 = Barista.SharePoint
-		SccLocalPath3 = Barista.SharePoint
-		SccProjectUniqueName4 = Barista.UnitTests.Jurassic\\Barista.UnitTests.Jurassic.csproj
-		SccProjectTopLevelParentUniqueName4 = Barista.sln
-		SccProjectName4 = Barista.UnitTests.Jurassic
-		SccLocalPath4 = Barista.UnitTests.Jurassic
-		SccProjectUniqueName5 = Barista.SharePoint.Core\\Barista.SharePoint.Core.csproj
-		SccProjectTopLevelParentUniqueName5 = Barista.sln
-		SccProjectName5 = Barista.SharePoint.Core
-		SccLocalPath5 = Barista.SharePoint.Core
-		SccProjectUniqueName6 = Server\\Barista.Server\\Barista.Server.csproj
-		SccProjectTopLevelParentUniqueName6 = Barista.sln
-		SccProjectName6 = Server/Barista.Server
-		SccLocalPath6 = Server\\Barista.Server
-		SccProjectUniqueName7 = Barista.SharePoint.WebSocketsService\\Barista.SharePoint.WebSocketsService.csproj
-		SccProjectTopLevelParentUniqueName7 = Barista.sln
-		SccProjectName7 = Barista.SharePoint.WebSocketsService
-		SccLocalPath7 = Barista.SharePoint.WebSocketsService
-		SccProjectUniqueName8 = Barista.SharePoint.SearchService\\Barista.SharePoint.SearchService.csproj
-		SccProjectTopLevelParentUniqueName8 = Barista.sln
-		SccProjectName8 = Barista.SharePoint.SearchService
-		SccLocalPath8 = Barista.SharePoint.SearchService
-		SccProjectUniqueName9 = Barista.Web\\Barista.Web.csproj
-		SccProjectTopLevelParentUniqueName9 = Barista.sln
-		SccProjectName9 = Barista.Web
-		SccLocalPath9 = Barista.Web
-		SccProjectUniqueName10 = BaristaWebHost\\BaristaWebHost.csproj
-		SccProjectTopLevelParentUniqueName10 = Barista.sln
-		SccProjectName10 = BaristaWebHost
-		SccLocalPath10 = BaristaWebHost
-		SccProjectUniqueName11 = Barista.DocumentStore.FileSystem\\Barista.DocumentStore.FileSystem.csproj
-		SccProjectTopLevelParentUniqueName11 = Barista.sln
-		SccProjectName11 = Barista.DocumentStore.FileSystem
-		SccLocalPath11 = Barista.DocumentStore.FileSystem
-		SccProjectUniqueName12 = Barista.DocumentStore.Raven\\Barista.DocumentStore.Raven.csproj
-		SccProjectTopLevelParentUniqueName12 = Barista.sln
-		SccProjectName12 = Barista.DocumentStore.Raven
-		SccLocalPath12 = Barista.DocumentStore.Raven
-		SccProjectUniqueName13 = Barista.Social\\Barista.Social.csproj
-		SccProjectTopLevelParentUniqueName13 = Barista.sln
-		SccProjectName13 = Barista.Social
-		SccLocalPath13 = Barista.Social
-		SccProjectUniqueName14 = Barista.Raven\\Barista.Raven.csproj
-		SccProjectTopLevelParentUniqueName14 = Barista.sln
-		SccProjectName14 = Barista.Raven
-		SccLocalPath14 = Barista.Raven
-		SccProjectUniqueName15 = Barista.Automation\\Barista.Automation.csproj
-		SccProjectTopLevelParentUniqueName15 = Barista.sln
-		SccProjectName15 = Barista.Automation
-		SccLocalPath15 = Barista.Automation
-		SccProjectUniqueName16 = Barista.Web.Mvc\\Barista.Web.Mvc.csproj
-		SccProjectTopLevelParentUniqueName16 = Barista.sln
-		SccProjectName16 = Barista.Web.Mvc
-		SccLocalPath16 = Barista.Web.Mvc
-		SccProjectUniqueName17 = BaristaAutomationClient\\BaristaAutomationClient.csproj
-		SccProjectTopLevelParentUniqueName17 = Barista.sln
-		SccProjectName17 = BaristaAutomationClient
-		SccLocalPath17 = BaristaAutomationClient
-		SccProjectUniqueName18 = Barista.SharePoint.SchedulerService\\Barista.SharePoint.SchedulerService.csproj
-		SccProjectTopLevelParentUniqueName18 = Barista.sln
-		SccProjectName18 = Barista.SharePoint.SchedulerService
-		SccLocalPath18 = Barista.SharePoint.SchedulerService
-		SccProjectUniqueName19 = Barista.UnitTests.CamlexNET\\Barista.UnitTests.CamlexNET.csproj
-		SccProjectTopLevelParentUniqueName19 = Barista.sln
-		SccProjectName19 = Barista.UnitTests.CamlexNET
-		SccLocalPath19 = Barista.UnitTests.CamlexNET
-		SccProjectUniqueName20 = BaristaConsoleClient\\BaristaConsoleClient.csproj
-		SccProjectTopLevelParentUniqueName20 = Barista.sln
-		SccProjectName20 = BaristaConsoleClient
-		SccLocalPath20 = BaristaConsoleClient
-		SccProjectUniqueName21 = Barista.UnitTests.iCal\\Barista.UnitTests.iCal.csproj
-		SccProjectTopLevelParentUniqueName21 = Barista.sln
-		SccProjectName21 = Barista.UnitTests.iCal
-		SccLocalPath21 = Barista.UnitTests.iCal
-		SccProjectUniqueName22 = Barista.SharePoint.WorkflowActivities\\Barista.SharePoint.WorkflowActivities.csproj
-		SccProjectTopLevelParentUniqueName22 = Barista.sln
-		SccProjectName22 = Barista.SharePoint.WorkflowActivities
-		SccLocalPath22 = Barista.SharePoint.WorkflowActivities
-		SccProjectUniqueName23 = Barista.SharePoint.PowerShell\\Barista.SharePoint.PowerShell.csproj
-		SccProjectTopLevelParentUniqueName23 = Barista.sln
-		SccProjectName23 = Barista.SharePoint.PowerShell
-		SccLocalPath23 = Barista.SharePoint.PowerShell
-		SccProjectUniqueName24 = Barista.ConsoleTests\\Barista.ConsoleTests.csproj
-		SccProjectTopLevelParentUniqueName24 = Barista.sln
-		SccProjectName24 = Barista.ConsoleTests
-		SccLocalPath24 = Barista.ConsoleTests
-		SccProjectUniqueName25 = Barista.EdgeJs.SharePoint\\Barista.EdgeJs.SharePoint.csproj
-		SccProjectTopLevelParentUniqueName25 = Barista.sln
-		SccProjectName25 = Barista.EdgeJs.SharePoint
-		SccLocalPath25 = Barista.EdgeJs.SharePoint
-		SccProjectUniqueName26 = Barista.EdgeJs.EPPlus\\Barista.EdgeJs.EPPlus.csproj
-		SccProjectTopLevelParentUniqueName26 = Barista.sln
-		SccProjectName26 = Barista.EdgeJs.EPPlus
-		SccLocalPath26 = Barista.EdgeJs.EPPlus
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -388,19 +280,19 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
+		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
+		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
+		{E2F2E77D-5F2F-4B96-88C0-A42845185B92} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{0CBC23EF-F5A0-4DDC-8C83-3B7FBB47E598} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{77BC7214-5D7D-472C-88C5-7D022D93C231} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{BEDCAD5A-3A7B-4CA7-B97B-CEA3212F3149} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{E205EA62-7287-4B4E-BF1F-F9D9EFBA50A5} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
-		{D0D109F0-F49F-43A4-AAE2-EB239EFAEB84} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
-		{47FDFAD3-D414-49D6-900A-8F7C0912C655} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
-		{C74F12B1-76DF-4797-91D2-7441959949C7} = {0384B6AA-AF6D-45DC-A583-C87DF988372A}
 		{DA5FEB5C-9035-46A4-BDE1-6948F8DF1F60} = {F44F6017-BEDA-4A21-9A79-59BC8F15FEC0}
 		{17B92DC5-9402-44DF-B03C-4687E99FEF61} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{21C96F8A-5665-4EEC-8691-ADC1B08EB269} = {BC15B32B-BEA4-495E-B9BE-F085F7BA081C}
 		{C1F76C47-B2D0-42AB-86E8-5D03A5FB38DC} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
 		{B4165BA6-6A20-45F8-96DC-61F5DE7B6CD7} = {C2439767-5A7B-4D56-93B6-A5FBA91FECB0}
-		{E2F2E77D-5F2F-4B96-88C0-A42845185B92} = {A745E621-0AC3-4826-896F-DD46BEE2CA0B}
 		{83078881-2C80-47E3-9BED-A87FB429F347} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}
 		{DEB438E2-AA9C-4648-89BC-17D76CF0D6FA} = {7DB948B6-8410-4DB1-8C29-0310F6D2047F}
 		{27F98766-B157-46E3-9EA2-98D9E3E1FDC0} = {63D2DF36-8C74-4FB1-B8C4-BE2F72345ADE}

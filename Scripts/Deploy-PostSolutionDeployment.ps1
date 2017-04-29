@@ -2,7 +2,7 @@
 param (
 	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$ManagedAccount = "TREASURY\SP_WorkerProcess",
+	[string]$ManagedAccount = "TREASURY\SP_Farm",
 
 	[Parameter(Mandatory=$false, Position=1, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
@@ -10,7 +10,7 @@ param (
 
 	[Parameter(Mandatory=$false, Position=2, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$Uri = "http://ofsdev"
+	[string]$Uri = "http://ofs.treasuryecm.gov"
 )
 
 $ver = $host | select version

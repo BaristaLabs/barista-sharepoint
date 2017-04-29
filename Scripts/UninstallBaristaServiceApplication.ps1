@@ -14,7 +14,7 @@
 param (
 	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$ManagedAccount = "TREASURY\SP_WorkerProcess",
+	[string]$ManagedAccount = "TREASURY\SP_Farm",
 
 	[Parameter(Mandatory=$false, Position=2, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]

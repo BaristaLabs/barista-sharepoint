@@ -2,7 +2,7 @@
 param (
 	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$Uri = "http://ofsdev"
+	[string]$Uri = "http://ofs.treasuryecm.gov"
 )
 
 function LoadSharePointPowerShellEnvironment

@@ -30,12 +30,14 @@
     <PostDeploymentCommand>%25windir%25\sysnative\WindowsPowerShell\v1.0\PowerShell.exe -Version 3 -file "%24%28SolutionDir%29Scripts\VSDeploy-PostSolutionDeployment.ps1" "%24%28SolutionDir%29Scripts"</PostDeploymentCommand>
     <RestorePackages>true</RestorePackages>
     <ProjectMode>SharePointCustomization</ProjectMode>
-    <TargetOfficeVersion>15.0</TargetOfficeVersion>
+    <TargetOfficeVersion>16.0</TargetOfficeVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
+    <MinimumOfficeToolsVersion>14.0</MinimumOfficeToolsVersion>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -113,10 +115,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LIB_SP2013\Microsoft.Office.Server.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\LIB_SP2013\Microsoft.SharePoint.dll</HintPath>
+      <HintPath>..\Lib_SP2016\Microsoft.SharePoint.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.WorkflowActions, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net35\Ninject.dll</HintPath>
     </Reference>

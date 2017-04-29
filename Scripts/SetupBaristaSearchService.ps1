@@ -2,7 +2,7 @@
 param (
 	[Parameter(Mandatory=$false, Position=0, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$ManagedAccount = "TREASURY\SP_WorkerProcess"
+	[string]$ManagedAccount = "TREASURY\SP_Services"
 )
 
 ## delete existing service

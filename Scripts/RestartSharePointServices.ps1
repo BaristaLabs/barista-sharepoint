@@ -1,7 +1,7 @@
 param
 (
     [Parameter(Mandatory=$false, HelpMessage='-ServiceNames Optional, provide a set of service names to restart.')]
-    [Array]$ServiceNames=@("SharePoint 2010 Timer","SharePoint 2010 Administration","IIS Admin Service","World Wide Web Publishing Service","Web Analytics Service","ReportServer*")
+    [Array]$ServiceNames=@("SharePoint 2016 Timer","SharePoint 2016 Administration","IIS Admin Service","World Wide Web Publishing Service","Web Analytics Service","ReportServer*")
 );
 
 $ver = $host | select version
