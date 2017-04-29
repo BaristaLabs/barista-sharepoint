@@ -43,7 +43,7 @@ if (currentSearchIndex != null) {
     if (index != -1) {
         searchIndexes.splice(index, 1);
         serviceApplication.propertyBag.setValueByKey("BaristaSearchIndexDefinitions", JSON.stringify(searchIndexes));
-        serviceApplication.update();
+        //serviceApplication.update();
         result = true;
     }
 }

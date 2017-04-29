@@ -43,7 +43,7 @@ if (currentUrl != null) {
     if (index != -1) {
         trustedLocations.splice(index, 1);
         serviceApplication.propertyBag.setValueByKey("BaristaTrustedLocations", JSON.stringify(trustedLocations));
-        serviceApplication.update();
+        //serviceApplication.update();
         result = true;
     }
 }

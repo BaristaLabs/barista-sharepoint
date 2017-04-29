@@ -50,5 +50,5 @@ else {
 }
 
 serviceApplication.propertyBag.setValueByKey("BaristaPackageApprovals", JSON.stringify(approvals));
-serviceApplication.update();
+//serviceApplication.update();
 result;
