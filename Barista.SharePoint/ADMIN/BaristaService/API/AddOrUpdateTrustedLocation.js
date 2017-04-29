@@ -65,5 +65,5 @@ else {
 }
 
 serviceApplication.propertyBag.setValueByKey("BaristaTrustedLocations", JSON.stringify(trustedLocations));
-//serviceApplication.update();
+serviceApplication.update();
 result;

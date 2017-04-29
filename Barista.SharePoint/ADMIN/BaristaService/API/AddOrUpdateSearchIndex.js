@@ -83,5 +83,5 @@ else {
 }
 
 serviceApplication.propertyBag.setValueByKey("BaristaSearchIndexDefinitions", JSON.stringify(searchIndexes));
-//serviceApplication.update();
+serviceApplication.update();
 result;

@@ -6,7 +6,7 @@ param (
 
 	[Parameter(Mandatory=$false, Position=1, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
-	[string]$ManagedAccount = "TREASURY\SP_PortalAppPool",
+	[string]$ManagedAccount = "TREASURY\SP_Farm",
 
 	[Parameter(Mandatory=$false, Position=2, ParameterSetName="FileOrDirectory")]
 	[ValidateNotNullOrEmpty()]
