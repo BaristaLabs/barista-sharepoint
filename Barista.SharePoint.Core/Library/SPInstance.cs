@@ -73,7 +73,7 @@
             if (targetFolder == null)
                 throw new JavaScriptException(this.Engine, "Error", "targetFolder must be specified.");
 
-            var iDesiredPathVersion = SPUtility.CompatibilityLevel15;
+            var iDesiredPathVersion = SPUtility.ContextCompatibilityLevel;
 
             if (desiredPathVersion != Null.Value && desiredPathVersion != Undefined.Value && desiredPathVersion != null)
                 iDesiredPathVersion = TypeConverter.ToInt32(desiredPathVersion);

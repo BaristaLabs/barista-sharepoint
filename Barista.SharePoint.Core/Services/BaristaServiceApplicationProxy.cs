@@ -37,7 +37,7 @@
         {
             // open the client.config
             //FIXME: if Barista ever targets SP >2013 this will need to be updated to the 16,17,18, or whatever hive it is.
-            var clientConfigPath = SPUtility.GetVersionedGenericSetupPath(@"WebClients\Barista", SPUtility.CompatibilityLevel15); //SPUtility.ContextCompatibilityLevel
+            var clientConfigPath = SPUtility.GetVersionedGenericSetupPath(@"WebClients\Barista", SPUtility.ContextCompatibilityLevel); //SPUtility.ContextCompatibilityLevel
             var clientConfig = OpenClientConfiguration(clientConfigPath);
             
             var factory = new ConfigurationChannelFactory<T>(endpointConfigName, clientConfig, null);

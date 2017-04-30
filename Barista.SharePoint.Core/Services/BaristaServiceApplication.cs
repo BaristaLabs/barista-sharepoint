@@ -76,7 +76,7 @@
 
         protected override string InstallPath
         {
-            get { return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.CompatibilityLevel15); }
+            get { return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.ContextCompatibilityLevel); }
         }
 
         protected override string VirtualPath
@@ -130,7 +130,7 @@
             source.Flags["response"] = JsonConvert.SerializeObject(response);
 
             source.Flags["environment"] = JsonConvert.SerializeObject(new {
-                baristaWebServiceBinFolder = SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista\bin", SPUtility.CompatibilityLevel15),
+                baristaWebServiceBinFolder = SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista\bin", SPUtility.ContextCompatibilityLevel),
                 baristaAssembly = BaristaHelper.GetAssemblyPath(typeof(Barista.Library.BaristaGlobal)) + "\\Barista.Core.dll",
                 baristaSharePointAssembly = BaristaHelper.GetAssemblyPath(typeof(Barista.SharePoint.Library.BaristaSharePointGlobal)) + "\\Barista.SharePoint.Core.dll",
                 sharePointAssembly = BaristaHelper.GetAssemblyPath(typeof(Microsoft.SharePoint.SPContext)) + "\\Microsoft.SharePoint.dll"

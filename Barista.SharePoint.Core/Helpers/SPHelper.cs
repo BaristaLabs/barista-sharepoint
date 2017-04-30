@@ -114,7 +114,13 @@
             Uri finalUri;
             if (Uri.TryCreate(uriString, UriKind.Absolute, out finalUri))
             {
-                uri = finalUri;
+                //In SP2016, querystrings such as v=xxx can cause issues.
+                var builder = new UriBuilder(finalUri)
+                {
+                    Query = null
+                };
+
+                uri = builder.Uri;
                 return true;
             }
 
@@ -573,7 +579,7 @@
             //Attempt to get the script from a relative path to the requesting url.
             Uri referrer = null;
 
-            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Request != null && SPBaristaContext.Current.Request.Headers.Referrer != null)
+            if (SPBaristaContext.HasCurrentContext && SPBaristaContext.Current != null && SPBaristaContext.Current.Request != null && !String.IsNullOrWhiteSpace(SPBaristaContext.Current.Request.Headers.Referrer))
                 referrer = new Uri(SPBaristaContext.Current.Request.Headers.Referrer, UriKind.Absolute);
             else if (HttpContext.Current != null)
                 referrer = HttpContext.Current.Request.UrlReferrer;

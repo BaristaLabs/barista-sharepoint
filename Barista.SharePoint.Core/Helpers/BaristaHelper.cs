@@ -54,7 +54,7 @@
 
         public static string GetBaristaWebServicesInstallPath()
         {
-            return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.CompatibilityLevel15);
+            return SPUtility.GetVersionedGenericSetupPath(@"WebServices\Barista", SPUtility.ContextCompatibilityLevel);
         }
 
         /// <summary>
