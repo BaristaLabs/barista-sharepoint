@@ -232,7 +232,6 @@
 
             var createdByUserValue = documentSet.Item[SPBuiltInFieldId.Author] as String;
             var createdByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, createdByUserValue);
-
             if (createdByUser.User != null)
             {
                 entity.CreatedBy = new User
@@ -241,6 +240,10 @@
                     LoginName = createdByUser.User.LoginName,
                     Name = createdByUser.User.Name,
                 };
+            }
+            else
+            {
+                entity.CreatedBy = new User { LoginName = createdByUserValue };
             }
 
             var defaultEntityPart =
@@ -265,7 +268,6 @@
             {
                 var modifiedByUserValue = documentSet.Item[SPBuiltInFieldId.Editor] as String;
                 var modifiedByUser = new SPFieldUserValue(documentSet.Folder.ParentWeb, modifiedByUserValue);
-
                 if (modifiedByUser.User != null)
                 {
                     entity.ModifiedBy = new User
@@ -274,6 +276,10 @@
                         LoginName = modifiedByUser.User.LoginName,
                         Name = modifiedByUser.User.Name,
                     };
+                }
+                else
+                {
+                    entity.ModifiedBy = new User { LoginName = modifiedByUserValue };
                 }
             }
 
@@ -314,22 +320,34 @@
 
             var createdByUserValue = version[version.ListItem.Fields[SPBuiltInFieldId.Author].Title] as string;
             var createdByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
-
-            result.CreatedBy = new User
-              {
-                  Email = createdByUser.User.Email,
-                  LoginName = createdByUser.User.LoginName,
-                  Name = createdByUser.User.Name,
-              };
+            if (createdByUser.User != null)
+            {
+                result.CreatedBy = new User
+                {
+                    Email = createdByUser.User.Email,
+                    LoginName = createdByUser.User.LoginName,
+                    Name = createdByUser.User.Name,
+                };
+            }
+            else
+            {
+                result.CreatedBy = new User { LoginName = createdByUserValue };
+            }
 
             var modifiedByUser = new SPFieldUserValue(version.ListItem.Web, createdByUserValue);
-
-            result.ModifiedBy = new User
-              {
-                  Email = modifiedByUser.User.Email,
-                  LoginName = modifiedByUser.User.LoginName,
-                  Name = modifiedByUser.User.Name,
-              };
+            if (modifiedByUser.User != null)
+            {
+                result.ModifiedBy = new User
+                {
+                    Email = modifiedByUser.User.Email,
+                    LoginName = modifiedByUser.User.LoginName,
+                    Name = modifiedByUser.User.Name,
+                };
+            }
+            else
+            {
+                result.ModifiedBy = new User { LoginName = createdByUserValue };
+            }
 
             if (version.IsCurrentVersion)
             {
@@ -387,22 +405,34 @@
 
             var createdByUserValue = file.Item[SPBuiltInFieldId.Author] as string;
             var createdByUser = new SPFieldUserValue(file.Web, createdByUserValue);
-
-            entityPart.CreatedBy = new User
-              {
-                  Email = createdByUser.User.Email,
-                  LoginName = createdByUser.User.LoginName,
-                  Name = createdByUser.User.Name,
-              };
+            if (createdByUser.User != null)
+            {
+                entityPart.CreatedBy = new User
+                {
+                    Email = createdByUser.User.Email,
+                    LoginName = createdByUser.User.LoginName,
+                    Name = createdByUser.User.Name,
+                };
+            }
+            else
+            {
+                entityPart.CreatedBy = new User { LoginName = createdByUserValue };
+            }
 
             var modifiedByUser = new SPFieldUserValue(file.Web, createdByUserValue);
-
-            entityPart.ModifiedBy = new User
-              {
-                  Email = modifiedByUser.User.Email,
-                  LoginName = modifiedByUser.User.LoginName,
-                  Name = modifiedByUser.User.Name,
-              };
+            if (modifiedByUser.User != null)
+            {
+                entityPart.ModifiedBy = new User
+                {
+                    Email = modifiedByUser.User.Email,
+                    LoginName = modifiedByUser.User.LoginName,
+                    Name = modifiedByUser.User.Name,
+                };
+            }
+            else
+            {
+                entityPart.ModifiedBy = new User { LoginName = createdByUserValue };
+            }
 
             return entityPart;
         }
@@ -447,13 +477,19 @@
                 if (String.Compare(modifiedByUserValue, "SHAREPOINT\\system", StringComparison.InvariantCultureIgnoreCase) != 0)
                 {
                     var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, modifiedByUserValue);
-
-                    result.ModifiedBy = new User
-                      {
-                          Email = modifiedByUser.User.Email,
-                          LoginName = modifiedByUser.User.LoginName,
-                          Name = modifiedByUser.User.Name,
-                      };
+                    if (modifiedByUser.User != null)
+                    {
+                        result.ModifiedBy = new User
+                        {
+                            Email = modifiedByUser.User.Email,
+                            LoginName = modifiedByUser.User.LoginName,
+                            Name = modifiedByUser.User.Name,
+                        };
+                    }
+                    else
+                    {
+                        result.ModifiedBy = new User { LoginName = modifiedByUserValue };
+                    }
                 }
             }
             else
@@ -464,23 +500,35 @@
 
                 var createdByUserValue = folderListItem[SPBuiltInFieldId.Author] as String;
                 var createdByUser = new SPFieldUserValue(folder.ParentWeb, createdByUserValue);
-
-                result.CreatedBy = new User
+                if (createdByUser.User != null)
                 {
-                    Email = createdByUser.User.Email,
-                    LoginName = createdByUser.User.LoginName,
-                    Name = createdByUser.User.Name,
-                };
+                    result.CreatedBy = new User
+                    {
+                        Email = createdByUser.User.Email,
+                        LoginName = createdByUser.User.LoginName,
+                        Name = createdByUser.User.Name,
+                    };
+                }
+                else
+                {
+                    result.CreatedBy = new User { LoginName = createdByUserValue };
+                }
 
                 var modifiedByUserValue = folderListItem[SPBuiltInFieldId.Editor] as String;
                 var modifiedByUser = new SPFieldUserValue(folder.ParentWeb, modifiedByUserValue);
-
-                result.ModifiedBy = new User
+                if (modifiedByUser.User != null)
                 {
-                    Email = modifiedByUser.User.Email,
-                    LoginName = modifiedByUser.User.LoginName,
-                    Name = modifiedByUser.User.Name,
-                };
+                    result.ModifiedBy = new User
+                    {
+                        Email = modifiedByUser.User.Email,
+                        LoginName = modifiedByUser.User.LoginName,
+                        Name = modifiedByUser.User.Name,
+                    };
+                }
+                else
+                {
+                    result.ModifiedBy = new User { LoginName = modifiedByUserValue };
+                }
             }
 
             return result;
