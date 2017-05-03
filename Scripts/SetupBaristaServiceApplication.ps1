@@ -98,13 +98,14 @@ write-host
 
 write-host "Ensure service instance is running on server $env:COMPUTERNAME..." -foregroundcolor Gray
 
+$currentSPServer = Get-SPServer $env:COMPUTERNAME
 $serviceInstanceRetry = 0
 do {
 	if ($serviceInstanceRetry -gt 0) {
 		write-host "Waiting"($serviceInstanceRetry * 10)"s for Barista Service Instance deployment..." -foregroundcolor Yellow
 		Start-Sleep -s ($serviceInstanceRetry * 10)
 	}
-	$localServiceInstance = Get-SPServiceInstance -Server $env:COMPUTERNAME | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "BaristaServiceInstance" }
+	$localServiceInstance = Get-SPServiceInstance -Server $currentSPServer | where { $_.GetType().FullName -eq "Barista.SharePoint.Services.BaristaServiceInstance" -and $_.Name -eq "BaristaServiceInstance" }
 }
 while(++$serviceInstanceRetry -le 6 -and $localServiceInstance -eq $null)
 
