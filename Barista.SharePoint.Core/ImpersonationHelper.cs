@@ -22,7 +22,7 @@ namespace Barista.SharePoint
     [SuppressMessage("SPCAF.Rules.SecurityGroup", "SPC020204:DoNotCallWindowsIdentityImpersonate", Justification = "The intent of this class is to facilitate impersonation for credentials defined in a secure store application.")]
     public class ImpersonationHelper : IDisposable
     {
-        public const string DefaultSharePointSecureStoreProvider = "Microsoft.Office.SecureStoreService.Server.SecureStoreProvider, Microsoft.Office.SecureStoreService, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+        public const string DefaultSharePointSecureStoreProvider = "Microsoft.Office.SecureStoreService.Server.SecureStoreProvider, Microsoft.Office.SecureStoreService, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
 
         public delegate void RunAsDelegate();
 
@@ -62,7 +62,7 @@ namespace Barista.SharePoint
         /// Gets or sets the type name of the Secure Store Service Provider
         /// </summary>
         /// <remarks>
-        /// Usually Microsoft.Office.SecureStoreService.Server.SecureStoreProvider, Microsoft.Office.SecureStoreService, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c
+        /// Usually Microsoft.Office.SecureStoreService.Server.SecureStoreProvider, Microsoft.Office.SecureStoreService, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c
         /// </remarks>
         /// <value>The fully qualified type name of the SSS Provider.</value>
         public string ProviderTypeName

@@ -393,7 +393,7 @@
             AddEventHandler(
           contentType,
           "DocumentSet ItemUpdated",
-          "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
+          "Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
           "Microsoft.Office.DocumentManagement.DocumentSets.DocumentSetEventReceiver",
           SPEventReceiverType.ItemUpdated,
           100,
@@ -402,7 +402,7 @@
             AddEventHandler(
           contentType,
           "DocumentSet ItemAdded",
-          "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
+          "Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
           "Microsoft.Office.DocumentManagement.DocumentSets.DocumentSetItemsEventReceiver",
           SPEventReceiverType.ItemAdded,
           100,

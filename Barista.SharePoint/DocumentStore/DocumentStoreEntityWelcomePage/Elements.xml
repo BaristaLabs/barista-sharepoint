@@ -28,7 +28,7 @@
           <MissingAssembly>Cannot import this Web Part.</MissingAssembly>
           <PartImageLarge />
           <IsIncludedFilter />
-          <Assembly>Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+          <Assembly>Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
           <TypeName>Microsoft.SharePoint.WebPartPages.ImageWebPart</TypeName>
           <ImageLink xmlns="http://schemas.microsoft.com/WebPart/v2/Image">/_layouts/images/docset_welcomepage_big.png</ImageLink>
           <AlternativeText xmlns="http://schemas.microsoft.com/WebPart/v2/Image" />
@@ -65,7 +65,7 @@
                     <IsIncludedFilter />
                     <DisplayText>
                     </DisplayText>
-                    <Assembly>Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+                    <Assembly>Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
                     <TypeName>Microsoft.Office.Server.WebControls.DocumentSetPropertiesWebPart</TypeName>
                   </WebPart>]]>
       </AllUsersWebPart>
@@ -97,7 +97,7 @@
           <IsIncludedFilter />
           <DisplayText>
           </DisplayText>
-          <Assembly>Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+          <Assembly>Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
           <TypeName>Microsoft.Office.Server.WebControls.DocumentSetContentsWebPart</TypeName>
         </WebPart>]]>
       </AllUsersWebPart>
