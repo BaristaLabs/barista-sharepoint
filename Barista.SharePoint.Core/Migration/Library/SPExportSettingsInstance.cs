@@ -397,22 +397,6 @@
             }
         }
 
-        [JSProperty(Name = "unattachedContentDatabase")]
-        [JsonIgnore]
-        public SPContentDatabaseInstance UnattachedContentDatabase
-        {
-            get
-            {
-                return new SPContentDatabaseInstance(this.Engine.Object.InstancePrototype, m_exportSettings.UnattachedContentDatabase);
-            }
-            set
-            {
-                m_exportSettings.UnattachedContentDatabase = value == null
-                  ? null
-                  : value.SPContentDatabase;
-            }
-        }
-
         [JSFunction(Name = "validate")]
         public void Validate()
         {

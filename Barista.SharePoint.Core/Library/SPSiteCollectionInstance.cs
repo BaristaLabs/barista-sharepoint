@@ -142,14 +142,5 @@
             }
             return result;
         }
-
-        [JSFunction(Name = "getWebApplication")]
-        public SPWebApplicationInstance GetWebApplication()
-        {
-            var wa = m_siteCollection.WebApplication;
-            return wa == null
-              ? null
-              : new SPWebApplicationInstance(Engine.Object, wa);
-        }
     }
 }

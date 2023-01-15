@@ -23,15 +23,6 @@
             return new PublishingCacheInstance(this.InstancePrototype);
         }
 
-        [JSFunction(Name = "flushBlobCache")]
-        public void FlushBlobCache(SPWebApplicationInstance webApplication)
-        {
-            if (webApplication == null)
-                throw new JavaScriptException(this.Engine, "Error", "An instance of a Web Application object must be specified as the first argument.");
-
-            PublishingCache.FlushBlobCache(webApplication.SPWebApplication);
-        }
-
         [JSFunction(Name = "listCacheContents")]
         public Base64EncodedByteArrayInstance ListCacheContents(SPSiteInstance site)
         {

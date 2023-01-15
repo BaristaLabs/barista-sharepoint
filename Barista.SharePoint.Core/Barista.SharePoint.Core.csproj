@@ -185,6 +185,7 @@
     <Compile Include="Bundles\SharePointWorkflowBundle.cs" />
     <Compile Include="Bundles\SPWebOptimizationBundle.cs" />
     <Compile Include="Extensions\SPWebExtensions.cs" />
+    <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Services\BaristaServiceRequestPipeline.cs" />
     <Compile Include="Imports\Camlex.NET\Attributes.cs" />
     <Compile Include="Imports\Camlex.NET\Camlex.cs" />
@@ -311,7 +312,6 @@
     <Compile Include="Library\SPAlertTemplateInstance.cs" />
     <Compile Include="Library\SPAlternateUrlCollectionInstance.cs" />
     <Compile Include="Library\SPAlternateUrlInstance.cs" />
-    <Compile Include="Library\SPApplicationPoolInstance.cs" />
     <Compile Include="Library\SPAttachmentCollectionInstance.cs" />
     <Compile Include="Library\SPAuditEntryCollectionInstance.cs" />
     <Compile Include="Library\SPAuditEntryInstance.cs" />
@@ -319,8 +319,6 @@
     <Compile Include="Library\SPAuditQueryInstance.cs" />
     <Compile Include="Library\SPCheckedOutFileInstance.cs" />
     <Compile Include="Library\SPCheckedOutFilesList.cs" />
-    <Compile Include="Library\SPContentDatabaseCollectionInstance.cs" />
-    <Compile Include="Library\SPContentDatabaseInstance.cs" />
     <Compile Include="Library\SPContentTypeCollectionInstance.cs" />
     <Compile Include="Library\SPContentTypeListInstance.cs" />
     <Compile Include="Library\SPDatabaseSnapshotInstance.cs" />
@@ -330,7 +328,6 @@
     <Compile Include="Library\SPDocTemplateCollectionInstance.cs" />
     <Compile Include="Library\SPDocumentLibraryInstance.cs" />
     <Compile Include="Library\SPEventReceiverDefinitionCollectionInstance.cs" />
-    <Compile Include="Library\SPFarmManagedAccountCollectionInstance.cs" />
     <Compile Include="Library\SPFeatureCollectionInstance.cs" />
     <Compile Include="Library\SPFeatureDefinitionCollectionInstance.cs" />
     <Compile Include="Library\SPFieldCollectionInstance.cs" />
@@ -348,8 +345,6 @@
     <Compile Include="Library\SPFolderCollectionInstance.cs" />
     <Compile Include="Library\SPGroupCollectionInstance.cs" />
     <Compile Include="Library\SPGroupsListInstance.cs" />
-    <Compile Include="Library\SPIisWebServiceApplicationInstance.cs" />
-    <Compile Include="Library\SPIisWebServiceApplicationPoolInstance.cs" />
     <Compile Include="Library\SPLimitedWebPartCollectionInstance.cs" />
     <Compile Include="Library\SPLimitedWebPartManagerInstance.cs" />
     <Compile Include="Library\SPListCollectionInstance.cs" />
@@ -362,7 +357,6 @@
     <Compile Include="Library\SPNavigationNodeInstance.cs" />
     <Compile Include="Library\SPPrincipalInfoInstance.cs" />
     <Compile Include="Library\SPPrincipalInstance.cs" />
-    <Compile Include="Library\SPProcessAccountInstance.cs" />
     <Compile Include="Library\SPPropertyBagInstance.cs" />
     <Compile Include="Library\SPQuotaInstance.cs" />
     <Compile Include="Library\SPResourceInstance.cs" />
@@ -370,17 +364,12 @@
     <Compile Include="Library\SPRoleAssignmentInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionBindingCollectionInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionCollectionInstance.cs" />
-    <Compile Include="Library\SPServerCollectionInstance.cs" />
-    <Compile Include="Library\SPServiceApplicationCollectionInstance.cs" />
-    <Compile Include="Library\SPServiceCollectionInstance.cs" />
-    <Compile Include="Library\SPServiceInstanceDependencyCollectionInstance.cs" />
     <Compile Include="Library\SPUserCustomActionCollectionInstance.cs" />
     <Compile Include="Library\SPUserCustomActionInstance.cs" />
     <Compile Include="Library\SPUserSolutionCollection.cs" />
     <Compile Include="Library\SPUserSolutionInstance.cs" />
     <Compile Include="Library\SPUserTokenInstance.cs" />
     <Compile Include="Library\SPUtilityInstance.cs" />
-    <Compile Include="Library\SPWebCollectionInstance.cs" />
     <Compile Include="Library\SPWebInfoInstance.cs" />
     <Compile Include="Library\SPWebInfoListInstance.cs" />
     <Compile Include="Library\SPWebListInfoInstance.cs" />
@@ -416,9 +405,7 @@
     <Compile Include="Workflow\SPWorkflowInstance.cs" />
     <Compile Include="Workflow\SPWorkflowManagerInstance.cs" />
     <Compile Include="Publishing\Library\PublishingCacheInstance.cs" />
-    <Compile Include="Library\SPSecureStoreInstance.cs" />
     <Compile Include="Library\SPUserCollectionInstance.cs" />
-    <Compile Include="Library\SPWebApplicationInstance.cs" />
     <Compile Include="Migration\Library\SPExportInstance.cs" />
     <Compile Include="Migration\Library\SPExportObjectCollectionInstance.cs" />
     <Compile Include="Migration\Library\SPExportObjectInstance.cs" />
@@ -481,7 +468,6 @@
     <Compile Include="Library\SPDocTemplateInstance.cs" />
     <Compile Include="Library\SPDocumentSetInstance.cs" />
     <Compile Include="Library\SPEventReceiverDefinitionInstance.cs" />
-    <Compile Include="Library\SPFarmInstance.cs" />
     <Compile Include="Library\SPFeatureDefinitionInstance.cs" />
     <Compile Include="Library\SPFeatureDependencyInstance.cs" />
     <Compile Include="Library\SPFeatureInstance.cs" />
@@ -496,18 +482,12 @@
     <Compile Include="Library\SPListItemCollectionPositionInstance.cs" />
     <Compile Include="Library\SPListItemInstance.cs" />
     <Compile Include="Library\SPListTemplateInstance.cs" />
-    <Compile Include="Library\SPManagedAccountInstance.cs" />
     <Compile Include="Library\SPModerationInformationInstance.cs" />
     <Compile Include="Library\SPMonitoredScopeInstance.cs" />
-    <Compile Include="Library\SPProcessIdentityInstance.cs" />
     <Compile Include="Library\SPRecycleBinItemCollection.cs" />
     <Compile Include="Library\SPRecycleBinItemInstance.cs" />
     <Compile Include="Library\SPRoleDefinitionInstance.cs" />
     <Compile Include="Library\SPSecurableObjectInstance.cs" />
-    <Compile Include="Library\SPServerInstance.cs" />
-    <Compile Include="Library\SPServiceInstance.cs" />
-    <Compile Include="Library\SPServiceApplicationInstance.cs" />
-    <Compile Include="Library\SPServiceInstanceInstance.cs" />
     <Compile Include="Library\SPSiteDataQueryInstance.cs" />
     <Compile Include="Library\SPSiteInstance.cs" />
     <Compile Include="Library\SPUserInstance.cs" />
@@ -515,7 +495,6 @@
     <Compile Include="Library\SPWebCreationInformation.cs" />
     <Compile Include="Library\SPWebInstance.cs" />
     <Compile Include="Library\SPWebTemplateInstance.cs" />
-    <Compile Include="Library\SPWindowsServiceInstance.cs" />
     <Compile Include="Library\UsageInfoInstance.cs" />
     <Compile Include="Library\SPBaristaWebInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

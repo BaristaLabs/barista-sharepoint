@@ -57,8 +57,7 @@ namespace Barista.SharePoint.Bundles
             engine.SetGlobalValue("SPResource", new SPResourceInstance(engine));
 
             //Data Related
-            
-            engine.SetGlobalValue("SPWebApplication", new SPWebApplicationConstructor(engine));
+
             engine.SetGlobalValue("SPSite", new SPSiteConstructor(engine));
             engine.SetGlobalValue("SPWeb", new SPWebConstructor(engine));
             engine.SetGlobalValue("SPFile", new SPFileConstructor(engine));

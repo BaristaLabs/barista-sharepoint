@@ -379,27 +379,6 @@
             return SPUtility.MapToServerFileRedirect(web.Web, fileName, progId);
         }
 
-        [JSFunction(Name = "searchWindowsPrincipals")]
-        public ObjectInstance SearchWindowsPrincipals(SPWebApplicationInstance webApp, string input, string principalType, int maxCount)
-        {
-            if (webApp == null)
-                throw new JavaScriptException(this.Engine, "Error", "A webapp must be specified as the first parameter.");
-
-            SPPrincipalType scopes;
-            principalType.TryParseEnum(true, SPPrincipalType.All, out scopes);
-            
-            bool reachedMaxCount;
-            var principals = SPUtility.SearchWindowsPrincipals(webApp.SPWebApplication, input, scopes, maxCount, out reachedMaxCount);
-            var arrPrincipals = this.Engine.Array.Construct();
-            foreach (var principal in principals)
-                ArrayInstance.Push(arrPrincipals, new SPPrincipalInfoInstance(this.Engine, principal));
-
-            var result = this.Engine.Object.Construct();
-            result.SetPropertyValue("principals", arrPrincipals, false);
-            result.SetPropertyValue("reachedMaxCount", reachedMaxCount, false);
-            return result;
-        }
-
         [JSFunction(Name = "validateFormDigest")]
         public bool ValidateFormDigest()
         {

@@ -274,17 +274,6 @@ namespace Barista.SharePoint.Library
             get { return m_site.CompatibilityLevel; }
         }
 
-        [JSProperty(Name = "contentDatabase")]
-        public SPContentDatabaseInstance ContentDatabase
-        {
-            get
-            {
-                return m_site.ContentDatabase == null
-                    ? null
-                    : new SPContentDatabaseInstance(Engine.Object.InstancePrototype, m_site.ContentDatabase);
-            }
-        }
-
         //currentchangetoken
 
         [JSProperty(Name = "currentResourceUsage")]
@@ -581,17 +570,6 @@ namespace Barista.SharePoint.Library
         public SPWebInstance RootWeb
         {
             get { return new SPWebInstance(Engine, m_site.RootWeb); }
-        }
-
-        [JSProperty(Name = "searchServiceInstance")]
-        public SPServiceInstanceInstance SearchServiceInstance
-        {
-            get
-            {
-                return m_site.SearchServiceInstance == null
-                    ? null
-                    : new SPServiceInstanceInstance(Engine.Object.InstancePrototype, m_site.SearchServiceInstance);
-            }
         }
 
         [JSProperty(Name = "secondaryContact")]
@@ -941,12 +919,6 @@ namespace Barista.SharePoint.Library
         //GetWebTemplates
         //GetWorkItems
 
-        [JSFunction(Name = "getWebApplication")]
-        public SPWebApplicationInstance GetWebApplication()
-        {
-            return new SPWebApplicationInstance(Engine.Object.InstancePrototype, m_site.WebApplication);
-        }
-
         [JSFunction(Name = "deactivateFeature")]
         public void DeactivateFeature(object feature)
         {
@@ -1000,12 +972,6 @@ namespace Barista.SharePoint.Library
                 ArrayInstance.Push(result, new SPWebInstance(Engine, web));
             }
             return result;
-        }
-
-        [JSFunction(Name = "getContentDatabase")]
-        public SPContentDatabaseInstance GetContentDatabase()
-        {
-            return new SPContentDatabaseInstance(Engine.Object.InstancePrototype, m_site.ContentDatabase);
         }
 
         [JSFunction(Name = "getFeatureDefinitions")]
